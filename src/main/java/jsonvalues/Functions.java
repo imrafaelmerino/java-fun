@@ -379,6 +379,7 @@ class Functions
                              );
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static <T> Trampoline<Optional<T>> reduce_(final JsArray arr,
                                                final BinaryOperator<T> op,
@@ -441,6 +442,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static <T> Trampoline<Optional<T>> reduce_(final JsObj obj,
                                                final BinaryOperator<T> op,
@@ -500,6 +502,7 @@ class Functions
                              );
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsArray _filterJsObj_(final JsArray arr,
                                  final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -524,6 +527,7 @@ class Functions
         return arr;
 
     }
+
     @SuppressWarnings("squid:S00100") // naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsObj _filterJsObj_(final JsObj obj,
                                final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -550,7 +554,8 @@ class Functions
 
 
     }
-    @SuppressWarnings({"ReturnValueIgnored","squid:S00100"}) //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+
+    @SuppressWarnings({"ReturnValueIgnored", "squid:S00100"}) //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     private static void _filterJsObj__(final Json<?> json,
                                        final BiPredicate<? super JsPath, ? super JsObj> predicate,
                                        final JsPath path
@@ -568,6 +573,7 @@ class Functions
                  )
         .apply(json);
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsArray _filterJsObj__(final JsArray arr,
                                   final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -599,6 +605,7 @@ class Functions
         }
         return arr;
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsObj _filterJsObj__(final JsObj obj,
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -633,7 +640,7 @@ class Functions
 
     }
 
-
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static JsObj _filterKeys_(final JsObj obj,
                               final Predicate<? super JsPair> predicate,
                               final JsPath path
@@ -653,7 +660,8 @@ class Functions
         }
         return obj;
     }
-    @SuppressWarnings({"ReturnValueIgnored","squid:S00100"})//  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+
+    @SuppressWarnings({"ReturnValueIgnored", "squid:S00100"})//  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     private static void _filterKeys__(final Json<?> json,
                                       final Predicate<? super JsPair> predicate,
                                       final JsPath path
@@ -670,6 +678,7 @@ class Functions
                                      )
                  ).apply(json);
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsArray _filterKeys__(final JsArray arr,
                                  final Predicate<? super JsPair> predicate,
@@ -693,6 +702,7 @@ class Functions
         return arr;
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsObj _filterKeys__(final JsObj obj,
                                final Predicate<? super JsPair> predicate,
@@ -721,6 +731,7 @@ class Functions
 
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static JsArray _filterValues_(final JsArray arr,
                                   final Predicate<? super JsPair> predicate,
                                   final JsPath path
@@ -744,6 +755,7 @@ class Functions
 
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static JsObj _filterValues_(final JsObj obj,
                                 final Predicate<? super JsPair> predicate,
                                 final JsPath path
@@ -766,7 +778,8 @@ class Functions
         return obj;
 
     }
-    @SuppressWarnings({"ReturnValueIgnored","squid:S00100"})//  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+
+    @SuppressWarnings({"ReturnValueIgnored", "squid:S00100"})//  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     private static void _filterValues__(final Json<?> json,
                                         final Predicate<? super JsPair> predicate,
                                         final JsPath path
@@ -785,6 +798,7 @@ class Functions
         .apply(json);
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsArray _filterValues__(final JsArray arr,
                                    final Predicate<? super JsPair> predicate,
@@ -816,6 +830,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static JsObj _filterValues__(final JsObj obj,
                                  final Predicate<? super JsPair> predicate,
@@ -847,6 +862,7 @@ class Functions
 
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static Trampoline<JsObj> _mapJsObj_(final JsObj acc,
                                         final JsObj remaining,
                                         final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
@@ -898,6 +914,7 @@ class Functions
                              );
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static Trampoline<JsArray> _mapJsObj_(final JsArray acc,
                                           final JsArray remaining,
                                           final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
@@ -942,6 +959,7 @@ class Functions
 
                              );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static Trampoline<JsObj> _mapJsObj__(final JsObj acc,
                                          final JsObj remaining,
@@ -1012,6 +1030,7 @@ class Functions
 
                              );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static Trampoline<JsArray> _mapJsObj__(final JsArray acc,
                                            final JsArray remaining,
@@ -1082,6 +1101,7 @@ class Functions
 
                              );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static Trampoline<JsObj> _mapKeys_(final JsObj acc,
                                        final JsObj remaining,
@@ -1170,6 +1190,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static Trampoline<JsObj> _mapKeys__(final JsObj acc,
                                         final JsObj remaining,
@@ -1206,10 +1227,10 @@ class Functions
                                                                                                    () -> tailCall
                                                                                                   ),
                                                            (p, elem) -> removeOldKeyAndPutNew(head.getKey(),
-                                                                                                  fn.apply(pair),
-                                                                                                  elem,
-                                                                                                  () -> tailCall
-                                                                                                 )
+                                                                                              fn.apply(pair),
+                                                                                              elem,
+                                                                                              () -> tailCall
+                                                                                             )
                                                           ),
                                                 ifJsonElse((ppath, json) -> put_(JsPath.of(head.getKey()),
                                                                                  () -> _mapKeys__(json,
@@ -1220,9 +1241,9 @@ class Functions
                                                                                  () -> tailCall
                                                                                 ),
                                                            (p, elem) -> put(head.getKey(),
-                                                                                elem,
-                                                                                () -> tailCall
-                                                                               )
+                                                                            elem,
+                                                                            () -> tailCall
+                                                                           )
 
                                                           )
                                                ).apply(pair);
@@ -1425,6 +1446,7 @@ class Functions
         return more(tail).map(it -> it.prepend(head));
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     private static Trampoline<JsArray> appendFront_(final Trampoline<Trampoline<? extends Json<?>>> head,
                                                     final Trampoline<Trampoline<JsArray>> tail
                                                    )
@@ -1517,7 +1539,6 @@ class Functions
     }
 
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-
     static Trampoline<JsArray> filterJsObjs_(final JsArray arr,
                                              final BiPredicate<? super JsPath, ? super JsObj> predicate,
                                              final JsPath path
@@ -1551,12 +1572,12 @@ class Functions
                                                     .apply(JsPair.of(headPath,
                                                                      json
                                                                     )),
-                                                    _arr -> appendFront_(() -> filterJsObjs_(_arr,
-                                                                                             predicate,
-                                                                                             headPath.index(-1)
-                                                                                            ),
-                                                                         () -> tailCall
-                                                                        ),
+                                                    array -> appendFront_(() -> filterJsObjs_(array,
+                                                                                              predicate,
+                                                                                              headPath.index(-1)
+                                                                                             ),
+                                                                          () -> tailCall
+                                                                         ),
                                                     value -> appendFront(value,
                                                                          () -> tailCall
                                                                         )
@@ -1655,6 +1676,7 @@ class Functions
 
 
     }
+
     //private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
     @SuppressWarnings("squid:S1452")
     private static Trampoline<? extends Json<?>> filterKeys_(final Json<?> json,
@@ -1834,6 +1856,7 @@ class Functions
                              );
 
     }
+
     //private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
     @SuppressWarnings("squid:S1452")
     private static Trampoline<? extends Json<?>> filterValues_(final Json<?> json,
@@ -1976,7 +1999,8 @@ class Functions
                        );
 
     }
-    @SuppressWarnings("squid:S00100") //  perfectly fine _
+
+    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name for an enum constant
     static Trampoline<JsArray> intersection(JsArray a,
                                             JsArray b,
                                             JsArray.TYPE ARRAY_AS
@@ -2002,7 +2026,8 @@ class Functions
 
         throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
     }
-    @SuppressWarnings("squid:S00100") //  perfectly fine _
+
+    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name for an enum constant
     static Trampoline<JsObj> intersection(final JsObj a,
                                           final JsObj b,
                                           final JsArray.TYPE ARRAY_AS
@@ -2105,7 +2130,7 @@ class Functions
 
 
     }
-    @SuppressWarnings("squid:S00100") //  perfectly fine _
+    @SuppressWarnings({"squid:S00117","squid:S00100"}) // ARRAY_AS should be a valid name for an enum constant, naming convention _
     static Trampoline<JsObj> intersection_(final JsObj a,
                                            final JsObj b,
                                            final JsArray.TYPE ARRAY_AS
@@ -2158,10 +2183,11 @@ class Functions
 
 
     }
+
     //squid:S1452 -> private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
     //squid:S00100 ->  naming convention: xx_ traverses the whole json
     //squid:S00117 -> ARRAY_AS should be a valid name
-    @SuppressWarnings({"squid:S00100","squid:S1452","squid:S00117"})
+    @SuppressWarnings({"squid:S00100", "squid:S1452", "squid:S00117"})
     private static Trampoline<? extends Json<?>> intersection_(final Json<?> a,
                                                                final Json<?> b,
                                                                final JsArray.TYPE ARRAY_AS
@@ -2182,7 +2208,7 @@ class Functions
 
 
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> intersection_(final JsArray a,
                                              final JsArray b
                                             )
@@ -2305,7 +2331,7 @@ class Functions
 
                              );
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> mapJsObj_(final JsObj obj,
                                        final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                        final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -2366,7 +2392,7 @@ class Functions
 
                              );
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> mapJsObj_(final JsArray arr,
                                          final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                          final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -2408,13 +2434,13 @@ class Functions
                                                     .apply(JsPair.of(headPath,
                                                                      json
                                                                     )),
-                                                    _arr -> appendFront_(() -> mapJsObj_(_arr,
-                                                                                         fn,
-                                                                                         predicate,
-                                                                                         headPath.index(-1)
-                                                                                        ),
-                                                                         () -> tailCall
-                                                                        ),
+                                                    array -> appendFront_(() -> mapJsObj_(array,
+                                                                                          fn,
+                                                                                          predicate,
+                                                                                          headPath.index(-1)
+                                                                                         ),
+                                                                          () -> tailCall
+                                                                         ),
                                                     value -> appendFront(value,
                                                                          () -> tailCall
                                                                         )
@@ -2466,6 +2492,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static Trampoline<JsArray> mapKeys_(final JsArray array,
                                         final Function<? super JsPair, String> fn,
@@ -2506,6 +2533,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> mapKeys_(final JsObj obj,
                                       final Function<? super JsPair, String> fn,
@@ -2538,9 +2566,9 @@ class Functions
                                                                                  () -> tailCall
                                                                                 ),
                                                            (p, elem) -> put(fn.apply(pair),
-                                                                                elem,
-                                                                                () -> tailCall
-                                                                               )
+                                                                            elem,
+                                                                            () -> tailCall
+                                                                           )
                                                           ),
                                                 ifJsonElse((ppath, json) -> put_(JsPath.of(head.getKey()),
                                                                                  () -> mapKeys_(json,
@@ -2551,9 +2579,9 @@ class Functions
                                                                                  () -> tailCall
                                                                                 ),
                                                            (p, elem) -> put(head.getKey(),
-                                                                                elem,
-                                                                                () -> tailCall
-                                                                               )
+                                                                            elem,
+                                                                            () -> tailCall
+                                                                           )
 
                                                           )
                                                )
@@ -2637,6 +2665,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static Trampoline<JsArray> mapValues_(final JsArray array,
                                           final Function<? super JsPair, ? extends JsElem> fn,
@@ -2683,7 +2712,7 @@ class Functions
                               }
                              );
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> mapValues_(final JsObj obj,
                                         final Function<? super JsPair, ? extends JsElem> fn,
                                         final Predicate<? super JsPair> predicate,
@@ -3396,6 +3425,7 @@ class Functions
                                                );
                               });
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     private static Trampoline<JsObj> removeOldKeyAndPutNew_(final String oldKey,
                                                             final String newKey,
@@ -3661,7 +3691,7 @@ class Functions
                                           ))
                          ).apply(head.getValue());
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     private static Trampoline<JsObj> mapHead_(final Function<? super JsPair, ? extends JsElem> fn,
                                               final Predicate<? super JsPair> predicate,
                                               final Map.Entry<String, JsElem> head,
@@ -3670,8 +3700,8 @@ class Functions
                                               final Function<Json<?>, Trampoline<Trampoline<? extends Json<?>>>> headTrampoline
                                              )
     {
-        return ifJsonElse(elem -> put_(JsPath.of(head.getKey()),
-                                       headTrampoline.apply(elem),
+        return ifJsonElse(json -> put_(JsPath.of(head.getKey()),
+                                       headTrampoline.apply(json),
                                        () -> tailCall
                                       ),
                           elem -> ifElse(predicate,
@@ -3737,6 +3767,7 @@ class Functions
                                          head::getValue
                                         ));
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public static Trampoline<JsObj> combiner_(final JsObj a,
                                               final JsObj b
@@ -3784,6 +3815,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  perfectly fine _
     static Trampoline<JsObj> union_(final JsObj a,
                                     final JsObj b,
@@ -3834,6 +3866,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     private static Trampoline<? extends Json<?>> combiner_(final Json<?> a,
                                                            final Json<?> b
@@ -3849,7 +3882,8 @@ class Functions
 
 
     }
-    @SuppressWarnings("squid:S00100") //  perfectly fine _
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     private static Trampoline<? extends Json<?>> union_(final Json<?> a,
                                                         final Json<?> b,
                                                         final JsArray.TYPE ARRAY_AS
@@ -3871,7 +3905,7 @@ class Functions
 
 
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> union_(final JsArray a,
                                       final JsArray b
                                      )
@@ -3915,7 +3949,7 @@ class Functions
 
     }
 
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     private static <T> Trampoline<Optional<T>> reduce_(final Json<?> json,
                                                        final BinaryOperator<T> op,
                                                        final Function<? super JsPair, T> fn,
@@ -3940,6 +3974,7 @@ class Functions
                             result
                            );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     private static Trampoline<? extends Json<?>> _mapKeys__(final Json<?> json,
                                                             final Function<? super JsPair, String> fn,
@@ -3964,6 +3999,7 @@ class Functions
         .apply(json);
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     private static Trampoline<? extends Json<?>> _mapValues__(Json<?> json,
                                                               Function<? super JsPair, ? extends JsElem> fn,
@@ -4004,6 +4040,7 @@ class Functions
         return Optional.ofNullable(mapped);
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     private static Trampoline<? extends Json<?>> mapKeys_(final Json<?> json,
                                                           final Function<? super JsPair, String> fn,
@@ -4026,6 +4063,7 @@ class Functions
         .apply(json);
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     private static Trampoline<? extends Json<?>> mapValues_(Json<?> json,
                                                             Function<? super JsPair, ? extends JsElem> fn,
@@ -4066,6 +4104,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public static Trampoline<JsArray> combiner_(final JsArray a,
                                                 final JsArray b

@@ -8,7 +8,6 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/apidocs</directory>
-            <outputDirectory>/</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

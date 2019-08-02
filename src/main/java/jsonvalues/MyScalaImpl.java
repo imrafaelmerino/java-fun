@@ -165,10 +165,10 @@ class MyScalaImpl
 
 
         @Override
-        public Map updateAll(final java.util.Map<String, JsElem> map)
+        public Map updateAll(final java.util.Map<String, JsElem> pmap)
         {
             scala.collection.immutable.Map<String, JsElem> immap = this.map;
-            for (java.util.Map.Entry<String, JsElem> entry : map.entrySet())
+            for (java.util.Map.Entry<String, JsElem> entry : pmap.entrySet())
                 immap = immap.updated(entry.getKey(),
                                       entry.getValue()
                                      );

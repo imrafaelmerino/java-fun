@@ -45,8 +45,8 @@ class MyJavaImpl
         }
 
         @Override
-        @SuppressWarnings("cast")
-        //according checkerframework, the return type is keyfor(map), but the type of the interface can't be change
+        //according checkerframework, the return type is keyfor(map) and the type of the interface can't change
+        @SuppressWarnings({"cast","squid:S1905"})
         public Set<String> fields()
         {
             return (Set<String>) elements.keySet();
@@ -75,7 +75,7 @@ class MyJavaImpl
                            .map(key -> new AbstractMap.SimpleEntry<>(key,
                                                                      elements.get(key)
                            ))
-                           .orElseThrow(() -> new Error("Map not empty without a key!"));
+                           .orElseThrow(() -> new UnsupportedOperationException("Map not empty without a key!"));
         }
 
         @Override

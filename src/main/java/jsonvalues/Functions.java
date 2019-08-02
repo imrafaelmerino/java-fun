@@ -3381,6 +3381,7 @@ class Functions
                                           ));
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> putInArray_(final JsPath path,
                                            final Trampoline<Trampoline<? extends Json<?>>> head,
                                            final Trampoline<Trampoline<JsArray>> tail
@@ -3393,7 +3394,7 @@ class Functions
                                                             it
                                                            )));
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> put_(final JsPath path,
                                   final Trampoline<Trampoline<? extends Json<?>>> head,
                                   final Trampoline<Trampoline<JsObj>> tail
@@ -3883,7 +3884,9 @@ class Functions
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
+    // squid:S00100: naming convention: xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00100","squid:S1452"})
     private static Trampoline<? extends Json<?>> union_(final Json<?> a,
                                                         final Json<?> b,
                                                         final JsArray.TYPE ARRAY_AS
@@ -3975,7 +3978,9 @@ class Functions
                            );
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
+    // squid:S00100: naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00100","squid:S1452"})
     private static Trampoline<? extends Json<?>> _mapKeys__(final Json<?> json,
                                                             final Function<? super JsPair, String> fn,
                                                             final Predicate<? super JsPair> predicate,
@@ -4000,7 +4005,9 @@ class Functions
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
+    // squid:S00100: //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00100","squid:S1452"})
     private static Trampoline<? extends Json<?>> _mapValues__(Json<?> json,
                                                               Function<? super JsPair, ? extends JsElem> fn,
                                                               Predicate<? super JsPair> predicate,
@@ -4041,7 +4048,9 @@ class Functions
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
+    // squid:S00100: // xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00100","squid:S1452"})
     private static Trampoline<? extends Json<?>> mapKeys_(final Json<?> json,
                                                           final Function<? super JsPair, String> fn,
                                                           final Predicate<? super JsPair> predicate,
@@ -4063,8 +4072,9 @@ class Functions
         .apply(json);
 
     }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
+    // squid:S00100: naming convention: xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00100","squid:S1452"})
     private static Trampoline<? extends Json<?>> mapValues_(Json<?> json,
                                                             Function<? super JsPair, ? extends JsElem> fn,
                                                             Predicate<? super JsPair> predicate,

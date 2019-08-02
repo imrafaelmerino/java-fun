@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -e
-
 echo "Generating changelog"
 ./mvnw exec:exec -Dexec.executable="scripts/changelog.sh"
 

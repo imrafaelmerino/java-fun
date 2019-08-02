@@ -165,6 +165,7 @@ public interface JsElem
     {
         return this instanceof JsBigDec;
     }
+
     /**
      Returns true if this elem is a JsBigDec and satisfies the given predicate
      @param predicate the given predicate
@@ -315,6 +316,7 @@ public interface JsElem
     {
         return this instanceof JsArray;
     }
+
     /**
      Returns true if this elem is a JsArray and satisfies the given predicate
      @param predicate the given predicate
@@ -509,21 +511,21 @@ public interface JsElem
         requireNonNull(formatter);
         return isStr(str ->
                      {
+                         try
                          {
-                             try
-                             {
-                                 LocalDateTime.parse(str,
-                                                     formatter
-                                                    );
-                                 return true;
-                             }
-                             catch (Exception e)
-                             {
-                                 return false;
-                             }
+                             LocalDateTime.parse(str,
+                                                 formatter
+                                                );
+                             return true;
                          }
+                         catch (Exception e)
+                         {
+                             return false;
+                         }
+
                      });
     }
+
     /**
      return true if this JsElem is a JsStr that contains a local date-time that can be parsed with the given formatter
      and satisfies the given predicate
@@ -564,6 +566,7 @@ public interface JsElem
     {
         return isInt() || isLong() || isBigInt();
     }
+
     /**
 
      @return true if this element is an decimal number (JsDouble or JsBigDec)

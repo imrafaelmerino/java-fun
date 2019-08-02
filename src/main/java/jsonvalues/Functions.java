@@ -1677,8 +1677,9 @@ class Functions
 
     }
 
-    //private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
-    @SuppressWarnings("squid:S1452")
+    //squid:S1452 private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
+    //squid:S00100 naming convention: xx_ traverses the whole json
+    @SuppressWarnings({"squid:S1452", "squid:S00100"})
     private static Trampoline<? extends Json<?>> filterKeys_(final Json<?> json,
                                                              final Predicate<? super JsPair> predicate,
                                                              final JsPath path
@@ -1857,8 +1858,9 @@ class Functions
 
     }
 
-    //private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
-    @SuppressWarnings("squid:S1452")
+    //squid:S1452 private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
+    //squid:S00100 naming convention: xx_ traverses the whole json
+    @SuppressWarnings({"squid:S1452", "squid:S00100"})
     private static Trampoline<? extends Json<?>> filterValues_(final Json<?> json,
                                                                final Predicate<? super JsPair> predicate,
                                                                final JsPath path
@@ -1878,6 +1880,8 @@ class Functions
 
     }
 
+    //squid:S00100_ naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
     static Trampoline<JsArray> filterValues_(final JsArray arr,
                                              final Predicate<? super JsPair> predicate,
                                              final JsPath path
@@ -1919,6 +1923,8 @@ class Functions
 
     }
 
+    //squid:S00100_ naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
     static Trampoline<JsObj> filterValues_(final JsObj obj,
                                            final Predicate<? super JsPair> predicate,
                                            final JsPath path
@@ -2130,7 +2136,8 @@ class Functions
 
 
     }
-    @SuppressWarnings({"squid:S00117","squid:S00100"}) // ARRAY_AS should be a valid name for an enum constant, naming convention _
+
+    @SuppressWarnings({"squid:S00117", "squid:S00100"}) // ARRAY_AS should be a valid name for an enum constant, naming convention _
     static Trampoline<JsObj> intersection_(final JsObj a,
                                            final JsObj b,
                                            final JsArray.TYPE ARRAY_AS
@@ -2208,6 +2215,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> intersection_(final JsArray a,
                                              final JsArray b
@@ -2331,6 +2339,7 @@ class Functions
 
                              );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> mapJsObj_(final JsObj obj,
                                        final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
@@ -2392,6 +2401,7 @@ class Functions
 
                              );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> mapJsObj_(final JsArray arr,
                                          final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
@@ -2712,6 +2722,7 @@ class Functions
                               }
                              );
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> mapValues_(final JsObj obj,
                                         final Function<? super JsPair, ? extends JsElem> fn,
@@ -3394,6 +3405,7 @@ class Functions
                                                             it
                                                            )));
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsObj> put_(final JsPath path,
                                   final Trampoline<Trampoline<? extends Json<?>>> head,
@@ -3625,11 +3637,11 @@ class Functions
 
     }
 
-    static OptionalInt longToInt(Long _long)
+    static OptionalInt longToInt(Long a)
     {
         try
         {
-            return OptionalInt.of(Math.toIntExact(_long));
+            return OptionalInt.of(Math.toIntExact(a));
         }
         catch (Exception e)
         {
@@ -3692,6 +3704,7 @@ class Functions
                                           ))
                          ).apply(head.getValue());
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     private static Trampoline<JsObj> mapHead_(final Function<? super JsPair, ? extends JsElem> fn,
                                               final Predicate<? super JsPair> predicate,
@@ -3720,7 +3733,7 @@ class Functions
                          ).apply(head.getValue());
     }
 
-
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
     static Trampoline<JsArray> union(JsArray a,
                                      JsArray b,
                                      JsArray.TYPE ARRAY_AS
@@ -3817,7 +3830,9 @@ class Functions
 
     }
 
-    @SuppressWarnings("squid:S00100") //  perfectly fine _
+    //squid:S00117 ARRAY_AS should be a valid name
+    //squid:S00100 naming convention: xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00117","squid:S00100"}) //  ARRAY_AS  should be a valid name
     static Trampoline<JsObj> union_(final JsObj a,
                                     final JsObj b,
                                     final TYPE ARRAY_AS
@@ -3886,7 +3901,8 @@ class Functions
 
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
     // squid:S00100: naming convention: xx_ traverses the whole json
-    @SuppressWarnings({"squid:S00100","squid:S1452"})
+    // squid:S00117: ARRAY_AS  should be a valid name
+    @SuppressWarnings({"squid:S00100", "squid:S1452", "squid:S00117"})
     private static Trampoline<? extends Json<?>> union_(final Json<?> a,
                                                         final Json<?> b,
                                                         final JsArray.TYPE ARRAY_AS
@@ -3908,6 +3924,7 @@ class Functions
 
 
     }
+
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Trampoline<JsArray> union_(final JsArray a,
                                       final JsArray b
@@ -3980,7 +3997,7 @@ class Functions
 
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
     // squid:S00100: naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    @SuppressWarnings({"squid:S00100","squid:S1452"})
+    @SuppressWarnings({"squid:S00100", "squid:S1452"})
     private static Trampoline<? extends Json<?>> _mapKeys__(final Json<?> json,
                                                             final Function<? super JsPair, String> fn,
                                                             final Predicate<? super JsPair> predicate,
@@ -4007,7 +4024,7 @@ class Functions
 
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
     // squid:S00100: //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    @SuppressWarnings({"squid:S00100","squid:S1452"})
+    @SuppressWarnings({"squid:S00100", "squid:S1452"})
     private static Trampoline<? extends Json<?>> _mapValues__(Json<?> json,
                                                               Function<? super JsPair, ? extends JsElem> fn,
                                                               Predicate<? super JsPair> predicate,
@@ -4050,7 +4067,7 @@ class Functions
 
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
     // squid:S00100: // xx_ traverses the whole json
-    @SuppressWarnings({"squid:S00100","squid:S1452"})
+    @SuppressWarnings({"squid:S00100", "squid:S1452"})
     private static Trampoline<? extends Json<?>> mapKeys_(final Json<?> json,
                                                           final Function<? super JsPair, String> fn,
                                                           final Predicate<? super JsPair> predicate,
@@ -4072,9 +4089,10 @@ class Functions
         .apply(json);
 
     }
+
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
     // squid:S00100: naming convention: xx_ traverses the whole json
-    @SuppressWarnings({"squid:S00100","squid:S1452"})
+    @SuppressWarnings({"squid:S00100", "squid:S1452"})
     private static Trampoline<? extends Json<?>> mapValues_(Json<?> json,
                                                             Function<? super JsPair, ? extends JsElem> fn,
                                                             Predicate<? super JsPair> predicate,
@@ -4194,17 +4212,16 @@ class Functions
 
     private static MyScalaImpl.Map updateIfCondition(Predicate<? super JsPair> condition,
                                                      Function<? super JsPair, ? extends JsElem> elemMap,
-                                                     MyScalaImpl.Map map,
+                                                     MyScalaImpl.Map pmap,
                                                      final JsPair pair,
                                                      final String key
                                                     )
     {
 
 
-        if (condition.test(pair)) map = map.update(key,
-                                                   elemMap.apply(pair)
-                                                  );
-        return map;
+        return (condition.test(pair)) ? pmap.update(key,
+                                                    elemMap.apply(pair)
+                                                   ) : pmap;
     }
 
 

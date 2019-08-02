@@ -25,15 +25,16 @@ interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
         final boolean thisEmpty = isEmpty();
         if (thatEmpty && thisEmpty) return true;
         if (this.size() != thatArray.size()) return false;
-        return YContainsX(this,
+        return yContainsX(this,
                           thatArray
-                         ) && YContainsX(thatArray,
+                         ) && yContainsX(thatArray,
                                          this
                                         );
 
     }
 
-    static boolean YContainsX(MyVector<?> x,
+
+    static boolean yContainsX(MyVector<?> x,
                               MyVector<?> y
                              )
     {

@@ -22,6 +22,7 @@ import static jsonvalues.Functions.accept;
 class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
 {
     public static final long serialVersionUID = 1L;
+    @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
     static JsObjImmutableImpl EMPTY = new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY);
     private transient volatile int hascode;
     private transient volatile @Nullable String str;
@@ -78,6 +79,7 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     public JsObj toMutable()
     {
         Map<String, JsElem> acc = new HashMap<>();
+        @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
         final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) map.fields();
         keys.forEach(key -> accept(val -> acc.put(key,
                                                   val

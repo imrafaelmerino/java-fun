@@ -732,6 +732,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
     JsObj intersection(final JsObj that,
                        final TYPE ARRAY_AS
                       );
@@ -770,7 +771,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+
+    // squid:S00100:  naming convention: _xx_ returns immutable object
+    // squid:squid:S00117: ARRAY_AS should be a valid name
+    @SuppressWarnings({"squid:S00100","squid:S00117"})
+
     JsObj union_(final JsObj that,
                  final TYPE ARRAY_AS
                 );

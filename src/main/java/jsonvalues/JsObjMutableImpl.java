@@ -60,7 +60,7 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     public JsObj toImmutable()
     {
         Map<String, JsElem> acc = new HashMap<>();
-        @SuppressWarnings("squid:S1905") // unnecessary cast to Set, but this way checkerframework type the keys with @KeyFor("map")
+        @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
         final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) map.fields();
         keys.forEach(key -> accept(val -> acc.put(key,
                                                   val

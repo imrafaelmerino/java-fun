@@ -170,9 +170,9 @@ class MyJavaImpl
         private List<JsElem> elements;
 
 
-        Vector(final List<JsElem> p_vector)
+        Vector(final List<JsElem> pvector)
         {
-            elements = p_vector;
+            elements = pvector;
 
         }
 

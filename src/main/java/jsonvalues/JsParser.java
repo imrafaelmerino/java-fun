@@ -54,6 +54,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static jsonvalues.JsParser.Event.*;
+import static jsonvalues.JsParser.Tokenizer.Token.*;
 
 class JsParser implements Closeable
 {
@@ -179,17 +180,12 @@ class JsParser implements Closeable
 
     JsNumber getJsNumber()
     {
-
         if (isDefinitelyInt())
-        {
             return JsInt.of(getInt());
-        } else if (isDefinitelyLong())
-        {
+        if (isDefinitelyLong())
             return JsLong.of(getLong());
-        } else if (isIntegralNumber())
-        {
+        if (isIntegralNumber())
             return JsBigInt.of(getBigInteger());
-        }
         return JsBigDec.of(getBigDecimal());
     }
 
@@ -198,7 +194,7 @@ class JsParser implements Closeable
         return tokenizer.getLocation();
     }
 
-    Location getLastCharLocation()
+    private Location getLastCharLocation()
     {
         return tokenizer.getLastCharLocation();
     }
@@ -258,27 +254,37 @@ class JsParser implements Closeable
         {
             // Handle 1. {   2. [   3. value
             Tokenizer.Token token = tokenizer.nextToken();
-            if (token == Tokenizer.Token.CURLYOPEN)
+            if (token == CURLYOPEN)
             {
                 stack.push(currentContext);
                 currentContext = new ObjectContext();
                 return Event.START_OBJECT;
-            } else if (token == Tokenizer.Token.SQUAREOPEN)
+            }
+            if (token == SQUAREOPEN)
             {
                 stack.push(currentContext);
                 currentContext = new ArrayContext();
                 return Event.START_ARRAY;
-            } else if (token.isValue())
-            {
-                return token.getEvent();
             }
-            throw MalformedJson.invalidToken(token,
-                                             getLastCharLocation(),
-                                             "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
-                                            );
+            if (token.isValue())
+                return token.getEvent();
+
+            throw expectedValueOrJsonBeginning(token,
+                                               "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
+                                              );
         }
 
 
+    }
+
+    private MalformedJson expectedValueOrJsonBeginning(final Tokenizer.Token token,
+                                                       final String s
+                                                      )
+    {
+        return MalformedJson.invalidToken(token,
+                                          getLastCharLocation(),
+                                          s
+                                         );
     }
 
 
@@ -302,49 +308,30 @@ class JsParser implements Closeable
             else if (currentEvent == Event.START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
             else token = tokenizer.nextToken();
 
-            if (token == Tokenizer.Token.EOF)
+            if (token == EOF)
             {
-                if (currentEvent == null) return null;
+                if (currentEvent == null) return currentEvent;
                 switch (currentEvent)
                 {
                     case START_OBJECT:
-                        throw MalformedJson.invalidToken(token,
-                                                         getLastCharLocation(),
-                                                         "[STRING, CURLYCLOSE]"
-                                                        );
+                        throw expectedValueOrJsonBeginning(token,
+                                                           "[STRING, CURLYCLOSE]"
+                                                          );
                     case KEY_NAME:
-                        throw MalformedJson.invalidToken(token,
-                                                         getLastCharLocation(),
-                                                         "[COLON]"
-                                                        );
+                        throw expectedValueOrJsonBeginning(token,
+                                                           "[COLON]"
+                                                          );
                     default:
-                        throw MalformedJson.invalidToken(token,
-                                                         getLastCharLocation(),
-                                                         "[COMMA, CURLYCLOSE]"
-                                                        );
+                        throw expectedValueOrJsonBeginning(token,
+                                                           "[COMMA, CURLYCLOSE]"
+                                                          );
                 }
-            } else if (currentEvent == Event.KEY_NAME)
+            }
+            if (currentEvent == Event.KEY_NAME)
             {
 
                 token = tokenizer.nextToken();
-                if (token.isValue())
-                {
-                    return token.getEvent();
-                } else if (token == Tokenizer.Token.CURLYOPEN)
-                {
-                    stack.push(currentContext);
-                    currentContext = new ObjectContext();
-                    return Event.START_OBJECT;
-                } else if (token == Tokenizer.Token.SQUAREOPEN)
-                {
-                    stack.push(currentContext);
-                    currentContext = new ArrayContext();
-                    return Event.START_ARRAY;
-                }
-                throw MalformedJson.invalidToken(token,
-                                                 getLastCharLocation(),
-                                                 "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
-                                                );
+                return nextValueOrJsonBeginning(token);
             } else
             {
                 // Handle 1. }   2. name   3. ,name
@@ -360,21 +347,18 @@ class JsParser implements Closeable
                 {
                     if (token != Tokenizer.Token.COMMA)
                     {
-                        throw MalformedJson.invalidToken(token,
-                                                         getLastCharLocation(),
-                                                         "[COMMA]"
-                                                        );
+                        throw expectedValueOrJsonBeginning(token,
+                                                           "[COMMA]"
+                                                          );
                     }
                     token = tokenizer.nextToken();
                 }
                 if (token == Tokenizer.Token.STRING)
-                {
                     return Event.KEY_NAME;
-                }
-                throw MalformedJson.invalidToken(token,
-                                                 getLastCharLocation(),
-                                                 "[STRING]"
-                                                );
+
+                throw expectedValueOrJsonBeginning(token,
+                                                   "[STRING]"
+                                                  );
             }
         }
 
@@ -385,28 +369,21 @@ class JsParser implements Closeable
     {
         private boolean firstValue = true;
 
-        // Handle 1. ]   2. value   3. ,value
-
         @Override
         @Nullable Event getNextEvent() throws MalformedJson
         {
             Tokenizer.Token token = tokenizer.nextToken();
-            if (token == Tokenizer.Token.EOF)
+            if (token == EOF)
             {
                 if (currentEvent == null) return null;
-                switch (currentEvent)
-                {
-                    case START_ARRAY:
-                        throw MalformedJson.invalidToken(token,
-                                                         getLastCharLocation(),
-                                                         "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
-                                                        );
-                    default:
-                        throw MalformedJson.invalidToken(token,
-                                                         getLastCharLocation(),
-                                                         "[COMMA, CURLYCLOSE]"
-                                                        );
-                }
+                if (currentEvent == START_ARRAY)
+                    throw expectedValueOrJsonBeginning(token,
+                                                       "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
+                                                      );
+
+                throw expectedValueOrJsonBeginning(token,
+                                                   "[COMMA, CURLYCLOSE]"
+                                                  );
             }
             if (token == Tokenizer.Token.SQUARECLOSE)
             {
@@ -420,33 +397,36 @@ class JsParser implements Closeable
             {
                 if (token != Tokenizer.Token.COMMA)
                 {
-                    throw MalformedJson.invalidToken(token,
-                                                     getLastCharLocation(),
-                                                     "[COMMA]"
-                                                    );
+                    throw expectedValueOrJsonBeginning(token,
+                                                       "[COMMA]"
+                                                      );
                 }
                 token = tokenizer.nextToken();
             }
-            if (token.isValue())
-            {
-                return token.getEvent();
-            } else if (token == Tokenizer.Token.CURLYOPEN)
-            {
-                stack.push(currentContext);
-                currentContext = new ObjectContext();
-                return Event.START_OBJECT;
-            } else if (token == Tokenizer.Token.SQUAREOPEN)
-            {
-                stack.push(currentContext);
-                currentContext = new ArrayContext();
-                return Event.START_ARRAY;
-            }
-            throw MalformedJson.invalidToken(token,
-                                             getLastCharLocation(),
-                                             "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
-                                            );
+            return nextValueOrJsonBeginning(token);
         }
 
+    }
+
+    private @Nullable Event nextValueOrJsonBeginning(final Tokenizer.Token token) throws MalformedJson
+    {
+        if (token.isValue())
+            return token.getEvent();
+        if (token == CURLYOPEN)
+        {
+            stack.push(currentContext);
+            currentContext = new ObjectContext();
+            return Event.START_OBJECT;
+        }
+        if (token == SQUAREOPEN)
+        {
+            stack.push(currentContext);
+            currentContext = new ArrayContext();
+            return Event.START_ARRAY;
+        }
+        throw expectedValueOrJsonBeginning(token,
+                                           "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
+                                          );
     }
 
     /**
@@ -695,10 +675,10 @@ class JsParser implements Closeable
                     {
                         if (ch == '"')
                         {
-                            storeEnd = readBegin++; // ++ to consume quote char
-                            return;                 // Got the entire string
+                            storeEnd = readBegin++;
+                            return;
                         }
-                        readBegin++;                // consume unescaped char
+                        readBegin++;
                     }
                     storeEnd = readBegin;
                 }
@@ -781,9 +761,13 @@ class JsParser implements Closeable
             }
         }
 
-        // Reads a number char. If the char is within the buffer, directly
-        // reads from the buffer. Otherwise, uses read() which takes care
-        // of resizing, filling up the buf, adjusting the pointers
+
+        /**
+         Reads a number char. If the char is within the buffer, directly
+         reads from the buffer. Otherwise, uses read() which takes care
+         of resizing, filling up the buf, adjusting the pointers
+         @return a number char
+         */
         private int readNumberChar()
         {
             if (readBegin < readEnd)
@@ -875,75 +859,68 @@ class JsParser implements Closeable
         {
             int ch1 = read();
             if (ch1 != 'r')
-            {
                 throw MalformedJson.unexpectedChar(ch1,
                                                    getLastCharLocation()
                                                   );
-            }
             int ch2 = read();
             if (ch2 != 'u')
-            {
                 throw MalformedJson.unexpectedChar(ch2,
                                                    getLastCharLocation()
                                                   );
-            }
+
             int ch3 = read();
             if (ch3 != 'e')
-            {
                 throw MalformedJson.unexpectedChar(ch3,
                                                    getLastCharLocation()
                                                   );
-            }
+
         }
 
         private void readFalse() throws MalformedJson
         {
             int ch1 = read();
             if (ch1 != 'a')
-            {
                 throw MalformedJson.expectedChar(ch1,
                                                  getLastCharLocation(),
                                                  'a'
                                                 );
 
-            }
             int ch2 = read();
             if (ch2 != 'l')
-            {
                 throw MalformedJson.expectedChar(ch2,
                                                  getLastCharLocation(),
                                                  'l'
                                                 );
 
-            }
+
             int ch3 = read();
             if (ch3 != 's')
-            {
+
                 throw MalformedJson.expectedChar(ch3,
                                                  getLastCharLocation(),
                                                  's'
                                                 );
-            }
+
             int ch4 = read();
             if (ch4 != 'e')
-            {
+
                 throw MalformedJson.expectedChar(ch4,
                                                  getLastCharLocation(),
                                                  'e'
                                                 );
-            }
+
         }
 
         private void readNull() throws MalformedJson
         {
             int ch1 = read();
             if (ch1 != 'u')
-            {
+
                 throw MalformedJson.expectedChar(ch1,
                                                  getLastCharLocation(),
                                                  'u'
                                                 );
-            }
+
             int ch2 = read();
             if (ch2 != 'l')
             {
@@ -954,12 +931,12 @@ class JsParser implements Closeable
             }
             int ch3 = read();
             if (ch3 != 'l')
-            {
+
                 throw MalformedJson.expectedChar(ch3,
                                                  getLastCharLocation(),
                                                  'l'
                                                 );
-            }
+
         }
 
 
@@ -977,9 +954,9 @@ class JsParser implements Closeable
                     readString();
                     return Token.STRING;
                 case '{':
-                    return Token.CURLYOPEN;
+                    return CURLYOPEN;
                 case '[':
-                    return Token.SQUAREOPEN;
+                    return SQUAREOPEN;
                 case ',':
                     return Token.COMMA;
                 case 't':
@@ -1009,7 +986,7 @@ class JsParser implements Closeable
                     readNumber(ch);
                     return Token.NUMBER;
                 case -1:
-                    return Token.EOF;
+                    return EOF;
                 default:
                     throw MalformedJson.unexpectedChar(ch,
                                                        getLastCharLocation()
@@ -1019,10 +996,6 @@ class JsParser implements Closeable
         }
 
 
-        /*
-         * Could be optimized if the parser uses separate methods to match colon
-         * etc (that would avoid the switch statement cost in certain cases)
-         */
         Token matchColonToken() throws MalformedJson
         {
             reset();
@@ -1116,10 +1089,8 @@ class JsParser implements Closeable
                 if (readBegin == readEnd)
                 {     // need to fill the buffer
                     int len = fillBuf();
-                    if (len == -1)
-                    {
-                        return -1;
-                    }
+                    if (len == -1) return -1;
+
                     assert len != 0;
                     readBegin = storeEnd;
                     readEnd = readBegin + len;

@@ -7,7 +7,6 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -57,7 +56,6 @@ public final class JsBigDec implements JsNumber,Comparable<JsBigDec>
     @Override
     public boolean equals(@Nullable Object that)
     {
-
         if (this == that) return true;
         if (that == null) return false;
         if (!(that instanceof JsNumber)) return false;

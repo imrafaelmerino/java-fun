@@ -20,6 +20,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
     static JsArrayImmutableImpl EMPTY = new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY);
     private volatile int hascode;
     private volatile @Nullable String str;
@@ -69,9 +70,9 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         List<JsElem> acc = new ArrayList<>();
         array.forEach(accept(acc::add,
-                            obj -> acc.add(obj.toMutable()),
-                            arr -> acc.add(arr.toMutable())
-                           ));
+                             obj -> acc.add(obj.toMutable()),
+                             arr -> acc.add(arr.toMutable())
+                            ));
         return new JsArrayMutableImpl(new MyJavaImpl.Vector(acc));
 
     }
@@ -223,7 +224,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     }
 
     @Override
-    public final JsArray mapObjs_(final BiFunction<? super JsPath,? super  JsObj, JsObj> fn,
+    public final JsArray mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                   final BiPredicate<? super JsPath, ? super JsObj> predicate
                                  )
     {
@@ -239,7 +240,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     }
 
     @Override
-    public final JsArray mapObjs_(final BiFunction<? super JsPath,? super JsObj, JsObj> fn)
+    public final JsArray mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
         return Functions.mapJsObj_(this,
                                    requireNonNull(fn),
@@ -263,6 +264,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     }
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
 

@@ -26,16 +26,16 @@ class MyScalaImpl
     {
         static final HashMap<String, JsElem> EMPTY_HASH_MAP = new HashMap<>();
         static final Map EMPTY = new Map();
-        private final scala.collection.immutable.Map<String, JsElem> map;
+        private final scala.collection.immutable.Map<String, JsElem> persistentMap;
 
         Map()
         {
-            this.map = EMPTY_HASH_MAP;
+            this.persistentMap = EMPTY_HASH_MAP;
         }
 
         Map(final scala.collection.immutable.Map<String, JsElem> map)
         {
-            this.map = map;
+            this.persistentMap = map;
         }
 
         static AbstractFunction1<String, String> af1(UnaryOperator<String> uo)
@@ -53,7 +53,7 @@ class MyScalaImpl
         @Override
         public java.util.Iterator<java.util.Map.Entry<String, JsElem>> iterator()
         {
-            final Iterator<Tuple2<String, JsElem>> iterator = map.iterator();
+            final Iterator<Tuple2<String, JsElem>> iterator = persistentMap.iterator();
             return JavaConverters.asJavaIterator(iterator.map(it -> new AbstractMap.SimpleEntry<>(it._1,
                                                                                                   it._2
                                                               )
@@ -63,15 +63,15 @@ class MyScalaImpl
         @Override
         public boolean contains(final String key)
         {
-            return map.contains(key);
+            return persistentMap.contains(key);
         }
 
 
         @Override
         public final Set<String> fields()
         {
-            return JavaConverters.setAsJavaSet(map.keys()
-                                                  .toSet());
+            return JavaConverters.setAsJavaSet(persistentMap.keys()
+                                                            .toSet());
 
         }
 
@@ -79,20 +79,20 @@ class MyScalaImpl
         public JsElem get(final String key)
         {
 
-            return map.apply(key);
+            return persistentMap.apply(key);
         }
 
         @Override
         public Optional<JsElem> getOptional(final String key)
         {
-            return map.contains(key) ? Optional.of(map.get(key)
-                                                      .get()) : Optional.empty();
+            return persistentMap.contains(key) ? Optional.of(persistentMap.get(key)
+                                                                          .get()) : Optional.empty();
         }
 
         @Override
         public int hashCode()
         {
-            return ((HashMap<String, JsElem>) map).hashCode();
+            return ((HashMap<String, JsElem>) persistentMap).hashCode();
         }
 
         @Override
@@ -100,7 +100,7 @@ class MyScalaImpl
         {
             if (this.isEmpty()) throw new UnsupportedOperationException("head parse empty map");
 
-            final Tuple2<String, JsElem> head = map.head();
+            final Tuple2<String, JsElem> head = persistentMap.head();
 
             return new AbstractMap.SimpleEntry<>(head._1,
                                                  head._2
@@ -110,20 +110,20 @@ class MyScalaImpl
         @Override
         public boolean isEmpty()
         {
-            return map.isEmpty();
+            return persistentMap.isEmpty();
         }
 
         @Override
         @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
         public Map remove(final String key)
         {
-            return new Map(((HashMap<String, JsElem>) map).$minus(key));
+            return new Map(((HashMap<String, JsElem>) persistentMap).$minus(key));
         }
 
         @Override
         public int size()
         {
-            return map.size();
+            return persistentMap.size();
         }
 
         @Override
@@ -132,21 +132,21 @@ class MyScalaImpl
         {
             if (this.isEmpty()) throw new UnsupportedOperationException("tail of empty map");
 
-            return new Map(((HashMap<String, JsElem>) map).$minus(head));
+            return new Map(((HashMap<String, JsElem>) persistentMap).$minus(head));
 
         }
 
         @Override
         public String toString()
         {
-            if (map.isEmpty()) return EMPTY_OBJ_AS_STR;
+            if (persistentMap.isEmpty()) return EMPTY_OBJ_AS_STR;
 
 
-            return map.keysIterator()
-                      .map(af1(key -> MAP_PAIR_TO_STR.apply(key,
-                                                            map.apply(key)
+            return persistentMap.keysIterator()
+                                .map(af1(key -> MAP_PAIR_TO_STR.apply(key,
+                                                                      persistentMap.apply(key)
                                                            )))
-                      .mkString(OPEN_BRACKET,
+                                .mkString(OPEN_BRACKET,
                                 COMMA,
                                 CLOSE_BRACKET
                                );
@@ -157,22 +157,22 @@ class MyScalaImpl
                           final JsElem je
                          )
         {
-            return new Map(map.updated(key,
-                                       je
-                                      ));
+            return new Map(persistentMap.updated(key,
+                                                 je
+                                                ));
         }
 
 
 
         @Override
-        public Map updateAll(final java.util.Map<String, JsElem> pmap)
+        public Map updateAll(final java.util.Map<String, JsElem> map)
         {
-            scala.collection.immutable.Map<String, JsElem> immap = this.map;
-            for (java.util.Map.Entry<String, JsElem> entry : pmap.entrySet())
-                immap = immap.updated(entry.getKey(),
+            scala.collection.immutable.Map<String, JsElem> newMap = this.persistentMap;
+            for (java.util.Map.Entry<String, JsElem> entry : map.entrySet())
+                newMap = newMap.updated(entry.getKey(),
                                       entry.getValue()
                                      );
-            return new Map(immap);
+            return new Map(newMap);
         }
 
         @Override

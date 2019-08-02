@@ -78,8 +78,9 @@ public class TestJsArray
                                            )
                                     .orElse(-1);
 
-        Assertions.assertEquals(result1,
-                                103
+        Assertions.assertEquals(103,
+                                result1
+
                                );
 
         final int result3 = supplier.get()
@@ -94,8 +95,8 @@ public class TestJsArray
                                     .orElse(-1);
 
 
-        Assertions.assertEquals(result3,
-                                407
+        Assertions.assertEquals(407,
+                                result3
                                );
 
     }
@@ -166,11 +167,12 @@ public class TestJsArray
                                         p -> p.elem.isInt()
                                        )
                                .orElse(-1);
-        Assertions.assertEquals(result2,
-                                406
+        Assertions.assertEquals(406,
+                                result2
+
                                );
-        Assertions.assertEquals(result3,
-                                406
+        Assertions.assertEquals(406,
+                                result3
                                );
     }
 
@@ -2139,7 +2141,6 @@ public class TestJsArray
         Assertions.assertTrue(Json._parse_("[")
                                   .isFailure());
     }
-
 
 
     @Test

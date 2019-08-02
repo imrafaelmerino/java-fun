@@ -591,7 +591,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
     public final JsArray union(final JsArray that,
                                final TYPE ARRAY_AS
                               )

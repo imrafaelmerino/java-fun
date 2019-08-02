@@ -1224,7 +1224,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                         .count();
     }
 
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
     default boolean equals(final JsElem elem,
                            final TYPE ARRAY_AS
                           )

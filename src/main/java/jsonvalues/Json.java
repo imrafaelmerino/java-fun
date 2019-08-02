@@ -1733,8 +1733,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                              requireNonNull(fn).apply(elem)
                                                             );
 
-        //this is an instance of T (recursive type));
-        @SuppressWarnings("unchecked") final T t = (T) this;
+        @SuppressWarnings("unchecked") final T t = (T) this;  //this is an instance of T (recursive type));
+
         return t;
 
     }

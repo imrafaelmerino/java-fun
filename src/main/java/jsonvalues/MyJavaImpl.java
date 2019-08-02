@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static jsonvalues.Constants.*;
+
 class MyJavaImpl
 {
     private MyJavaImpl()
@@ -108,9 +110,9 @@ class MyJavaImpl
                                                      elements.get(key)
                                                     )
                                )
-                           .collect(Collectors.joining(Constants.COMMA,
-                                                       Constants.OPEN_BRACKET,
-                                                       Constants.CLOSE_BRACKET
+                           .collect(Collectors.joining(COMMA,
+                                                       OPEN_CURLY,
+                                                       CLOSE_CURLY
                                                       )
                                    );
 
@@ -275,7 +277,7 @@ class MyJavaImpl
 
             return elements.stream()
                            .map(JsElem::toString)
-                           .collect(Collectors.joining(Constants.COMMA,
+                           .collect(Collectors.joining(COMMA,
                                                        Constants.OPEN_BRACKET,
                                                        Constants.CLOSE_BRACKET
                                                       ));

@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static jsonvalues.Constants.*;
+
 class MyScalaImpl
 {
     private MyScalaImpl()
@@ -131,9 +133,7 @@ class MyScalaImpl
         public Map tail(String head)
         {
             if (this.isEmpty()) throw new UnsupportedOperationException("tail of empty map");
-
             return new Map(((HashMap<String, JsElem>) persistentMap).$minus(head));
-
         }
 
         @Override
@@ -147,9 +147,9 @@ class MyScalaImpl
                                                               key,
                                                               persistentMap.apply(key)
                                                              )))
-                                .mkString(Constants.OPEN_BRACKET,
-                                          Constants.COMMA,
-                                          Constants.CLOSE_BRACKET
+                                .mkString(Constants.OPEN_CURLY,
+                                          COMMA,
+                                          Constants.CLOSE_CURLY
                                          );
         }
 
@@ -297,9 +297,9 @@ class MyScalaImpl
         {
             if (vector.isEmpty()) return Constants.EMPTY_ARR_AS_STR;
 
-            return vector.mkString(Constants.OPEN_BRACKET,
-                                   Constants.COMMA,
-                                   Constants.CLOSE_BRACKET
+            return vector.mkString(OPEN_BRACKET,
+                                   COMMA,
+                                   CLOSE_BRACKET
                                   );
         }
 

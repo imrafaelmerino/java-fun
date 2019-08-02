@@ -6,11 +6,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
-
-
 {
-
-
     default boolean eq(final @Nullable Object that)
     {
         if (!(that instanceof MyVector)) return false;
@@ -25,9 +21,7 @@ interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
                          ) && yContainsX(thatArray,
                                          this
                                         );
-
     }
-
 
     static boolean yContainsX(MyVector<?> x,
                               MyVector<?> y

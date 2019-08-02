@@ -94,7 +94,7 @@ class JsParser implements Closeable
         VALUE_NUMBER,
         /**
          * {@code true} value in a JSON array or object. The position of the
-         * parser is after the {@code true} value. 
+         * parser is after the {@code true} value.
          */
         VALUE_TRUE,
         /**
@@ -255,6 +255,7 @@ class JsParser implements Closeable
         {
             return nextValueOrJsonBeginning(tokenizer.nextToken());
         }
+
 
     }
 
@@ -751,79 +752,82 @@ class JsParser implements Closeable
          */
         private int readNumberChar()
         {
-            if (readBegin < readEnd) return buf[readBegin++];
-            storeEnd = readBegin;
-            return read();
+            if (readBegin < readEnd)
+            {
+                return buf[readBegin++];
+            } else
+            {
+                storeEnd = readBegin;
+                return read();
+            }
         }
 
         private void readNumber(int ch) throws MalformedJson
         {
             storeBegin = storeEnd = readBegin - 1;
-            if (ch == '-')
-            {
-                this.minus = true;
-                ch = readNumberChar();
-                if (ch < '0' || ch > '9')
-                {
-                    throw MalformedJson.unexpectedChar(ch,
-                                                       getLastCharLocation()
-                                                      );
-                }
-            }
-
-            if (ch == '0')
-            {
-                ch = readNumberChar();
-            } else
-            {
-                do
-                {
-                    ch = readNumberChar();
-                } while (ch >= '0' && ch <= '9');
-            }
-
-            if (ch == '.')
-            {
-                this.fracOrExp = true;
-                int count = 0;
-                do
-                {
-                    ch = readNumberChar();
-                    count++;
-                } while (ch >= '0' && ch <= '9');
-                if (count == 1)
-                {
-                    throw MalformedJson.unexpectedChar(ch,
-                                                       getLastCharLocation()
-                                                      );
-                }
-            }
-            if (ch == 'e' || ch == 'E')
-            {
-                this.fracOrExp = true;
-                ch = readNumberChar();
-                if (ch == '+' || ch == '-')
-                {
-                    ch = readNumberChar();
-                }
-                int count;
-                for (count = 0; ch >= '0' && ch <= '9'; count++)
-                {
-                    ch = readNumberChar();
-                }
-                if (count == 0)
-                {
-                    throw MalformedJson.unexpectedChar(ch,
-                                                       getLastCharLocation()
-                                                      );
-                }
-            }
+            if (ch == '-') ch = readNegative(ch);
+            if (ch == '0') ch = readNumberChar();
+            else ch = readAllNumberChar(ch);
+            if (ch == '.') ch = readFraccional(ch);
+            if (ch == 'e' || ch == 'E') ch = readExponential(ch);
             if (ch != -1)
             {
-                // Only reset readBegin if eof has not been reached
                 readBegin--;
                 storeEnd = readBegin;
             }
+        }
+
+        private int readAllNumberChar(int ch)
+        {
+            do
+            {
+                ch = readNumberChar();
+            } while (ch >= '0' && ch <= '9');
+            return ch;
+        }
+
+        private int readNegative(int ch) throws MalformedJson
+        {
+            this.minus = true;
+            ch = readNumberChar();
+            if (ch < '0' || ch > '9')
+                throw MalformedJson.unexpectedChar(ch,
+                                                   getLastCharLocation()
+                                                  );
+            return ch;
+        }
+
+        private int readExponential(int ch) throws MalformedJson
+        {
+            this.fracOrExp = true;
+            ch = readNumberChar();
+            if (ch == '+' || ch == '-') ch = readNumberChar();
+            int count;
+            for (count = 0; ch >= '0' && ch <= '9'; count++)
+            {
+                ch = readNumberChar();
+            }
+            if (count == 0)
+                throw MalformedJson.unexpectedChar(ch,
+                                                   getLastCharLocation()
+                                                  );
+            return ch;
+        }
+
+        private int readFraccional(int ch) throws MalformedJson
+        {
+            this.fracOrExp = true;
+            int count = 0;
+            do
+            {
+                ch = readNumberChar();
+                count++;
+            } while (ch >= '0' && ch <= '9');
+            if (count == 1)
+                throw MalformedJson.unexpectedChar(ch,
+                                                   getLastCharLocation()
+                                                  );
+            return ch;
         }
 
         private void readTrue() throws MalformedJson

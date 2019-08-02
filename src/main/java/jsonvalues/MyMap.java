@@ -6,20 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 interface MyMap<T extends MyMap<T>>
 
 {
-
-    String CLOSE_BRACKET = "}";
-    String COMMA = ",";
-    String EMPTY_OBJ_AS_STR = "{}";
-    BiFunction<String, JsElem, String> MAP_PAIR_TO_STR = (key, elem) -> String.format("\"%s\":%s",
-                                                                                      key,
-                                                                                      elem
-                                                                                     );
-    String OPEN_BRACKET = "{";
 
     boolean contains(String key);
 

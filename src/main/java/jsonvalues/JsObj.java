@@ -19,10 +19,10 @@ import static jsonvalues.MyScalaImpl.Map.EMPTY;
  provided, an immutable which uses the persistent Scala HashMap, and a mutable which uses the conventional
  Java HashMap.
  */
+@SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
 public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 {
 
-    @SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
     long serialVersionUID = 1L;
 
     /**
@@ -748,7 +748,9 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
-     @SuppressWarnings("squid:S00117") //  perfectly fine _
+     // squid:S00100_ naming convention: xx_ traverses the whole json
+     // squid:S00117 ARRAY_AS should be a valid name
+     @SuppressWarnings({"squid:S00117","squid:S00100"})
      JsObj intersection_(final JsObj that,
                         final TYPE ARRAY_AS
                        );

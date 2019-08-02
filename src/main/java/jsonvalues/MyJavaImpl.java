@@ -18,7 +18,6 @@ class MyJavaImpl
     static class Map implements MyMap<Map>
     {
 
-
         private java.util.Map<String, JsElem> elements;
 
         Map(final java.util.Map<String, JsElem> elements)
@@ -45,8 +44,7 @@ class MyJavaImpl
         }
 
         @Override
-        //according checkerframework, the return type is keyfor(map) and the type of the interface can't change
-        @SuppressWarnings({"cast","squid:S1905"})
+        @SuppressWarnings({"cast", "squid:S1905"}) //// in return checkerframework doesn't complain and does its job!
         public Set<String> fields()
         {
             return (Set<String>) elements.keySet();
@@ -101,17 +99,18 @@ class MyJavaImpl
         @Override
         public String toString()
         {
-            if (elements.isEmpty()) return EMPTY_OBJ_AS_STR;
+            if (elements.isEmpty()) return Constants.EMPTY_OBJ_AS_STR;
 
             return elements.keySet()
                            .stream()
-                           .map(key -> MAP_PAIR_TO_STR.apply(key,
-                                                             elements.get(key)
-                                                            )
+                           .map(key -> String.format("\"%s\":%s",
+                                                     key,
+                                                     elements.get(key)
+                                                    )
                                )
-                           .collect(Collectors.joining(COMMA,
-                                                       OPEN_BRACKET,
-                                                       CLOSE_BRACKET
+                           .collect(Collectors.joining(Constants.COMMA,
+                                                       Constants.OPEN_BRACKET,
+                                                       Constants.CLOSE_BRACKET
                                                       )
                                    );
 
@@ -144,9 +143,9 @@ class MyJavaImpl
         }
 
         @Override
-        public Map updateAll(final java.util.Map<String, JsElem> p_map)
+        public Map updateAll(final java.util.Map<String, JsElem> map)
         {
-            elements.putAll(p_map);
+            elements.putAll(map);
             return this;
         }
 
@@ -241,7 +240,6 @@ class MyJavaImpl
         @Override
         public Vector init()
         {
-
             if (isEmpty()) throw new UnsupportedOperationException("init of empty vector");
             return new Vector(IntStream.range(0,
                                               elements.size() - 1
@@ -273,13 +271,13 @@ class MyJavaImpl
         @Override
         public String toString()
         {
-            if (elements.isEmpty()) return EMPTY_ARR_AS_STR;
+            if (elements.isEmpty()) return Constants.EMPTY_ARR_AS_STR;
 
             return elements.stream()
                            .map(JsElem::toString)
-                           .collect(Collectors.joining(COMMA,
-                                                       OPEN_BRACKET,
-                                                       CLOSE_BRACKET
+                           .collect(Collectors.joining(Constants.COMMA,
+                                                       Constants.OPEN_BRACKET,
+                                                       Constants.CLOSE_BRACKET
                                                       ));
         }
 
@@ -329,7 +327,5 @@ class MyJavaImpl
         {
             return this.eq(that);
         }
-
-
     }
 }

@@ -10,11 +10,6 @@ interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
 
 {
 
-    String EMPTY_ARR_AS_STR = "[]";
-    String OPEN_BRACKET = "[";
-    String CLOSE_BRACKET = "]";
-    String COMMA = ",";
-
 
     default boolean eq(final @Nullable Object that)
     {

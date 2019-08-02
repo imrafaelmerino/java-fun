@@ -139,17 +139,18 @@ class MyScalaImpl
         @Override
         public String toString()
         {
-            if (persistentMap.isEmpty()) return EMPTY_OBJ_AS_STR;
+            if (persistentMap.isEmpty()) return Constants.EMPTY_OBJ_AS_STR;
 
 
             return persistentMap.keysIterator()
-                                .map(af1(key -> MAP_PAIR_TO_STR.apply(key,
-                                                                      persistentMap.apply(key)
-                                                           )))
-                                .mkString(OPEN_BRACKET,
-                                COMMA,
-                                CLOSE_BRACKET
-                               );
+                                .map(af1(key -> String.format("\"%s\":%s",
+                                                              key,
+                                                              persistentMap.apply(key)
+                                                             )))
+                                .mkString(Constants.OPEN_BRACKET,
+                                          Constants.COMMA,
+                                          Constants.CLOSE_BRACKET
+                                         );
         }
 
         @Override
@@ -163,15 +164,14 @@ class MyScalaImpl
         }
 
 
-
         @Override
         public Map updateAll(final java.util.Map<String, JsElem> map)
         {
             scala.collection.immutable.Map<String, JsElem> newMap = this.persistentMap;
             for (java.util.Map.Entry<String, JsElem> entry : map.entrySet())
                 newMap = newMap.updated(entry.getKey(),
-                                      entry.getValue()
-                                     );
+                                        entry.getValue()
+                                       );
             return new Map(newMap);
         }
 
@@ -295,11 +295,11 @@ class MyScalaImpl
         @Override
         public String toString()
         {
-            if (vector.isEmpty()) return EMPTY_ARR_AS_STR;
+            if (vector.isEmpty()) return Constants.EMPTY_ARR_AS_STR;
 
-            return vector.mkString(OPEN_BRACKET,
-                                   COMMA,
-                                   CLOSE_BRACKET
+            return vector.mkString(Constants.OPEN_BRACKET,
+                                   Constants.COMMA,
+                                   Constants.CLOSE_BRACKET
                                   );
         }
 

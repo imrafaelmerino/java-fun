@@ -18,10 +18,10 @@ import static jsonvalues.MyScalaImpl.Vector.EMPTY;
  Represents a json array, which is an ordered list of elements. Two implementations are provided, an
  immutable which uses the persistent Scala Vector and a mutable which uses the conventional Java ArrayList.
  */
+@SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
 public interface JsArray extends Json<JsArray>, Iterable<JsElem>
 
 {
-     @SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
      long serialVersionUID = 1L;
 
 

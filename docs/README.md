@@ -1,4 +1,11 @@
-<img src="https://img.shields.io/travis/imrafaelmerino/json-values/master"/>  <img src="https://img.shields.io/circleci/build/github/imrafaelmerino/json-values/master"/>  <img src="https://img.shields.io/badge/code%20quality-A-success"/>  [![Coverage](https://img.shields.io/badge/coverage-88-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html) 
+<img src="https://img.shields.io/travis/imrafaelmerino/json-values/master"/>  
+<img src="https://img.shields.io/circleci/build/github/imrafaelmerino/json-values/master"/>  
+
+[![Coverage](https://img.shields.io/badge/coverage-88-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html) 
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_index)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
 <img src="https://img.shields.io/badge/LOC-19797-blue"/>  <img src="https://img.shields.io/badge/HOC-67770-blue"/>
 

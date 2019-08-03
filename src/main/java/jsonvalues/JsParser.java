@@ -205,6 +205,7 @@ class JsParser implements Closeable
     }
 
     @Override
+    @SuppressWarnings("squid:S00112") //unchecked exception is fine here, no need to create a dedicated exception, unrecoverable situation
     public void close()
     {
         try
@@ -252,28 +253,8 @@ class JsParser implements Closeable
         @Override
         @Nullable Event getNextEvent() throws MalformedJson
         {
-            // Handle 1. {   2. [   3. value
-            Tokenizer.Token token = tokenizer.nextToken();
-            if (token == CURLYOPEN)
-            {
-                stack.push(currentContext);
-                currentContext = new ObjectContext();
-                return Event.START_OBJECT;
-            }
-            if (token == SQUAREOPEN)
-            {
-                stack.push(currentContext);
-                currentContext = new ArrayContext();
-                return Event.START_ARRAY;
-            }
-            if (token.isValue())
-                return token.getEvent();
-
-            throw expectedValueOrJsonBeginning(token,
-                                               "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
-                                              );
+            return nextValueOrJsonBeginning(tokenizer.nextToken());
         }
-
 
     }
 
@@ -770,20 +751,14 @@ class JsParser implements Closeable
          */
         private int readNumberChar()
         {
-            if (readBegin < readEnd)
-            {
-                return buf[readBegin++];
-            } else
-            {
-                storeEnd = readBegin;
-                return read();
-            }
+            if (readBegin < readEnd) return buf[readBegin++];
+            storeEnd = readBegin;
+            return read();
         }
 
         private void readNumber(int ch) throws MalformedJson
         {
             storeBegin = storeEnd = readBegin - 1;
-            // sign
             if (ch == '-')
             {
                 this.minus = true;
@@ -796,7 +771,6 @@ class JsParser implements Closeable
                 }
             }
 
-            // int
             if (ch == '0')
             {
                 ch = readNumberChar();
@@ -808,7 +782,6 @@ class JsParser implements Closeable
                 } while (ch >= '0' && ch <= '9');
             }
 
-            // frac
             if (ch == '.')
             {
                 this.fracOrExp = true;
@@ -825,8 +798,6 @@ class JsParser implements Closeable
                                                       );
                 }
             }
-
-            // exp
             if (ch == 'e' || ch == 'E')
             {
                 this.fracOrExp = true;
@@ -1082,6 +1053,7 @@ class JsParser implements Closeable
             );
         }
 
+        @SuppressWarnings("squid:S00112") //unchecked exception is fine here, no need to create a dedicated exception, unrecoverable situation
         private int read()
         {
             try

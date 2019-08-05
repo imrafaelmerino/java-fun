@@ -17,13 +17,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.accept;
+import static jsonvalues.Functions.ifJsonElse;
+import static jsonvalues.Functions.ifObjElse;
 
 class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
 {
     public static final long serialVersionUID = 1L;
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
     static JsObjImmutableImpl EMPTY = new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY);
+    private static final JsPath EMPTY_PATH = JsPath.empty();
     private transient volatile int hascode;
     private transient volatile @Nullable String str;
 
@@ -97,7 +99,6 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     }
 
 
-
     @Override
     public final String toString()
     {
@@ -111,12 +112,12 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     public final JsObj mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
 
-        return Functions.mapValues(this,
-                                   requireNonNull(fn),
-                                   p -> true,
-                                   JsPath.empty()
-                                  )
-                        .get();
+        return mapValues(this,
+                         requireNonNull(fn),
+                         p -> true,
+                         EMPTY_PATH
+                        )
+        .get();
     }
 
     @Override
@@ -124,23 +125,53 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return Functions.mapValues(this,
-                                   requireNonNull(fn),
-                                   predicate,
-                                   JsPath.empty()
-                                  )
-                        .get();
+        return mapValues(this,
+                         requireNonNull(fn),
+                         predicate,
+                         EMPTY_PATH
+                        )
+        .get();
+    }
+
+    private Trampoline<JsObj> mapValues(final JsObj obj,
+                                        final Function<? super JsPair, ? extends JsElem> fn,
+                                        final Predicate<? super JsPair> predicate,
+                                        final JsPath path
+                                       )
+    {
+
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapValues(tail,
+                                                                                                      fn,
+                                                                                                      predicate,
+                                                                                                      path
+                                                                                                     ));
+                                   return mapHead(fn,
+                                                  predicate,
+                                                  head,
+                                                  headPath,
+                                                  tailCall
+                                                 );
+
+                               }
+                              );
+
+
     }
 
     @Override
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return Functions.mapValues_(this,
-                                    requireNonNull(fn),
-                                    p -> true,
-                                    JsPath.empty()
-                                   )
-                        .get();
+        return MapFunctions.mapElems_(requireNonNull(fn),
+                                      p -> true,
+                                      EMPTY_PATH
+                                     )
+                           .apply(this)
+                           .get();
     }
 
     @Override
@@ -148,23 +179,23 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                  final Predicate<? super JsPair> predicate
                                 )
     {
-        return Functions.mapValues_(this,
-                                    requireNonNull(fn),
-                                    requireNonNull(predicate),
-                                    JsPath.empty()
-                                   )
-                        .get();
+        return MapFunctions.mapElems_(requireNonNull(fn),
+                                      requireNonNull(predicate),
+                                      EMPTY_PATH
+                                     )
+                           .apply(this)
+                           .get();
     }
+
 
     @Override
     public final JsObj mapKeys(final Function<? super JsPair, String> fn)
     {
-        return Functions.mapKeys(this,
-                                 requireNonNull(fn),
-                                 p -> true,
-                                 JsPath.empty()
-                                )
-                        .get();
+        return mapKeys(this,
+                       requireNonNull(fn),
+                       p -> true,
+                       EMPTY_PATH
+                      ).get();
     }
 
     @Override
@@ -172,24 +203,65 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                final Predicate<? super JsPair> predicate
                               )
     {
-        return Functions.mapKeys(this,
-                                 requireNonNull(fn),
-                                 requireNonNull(predicate),
-                                 JsPath.empty()
-                                )
-                        .get();
+        return mapKeys(this,
+                       requireNonNull(fn),
+                       requireNonNull(predicate),
+                       EMPTY_PATH
+                      ).get();
+    }
+
+    private Trampoline<JsObj> mapKeys(final JsObj obj,
+                                      final Function<? super JsPair, String> fn,
+                                      final Predicate<? super JsPair> predicate,
+                                      final JsPath path
+                                     )
+    {
+
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapKeys(obj.tail(head.getKey()),
+                                                                                                    fn,
+                                                                                                    predicate,
+                                                                                                    path
+                                                                                                   ));
+
+                                   return JsPair.of(headPath,
+                                                    head.getValue()
+                                                   )
+                                                .ifElse(predicate,
+                                                        p -> AbstractJsObj.put(fn.apply(p),
+                                                                               p.elem,
+                                                                               () -> tailCall
+
+                                                                              ),
+                                                        p -> AbstractJsObj.put(head.getKey(),
+                                                                               p.elem,
+                                                                               () -> tailCall
+                                                                              )
+
+
+                                                       );
+
+
+                               }
+                              );
+
+
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return Functions.mapKeys_(this,
-                                  requireNonNull(fn),
-                                  p -> true,
-                                  JsPath.empty()
-                                 )
-                        .get();
+        return MapFunctions.mapKeys(requireNonNull(fn),
+                                    p -> true,
+                                    EMPTY_PATH
+                                   )
+                           .apply(this)
+                           .get();
 
     }
 
@@ -199,128 +271,379 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return Functions.mapKeys_(this,
-                                  requireNonNull(fn),
-                                  requireNonNull(predicate),
-                                  JsPath.empty()
-                                 )
-                        .get();
+        return MapFunctions.mapKeys_(requireNonNull(fn),
+                                     requireNonNull(predicate),
+                                     EMPTY_PATH
+                                    )
+                           .apply(this)
+                           .get();
     }
 
+
     @Override
-    public final JsObj mapObjs(final BiFunction<? super JsPath,? super  JsObj, JsObj> fn,
+    public final JsObj mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                final BiPredicate<? super JsPath, ? super JsObj> predicate
                               )
     {
 
-        return Functions.mapJsObj(this,
-                                  requireNonNull(fn),
-                                  requireNonNull(predicate),
-                                  JsPath.empty()
-                                 )
-                        .get();
+        return MapFunctions.mapJsObj(requireNonNull(fn),
+                                     requireNonNull(predicate),
+                                     EMPTY_PATH
+                                    )
+                           .apply(this)
+                           .get();
     }
 
     @Override
-    public final JsObj mapObjs(final BiFunction<? super JsPath,? super JsObj, JsObj> fn)
+    public final JsObj mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return Functions.mapJsObj(this,
-                                  requireNonNull(fn),
-                                  (path, obj) -> true,
-                                  JsPath.empty()
-                                 )
-                        .get();
+        return MapFunctions.mapJsObj(requireNonNull(fn),
+                                     (path, obj) -> true,
+                                     EMPTY_PATH
+                                    )
+                           .apply(this)
+                           .get();
     }
+
 
     @Override
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
     {
+        return MapFunctions.mapJsObj_(fn,
+                                      predicate,
+                                      EMPTY_PATH
+                                     )
+                           .apply(this)
+                           .get();
 
-
-        return Functions.mapJsObj_(this,
-                                   requireNonNull(fn),
-                                   requireNonNull(predicate),
-                                   JsPath.empty()
-                                  )
-                        .get();
     }
 
     @Override
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return Functions.mapJsObj_(this,
-                                   requireNonNull(fn),
-                                   (path, obj) -> true,
-                                   JsPath.empty()
-                                  )
-                        .get();
+        return MapFunctions.mapJsObj_(fn,
+                                      (path, obj) -> true,
+                                      EMPTY_PATH
+                                     )
+                           .apply(this)
+                           .get();
+
     }
+
 
     @Override
     public final JsObj filterElems(final Predicate<? super JsPair> filter)
     {
-        return Functions.filterValues(this,
-                                      requireNonNull(filter),
-                                      JsPath.empty()
-                                     )
-                        .get();
+        return filterValues(this,
+                            requireNonNull(filter),
+                            EMPTY_PATH
+                           )
+        .get();
     }
+
+    private Trampoline<JsObj> filterValues(final JsObj obj,
+                                           final Predicate<? super JsPair> predicate,
+                                           final JsPath path
+                                          )
+    {
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterValues(tail,
+                                                                                                         predicate,
+                                                                                                         path
+                                                                                                        ));
+                                   return ifJsonElse(headElem -> AbstractJsObj.put(head.getKey(),
+                                                                                   headElem,
+                                                                                   () -> tailCall
+                                                                                  ),
+                                                     headElem -> JsPair.of(headPath,
+                                                                           headElem
+                                                                          )
+                                                                       .ifElse(predicate,
+                                                                               () -> AbstractJsObj.put(head.getKey(),
+                                                                                                       headElem,
+                                                                                                       () -> tailCall
+                                                                                                      ),
+                                                                               () -> tailCall
+                                                                              )
+
+                                                    )
+                                   .apply(head.getValue());
+
+                               }
+                              );
+
+    }
+
 
     @Override
     public final JsObj filterElems_(final Predicate<? super JsPair> filter)
     {
-
-
-        return Functions.filterValues_(this,
-                                       requireNonNull(filter),
-                                       JsPath.empty()
-                                      )
-                        .get();
+        return filterValues_(this,
+                             requireNonNull(filter),
+                             EMPTY_PATH
+                            ).get();
 
     }
+
+    //squid:S00100_ naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
+    static Trampoline<JsObj> filterValues_(final JsObj obj,
+                                           final Predicate<? super JsPair> predicate,
+                                           final JsPath path
+                                          )
+    {
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterValues_(tail,
+                                                                                                          predicate,
+                                                                                                          path
+                                                                                                         ));
+                                   return ifJsonElse(headElem -> put_(JsPath.of(head.getKey()),
+                                                                      () -> headElem.isObj() ?
+                                                                      filterValues_(headElem.asJsObj(),
+                                                                                    predicate,
+                                                                                    headPath
+                                                                                   ) :
+                                                                      JsArrayImmutableImpl.filterValues_(headElem.asJsArray(),
+                                                                                                         predicate,
+                                                                                                         headPath.index(-1)
+                                                                                                        ),
+                                                                      () -> tailCall
+                                                                     ),
+                                                     headElem -> JsPair.of(headPath,
+                                                                           headElem
+                                                                          )
+                                                                       .ifElse(predicate,
+                                                                               () -> AbstractJsObj.put(head.getKey(),
+                                                                                                       headElem,
+                                                                                                       () -> tailCall
+                                                                                                      ),
+                                                                               () -> tailCall
+                                                                              )
+
+                                                    )
+                                   .apply(head.getValue());
+
+                               }
+                              );
+
+    }
+
 
     @Override
     public final JsObj filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return Functions.filterJsObjs(this,
-                                      requireNonNull(filter),
-                                      JsPath.empty()
-                                     )
-                        .get();
+        return filterJsObjs(this,
+                            requireNonNull(filter),
+                            EMPTY_PATH
+                           )
+        .get();
     }
+
+    private Trampoline<JsObj> filterJsObjs(final JsObj obj,
+                                           final BiPredicate<? super JsPath, ? super JsObj> predicate,
+                                           final JsPath path
+                                          )
+    {
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterJsObjs(tail,
+                                                                                                         predicate,
+                                                                                                         path
+                                                                                                        ));
+                                   return ifObjElse(json -> JsPair.of(headPath,
+                                                                      json
+                                                                     )
+                                                                  .ifElse(p -> predicate.test(p.path,
+                                                                                              json
+                                                                                             ),
+                                                                          p -> AbstractJsObj.put(head.getKey(),
+                                                                                                 json,
+                                                                                                 () -> tailCall
+                                                                                                ),
+                                                                          p -> tailCall
+                                                                         ),
+                                                    value -> AbstractJsObj.put(head.getKey(),
+                                                                               value,
+                                                                               () -> tailCall
+                                                                              )
+                                                   )
+                                   .apply(head.getValue());
+                               }
+
+                              );
+    }
+
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return Functions.filterJsObjs_(this,
-                                       requireNonNull(filter),
-                                       JsPath.empty()
-                                      )
-                        .get();
+        return filterJsObjs_(this,
+                             requireNonNull(filter),
+                             EMPTY_PATH
+                            ).get();
+
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    static Trampoline<JsObj> filterJsObjs_(final JsObj obj,
+                                           final BiPredicate<? super JsPath, ? super JsObj> predicate,
+                                           final JsPath path
+                                          )
+    {
+
+
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterJsObjs_(tail,
+                                                                                                          predicate,
+                                                                                                          path
+                                                                                                         ));
+                                   return ifJsonElse(json -> JsPair.of(headPath,
+                                                                       json
+                                                                      )
+                                                                   .ifElse(p -> predicate.test(p.path,
+                                                                                               json
+                                                                                              ),
+                                                                           p -> put_(JsPath.of(head.getKey()),
+                                                                                     () -> filterJsObjs_(json,
+                                                                                                         predicate,
+                                                                                                         headPath
+                                                                                                        ),
+                                                                                     () -> tailCall
+                                                                                    ),
+                                                                           p -> tailCall
+                                                                          ),
+                                                     arr -> AbstractJson.put_(JsPath.of(head.getKey()),
+                                                                              () -> JsArrayImmutableImpl.filterJsObjs_(arr,
+                                                                                                                       predicate,
+                                                                                                                       headPath.index(-1)
+                                                                                                                      ),
+                                                                              () -> tailCall
+                                                                             ),
+                                                     value -> AbstractJsObj.put(head.getKey(),
+                                                                                value,
+                                                                                () -> tailCall
+                                                                               )
+                                                    )
+                                   .apply(head.getValue());
+                               }
+
+                              );
 
     }
 
     @Override
     public final JsObj filterKeys(final Predicate<? super JsPair> filter)
     {
-        return Functions.filterKeys(this,
-                                    requireNonNull(filter),
-                                    JsPath.empty()
-                                   )
-                        .get();
+        return filterKeys(this,
+                          requireNonNull(filter),
+                          EMPTY_PATH
+                         )
+        .get();
     }
+
+    private Trampoline<JsObj> filterKeys(final JsObj obj,
+                                         final Predicate<? super JsPair> predicate,
+                                         final JsPath path
+                                        )
+    {
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterKeys(tail,
+                                                                                                       predicate,
+                                                                                                       path
+                                                                                                      ));
+                                   return JsPair.of(headPath,
+                                                    head.getValue()
+                                                   )
+                                                .ifElse(predicate,
+                                                        () -> AbstractJsObj.put(head.getKey(),
+                                                                                head.getValue(),
+                                                                                () -> tailCall
+                                                                               ),
+
+
+                                                        () -> tailCall
+                                                       );
+                               }
+                              );
+
+
+    }
+
 
     @Override
     public final JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return Functions.filterKeys_(this,
-                                     requireNonNull(filter),
-                                     JsPath.empty()
-                                    )
-                        .get();
+        return filterKeys_(this,
+                           requireNonNull(filter),
+                           EMPTY_PATH
+                          ).get();
+
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    static Trampoline<JsObj> filterKeys_(final JsObj obj,
+                                         final Predicate<? super JsPair> predicate,
+                                         final JsPath path
+                                        )
+    {
+        return obj.ifEmptyElse(Trampoline.done(obj),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.key(head.getKey());
+
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterKeys_(tail,
+                                                                                                        predicate,
+                                                                                                        path
+                                                                                                       ));
+                                   return JsPair.of(headPath,
+                                                    head.getValue()
+                                                   )
+                                                .ifElse(predicate,
+                                                        () -> ifJsonElse(json -> put_(JsPath.of(head.getKey()),
+                                                                                      () -> json.isObj() ? filterKeys_(json.asJsObj(),
+                                                                                                                       predicate,
+                                                                                                                       headPath
+                                                                                                                      ) :
+                                                                                      JsArrayImmutableImpl.filterKeys_(json.asJsArray(),
+                                                                                                                       predicate,
+                                                                                                                       headPath.index(-1)
+                                                                                                                      ),
+                                                                                      () -> tailCall
+                                                                                     ),
+                                                                         value -> AbstractJsObj.put(head.getKey(),
+                                                                                                    value,
+                                                                                                    () -> tailCall
+                                                                                                   )
+
+                                                                        )
+                                                        .apply(head.getValue()),
+                                                        () -> tailCall
+                                                       );
+                               }
+                              );
+
 
     }
 
@@ -354,6 +677,7 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
         }
 
     }
+
     @Override
     public boolean isMutable()
     {

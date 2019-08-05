@@ -1739,7 +1739,8 @@ public class TestJsObj
                                                                                    );
         final JsObj newObj = obj.mapObjs_((p, o) ->
                                           {
-
+                                              System.out.println(p);
+                                              System.out.println(o);
                                               Assertions.assertEquals(o,
                                                                       obj.get(p)
                                                                      );

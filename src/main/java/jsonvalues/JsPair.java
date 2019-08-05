@@ -5,7 +5,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  Immutable pair which represents a JsElem of a Json and its JsPath location: (path, element).
@@ -64,6 +66,7 @@ public final class JsPair
                           JsInt.of(i)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the double.
      @param path the path-like string
@@ -78,6 +81,7 @@ public final class JsPair
                           JsDouble.of(d)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the long.
      @param path the path-like string
@@ -92,6 +96,7 @@ public final class JsPair
                           JsLong.of(l)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the boolean.
      @param path the path-like string
@@ -106,6 +111,7 @@ public final class JsPair
                           JsBool.of(b)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the string.
      @param path the path-like string
@@ -120,6 +126,7 @@ public final class JsPair
                           JsStr.of(Objects.requireNonNull(s))
         );
     }
+
     /**
      Returns a json pair from the path-like string and the big decimal.
      @param path the path-like string
@@ -134,6 +141,7 @@ public final class JsPair
                           JsBigDec.of(Objects.requireNonNull(bd))
         );
     }
+
     /**
      Returns a json pair from the path-like string and the big integer.
      @param path the path-like string
@@ -178,6 +186,7 @@ public final class JsPair
                           JsInt.of(i)
         );
     }
+
     /**
      Returns a json pair from the path and the double.
      @param path the JsPath
@@ -192,6 +201,7 @@ public final class JsPair
                           JsDouble.of(d)
         );
     }
+
     /**
      Returns a json pair from the path and the long.
      @param path the JsPath
@@ -206,6 +216,7 @@ public final class JsPair
                           JsLong.of(l)
         );
     }
+
     /**
      Returns a json pair from the path and the boolean.
      @param path the JsPath
@@ -220,6 +231,7 @@ public final class JsPair
                           JsBool.of(b)
         );
     }
+
     /**
      Returns a json pair from the path and the string.
      @param path the JsPath
@@ -234,6 +246,7 @@ public final class JsPair
                           JsStr.of(Objects.requireNonNull(s))
         );
     }
+
     /**
      Returns a json pair from the path and the big decimal.
      @param path the JsPath
@@ -248,6 +261,7 @@ public final class JsPair
                           JsBigDec.of(Objects.requireNonNull(bd))
         );
     }
+
     /**
      Returns a json pair from the path and the big integer.
      @param path the JsPath
@@ -314,7 +328,7 @@ public final class JsPair
      @param map the mapping function which maps the JsElem
      @return a new JsPair
      */
-    public JsPair mapElem(UnaryOperator<JsElem> map)
+    public JsPair mapElem(final UnaryOperator<JsElem> map)
     {
         return JsPair.of(this.path,
                          map.apply(this.elem)
@@ -326,12 +340,46 @@ public final class JsPair
      @param map the mapping function which maps the JsPath
      @return a new JsPair
      */
-    public JsPair mapPath(UnaryOperator<JsPath> map)
+    public JsPair mapPath(final UnaryOperator<JsPath> map)
     {
         return JsPair.of(map.apply(this.path),
                          this.elem
                         );
     }
 
+    public <T> T ifJsonElse(final BiFunction<JsPath, Json<?>, T> ifJson,
+                            final BiFunction<JsPath, JsElem, T> ifNotJson
+                           )
+    {
+
+        return elem.isJson() ? requireNonNull(ifJson).apply(path,
+                                                            elem.asJson()
+                                                           ) : requireNonNull(ifNotJson).apply(path,
+                                                                                               elem
+                                                                                              );
+    }
+
+    public <R> R ifElse(final Predicate<? super JsPair> predicate,
+                        final Function<? super JsPair, R> ifTrue,
+                        final Function<? super JsPair, R> ifFalse
+                       )
+    {
+        return predicate.test(this) ? ifTrue.apply(this) : ifFalse.apply(this);
+    }
+
+    public <R> R ifElse(final Predicate<? super JsPair> predicate,
+                        final Supplier<R> ifTrue,
+                        final Supplier<R> ifFalse
+                       )
+    {
+        return predicate.test(this) ? ifTrue.get() : ifFalse.get();
+    }
+
+    public void consumeIf(final Predicate<JsPair> predicate,
+                          final Consumer<JsPair> consumer
+                         )
+    {
+        if (predicate.test(this)) consumer.accept(this);
+    }
 
 }

@@ -4,6 +4,7 @@ package jsonvalues;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
@@ -22,7 +23,7 @@ import static jsonvalues.MyScalaImpl.Vector.EMPTY;
 public interface JsArray extends Json<JsArray>, Iterable<JsElem>
 
 {
-     long serialVersionUID = 1L;
+    long serialVersionUID = 1L;
 
 
     /**
@@ -136,7 +137,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsArray _of_(final JsElem e,
                         final JsElem e1,
                         final JsElem e2,
@@ -164,7 +165,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsArray _of_(final JsElem e,
                         final JsElem e1,
                         final JsElem e2,
@@ -331,10 +332,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get(),
+                            (a, b) -> AbstractJsArray.combiner_(a,
+                                                                b
+                                                               )
+                                                     .get(),
                             jsonvalues.JsArray::toImmutable
                            );
 
@@ -354,10 +355,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get()
+                            (a, b) -> AbstractJsArray.combiner_(a,
+                                                                b
+                                                               )
+                                                     .get()
                            );
 
     }
@@ -829,7 +830,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117")
+    //  perfectly fine _
     JsArray intersection(final JsArray that,
                          final TYPE ARRAY_AS
                         );
@@ -841,7 +843,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param that the other array
      @return a JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
+    //  naming convention: xx_ traverses the whole json
     JsArray intersection_(final JsArray that);
 
     /**
@@ -851,7 +854,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new json array of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
+    @SuppressWarnings("squid:S00117")
+    //  ARRAY_AS  should be a valid name
     JsArray union(final JsArray that,
                   final TYPE ARRAY_AS
                  );
@@ -864,7 +868,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param that the other array
      @return a new JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
+    //  naming convention: xx_ traverses the whole json
     JsArray union_(final JsArray that);
 
 
@@ -918,5 +923,22 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         }
 
         return arr;
+    }
+
+    default <T> Trampoline<T> ifEmptyElse(final Trampoline<T> empty,
+                                          final BiFunction<JsElem, JsArray, Trampoline<T>> fn
+                                         )
+    {
+
+        if (this.isEmpty()) return empty;
+
+        final JsElem head = this.head(); // when filtering mutable arrays, to remove indexes and not lose the track you have to iterate starting from the last
+
+        final JsArray tail = this.tail();
+
+        return fn.apply(head,
+                        tail
+                       );
+
     }
 }

@@ -5,6 +5,7 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -12,19 +13,22 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.accept;
+import static jsonvalues.Functions.ifJsonElse;
+import static jsonvalues.Functions.ifObjElse;
+import static jsonvalues.Trampoline.done;
+import static jsonvalues.Trampoline.more;
 
 class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 
-    protected JsArrayMutableImpl()
+    JsArrayMutableImpl()
     {
         super(new MyJavaImpl.Vector());
     }
 
 
-    protected JsArrayMutableImpl(final MyJavaImpl.Vector array)
+    JsArrayMutableImpl(final MyJavaImpl.Vector array)
     {
         super(array);
     }
@@ -50,14 +54,14 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @Override
     public JsArray mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return Functions._mapValues_(this,
-                                     this,
-                                     fn,
-                                     p -> true,
-                                     JsPath.empty()
-                                           .index(-1)
-                                    )
-                        .get();
+        return mapValues(this,
+                         this,
+                         fn,
+                         p -> true,
+                         JsPath.empty()
+                               .index(-1)
+                        )
+        .get();
     }
 
     @Override
@@ -65,28 +69,73 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                             final Predicate<? super JsPair> predicate
                            )
     {
-        return Functions._mapValues_(this,
-                                     this,
-                                     requireNonNull(fn),
-                                     predicate,
-                                     JsPath.empty()
-                                           .index(-1)
-                                    )
-                        .get();
+        return mapValues(this,
+                         this,
+                         requireNonNull(fn),
+                         predicate,
+                         JsPath.empty()
+                               .index(-1)
+                        )
+        .get();
+    }
+
+    private Trampoline<JsArray> mapValues(final JsArray acc,
+                                          final JsArray remaining,
+                                          final Function<? super JsPair, ? extends JsElem> fn,
+                                          final Predicate<? super JsPair> predicate,
+                                          final JsPath path
+                                         )
+    {
+
+
+        return remaining.ifEmptyElse(done(acc),
+                                     (head, tail) ->
+                                     {
+                                         final JsPath headPath = path.inc();
+
+                                         final Trampoline<JsArray> tailCall = more(() -> mapValues(acc,
+                                                                                                   tail,
+                                                                                                   fn,
+                                                                                                   predicate,
+                                                                                                   headPath
+                                                                                                  ));
+
+                                         return ifJsonElse(elem -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                       elem,
+                                                                                       () -> tailCall
+                                                                                      ),
+                                                           elem -> JsPair.of(headPath,
+                                                                             elem
+                                                                            )
+                                                                         .ifElse(predicate,
+                                                                                 p -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                                          fn.apply(p),
+                                                                                                          () -> tailCall
+                                                                                                         ),
+                                                                                 p -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                                          elem,
+                                                                                                          () -> tailCall
+                                                                                                         )
+                                                                                )
+                                                          ).apply(head);
+
+
+                                     }
+                                    );
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public JsArray mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return Functions._mapValues__(this,
-                                      this,
-                                      requireNonNull(fn),
-                                      it -> true,
-                                      JsPath.empty()
-                                            .index(-1)
-                                     )
-                        .get();
+        return mapValues_(this,
+                          this,
+                          requireNonNull(fn),
+                          it -> true,
+                          JsPath.empty()
+                                .index(-1)
+                         )
+        .get();
     }
 
     @Override
@@ -95,15 +144,74 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                              final Predicate<? super JsPair> predicate
                             )
     {
-        return Functions._mapValues__(this,
-                                      this,
-                                      requireNonNull(fn),
-                                      predicate,
-                                      JsPath.empty()
-                                            .index(-1)
-                                     )
-                        .get();
+        return mapValues_(this,
+                          this,
+                          requireNonNull(fn),
+                          predicate,
+                          JsPath.empty()
+                                .index(-1)
+                         )
+        .get();
     }
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    static Trampoline<JsArray> mapValues_(final JsArray acc,
+                                          final JsArray remaining,
+                                          final Function<? super JsPair, ? extends JsElem> fn,
+                                          final Predicate<? super JsPair> predicate,
+                                          final JsPath path
+                                         )
+    {
+
+
+        return remaining.ifEmptyElse(done(acc),
+                                     (head, tail) ->
+                                     {
+                                         final JsPath headPath = path.inc();
+
+                                         final Trampoline<JsArray> tailCall = more(() -> mapValues_(acc,
+                                                                                                    tail,
+                                                                                                    fn,
+                                                                                                    predicate,
+                                                                                                    headPath
+                                                                                                   ));
+
+
+                                         return ifJsonElse(json -> putInArray_(new JsPath(headPath.last()),
+                                                                               () -> json.isObj() ? JsObjMutableImpl.mapValues_(json.asJsObj(),
+                                                                                                                                json.asJsObj(),
+                                                                                                                                fn,
+                                                                                                                                predicate,
+                                                                                                                                headPath
+                                                                                                                               ) : mapValues_(json.asJsArray(),
+                                                                                                                                              json.asJsArray(),
+                                                                                                                                              fn,
+                                                                                                                                              predicate,
+                                                                                                                                              headPath.index(-1)
+                                                                                                                                             ),
+                                                                               () -> tailCall
+                                                                              ),
+                                                           elem -> JsPair.of(headPath,
+                                                                             elem
+                                                                            )
+                                                                         .ifElse(predicate,
+                                                                                 p -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                                          fn.apply(p),
+                                                                                                          () -> tailCall
+                                                                                                         ),
+                                                                                 p -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                                          elem,
+                                                                                                          () -> tailCall
+                                                                                                         )
+                                                                                )
+                                                          )
+                                         .apply(head);
+
+
+                                     }
+                                    );
+    }
+
 
     @Override
     public JsArray toImmutable()
@@ -117,7 +225,8 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
 
     }
 
-    public JsArray toMutable(){
+    public JsArray toMutable()
+    {
         return this;
     }
 
@@ -140,14 +249,14 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return Functions._mapKeys__(this,
-                                    this,
-                                    requireNonNull(fn),
-                                    it -> true,
-                                    JsPath.empty()
-                                          .index(-1)
-                                   )
-                        .get();
+        return mapKeys_(this,
+                        this,
+                        requireNonNull(fn),
+                        it -> true,
+                        JsPath.empty()
+                              .index(-1)
+                       )
+        .get();
     }
 
     @Override
@@ -156,14 +265,65 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                   final Predicate<? super JsPair> predicate
                                  )
     {
-        return Functions._mapKeys__(this,
-                                    this,
-                                    requireNonNull(fn),
-                                    requireNonNull(predicate),
-                                    JsPath.empty()
-                                          .index(-1)
-                                   )
-                        .get();
+        return mapKeys_(this,
+                        this,
+                        requireNonNull(fn),
+                        requireNonNull(predicate),
+                        JsPath.empty()
+                              .index(-1)
+                       )
+        .get();
+
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    static Trampoline<JsArray> mapKeys_(final JsArray acc,
+                                        final JsArray remaining,
+                                        final Function<? super JsPair, String> fn,
+                                        final Predicate<? super JsPair> predicate,
+                                        final JsPath path
+                                       )
+    {
+
+
+        return remaining.ifEmptyElse(done(acc),
+                                     (head, tail) ->
+                                     {
+
+                                         final JsPath headPath = path.inc();
+
+                                         final Trampoline<JsArray> tailCall = more(() -> mapKeys_(acc,
+                                                                                                  remaining.tail(),
+                                                                                                  fn,
+                                                                                                  predicate,
+                                                                                                  headPath
+                                                                                                 ));
+
+                                         return ifJsonElse(json -> putInArray_(new JsPath(headPath.last()),
+                                                                               () -> json.isObj() ? JsObjMutableImpl.mapKeys_(json.asJsObj(),
+                                                                                                                              json.asJsObj(),
+                                                                                                                              fn,
+                                                                                                                              predicate,
+                                                                                                                              headPath
+                                                                                                                             ) :
+                                                                               mapKeys_(json.asJsArray(),
+                                                                                        json.asJsArray(),
+                                                                                        fn,
+                                                                                        predicate,
+                                                                                        headPath.index(-1)
+                                                                                       ),
+                                                                               () -> tailCall
+                                                                              ),
+                                                           e -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                    head,
+                                                                                    () -> tailCall
+                                                                                   )
+                                                          )
+                                         .apply(head);
+
+                                     }
+                                    );
+
 
     }
 
@@ -173,28 +333,76 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                 )
     {
 
-        return Functions._mapJsObj_(this,
-                                    this,
-                                    requireNonNull(fn),
-                                    requireNonNull(predicate),
-                                    JsPath.empty()
-                                          .index(-1)
-                                   )
-                        .get();
+        return mapJsObj(this,
+                        this,
+                        requireNonNull(fn),
+                        requireNonNull(predicate),
+                        JsPath.empty()
+                              .index(-1)
+                       )
+        .get();
 
     }
+
+    @SuppressWarnings("squid:S00100")
+    //  naming convention: _xx_ returns immutable object
+    private Trampoline<JsArray> mapJsObj(final JsArray acc,
+                                         final JsArray remaining,
+                                         final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
+                                         final BiPredicate<? super JsPath, ? super JsObj> predicate,
+                                         final JsPath path
+                                        )
+    {
+        return remaining.ifEmptyElse(done(acc),
+                                     (head, tail) ->
+                                     {
+                                         final JsPath headPath = path.inc();
+
+                                         final Trampoline<JsArray> tailCall = more(() -> mapJsObj(acc,
+                                                                                                  tail,
+                                                                                                  fn,
+                                                                                                  predicate,
+                                                                                                  headPath
+                                                                                                 ));
+                                         return ifObjElse(obj -> JsPair.of(headPath,
+                                                                           obj
+                                                                          )
+                                                                       .ifElse(p -> predicate.test(p.path,
+                                                                                                   obj
+                                                                                                  ),
+                                                                               p -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                                        fn.apply(p.path,
+                                                                                                                 obj
+                                                                                                                ),
+                                                                                                        () -> tailCall
+                                                                                                       ),
+                                                                               p -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                                        p.elem,
+                                                                                                        () -> tailCall
+                                                                                                       )
+                                                                              ),
+                                                          value -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                       value,
+                                                                                       () -> tailCall
+                                                                                      )
+                                                         ).apply(head);
+                                     }
+
+                                    );
+    }
+
 
     @Override
     public final JsArray mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return Functions._mapJsObj_(this,
-                                    this,
-                                    requireNonNull(fn),
-                                    (p, o) -> true,
-                                    JsPath.empty()
-                                          .index(-1)
-                                   )
-                        .get();
+        return mapJsObj(this,
+                        this,
+                        requireNonNull(fn),
+                        (p, o) -> true,
+                        JsPath.empty()
+                              .index(-1)
+                       )
+        .get();
 
     }
 
@@ -205,14 +413,14 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                  )
     {
 
-        return Functions._mapJsObj__(this,
-                                     this,
-                                     requireNonNull(fn),
-                                     requireNonNull(predicate),
-                                     JsPath.empty()
-                                           .index(-1)
-                                    )
-                        .get();
+        return mapJsObj_(this,
+                         this,
+                         requireNonNull(fn),
+                         requireNonNull(predicate),
+                         JsPath.empty()
+                               .index(-1)
+                        )
+        .get();
 
     }
 
@@ -220,27 +428,106 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return Functions._mapJsObj__(this,
-                                     this,
-                                     requireNonNull(fn),
-                                     (p, o) -> true,
-                                     JsPath.empty()
-                                           .index(-1)
-                                    )
-                        .get();
+        return mapJsObj_(this,
+                         this,
+                         requireNonNull(fn),
+                         (p, o) -> true,
+                         JsPath.empty()
+                               .index(-1)
+                        )
+        .get();
 
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    static Trampoline<JsArray> mapJsObj_(final JsArray acc,
+                                         final JsArray remaining,
+                                         final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
+                                         final BiPredicate<? super JsPath, ? super JsObj> predicate,
+                                         final JsPath path
+                                        )
+    {
+        return remaining.ifEmptyElse(done(acc),
+                                     (head, tail) ->
+                                     {
+                                         final JsPath headPath = path.inc();
+
+                                         final Trampoline<JsArray> tailCall = more(() -> mapJsObj_(acc,
+                                                                                                   tail,
+                                                                                                   fn,
+                                                                                                   predicate,
+                                                                                                   headPath
+                                                                                                  ));
+                                         return ifJsonElse(obj -> JsPair.of(headPath,
+                                                                            obj
+                                                                           )
+                                                                        .ifElse(p -> predicate.test(p.path,
+                                                                                                    obj
+                                                                                                   ),
+                                                                                p -> putInArray_(new JsPath(headPath.last()),
+                                                                                                 () ->
+                                                                                                 {
+                                                                                                     final JsObj mapped = fn.apply(headPath,
+                                                                                                                                   obj
+                                                                                                                                  );
+                                                                                                     return JsObjMutableImpl.mapJsObj_(mapped,
+                                                                                                                                       mapped,
+                                                                                                                                       fn,
+                                                                                                                                       predicate,
+                                                                                                                                       headPath
+                                                                                                                                      );
+                                                                                                 },
+                                                                                                 () -> tailCall
+                                                                                                ),
+                                                                                p -> putInArray_(new JsPath(headPath.last()),
+                                                                                                 () -> JsObjMutableImpl.mapJsObj_(obj,
+                                                                                                                                  obj,
+                                                                                                                                  fn,
+                                                                                                                                  predicate,
+                                                                                                                                  headPath
+                                                                                                                                 ),
+                                                                                                 () -> tailCall
+                                                                                                )
+                                                                               )
+                                         ,
+                                                           arr -> putInArray_(new JsPath(headPath.last()),
+                                                                              () -> mapJsObj_(arr,
+                                                                                              arr,
+                                                                                              fn,
+                                                                                              predicate,
+                                                                                              headPath.index(-1)
+                                                                                             ),
+                                                                              () -> tailCall
+                                                                             ),
+                                                           value -> AbstractJsArray.put(new JsPath(headPath.last()),
+                                                                                        value,
+                                                                                        () -> tailCall
+                                                                                       )
+                                                          )
+                                         .apply(head);
+                                     }
+
+                                    );
     }
 
 
     @Override
-    public JsArray filterElems(final Predicate<? super JsPair> filter)
+    public JsArray filterElems(final Predicate<? super JsPair> predicate)
     {
-        return Functions._filterValues_(this,
-                                        requireNonNull(filter),
-                                        JsPath.empty()
-                                              .index(-1)
+        JsPath currentPath = JsPath.fromIndex(-1);
+        final Iterator<JsElem> iterator = this.iterator();
+        while (iterator.hasNext())
+        {
+            currentPath = currentPath.inc();
+            final JsPair pair = JsPair.of(currentPath,
+                                          iterator.next()
+                                         );
+            if (pair.elem.isNotJson() && predicate.negate()
+                                                  .test(pair))
+                iterator.remove();
 
-                                       );
+        }
+        return this;
 
     }
 
@@ -248,35 +535,111 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
-        return Functions._filterValues__(this,
-                                         requireNonNull(filter),
-                                         JsPath.empty()
-                                               .index(-1)
-                                        );
+        return filterValues_(this,
+                             requireNonNull(filter),
+                             JsPath.empty()
+                                   .index(-1)
+                            );
     }
 
-    @Override
-    public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    static JsArray filterValues_(final JsArray arr,
+                                 final Predicate<? super JsPair> predicate,
+                                 final JsPath path
+                                )
     {
-        return Functions._filterJsObj_(this,
-                                       requireNonNull(filter),
-                                       JsPath.empty()
-                                             .index(-1)
-                                      )
-        ;
+        JsPath currentPath = path;
+        final Iterator<JsElem> iterator = arr.iterator();
+        while (iterator.hasNext())
+        {
+            currentPath = currentPath.inc();
+            final JsPair pair = JsPair.of(currentPath,
+                                          iterator.next()
+                                         );
+            if (pair.elem.isNotJson() && predicate.negate()
+                                                  .test(pair))
+                iterator.remove();
+            else if (pair.elem.isObj())
+                JsObjMutableImpl.filterValues_(pair.elem.asJsObj(),
+                                               predicate,
+                                               currentPath
+                                              );
+            else if (pair.elem.isArray())
+                filterValues_(pair.elem.asJsArray(),
+                              predicate,
+                              currentPath.index(-1)
+                             );
+        }
+        return arr;
+    }
+
+
+    @Override
+    public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> predicate)
+    {
+        JsPath currentPath = JsPath.fromIndex(-1);
+        final Iterator<JsElem> iterator = this.iterator();
+        while (iterator.hasNext())
+        {
+            currentPath = currentPath.inc();
+            final JsElem next = iterator.next();
+            if (next.isObj() && predicate.negate()
+                                         .test(currentPath,
+                                               next.asJsObj()
+                                              )
+            ) iterator.remove();
+
+        }
+
+        return this;
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return Functions._filterJsObj__(this,
-                                        requireNonNull(filter),
-                                        JsPath.empty()
-                                              .index(-1)
-                                       );
+        return filterObjs_(this,
+                           requireNonNull(filter),
+                           JsPath.empty()
+                                 .index(-1)
+                          );
 
 
+    }
+
+    static JsArray filterObjs_(final JsArray arr,
+                               final BiPredicate<? super JsPath, ? super JsObj> predicate,
+                               final JsPath path
+                              )
+    {
+        JsPath currentPath = path;
+        final Iterator<JsElem> iterator = arr.iterator();
+        while (iterator.hasNext())
+        {
+            currentPath = currentPath.inc();
+            final JsPair pair = JsPair.of(currentPath,
+                                          iterator.next()
+                                         );
+            if (pair.elem.isJson())
+            {
+                if (pair.elem.isObj() && predicate.negate()
+                                                  .test(pair.path,
+                                                        pair.elem.asJsObj()
+                                                       )
+                ) iterator.remove();
+                else if (pair.elem.isObj()) JsObjMutableImpl.filterObjs_(pair.elem.asJsObj(),
+                                                                         predicate,
+                                                                         pair.path
+                                                                        );
+                else if (pair.elem.isArray()) filterObjs_(pair.elem.asJsArray(),
+                                                          predicate,
+                                                          pair.path.index(-1)
+                                                         );
+
+            }
+
+        }
+        return arr;
     }
 
     @Override
@@ -289,12 +652,41 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return Functions._filterKeys__(this,
-                                       requireNonNull(filter),
-                                       JsPath.empty()
-                                             .index(-1)
+        return filterKeys_(this,
+                           requireNonNull(filter),
+                           JsPath.empty()
+                                 .index(-1)
 
-                                      );
+                          );
+
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+    static JsArray filterKeys_(final JsArray arr,
+                               final Predicate<? super JsPair> predicate,
+                               final JsPath path
+                              )
+    {
+        JsPath currentPath = path;
+        for (final JsElem elem : arr)
+        {
+            currentPath = currentPath.inc();
+            final JsPair pair = JsPair.of(currentPath,
+                                          elem
+                                         );
+            if (pair.elem.isArray())
+                filterKeys_(pair.elem.asJsArray(),
+                            predicate,
+                            currentPath.index(-1)
+                           );
+            else if (pair.elem.isObj())
+                JsObjMutableImpl.filterKeys_(pair.elem.asJsObj(),
+                                             predicate,
+                                             currentPath
+                                            );
+
+        }
+        return arr;
 
     }
 
@@ -327,6 +719,20 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                                             ));
         }
 
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    private static Trampoline<JsArray> putInArray_(final JsPath path,
+                                                   final Trampoline<Trampoline<? extends Json<?>>> head,
+                                                   final Trampoline<Trampoline<JsArray>> tail
+                                                  )
+
+    {
+        return more(tail).flatMap(json -> head.get()
+                                              .map(it ->
+                                                   json.put(path,
+                                                            it
+                                                           )));
     }
 
     @Override

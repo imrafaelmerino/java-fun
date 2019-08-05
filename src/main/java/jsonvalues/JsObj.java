@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collector;
 
 import static java.util.Objects.requireNonNull;
@@ -92,7 +93,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -126,7 +127,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -167,7 +168,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -213,7 +214,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -253,7 +254,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
-    static JsObj _of_(final java.util.Map<String,JsElem> map)
+    static JsObj _of_(final java.util.Map<String, JsElem> map)
     {
         Functions.throwErrorIfImmutableElemFound(Objects.requireNonNull(map)
                                                         .values());
@@ -369,14 +370,15 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get(),
+                            (a, b) -> AbstractJsObj.combiner_(a,
+                                                              b
+                                                             )
+                                                   .get(),
                             jsonvalues.JsObj::toImmutable
                            );
 
     }
+
 
     /**
      Returns a collector that accumulates the pairs from a stream into an mutable object.
@@ -391,10 +393,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get()
+                            (a, b) -> AbstractJsObj.combiner_(a,
+                                                              b
+                                                             )
+                                                   .get()
                            );
 
     }
@@ -732,14 +734,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
+    @SuppressWarnings("squid:S00117")
+    //  ARRAY_AS  should be a valid name
     JsObj intersection(final JsObj that,
                        final TYPE ARRAY_AS
                       );
 
 
-
-     /**
+    /**
      Returns the intersection of this object and another given as parameter applying recursively
      the intersection to those elements which are Json of the same type and are located at the same key
      and defining characteristics like order and duplicates occurrence in arrays with the given ARRAY_AS
@@ -748,10 +750,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
-     // squid:S00100_ naming convention: xx_ traverses the whole json
-     // squid:S00117 ARRAY_AS should be a valid name
-     @SuppressWarnings({"squid:S00117","squid:S00100"})
-     JsObj intersection_(final JsObj that,
+    // squid:S00100_ naming convention: xx_ traverses the whole json
+    // squid:S00117 ARRAY_AS should be a valid name
+    @SuppressWarnings({"squid:S00117", "squid:S00100"})
+    JsObj intersection_(final JsObj that,
                         final TYPE ARRAY_AS
                        );
 
@@ -776,12 +778,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
     // squid:S00100:  naming convention: _xx_ returns immutable object
     // squid:squid:S00117: ARRAY_AS should be a valid name
-    @SuppressWarnings({"squid:S00100","squid:S00117"})
-
+    @SuppressWarnings({"squid:S00100", "squid:S00117"})
     JsObj union_(final JsObj that,
                  final TYPE ARRAY_AS
                 );
-
 
 
     /**
@@ -831,6 +831,24 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                    );
         }
         return obj;
+    }
+
+    default <T> Trampoline<T> ifEmptyElse(final Trampoline<T> empty,
+                                          final BiFunction<Map.Entry<String, JsElem>, JsObj, Trampoline<T>> fn
+                                         )
+    {
+
+
+        if (this.isEmpty()) return empty;
+
+        final Map.Entry<String, JsElem> head = this.head();
+
+        final JsObj tail = this.tail(head.getKey());
+
+        return fn.apply(head,
+                        tail
+                       );
+
     }
 
 

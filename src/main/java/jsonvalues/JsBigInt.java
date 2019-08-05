@@ -96,13 +96,13 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
     public int hashCode()
     {
         final OptionalInt optInt = Functions.bigIntToInt(x);
-        if (optInt.isPresent()) return Functions.hashCode(optInt.getAsInt());
+        if (optInt.isPresent()) return optInt.getAsInt();
 
         final OptionalLong optLong = Functions.bigIntToLong(x);
         if (optLong.isPresent())
             return Functions.hashCode(optLong.getAsLong());
 
-        return Functions.hashCode(x);
+        return x.hashCode();
 
     }
 

@@ -96,14 +96,14 @@ public final class JsBigDec implements JsNumber,Comparable<JsBigDec>
     public int hashCode()
     {
         final OptionalInt optionalInt = Functions.bigDecimalToInt(x);
-        if (optionalInt.isPresent()) return Functions.hashCode(optionalInt.getAsInt());
+        if (optionalInt.isPresent()) return optionalInt.getAsInt();
 
         final OptionalLong optionalLong = Functions.bigDecimalToLong(x);
         if (optionalLong.isPresent()) return Functions.hashCode(optionalLong.getAsLong());
 
         final Optional<BigInteger> optionalBigInteger = Functions.bigDecimalToBigInteger(x);
-        return optionalBigInteger.map(Functions::hashCode)
-                                 .orElseGet(() -> Functions.hashCode(x));
+        return optionalBigInteger.map(BigInteger::hashCode)
+                                 .orElseGet(x::hashCode);
 
     }
 

@@ -88,7 +88,7 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
     public int hashCode()
     {
         return Functions.longToInt(x)
-                        .isPresent() ? Functions.hashCode((int) x) : Functions.hashCode(x);
+                        .isPresent() ? (int) x : Functions.hashCode(x);
     }
 
     /**

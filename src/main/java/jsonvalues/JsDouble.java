@@ -37,7 +37,8 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     public int compareTo(final JsDouble o)
     {
         return Double.compare(x,
-                              requireNonNull(o).x);
+                              requireNonNull(o).x
+                             );
     }
 
     /**
@@ -88,12 +89,12 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     {
         final BigDecimal bigDecimal = BigDecimal.valueOf(this.x);
         final OptionalInt optionalInt = Functions.bigDecimalToInt(bigDecimal);
-        if (optionalInt.isPresent()) return Functions.hashCode(optionalInt.getAsInt());
+        if (optionalInt.isPresent()) return optionalInt.getAsInt();
         final OptionalLong optionalLong = Functions.bigDecimalToLong(bigDecimal);
         if (optionalLong.isPresent()) return Functions.hashCode(optionalLong.getAsLong());
         final Optional<BigInteger> optionalBigInteger = Functions.bigDecimalToBigInteger(bigDecimal);
-        return optionalBigInteger.map(Functions::hashCode)
-                                 .orElseGet(() -> Functions.hashCode(bigDecimal));
+        return optionalBigInteger.map(BigInteger::hashCode)
+                                 .orElseGet(bigDecimal::hashCode);
     }
 
     /**
@@ -107,29 +108,33 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     }
 
     /**
-     adds up this long to the specified one
-     @param that the specified long
-     @return the sum of both longs
-     */
-    public JsDouble plus(JsDouble that){
-        return JsDouble.of(x+that.x);
-    }
-
-    /**
      subtract this long from the specified one
      @param that the specified long
      @return this long minus the specified one
      */
-    public JsDouble minus(JsDouble that){
-        return JsDouble.of(x-that.x);
+    public JsDouble minus(JsDouble that)
+    {
+        return JsDouble.of(x - that.x);
     }
+
     /**
-     multiplies this long by the specified one
-     @param that the specified long
-     @return this long times the specified one
+     * Static factory method to create a JsDouble from a double primitive type.
+     * @param n the double primitive type
+     * @return a new JsDouble
      */
-    public JsDouble times(JsDouble that){
-        return JsDouble.of(x*that.x);
+    public static JsDouble of(double n)
+    {
+        return new JsDouble(n);
+    }
+
+    /**
+     adds up this long to the specified one
+     @param that the specified long
+     @return the sum of both longs
+     */
+    public JsDouble plus(JsDouble that)
+    {
+        return JsDouble.of(x + that.x);
     }
 
     /**
@@ -143,13 +148,13 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     }
 
     /**
-     * Static factory method to create a JsDouble from a double primitive type.
-     * @param n the double primitive type
-     * @return a new JsDouble
+     multiplies this long by the specified one
+     @param that the specified long
+     @return this long times the specified one
      */
-    public static JsDouble of(double n)
+    public JsDouble times(JsDouble that)
     {
-        return new JsDouble(n);
+        return JsDouble.of(x * that.x);
     }
 
     /**

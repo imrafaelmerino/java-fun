@@ -16,9 +16,13 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
 import static jsonvalues.AbstractJsObj.streamOfObj;
+import static jsonvalues.Functions.ifJsonElse;
+import static jsonvalues.Functions.isSameType;
+import static jsonvalues.Trampoline.done;
+import static jsonvalues.Trampoline.more;
 
 
-abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implements JsArray
+abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends AbstractJson implements JsArray
 
 {
     public static final long serialVersionUID = 1L;
@@ -148,6 +152,13 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                        requireNonNull(array)
                                       ).get();
 
+    }
+
+    static Trampoline<JsArray> appendFront(final JsElem head,
+                                           final Trampoline<Trampoline<JsArray>> tail
+                                          )
+    {
+        return more(tail).map(it -> it.prepend(head));
     }
 
     @Override
@@ -355,11 +366,117 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                       final TYPE ARRAY_AS
                                      )
     {
-        return Functions.intersection(this,
-                                      requireNonNull(that),
-                                      requireNonNull(ARRAY_AS)
-                                     )
-                        .get();
+        return intersection(this,
+                            requireNonNull(that),
+                            requireNonNull(ARRAY_AS)
+                           ).get();
+
+
+    }
+
+    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name for an enum constant
+    static Trampoline<JsArray> intersection(JsArray a,
+                                            JsArray b,
+                                            JsArray.TYPE ARRAY_AS
+                                           )
+    {
+
+
+        switch (ARRAY_AS)
+        {
+            case SET:
+                return intersectionAsSet(a,
+                                         b
+                                        );
+            case LIST:
+                return intersectionAsList(a,
+                                          b
+                                         );
+            case MULTISET:
+                return intersectionAsMultiSet(a,
+                                              b
+                                             );
+        }
+
+        throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
+    }
+
+    static Trampoline<JsArray> put(final JsPath path,
+                                   final JsElem head,
+                                   final Trampoline<Trampoline<JsArray>> tail
+                                  )
+    {
+        return more(tail).map(it -> it.put(path,
+                                           head
+                                          ));
+    }
+
+    private static Trampoline<JsArray> intersectionAsList(JsArray a,
+                                                          JsArray b
+                                                         )
+    {
+
+        if (a.isEmpty()) return done(a);
+        if (b.isEmpty()) return done(b);
+
+        final JsElem head = a.head();
+        final JsArray tail = a.tail();
+
+        final JsElem otherHead = b.head();
+        final JsArray otherTail = b.tail();
+
+        final Trampoline<Trampoline<JsArray>> tailCall = () -> intersectionAsList(tail,
+                                                                                  otherTail
+                                                                                 );
+
+        if (head.equals(otherHead)) return appendFront(head,
+                                                       tailCall
+                                                      );
+        return more(tailCall);
+
+
+    }
+
+
+    private static Trampoline<JsArray> intersectionAsMultiSet(JsArray a,
+                                                              JsArray b
+                                                             )
+    {
+
+        if (a.isEmpty()) return done(a);
+        if (b.isEmpty()) return done(b);
+
+        final JsElem head = a.head();
+        final JsArray tail = a.tail();
+
+        final Trampoline<Trampoline<JsArray>> tailCall = () -> intersectionAsMultiSet(tail,
+                                                                                      b
+                                                                                     );
+
+        if (b.containsElem(head)) return appendFront(head,
+                                                     tailCall
+                                                    );
+        return more(tailCall);
+    }
+
+    private static Trampoline<JsArray> intersectionAsSet(JsArray a,
+                                                         JsArray b
+                                                        )
+    {
+        if (a.isEmpty()) return done(a);
+        if (b.isEmpty()) return done(b);
+
+        final JsElem head = a.head();
+        final JsArray tail = a.tail();
+
+        final Trampoline<Trampoline<JsArray>> tailCall = () -> intersectionAsSet(tail,
+                                                                                 b
+                                                                                );
+
+        if (b.containsElem(head) && !tail.containsElem(head)) return appendFront(head,
+                                                                                 tailCall
+                                                                                );
+        return more(tailCall);
 
 
     }
@@ -368,11 +485,46 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public JsArray intersection_(final JsArray that)
     {
-        return Functions.intersection_(this,
-                                       requireNonNull(that)
-                                      )
-                        .get();
+        return intersection_(this,
+                             requireNonNull(that)
+                            ).get();
     }
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    static Trampoline<JsArray> intersection_(final JsArray a,
+                                             final JsArray b
+                                            )
+    {
+        if (a.isEmpty()) return done(a);
+        if (b.isEmpty()) return done(b);
+
+        final JsElem head = a.head();
+        final JsElem otherHead = b.head();
+
+        final Trampoline<JsArray> tailCall = intersectionAsList(a.tail(),
+                                                                b.tail()
+                                                               );
+
+        if (head.isJson() && isSameType(otherHead).test(head))
+        {
+            final Json<?> obj = head.asJson();
+            final Json<?> obj1 = otherHead.asJson();
+
+            Trampoline<? extends Json<?>> headCall = more(() -> intersection_(obj,
+                                                                              obj1,
+                                                                              JsArray.TYPE.LIST
+                                                                             ));
+            return appendFront_(() -> headCall,
+                                () -> tailCall
+                               );
+        } else if (head.equals(otherHead)) return appendFront(head,
+                                                              () -> tailCall
+                                                             );
+        else return more(() -> tailCall);
+
+
+    }
+
 
     @Override
     public final boolean isEmpty()
@@ -458,17 +610,70 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return Functions.reduce(this,
-                                requireNonNull(op),
-                                requireNonNull(map),
-                                requireNonNull(predicate),
-                                JsPath.empty()
-                                      .index(-1),
-                                Optional.empty()
-                               )
-                        .get();
+        return reduce(this,
+                      requireNonNull(op),
+                      requireNonNull(map),
+                      requireNonNull(predicate),
+                      JsPath.empty()
+                            .index(-1),
+                      Optional.empty()
+                     )
+        .get();
 
     }
+
+    private <T> Trampoline<Optional<T>> reduce(final JsArray arr,
+                                               final BinaryOperator<T> op,
+                                               final Function<? super JsPair, T> fn,
+                                               final Predicate<? super JsPair> predicate,
+                                               final JsPath path,
+                                               final Optional<T> result
+                                              )
+    {
+
+        return arr.ifEmptyElse(done(result),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.inc();
+                                   return ifJsonElse(json -> more(() -> reduce(tail,
+                                                                               op,
+                                                                               fn,
+                                                                               predicate,
+                                                                               headPath,
+                                                                               result
+                                                                              )),
+                                                     elem -> JsPair.of(headPath,
+                                                                       elem
+                                                                      )
+                                                                   .ifElse(predicate,
+                                                                           p -> more(() -> reduce(tail,
+                                                                                                  op,
+                                                                                                  fn,
+                                                                                                  predicate,
+                                                                                                  headPath,
+                                                                                                  reduceElem(p,
+                                                                                                             op,
+                                                                                                             fn,
+                                                                                                             result
+                                                                                                            )
+                                                                                                 )),
+                                                                           p -> more(() -> reduce(tail,
+                                                                                                  op,
+                                                                                                  fn,
+                                                                                                  predicate,
+                                                                                                  headPath,
+                                                                                                  result
+                                                                                                 ))
+                                                                          )
+
+
+                                                    )
+                                   .apply(head);
+                               }
+                              );
+
+    }
+
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
@@ -477,14 +682,75 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return Functions.reduce_(this,
-                                 requireNonNull(op),
-                                 requireNonNull(map),
-                                 requireNonNull(predicate),
-                                 MINUS_ONE_PATH,
-                                 Optional.empty()
-                                )
-                        .get();
+        return reduce_(this,
+                       requireNonNull(op),
+                       requireNonNull(map),
+                       requireNonNull(predicate),
+                       MINUS_ONE_PATH,
+                       Optional.empty()
+                      ).get();
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    static <T> Trampoline<Optional<T>> reduce_(final JsArray arr,
+                                               final BinaryOperator<T> op,
+                                               final Function<? super JsPair, T> fn,
+                                               final Predicate<? super JsPair> predicate,
+                                               final JsPath path,
+                                               final Optional<T> result
+                                              )
+    {
+
+
+        return arr.ifEmptyElse(done(result),
+                               (head, tail) ->
+                               {
+                                   final JsPath headPath = path.inc();
+
+                                   return ifJsonElse(json -> more(() -> reduce_(json,
+                                                                                op,
+                                                                                fn,
+                                                                                predicate,
+                                                                                headPath,
+                                                                                result
+                                                                               )
+                                                                 ).flatMap(r -> reduce_(tail,
+                                                                                        op,
+                                                                                        fn,
+                                                                                        predicate,
+                                                                                        path,
+                                                                                        r
+                                                                                       )),
+                                                     elem -> JsPair.of(headPath,
+                                                                       elem
+                                                                      )
+                                                                   .ifElse(predicate,
+                                                                           p -> more(() -> reduce_(tail,
+                                                                                                   op,
+                                                                                                   fn,
+                                                                                                   predicate,
+                                                                                                   headPath,
+                                                                                                   reduceElem(p,
+                                                                                                              op,
+                                                                                                              fn,
+                                                                                                              result
+                                                                                                             )
+                                                                                                  )),
+                                                                           p -> more(() -> reduce_(tail,
+                                                                                                   op,
+                                                                                                   fn,
+                                                                                                   predicate,
+                                                                                                   headPath,
+                                                                                                   result
+                                                                                                  ))
+                                                                          )
+
+                                                    )
+                                   .apply(head);
+                               }
+                              );
+
+
     }
 
     @Override
@@ -500,12 +766,12 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                               if (index < -1 || index > maxIndex) return this;
                                               final JsPath tail = path.tail();
                                               return tail.ifEmptyElse(() -> of(index == -1 ? array.remove(maxIndex) : array.remove(index)),
-                                                                      () -> Functions.ifJsonElse(json -> of(array.update(index,
-                                                                                                                         json.remove(tail)
-                                                                                                                        )),
-                                                                                                 e -> this
-                                                                                                )
-                                                                                     .apply(array.get(index))
+                                                                      () -> ifJsonElse(json -> of(array.update(index,
+                                                                                                               json.remove(tail)
+                                                                                                              )),
+                                                                                       e -> this
+                                                                                      )
+                                                                      .apply(array.get(index))
                                                                      );
                                           }
 
@@ -597,13 +863,98 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                               )
     {
 
-        return Functions.union(this,
-                               requireNonNull(that),
-                               requireNonNull(ARRAY_AS)
-                              )
-                        .get();
+        return union(this,
+                     requireNonNull(that),
+                     requireNonNull(ARRAY_AS)
+                    ).get();
     }
 
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
+    static Trampoline<JsArray> union(JsArray a,
+                                     JsArray b,
+                                     JsArray.TYPE ARRAY_AS
+                                    )
+    {
+
+
+        switch (ARRAY_AS)
+        {
+            case SET:
+                return unionAsSet(a,
+                                  b
+                                 );
+            case LIST:
+                return unionAsList(a,
+                                   b
+                                  );
+            case MULTISET:
+                return unionAsMultiSet(a,
+                                       b
+                                      );
+        }
+
+        throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
+
+    }
+
+    private static Trampoline<JsArray> unionAsList(final JsArray a,
+                                                   final JsArray b
+                                                  )
+    {
+        if (b.isEmpty()) return done(a);
+
+        if (a.isEmpty()) return done(b);
+
+        final Trampoline<JsArray> tailCall = unionAsList(a.tail(),
+                                                         b.tail()
+                                                        );
+        return appendFront(a.head(),
+                           () -> tailCall
+                          );
+
+
+    }
+
+    private static Trampoline<JsArray> unionAsMultiSet(final JsArray a,
+                                                       final JsArray b
+                                                      )
+    {
+        if (b.isEmpty()) return done(a);
+
+        if (a.isEmpty()) return done(b);
+
+        return more(() -> () -> a.appendAll(b));
+
+    }
+
+    private static Trampoline<JsArray> unionAsSet(final JsArray a,
+                                                  final JsArray b
+                                                 )
+    {
+        if (b.isEmpty()) return done(a);
+
+        if (a.isEmpty()) return done(b);
+
+        JsElem last = b.last();
+
+        final Trampoline<JsArray> initCall = unionAsSet(a,
+                                                        b.init()
+                                                       );
+
+        if (!a.containsElem(last)) return appendBack(last,
+                                                     () -> initCall
+                                                    );
+
+
+        return more(() -> initCall);
+    }
+
+    private static Trampoline<JsArray> appendBack(final JsElem head,
+                                                  final Trampoline<Trampoline<JsArray>> tail
+                                                 )
+    {
+        return more(tail).map(it -> it.append(head));
+    }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
@@ -611,10 +962,54 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                )
     {
 
-        return Functions.union_(this,
-                                requireNonNull(that)
-                               )
-                        .get();
+        return union_(this,
+                      requireNonNull(that)
+                     )
+        .get();
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    static Trampoline<JsArray> union_(final JsArray a,
+                                      final JsArray b
+                                     )
+    {
+
+        if (b.isEmpty()) return done(a);
+
+        if (a.isEmpty()) return done(b);
+
+
+        final JsElem head = a.head();
+        final JsElem otherHead = b.head();
+
+        final Trampoline<JsArray> tailCall = union_(a.tail(),
+                                                    b.tail()
+                                                   );
+
+
+        if (head.isJson() && isSameType(otherHead).test(head))
+        {
+
+
+            final Json<?> obj = head.asJson();
+            final Json<?> obj1 = otherHead.asJson();
+
+            Trampoline<? extends Json<?>> headCall = more(() -> union_(obj,
+                                                                       obj1,
+                                                                       JsArray.TYPE.LIST
+                                                                      ));
+
+
+            return appendFront_(() -> headCall,
+                                () -> tailCall
+                               );
+        }
+
+        return appendFront(head,
+                           () -> tailCall
+                          );
+
+
     }
 
     private Trampoline<JsArray> appendAllBackTrampoline(final JsArray arr1,
@@ -679,6 +1074,49 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                                            e
                                                           ));
     }
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    static Trampoline<JsArray> combiner_(final JsArray a,
+                                         final JsArray b
+                                        )
+    {
+        if (b.isEmpty()) return done(a);
+
+        if (a.isEmpty()) return done(b);
+
+
+        final JsElem head = a.head();
+        final JsElem otherHead = b.head();
+
+        final Trampoline<JsArray> tailCall = combiner_(a.tail(),
+                                                       b.tail()
+                                                      );
+
+
+        if (head.isJson() && isSameType(otherHead).test(head))
+        {
+
+
+            final Json<?> obj = head.asJson();
+            final Json<?> obj1 = otherHead.asJson();
+
+            Trampoline<? extends Json<?>> headCall = more(() -> combiner_(obj,
+                                                                          obj1
+                                                                         ));
+
+
+            return appendFront_(() -> headCall,
+                                () -> tailCall
+                               );
+        }
+
+        return appendFront(head.isNull() ? otherHead : head,
+                           () -> tailCall
+                          );
+
+
+    }
+
 
     @SuppressWarnings("squid:S1602") // curly braces makes IntelliJ to format the code in a more legible way
     private BiPredicate<Integer, JsPath> putEmptyJson(final MyVector<?> parray)

@@ -82,7 +82,7 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
     @Override
     public int hashCode()
     {
-        return Functions.hashCode(x);
+        return x;
     }
 
 

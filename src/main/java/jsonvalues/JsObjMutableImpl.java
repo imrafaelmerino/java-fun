@@ -111,14 +111,12 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @Override
     public final JsObj mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-
-        return mapValues(this,
-                         this,
-                         requireNonNull(fn),
-                         p -> true,
-                         JsPath.empty()
-                        )
-        .get();
+        return mapElems(this,
+                        this,
+                        requireNonNull(fn),
+                        p -> true,
+                        JsPath.empty()
+                       ).get();
     }
 
     @Override
@@ -126,21 +124,20 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return mapValues(this,
-                         this,
-                         requireNonNull(fn),
-                         predicate,
-                         JsPath.empty()
-                        )
-        .get();
+        return mapElems(this,
+                        this,
+                        requireNonNull(fn),
+                        predicate,
+                        JsPath.empty()
+                       ).get();
     }
 
-    private Trampoline<JsObj> mapValues(final JsObj acc,
-                                        final JsObj remaining,
-                                        final Function<? super JsPair, ? extends JsElem> fn,
-                                        final Predicate<? super JsPair> predicate,
-                                        final JsPath path
-                                       )
+    private Trampoline<JsObj> mapElems(final JsObj acc,
+                                       final JsObj remaining,
+                                       final Function<? super JsPair, ? extends JsElem> fn,
+                                       final Predicate<? super JsPair> predicate,
+                                       final JsPath path
+                                      )
     {
 
         return remaining.ifEmptyElse(done(acc),
@@ -148,12 +145,12 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                      {
                                          final JsPath headPath = path.key(head.getKey());
 
-                                         final Trampoline<JsObj> tailCall = more(() -> mapValues(acc,
-                                                                                                 tail,
-                                                                                                 fn,
-                                                                                                 predicate,
-                                                                                                 path
-                                                                                                ));
+                                         final Trampoline<JsObj> tailCall = more(() -> mapElems(acc,
+                                                                                                tail,
+                                                                                                fn,
+                                                                                                predicate,
+                                                                                                path
+                                                                                               ));
                                          return mapHead(fn,
                                                         predicate,
                                                         head,
@@ -167,18 +164,18 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
 
     }
 
-
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return mapValues_(this,
-                          this,
-                          requireNonNull(fn),
-                          p -> true,
-                          JsPath.empty()
-                         )
-        .get();
+        return MapFunctions._mapElems__(requireNonNull(fn),
+                                        p -> true,
+                                        JsPath.empty()
+                                       )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
     }
 
     @Override
@@ -187,59 +184,14 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                  final Predicate<? super JsPair> predicate
                                 )
     {
-        return mapValues_(this,
-                          this,
-                          requireNonNull(fn),
-                          requireNonNull(predicate),
-                          JsPath.empty()
-                         )
-        .get();
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    static Trampoline<JsObj> mapValues_(final JsObj acc,
-                                        final JsObj remaining,
-                                        final Function<? super JsPair, ? extends JsElem> fn,
-                                        final Predicate<? super JsPair> predicate,
-                                        final JsPath path
+        return MapFunctions._mapElems__(requireNonNull(fn),
+                                        requireNonNull(predicate),
+                                        JsPath.empty()
                                        )
-    {
-
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-                                         final JsPath headPath = path.key(head.getKey());
-
-                                         final Trampoline<JsObj> tailCall = more(() -> mapValues_(acc,
-                                                                                                  tail,
-                                                                                                  fn,
-                                                                                                  predicate,
-                                                                                                  path
-
-                                                                                                 ));
-
-                                         return mapHead_(fn,
-                                                         predicate,
-                                                         head,
-                                                         headPath,
-                                                         tailCall,
-                                                         json -> () -> json.isObj() ? mapValues_(json.asJsObj(),
-                                                                                                 json.asJsObj(),
-                                                                                                 fn,
-                                                                                                 predicate,
-                                                                                                 headPath
-                                                                                                ) : JsArrayMutableImpl.mapValues_(json.asJsArray(),
-                                                                                                                                  json.asJsArray(),
-                                                                                                                                  fn,
-                                                                                                                                  predicate,
-                                                                                                                                  headPath.index(-1)
-                                                                                                                                 )
-                                                        );
-
-                                     }
-                                    );
-
-
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
     }
 
 

@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.Functions.ifJsonElse;
 import static jsonvalues.Functions.ifObjElse;
+import static jsonvalues.Trampoline.more;
 
 class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
 {
@@ -112,11 +113,11 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     public final JsObj mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
 
-        return mapValues(this,
-                         requireNonNull(fn),
-                         p -> true,
-                         EMPTY_PATH
-                        )
+        return mapElems(this,
+                        requireNonNull(fn),
+                        p -> true,
+                        EMPTY_PATH
+                       )
         .get();
     }
 
@@ -125,19 +126,19 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return mapValues(this,
-                         requireNonNull(fn),
-                         predicate,
-                         EMPTY_PATH
-                        )
+        return mapElems(this,
+                        requireNonNull(fn),
+                        predicate,
+                        EMPTY_PATH
+                       )
         .get();
     }
 
-    private Trampoline<JsObj> mapValues(final JsObj obj,
-                                        final Function<? super JsPair, ? extends JsElem> fn,
-                                        final Predicate<? super JsPair> predicate,
-                                        final JsPath path
-                                       )
+    private Trampoline<JsObj> mapElems(final JsObj obj,
+                                       final Function<? super JsPair, ? extends JsElem> fn,
+                                       final Predicate<? super JsPair> predicate,
+                                       final JsPath path
+                                      )
     {
 
         return obj.ifEmptyElse(Trampoline.done(obj),
@@ -145,18 +146,29 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                {
                                    final JsPath headPath = path.key(head.getKey());
 
-                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapValues(tail,
-                                                                                                      fn,
-                                                                                                      predicate,
-                                                                                                      path
-                                                                                                     ));
-                                   return mapHead(fn,
-                                                  predicate,
-                                                  head,
-                                                  headPath,
-                                                  tailCall
-                                                 );
+                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapElems(tail,
+                                                                                                     fn,
+                                                                                                     predicate,
+                                                                                                     path
+                                                                                                    ));
+                                   return ifJsonElse(headJson -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                       headJson
+                                                                                                                      )),
+                                                     headElem ->
+                                                     {
+                                                         JsElem headMapped = JsPair.of(headPath,
+                                                                                       headElem
+                                                                                      )
+                                                                                   .ifElse(predicate,
+                                                                                           p -> fn.apply(p),
+                                                                                           p -> headElem
+                                                                                          );
+                                                         return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                      headMapped
+                                                                                                                     ));
+                                                     }
 
+                                                    ).apply(head.getValue());
                                }
                               );
 
@@ -191,11 +203,12 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj mapKeys(final Function<? super JsPair, String> fn)
     {
-        return mapKeys(this,
-                       requireNonNull(fn),
-                       p -> true,
-                       EMPTY_PATH
-                      ).get();
+        return MapFunctions.mapKeys(requireNonNull(fn),
+                                    p -> true,
+                                    EMPTY_PATH
+                                   )
+                           .apply(this)
+                           .get();
     }
 
     @Override
@@ -203,53 +216,12 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                final Predicate<? super JsPair> predicate
                               )
     {
-        return mapKeys(this,
-                       requireNonNull(fn),
-                       requireNonNull(predicate),
-                       EMPTY_PATH
-                      ).get();
-    }
-
-    private Trampoline<JsObj> mapKeys(final JsObj obj,
-                                      final Function<? super JsPair, String> fn,
-                                      final Predicate<? super JsPair> predicate,
-                                      final JsPath path
-                                     )
-    {
-
-        return obj.ifEmptyElse(Trampoline.done(obj),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.key(head.getKey());
-
-                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapKeys(obj.tail(head.getKey()),
-                                                                                                    fn,
-                                                                                                    predicate,
-                                                                                                    path
-                                                                                                   ));
-
-                                   return JsPair.of(headPath,
-                                                    head.getValue()
-                                                   )
-                                                .ifElse(predicate,
-                                                        p -> AbstractJsObj.put(fn.apply(p),
-                                                                               p.elem,
-                                                                               () -> tailCall
-
-                                                                              ),
-                                                        p -> AbstractJsObj.put(head.getKey(),
-                                                                               p.elem,
-                                                                               () -> tailCall
-                                                                              )
-
-
-                                                       );
-
-
-                               }
-                              );
-
-
+        return MapFunctions.mapKeys(requireNonNull(fn),
+                                    requireNonNull(predicate),
+                                    EMPTY_PATH
+                                   )
+                           .apply(this)
+                           .get();
     }
 
     @Override

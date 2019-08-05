@@ -15,7 +15,6 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.Functions.*;
-import static jsonvalues.Trampoline.more;
 
 class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 {
@@ -102,13 +101,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return mapValues(this,
-                         requireNonNull(fn),
-                         it -> true,
-                         JsPath.empty()
-                               .index(-1)
-                        )
-        .get();
+        return MapFunctions.mapArrElems(requireNonNull(fn),
+                                        p -> true,
+                                        Functions.MINUS_ONE_INDEX
+                                       )
+                           .apply(this)
+                           .get();
 
     }
 
@@ -117,48 +115,13 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                             final Predicate<? super JsPair> predicate
                            )
     {
-        return mapValues(this,
-                         requireNonNull(fn),
-                         predicate,
-                         Functions.MINUS_ONE_INDEX
-                        )
-        .get();
+        return MapFunctions.mapArrElems(requireNonNull(fn),
+                                        requireNonNull(predicate),
+                                        Functions.MINUS_ONE_INDEX
+                                       )
+                           .apply(this)
+                           .get();
     }
-
-    private Trampoline<JsArray> mapValues(final JsArray array,
-                                          final Function<? super JsPair, ? extends JsElem> fn,
-                                          final Predicate<? super JsPair> predicate,
-                                          final JsPath path
-                                         )
-    {
-
-
-        return array.ifEmptyElse(Trampoline.done(array),
-                                 (head, tail) ->
-                                 {
-                                     final JsPath headPath = path.inc();
-
-                                     final Trampoline<JsArray> tailCall = Trampoline.more(() -> mapValues(tail,
-                                                                                                          fn,
-                                                                                                          predicate,
-                                                                                                          headPath
-                                                                                                         ));
-                                     return ifJsonElse(elem -> appendFront(elem,
-                                                                           () -> tailCall
-                                                                          ),
-                                                       elem -> JsPair.of(headPath,
-                                                                         elem
-                                                                        )
-                                                                     .ifElse(predicate,
-                                                                             p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(fn.apply(p))),
-                                                                             p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(p.elem))
-
-                                                                            )
-                                                      ).apply(head);
-                                 }
-                                );
-    }
-
 
     @Override
     public JsArray mapElems_(final Function<? super JsPair, ? extends JsElem> fn)

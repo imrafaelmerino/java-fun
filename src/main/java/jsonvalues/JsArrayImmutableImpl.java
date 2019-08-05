@@ -257,8 +257,6 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                              final JsPath path
                                             )
     {
-
-
         return arr.ifEmptyElse(Trampoline.done(arr),
                                (head, tail) ->
                                {
@@ -285,71 +283,17 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                    .apply(head);
                                }
                               );
-
-
     }
-
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
-
-
-        return filterValues_(this,
-                             requireNonNull(filter),
-                             JsPath.empty()
-                                   .index(-1)
-                            ).get();
-
-    }
-
-    //squid:S00100_ naming convention: xx_ traverses the whole json
-    @SuppressWarnings("squid:S00100")
-    static Trampoline<JsArray> filterValues_(final JsArray arr,
-                                             final Predicate<? super JsPair> predicate,
-                                             final JsPath path
-                                            )
-    {
-
-
-        return arr.ifEmptyElse(Trampoline.done(arr),
-                               (head, tail) ->
-                               {
-
-                                   final JsPath headPath = path.inc();
-
-                                   final Trampoline<JsArray> tailCall = Trampoline.more(() -> filterValues_(tail,
-                                                                                                            predicate,
-                                                                                                            headPath
-                                                                                                           ));
-                                   return ifJsonElse(elem -> appendFront_(() -> elem.isObj() ?
-                                                                          JsObjImmutableImpl.filterValues_(elem.asJsObj(),
-                                                                                                           predicate,
-                                                                                                           headPath
-                                                                                                          ) :
-                                                                          filterValues_(elem.asJsArray(),
-                                                                                        predicate,
-                                                                                        headPath.index(-1)
-                                                                                       )
-                                   ,
-                                                                          () -> tailCall
-                                                                         ),
-                                                     elem -> JsPair.of(headPath,
-                                                                       elem
-                                                                      )
-                                                                   .ifElse(predicate,
-                                                                           () -> appendFront(elem,
-                                                                                             () -> tailCall
-                                                                                            ),
-                                                                           () -> tailCall
-                                                                          )
-                                                    )
-                                   .apply(head);
-                               }
-                              );
-
-
+        return FilterFunctions.filterArrElems_(requireNonNull(filter),
+                                               MINUS_ONE_INDEX
+                                              )
+                              .apply(this)
+                              .get();
     }
 
     @Override

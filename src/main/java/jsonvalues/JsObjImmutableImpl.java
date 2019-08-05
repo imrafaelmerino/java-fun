@@ -17,8 +17,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.ifJsonElse;
-import static jsonvalues.Functions.ifObjElse;
+import static jsonvalues.Functions.*;
 import static jsonvalues.Trampoline.more;
 
 class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
@@ -356,60 +355,13 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj filterElems_(final Predicate<? super JsPair> filter)
     {
-        return filterValues_(this,
-                             requireNonNull(filter),
-                             EMPTY_PATH
-                            ).get();
+        return FilterFunctions.filterElems_(requireNonNull(filter),
+                                            MINUS_ONE_INDEX
+                                           )
+                              .apply(this)
+                              .get();
 
     }
-
-    //squid:S00100_ naming convention: xx_ traverses the whole json
-    @SuppressWarnings("squid:S00100")
-    static Trampoline<JsObj> filterValues_(final JsObj obj,
-                                           final Predicate<? super JsPair> predicate,
-                                           final JsPath path
-                                          )
-    {
-        return obj.ifEmptyElse(Trampoline.done(obj),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.key(head.getKey());
-
-                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterValues_(tail,
-                                                                                                          predicate,
-                                                                                                          path
-                                                                                                         ));
-                                   return ifJsonElse(headElem -> put_(JsPath.of(head.getKey()),
-                                                                      () -> headElem.isObj() ?
-                                                                      filterValues_(headElem.asJsObj(),
-                                                                                    predicate,
-                                                                                    headPath
-                                                                                   ) :
-                                                                      JsArrayImmutableImpl.filterValues_(headElem.asJsArray(),
-                                                                                                         predicate,
-                                                                                                         headPath.index(-1)
-                                                                                                        ),
-                                                                      () -> tailCall
-                                                                     ),
-                                                     headElem -> JsPair.of(headPath,
-                                                                           headElem
-                                                                          )
-                                                                       .ifElse(predicate,
-                                                                               () -> AbstractJsObj.put(head.getKey(),
-                                                                                                       headElem,
-                                                                                                       () -> tailCall
-                                                                                                      ),
-                                                                               () -> tailCall
-                                                                              )
-
-                                                    )
-                                   .apply(head.getValue());
-
-                               }
-                              );
-
-    }
-
 
     @Override
     public final JsObj filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)

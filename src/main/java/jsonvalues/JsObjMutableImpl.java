@@ -249,10 +249,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                                                                          () -> tailCall
 
                                                                                         ),
-                                                              p -> AbstractJsObj.put(head.getKey(),
-                                                                                     p.elem,
-                                                                                     () -> tailCall
-                                                                                    )
+                                                              p -> put(head.getKey(),
+                                                                       p.elem,
+                                                                       () -> tailCall
+                                                                      )
                                                              );
                                      }
                                     );
@@ -351,10 +351,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                                                                                                                ),
                                                                                                     () -> tailCall
                                                                                                    ),
-                                                                              (ppath, elem) -> AbstractJsObj.put(head.getKey(),
-                                                                                                                 elem,
-                                                                                                                 () -> tailCall
-                                                                                                                )
+                                                                              (ppath, elem) -> put(head.getKey(),
+                                                                                                   elem,
+                                                                                                   () -> tailCall
+                                                                                                  )
 
                                                                              )
                                                            );
@@ -442,25 +442,19 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                                                                p ->
                                                                                {
                                                                                    obj.remove(head.getKey());
-                                                                                   return AbstractJsObj.put(head.getKey(),
-                                                                                                            fn.apply(p.path,
-                                                                                                                     obj
-                                                                                                                    ),
-                                                                                                            () -> tailCall
-                                                                                                           );
-                                                                               }
-
-                                                                       ,
-                                                                               p -> AbstractJsObj.put(head.getKey(),
-                                                                                                      p.elem,
-                                                                                                      () -> tailCall
-                                                                                                     )
-                                                                              )
-                                         ,
-                                                          value -> AbstractJsObj.put(head.getKey(),
-                                                                                     value,
-                                                                                     () -> tailCall
-                                                                                    )
+                                                                                   return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                                                fn.apply(p.path,
+                                                                                                                                                         obj
+                                                                                                                                                        )
+                                                                                                                                               ));
+                                                                               },
+                                                                               p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                                          p.elem
+                                                                                                                                         ))
+                                                                              ),
+                                                          value -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                                         value
+                                                                                                        ))
                                                          )
                                          .apply(head.getValue());
                                      }
@@ -558,10 +552,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                                                                                          ),
                                                                        () -> tailCall
                                                                       ),
-                                                           value -> AbstractJsObj.put(head.getKey(),
-                                                                                      value,
-                                                                                      () -> tailCall
-                                                                                     )
+                                                           value -> put(head.getKey(),
+                                                                        value,
+                                                                        () -> tailCall
+                                                                       )
                                                           )
                                          .apply(head.getValue());
                                      }

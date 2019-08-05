@@ -10,23 +10,18 @@ import static jsonvalues.Functions.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-/**
-
- */
 class MapFunctions
 {
-
-
     static Function<JsArray, Trampoline<JsArray>> mapArrJsObj(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                                               final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                                              final JsPath path
+                                                              final JsPath startingPath
                                                              )
     {
         return arr ->
         arr.ifEmptyElse(Trampoline.done(arr),
                         (head, tail) ->
                         {
-                            final JsPath headPath = path.inc();
+                            final JsPath headPath = startingPath.inc();
                             final Trampoline<JsArray> tailCall = Trampoline.more(() -> mapArrJsObj(fn,
                                                                                                    predicate,
                                                                                                    headPath
@@ -53,14 +48,14 @@ class MapFunctions
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Function<JsArray, Trampoline<JsArray>> mapArrJsObj_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                                                final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                                               final JsPath path
+                                                               final JsPath startingPath
                                                               )
     {
         return arr ->
         arr.ifEmptyElse(Trampoline.done(arr),
                         (head, tail) ->
                         {
-                            final JsPath headPath = path.inc();
+                            final JsPath headPath = startingPath.inc();
                             final Trampoline<JsArray> tailCall = Trampoline.more(() -> mapArrJsObj_(fn,
                                                                                                     predicate,
                                                                                                     headPath
@@ -100,20 +95,19 @@ class MapFunctions
                        );
     }
 
-
     static Function<JsObj, Trampoline<JsObj>> mapJsObj_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                                         final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                                        final JsPath path
+                                                        final JsPath startingPath
                                                        )
     {
         return obj ->
         obj.ifEmptyElse(Trampoline.done(obj),
                         (head, tail) ->
                         {
-                            final JsPath headPath = path.key(head.getKey());
+                            final JsPath headPath = startingPath.key(head.getKey());
                             final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapJsObj_(fn,
                                                                                                predicate,
-                                                                                               path
+                                                                                               startingPath
                                                                                               ).apply(tail)
                                                                               );
                             return ifJsonElse(headObj ->
@@ -159,20 +153,19 @@ class MapFunctions
                        );
     }
 
-
     static Function<JsObj, Trampoline<JsObj>> mapJsObj(final BiFunction<? super JsPath, ? super jsonvalues.JsObj, jsonvalues.JsObj> fn,
                                                        final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                                       final JsPath path
+                                                       final JsPath startingPath
                                                       )
     {
         return obj -> obj.ifEmptyElse(Trampoline.done(obj),
                                       (head, tail) ->
                                       {
-                                          final JsPath headPath = path.key(head.getKey());
+                                          final JsPath headPath = startingPath.key(head.getKey());
 
                                           final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapJsObj(fn,
                                                                                                             predicate,
-                                                                                                            path
+                                                                                                            startingPath
                                                                                                            ).apply(tail));
                                           return ifObjElse(headObj -> more(() -> tailCall).map(tailResult ->
                                                                                                {
@@ -200,20 +193,19 @@ class MapFunctions
                                      );
     }
 
-
     static Function<JsObj, Trampoline<JsObj>> mapKeys(final Function<? super JsPair, String> fn,
                                                       final Predicate<? super JsPair> predicate,
-                                                      final JsPath path
+                                                      final JsPath startingPath
                                                      )
     {
         return obj ->
         obj.ifEmptyElse(Trampoline.done(obj),
                         (head, tail) ->
                         {
-                            final JsPath headPath = path.key(head.getKey());
+                            final JsPath headPath = startingPath.key(head.getKey());
                             final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapKeys(fn,
                                                                                              predicate,
-                                                                                             path
+                                                                                             startingPath
                                                                                             ).apply(obj.tail(head.getKey()))
                                                                               );
                             return Trampoline.more(() -> tailCall)
@@ -233,7 +225,6 @@ class MapFunctions
                         }
                        );
     }
-
 
     private static Function<Json<?>, Trampoline<? extends Json<?>>> mapJsonKeys_(final Function<? super JsPair, String> fn,
                                                                                  final Predicate<? super JsPair> predicate,
@@ -278,7 +269,6 @@ class MapFunctions
                                           }
                                          );
     }
-
 
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Function<JsObj, Trampoline<JsObj>> mapKeys_(final Function<? super JsPair, String> fn,
@@ -360,14 +350,14 @@ class MapFunctions
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static Function<JsArray, Trampoline<JsArray>> mapArrElems_(final Function<? super JsPair, ? extends JsElem> fn,
                                                                final Predicate<? super JsPair> predicate,
-                                                               final JsPath path
+                                                               final JsPath startingPath
                                                               )
     {
 
         return array -> array.ifEmptyElse(Trampoline.done(array),
                                           (head, tail) ->
                                           {
-                                              final JsPath headPath = path.inc();
+                                              final JsPath headPath = startingPath.inc();
 
                                               final Trampoline<JsArray> tailCall = Trampoline.more(() -> mapArrElems_(fn,
                                                                                                                       predicate,
@@ -399,7 +389,7 @@ class MapFunctions
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static BiFunction<JsArray, JsArray, Trampoline<JsArray>> _mapArrElems__(final Function<? super JsPair, ? extends JsElem> fn,
                                                                             final Predicate<? super JsPair> predicate,
-                                                                            final JsPath path
+                                                                            final JsPath startingPath
                                                                            )
     {
 
@@ -407,7 +397,7 @@ class MapFunctions
         return (acc, remaining) -> remaining.ifEmptyElse(done(acc),
                                                          (head, tail) ->
                                                          {
-                                                             final JsPath headPath = path.inc();
+                                                             final JsPath headPath = startingPath.inc();
 
                                                              final Trampoline<JsArray> tailCall = more(() -> _mapArrElems__(fn,
                                                                                                                             predicate,
@@ -449,29 +439,30 @@ class MapFunctions
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static BiFunction<JsObj, JsObj, Trampoline<JsObj>> _mapElems__(final Function<? super JsPair, ? extends JsElem> fn,
                                                                    final Predicate<? super JsPair> predicate,
-                                                                   final JsPath path
+                                                                   final JsPath startingPath
                                                                   )
     {
         return (acc, remaining) ->
         remaining.ifEmptyElse(done(acc),
                               (head, tail) ->
                               {
-                                  final JsPath headPath = path.key(head.getKey());
+                                  final JsPath headPath = startingPath.key(head.getKey());
                                   final Trampoline<JsObj> tailCall = more(() -> _mapElems__(fn,
                                                                                             predicate,
-                                                                                            path
+                                                                                            startingPath
                                                                                            ).apply(acc,
                                                                                                    tail
                                                                                                   ));
                                   return ifJsonElse(headJson ->
                                                     more(() -> tailCall).flatMap(tailResult -> _mapJsonElems__(fn,
                                                                                                                predicate,
-                                                                                                               headPath).apply(headJson
-                                                                                                                              )
-                                                                                                                        .map(headMapped -> tailResult.put(head.getKey(),
-                                                                                                                                                          headMapped
-                                                                                                                                                         )
-                                                                                                                            )
+                                                                                                               headPath
+                                                                                                              ).apply(headJson
+                                                                                                                     )
+                                                                                                               .map(headMapped -> tailResult.put(head.getKey(),
+                                                                                                                                                 headMapped
+                                                                                                                                                )
+                                                                                                                   )
                                                                                 ),
                                                     headElem -> more(() -> tailCall).map(tailResult ->
                                                                                          {
@@ -492,16 +483,16 @@ class MapFunctions
     }
 
     static Function<JsArray, Trampoline<JsArray>> mapArrElems(final Function<? super JsPair, ? extends JsElem> fn,
-                                                       final Predicate<? super JsPair> predicate,
-                                                       final JsPath path
-                                                      )
+                                                              final Predicate<? super JsPair> predicate,
+                                                              final JsPath startingPath
+                                                             )
     {
 
 
         return array -> array.ifEmptyElse(Trampoline.done(array),
                                           (head, tail) ->
                                           {
-                                              final JsPath headPath = path.inc();
+                                              final JsPath headPath = startingPath.inc();
 
                                               final Trampoline<JsArray> tailCall = Trampoline.more(() -> mapArrElems(fn,
                                                                                                                      predicate,
@@ -527,18 +518,18 @@ class MapFunctions
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     static Function<JsObj, Trampoline<JsObj>> mapElems_(final Function<? super JsPair, ? extends JsElem> fn,
                                                         final Predicate<? super JsPair> predicate,
-                                                        final JsPath path
+                                                        final JsPath startingPath
                                                        )
     {
 
         return obj -> obj.ifEmptyElse(Trampoline.done(obj),
                                       (head, tail) ->
                                       {
-                                          final JsPath headPath = path.key(head.getKey());
+                                          final JsPath headPath = startingPath.key(head.getKey());
 
                                           final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapElems_(fn,
                                                                                                              predicate,
-                                                                                                             path
+                                                                                                             startingPath
                                                                                                             ).apply(tail)
                                                                                             );
                                           return ifJsonElse(headJson -> more(() -> tailCall).flatMap(tailResult -> mapJsonElems_(fn,

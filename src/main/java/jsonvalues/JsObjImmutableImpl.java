@@ -415,61 +415,11 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return filterJsObjs_(this,
-                             requireNonNull(filter),
-                             EMPTY_PATH
-                            ).get();
-
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    static Trampoline<JsObj> filterJsObjs_(final JsObj obj,
-                                           final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                           final JsPath path
-                                          )
-    {
-
-
-        return obj.ifEmptyElse(Trampoline.done(obj),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.key(head.getKey());
-
-                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterJsObjs_(tail,
-                                                                                                          predicate,
-                                                                                                          path
-                                                                                                         ));
-                                   return ifJsonElse(json -> JsPair.of(headPath,
-                                                                       json
-                                                                      )
-                                                                   .ifElse(p -> predicate.test(p.path,
-                                                                                               json
-                                                                                              ),
-                                                                           p -> put_(JsPath.of(head.getKey()),
-                                                                                     () -> filterJsObjs_(json,
-                                                                                                         predicate,
-                                                                                                         headPath
-                                                                                                        ),
-                                                                                     () -> tailCall
-                                                                                    ),
-                                                                           p -> tailCall
-                                                                          ),
-                                                     arr -> AbstractJson.put_(JsPath.of(head.getKey()),
-                                                                              () -> JsArrayImmutableImpl.filterJsObjs_(arr,
-                                                                                                                       predicate,
-                                                                                                                       headPath.index(-1)
-                                                                                                                      ),
-                                                                              () -> tailCall
-                                                                             ),
-                                                     value -> AbstractJsObj.put(head.getKey(),
-                                                                                value,
-                                                                                () -> tailCall
-                                                                               )
-                                                    )
-                                   .apply(head.getValue());
-                               }
-
-                              );
+        return FilterFunctions.filterJsObjs_(requireNonNull(filter),
+                                             EMPTY_PATH
+                                            )
+                              .apply(this)
+                              .get();
 
     }
 
@@ -519,57 +469,14 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return filterKeys_(this,
-                           requireNonNull(filter),
-                           EMPTY_PATH
-                          ).get();
+        return FilterFunctions.filterKeys_(requireNonNull(filter),
+                                           EMPTY_PATH
+                                          )
+                              .apply(this)
+                              .get();
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    static Trampoline<JsObj> filterKeys_(final JsObj obj,
-                                         final Predicate<? super JsPair> predicate,
-                                         final JsPath path
-                                        )
-    {
-        return obj.ifEmptyElse(Trampoline.done(obj),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.key(head.getKey());
-
-                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> filterKeys_(tail,
-                                                                                                        predicate,
-                                                                                                        path
-                                                                                                       ));
-                                   return JsPair.of(headPath,
-                                                    head.getValue()
-                                                   )
-                                                .ifElse(predicate,
-                                                        () -> ifJsonElse(json -> put_(JsPath.of(head.getKey()),
-                                                                                      () -> json.isObj() ? filterKeys_(json.asJsObj(),
-                                                                                                                       predicate,
-                                                                                                                       headPath
-                                                                                                                      ) :
-                                                                                      JsArrayImmutableImpl.filterKeys_(json.asJsArray(),
-                                                                                                                       predicate,
-                                                                                                                       headPath.index(-1)
-                                                                                                                      ),
-                                                                                      () -> tailCall
-                                                                                     ),
-                                                                         value -> AbstractJsObj.put(head.getKey(),
-                                                                                                    value,
-                                                                                                    () -> tailCall
-                                                                                                   )
-
-                                                                        )
-                                                        .apply(head.getValue()),
-                                                        () -> tailCall
-                                                       );
-                               }
-                              );
-
-
-    }
 
     /**
      * Serialize this {@code ScalaJsObj} instance.

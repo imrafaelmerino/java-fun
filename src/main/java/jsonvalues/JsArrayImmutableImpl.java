@@ -351,64 +351,14 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return filterJsObjs_(this,
-                             requireNonNull(filter),
-                             JsPath.empty()
-                                   .index(-1)
-                            ).get();
+        return FilterFunctions.filterArrJsObjs_(requireNonNull(filter),
+                                                MINUS_ONE_INDEX
+                                               )
+                              .apply(this)
+                              .get();
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static Trampoline<JsArray> filterJsObjs_(final JsArray arr,
-                                             final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                             final JsPath path
-                                            )
-    {
-
-
-        return arr.ifEmptyElse(Trampoline.done(arr),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.inc();
-
-                                   final Trampoline<JsArray> tailCall = Trampoline.more(() -> filterJsObjs_(tail,
-                                                                                                            predicate,
-                                                                                                            headPath
-                                                                                                           ));
-                                   return ifJsonElse(json -> JsPair.of(headPath,
-                                                                       json
-                                                                      )
-                                                                   .ifElse(p -> predicate.test(p.path,
-                                                                                               json
-                                                                                              ),
-                                                                           p -> appendFront_(() -> JsObjImmutableImpl.filterJsObjs_(json,
-                                                                                                                                    predicate,
-                                                                                                                                    headPath
-                                                                                                                                   ),
-                                                                                             () -> tailCall
-
-                                                                                            ),
-                                                                           p -> tailCall
-
-                                                                          ),
-                                                     array -> appendFront_(() -> filterJsObjs_(array,
-                                                                                               predicate,
-                                                                                               headPath.index(-1)
-                                                                                              ),
-                                                                           () -> tailCall
-                                                                          ),
-                                                     value -> appendFront(value,
-                                                                          () -> tailCall
-                                                                         )
-                                                    )
-                                   .apply(head);
-                               }
-
-                              );
-
-
-    }
 
     @Override
     public final JsArray filterKeys(final Predicate<? super JsPair> filter)
@@ -419,56 +369,14 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return filterKeys_(this,
-                           requireNonNull(filter),
-                           JsPath.empty()
-                                 .index(-1)
-                          ).get();
+        return FilterFunctions.filterArrKeys_(requireNonNull(filter),
+                                              MINUS_ONE_INDEX
+                                             )
+                              .apply(this)
+                              .get();
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    static Trampoline<JsArray> filterKeys_(final JsArray arr,
-                                           final Predicate<? super JsPair> predicate,
-                                           final JsPath path
-                                          )
-    {
-
-
-        return arr.ifEmptyElse(Trampoline.done(arr),
-                               (head, tail) ->
-                               {
-
-                                   final JsPath headPath = path.inc();
-
-                                   final Trampoline<JsArray> tailCall = Trampoline.more(() -> filterKeys_(tail,
-                                                                                                          predicate,
-                                                                                                          headPath
-                                                                                                         ));
-
-
-                                   return ifJsonElse(elem -> appendFront_(() -> elem.isArray() ? filterKeys_(elem.asJsArray(),
-                                                                                                             predicate,
-                                                                                                             headPath.index(-1)
-                                                                                                            ) :
-                                                                          JsObjImmutableImpl.filterKeys_(elem.asJsObj(),
-                                                                                                         predicate,
-                                                                                                         headPath
-                                                                                                        )
-                                   ,
-                                                                          () -> tailCall
-                                                                         ),
-                                                     elem -> appendFront(elem,
-                                                                         () -> tailCall
-
-                                                                        )
-                                                    )
-                                   .apply(head);
-                               }
-                              );
-
-
-    }
 
     /**
      * Serialize this {@code ScalaJsObj} instance.

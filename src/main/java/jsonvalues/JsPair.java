@@ -47,8 +47,8 @@ public final class JsPair
                             JsElem elem
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          Objects.requireNonNull(elem)
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          requireNonNull(elem)
         );
     }
 
@@ -62,7 +62,7 @@ public final class JsPair
                             int i
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsInt.of(i)
         );
     }
@@ -77,7 +77,7 @@ public final class JsPair
                             double d
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsDouble.of(d)
         );
     }
@@ -92,7 +92,7 @@ public final class JsPair
                             long l
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsLong.of(l)
         );
     }
@@ -107,7 +107,7 @@ public final class JsPair
                             boolean b
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsBool.of(b)
         );
     }
@@ -122,8 +122,8 @@ public final class JsPair
                             String s
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          JsStr.of(Objects.requireNonNull(s))
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          JsStr.of(requireNonNull(s))
         );
     }
 
@@ -137,8 +137,8 @@ public final class JsPair
                             BigDecimal bd
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          JsBigDec.of(Objects.requireNonNull(bd))
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          JsBigDec.of(requireNonNull(bd))
         );
     }
 
@@ -152,8 +152,8 @@ public final class JsPair
                             BigInteger bi
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          JsBigInt.of(Objects.requireNonNull(bi))
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          JsBigInt.of(requireNonNull(bi))
         );
     }
 
@@ -167,8 +167,8 @@ public final class JsPair
                             JsElem elem
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          Objects.requireNonNull(elem)
+        return new JsPair(requireNonNull(path),
+                          requireNonNull(elem)
         );
     }
 
@@ -182,7 +182,7 @@ public final class JsPair
                             int i
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsInt.of(i)
         );
     }
@@ -197,7 +197,7 @@ public final class JsPair
                             double d
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsDouble.of(d)
         );
     }
@@ -212,7 +212,7 @@ public final class JsPair
                             long l
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsLong.of(l)
         );
     }
@@ -227,7 +227,7 @@ public final class JsPair
                             boolean b
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsBool.of(b)
         );
     }
@@ -242,8 +242,8 @@ public final class JsPair
                             String s
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          JsStr.of(Objects.requireNonNull(s))
+        return new JsPair(requireNonNull(path),
+                          JsStr.of(requireNonNull(s))
         );
     }
 
@@ -257,8 +257,8 @@ public final class JsPair
                             BigDecimal bd
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          JsBigDec.of(Objects.requireNonNull(bd))
+        return new JsPair(requireNonNull(path),
+                          JsBigDec.of(requireNonNull(bd))
         );
     }
 
@@ -272,8 +272,8 @@ public final class JsPair
                             BigInteger bi
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          JsBigInt.of(Objects.requireNonNull(bi))
+        return new JsPair(requireNonNull(path),
+                          JsBigInt.of(requireNonNull(bi))
         );
     }
 
@@ -331,7 +331,7 @@ public final class JsPair
     public JsPair mapElem(final UnaryOperator<JsElem> map)
     {
         return JsPair.of(this.path,
-                         map.apply(this.elem)
+                         requireNonNull(map).apply(this.elem)
                         );
     }
 
@@ -342,7 +342,7 @@ public final class JsPair
      */
     public JsPair mapPath(final UnaryOperator<JsPath> map)
     {
-        return JsPair.of(map.apply(this.path),
+        return JsPair.of(requireNonNull(map).apply(this.path),
                          this.elem
                         );
     }
@@ -364,7 +364,7 @@ public final class JsPair
                         final Function<? super JsPair, R> ifFalse
                        )
     {
-        return predicate.test(this) ? ifTrue.apply(this) : ifFalse.apply(this);
+        return requireNonNull(predicate).test(this) ? requireNonNull(ifTrue).apply(this) : requireNonNull(ifFalse).apply(this);
     }
 
     public <R> R ifElse(final Predicate<? super JsPair> predicate,
@@ -372,14 +372,14 @@ public final class JsPair
                         final Supplier<R> ifFalse
                        )
     {
-        return predicate.test(this) ? ifTrue.get() : ifFalse.get();
+        return requireNonNull(predicate).test(this) ? requireNonNull(ifTrue).get() : requireNonNull(ifFalse).get();
     }
 
     public void consumeIf(final Predicate<JsPair> predicate,
                           final Consumer<JsPair> consumer
                          )
     {
-        if (predicate.test(this)) consumer.accept(this);
+        if (requireNonNull(predicate).test(this)) requireNonNull(consumer).accept(this);
     }
 
 }

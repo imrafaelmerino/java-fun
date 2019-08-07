@@ -573,22 +573,21 @@ public class TestJsObj
                                                           " f ",
                                                           JsStr.of("F")
                                                          );
+        final JsObj obj = supplier.get();
+        final JsObj mapped = obj.mapKeys_(p ->
+                                          {
+
+                                              Assertions.assertEquals(p.elem,
+                                                                      supplier.get()
+                                                                              .get(p.path)
+                                                                     );
+                                              return p.path.last()
+                                                           .asKey().name.trim()
+                                                                        .toUpperCase();
 
 
-        final JsObj mapped = supplier.get()
-                                     .mapKeys_(p ->
-                                               {
+                                          });
 
-                                                   Assertions.assertEquals(p.elem,
-                                                                           supplier.get()
-                                                                                   .get(p.path)
-                                                                          );
-                                                   return p.path.last()
-                                                                .asKey().name.trim()
-                                                                             .toUpperCase();
-
-
-                                               });
 
         Assertions.assertFalse(mapped.stream_()
                                      .map(it ->
@@ -1739,8 +1738,6 @@ public class TestJsObj
                                                                                    );
         final JsObj newObj = obj.mapObjs_((p, o) ->
                                           {
-                                              System.out.println(p);
-                                              System.out.println(o);
                                               Assertions.assertEquals(o,
                                                                       obj.get(p)
                                                                      );

@@ -1,11 +1,12 @@
 package jsonvalues;
 
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static jsonvalues.Functions.ifJsonElse;
-import static jsonvalues.Functions.ifObjElse;
+import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 class FilterFunctions
@@ -195,39 +196,6 @@ class FilterFunctions
 
     }
 
-    private Function<JsArray, Trampoline<JsArray>> filterArrJsObjs(final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                                                   final JsPath path
-                                                                  )
-    {
-
-
-        return arr -> arr.ifEmptyElse(Trampoline.done(arr),
-                                      (head, tail) ->
-                                      {
-                                          final JsPath headPath = path.inc();
-
-                                          final Trampoline<JsArray> tailCall = Trampoline.more(() -> filterArrJsObjs(predicate,
-                                                                                                                     headPath
-                                                                                                                    ).apply(tail));
-                                          return ifObjElse(headJson -> JsPair.of(headPath,
-                                                                                 headJson
-                                                                                )
-                                                                             .ifElse(p -> predicate.test(p.path,
-                                                                                                         headJson
-                                                                                                        ),
-                                                                                     p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(headJson)),
-                                                                                     p -> tailCall
-                                                                                    )
-                                          ,
-                                                           headElem -> more(() -> tailCall).map(it -> it.prepend(headElem))
-                                                          )
-                                          .apply(head);
-                                      }
-
-                                     );
-
-
-    }
 
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     static Function<JsObj, Trampoline<JsObj>> filterKeys_(final Predicate<? super JsPair> predicate,
@@ -306,5 +274,8 @@ class FilterFunctions
 
 
     }
+
+
+
 
 }

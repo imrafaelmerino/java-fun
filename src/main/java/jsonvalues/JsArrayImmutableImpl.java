@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.Functions.*;
+import static jsonvalues.Trampoline.more;
 
 class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 {
@@ -267,16 +268,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                                                                                            predicate,
                                                                                                            headPath
                                                                                                           ));
-                                   return ifJsonElse(elem -> appendFront(elem,
-                                                                         () -> tailCall
-                                                                        ),
+                                   return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.prepend(elem)),
                                                      elem -> JsPair.of(headPath,
                                                                        elem
                                                                       )
                                                                    .ifElse(predicate,
-                                                                           () -> appendFront(elem,
-                                                                                             () -> tailCall
-                                                                                            ),
+                                                                           () -> more(() -> tailCall).map(it -> it.prepend(elem)),
                                                                            () -> tailCall
                                                                           )
                                                     )
@@ -307,12 +304,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
         .get();
     }
 
+
     private Trampoline<JsArray> filterJsObjs(final JsArray arr,
                                              final BiPredicate<? super JsPath, ? super JsObj> predicate,
                                              final JsPath path
                                             )
     {
-
 
         return arr.ifEmptyElse(Trampoline.done(arr),
                                (head, tail) ->
@@ -323,21 +320,17 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                                                                                            predicate,
                                                                                                            headPath
                                                                                                           ));
-                                   return ifObjElse(json -> JsPair.of(headPath,
-                                                                      json
-                                                                     )
-                                                                  .ifElse(p -> predicate.test(p.path,
-                                                                                              json
-                                                                                             ),
-                                                                          p -> appendFront(json,
-                                                                                           () -> tailCall
-                                                                                          ),
-                                                                          p -> tailCall
+                                   return ifObjElse(headJson -> JsPair.of(headPath,
+                                                                          headJson
                                                                          )
+                                                                      .ifElse(p -> predicate.test(p.path,
+                                                                                                  headJson
+                                                                                                 ),
+                                                                              p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(headJson)),
+                                                                              p -> tailCall
+                                                                             )
                                    ,
-                                                    value -> appendFront(value,
-                                                                         () -> tailCall
-                                                                        )
+                                                    headElem -> more(() -> tailCall).map(it -> it.prepend(headElem))
                                                    )
                                    .apply(head);
                                }

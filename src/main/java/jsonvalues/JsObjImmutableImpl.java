@@ -227,7 +227,7 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return MapFunctions.mapKeys(requireNonNull(fn),
+        return MapFunctions.mapKeys_(requireNonNull(fn),
                                     p -> true,
                                     EMPTY_PATH
                                    )
@@ -328,18 +328,16 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                                                                                          predicate,
                                                                                                          path
                                                                                                         ));
-                                   return ifJsonElse(headElem -> AbstractJsObj.put(head.getKey(),
-                                                                                   headElem,
-                                                                                   () -> tailCall
-                                                                                  ),
+                                   return ifJsonElse(headElem -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                       headElem
+                                                                                                                      )),
                                                      headElem -> JsPair.of(headPath,
                                                                            headElem
                                                                           )
                                                                        .ifElse(predicate,
-                                                                               () -> AbstractJsObj.put(head.getKey(),
-                                                                                                       headElem,
-                                                                                                       () -> tailCall
-                                                                                                      ),
+                                                                               () -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                                           headElem
+                                                                                                                                          )),
                                                                                () -> tailCall
                                                                               )
 
@@ -393,16 +391,14 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                                                   .ifElse(p -> predicate.test(p.path,
                                                                                               json
                                                                                              ),
-                                                                          p -> AbstractJsObj.put(head.getKey(),
-                                                                                                 json,
-                                                                                                 () -> tailCall
-                                                                                                ),
+                                                                          p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                                     json
+                                                                                                                                    )),
                                                                           p -> tailCall
                                                                          ),
-                                                    value -> AbstractJsObj.put(head.getKey(),
-                                                                               value,
-                                                                               () -> tailCall
-                                                                              )
+                                                    value -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                   value
+                                                                                                                  ))
                                                    )
                                    .apply(head.getValue());
                                }
@@ -451,10 +447,9 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                                     head.getValue()
                                                    )
                                                 .ifElse(predicate,
-                                                        () -> AbstractJsObj.put(head.getKey(),
-                                                                                head.getValue(),
-                                                                                () -> tailCall
-                                                                               ),
+                                                        () -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                    head.getValue()
+                                                                                                                   )),
 
 
                                                         () -> tailCall

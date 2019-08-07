@@ -151,12 +151,23 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                                                                                 predicate,
                                                                                                 path
                                                                                                ));
-                                         return mapHead(fn,
-                                                        predicate,
-                                                        head,
-                                                        headPath,
-                                                        tailCall
-                                                       );
+
+                                         return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                                         elem
+                                                                                                        )),
+                                                           elem -> JsPair.of(headPath,
+                                                                             elem
+                                                                            )
+                                                                         .ifElse(predicate,
+                                                                                 p -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                                                            fn.apply(p)
+                                                                                                                           )),
+                                                                                 p -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                                                            elem
+                                                                                                                           ))
+                                                                                )
+
+                                                          ).apply(head.getValue());
 
                                      }
                                     );
@@ -243,16 +254,16 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                                           head.getValue()
                                                          )
                                                       .ifElse(predicate,
-                                                              p -> removeOldKeyAndPutNew(head.getKey(),
-                                                                                         fn.apply(p),
-                                                                                         p.elem,
-                                                                                         () -> tailCall
-
-                                                                                        ),
-                                                              p -> put(head.getKey(),
-                                                                       p.elem,
-                                                                       () -> tailCall
-                                                                      )
+                                                              p -> more(() -> tailCall).map(it ->
+                                                                                            {
+                                                                                                it.remove(head.getKey());
+                                                                                                return it.put(fn.apply(p),
+                                                                                                              p.elem
+                                                                                                             );
+                                                                                            }),
+                                                              p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                                                         p.elem
+                                                                                                                        ))
                                                              );
                                      }
                                     );
@@ -264,13 +275,14 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return mapKeys_(this,
-                        this,
-                        requireNonNull(fn),
-                        p -> true,
-                        JsPath.empty()
-                       )
-        .get();
+        return MapFunctions._mapKeys__(requireNonNull(fn),
+                                       p -> true,
+                                       JsPath.empty()
+                                      )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
 
     }
 
@@ -280,111 +292,13 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return mapKeys_(this,
-                        this,
-                        requireNonNull(fn),
-                        requireNonNull(predicate),
-                        JsPath.empty()
-                       )
-        .get();
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static Trampoline<JsObj> mapKeys_(final JsObj acc,
-                                      final JsObj remaining,
-                                      final Function<? super JsPair, String> fn,
-                                      final Predicate<? super JsPair> predicate,
-                                      final JsPath path
-                                     )
-    {
-
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-                                         final JsPath headPath = path.key(head.getKey());
-
-                                         final Trampoline<JsObj> tailCall = more(() -> mapKeys_(acc,
-                                                                                                remaining.tail(head.getKey()),
-                                                                                                fn,
-                                                                                                predicate,
-                                                                                                path
-                                                                                               ));
-
-                                         final JsPair pair = JsPair.of(headPath,
-                                                                       head.getValue()
-                                                                      );
-                                         return pair.ifElse(predicate,
-                                                            p -> p.ifJsonElse((ppath, json) -> removeOldKeyAndPutNew_(head.getKey(),
-                                                                                                                      fn.apply(pair),
-                                                                                                                      () -> json.isObj() ? mapKeys_(json.asJsObj(),
-                                                                                                                                                    json.asJsObj(),
-                                                                                                                                                    fn,
-                                                                                                                                                    predicate,
-                                                                                                                                                    ppath
-                                                                                                                                                   ) :
-                                                                                                                      JsArrayMutableImpl.mapKeys_(json.asJsArray(),
-                                                                                                                                                  json.asJsArray(),
-                                                                                                                                                  fn,
-                                                                                                                                                  predicate,
-                                                                                                                                                  ppath.index(-1)
-                                                                                                                                                 ),
-                                                                                                                      () -> tailCall
-                                                                                                                     ),
-                                                                              (ppath, elem) -> removeOldKeyAndPutNew(head.getKey(),
-                                                                                                                     fn.apply(pair),
-                                                                                                                     elem,
-                                                                                                                     () -> tailCall
-                                                                                                                    )
-                                                                             ),
-                                                            p -> p.ifJsonElse((ppath, json) -> put_(JsPath.of(head.getKey()),
-                                                                                                    () -> json.isObj() ? mapKeys_(json.asJsObj(),
-                                                                                                                                  json.asJsObj(),
-                                                                                                                                  fn,
-                                                                                                                                  predicate,
-                                                                                                                                  ppath
-                                                                                                                                 ) :
-                                                                                                    JsArrayMutableImpl.mapKeys_(json.asJsArray(),
-                                                                                                                                json.asJsArray(),
-                                                                                                                                fn,
-                                                                                                                                predicate,
-                                                                                                                                ppath.index(-1)
-                                                                                                                               ),
-                                                                                                    () -> tailCall
-                                                                                                   ),
-                                                                              (ppath, elem) -> put(head.getKey(),
-                                                                                                   elem,
-                                                                                                   () -> tailCall
-                                                                                                  )
-
-                                                                             )
-                                                           );
-
-
-                                     }
-                                    );
-
-
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    private static Trampoline<JsObj> removeOldKeyAndPutNew_(final String oldKey,
-                                                            final String newKey,
-                                                            final Trampoline<Trampoline<? extends Json<?>>> head,
-                                                            final Trampoline<Trampoline<JsObj>> tail
-
-                                                           )
-
-    {
-        return more(tail).flatMap(json -> head.get()
-                                              .map(it ->
-                                                   {
-                                                       json.remove(oldKey);
-                                                       return json.put(JsPath.of(newKey),
-                                                                       it
-                                                                      );
-                                                   }
-                                                  )
-                                 );
+        return MapFunctions._mapKeys__(requireNonNull(fn),
+                                       requireNonNull(predicate),
+                                       JsPath.empty()
+                                      )
+                           .apply(this,
+                                  this)
+                           .get();
     }
 
 
@@ -469,99 +383,30 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
     {
-        return mapJsObj_(this,
-                         this,
-                         requireNonNull(fn),
-                         requireNonNull(predicate),
-                         JsPath.empty()
-                        )
-        .get();
+        return MapFunctions._mapJsObj__(requireNonNull(fn),
+                                        requireNonNull(predicate),
+                                        JsPath.empty()
+                                       )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return mapJsObj_(this,
-                         this,
-                         requireNonNull(fn),
-                         (p, o) -> true,
-                         JsPath.empty()
-                        )
-        .get();
+        return MapFunctions._mapJsObj__(requireNonNull(fn),
+                                        (p, o) -> true,
+                                        JsPath.empty()
+                                       )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static Trampoline<JsObj> mapJsObj_(final JsObj acc,
-                                       final JsObj remaining,
-                                       final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
-                                       final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                       final JsPath path
-                                      )
-    {
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-                                         final JsPath headPath = path.key(head.getKey());
-
-                                         final Trampoline<JsObj> tailCall = more(() -> mapJsObj_(acc,
-                                                                                                 tail,
-                                                                                                 fn,
-                                                                                                 predicate,
-                                                                                                 path
-                                                                                                ));
-                                         return ifJsonElse(json -> JsPair.of(headPath,
-                                                                             json
-                                                                            )
-                                                                         .ifElse(p -> predicate.test(p.path,
-                                                                                                     json
-                                                                                                    ),
-                                                                                 p -> put_(JsPath.of(head.getKey()),
-                                                                                           () ->
-                                                                                           {
-                                                                                               final JsObj mapped = fn.apply(headPath,
-                                                                                                                             json
-                                                                                                                            );
-
-                                                                                               return mapJsObj_(mapped,
-                                                                                                                mapped,
-                                                                                                                fn,
-                                                                                                                predicate,
-                                                                                                                headPath
-                                                                                                               );
-                                                                                           },
-                                                                                           () -> tailCall
-                                                                                          ),
-                                                                                 p -> put_(JsPath.of(head.getKey()),
-                                                                                           () -> mapJsObj_(json,
-                                                                                                           json,
-                                                                                                           fn,
-                                                                                                           predicate,
-                                                                                                           headPath
-                                                                                                          ),
-                                                                                           () -> tailCall
-                                                                                          )
-                                                                                )
-                                         ,
-                                                           arr -> put_(JsPath.of(head.getKey()),
-                                                                       () -> JsArrayMutableImpl.mapJsObj_(arr,
-                                                                                                          arr,
-                                                                                                          fn,
-                                                                                                          predicate,
-                                                                                                          headPath.index(-1)
-                                                                                                         ),
-                                                                       () -> tailCall
-                                                                      ),
-                                                           value -> put(head.getKey(),
-                                                                        value,
-                                                                        () -> tailCall
-                                                                       )
-                                                          )
-                                         .apply(head.getValue());
-                                     }
-
-                                    );
-    }
 
     @Override
     public JsObj filterElems(final Predicate<? super JsPair> predicate)

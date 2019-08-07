@@ -93,11 +93,11 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                          final JsPath headPath = path.inc();
 
                                          final Trampoline<JsArray> tailCall = more(() -> mapElems(acc,
-                                                                                                   tail,
-                                                                                                   fn,
-                                                                                                   predicate,
-                                                                                                   headPath
-                                                                                                  ));
+                                                                                                  tail,
+                                                                                                  fn,
+                                                                                                  predicate,
+                                                                                                  headPath
+                                                                                                 ));
 
                                          return ifJsonElse(elem -> AbstractJsArray.put(new JsPath(headPath.last()),
                                                                                        elem,
@@ -190,14 +190,14 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return mapKeys_(this,
-                        this,
-                        requireNonNull(fn),
-                        it -> true,
-                        JsPath.empty()
-                              .index(-1)
-                       )
-        .get();
+        return MapFunctions._mapArrKeys__(requireNonNull(fn),
+                                          it -> true,
+                                          MINUS_ONE_INDEX
+                                         )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
     }
 
     @Override
@@ -206,67 +206,18 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                   final Predicate<? super JsPair> predicate
                                  )
     {
-        return mapKeys_(this,
-                        this,
-                        requireNonNull(fn),
-                        requireNonNull(predicate),
-                        JsPath.empty()
-                              .index(-1)
-                       )
-        .get();
+        return MapFunctions._mapArrKeys__(requireNonNull(fn),
+                                          requireNonNull(predicate),
+                                          JsPath.empty()
+                                                .index(-1)
+                                         )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
 
     }
 
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static Trampoline<JsArray> mapKeys_(final JsArray acc,
-                                        final JsArray remaining,
-                                        final Function<? super JsPair, String> fn,
-                                        final Predicate<? super JsPair> predicate,
-                                        final JsPath path
-                                       )
-    {
-
-
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-
-                                         final JsPath headPath = path.inc();
-
-                                         final Trampoline<JsArray> tailCall = more(() -> mapKeys_(acc,
-                                                                                                  remaining.tail(),
-                                                                                                  fn,
-                                                                                                  predicate,
-                                                                                                  headPath
-                                                                                                 ));
-
-                                         return ifJsonElse(json -> putInArray_(new JsPath(headPath.last()),
-                                                                               () -> json.isObj() ? JsObjMutableImpl.mapKeys_(json.asJsObj(),
-                                                                                                                              json.asJsObj(),
-                                                                                                                              fn,
-                                                                                                                              predicate,
-                                                                                                                              headPath
-                                                                                                                             ) :
-                                                                               mapKeys_(json.asJsArray(),
-                                                                                        json.asJsArray(),
-                                                                                        fn,
-                                                                                        predicate,
-                                                                                        headPath.index(-1)
-                                                                                       ),
-                                                                               () -> tailCall
-                                                                              ),
-                                                           e -> AbstractJsArray.put(new JsPath(headPath.last()),
-                                                                                    head,
-                                                                                    () -> tailCall
-                                                                                   )
-                                                          )
-                                         .apply(head);
-
-                                     }
-                                    );
-
-
-    }
 
     @Override
     public final JsArray mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
@@ -278,8 +229,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                         this,
                         requireNonNull(fn),
                         requireNonNull(predicate),
-                        JsPath.empty()
-                              .index(-1)
+                        MINUS_ONE_INDEX
                        )
         .get();
 
@@ -340,8 +290,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                         this,
                         requireNonNull(fn),
                         (p, o) -> true,
-                        JsPath.empty()
-                              .index(-1)
+                        MINUS_ONE_INDEX
                        )
         .get();
 
@@ -354,14 +303,14 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                  )
     {
 
-        return mapJsObj_(this,
-                         this,
-                         requireNonNull(fn),
-                         requireNonNull(predicate),
-                         JsPath.empty()
-                               .index(-1)
-                        )
-        .get();
+        return MapFunctions._mapArrJsObj__(requireNonNull(fn),
+                                           requireNonNull(predicate),
+                                           MINUS_ONE_INDEX
+                                          )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
 
     }
 
@@ -369,86 +318,15 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return mapJsObj_(this,
-                         this,
-                         requireNonNull(fn),
-                         (p, o) -> true,
-                         JsPath.empty()
-                               .index(-1)
-                        )
-        .get();
+        return MapFunctions._mapArrJsObj__(requireNonNull(fn),
+                                           (p, o) -> true,
+                                           MINUS_ONE_INDEX
+                                          )
+                           .apply(this,
+                                  this
+                                 )
+                           .get();
 
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static Trampoline<JsArray> mapJsObj_(final JsArray acc,
-                                         final JsArray remaining,
-                                         final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
-                                         final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                         final JsPath path
-                                        )
-    {
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-                                         final JsPath headPath = path.inc();
-
-                                         final Trampoline<JsArray> tailCall = more(() -> mapJsObj_(acc,
-                                                                                                   tail,
-                                                                                                   fn,
-                                                                                                   predicate,
-                                                                                                   headPath
-                                                                                                  ));
-                                         return ifJsonElse(obj -> JsPair.of(headPath,
-                                                                            obj
-                                                                           )
-                                                                        .ifElse(p -> predicate.test(p.path,
-                                                                                                    obj
-                                                                                                   ),
-                                                                                p -> putInArray_(new JsPath(headPath.last()),
-                                                                                                 () ->
-                                                                                                 {
-                                                                                                     final JsObj mapped = fn.apply(headPath,
-                                                                                                                                   obj
-                                                                                                                                  );
-                                                                                                     return JsObjMutableImpl.mapJsObj_(mapped,
-                                                                                                                                       mapped,
-                                                                                                                                       fn,
-                                                                                                                                       predicate,
-                                                                                                                                       headPath
-                                                                                                                                      );
-                                                                                                 },
-                                                                                                 () -> tailCall
-                                                                                                ),
-                                                                                p -> putInArray_(new JsPath(headPath.last()),
-                                                                                                 () -> JsObjMutableImpl.mapJsObj_(obj,
-                                                                                                                                  obj,
-                                                                                                                                  fn,
-                                                                                                                                  predicate,
-                                                                                                                                  headPath
-                                                                                                                                 ),
-                                                                                                 () -> tailCall
-                                                                                                )
-                                                                               )
-                                         ,
-                                                           arr -> putInArray_(new JsPath(headPath.last()),
-                                                                              () -> mapJsObj_(arr,
-                                                                                              arr,
-                                                                                              fn,
-                                                                                              predicate,
-                                                                                              headPath.index(-1)
-                                                                                             ),
-                                                                              () -> tailCall
-                                                                             ),
-                                                           value -> AbstractJsArray.put(new JsPath(headPath.last()),
-                                                                                        value,
-                                                                                        () -> tailCall
-                                                                                       )
-                                                          )
-                                         .apply(head);
-                                     }
-
-                                    );
     }
 
 
@@ -478,8 +356,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return filterValues_(this,
                              requireNonNull(filter),
-                             JsPath.empty()
-                                   .index(-1)
+                             MINUS_ONE_INDEX
                             );
     }
 
@@ -541,8 +418,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return filterObjs_(this,
                            requireNonNull(filter),
-                           JsPath.empty()
-                                 .index(-1)
+                           MINUS_ONE_INDEX
                           );
 
 
@@ -595,9 +471,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return filterKeys_(this,
                            requireNonNull(filter),
-                           JsPath.empty()
-                                 .index(-1)
-
+                           MINUS_ONE_INDEX
                           );
 
     }
@@ -660,20 +534,6 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                                                             ));
         }
 
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
-    private static Trampoline<JsArray> putInArray_(final JsPath path,
-                                                   final Trampoline<Trampoline<? extends Json<?>>> head,
-                                                   final Trampoline<Trampoline<JsArray>> tail
-                                                  )
-
-    {
-        return more(tail).flatMap(json -> head.get()
-                                              .map(it ->
-                                                   json.put(path,
-                                                            it
-                                                           )));
     }
 
     @Override

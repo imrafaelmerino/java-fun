@@ -228,9 +228,9 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
         return MapFunctions.mapKeys_(requireNonNull(fn),
-                                    p -> true,
-                                    EMPTY_PATH
-                                   )
+                                     p -> true,
+                                     EMPTY_PATH
+                                    )
                            .apply(this)
                            .get();
 
@@ -353,9 +353,9 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj filterElems_(final Predicate<? super JsPair> filter)
     {
-        return FilterFunctions.filterElems_(requireNonNull(filter),
-                                            MINUS_ONE_INDEX
-                                           )
+        return FilterFunctions.filterObjElems_(requireNonNull(filter),
+                                               MINUS_ONE_INDEX
+                                              )
                               .apply(this)
                               .get();
 
@@ -411,9 +411,9 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return FilterFunctions.filterJsObjs_(requireNonNull(filter),
-                                             EMPTY_PATH
-                                            )
+        return FilterFunctions.filterObjObjs_(requireNonNull(filter),
+                                              EMPTY_PATH
+                                             )
                               .apply(this)
                               .get();
 
@@ -464,9 +464,9 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return FilterFunctions.filterKeys_(requireNonNull(filter),
-                                           EMPTY_PATH
-                                          )
+        return FilterFunctions.filterObjKeys_(requireNonNull(filter),
+                                              EMPTY_PATH
+                                             )
                               .apply(this)
                               .get();
 

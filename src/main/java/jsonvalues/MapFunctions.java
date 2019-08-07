@@ -884,4 +884,53 @@ class MapFunctions
 
 
     }
+
+    @SuppressWarnings("squid:S00100")
+    //  naming convention: _xx_ returns immutable object
+    static BiFunction<JsArray, JsArray, Trampoline<JsArray>> _mapJsObj_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
+                                                                        final BiPredicate<? super JsPath, ? super JsObj> predicate,
+                                                                        final JsPath path
+                                                                       )
+    {
+        return (acc, remaining) -> remaining.ifEmptyElse(done(acc),
+                                                         (head, tail) ->
+                                                         {
+                                                             final JsPath headPath = path.inc();
+
+                                                             final Trampoline<JsArray> tailCall = more(() -> _mapJsObj_(fn,
+                                                                                                                        predicate,
+                                                                                                                        headPath
+                                                                                                                       ).apply(acc,
+                                                                                                                               tail
+                                                                                                                              ));
+                                                             return ifObjElse(obj -> JsPair.of(headPath,
+                                                                                               obj
+                                                                                              )
+                                                                                           .ifElse(p -> predicate.test(p.path,
+                                                                                                                       obj
+                                                                                                                      ),
+                                                                                                   p ->
+                                                                                                   {
+                                                                                                       final JsObj newObj = fn.apply(p.path,
+                                                                                                                                     obj
+                                                                                                                                    );
+                                                                                                       return more(() -> tailCall).map(it -> it.put(new JsPath(headPath.last()),
+                                                                                                                                                    newObj
+                                                                                                                                                   ));
+
+                                                                                                   },
+                                                                                                   p -> more(() -> tailCall).map(it -> it.put(new JsPath(headPath.last()),
+                                                                                                                                              p.elem
+                                                                                                                                             ))
+                                                                                                  ),
+                                                                              value -> more(() -> tailCall).map(it -> it.put(new JsPath(headPath.last()),
+                                                                                                                             value
+                                                                                                                            ))
+                                                                             ).apply(head);
+                                                         }
+                                                        );
+    }
+
+
+
 }

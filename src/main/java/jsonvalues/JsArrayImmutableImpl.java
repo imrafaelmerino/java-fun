@@ -14,8 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.*;
-import static jsonvalues.Trampoline.more;
+import static jsonvalues.Functions.MINUS_ONE_INDEX;
 
 class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 {
@@ -245,42 +244,13 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray filterElems(final Predicate<? super JsPair> filter)
     {
-        return filterValues(this,
-                            requireNonNull(filter),
-                            JsPath.empty()
-                                  .index(-1)
-                           )
-        .get();
+        return FilterFunctions.filterElems(requireNonNull(filter),
+                                           MINUS_ONE_INDEX
+                                          )
+                              .apply(this)
+                              .get();
     }
 
-    private Trampoline<JsArray> filterValues(final JsArray arr,
-                                             final Predicate<? super JsPair> predicate,
-                                             final JsPath path
-                                            )
-    {
-        return arr.ifEmptyElse(Trampoline.done(arr),
-                               (head, tail) ->
-                               {
-
-                                   final JsPath headPath = path.inc();
-
-                                   final Trampoline<JsArray> tailCall = Trampoline.more(() -> filterValues(tail,
-                                                                                                           predicate,
-                                                                                                           headPath
-                                                                                                          ));
-                                   return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.prepend(elem)),
-                                                     elem -> JsPair.of(headPath,
-                                                                       elem
-                                                                      )
-                                                                   .ifElse(predicate,
-                                                                           () -> more(() -> tailCall).map(it -> it.prepend(elem)),
-                                                                           () -> tailCall
-                                                                          )
-                                                    )
-                                   .apply(head);
-                               }
-                              );
-    }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
@@ -296,49 +266,13 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return filterJsObjs(this,
-                            requireNonNull(filter),
-                            JsPath.empty()
-                                  .index(-1)
-                           )
-        .get();
-    }
-
-
-    private Trampoline<JsArray> filterJsObjs(final JsArray arr,
-                                             final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                             final JsPath path
+        return FilterFunctions.filterArrObjs(requireNonNull(filter),
+                                             MINUS_ONE_INDEX
                                             )
-    {
-
-        return arr.ifEmptyElse(Trampoline.done(arr),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.inc();
-
-                                   final Trampoline<JsArray> tailCall = Trampoline.more(() -> filterJsObjs(tail,
-                                                                                                           predicate,
-                                                                                                           headPath
-                                                                                                          ));
-                                   return ifObjElse(headJson -> JsPair.of(headPath,
-                                                                          headJson
-                                                                         )
-                                                                      .ifElse(p -> predicate.test(p.path,
-                                                                                                  headJson
-                                                                                                 ),
-                                                                              p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(headJson)),
-                                                                              p -> tailCall
-                                                                             )
-                                   ,
-                                                    headElem -> more(() -> tailCall).map(it -> it.prepend(headElem))
-                                                   )
-                                   .apply(head);
-                               }
-
-                              );
-
-
+                              .apply(this)
+                              .get();
     }
+
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json

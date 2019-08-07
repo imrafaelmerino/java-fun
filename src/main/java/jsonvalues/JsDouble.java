@@ -88,13 +88,13 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     public int hashCode()
     {
         final BigDecimal bigDecimal = BigDecimal.valueOf(this.x);
-        final OptionalInt optionalInt = Functions.bigDecimalToInt(bigDecimal);
-        if (optionalInt.isPresent()) return optionalInt.getAsInt();
-        final OptionalLong optionalLong = Functions.bigDecimalToLong(bigDecimal);
-        if (optionalLong.isPresent()) return Functions.hashCode(optionalLong.getAsLong());
-        final Optional<BigInteger> optionalBigInteger = Functions.bigDecimalToBigInteger(bigDecimal);
-        return optionalBigInteger.map(BigInteger::hashCode)
-                                 .orElseGet(bigDecimal::hashCode);
+        final OptionalInt optInt = Functions.bigDecimalToInt(bigDecimal);
+        if (optInt.isPresent()) return optInt.getAsInt();
+        final OptionalLong optLong = Functions.bigDecimalToLong(bigDecimal);
+        if (optLong.isPresent()) return (int) (optLong.getAsLong() ^ (optLong.getAsLong() >>> 32));
+        final Optional<BigInteger> optBigInt = Functions.bigDecimalToBigInteger(bigDecimal);
+        return optBigInt.map(BigInteger::hashCode)
+                        .orElseGet(bigDecimal::hashCode);
     }
 
     /**

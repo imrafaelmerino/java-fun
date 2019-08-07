@@ -37,9 +37,11 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsBool",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsBool",
+                                                                  this.getClass()
+                                                                 ));
+
         }
     }
 
@@ -79,9 +81,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsInt",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsInt",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -115,9 +118,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsDouble",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsDouble",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -152,9 +156,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsBigDec",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsBigDec",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -189,9 +194,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsLong",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsLong",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -224,9 +230,11 @@ public interface JsElem
 
         if (isObj()) return asJsObj();
         else if (isArray()) return asJsArray();
-        else throw Functions.castingError("asJson",
-                                          this.getClass()
-                                         );
+        else throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                   "asJson",
+                                                                   this.getClass()
+                                                                  ));
+
     }
 
     /**
@@ -267,9 +275,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsObj",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsObj",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -303,9 +312,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsArray",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsArray",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -339,9 +349,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsStr",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsStr",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -377,9 +388,10 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw Functions.castingError("asJsBigInt",
-                                         this.getClass()
-                                        );
+            throw new UnsupportedOperationException(String.format("%s of %s",
+                                                                  "asJsBigInt",
+                                                                  this.getClass()
+                                                                 ));
         }
     }
 
@@ -623,6 +635,5 @@ public interface JsElem
     {
         return !isNumber();
     }
-
 
 }

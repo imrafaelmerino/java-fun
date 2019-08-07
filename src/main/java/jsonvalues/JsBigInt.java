@@ -100,7 +100,7 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
 
         final OptionalLong optLong = Functions.bigIntToLong(x);
         if (optLong.isPresent())
-            return Functions.hashCode(optLong.getAsLong());
+            return (int) (optLong.getAsLong() ^ (optLong.getAsLong() >>> 32));
 
         return x.hashCode();
 

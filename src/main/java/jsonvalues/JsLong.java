@@ -88,7 +88,7 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
     public int hashCode()
     {
         return Functions.longToInt(x)
-                        .isPresent() ? (int) x : Functions.hashCode(x);
+                        .isPresent() ? (int) x : (int) (x ^ (x >>> 32));
     }
 
     /**
@@ -106,8 +106,9 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
      @param that the specified long
      @return the sum of both longs
      */
-    public JsLong plus(JsLong that){
-        return JsLong.of(x+that.x);
+    public JsLong plus(JsLong that)
+    {
+        return JsLong.of(x + that.x);
     }
 
     /**
@@ -115,16 +116,19 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
      @param that the specified long
      @return this long minus the specified one
      */
-    public JsLong minus(JsLong that){
-        return JsLong.of(x-that.x);
+    public JsLong minus(JsLong that)
+    {
+        return JsLong.of(x - that.x);
     }
+
     /**
      multiplies this long by the specified one
      @param that the specified long
      @return this long times the specified one
      */
-    public JsLong times(JsLong that){
-        return JsLong.of(x*that.x);
+    public JsLong times(JsLong that)
+    {
+        return JsLong.of(x * that.x);
     }
 
     /**

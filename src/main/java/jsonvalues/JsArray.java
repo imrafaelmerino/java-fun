@@ -9,7 +9,9 @@ import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.*;
+import static jsonvalues.Errors.errorIfImmutableArg;
+import static jsonvalues.Errors.errorIfMutableArg;
+import static jsonvalues.Functions.MINUS_ONE_INDEX;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
 import static jsonvalues.JsParser.Event.START_ARRAY;
@@ -48,8 +50,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final List<JsElem> list)
     {
-        throwErrorIfImmutableElemFound(requireNonNull(list));
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector(list));
+        return new JsArrayMutableImpl(new MyJavaImpl.Vector(Errors.<List<JsElem>>errorIfAnyImmutableInOf().apply(list)));
 
     }
 
@@ -63,7 +64,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsElem e)
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -78,8 +79,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e1
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e1))
+                                                             .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -98,9 +99,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e2))
-                                                             .appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e2))
+                                                             .appendFront(errorIfImmutableArg.apply(e1))
+                                                             .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -119,10 +120,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e3
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e3))
-                                                             .appendFront(throwErrorIfImmutableElem(e2))
-                                                             .appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e3))
+                                                             .appendFront(errorIfImmutableArg.apply(e2))
+                                                             .appendFront(errorIfImmutableArg.apply(e1))
+                                                             .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -145,11 +146,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e4
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e4))
-                                                             .appendFront(throwErrorIfImmutableElem(e3))
-                                                             .appendFront(throwErrorIfImmutableElem(e2))
-                                                             .appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e4))
+                                                             .appendFront(errorIfImmutableArg.apply(e3))
+                                                             .appendFront(errorIfImmutableArg.apply(e2))
+                                                             .appendFront(errorIfImmutableArg.apply(e1))
+                                                             .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -175,13 +176,13 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
         JsArray empty = _empty_();
-        for (JsElem other : requireNonNull(rest)) empty = empty.append(throwErrorIfImmutableElem(other));
+        for (JsElem other : requireNonNull(rest)) empty = empty.append(errorIfImmutableArg.apply(other));
 
-        return empty.prepend(throwErrorIfImmutableElem(e4))
-                    .prepend(throwErrorIfImmutableElem(e3))
-                    .prepend(throwErrorIfImmutableElem(e2))
-                    .prepend(throwErrorIfImmutableElem(e1))
-                    .prepend(throwErrorIfImmutableElem(e));
+        return empty.prepend(errorIfImmutableArg.apply(e4))
+                    .prepend(errorIfImmutableArg.apply(e3))
+                    .prepend(errorIfImmutableArg.apply(e2))
+                    .prepend(errorIfImmutableArg.apply(e1))
+                    .prepend(errorIfImmutableArg.apply(e));
 
 
     }
@@ -427,7 +428,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     static JsArray of(final Collection<? extends JsElem> list)
     {
         if (requireNonNull(list).isEmpty()) return empty();
-        Functions.throwErrorIfMutableElemFound(list);
+        Errors.errorIfAnyMutableInOf()
+              .apply(list);
         return new JsArrayImmutableImpl(EMPTY.add(list));
 
     }
@@ -441,7 +443,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     static JsArray of(JsElem e)
     {
-        return empty().prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -455,8 +457,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       final JsElem e1
                      )
     {
-        return empty().prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
 
     }
 
@@ -474,9 +476,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        return empty().prepend(throwErrorIfMutableElem(e2))
-                      .prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e2))
+                      .prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -494,10 +496,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       final JsElem e3
                      )
     {
-        return empty().prepend(throwErrorIfMutableElem(e3))
-                      .prepend(throwErrorIfMutableElem(e2))
-                      .prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e3))
+                      .prepend(errorIfMutableArg.apply(e2))
+                      .prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -519,11 +521,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       final JsElem e4
                      )
     {
-        return empty().prepend(throwErrorIfMutableElem(e4))
-                      .prepend(throwErrorIfMutableElem(e3))
-                      .prepend(throwErrorIfMutableElem(e2))
-                      .prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e4))
+                      .prepend(errorIfMutableArg.apply(e3))
+                      .prepend(errorIfMutableArg.apply(e2))
+                      .prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -548,13 +550,13 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
         JsArray empty = empty();
-        for (JsElem other : requireNonNull(rest)) empty = empty.append(throwErrorIfMutableElem(other));
+        for (JsElem other : requireNonNull(rest)) empty = empty.append(errorIfMutableArg.apply(other));
 
-        return empty.prepend(throwErrorIfMutableElem(e4))
-                    .prepend(throwErrorIfMutableElem(e3))
-                    .prepend(throwErrorIfMutableElem(e2))
-                    .prepend(throwErrorIfMutableElem(e1))
-                    .prepend(throwErrorIfMutableElem(e));
+        return empty.prepend(errorIfMutableArg.apply(e4))
+                    .prepend(errorIfMutableArg.apply(e3))
+                    .prepend(errorIfMutableArg.apply(e2))
+                    .prepend(errorIfMutableArg.apply(e1))
+                    .prepend(errorIfMutableArg.apply(e));
 
 
     }
@@ -887,12 +889,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
 
         JsArray arr = empty().put(pair.path,
-                                  throwErrorIfMutableElem(pair.elem)
+                                  errorIfMutableArg.apply(pair.elem)
                                  );
         for (final JsPair p : pairs)
         {
             arr = arr.put(p.path,
-                          throwErrorIfMutableElem(p.elem)
+                          errorIfMutableArg.apply(p.elem)
                          );
         }
 
@@ -913,12 +915,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
 
         JsArray arr = _empty_().put(pair.path,
-                                    throwErrorIfImmutableElem(pair.elem)
+                                    errorIfMutableArg.apply(pair.elem)
                                    );
         for (final JsPair p : pairs)
         {
             arr.put(p.path,
-                    throwErrorIfImmutableElem(p.elem)
+                    errorIfMutableArg.apply(p.elem)
                    );
         }
 

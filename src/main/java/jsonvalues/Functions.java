@@ -27,15 +27,6 @@ class Functions
     {
     }
 
-    static UnsupportedOperationException castingError(String method,
-                                                      Class<?> pclass
-                                                     )
-    {
-        return new UnsupportedOperationException(String.format("%s of %s",
-                                                               method,
-                                                               pclass.getName()
-                                                              ));
-    }
 
 
     static JsElem get(final JsElem elem,
@@ -1003,12 +994,6 @@ class Functions
     }
 
 
-    static int hashCode(long n)
-    {
-        return (int) (n ^ (n >>> 32));
-
-    }
-
 
 
     private static MyScalaImpl.Map updateIfCondition(Predicate<? super JsPair> condition,
@@ -1026,50 +1011,6 @@ class Functions
     }
 
 
-    static void throwErrorIfMutableElemFound(Collection<? extends JsElem> elems)
-    {
-
-        for (JsElem elem : elems)
-        {
-            if (isMutable(elem))
-                throw new UnsupportedOperationException("all the elements have to be immutable when calling the 'of' factory methods. Use JsObj.of(...) and JsArray.of(...) methods instead.");
-        }
-
-    }
-
-    static JsElem throwErrorIfMutableElem(JsElem elem)
-    {
-        if (isMutable(elem))
-            throw new UnsupportedOperationException("all the elements have to be immutable when calling the 'of' factory methods. Use JsObj.of(...) and JsArray.of(...) methods instead.");
-        return elem;
-    }
-
-    static void throwErrorIfImmutableElemFound(Collection<? extends JsElem> elems)
-    {
-        for (JsElem elem : elems)
-        {
-            if (isImmutable(elem))
-                throw new UnsupportedOperationException("all the elements have to be mutable when calling the '_of_' factory methods. Use JsObj._of_(...) and JsArray._of_(...) methods instead.");
-        }
-    }
 
 
-    static JsElem throwErrorIfImmutableElem(JsElem elem)
-    {
-        if (isImmutable(elem))
-            throw new UnsupportedOperationException("all the elements have to be mutable when calling the '_of_' factory methods. Use JsObj._of_(...) and JsArray._of_(...) methods instead.");
-        return elem;
-    }
-
-    private static boolean isImmutable(final JsElem elem)
-    {
-        return Objects.requireNonNull(elem)
-                      .isJson(Json::isImmutable);
-    }
-
-    private static boolean isMutable(final JsElem elem)
-    {
-        return Objects.requireNonNull(elem)
-                      .isJson(Json::isMutable);
-    }
 }

@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNull;
 /**
  Represents an immutable json number of type BigDecimal.
  */
-public final class JsBigDec implements JsNumber,Comparable<JsBigDec>
+public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
 {
 
     /**
@@ -95,15 +95,15 @@ public final class JsBigDec implements JsNumber,Comparable<JsBigDec>
     @Override
     public int hashCode()
     {
-        final OptionalInt optionalInt = Functions.bigDecimalToInt(x);
-        if (optionalInt.isPresent()) return optionalInt.getAsInt();
+        final OptionalInt optInt = Functions.bigDecimalToInt(x);
+        if (optInt.isPresent()) return optInt.getAsInt();
 
-        final OptionalLong optionalLong = Functions.bigDecimalToLong(x);
-        if (optionalLong.isPresent()) return Functions.hashCode(optionalLong.getAsLong());
+        final OptionalLong optLong = Functions.bigDecimalToLong(x);
+        if (optLong.isPresent()) return (int) (optLong.getAsLong() ^ (optLong.getAsLong() >>> 32));
 
-        final Optional<BigInteger> optionalBigInteger = Functions.bigDecimalToBigInteger(x);
-        return optionalBigInteger.map(BigInteger::hashCode)
-                                 .orElseGet(x::hashCode);
+        final Optional<BigInteger> optBigInt = Functions.bigDecimalToBigInteger(x);
+        return optBigInt.map(BigInteger::hashCode)
+                        .orElseGet(x::hashCode);
 
     }
 

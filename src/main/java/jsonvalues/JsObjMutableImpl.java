@@ -297,7 +297,8 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                        JsPath.empty()
                                       )
                            .apply(this,
-                                  this)
+                                  this
+                                 )
                            .get();
     }
 
@@ -493,47 +494,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return filterObjs_(this,
-                           requireNonNull(filter),
-                           JsPath.empty()
-                          );
-    }
-
-
-    static JsObj filterObjs_(final JsObj obj,
-                             final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                             final JsPath path
-                            )
-    {
-        final Iterator<Map.Entry<String, JsElem>> iterator = obj.iterator();
-        while (iterator.hasNext())
-        {
-            final Map.Entry<String, JsElem> entry = iterator.next();
-            final JsPair pair = JsPair.of(path.key(entry.getKey()),
-                                          entry.getValue()
-                                         );
-
-            if (pair.elem.isJson())
-            {
-
-                if (pair.elem.isObj() && predicate.negate()
-                                                  .test(pair.path,
-                                                        pair.elem.asJsObj()
-                                                       ))
-                    iterator.remove();
-                else if (pair.elem.isObj()) filterObjs_(pair.elem.asJsObj(),
-                                                        predicate,
-                                                        pair.path
-                                                       );
-                else if (pair.elem.isArray()) JsArrayMutableImpl.filterObjs_(pair.elem.asJsArray(),
-                                                                             predicate,
-                                                                             pair.path.index(-1)
-                                                                            );
-            }
-        }
-
-        return obj;
-
+        return FilterFunctions._filterObjObjs__(requireNonNull(filter),
+                                                JsPath.empty()
+                                               )
+                              .apply(this);
     }
 
 
@@ -559,43 +523,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return filterKeys_(this,
-                           requireNonNull(filter),
-                           JsPath.empty()
-                          );
-
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static JsObj filterKeys_(final JsObj obj,
-                             final Predicate<? super JsPair> predicate,
-                             final JsPath path
-                            )
-    {
-        final Iterator<Map.Entry<String, JsElem>> iterator = obj.iterator();
-        while (iterator.hasNext())
-        {
-            final Map.Entry<String, JsElem> entry = iterator.next();
-            final JsPair pair = JsPair.of(path.key(entry.getKey()),
-                                          entry.getValue()
-                                         );
-            if (predicate.negate()
-                         .test(pair))
-                iterator.remove();
-            else if (pair.elem.isObj())
-                filterKeys_(pair.elem.asJsObj(),
-                            predicate,
-                            pair.path
-                           );
-            else if (pair.elem.isArray())
-                JsArrayMutableImpl.filterKeys_(pair.elem.asJsArray(),
-                                               predicate,
-                                               pair.path.index(-1)
-                                              );
-        }
-
-        return obj;
-
+        return FilterFunctions._filterObjKeys__(requireNonNull(filter),
+                                                JsPath.empty()
+                                               )
+                              .apply(this);
 
     }
 

@@ -89,16 +89,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             if (event == START_ARRAY)
             {
                 final MyJavaImpl.Vector array = new MyJavaImpl.Vector();
-                Functions.parse(array,
-                                parser
-                               );
+                array.parse(parser);
                 return new Try(new JsArrayMutableImpl(array));
             }
 
             final MyJavaImpl.Map obj = new MyJavaImpl.Map();
-            Functions.parse(obj,
-                            parser
-                           );
+            obj.parse(parser);
             return new Try(new JsObjMutableImpl(obj));
         }
         catch (MalformedJson e)
@@ -128,20 +124,18 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             if (event == START_ARRAY)
             {
                 final MyJavaImpl.Vector array = new MyJavaImpl.Vector();
-                Functions.parse(array,
-                                parser,
-                                options.create(),
-                                JsPath.empty()
-                                      .index(-1)
-                               );
+                array.parse(parser,
+                            options.create(),
+                            JsPath.empty()
+                                  .index(-1)
+                           );
                 return new Try(new JsArrayMutableImpl(array));
             }
             final MyJavaImpl.Map obj = new MyJavaImpl.Map();
-            Functions.parse(obj,
-                            parser,
-                            options.create(),
-                            JsPath.empty()
-                           );
+            obj.parse(parser,
+                      options.create(),
+                      JsPath.empty()
+                     );
             return new Try(new JsObjMutableImpl(obj));
         }
 
@@ -904,8 +898,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         if (path.isEmpty()) return this;
         final JsElem e = get(path.head());
         final JsPath tail = path.tail();
-        if(tail.isEmpty()) return e;
-        if(e.isNotJson()) return NOTHING;
+        if (tail.isEmpty()) return e;
+        if (e.isNotJson()) return NOTHING;
         return e.asJson()
                 .get(tail);
     }
@@ -1462,14 +1456,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         {
 
             final JsParser.Event event = parser.next();
-            if (event == START_ARRAY) return new Try(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
-                                                                                              parser
-                                                                                             )
-            ));
-            return new Try(new JsObjImmutableImpl(Functions.parse(MyScalaImpl.Map.EMPTY,
-                                                                  parser
-
-                                                                 )));
+            if (event == START_ARRAY)
+            {
+                return new Try(new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY.parse(parser)
+                ));
+            }
+            return new Try(new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -1496,19 +1488,17 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         {
 
             final JsParser.Event event = parser.next();
-            if (event == START_ARRAY) return new Try(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
-                                                                                              parser,
-                                                                                              options.create(),
-                                                                                              JsPath.empty()
-                                                                                                    .index(-1)
+            if (event == START_ARRAY) return new Try(new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY.parse(parser,
+                                                                                                             options.create(),
+                                                                                                             JsPath.empty()
+                                                                                                                   .index(-1)
 
-                                                                                             )));
-            return new Try(new JsObjImmutableImpl(Functions.parse(MyScalaImpl.Map.EMPTY,
-                                                                  parser,
-                                                                  options.create(),
-                                                                  JsPath.empty()
+                                                                                                            )));
+            return new Try(new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY.parse(parser,
+                                                                              options.create(),
+                                                                              JsPath.empty()
 
-                                                                 )));
+                                                                             )));
         }
 
         catch (MalformedJson e)

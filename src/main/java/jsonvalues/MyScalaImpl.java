@@ -13,10 +13,16 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static jsonvalues.Constants.*;
+import static jsonvalues.JsBool.FALSE;
+import static jsonvalues.JsBool.TRUE;
+import static jsonvalues.JsNull.NULL;
+import static jsonvalues.JsParser.Event.END_ARRAY;
+import static jsonvalues.JsParser.Event.END_OBJECT;
 
 class MyScalaImpl
 {
@@ -179,6 +185,146 @@ class MyScalaImpl
         public boolean equals(@Nullable Object obj)
         {
             return this.eq(obj);
+        }
+
+        MyScalaImpl.Map parse(final JsParser parser) throws MalformedJson
+        {
+            MyScalaImpl.Map newRoot = this;
+            while (parser.next() != END_OBJECT)
+            {
+                final String key = parser.getString();
+                JsParser.Event elem = parser.next();
+                assert elem != null;
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        newRoot = newRoot.update(key,
+                                                 parser.getJsString()
+                                                );
+                        break;
+                    case VALUE_NUMBER:
+                        newRoot = newRoot.update(key,
+                                                 parser.getJsNumber()
+                                                );
+                        break;
+                    case VALUE_FALSE:
+                        newRoot = newRoot.update(key,
+                                                 FALSE
+                                                );
+                        break;
+                    case VALUE_TRUE:
+                        newRoot = newRoot.update(key,
+                                                 TRUE
+                                                );
+                        break;
+                    case VALUE_NULL:
+                        newRoot = newRoot.update(key,
+                                                 NULL
+                                                );
+                        break;
+                    case START_OBJECT:
+                        final MyScalaImpl.Map newObj = EMPTY.parse(parser);
+                        newRoot = newRoot.update(key,
+                                                 new JsObjImmutableImpl(newObj)
+                                                );
+                        break;
+                    case START_ARRAY:
+                        final MyScalaImpl.Vector newArr = MyScalaImpl.Vector.EMPTY.parse(parser);
+                        newRoot = newRoot.update(key,
+                                                 new JsArrayImmutableImpl(newArr)
+                                                );
+                        break;
+
+                }
+            }
+            return newRoot;
+
+
+        }
+
+        MyScalaImpl.Map parse(final JsParser parser,
+                              final ParseOptions.Options options,
+                              final JsPath path
+                             ) throws MalformedJson
+        {
+
+            MyScalaImpl.Map newRoot = this;
+            final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+            while (parser.next() != END_OBJECT)
+            {
+                final String key = options.keyMap.apply(parser.getString());
+                final JsPath currentPath = path.key(key);
+                JsParser.Event elem = parser.next();
+                final JsPair pair;
+                assert elem != null;
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        pair = JsPair.of(currentPath,
+                                         parser.getJsString()
+                                        );
+                        newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                          options.elemMap.apply(pair)
+                                                                         ) : newRoot;
+                        break;
+                    case VALUE_NUMBER:
+                        pair = JsPair.of(currentPath,
+                                         parser.getJsNumber()
+                                        );
+                        newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                          options.elemMap.apply(pair)
+                                                                         ) : newRoot;
+                        break;
+                    case VALUE_TRUE:
+                        pair = JsPair.of(currentPath,
+                                         TRUE
+                                        );
+                        newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                          options.elemMap.apply(pair)
+                                                                         ) : newRoot;
+                        break;
+                    case VALUE_FALSE:
+                        pair = JsPair.of(currentPath,
+                                         FALSE
+                                        );
+                        newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                          options.elemMap.apply(pair)
+                                                                         ) : newRoot;
+                        break;
+                    case VALUE_NULL:
+                        pair = JsPair.of(currentPath,
+                                         NULL
+                                        );
+                        newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                          options.elemMap.apply(pair)
+                                                                         ) : newRoot;
+                        break;
+
+                    case START_OBJECT:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            newRoot = newRoot.update(key,
+                                                     new JsObjImmutableImpl(EMPTY.parse(parser,
+                                                                                        options,
+                                                                                        currentPath
+                                                                                       ))
+                                                    );
+                        }
+                        break;
+                    case START_ARRAY:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            newRoot = newRoot.update(key,
+                                                     new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY.parse(parser,
+                                                                                                             options,
+                                                                                                             currentPath.index(-1)
+                                                                                                            ))
+                                                    );
+                        }
+                        break;
+                }
+            }
+            return newRoot;
         }
     }
 
@@ -355,5 +501,124 @@ class MyScalaImpl
         {
             return this.eq(that);
         }
+
+        MyScalaImpl.Vector parse(final JsParser parser) throws MalformedJson
+        {
+
+            JsParser.Event elem;
+            MyScalaImpl.Vector newRoot = this;
+            while ((elem = parser.next()) != END_ARRAY)
+            {
+                assert elem != null;
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        newRoot = newRoot.appendBack(parser.getJsString());
+                        break;
+                    case VALUE_NUMBER:
+                        newRoot = newRoot.appendBack(parser.getJsNumber());
+                        break;
+                    case VALUE_FALSE:
+                        newRoot = newRoot.appendBack(FALSE);
+                        break;
+                    case VALUE_TRUE:
+                        newRoot = newRoot.appendBack(TRUE);
+                        break;
+                    case VALUE_NULL:
+                        newRoot = newRoot.appendBack(NULL);
+                        break;
+                    case START_OBJECT:
+                        final MyScalaImpl.Map newObj = MyScalaImpl.Map.EMPTY.parse(parser);
+                        newRoot = newRoot.appendBack(new JsObjImmutableImpl(newObj));
+                        break;
+
+                    case START_ARRAY:
+                        final MyScalaImpl.Vector newVector = EMPTY.parse(parser);
+
+                        newRoot = newRoot.appendBack(new JsArrayImmutableImpl(newVector));
+                        break;
+                }
+            }
+
+            return newRoot;
+
+
+        }
+
+        MyScalaImpl.Vector parse(final JsParser parser,
+                                 final ParseOptions.Options options,
+                                 final JsPath path
+                                ) throws MalformedJson
+        {
+            JsParser.Event elem;
+            MyScalaImpl.Vector newRoot = this;
+            JsPair pair;
+            final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+            while ((elem = parser.next()) != END_ARRAY)
+            {
+                assert elem != null;
+                final JsPath currentPath = path.inc();
+                switch (elem)
+                {
+                    case VALUE_STRING:
+
+                        pair = JsPair.of(currentPath,
+                                         parser.getJsString()
+                                        );
+                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+
+                        break;
+                    case VALUE_NUMBER:
+                        pair = JsPair.of(currentPath,
+                                         parser.getJsNumber()
+                                        );
+                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+
+
+                        break;
+
+                    case VALUE_TRUE:
+                        pair = JsPair.of(currentPath,
+                                         TRUE
+                                        );
+                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+
+                        break;
+                    case VALUE_FALSE:
+                        pair = JsPair.of(currentPath,
+                                         FALSE
+                                        );
+                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+                        break;
+                    case VALUE_NULL:
+                        pair = JsPair.of(currentPath,
+                                         NULL
+                                        );
+                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+                        break;
+                    case START_OBJECT:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            newRoot = newRoot.appendBack(new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY.parse(parser,
+                                                                                                            options,
+                                                                                                            currentPath
+                                                                                                           )));
+                        }
+                        break;
+                    case START_ARRAY:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            newRoot = newRoot.appendBack(new JsArrayImmutableImpl(EMPTY.parse(parser,
+                                                                                              options,
+                                                                                              currentPath.index(-1)
+                                                                                             )));
+                        }
+
+                        break;
+                }
+            }
+            return newRoot;
+        }
+
     }
 }

@@ -201,9 +201,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
             MyJavaImpl.Vector array = new MyJavaImpl.Vector();
-            Functions.parse(array,
-                            parser
-                           );
+            array.parse(parser);
             return new TryArr(new JsArrayMutableImpl(array));
         }
 
@@ -266,11 +264,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
             MyJavaImpl.Vector array = new MyJavaImpl.Vector();
-            Functions.parse(array,
-                            parser,
-                            options.create(),
-                            JsPath.empty().index(-1)
-                           );
+            array.parse(parser,
+                        options.create(),
+                        JsPath.empty()
+                              .index(-1)
+                       );
             return new TryArr(new JsArrayMutableImpl(array));
         }
 
@@ -575,10 +573,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new JsArrayImmutableImpl(Functions.parse(EMPTY,
-                                                                       parser
-
-                                                                      )));
+            return new TryArr(new JsArrayImmutableImpl(EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -606,11 +601,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
-                                                                       parser,
-                                                                       options.create(),
-                                                                       JsPath.empty().index(-1)
-                                                                      )));
+            return new TryArr(new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY.parse(parser,
+                                                                                      options.create(),
+                                                                                      JsPath.empty()
+                                                                                            .index(-1)
+                                                                                     )));
         }
 
         catch (MalformedJson e)

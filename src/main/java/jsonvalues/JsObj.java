@@ -275,9 +275,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
             MyJavaImpl.Map obj = new MyJavaImpl.Map();
-            Functions.parse(obj,
-                            parser
-                           );
+            obj.parse(parser);
             return new TryObj(new JsObjMutableImpl(obj));
         }
 
@@ -341,11 +339,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
             MyJavaImpl.Map obj = new MyJavaImpl.Map();
-            Functions.parse(obj,
-                            parser,
-                            options.create(),
-                            JsPath.empty()
-                           );
+            obj.parse(parser,
+                      options.create(),
+                      JsPath.empty()
+                     );
             return new TryObj(new JsObjMutableImpl(obj));
         }
 
@@ -652,23 +649,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static TryObj parse(final String str)
     {
-
         try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new JsObjImmutableImpl(Functions.parse(EMPTY,
-                                                                     parser
-
-                                                                    )));
+            return new TryObj(new JsObjImmutableImpl(EMPTY.parse(parser)));
         }
-
         catch (MalformedJson e)
         {
             return new TryObj(e);
         }
-
-
     }
 
 
@@ -684,26 +674,19 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         final ParseOptions options
                        )
     {
-
         try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new JsObjImmutableImpl(Functions.parse(EMPTY,
-                                                                     parser,
-                                                                     options.create(),
-                                                                     JsPath.empty()
-
-                                                                    )));
+            return new TryObj(new JsObjImmutableImpl(EMPTY.parse(parser,
+                                                                 options.create(),
+                                                                 JsPath.empty()
+                                                                )));
         }
-
         catch (MalformedJson e)
         {
-
             return new TryObj(e);
         }
-
-
     }
 
 

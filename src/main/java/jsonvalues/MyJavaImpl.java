@@ -5,11 +5,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static jsonvalues.Constants.*;
+import static jsonvalues.JsBool.FALSE;
+import static jsonvalues.JsBool.TRUE;
+import static jsonvalues.JsNull.NULL;
+import static jsonvalues.JsParser.Event.END_ARRAY;
+import static jsonvalues.JsParser.Event.END_OBJECT;
 
 class MyJavaImpl
 {
@@ -162,6 +168,165 @@ class MyJavaImpl
         public boolean equals(final @Nullable Object obj)
         {
             return this.eq(obj);
+        }
+
+        void parse(final JsParser parser) throws MalformedJson
+        {
+            while (parser.next() != END_OBJECT)
+            {
+                final String key = parser.getString();
+                JsParser.Event elem = parser.next();
+                assert elem != null;
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        this.update(key,
+                                    parser.getJsString()
+                                   );
+                        break;
+                    case VALUE_NUMBER:
+                        this.update(key,
+                                    parser.getJsNumber()
+                                   );
+                        break;
+                    case VALUE_FALSE:
+                        this.update(key,
+                                    FALSE
+                                   );
+                        break;
+                    case VALUE_TRUE:
+                        this.update(key,
+                                    TRUE
+                                   );
+                        break;
+                    case VALUE_NULL:
+                        this.update(key,
+                                    NULL
+                                   );
+                        break;
+                    case START_OBJECT:
+                        final MyJavaImpl.Map obj = new MyJavaImpl.Map();
+                        obj.parse(parser);
+                        this.update(key,
+                                    new JsObjMutableImpl(obj)
+                                   );
+                        break;
+                    case START_ARRAY:
+                        final MyJavaImpl.Vector arr = new MyJavaImpl.Vector();
+                        arr.parse(parser);
+                        this.update(key,
+                                    new JsArrayMutableImpl(arr)
+                                   );
+                        break;
+
+                }
+
+
+            }
+        }
+
+        void parse(final JsParser parser,
+                   final ParseOptions.Options options,
+                   final JsPath path
+                  ) throws MalformedJson
+        {
+            final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+            while (parser.next() != END_OBJECT)
+            {
+                final String key = options.keyMap.apply(parser.getString());
+                final JsPath currentPath = path.key(key);
+                JsParser.Event elem = parser.next();
+                assert elem != null;
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        JsPair.of(currentPath,
+                                  parser.getJsString()
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.update(key,
+                                                          options.elemMap.apply(p)
+                                                         )
+                                        );
+
+                        break;
+                    case VALUE_NUMBER:
+                        JsPair.of(currentPath,
+                                  parser.getJsNumber()
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.update(key,
+                                                          options.elemMap.apply(p)
+                                                         )
+                                        );
+
+                        break;
+                    case VALUE_FALSE:
+                        JsPair.of(currentPath,
+                                  FALSE
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.update(key,
+                                                          options.elemMap
+                                                          .apply(p)
+                                                         )
+                                        );
+
+                        break;
+                    case VALUE_TRUE:
+                        JsPair.of(currentPath,
+                                  TRUE
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.update(key,
+                                                          options.elemMap
+                                                          .apply(p)
+                                                         )
+                                        );
+
+                        break;
+                    case VALUE_NULL:
+                        JsPair.of(currentPath,
+                                  NULL
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.update(key,
+                                                          options.elemMap
+                                                          .apply(p)
+                                                         )
+                                        );
+
+                        break;
+                    case START_OBJECT:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            final MyJavaImpl.Map obj = new MyJavaImpl.Map();
+                            obj.parse(parser,
+                                      options,
+                                      currentPath
+                                     );
+                            this.update(key,
+                                        new JsObjMutableImpl(obj)
+                                       );
+                        }
+                        break;
+                    case START_ARRAY:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            final MyJavaImpl.Vector arr = new MyJavaImpl.Vector();
+                            arr.parse(parser,
+                                      options,
+                                      currentPath.index(-1)
+                                     );
+                            this.update(key,
+                                        new JsArrayMutableImpl(arr)
+                                       );
+                        }
+                        break;
+                }
+
+
+            }
         }
     }
 
@@ -328,6 +493,126 @@ class MyJavaImpl
         public boolean equals(final @Nullable Object that)
         {
             return this.eq(that);
+        }
+
+        void parse(final JsParser parser) throws MalformedJson
+        {
+            JsParser.Event elem;
+            while ((elem = parser.next()) != END_ARRAY)
+            {
+                assert elem != null;
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        this.appendBack(parser.getJsString());
+                        break;
+                    case VALUE_NUMBER:
+                        this.appendBack(parser.getJsNumber());
+                        break;
+                    case VALUE_FALSE:
+                        this.appendBack(FALSE);
+                        break;
+                    case VALUE_TRUE:
+                        this.appendBack(TRUE);
+                        break;
+                    case VALUE_NULL:
+                        this.appendBack(NULL);
+                        break;
+                    case START_OBJECT:
+                        final MyJavaImpl.Map obj = new MyJavaImpl.Map();
+                        obj.parse(parser);
+                        this.appendBack(new JsObjMutableImpl(obj));
+                        break;
+                    case START_ARRAY:
+                        final MyJavaImpl.Vector arr = new MyJavaImpl.Vector();
+                        arr.parse(parser);
+                        this.appendBack(new JsArrayMutableImpl(arr));
+                        break;
+                }
+            }
+        }
+
+        void parse(final JsParser parser,
+                   final ParseOptions.Options options,
+                   final JsPath path
+                  ) throws MalformedJson
+        {
+            JsParser.Event elem;
+            final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+            while ((elem = parser.next()) != END_ARRAY)
+            {
+                assert elem != null;
+                final JsPath currentPath = path.inc();
+                switch (elem)
+                {
+                    case VALUE_STRING:
+                        JsPair.of(currentPath,
+                                  parser.getJsString()
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.appendBack(options.elemMap.apply(p))
+                                        )
+                        ;
+                        break;
+                    case VALUE_NUMBER:
+                        JsPair.of(currentPath,
+                                  parser.getJsNumber()
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.appendBack(options.elemMap.apply(p))
+                                        );
+                        break;
+                    case VALUE_FALSE:
+                        JsPair.of(currentPath,
+                                  FALSE
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.appendBack(options.elemMap.apply(p))
+                                        )
+                        ;
+                        break;
+                    case VALUE_TRUE:
+                        JsPair.of(currentPath,
+                                  TRUE
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.appendBack(options.elemMap.apply(p))
+                                        );
+                        break;
+                    case VALUE_NULL:
+                        JsPair.of(currentPath,
+                                  NULL
+                                 )
+                              .consumeIf(condition,
+                                         p -> this.appendBack(options.elemMap.apply(p))
+                                        );
+                        break;
+                    case START_OBJECT:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            final MyJavaImpl.Map obj = new MyJavaImpl.Map();
+                            obj.parse(parser,
+                                      options,
+                                      currentPath
+                                     );
+                            this.appendBack(new JsObjMutableImpl(obj));
+                        }
+                        break;
+
+                    case START_ARRAY:
+                        if (options.keyFilter.test(currentPath))
+                        {
+                            final MyJavaImpl.Vector arr = new MyJavaImpl.Vector();
+                            arr.parse(parser,
+                                      options,
+                                      currentPath.index(-1)
+                                     );
+
+                            this.appendBack(new JsArrayMutableImpl(arr));
+                        }
+                        break;
+                }
+            }
         }
     }
 }

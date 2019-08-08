@@ -21,22 +21,6 @@ class Functions
     }
 
 
-    static JsElem get(final JsElem elem,
-                      final JsPath path
-                     )
-    {
-        assert elem != null;
-        assert path != null;
-        if (path.isEmpty()) return elem;
-        if (elem.isNotJson() || elem.isNothing()) return JsNothing.NOTHING;
-        return get(elem.asJson()
-                       .get(path.head()),
-                   path.tail()
-                  );
-
-    }
-
-
     static MyScalaImpl.Vector parse(final MyScalaImpl.Vector root,
                                     final JsParser parser
                                    ) throws MalformedJson

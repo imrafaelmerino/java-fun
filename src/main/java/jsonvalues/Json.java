@@ -11,6 +11,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsParser.Event.START_ARRAY;
 
 /**
@@ -130,7 +131,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                 Functions.parse(array,
                                 parser,
                                 options.create(),
-                                JsPath.empty().index(-1)
+                                JsPath.empty()
+                                      .index(-1)
                                );
                 return new Try(new JsArrayMutableImpl(array));
             }
@@ -304,13 +306,13 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
         return MatchFns.ifArrElse(it -> append(path,
                                                Objects.requireNonNull(supplier)
-                                                       .get()
+                                                      .get()
                                               ),
-                                   it ->
-                                   {
-                                       @SuppressWarnings("unchecked") final T t = (T) this; //this is an instance of T (recursive type)
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      @SuppressWarnings("unchecked") final T t = (T) this; //this is an instance of T (recursive type)
+                                      return t;
+                                  }
                                  )
                        .apply(get(requireNonNull(path)));
     }
@@ -332,12 +334,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         return MatchFns.ifArrElse(it -> appendAll(path,
                                                   requireNonNull(supplier).get()
                                                  ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(requireNonNull(path)));
 
@@ -499,12 +501,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         return MatchFns.ifArrElse(it -> prependAll(path,
                                                    supplier.get()
                                                   ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(requireNonNull(path)));
     }
@@ -663,12 +665,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         return MatchFns.ifArrElse(it -> prepend(path,
                                                 supplier.get()
                                                ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(path));
 
@@ -693,12 +695,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                 number,
                                                 others
                                                ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(path));
 
@@ -723,12 +725,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                 number,
                                                 others
                                                ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(path));
 
@@ -753,12 +755,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                 number,
                                                 others
                                                ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(path));
 
@@ -783,12 +785,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                 str,
                                                 others
                                                ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(path));
 
@@ -813,12 +815,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                 bool,
                                                 others
                                                ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(path));
 
@@ -899,9 +901,13 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default JsElem get(final JsPath path)
     {
-        return Functions.get(this,
-                             requireNonNull(path)
-                            );
+        if (path.isEmpty()) return this;
+        final JsElem e = get(path.head());
+        final JsPath tail = path.tail();
+        if(tail.isEmpty()) return e;
+        if(e.isNotJson()) return NOTHING;
+        return e.asJson()
+                .get(tail);
     }
 
     /**
@@ -925,11 +931,9 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default Optional<JsArray> getArray(final JsPath path)
     {
         final Function<JsElem, Optional<JsArray>> ifElse = MatchFns.ifArrElse(Optional::of,
-                                                                               it -> Optional.empty()
+                                                                              it -> Optional.empty()
                                                                              );
-        return ifElse.apply(Functions.get(this,
-                                          requireNonNull(path)
-                                         ));
+        return ifElse.apply(this.get(requireNonNull(path)));
     }
 
     /**
@@ -954,11 +958,9 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
         final Function<JsElem, Optional<BigDecimal>> ifElse = MatchFns.ifDecimalElse(it -> Optional.of(BigDecimal.valueOf(it)),
                                                                                      Optional::of,
-                                                                                      it -> Optional.empty()
+                                                                                     it -> Optional.empty()
                                                                                     );
-        return ifElse.apply(Functions.get(this,
-                                          requireNonNull(path)
-                                         ));
+        return ifElse.apply(this.get(requireNonNull(path)));
     }
 
     /**
@@ -981,13 +983,11 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default Optional<BigInteger> getBigInt(final JsPath path)
     {
         final Function<JsElem, Optional<BigInteger>> ifElse = MatchFns.ifIntegralElse(it -> Optional.of(BigInteger.valueOf(it)),
-                                                                                       it -> Optional.of(BigInteger.valueOf(it)),
+                                                                                      it -> Optional.of(BigInteger.valueOf(it)),
                                                                                       Optional::of,
-                                                                                       e -> Optional.empty()
+                                                                                      e -> Optional.empty()
                                                                                      );
-        return ifElse.apply(Functions.get(this,
-                                          requireNonNull(path)
-                                         ));
+        return ifElse.apply(this.get(requireNonNull(path)));
     }
 
     /**
@@ -1010,11 +1010,9 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default Optional<Boolean> getBool(final JsPath path)
     {
         final Function<JsElem, Optional<Boolean>> fn = MatchFns.ifBoolElse(Optional::of,
-                                                                            it -> Optional.empty()
+                                                                           it -> Optional.empty()
                                                                           );
-        return fn.apply(Functions.get(this,
-                                      requireNonNull(path)
-                                     ));
+        return fn.apply(this.get(requireNonNull(path)));
     }
 
     /**
@@ -1039,13 +1037,11 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default OptionalDouble getDouble(final JsPath path)
     {
         return MatchFns.ifDecimalElse(OptionalDouble::of,
-                                       bd -> JsBigDec.of(bd)
-                                                     .doubleValueExact(),
-                                       elem -> OptionalDouble.empty()
+                                      bd -> JsBigDec.of(bd)
+                                                    .doubleValueExact(),
+                                      elem -> OptionalDouble.empty()
                                      )
-                       .apply(Functions.get(this,
-                                             requireNonNull(path)
-                                            ));
+                       .apply(this.get(requireNonNull(path)));
     }
 
 
@@ -1072,15 +1068,13 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default OptionalInt getInt(final JsPath path)
     {
         return MatchFns.ifIntegralElse(OptionalInt::of,
-                                        l -> JsLong.of(l)
-                                                   .intValueExact(),
-                                        bi -> JsBigInt.of(bi)
-                                                      .intValueExact(),
-                                        other -> OptionalInt.empty()
+                                       l -> JsLong.of(l)
+                                                  .intValueExact(),
+                                       bi -> JsBigInt.of(bi)
+                                                     .intValueExact(),
+                                       other -> OptionalInt.empty()
                                       )
-                       .apply(Functions.get(this,
-                                             requireNonNull(path)
-                                            ));
+                       .apply(this.get(requireNonNull(path)));
     }
 
 
@@ -1106,13 +1100,11 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
         return MatchFns.ifIntegralElse(OptionalLong::of,
                                        OptionalLong::of,
-                                        bi -> JsBigInt.of(bi)
-                                                      .longValueExact(),
-                                        elem -> OptionalLong.empty()
+                                       bi -> JsBigInt.of(bi)
+                                                     .longValueExact(),
+                                       elem -> OptionalLong.empty()
                                       )
-                       .apply(Functions.get(this,
-                                             requireNonNull(path)
-                                            ));
+                       .apply(this.get(requireNonNull(path)));
 
     }
 
@@ -1137,11 +1129,9 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default Optional<JsObj> getObj(final JsPath path)
     {
         final Function<JsElem, Optional<JsObj>> ifElse = MatchFns.ifObjElse(Optional::of,
-                                                                             it -> Optional.empty()
+                                                                            it -> Optional.empty()
                                                                            );
-        return ifElse.apply(Functions.get(this,
-                                          requireNonNull(path)
-                                         ));
+        return ifElse.apply(this.get(requireNonNull(path)));
     }
 
     /**
@@ -1165,11 +1155,9 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default Optional<String> getStr(final JsPath path)
     {
         final Function<JsElem, Optional<String>> ifStrElseFn = MatchFns.ifStrElse(Optional::of,
-                                                                                   it -> Optional.empty()
+                                                                                  it -> Optional.empty()
                                                                                  );
-        return ifStrElseFn.apply(Functions.get(this,
-                                               requireNonNull(path)
-                                              ));
+        return ifStrElseFn.apply(this.get(requireNonNull(path)));
 
     }
 
@@ -1511,7 +1499,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             if (event == START_ARRAY) return new Try(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
                                                                                               parser,
                                                                                               options.create(),
-                                                                                              JsPath.empty().index(-1)
+                                                                                              JsPath.empty()
+                                                                                                    .index(-1)
 
                                                                                              )));
             return new Try(new JsObjImmutableImpl(Functions.parse(MyScalaImpl.Map.EMPTY,
@@ -1995,12 +1984,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                number,
                                                others
                                               ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(Objects.requireNonNull(path)));
     }
@@ -2022,12 +2011,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                number,
                                                others
                                               ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(Objects.requireNonNull(path)));
 
@@ -2050,12 +2039,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                str,
                                                others
                                               ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(Objects.requireNonNull(path)));
 
@@ -2078,12 +2067,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                number,
                                                others
                                               ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(Objects.requireNonNull(path)));
 
@@ -2106,12 +2095,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                                                number,
                                                others
                                               ),
-                                   it ->
-                                   {
-                                       //this is an instance of T (recursive type)
-                                       @SuppressWarnings("unchecked") final T t = (T) this;
-                                       return t;
-                                   }
+                                  it ->
+                                  {
+                                      //this is an instance of T (recursive type)
+                                      @SuppressWarnings("unchecked") final T t = (T) this;
+                                      return t;
+                                  }
                                  )
                        .apply(get(Objects.requireNonNull(path)));
 
@@ -2860,7 +2849,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         return MatchFns.ifJsonElse(it -> OptionalInt.of(it.size()),
-                                    it -> OptionalInt.empty()
+                                   it -> OptionalInt.empty()
                                   )
                        .apply(get(requireNonNull(path)));
 
@@ -2878,7 +2867,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         return MatchFns.ifJsonElse(it -> OptionalInt.of(it.size_()),
-                                    it -> OptionalInt.empty()
+                                   it -> OptionalInt.empty()
                                   )
                        .apply(get(requireNonNull(path)));
 

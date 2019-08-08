@@ -17,7 +17,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.*;
+import static jsonvalues.Functions.ifJsonElse;
+import static jsonvalues.Functions.ifObjElse;
 import static jsonvalues.Trampoline.more;
 
 class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
@@ -335,10 +336,10 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                                                            headElem
                                                                           )
                                                                        .ifElse(predicate,
-                                                                               () -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                               p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
                                                                                                                                            headElem
                                                                                                                                           )),
-                                                                               () -> tailCall
+                                                                               p -> tailCall
                                                                               )
 
                                                     )
@@ -354,7 +355,7 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     public final JsObj filterElems_(final Predicate<? super JsPair> filter)
     {
         return FilterFunctions.filterObjElems_(requireNonNull(filter),
-                                               MINUS_ONE_INDEX
+                                               JsPath.empty().index(-1)
                                               )
                               .apply(this)
                               .get();
@@ -447,12 +448,12 @@ class JsObjImmutableImpl extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                                     head.getValue()
                                                    )
                                                 .ifElse(predicate,
-                                                        () -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                        p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
                                                                                                                     head.getValue()
                                                                                                                    )),
 
 
-                                                        () -> tailCall
+                                                        p -> tailCall
                                                        );
                                }
                               );

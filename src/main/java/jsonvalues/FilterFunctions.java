@@ -4,7 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.*;
 
-import static jsonvalues.Functions.*;
+import static jsonvalues.Functions.ifJsonElse;
+import static jsonvalues.Functions.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -38,10 +39,10 @@ class FilterFunctions
                                                                                   headElem
                                                                                  )
                                                                               .ifElse(predicate,
-                                                                                      () -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                      p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
                                                                                                                                                   headElem
                                                                                                                                                  )),
-                                                                                      () -> tailCall
+                                                                                      p -> tailCall
                                                                                      )
 
                                                            )
@@ -77,8 +78,8 @@ class FilterFunctions
                                                                                   headElem
                                                                                  )
                                                                               .ifElse(predicate,
-                                                                                      () -> more(() -> tailCall).map(tailResult -> tailResult.prepend(headElem)),
-                                                                                      () -> tailCall
+                                                                                      p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(headElem)),
+                                                                                      p -> tailCall
                                                                                      )
                                                            )
                                           .apply(head);
@@ -106,8 +107,8 @@ class FilterFunctions
                                                                               elem
                                                                              )
                                                                           .ifElse(predicate,
-                                                                                  () -> more(() -> tailCall).map(it -> it.prepend(elem)),
-                                                                                  () -> tailCall
+                                                                                  p -> more(() -> tailCall).map(it -> it.prepend(elem)),
+                                                                                  p -> tailCall
                                                                                  )
                                                            )
                                           .apply(head);
@@ -275,7 +276,7 @@ class FilterFunctions
                                                            head.getValue()
                                                           )
                                                        .ifElse(predicate,
-                                                               () -> ifJsonElse(headJson -> more(() -> tailCall).flatMap(tailResult -> filterJsonKeys_(predicate,
+                                                               p -> ifJsonElse(headJson -> more(() -> tailCall).flatMap(tailResult -> filterJsonKeys_(predicate,
                                                                                                                                                        headPath
                                                                                                                                                       ).apply(headJson)
                                                                                                                                                        .map(headMapped ->
@@ -290,7 +291,7 @@ class FilterFunctions
 
                                                                                )
                                                                .apply(head.getValue()),
-                                                               () -> tailCall
+                                                               p -> tailCall
                                                               );
                                       }
                                      );
@@ -471,7 +472,7 @@ class FilterFunctions
                                              );
                 if (pair.elem.isArray())
                     _filterArrKeys__(predicate,
-                                     MINUS_ONE_INDEX
+                                     JsPath.empty().index(-1)
                                     ).apply(pair.elem.asJsArray());
                 else if (pair.elem.isObj())
                     _filterObjKeys__(predicate,

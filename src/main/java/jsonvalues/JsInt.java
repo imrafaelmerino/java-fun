@@ -60,17 +60,9 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
 
         if (number.isInt()) return x == number.asJsInt().x;
         if (number.isLong()) return (long) x == number.asJsLong().x;
-
-        if (number.isBigInt())
-            return Functions.equals(number.asJsBigInt().x,
-                                    x
-                                   );
-
-        if (number.isBigDec())
-            return Functions.equals(number.asJsBigDec().x,
-                                    x
-                                   );
-        if (number.isDouble()) return (double) x == number.asJsDouble().x;
+        if (number.isBigInt()) return equals(number.asJsBigInt());
+        if (number.isBigDec()) return equals(number.asJsBigDec());
+        if (number.isDouble()) return equals(number.asJsDouble());
 
         return false;
     }
@@ -121,8 +113,9 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
      @param that the specified integer
      @return the sum of both integers
      */
-    public JsInt plus(JsInt that){
-        return JsInt.of(x+that.x);
+    public JsInt plus(JsInt that)
+    {
+        return JsInt.of(x + that.x);
     }
 
     /**
@@ -130,16 +123,19 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
      @param that the specified integer
      @return this integer minus the specified one
      */
-    public JsInt minus(JsInt that){
-        return JsInt.of(x-that.x);
+    public JsInt minus(JsInt that)
+    {
+        return JsInt.of(x - that.x);
     }
+
     /**
      multiplies this integer by the specified one
      @param that the specified integer
      @return this integer times the specified one
      */
-    public JsInt times(JsInt that){
-        return JsInt.of(x*that.x);
+    public JsInt times(JsInt that)
+    {
+        return JsInt.of(x * that.x);
     }
 
     /**
@@ -149,7 +145,45 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
      */
     public boolean test(IntPredicate predicate)
     {
-        return predicate.test(x);
+        return requireNonNull(predicate).test(x);
     }
+
+    /**
+     returns true if this integer and the specified biginteger represent the same number
+     @param jsBigInt the specified JsBigInt
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsBigInt jsBigInt)
+    {
+        return requireNonNull(jsBigInt).equals(this);
+    }
+    /**
+     returns true if this integer and the specified bigdecimal represent the same number
+     @param jsBigDec the specified JsBigDec
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsBigDec jsBigDec)
+    {
+        return requireNonNull(jsBigDec).equals(this);
+    }
+    /**
+     returns true if this integer and the specified long represent the same number
+     @param jsLong the specified JsLong
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsLong jsLong)
+    {
+        return requireNonNull(jsLong).equals(this);
+    }
+    /**
+     returns true if this integer and the specified double represent the same number
+     @param jsDouble the specified JsDouble
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsDouble jsDouble)
+    {
+        return (double) x == requireNonNull(jsDouble).x;
+    }
+
 
 }

@@ -2,6 +2,7 @@ package jsonvalues;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.OptionalInt;
 import java.util.function.LongPredicate;
 import java.util.function.LongUnaryOperator;
 
@@ -60,21 +61,10 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
         final JsNumber number = (JsNumber) that;
 
         if (number.isLong()) return x == number.asJsLong().x;
-
-        if (number.isInt()) return x == (long) number.asJsInt().x;
-
-
-        if (number.isBigInt())
-            return Functions.equals(number.asJsBigInt().x,
-                                    x
-                                   );
-
-        if (number.isBigDec())
-            return Functions.equals(number.asJsBigDec().x,
-                                    x
-                                   );
-
-        if (number.isDouble()) return (double) x == number.asJsDouble().x;
+        if (number.isInt()) return equals(number.asJsInt());
+        if (number.isBigInt()) return equals(number.asJsBigInt());
+        if (number.isBigDec()) return equals(number.asJsBigDec());
+        if (number.isDouble()) return equals(number.asJsDouble());
 
         return false;
 
@@ -87,8 +77,8 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
     @Override
     public int hashCode()
     {
-        return Functions.longToInt(x)
-                        .isPresent() ? (int) x : (int) (x ^ (x >>> 32));
+        final OptionalInt intExact = intValueExact();
+        return intExact.isPresent() ? intExact.getAsInt() : (int) (x ^ (x >>> 32));
     }
 
     /**
@@ -162,5 +152,58 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
         return new JsLong(n);
     }
 
+    /**
+     * Returns the value of this long; or an empty optional if the value overflows an {@code int}.
+     @return this long as an int wrapped in an OptionalInt
+     */
+    public OptionalInt intValueExact()
+    {
+        try
+        {
+            return OptionalInt.of(Math.toIntExact(x));
+        }
+        catch (ArithmeticException e)
+        {
+            return OptionalInt.empty();
+        }
+    }
+    /**
+     returns true if this long and the specified bigdecimal represent the same number
+     @param jsBigDec the specified JsBigDec
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsBigDec jsBigDec)
+    {
+        return requireNonNull(jsBigDec).equals(this);
+    }
+
+    /**
+     returns true if this long and the specified biginteger represent the same number
+     @param jsBigInt the specified JsBigInt
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsBigInt jsBigInt)
+    {
+        return requireNonNull(jsBigInt).equals(this);
+    }
+    /**
+     returns true if this long and the specified integer represent the same number
+     @param jsInt the specified JsInt
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsInt jsInt)
+    {
+        return x == (long) requireNonNull(jsInt).x;
+    }
+
+    /**
+     returns true if this long and the specified double represent the same number
+     @param jsDouble the specified JsDouble
+     @return true if both JsElem are the same value
+     */
+    public boolean equals(JsDouble jsDouble)
+    {
+        return (double) x == requireNonNull(jsDouble).x;
+    }
 
 }

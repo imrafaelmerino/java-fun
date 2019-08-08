@@ -100,7 +100,7 @@ class MyScalaImpl
         @Override
         public java.util.Map.Entry<String, JsElem> head()
         {
-            if (this.isEmpty()) throw new UnsupportedOperationException("head parse empty map");
+            if (this.isEmpty()) throw new UnsupportedOperationException("head of empty map");
 
             final Tuple2<String, JsElem> head = persistentMap.head();
 

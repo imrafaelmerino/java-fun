@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.Errors.errorIfImmutableArg;
 import static jsonvalues.Errors.errorIfMutableArg;
-import static jsonvalues.Functions.MINUS_ONE_INDEX;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
 import static jsonvalues.JsParser.Event.START_ARRAY;
@@ -270,7 +269,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             Functions.parse(array,
                             parser,
                             options.create(),
-                            MINUS_ONE_INDEX
+                            JsPath.empty().index(-1)
                            );
             return new TryArr(new JsArrayMutableImpl(array));
         }
@@ -610,7 +609,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             return new TryArr(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
                                                                        parser,
                                                                        options.create(),
-                                                                       MINUS_ONE_INDEX
+                                                                       JsPath.empty().index(-1)
                                                                       )));
         }
 

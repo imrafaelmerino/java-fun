@@ -11,7 +11,6 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.MINUS_ONE_INDEX;
 import static jsonvalues.JsParser.Event.START_ARRAY;
 
 /**
@@ -131,7 +130,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                 Functions.parse(array,
                                 parser,
                                 options.create(),
-                                MINUS_ONE_INDEX
+                                JsPath.empty().index(-1)
                                );
                 return new Try(new JsArrayMutableImpl(array));
             }
@@ -1040,7 +1039,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default OptionalDouble getDouble(final JsPath path)
     {
         return Functions.ifDecimalElse(OptionalDouble::of,
-                                       Functions::bigDecimalToDouble,
+                                       bd -> JsBigDec.of(bd)
+                                                     .doubleValueExact(),
                                        elem -> OptionalDouble.empty()
                                       )
                         .apply(Functions.get(this,
@@ -1072,9 +1072,11 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default OptionalInt getInt(final JsPath path)
     {
         return Functions.ifIntegralElse(OptionalInt::of,
-                                        Functions::longToInt,
-                                        Functions::bigIntToInt,
-                                        elem -> OptionalInt.empty()
+                                        l -> JsLong.of(l)
+                                                   .intValueExact(),
+                                        bi -> JsBigInt.of(bi)
+                                                      .intValueExact(),
+                                        other -> OptionalInt.empty()
                                        )
                         .apply(Functions.get(this,
                                              requireNonNull(path)
@@ -1104,7 +1106,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
         return Functions.ifIntegralElse(OptionalLong::of,
                                         OptionalLong::of,
-                                        Functions::bigIntToLong,
+                                        bi -> JsBigInt.of(bi)
+                                                      .longValueExact(),
                                         elem -> OptionalLong.empty()
                                        )
                         .apply(Functions.get(this,
@@ -1508,7 +1511,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             if (event == START_ARRAY) return new Try(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
                                                                                               parser,
                                                                                               options.create(),
-                                                                                              MINUS_ONE_INDEX
+                                                                                              JsPath.empty().index(-1)
 
                                                                                              )));
             return new Try(new JsObjImmutableImpl(Functions.parse(MyScalaImpl.Map.EMPTY,

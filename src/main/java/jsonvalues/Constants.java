@@ -2,7 +2,6 @@ package jsonvalues;
 
 final class Constants
 {
-
     static final String OPEN_CURLY = "{";
     static final String CLOSE_CURLY = "}";
     static final String CLOSE_BRACKET = "]";

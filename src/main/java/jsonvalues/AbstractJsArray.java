@@ -27,9 +27,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
 {
     public static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("squid:S00116") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    private final transient JsPath MINUS_ONE_PATH = JsPath.empty()
-                                                          .index(-1);
+
 
     protected transient T array;
 
@@ -686,7 +684,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                        requireNonNull(op),
                        requireNonNull(map),
                        requireNonNull(predicate),
-                       MINUS_ONE_PATH,
+                       JsPath.empty().index(-1),
                        Optional.empty()
                       ).get();
     }

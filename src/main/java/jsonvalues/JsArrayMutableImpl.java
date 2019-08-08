@@ -13,7 +13,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.MINUS_ONE_INDEX;
 import static jsonvalues.Functions.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
@@ -56,7 +55,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return FilterFunctions._mapElems_(requireNonNull(fn),
                                           p -> true,
-                                          MINUS_ONE_INDEX
+                                          JsPath.empty().index(-1)
                                          )
                               .apply(this,
                                      this
@@ -71,7 +70,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return FilterFunctions._mapElems_(requireNonNull(fn),
                                           requireNonNull(predicate),
-                                          MINUS_ONE_INDEX
+                                          JsPath.empty().index(-1)
                                          )
                               .apply(this,
                                      this
@@ -86,7 +85,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFunctions._mapArrElems__(requireNonNull(fn),
                                            it -> true,
-                                           MINUS_ONE_INDEX
+                                           JsPath.empty().index(-1)
                                           )
                            .apply(this,
                                   this
@@ -102,7 +101,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFunctions._mapArrElems__(requireNonNull(fn),
                                            predicate,
-                                           MINUS_ONE_INDEX
+                                           JsPath.empty().index(-1)
                                           )
                            .apply(this,
                                   this
@@ -149,7 +148,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFunctions._mapArrKeys__(requireNonNull(fn),
                                           it -> true,
-                                          MINUS_ONE_INDEX
+                                          JsPath.empty().index(-1)
                                          )
                            .apply(this,
                                   this
@@ -184,7 +183,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
 
         return MapFunctions._mapJsObj_(requireNonNull(fn),
                                        requireNonNull(predicate),
-                                       MINUS_ONE_INDEX
+                                       JsPath.empty().index(-1)
                                       )
                            .apply(this,
                                   this
@@ -246,7 +245,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFunctions._mapJsObj_(requireNonNull(fn),
                                        (a, r) -> true,
-                                       MINUS_ONE_INDEX
+                                       JsPath.empty().index(-1)
                                       )
                            .apply(this,
                                   this
@@ -264,7 +263,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
 
         return MapFunctions._mapArrJsObj__(requireNonNull(fn),
                                            requireNonNull(predicate),
-                                           MINUS_ONE_INDEX
+                                           JsPath.empty().index(-1)
                                           )
                            .apply(this,
                                   this
@@ -279,7 +278,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFunctions._mapArrJsObj__(requireNonNull(fn),
                                            (p, o) -> true,
-                                           MINUS_ONE_INDEX
+                                           JsPath.empty().index(-1)
                                           )
                            .apply(this,
                                   this
@@ -315,7 +314,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return filterValues_(this,
                              requireNonNull(filter),
-                             MINUS_ONE_INDEX
+                             JsPath.empty().index(-1)
                             );
     }
 
@@ -376,7 +375,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
         return FilterFunctions._filterArrObjs__(requireNonNull(filter),
-                                                MINUS_ONE_INDEX
+                                                JsPath.empty().index(-1)
                                                )
                               .apply(this);
     }
@@ -392,7 +391,7 @@ class JsArrayMutableImpl extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     public final JsArray filterKeys_(final Predicate<? super JsPair> filter)
     {
         return FilterFunctions._filterArrKeys__(requireNonNull(filter),
-                                                MINUS_ONE_INDEX
+                                                JsPath.empty().index(-1)
                                                )
                               .apply(this);
 

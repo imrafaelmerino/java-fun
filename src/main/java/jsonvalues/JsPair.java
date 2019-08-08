@@ -359,6 +359,15 @@ public final class JsPair
                                                                                               );
     }
 
+    /**
+     Declarative way of implementing an if-else. This pair is tested on a given predicate, executing
+     the ifTrue function when true and the ifFalse function otherwise
+     @param predicate the given predicate
+     @param ifTrue function to invoked when the predicate is evaluated to true, taking this pair as a parameter
+     @param ifFalse function to invoked when the predicate is evaluated to false, taking this pair as a parameter
+     @param <R> the type of the returned value
+     @return an object of type R
+     */
     public <R> R ifElse(final Predicate<? super JsPair> predicate,
                         final Function<? super JsPair, R> ifTrue,
                         final Function<? super JsPair, R> ifFalse
@@ -367,14 +376,11 @@ public final class JsPair
         return requireNonNull(predicate).test(this) ? requireNonNull(ifTrue).apply(this) : requireNonNull(ifFalse).apply(this);
     }
 
-    public <R> R ifElse(final Predicate<? super JsPair> predicate,
-                        final Supplier<R> ifTrue,
-                        final Supplier<R> ifFalse
-                       )
-    {
-        return requireNonNull(predicate).test(this) ? requireNonNull(ifTrue).get() : requireNonNull(ifFalse).get();
-    }
-
+    /**
+     Consumes this pair if it's evaluated to true o a given predicate
+     @param predicate the given predicate
+     @param consumer the consumer that it's invoked if the predicate is evaluated to true
+     */
     public void consumeIf(final Predicate<JsPair> predicate,
                           final Consumer<JsPair> consumer
                          )

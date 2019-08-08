@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.MINUS_ONE_INDEX;
 
 class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 {
@@ -103,7 +102,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrElems(requireNonNull(fn),
                                         p -> true,
-                                        Functions.MINUS_ONE_INDEX
+                                        JsPath.empty().index(-1)
                                        )
                            .apply(this)
                            .get();
@@ -117,7 +116,8 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrElems(requireNonNull(fn),
                                         requireNonNull(predicate),
-                                        Functions.MINUS_ONE_INDEX
+                                        JsPath.empty()
+                                              .index(-1)
                                        )
                            .apply(this)
                            .get();
@@ -128,7 +128,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrElems_(requireNonNull(fn),
                                          it -> true,
-                                         MINUS_ONE_INDEX
+                                         JsPath.empty().index(-1)
                                         )
                            .apply(this)
                            .get();
@@ -141,7 +141,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrElems_(requireNonNull(fn),
                                          requireNonNull(predicate),
-                                         MINUS_ONE_INDEX
+                                         JsPath.empty().index(-1)
                                         )
                            .apply(this)
                            .get();
@@ -167,7 +167,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrKeys_(requireNonNull(fn),
                                         it -> true,
-                                        MINUS_ONE_INDEX
+                                        JsPath.empty().index(-1)
                                        )
                            .apply(this)
                            .get();
@@ -181,7 +181,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrKeys_(requireNonNull(fn),
                                         requireNonNull(predicate),
-                                        MINUS_ONE_INDEX
+                                        JsPath.empty().index(-1)
                                        )
                            .apply(this)
                            .get();
@@ -197,7 +197,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 
         return MapFunctions.mapArrJsObj(requireNonNull(fn),
                                         requireNonNull(predicate),
-                                        MINUS_ONE_INDEX
+                                        JsPath.empty().index(-1)
                                        )
                            .apply(this)
                            .get();
@@ -210,7 +210,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrJsObj(requireNonNull(fn),
                                         (p, o) -> true,
-                                        MINUS_ONE_INDEX
+                                        JsPath.empty().index(-1)
                                        )
                            .apply(this)
                            .get();
@@ -223,7 +223,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrJsObj_(requireNonNull(fn),
                                          requireNonNull(predicate),
-                                         MINUS_ONE_INDEX
+                                         JsPath.empty().index(-1)
                                         )
                            .apply(this)
                            .get();
@@ -234,7 +234,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     {
         return MapFunctions.mapArrJsObj_(requireNonNull(fn),
                                          (p, o) -> true,
-                                         MINUS_ONE_INDEX
+                                         JsPath.empty().index(-1)
                                         )
                            .apply(this)
                            .get();
@@ -245,7 +245,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     public final JsArray filterElems(final Predicate<? super JsPair> filter)
     {
         return FilterFunctions.filterElems(requireNonNull(filter),
-                                           MINUS_ONE_INDEX
+                                           JsPath.empty().index(-1)
                                           )
                               .apply(this)
                               .get();
@@ -257,7 +257,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
         return FilterFunctions.filterArrElems_(requireNonNull(filter),
-                                               MINUS_ONE_INDEX
+                                               JsPath.empty().index(-1)
                                               )
                               .apply(this)
                               .get();
@@ -267,7 +267,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
         return FilterFunctions.filterArrObjs(requireNonNull(filter),
-                                             MINUS_ONE_INDEX
+                                             JsPath.empty().index(-1)
                                             )
                               .apply(this)
                               .get();
@@ -279,7 +279,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
         return FilterFunctions.filterArrJsObjs_(requireNonNull(filter),
-                                                MINUS_ONE_INDEX
+                                                JsPath.empty().index(-1)
                                                )
                               .apply(this)
                               .get();
@@ -297,7 +297,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     public final JsArray filterKeys_(final Predicate<? super JsPair> filter)
     {
         return FilterFunctions.filterArrKeys_(requireNonNull(filter),
-                                              MINUS_ONE_INDEX
+                                              JsPath.empty().index(-1)
                                              )
                               .apply(this)
                               .get();

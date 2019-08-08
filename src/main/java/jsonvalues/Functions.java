@@ -5,7 +5,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
 import java.util.function.*;
 
 import static java.util.Objects.requireNonNull;
@@ -19,14 +18,9 @@ import static jsonvalues.MyScalaImpl.Map.EMPTY;
 class Functions
 {
 
-    @SuppressWarnings("squid:S00117") //  perfectly fine using _ to name constant
-    static final JsPath MINUS_ONE_INDEX = JsPath.empty()
-                                                .index(-1);
-
     private Functions()
     {
     }
-
 
 
     static JsElem get(final JsElem elem,
@@ -435,9 +429,10 @@ class Functions
                 case VALUE_NULL:
                     JsPair.of(currentPath,
                               NULL
-                             ).consumeIf(condition,
-                              p -> root.appendBack(options.elemMap.apply(p))
-                             );
+                             )
+                          .consumeIf(condition,
+                                     p -> root.appendBack(options.elemMap.apply(p))
+                                    );
                     break;
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
@@ -718,54 +713,59 @@ class Functions
                 case VALUE_STRING:
                     JsPair.of(currentPath,
                               parser.getJsString()
-                             ).consumeIf(condition,
-                              p -> root.update(key,
-                                               options.elemMap.apply(p)
-                                              )
-                             );
+                             )
+                          .consumeIf(condition,
+                                     p -> root.update(key,
+                                                      options.elemMap.apply(p)
+                                                     )
+                                    );
 
                     break;
                 case VALUE_NUMBER:
                     JsPair.of(currentPath,
                               parser.getJsNumber()
-                             ).consumeIf(condition,
-                              p -> root.update(key,
-                                               options.elemMap.apply(p)
-                                              )
-                             );
+                             )
+                          .consumeIf(condition,
+                                     p -> root.update(key,
+                                                      options.elemMap.apply(p)
+                                                     )
+                                    );
 
                     break;
                 case VALUE_FALSE:
                     JsPair.of(currentPath,
                               FALSE
-                             ).consumeIf(condition,
-                              p -> root.update(key,
-                                               options.elemMap
-                                               .apply(p)
-                                              )
-                             );
+                             )
+                          .consumeIf(condition,
+                                     p -> root.update(key,
+                                                      options.elemMap
+                                                      .apply(p)
+                                                     )
+                                    );
 
                     break;
                 case VALUE_TRUE:
                     JsPair.of(currentPath,
                               TRUE
-                             ).consumeIf(condition,
-                              p -> root.update(key,
-                                               options.elemMap
-                                               .apply(p)
-                                              )
-                             );
+                             )
+                          .consumeIf(condition,
+                                     p -> root.update(key,
+                                                      options.elemMap
+                                                      .apply(p)
+                                                     )
+                                    );
 
                     break;
                 case VALUE_NULL:
                     JsPair.of(currentPath,
                               NULL
-                             ).consumeIf(condition,
-                              p -> root.update(key,
-                                               options.elemMap
-                                               .apply(p)
-                                              )
-                             );
+                             )
+                          .consumeIf(condition,
+                                     p -> root.update(key,
+                                                      options.elemMap
+                                                      .apply(p)
+                                                     )
+                                    );
 
                     break;
                 case START_OBJECT:
@@ -814,188 +814,6 @@ class Functions
     }
 
 
-    static OptionalDouble bigDecimalToDouble(BigDecimal bigDecimal)
-    {
-
-        final double value = bigDecimal.doubleValue();
-        if (value == Double.NEGATIVE_INFINITY) return OptionalDouble.empty();
-        if (value == Double.POSITIVE_INFINITY) return OptionalDouble.empty();
-        return OptionalDouble.of(value);
-
-    }
-
-    static OptionalInt bigIntToInt(BigInteger bigInteger)
-    {
-        try
-        {
-            return OptionalInt.of(bigInteger.intValueExact());
-        }
-        catch (Exception e)
-        {
-            return OptionalInt.empty();
-        }
-
-    }
-
-    static OptionalInt bigDecimalToInt(BigDecimal bigDecimal)
-    {
-
-        try
-        {
-            return OptionalInt.of(bigDecimal.intValueExact());
-        }
-        catch (Exception e)
-        {
-            return OptionalInt.empty();
-        }
-
-    }
-
-    static OptionalLong bigDecimalToLong(BigDecimal bigDecimal)
-    {
-        try
-        {
-            return OptionalLong.of(bigDecimal.longValueExact());
-        }
-        catch (Exception e)
-        {
-            return OptionalLong.empty();
-        }
-
-    }
-
-    static Optional<BigInteger> bigDecimalToBigInteger(BigDecimal bigDecimal)
-    {
-        try
-        {
-            return Optional.of(bigDecimal.toBigIntegerExact());
-        }
-        catch (Exception e)
-        {
-            return Optional.empty();
-        }
-
-    }
-
-    static Optional<BigInteger> doubleToBigInteger(double x)
-    {
-        try
-        {
-            return Optional.ofNullable(BigDecimal.valueOf(x)
-                                                 .toBigIntegerExact());
-        }
-        catch (Exception e)
-        {
-            return Optional.empty();
-        }
-    }
-
-    static boolean equals(BigInteger bigInteger,
-                          BigDecimal bigDecimal
-                         )
-    {
-        final Optional<BigInteger> optional = bigDecimalToBigInteger(bigDecimal);
-        return optional.isPresent() && optional.get()
-                                               .equals(bigInteger);
-    }
-
-    static boolean equals(double d,
-                          BigInteger bigInteger
-                         )
-    {
-
-
-        final Optional<BigInteger> x = doubleToBigInteger(d);
-        return x.isPresent() && x.get()
-                                 .equals(bigInteger);
-    }
-
-    static boolean equals(double d,
-                          BigDecimal bigDecimal
-                         )
-    {
-
-        //errorProne warning BigDecimalEquals -> compareTo instead of equals so 2.0 = 2.000
-        return BigDecimal.valueOf(d)
-                         .compareTo(bigDecimal) == 0;
-    }
-
-    static boolean equals(int x,
-                          BigDecimal bigDecimal
-                         )
-    {
-        final OptionalInt optional = bigDecimalToInt(bigDecimal);
-        return optional.isPresent() && optional.getAsInt() == x;
-    }
-
-    static boolean equals(long x,
-                          BigDecimal bigDecimal
-                         )
-    {
-        final OptionalLong optional = bigDecimalToLong(bigDecimal);
-        return optional.isPresent() && optional.getAsLong() == x;
-    }
-
-    static boolean equals(BigInteger bigInteger,
-                          long x
-                         )
-    {
-        final OptionalLong optional = bigIntToLong(bigInteger);
-        return optional.isPresent() && optional.getAsLong() == x;
-    }
-
-    static boolean equals(BigInteger bigInteger,
-                          int x
-                         )
-    {
-        final OptionalInt optional = bigIntToInt(bigInteger);
-        return optional.isPresent() && optional.getAsInt() == x;
-    }
-
-    static boolean equals(BigDecimal bigDecimal,
-                          long x
-                         )
-    {
-        final OptionalLong optional = bigDecimalToLong(bigDecimal);
-        return optional.isPresent() && optional.getAsLong() == x;
-    }
-
-    static boolean equals(BigDecimal bigDecimal,
-                          int x
-                         )
-    {
-        final OptionalInt optional = bigDecimalToInt(bigDecimal);
-        return optional.isPresent() && optional.getAsInt() == x;
-    }
-
-    static OptionalLong bigIntToLong(BigInteger bigInteger)
-    {
-        try
-        {
-            return OptionalLong.of(bigInteger.longValueExact());
-        }
-        catch (Exception e)
-        {
-            return OptionalLong.empty();
-        }
-
-    }
-
-    static OptionalInt longToInt(Long a)
-    {
-        try
-        {
-            return OptionalInt.of(Math.toIntExact(a));
-        }
-        catch (Exception e)
-        {
-            return OptionalInt.empty();
-        }
-    }
-
-
-
-
     private static MyScalaImpl.Map updateIfCondition(Predicate<? super JsPair> condition,
                                                      Function<? super JsPair, ? extends JsElem> elemMap,
                                                      MyScalaImpl.Map pmap,
@@ -1004,13 +822,10 @@ class Functions
                                                     )
     {
 
-
         return (condition.test(pair)) ? pmap.update(key,
                                                     elemMap.apply(pair)
                                                    ) : pmap;
     }
-
-
 
 
 }

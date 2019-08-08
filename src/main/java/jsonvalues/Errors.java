@@ -34,9 +34,6 @@ class Errors
                                                              )).apply(l);
     }
 
-    ;
-
-
     private static UnaryOperator<JsElem> errorIfMutable(Supplier<String> message)
     {
         return errorIf(e -> e.isJson() && e.asJson()
@@ -87,25 +84,5 @@ class Errors
             }
             return l;
         };
-    }
-
-    static UnaryOperator<JsElem> headInEmptyObj(Function<JsElem, String> message)
-    {
-        return e -> e;
-    }
-
-    static UnaryOperator<JsElem> headInEmptyArray(Function<JsElem, String> message)
-    {
-        return e -> e;
-    }
-
-    static UnaryOperator<JsElem> tailnEmptyObj(Function<JsElem, String> message)
-    {
-        return e -> e;
-    }
-
-    static UnaryOperator<JsElem> tailInEmptyArray(Function<JsElem, String> message)
-    {
-        return e -> e;
     }
 }

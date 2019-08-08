@@ -22,7 +22,7 @@ import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 
-abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends AbstractJson implements JsArray
+abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implements JsArray
 
 {
     public static final long serialVersionUID = 1L;
@@ -149,13 +149,6 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                        requireNonNull(array)
                                       ).get();
 
-    }
-
-    static Trampoline<JsArray> appendFront(final JsElem head,
-                                           final Trampoline<Trampoline<JsArray>> tail
-                                          )
-    {
-        return more(tail).map(it -> it.prepend(head));
     }
 
     @Override
@@ -426,9 +419,8 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                                                                   otherTail
                                                                                  );
 
-        if (head.equals(otherHead)) return appendFront(head,
-                                                       tailCall
-                                                      );
+        if (head.equals(otherHead)) return more(tailCall).map(it -> it.prepend(head));
+
         return more(tailCall);
 
 
@@ -450,9 +442,8 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                                                                       b
                                                                                      );
 
-        if (b.containsElem(head)) return appendFront(head,
-                                                     tailCall
-                                                    );
+        if (b.containsElem(head)) return more(tailCall).map(it -> it.prepend(head));
+
         return more(tailCall);
     }
 
@@ -470,12 +461,10 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                                                                  b
                                                                                 );
 
-        if (b.containsElem(head) && !tail.containsElem(head)) return appendFront(head,
-                                                                                 tailCall
-                                                                                );
+        if (b.containsElem(head) && !tail.containsElem(head))
+            return more(tailCall).map(it -> it.prepend(head));
+
         return more(tailCall);
-
-
     }
 
     @Override
@@ -507,19 +496,16 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
             final Json<?> obj = head.asJson();
             final Json<?> obj1 = otherHead.asJson();
 
-            Trampoline<? extends Json<?>> headCall = more(() -> intersection_(obj,
-                                                                              obj1,
-                                                                              JsArray.TYPE.LIST
-                                                                             ));
-            return appendFront_(() -> headCall,
-                                () -> tailCall
-                               );
-        } else if (head.equals(otherHead)) return appendFront(head,
-                                                              () -> tailCall
-                                                             );
+            Trampoline<? extends Json<?>> headCall = more(() -> SetTheoryFns.intersection_(obj,
+                                                                                           obj1,
+                                                                                           JsArray.TYPE.LIST
+                                                                                          ));
+
+            return more(() -> tailCall).flatMap(tailResult -> headCall.map(tailResult::prepend));
+
+        } else if (head.equals(otherHead))
+            return more(() -> tailCall).map(it -> it.prepend(head));
         else return more(() -> tailCall);
-
-
     }
 
 
@@ -607,67 +593,18 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return reduce(this,
-                      requireNonNull(op),
-                      requireNonNull(map),
-                      requireNonNull(predicate),
-                      JsPath.empty()
-                            .index(-1),
-                      Optional.empty()
-                     )
-        .get();
-
-    }
-
-    private <T> Trampoline<Optional<T>> reduce(final JsArray arr,
-                                               final BinaryOperator<T> op,
-                                               final Function<? super JsPair, T> fn,
-                                               final Predicate<? super JsPair> predicate,
-                                               final JsPath path,
-                                               final Optional<T> result
-                                              )
-    {
-
-        return arr.ifEmptyElse(done(result),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.inc();
-                                   return ifJsonElse(json -> more(() -> reduce(tail,
-                                                                               op,
-                                                                               fn,
-                                                                               predicate,
-                                                                               headPath,
-                                                                               result
-                                                                              )),
-                                                     elem -> JsPair.of(headPath,
-                                                                       elem
-                                                                      )
-                                                                   .ifElse(predicate,
-                                                                           p -> more(() -> reduce(tail,
-                                                                                                  op,
-                                                                                                  fn,
-                                                                                                  predicate,
-                                                                                                  headPath,
-                                                                                                  reduceElem(p,
-                                                                                                             op,
-                                                                                                             fn,
-                                                                                                             result
-                                                                                                            )
-                                                                                                 )),
-                                                                           p -> more(() -> reduce(tail,
-                                                                                                  op,
-                                                                                                  fn,
-                                                                                                  predicate,
-                                                                                                  headPath,
-                                                                                                  result
-                                                                                                 ))
-                                                                          )
-
-
-                                                    )
-                                   .apply(head);
-                               }
-                              );
+        return ReduceFns.reduceArr_(ReduceFns.accumulateIf(predicate,
+                                                           map,
+                                                           op
+                                                          ),
+                                    JsPath.empty()
+                                          .index(-1),
+                                    false
+                                   )
+                        .apply(this,
+                               Optional.empty()
+                              )
+                        .get();
 
     }
 
@@ -679,76 +616,18 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return reduce_(this,
-                       requireNonNull(op),
-                       requireNonNull(map),
-                       requireNonNull(predicate),
-                       JsPath.empty()
-                             .index(-1),
-                       Optional.empty()
-                      ).get();
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    static <T> Trampoline<Optional<T>> reduce_(final JsArray arr,
-                                               final BinaryOperator<T> op,
-                                               final Function<? super JsPair, T> fn,
-                                               final Predicate<? super JsPair> predicate,
-                                               final JsPath path,
-                                               final Optional<T> result
-                                              )
-    {
-
-
-        return arr.ifEmptyElse(done(result),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.inc();
-
-                                   return ifJsonElse(json -> more(() -> reduce_(json,
-                                                                                op,
-                                                                                fn,
-                                                                                predicate,
-                                                                                headPath,
-                                                                                result
-                                                                               )
-                                                                 ).flatMap(r -> reduce_(tail,
-                                                                                        op,
-                                                                                        fn,
-                                                                                        predicate,
-                                                                                        path,
-                                                                                        r
-                                                                                       )),
-                                                     elem -> JsPair.of(headPath,
-                                                                       elem
-                                                                      )
-                                                                   .ifElse(predicate,
-                                                                           p -> more(() -> reduce_(tail,
-                                                                                                   op,
-                                                                                                   fn,
-                                                                                                   predicate,
-                                                                                                   headPath,
-                                                                                                   reduceElem(p,
-                                                                                                              op,
-                                                                                                              fn,
-                                                                                                              result
-                                                                                                             )
-                                                                                                  )),
-                                                                           p -> more(() -> reduce_(tail,
-                                                                                                   op,
-                                                                                                   fn,
-                                                                                                   predicate,
-                                                                                                   headPath,
-                                                                                                   result
-                                                                                                  ))
-                                                                          )
-
-                                                    )
-                                   .apply(head);
-                               }
-                              );
-
-
+        return ReduceFns.reduceArr_(ReduceFns.accumulateIf(predicate,
+                                                           map,
+                                                           op
+                                                          ),
+                                    JsPath.empty()
+                                          .index(-1),
+                                    true
+                                   )
+                        .apply(this,
+                               Optional.empty()
+                              )
+                        .get();
     }
 
     @Override
@@ -861,98 +740,13 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                               )
     {
 
-        return union(this,
-                     requireNonNull(that),
-                     requireNonNull(ARRAY_AS)
-                    ).get();
+        return SetTheoryFns.union(this,
+                                  requireNonNull(that),
+                                  requireNonNull(ARRAY_AS)
+                                 )
+                           .get();
     }
 
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
-    static Trampoline<JsArray> union(JsArray a,
-                                     JsArray b,
-                                     JsArray.TYPE ARRAY_AS
-                                    )
-    {
-
-
-        switch (ARRAY_AS)
-        {
-            case SET:
-                return unionAsSet(a,
-                                  b
-                                 );
-            case LIST:
-                return unionAsList(a,
-                                   b
-                                  );
-            case MULTISET:
-                return unionAsMultiSet(a,
-                                       b
-                                      );
-        }
-
-        throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
-
-    }
-
-    private static Trampoline<JsArray> unionAsList(final JsArray a,
-                                                   final JsArray b
-                                                  )
-    {
-        if (b.isEmpty()) return done(a);
-
-        if (a.isEmpty()) return done(b);
-
-        final Trampoline<JsArray> tailCall = unionAsList(a.tail(),
-                                                         b.tail()
-                                                        );
-        return appendFront(a.head(),
-                           () -> tailCall
-                          );
-
-
-    }
-
-    private static Trampoline<JsArray> unionAsMultiSet(final JsArray a,
-                                                       final JsArray b
-                                                      )
-    {
-        if (b.isEmpty()) return done(a);
-
-        if (a.isEmpty()) return done(b);
-
-        return more(() -> () -> a.appendAll(b));
-
-    }
-
-    private static Trampoline<JsArray> unionAsSet(final JsArray a,
-                                                  final JsArray b
-                                                 )
-    {
-        if (b.isEmpty()) return done(a);
-
-        if (a.isEmpty()) return done(b);
-
-        JsElem last = b.last();
-
-        final Trampoline<JsArray> initCall = unionAsSet(a,
-                                                        b.init()
-                                                       );
-
-        if (!a.containsElem(last)) return appendBack(last,
-                                                     () -> initCall
-                                                    );
-
-
-        return more(() -> initCall);
-    }
-
-    private static Trampoline<JsArray> appendBack(final JsElem head,
-                                                  final Trampoline<Trampoline<JsArray>> tail
-                                                 )
-    {
-        return more(tail).map(it -> it.append(head));
-    }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
@@ -960,54 +754,10 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                )
     {
 
-        return union_(this,
-                      requireNonNull(that)
-                     )
-        .get();
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
-    static Trampoline<JsArray> union_(final JsArray a,
-                                      final JsArray b
-                                     )
-    {
-
-        if (b.isEmpty()) return done(a);
-
-        if (a.isEmpty()) return done(b);
-
-
-        final JsElem head = a.head();
-        final JsElem otherHead = b.head();
-
-        final Trampoline<JsArray> tailCall = union_(a.tail(),
-                                                    b.tail()
-                                                   );
-
-
-        if (head.isJson() && isSameType(otherHead).test(head))
-        {
-
-
-            final Json<?> obj = head.asJson();
-            final Json<?> obj1 = otherHead.asJson();
-
-            Trampoline<? extends Json<?>> headCall = more(() -> union_(obj,
-                                                                       obj1,
-                                                                       JsArray.TYPE.LIST
-                                                                      ));
-
-
-            return appendFront_(() -> headCall,
-                                () -> tailCall
-                               );
-        }
-
-        return appendFront(head,
-                           () -> tailCall
-                          );
-
-
+        return SetTheoryFns.union_(this,
+                                   requireNonNull(that)
+                                  )
+                           .get();
     }
 
     private Trampoline<JsArray> appendAllBackTrampoline(final JsArray arr1,
@@ -1071,48 +821,6 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                                            arr.appendBack(JsNull.NULL),
                                                            e
                                                           ));
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
-    static Trampoline<JsArray> combiner_(final JsArray a,
-                                         final JsArray b
-                                        )
-    {
-        if (b.isEmpty()) return done(a);
-
-        if (a.isEmpty()) return done(b);
-
-
-        final JsElem head = a.head();
-        final JsElem otherHead = b.head();
-
-        final Trampoline<JsArray> tailCall = combiner_(a.tail(),
-                                                       b.tail()
-                                                      );
-
-
-        if (head.isJson() && isSameType(otherHead).test(head))
-        {
-
-
-            final Json<?> obj = head.asJson();
-            final Json<?> obj1 = otherHead.asJson();
-
-            Trampoline<? extends Json<?>> headCall = more(() -> combiner_(obj,
-                                                                          obj1
-                                                                         ));
-
-
-            return appendFront_(() -> headCall,
-                                () -> tailCall
-                               );
-        }
-
-        return appendFront(head.isNull() ? otherHead : head,
-                           () -> tailCall
-                          );
-
-
     }
 
 

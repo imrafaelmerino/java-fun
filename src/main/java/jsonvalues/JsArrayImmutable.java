@@ -15,16 +15,16 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
+class JsArrayImmutable extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
-    static JsArrayImmutableImpl EMPTY = new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY);
+    static JsArrayImmutable EMPTY = new JsArrayImmutable(MyScalaImpl.Vector.EMPTY);
     private volatile int hascode;
     private volatile @Nullable String str;
 
-    JsArrayImmutableImpl(final MyScalaImpl.Vector array)
+    JsArrayImmutable(final MyScalaImpl.Vector array)
     {
         super(array);
     }
@@ -38,7 +38,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     JsObj emptyObject()
     {
-        return JsObjImmutableImpl.EMPTY;
+        return JsObjImmutable.EMPTY;
     }
 
     //equals method is inherited, so it's implemented. The purpose of this method is to cache
@@ -56,7 +56,7 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     JsArray of(final MyScalaImpl.Vector vector)
     {
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     @Override
@@ -68,11 +68,11 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     public JsArray toMutable()
     {
         List<JsElem> acc = new ArrayList<>();
-        array.forEach(accept(acc::add,
+        array.forEach(MatchFns.accept(acc::add,
                              obj -> acc.add(obj.toMutable()),
                              arr -> acc.add(arr.toMutable())
-                            ));
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector(acc));
+                                     ));
+        return new JsArrayMutable(new MyJavaImpl.Vector(acc));
 
     }
 
@@ -100,12 +100,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return MapFunctions.mapArrElems(requireNonNull(fn),
+        return MapFns.mapArrElems(requireNonNull(fn),
                                         p -> true,
-                                        JsPath.empty().index(-1)
-                                       )
-                           .apply(this)
-                           .get();
+                                  JsPath.empty().index(-1)
+                                 )
+                     .apply(this)
+                     .get();
 
     }
 
@@ -114,24 +114,24 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                             final Predicate<? super JsPair> predicate
                            )
     {
-        return MapFunctions.mapArrElems(requireNonNull(fn),
-                                        requireNonNull(predicate),
-                                        JsPath.empty()
+        return MapFns.mapArrElems(requireNonNull(fn),
+                                  requireNonNull(predicate),
+                                  JsPath.empty()
                                               .index(-1)
-                                       )
-                           .apply(this)
-                           .get();
+                                 )
+                     .apply(this)
+                     .get();
     }
 
     @Override
     public JsArray mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return MapFunctions.mapArrElems_(requireNonNull(fn),
+        return MapFns.mapArrElems_(requireNonNull(fn),
                                          it -> true,
-                                         JsPath.empty().index(-1)
-                                        )
-                           .apply(this)
-                           .get();
+                                   JsPath.empty().index(-1)
+                                  )
+                     .apply(this)
+                     .get();
     }
 
     @Override
@@ -139,12 +139,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                              final Predicate<? super JsPair> predicate
                             )
     {
-        return MapFunctions.mapArrElems_(requireNonNull(fn),
-                                         requireNonNull(predicate),
-                                         JsPath.empty().index(-1)
-                                        )
-                           .apply(this)
-                           .get();
+        return MapFns.mapArrElems_(requireNonNull(fn),
+                                   requireNonNull(predicate),
+                                   JsPath.empty().index(-1)
+                                  )
+                     .apply(this)
+                     .get();
     }
 
     @Override
@@ -165,12 +165,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return MapFunctions.mapArrKeys_(requireNonNull(fn),
+        return MapFns.mapArrKeys_(requireNonNull(fn),
                                         it -> true,
-                                        JsPath.empty().index(-1)
-                                       )
-                           .apply(this)
-                           .get();
+                                  JsPath.empty().index(-1)
+                                 )
+                     .apply(this)
+                     .get();
     }
 
     @Override
@@ -179,12 +179,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                   final Predicate<? super JsPair> predicate
                                  )
     {
-        return MapFunctions.mapArrKeys_(requireNonNull(fn),
-                                        requireNonNull(predicate),
-                                        JsPath.empty().index(-1)
-                                       )
-                           .apply(this)
-                           .get();
+        return MapFns.mapArrKeys_(requireNonNull(fn),
+                                  requireNonNull(predicate),
+                                  JsPath.empty().index(-1)
+                                 )
+                     .apply(this)
+                     .get();
 
     }
 
@@ -195,12 +195,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                 )
     {
 
-        return MapFunctions.mapArrJsObj(requireNonNull(fn),
-                                        requireNonNull(predicate),
-                                        JsPath.empty().index(-1)
-                                       )
-                           .apply(this)
-                           .get();
+        return MapFns.mapArrJsObj(requireNonNull(fn),
+                                  requireNonNull(predicate),
+                                  JsPath.empty().index(-1)
+                                 )
+                     .apply(this)
+                     .get();
 
     }
 
@@ -208,12 +208,12 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return MapFunctions.mapArrJsObj(requireNonNull(fn),
-                                        (p, o) -> true,
-                                        JsPath.empty().index(-1)
-                                       )
-                           .apply(this)
-                           .get();
+        return MapFns.mapArrJsObj(requireNonNull(fn),
+                                  (p, o) -> true,
+                                  JsPath.empty().index(-1)
+                                 )
+                     .apply(this)
+                     .get();
     }
 
     @Override
@@ -221,34 +221,34 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
                                   final BiPredicate<? super JsPath, ? super JsObj> predicate
                                  )
     {
-        return MapFunctions.mapArrJsObj_(requireNonNull(fn),
-                                         requireNonNull(predicate),
-                                         JsPath.empty().index(-1)
-                                        )
-                           .apply(this)
-                           .get();
+        return MapFns.mapArrJsObj_(requireNonNull(fn),
+                                   requireNonNull(predicate),
+                                   JsPath.empty().index(-1)
+                                  )
+                     .apply(this)
+                     .get();
     }
 
     @Override
     public final JsArray mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return MapFunctions.mapArrJsObj_(requireNonNull(fn),
-                                         (p, o) -> true,
-                                         JsPath.empty().index(-1)
-                                        )
-                           .apply(this)
-                           .get();
+        return MapFns.mapArrJsObj_(requireNonNull(fn),
+                                   (p, o) -> true,
+                                   JsPath.empty().index(-1)
+                                  )
+                     .apply(this)
+                     .get();
     }
 
 
     @Override
     public final JsArray filterElems(final Predicate<? super JsPair> filter)
     {
-        return FilterFunctions.filterElems(requireNonNull(filter),
-                                           JsPath.empty().index(-1)
-                                          )
-                              .apply(this)
-                              .get();
+        return FilterFns.filterElems(requireNonNull(filter),
+                                     JsPath.empty().index(-1)
+                                    )
+                        .apply(this)
+                        .get();
     }
 
 
@@ -256,21 +256,21 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
-        return FilterFunctions.filterArrElems_(requireNonNull(filter),
-                                               JsPath.empty().index(-1)
-                                              )
-                              .apply(this)
-                              .get();
+        return FilterFns.filterArrElems_(requireNonNull(filter),
+                                         JsPath.empty().index(-1)
+                                        )
+                        .apply(this)
+                        .get();
     }
 
     @Override
     public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return FilterFunctions.filterArrObjs(requireNonNull(filter),
-                                             JsPath.empty().index(-1)
-                                            )
-                              .apply(this)
-                              .get();
+        return FilterFns.filterArrObjs(requireNonNull(filter),
+                                       JsPath.empty().index(-1)
+                                      )
+                        .apply(this)
+                        .get();
     }
 
 
@@ -278,11 +278,11 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return FilterFunctions.filterArrJsObjs_(requireNonNull(filter),
-                                                JsPath.empty().index(-1)
-                                               )
-                              .apply(this)
-                              .get();
+        return FilterFns.filterArrJsObjs_(requireNonNull(filter),
+                                          JsPath.empty().index(-1)
+                                         )
+                        .apply(this)
+                        .get();
 
     }
 
@@ -296,11 +296,11 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
     @Override
     public final JsArray filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return FilterFunctions.filterArrKeys_(requireNonNull(filter),
-                                              JsPath.empty().index(-1)
-                                             )
-                              .apply(this)
-                              .get();
+        return FilterFns.filterArrKeys_(requireNonNull(filter),
+                                        JsPath.empty().index(-1)
+                                       )
+                        .apply(this)
+                        .get();
 
     }
 
@@ -323,8 +323,8 @@ class JsArrayImmutableImpl extends AbstractJsArray<MyScalaImpl.Vector, JsObj>
         final String json = (String) s.readObject();
         try
         {
-            array = ((JsArrayImmutableImpl) JsArray.parse(json)
-                                                   .orElseThrow()).array;
+            array = ((JsArrayImmutable) JsArray.parse(json)
+                                               .orElseThrow()).array;
         }
         catch (MalformedJson malformedJson)
         {

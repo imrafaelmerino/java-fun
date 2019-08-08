@@ -9,7 +9,7 @@ import static jsonvalues.MatchFns.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class FilterFunctions
+class FilterFns
 {
     //squid:S00100_ naming convention: xx_ traverses the whole json
     @SuppressWarnings("squid:S00100")

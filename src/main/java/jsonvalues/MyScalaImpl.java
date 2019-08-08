@@ -225,13 +225,13 @@ class MyScalaImpl
                     case START_OBJECT:
                         final MyScalaImpl.Map newObj = EMPTY.parse(parser);
                         newRoot = newRoot.update(key,
-                                                 new JsObjImmutableImpl(newObj)
+                                                 new JsObjImmutable(newObj)
                                                 );
                         break;
                     case START_ARRAY:
                         final MyScalaImpl.Vector newArr = MyScalaImpl.Vector.EMPTY.parse(parser);
                         newRoot = newRoot.update(key,
-                                                 new JsArrayImmutableImpl(newArr)
+                                                 new JsArrayImmutable(newArr)
                                                 );
                         break;
 
@@ -304,10 +304,10 @@ class MyScalaImpl
                         if (options.keyFilter.test(currentPath))
                         {
                             newRoot = newRoot.update(key,
-                                                     new JsObjImmutableImpl(EMPTY.parse(parser,
-                                                                                        options,
-                                                                                        currentPath
-                                                                                       ))
+                                                     new JsObjImmutable(EMPTY.parse(parser,
+                                                                                    options,
+                                                                                    currentPath
+                                                                                   ))
                                                     );
                         }
                         break;
@@ -315,10 +315,10 @@ class MyScalaImpl
                         if (options.keyFilter.test(currentPath))
                         {
                             newRoot = newRoot.update(key,
-                                                     new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY.parse(parser,
-                                                                                                             options,
-                                                                                                             currentPath.index(-1)
-                                                                                                            ))
+                                                     new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser,
+                                                                                                         options,
+                                                                                                         currentPath.index(-1)
+                                                                                                        ))
                                                     );
                         }
                         break;
@@ -529,13 +529,13 @@ class MyScalaImpl
                         break;
                     case START_OBJECT:
                         final MyScalaImpl.Map newObj = MyScalaImpl.Map.EMPTY.parse(parser);
-                        newRoot = newRoot.appendBack(new JsObjImmutableImpl(newObj));
+                        newRoot = newRoot.appendBack(new JsObjImmutable(newObj));
                         break;
 
                     case START_ARRAY:
                         final MyScalaImpl.Vector newVector = EMPTY.parse(parser);
 
-                        newRoot = newRoot.appendBack(new JsArrayImmutableImpl(newVector));
+                        newRoot = newRoot.appendBack(new JsArrayImmutable(newVector));
                         break;
                 }
             }
@@ -599,19 +599,19 @@ class MyScalaImpl
                     case START_OBJECT:
                         if (options.keyFilter.test(currentPath))
                         {
-                            newRoot = newRoot.appendBack(new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY.parse(parser,
-                                                                                                            options,
-                                                                                                            currentPath
-                                                                                                           )));
+                            newRoot = newRoot.appendBack(new JsObjImmutable(MyScalaImpl.Map.EMPTY.parse(parser,
+                                                                                                        options,
+                                                                                                        currentPath
+                                                                                                       )));
                         }
                         break;
                     case START_ARRAY:
                         if (options.keyFilter.test(currentPath))
                         {
-                            newRoot = newRoot.appendBack(new JsArrayImmutableImpl(EMPTY.parse(parser,
-                                                                                              options,
-                                                                                              currentPath.index(-1)
-                                                                                             )));
+                            newRoot = newRoot.appendBack(new JsArrayImmutable(EMPTY.parse(parser,
+                                                                                          options,
+                                                                                          currentPath.index(-1)
+                                                                                         )));
                         }
 
                         break;

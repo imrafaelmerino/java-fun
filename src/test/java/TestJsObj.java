@@ -507,7 +507,7 @@ public class TestJsObj
                                              });
 
             final Optional<String> reduced_ = obj1.reduce_(String::concat,
-                                                           p ->
+                                                          p ->
                                                            {
                                                                Assertions.assertEquals(p.elem,
                                                                                        obj1.get(p.path)

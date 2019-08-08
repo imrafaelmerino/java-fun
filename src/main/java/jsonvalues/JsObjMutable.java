@@ -21,30 +21,30 @@ import static jsonvalues.MatchFns.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
+class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
 {
     public static final long serialVersionUID = 1L;
 
-    JsObjMutableImpl(final MyJavaImpl.Map map)
+    JsObjMutable(final MyJavaImpl.Map map)
     {
         super(map);
     }
 
-    JsObjMutableImpl()
+    JsObjMutable()
     {
         super(new MyJavaImpl.Map());
     }
 
     @Override
-    JsArrayMutableImpl emptyArray()
+    JsArrayMutable emptyArray()
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector());
+        return new JsArrayMutable(new MyJavaImpl.Vector());
     }
 
     @Override
     JsObj emptyObject()
     {
-        return new JsObjMutableImpl(new MyJavaImpl.Map());
+        return new JsObjMutable(new MyJavaImpl.Map());
     }
 
     @Override
@@ -56,7 +56,7 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @Override
     JsObj of(final MyJavaImpl.Map map)
     {
-        return new JsObjMutableImpl(map);
+        return new JsObjMutable(map);
     }
 
     private static Trampoline<JsObj> removeOldKeyAndPutNew(final String oldKey,
@@ -81,18 +81,18 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
         Map<String, JsElem> acc = new HashMap<>();
         @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
         final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) map.fields();
-        keys.forEach(key -> accept(val -> acc.put(key,
-                                                  val
-                                                 ),
+        keys.forEach(key -> MatchFns.accept(val -> acc.put(key,
+                                                           val
+                                                          ),
                                    obj -> acc.put(key,
                                                   obj.toImmutable()
                                                  ),
                                    arr -> acc.put(key,
                                                   arr.toImmutable()
                                                  )
-                                  ).accept(map.get(key))
+                                           ).accept(map.get(key))
                     );
-        return new JsObjImmutableImpl(MyScalaImpl.Map.EMPTY.updateAll(acc));
+        return new JsObjImmutable(MyScalaImpl.Map.EMPTY.updateAll(acc));
 
     }
 
@@ -179,14 +179,14 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return MapFunctions._mapElems__(requireNonNull(fn),
+        return MapFns._mapElems__(requireNonNull(fn),
                                         p -> true,
-                                        JsPath.empty()
-                                       )
-                           .apply(this,
+                                  JsPath.empty()
+                                 )
+                     .apply(this,
                                   this
                                  )
-                           .get();
+                     .get();
     }
 
     @Override
@@ -195,14 +195,14 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                  final Predicate<? super JsPair> predicate
                                 )
     {
-        return MapFunctions._mapElems__(requireNonNull(fn),
-                                        requireNonNull(predicate),
-                                        JsPath.empty()
-                                       )
-                           .apply(this,
+        return MapFns._mapElems__(requireNonNull(fn),
+                                  requireNonNull(predicate),
+                                  JsPath.empty()
+                                 )
+                     .apply(this,
                                   this
                                  )
-                           .get();
+                     .get();
     }
 
 
@@ -275,14 +275,14 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return MapFunctions._mapKeys__(requireNonNull(fn),
+        return MapFns._mapKeys__(requireNonNull(fn),
                                        p -> true,
-                                       JsPath.empty()
-                                      )
-                           .apply(this,
+                                 JsPath.empty()
+                                )
+                     .apply(this,
                                   this
                                  )
-                           .get();
+                     .get();
 
     }
 
@@ -292,14 +292,14 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return MapFunctions._mapKeys__(requireNonNull(fn),
-                                       requireNonNull(predicate),
-                                       JsPath.empty()
-                                      )
-                           .apply(this,
+        return MapFns._mapKeys__(requireNonNull(fn),
+                                 requireNonNull(predicate),
+                                 JsPath.empty()
+                                )
+                     .apply(this,
                                   this
                                  )
-                           .get();
+                     .get();
     }
 
 
@@ -384,28 +384,28 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
     {
-        return MapFunctions._mapJsObj__(requireNonNull(fn),
-                                        requireNonNull(predicate),
-                                        JsPath.empty()
-                                       )
-                           .apply(this,
+        return MapFns._mapJsObj__(requireNonNull(fn),
+                                  requireNonNull(predicate),
+                                  JsPath.empty()
+                                 )
+                     .apply(this,
                                   this
                                  )
-                           .get();
+                     .get();
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return MapFunctions._mapJsObj__(requireNonNull(fn),
-                                        (p, o) -> true,
-                                        JsPath.empty()
-                                       )
-                           .apply(this,
+        return MapFns._mapJsObj__(requireNonNull(fn),
+                                  (p, o) -> true,
+                                  JsPath.empty()
+                                 )
+                     .apply(this,
                                   this
                                  )
-                           .get();
+                     .get();
     }
 
 
@@ -461,10 +461,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
                               pair.path
                              );
             else if (pair.elem.isArray())
-                JsArrayMutableImpl.filterValues_(pair.elem.asJsArray(),
-                                                 predicate,
-                                                 pair.path.index(-1)
-                                                );
+                JsArrayMutable.filterValues_(pair.elem.asJsArray(),
+                                             predicate,
+                                             pair.path.index(-1)
+                                            );
         }
 
         return obj;
@@ -494,10 +494,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return FilterFunctions._filterObjObjs__(requireNonNull(filter),
-                                                JsPath.empty()
-                                               )
-                              .apply(this);
+        return FilterFns._filterObjObjs__(requireNonNull(filter),
+                                          JsPath.empty()
+                                         )
+                        .apply(this);
     }
 
 
@@ -523,10 +523,10 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return FilterFunctions._filterObjKeys__(requireNonNull(filter),
-                                                JsPath.empty()
-                                               )
-                              .apply(this);
+        return FilterFns._filterObjKeys__(requireNonNull(filter),
+                                          JsPath.empty()
+                                         )
+                        .apply(this);
 
     }
 
@@ -545,8 +545,8 @@ class JsObjMutableImpl extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutableImpl>
         final String json = (String) s.readObject();
         try
         {
-            map = ((JsObjMutableImpl) JsObj._parse_(json)
-                                           .orElseThrow()).map;
+            map = ((JsObjMutable) JsObj._parse_(json)
+                                       .orElseThrow()).map;
         }
         catch (MalformedJson malformedJson)
         {

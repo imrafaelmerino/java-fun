@@ -14,6 +14,29 @@ public class MatchFns
     }
 
     /**
+     Declarative way of consuming an element based on its type
+     @param ifValue the consumer to be invoked if this JsElem is a JsValue
+     @param ifObj the consumer to be invoked if this JsElem is a JsObj
+     @param ifArray the consumer to be invoked if this JsElem is a JsArray
+     */
+    static Consumer<JsElem> accept(final Consumer<JsElem> ifValue,
+                                   final Consumer<JsObj> ifObj,
+                                   final Consumer<JsArray> ifArray
+                                  )
+    {
+        requireNonNull(ifValue);
+        requireNonNull(ifObj);
+        requireNonNull(ifArray);
+        return e ->
+        {
+            if (e.isNotJson()) ifValue.accept(e);
+            if (e.isObj()) ifObj.accept(e.asJsObj());
+            if (e.isArray()) ifArray.accept(e.asJsArray());
+        };
+
+    }
+
+    /**
      Declarative way of implementing if(this.isArray()) return ifArr.apply(this.asJsArray()) else return ifNotArr.apply(this)
      @param ifArr the function to be applied if this JsElem is a JsArray
      @param ifNotArr the function to be applied if this JsElem is not a JsArray

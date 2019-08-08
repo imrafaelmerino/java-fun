@@ -5,14 +5,12 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static jsonvalues.AbstractJsObj.put;
-import static jsonvalues.AbstractJson.put_;
 import static jsonvalues.MatchFns.ifJsonElse;
 import static jsonvalues.MatchFns.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class MapFunctions
+class MapFns
 {
     static Function<JsArray, Trampoline<JsArray>> mapArrJsObj(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                                               final BiPredicate<? super JsPath, ? super JsObj> predicate,
@@ -693,52 +691,64 @@ class MapFunctions
                                                                                                                       ).apply(acc,
                                                                                                                               tail
                                                                                                                              ));
-                                                             return ifJsonElse(json -> JsPair.of(headPath,
-                                                                                                 json
-                                                                                                )
-                                                                                             .ifElse(p -> predicate.test(p.path,
-                                                                                                                         json
-                                                                                                                        ),
-                                                                                                     p -> put_(JsPath.of(head.getKey()),
-                                                                                                               () ->
-                                                                                                               {
-                                                                                                                   final JsObj mapped = fn.apply(headPath,
-                                                                                                                                                 json
-                                                                                                                                                );
+                                                             return ifJsonElse(json ->
+                                                                               {
+                                                                                   return JsPair.of(headPath,
+                                                                                                    json
+                                                                                                   )
+                                                                                                .ifElse(p -> predicate.test(p.path,
+                                                                                                                            json
+                                                                                                                           ),
+                                                                                                        p ->
+                                                                                                        {
+                                                                                                            final JsObj mapped = fn.apply(headPath,
+                                                                                                                                          json
+                                                                                                                                         );
 
-                                                                                                                   return _mapJsObj__(fn,
-                                                                                                                                      predicate,
-                                                                                                                                      headPath
-                                                                                                                                     ).apply(mapped,
-                                                                                                                                             mapped
-                                                                                                                                            );
-                                                                                                               },
-                                                                                                               () -> tailCall
-                                                                                                              ),
-                                                                                                     p -> put_(JsPath.of(head.getKey()),
-                                                                                                               () -> _mapJsObj__(fn,
-                                                                                                                                 predicate,
-                                                                                                                                 headPath
-                                                                                                                                ).apply(json,
-                                                                                                                                        json
-                                                                                                                                       ),
-                                                                                                               () -> tailCall
-                                                                                                              )
-                                                                                                    )
+                                                                                                            return more(() -> tailCall).flatMap(tailResult -> _mapJsObj__(fn,
+                                                                                                                                                                          predicate,
+                                                                                                                                                                          headPath
+                                                                                                                                                                         ).apply(mapped,
+                                                                                                                                                                                 mapped
+                                                                                                                                                                                )
+                                                                                                                                                                          .map(mapped_ ->
+                                                                                                                                                                               tailResult.put(head.getKey(),
+                                                                                                                                                                                              mapped_
+                                                                                                                                                                                             )
+                                                                                                                                                                              )
+                                                                                                                                               );
+
+                                                                                                        },
+                                                                                                        p -> more(() -> tailCall).flatMap(tailResult -> _mapJsObj__(fn,
+                                                                                                                                                                    predicate,
+                                                                                                                                                                    headPath
+                                                                                                                                                                   ).apply(json,
+                                                                                                                                                                           json
+                                                                                                                                                                          )
+                                                                                                                                                                    .map(it ->
+                                                                                                                                                                         tailResult.put(head.getKey(),
+                                                                                                                                                                                        it
+                                                                                                                                                                                       )
+                                                                                                                                                                        )
+                                                                                                                                         )
+                                                                                                       );
+                                                                               }
                                                              ,
-                                                                               arr -> put_(JsPath.of(head.getKey()),
-                                                                                           () -> _mapArrJsObj__(fn,
-                                                                                                                predicate,
-                                                                                                                headPath.index(-1)
-                                                                                                               ).apply(arr,
-                                                                                                                       arr
-                                                                                                                      ),
-                                                                                           () -> tailCall
-                                                                                          ),
-                                                                               value -> put(head.getKey(),
-                                                                                            value,
-                                                                                            () -> tailCall
-                                                                                           )
+                                                                               arr -> more(() -> tailCall).flatMap(tailResult -> _mapArrJsObj__(fn,
+                                                                                                                                                predicate,
+                                                                                                                                                headPath.index(-1)
+                                                                                                                                               ).apply(arr,
+                                                                                                                                                       arr
+                                                                                                                                                      )
+                                                                                                                                                .map(it ->
+                                                                                                                                                     tailResult.put(head.getKey(),
+                                                                                                                                                                    it
+                                                                                                                                                                   )
+                                                                                                                                                    )
+                                                                                                                  ),
+                                                                               value -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                                                              value
+                                                                                                                             ))
                                                                               )
                                                              .apply(head.getValue());
                                                          }
@@ -930,7 +940,6 @@ class MapFunctions
                                                          }
                                                         );
     }
-
 
 
 }

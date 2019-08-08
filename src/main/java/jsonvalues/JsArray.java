@@ -34,7 +34,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _empty_()
     {
-        return new JsArrayMutableImpl();
+        return new JsArrayMutable();
     }
 
     /**
@@ -49,7 +49,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final List<JsElem> list)
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector(Errors.<List<JsElem>>errorIfAnyImmutableInOf().apply(list)));
+        return new JsArrayMutable(new MyJavaImpl.Vector(Errors.<List<JsElem>>errorIfAnyImmutable().apply(list)));
 
     }
 
@@ -63,7 +63,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsElem e)
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -78,8 +78,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e1
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e1))
-                                                             .appendFront(errorIfImmutableArg.apply(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -98,9 +98,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e2))
-                                                             .appendFront(errorIfImmutableArg.apply(e1))
-                                                             .appendFront(errorIfImmutableArg.apply(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e2))
+                                                         .appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -119,10 +119,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e3
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e3))
-                                                             .appendFront(errorIfImmutableArg.apply(e2))
-                                                             .appendFront(errorIfImmutableArg.apply(e1))
-                                                             .appendFront(errorIfImmutableArg.apply(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e3))
+                                                         .appendFront(errorIfImmutableArg.apply(e2))
+                                                         .appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -145,11 +145,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e4
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e4))
-                                                             .appendFront(errorIfImmutableArg.apply(e3))
-                                                             .appendFront(errorIfImmutableArg.apply(e2))
-                                                             .appendFront(errorIfImmutableArg.apply(e1))
-                                                             .appendFront(errorIfImmutableArg.apply(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e4))
+                                                         .appendFront(errorIfImmutableArg.apply(e3))
+                                                         .appendFront(errorIfImmutableArg.apply(e2))
+                                                         .appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -202,7 +202,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
             MyJavaImpl.Vector array = new MyJavaImpl.Vector();
             array.parse(parser);
-            return new TryArr(new JsArrayMutableImpl(array));
+            return new TryArr(new JsArrayMutable(array));
         }
 
         catch (MalformedJson e)
@@ -269,7 +269,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         JsPath.empty()
                               .index(-1)
                        );
-            return new TryArr(new JsArrayMutableImpl(array));
+            return new TryArr(new JsArrayMutable(array));
         }
 
         catch (MalformedJson e)
@@ -330,10 +330,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> AbstractJsArray.combiner_(a,
-                                                                b
-                                                               )
-                                                     .get(),
+                            (a, b) -> CombinerFns.combiner_(a,
+                                                            b
+                                                           )
+                                                 .get(),
                             jsonvalues.JsArray::toImmutable
                            );
 
@@ -353,10 +353,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> AbstractJsArray.combiner_(a,
-                                                                b
-                                                               )
-                                                     .get()
+                            (a, b) -> CombinerFns.combiner_(a,
+                                                            b
+                                                           )
+                                                 .get()
                            );
 
     }
@@ -390,7 +390,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     static JsArray empty()
     {
-        return JsArrayImmutableImpl.EMPTY;
+        return JsArrayImmutable.EMPTY;
     }
 
     /**
@@ -425,9 +425,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     static JsArray of(final Collection<? extends JsElem> list)
     {
         if (requireNonNull(list).isEmpty()) return empty();
-        Errors.errorIfAnyMutableInOf()
+        Errors.errorIfAnyMutable()
               .apply(list);
-        return new JsArrayImmutableImpl(EMPTY.add(list));
+        return new JsArrayImmutable(EMPTY.add(list));
 
     }
 
@@ -573,7 +573,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new JsArrayImmutableImpl(EMPTY.parse(parser)));
+            return new TryArr(new JsArrayImmutable(EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -601,11 +601,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new JsArrayImmutableImpl(MyScalaImpl.Vector.EMPTY.parse(parser,
-                                                                                      options.create(),
-                                                                                      JsPath.empty()
+            return new TryArr(new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser,
+                                                                                  options.create(),
+                                                                                  JsPath.empty()
                                                                                             .index(-1)
-                                                                                     )));
+                                                                                 )));
         }
 
         catch (MalformedJson e)
@@ -632,7 +632,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsStr.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -652,7 +652,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsStr.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -671,7 +671,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsInt.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -691,7 +691,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsInt.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -710,7 +710,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsLong.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -729,7 +729,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsBool.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -748,7 +748,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsDouble.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -768,7 +768,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsLong.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -788,7 +788,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsBool.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -808,7 +808,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsDouble.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
 

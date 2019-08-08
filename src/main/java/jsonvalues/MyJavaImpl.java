@@ -208,14 +208,14 @@ class MyJavaImpl
                         final MyJavaImpl.Map obj = new MyJavaImpl.Map();
                         obj.parse(parser);
                         this.update(key,
-                                    new JsObjMutableImpl(obj)
+                                    new JsObjMutable(obj)
                                    );
                         break;
                     case START_ARRAY:
                         final MyJavaImpl.Vector arr = new MyJavaImpl.Vector();
                         arr.parse(parser);
                         this.update(key,
-                                    new JsArrayMutableImpl(arr)
+                                    new JsArrayMutable(arr)
                                    );
                         break;
 
@@ -306,7 +306,7 @@ class MyJavaImpl
                                       currentPath
                                      );
                             this.update(key,
-                                        new JsObjMutableImpl(obj)
+                                        new JsObjMutable(obj)
                                        );
                         }
                         break;
@@ -319,7 +319,7 @@ class MyJavaImpl
                                       currentPath.index(-1)
                                      );
                             this.update(key,
-                                        new JsArrayMutableImpl(arr)
+                                        new JsArrayMutable(arr)
                                        );
                         }
                         break;
@@ -521,12 +521,12 @@ class MyJavaImpl
                     case START_OBJECT:
                         final MyJavaImpl.Map obj = new MyJavaImpl.Map();
                         obj.parse(parser);
-                        this.appendBack(new JsObjMutableImpl(obj));
+                        this.appendBack(new JsObjMutable(obj));
                         break;
                     case START_ARRAY:
                         final MyJavaImpl.Vector arr = new MyJavaImpl.Vector();
                         arr.parse(parser);
-                        this.appendBack(new JsArrayMutableImpl(arr));
+                        this.appendBack(new JsArrayMutable(arr));
                         break;
                 }
             }
@@ -595,7 +595,7 @@ class MyJavaImpl
                                       options,
                                       currentPath
                                      );
-                            this.appendBack(new JsObjMutableImpl(obj));
+                            this.appendBack(new JsObjMutable(obj));
                         }
                         break;
 
@@ -608,7 +608,7 @@ class MyJavaImpl
                                       currentPath.index(-1)
                                      );
 
-                            this.appendBack(new JsArrayMutableImpl(arr));
+                            this.appendBack(new JsArrayMutable(arr));
                         }
                         break;
                 }

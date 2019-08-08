@@ -502,8 +502,8 @@ public class TestJsObj
                                                  Assertions.assertEquals(pair.elem,
                                                                          obj.get(pair.path)
                                                                         );
-                                                 return Utils.mapIfStr(String::toLowerCase)
-                                                             .apply(pair).elem;
+                                                 return JsPair.mapIfStr(String::toLowerCase)
+                                                              .apply(pair).elem;
                                              });
 
             final Optional<String> reduced_ = obj1.reduce_(String::concat,
@@ -1582,9 +1582,9 @@ public class TestJsObj
                                                  supplier.get()
                                                          .get(pair.path)
                                                 );
-                         return Utils.mapIfInt(i -> i + 10)
-                                     .andThen(p -> p.elem)
-                                     .apply(pair);
+                         return JsPair.mapIfInt(i -> i + 10)
+                                      .andThen(p -> p.elem)
+                                      .apply(pair);
                      },
                      p -> p.elem.isInt()
                     );
@@ -1602,9 +1602,9 @@ public class TestJsObj
                                                    supplier.get()
                                                            .get(pair.path)
                                                   );
-                           return Utils.mapIfInt(i -> i + 10)
-                                       .andThen(p -> p.elem)
-                                       .apply(pair);
+                           return JsPair.mapIfInt(i -> i + 10)
+                                        .andThen(p -> p.elem)
+                                        .apply(pair);
                        },
                        p -> p.elem.isInt()
                       );

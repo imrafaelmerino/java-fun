@@ -1,7 +1,7 @@
 package jsonvalues
 
 
-object Constants {
+object Characters {
 
   val ALPHABET = "abcdefghijklmnopqrstuvwzyz".split("")
   val ESPECIAL_CHARACTERS = "()*?[]-.+{}".split("")

@@ -293,8 +293,8 @@ public class TestsUnionAndIntersection
     public void test_map_values_mutable_array()
     {
 
-        final Function<JsPair, JsElem> toLowerCaseFn = Utils.mapIfStr(String::toLowerCase)
-                                                            .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
+                                                             .andThen(p -> p.elem);
         JsArray array = JsArray._of_(JsStr.of("A"),
                                      JsStr.of("B")
                                     );
@@ -322,8 +322,8 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_values_immutable_array() throws MalformedJson
     {
-        final Function<JsPair, JsElem> toLowerCaseFn = Utils.mapIfStr(String::toLowerCase)
-                                                            .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
+                                                             .andThen(p -> p.elem);
 
 
         JsArray array = JsArray.of(JsStr.of("A"),
@@ -375,8 +375,8 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_values_mutable_obj()
     {
-        final Function<JsPair, JsElem> toLowerCaseFn = Utils.mapIfStr(String::toLowerCase)
-                                                            .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
+                                                             .andThen(p -> p.elem);
 
         JsObj obj = JsObj._of_("a",
                                JsStr.of("A"),
@@ -410,8 +410,8 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_values_immutable_obj()
     {
-        final Function<JsPair, JsElem> toLowerCaseFn = Utils.mapIfStr(String::toLowerCase)
-                                                            .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
+                                                             .andThen(p -> p.elem);
 
         JsObj obj = JsObj.of("a",
                              JsStr.of("A"),

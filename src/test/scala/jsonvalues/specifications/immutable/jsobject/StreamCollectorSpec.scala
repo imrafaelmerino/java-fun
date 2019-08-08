@@ -4,8 +4,8 @@ import java.math.BigInteger
 import java.util.function.Function
 import java.util.stream
 
+import jsonvalues.{ JsObj, JsPair}
 import jsonvalues.specifications.BasePropSpec
-import jsonvalues.{JsObj, JsPair, Utils}
 import org.scalacheck.Prop.forAll
 
 class StreamCollectorSpec extends BasePropSpec
@@ -87,7 +87,7 @@ class StreamCollectorSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
 
-            val function = Utils.mapIfStr(_.toUpperCase)
+            val function = JsPair.mapIfStr(_.toUpperCase)
 
             val a: stream.Stream[JsPair] = js.stream_().map(function)
 

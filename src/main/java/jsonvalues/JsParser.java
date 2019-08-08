@@ -277,7 +277,7 @@ class JsParser implements Closeable
         /*
          * Some more things could be optimized. For example, instead
          * tokenizer.nextToken(), one could use tokenizer.matchColonToken() to
-         * match ':'. That might optimize a bit, but will fragment nextToken().
+         * ifPredicateElse ':'. That might optimize a bit, but will fragment nextToken().
          * I think the current one is more readable.
          *
          */

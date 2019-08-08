@@ -46,7 +46,7 @@ case class FreqsTypeOfArr(numberFreq: Int = 10,
                           longFreq  : Int = 10
                          )
 
-case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
+case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
                       intGen          : Gen[Int] = arbitrary[Int],
                       longGen         : Gen[Long] = arbitrary[Long],
                       doubleGen       : Gen[Double] = arbitrary[Double],
@@ -60,7 +60,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
                       objSizeGen      : Gen[Int] = Gen.choose(5,
                                                               8
                                                               ),
-                      keyGen          : Gen[String] = Gen.oneOf(Constants.ALPHABET),
+                      keyGen          : Gen[String] = Gen.oneOf(Characters.ALPHABET),
                       freqTypeOfNumber: FreqTypeOfNumber = new FreqTypeOfNumber,
                       freqTypeOfValue : FreqTypeOfValue = new FreqTypeOfValue,
                       freqTypeOfPair  : FreqTypeOfPair = new FreqTypeOfPair,

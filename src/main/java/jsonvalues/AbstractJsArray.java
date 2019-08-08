@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
 import static jsonvalues.AbstractJsObj.streamOfObj;
-import static jsonvalues.Functions.ifJsonElse;
-import static jsonvalues.Functions.isSameType;
+import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchFns.isSameType;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -26,7 +26,6 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
 
 {
     public static final long serialVersionUID = 1L;
-
 
 
     protected transient T array;
@@ -50,15 +49,15 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(array.update(index,
-                                                                                                                       arr.appendAll(elems)
-                                                                                                                      )),
-                                                                                                e -> of(nullPadding(index,
-                                                                                                                    array,
-                                                                                                                    emptyArray().appendAll(elems)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Index.of(index))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                                                                                                      arr.appendAll(elems)
+                                                                                                                     )),
+                                                                                               e -> of(nullPadding(index,
+                                                                                                                   array,
+                                                                                                                   emptyArray().appendAll(elems)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Index.of(index))),
                                                                       () -> tail.ifPredicateElse(t -> putEmptyJson(array).test(index,
                                                                                                                                t
                                                                                                                               ),
@@ -102,15 +101,15 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(array.update(index,
-                                                                                                                       arr.append(elem)
-                                                                                                                      )),
-                                                                                                e -> of(nullPadding(index,
-                                                                                                                    array,
-                                                                                                                    emptyArray().append(elem)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Index.of(index))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                                                                                                      arr.append(elem)
+                                                                                                                     )),
+                                                                                               e -> of(nullPadding(index,
+                                                                                                                   array,
+                                                                                                                   emptyArray().append(elem)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Index.of(index))),
                                                                       () -> tail.ifPredicateElse(t -> putEmptyJson(array).test(index,
                                                                                                                                t
                                                                                                                               ),
@@ -181,15 +180,15 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(array.update(index,
-                                                                                                                       arr.prependAll(elems)
-                                                                                                                      )),
-                                                                                                e -> of(nullPadding(index,
-                                                                                                                    array,
-                                                                                                                    emptyArray().prependAll(elems)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Index.of(index))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                                                                                                      arr.prependAll(elems)
+                                                                                                                     )),
+                                                                                               e -> of(nullPadding(index,
+                                                                                                                   array,
+                                                                                                                   emptyArray().prependAll(elems)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Index.of(index))),
                                                                       () -> tail.ifPredicateElse(t -> putEmptyJson(array).test(index,
                                                                                                                                t
                                                                                                                               ),
@@ -234,15 +233,15 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(array.update(index,
-                                                                                                                       arr.prepend(elem)
-                                                                                                                      )),
-                                                                                                e -> of(nullPadding(index,
-                                                                                                                    array,
-                                                                                                                    emptyArray().prepend(elem)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Index.of(index))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                                                                                                      arr.prepend(elem)
+                                                                                                                     )),
+                                                                                               e -> of(nullPadding(index,
+                                                                                                                   array,
+                                                                                                                   emptyArray().prepend(elem)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Index.of(index))),
                                                                       () -> tail.ifPredicateElse(t -> putEmptyJson(array).test(index,
                                                                                                                                t
                                                                                                                               ),
@@ -560,13 +559,13 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                           {
                                               final JsPath tail = path.tail();
 
-                                              return tail.ifEmptyElse(() -> Functions.ifNothingElse(() -> this,
-                                                                                                    elem -> of(nullPadding(index,
-                                                                                                                           array,
-                                                                                                                           elem
-                                                                                                                          ))
-                                                                                                   )
-                                                                                     .apply(fn.apply(get(path))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifNothingElse(() -> this,
+                                                                                                   elem -> of(nullPadding(index,
+                                                                                                                          array,
+                                                                                                                          elem
+                                                                                                                         ))
+                                                                                                  )
+                                                                                    .apply(fn.apply(get(path))),
                                                                       () -> tail.ifPredicateElse(t -> putEmptyJson(array).test(index,
                                                                                                                                t
                                                                                                                               ),
@@ -684,7 +683,8 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                        requireNonNull(op),
                        requireNonNull(map),
                        requireNonNull(predicate),
-                       JsPath.empty().index(-1),
+                       JsPath.empty()
+                             .index(-1),
                        Optional.empty()
                       ).get();
     }
@@ -822,15 +822,15 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> extends A
                                                                                          array.get(Index.of(pair))
 
                                                                                         ))
-                                                             .flatMap(pair -> Functions.ifValueElse(e -> Stream.of(pair),
-                                                                                                    o -> streamOfObj(o,
-                                                                                                                     pair.path
-                                                                                                                    ),
-                                                                                                    a -> streamOfArr(a,
-                                                                                                                     pair.path
-                                                                                                                    )
-                                                                                                   )
-                                                                                       .apply(pair.elem)
+                                                             .flatMap(pair -> MatchFns.ifJsonElse(o -> streamOfObj(o,
+                                                                                                                   pair.path
+                                                                                                                  ),
+                                                                                                  a -> streamOfArr(a,
+                                                                                                                   pair.path
+                                                                                                                  ),
+                                                                                                  e -> Stream.of(pair)
+                                                                                                 )
+                                                                                      .apply(pair.elem)
                                                                      )
                                                 );
 

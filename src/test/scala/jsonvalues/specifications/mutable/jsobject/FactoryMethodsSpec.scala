@@ -151,7 +151,7 @@ class FactoryMethodsSpec extends BasePropSpec
           { js =>
 
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemMap(Utils.mapIfStr(_ => "hi").andThen(_.elem))
+                                       ParseOptions.builder().withElemMap(JsPair.mapIfStr(_ => "hi").andThen(_.elem))
                                        )
 
             parsed.orElseThrow().stream_().filter(p=> p.elem.isStr).allMatch(p=> p.elem.isStr(s => s.equals("hi")))

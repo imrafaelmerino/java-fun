@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.*;
 
-import static jsonvalues.Functions.ifJsonElse;
-import static jsonvalues.Functions.ifObjElse;
+import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchFns.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 

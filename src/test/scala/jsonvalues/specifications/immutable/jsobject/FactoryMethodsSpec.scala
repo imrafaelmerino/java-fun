@@ -2,7 +2,6 @@ package jsonvalues.specifications.immutable.jsobject
 
 import java.util.Optional
 import java.util.function.Predicate
-
 import jsonvalues._
 import jsonvalues.specifications.BasePropSpec
 import org.scalacheck.Prop.forAll

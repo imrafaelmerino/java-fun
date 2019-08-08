@@ -16,8 +16,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.ifJsonElse;
-import static jsonvalues.Functions.ifObjElse;
+import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchFns.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 

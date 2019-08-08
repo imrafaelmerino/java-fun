@@ -2,9 +2,10 @@ package jsonvalues;
 
 
 import java.math.BigDecimal;
-import java.util.function.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
+import java.util.function.UnaryOperator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -75,72 +76,6 @@ public class JsElems
         };
     }
 
-    /**
-     Returns true if, and only if, the entire string matches the pattern
-     @param pattern the pattern
-     @return true if, and only if, the entire string matches the pattern
-     */
-    public static Predicate<JsElem> matches(Pattern pattern)
-    {
-
-        return elem -> elem.isStr(str -> requireNonNull(pattern).matcher(Matcher.quoteReplacement(str))
-                                                                .matches());
-
-    }
-
-    public static BinaryOperator<JsElem> strOperator(final BinaryOperator<String> op,
-                                                     final JsElem _default
-                                                    )
-    {
-
-        requireNonNull(op);
-        requireNonNull(_default);
-        return (e1, e2) ->
-        {
-            requireNonNull(e1);
-            requireNonNull(e2);
-            if (e1.isStr() && e2.isStr()) return JsStr.of(op.apply(e1.asJsStr().x,
-                                                                   e2.asJsStr().x
-                                                                  ));
-            return _default;
-        };
-    }
-
-    public static BinaryOperator<JsElem> intOperator(final IntBinaryOperator op,
-                                                     final JsElem _default
-                                                    )
-    {
-
-        requireNonNull(op);
-        requireNonNull(_default);
-        return (e1, e2) ->
-        {
-            requireNonNull(e1);
-            requireNonNull(e2);
-            if (e1.isInt() && e2.isInt()) return JsInt.of(op.applyAsInt(e1.asJsInt().x,
-                                                                        e2.asJsInt().x
-                                                                       ));
-            return _default;
-        };
-    }
-
-    public static BinaryOperator<JsElem> longOperator(final LongBinaryOperator op,
-                                                      final JsElem _default
-                                                     )
-    {
-
-        requireNonNull(op);
-        requireNonNull(_default);
-        return (e1, e2) ->
-        {
-            requireNonNull(e1);
-            requireNonNull(e2);
-            if ((e1.isInt() || e1.isLong()) && (e2.isInt() || e2.isLong())) return JsLong.of(op.applyAsLong(e1.asJsLong().x,
-                                                                                                            e2.asJsLong().x
-                                                                                                           ));
-            return _default;
-        };
-    }
 
 
 }

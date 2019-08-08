@@ -10,7 +10,7 @@ case class FreqField(freqIndex: Int = 1,
 case class JsPathGens(lengthGen: Gen[Int] = Gen.choose(1,
                                                        10
                                                       ),
-                      keyGen      : Gen[String] = Gen.oneOf(Constants.ALPHABET),
+                      keyGen      : Gen[String] = Gen.oneOf(Characters.ALPHABET),
                       indexGen    : Gen[Int] = Gen.choose(0,
                                                           10
                                                          ),

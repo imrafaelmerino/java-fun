@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.AbstractJsArray.streamOfArr;
-import static jsonvalues.Functions.*;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
@@ -45,14 +44,14 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(map.update(head,
-                                                                                                                     arr.appendAll(elems)
-                                                                                                                    )),
-                                                                                                el -> of(map.update(head,
-                                                                                                                    emptyArray().appendAll(elems)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Key.of(head))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                                                                                                    arr.appendAll(elems)
+                                                                                                                   )),
+                                                                                               el -> of(map.update(head,
+                                                                                                                   emptyArray().appendAll(elems)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Key.of(head))),
                                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                                        t
                                                                                                                                       ),
@@ -94,14 +93,14 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(map.update(head,
-                                                                                                                     arr.append(elem)
-                                                                                                                    )),
-                                                                                                el -> of(map.update(head,
-                                                                                                                    emptyArray().append(elem)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Key.of(head))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                                                                                                    arr.append(elem)
+                                                                                                                   )),
+                                                                                               el -> of(map.update(head,
+                                                                                                                   emptyArray().append(elem)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Key.of(head))),
                                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                                        t
                                                                                                                                       ),
@@ -145,14 +144,14 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(map.update(head,
-                                                                                                                     arr.prependAll(elems)
-                                                                                                                    )),
-                                                                                                el -> of(map.update(head,
-                                                                                                                    emptyArray().prependAll(elems)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Key.of(head))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                                                                                                    arr.prependAll(elems)
+                                                                                                                   )),
+                                                                                               el -> of(map.update(head,
+                                                                                                                   emptyArray().prependAll(elems)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Key.of(head))),
                                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                                        t
                                                                                                                                       ),
@@ -195,14 +194,14 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> Functions.ifArrElse(arr -> of(map.update(head,
-                                                                                                                     arr.prepend(elem)
-                                                                                                                    )),
-                                                                                                el -> of(map.update(head,
-                                                                                                                    emptyArray().prepend(elem)
-                                                                                                                   ))
-                                                                                               )
-                                                                                     .apply(get(Key.of(head))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                                                                                                    arr.prepend(elem)
+                                                                                                                   )),
+                                                                                               el -> of(map.update(head,
+                                                                                                                   emptyArray().prepend(elem)
+                                                                                                                  ))
+                                                                                              )
+                                                                                    .apply(get(Key.of(head))),
                                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                                        t
                                                                                                                                       ),
@@ -374,7 +373,8 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                               )
                           );
             } else if (head.getValue()
-                           .isJson() && isSameType(headOtherElement).test(head.getValue()))
+                           .isJson() && MatchFns.isSameType(headOtherElement)
+                                                .test(head.getValue()))
             {//different but same container
                 Json<?> obj = head.getValue()
                                   .asJson();
@@ -420,12 +420,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                           {
                                               final JsPath tail = path.tail();
 
-                                              return tail.ifEmptyElse(() -> Functions.ifNothingElse(() -> this,
-                                                                                                    elem -> of(map.update(head,
-                                                                                                                          elem
-                                                                                                                         ))
-                                                                                                   )
-                                                                                     .apply(fn.apply(get(path))),
+                                              return tail.ifEmptyElse(() -> MatchFns.ifNothingElse(() -> this,
+                                                                                                   elem -> of(map.update(head,
+                                                                                                                         elem
+                                                                                                                        ))
+                                                                                                  )
+                                                                                    .apply(fn.apply(get(path))),
                                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                                        t
                                                                                                                                       ),
@@ -487,40 +487,40 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                {
                                    final JsPath headPath = path.key(head.getKey());
 
-                                   return ifJsonElse(json -> more(() -> reduce(tail,
-                                                                               op,
-                                                                               fn,
-                                                                               predicate,
-                                                                               path,
-                                                                               result
-                                                                              )),
-                                                     elem -> JsPair.of(headPath,
-                                                                       elem
-                                                                      )
-                                                                   .ifElse(predicate,
-                                                                           p -> more(() -> reduce(tail,
-                                                                                                  op,
-                                                                                                  fn,
-                                                                                                  predicate,
-                                                                                                  path,
-                                                                                                  reduceElem(p,
-                                                                                                             op,
-                                                                                                             fn,
-                                                                                                             result
-                                                                                                            )
-                                                                                                 )),
-                                                                           p -> more(() -> reduce(tail,
-                                                                                                  op,
-                                                                                                  fn,
-                                                                                                  predicate,
-                                                                                                  path,
-                                                                                                  result
-                                                                                                 ))
-                                                                          )
+                                   return MatchFns.ifJsonElse(json -> more(() -> reduce(tail,
+                                                                                        op,
+                                                                                        fn,
+                                                                                        predicate,
+                                                                                        path,
+                                                                                        result
+                                                                                       )),
+                                                              elem -> JsPair.of(headPath,
+                                                                                elem
+                                                                               )
+                                                                            .ifElse(predicate,
+                                                                                    p -> more(() -> reduce(tail,
+                                                                                                           op,
+                                                                                                           fn,
+                                                                                                           predicate,
+                                                                                                           path,
+                                                                                                           reduceElem(p,
+                                                                                                                      op,
+                                                                                                                      fn,
+                                                                                                                      result
+                                                                                                                     )
+                                                                                                          )),
+                                                                                    p -> more(() -> reduce(tail,
+                                                                                                           op,
+                                                                                                           fn,
+                                                                                                           predicate,
+                                                                                                           path,
+                                                                                                           result
+                                                                                                          ))
+                                                                                   )
 
 
-                                                    )
-                                   .apply(head.getValue());
+                                                             )
+                                                  .apply(head.getValue());
                                }
                               );
 
@@ -557,47 +557,47 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                (head, tail) ->
                                {
                                    final JsPath headPath = path.key(head.getKey());
-                                   return ifJsonElse(json -> more(() -> reduce_(json,
-                                                                                op,
-                                                                                fn,
-                                                                                predicate,
-                                                                                headPath,
-                                                                                result
-                                                                               )
-                                                                 ).flatMap(r -> reduce_(tail,
-                                                                                        op,
-                                                                                        fn,
-                                                                                        predicate,
-                                                                                        path,
-                                                                                        r
-                                                                                       ))
+                                   return MatchFns.ifJsonElse(json -> more(() -> reduce_(json,
+                                                                                         op,
+                                                                                         fn,
+                                                                                         predicate,
+                                                                                         headPath,
+                                                                                         result
+                                                                                        )
+                                                                          ).flatMap(r -> reduce_(tail,
+                                                                                                 op,
+                                                                                                 fn,
+                                                                                                 predicate,
+                                                                                                 path,
+                                                                                                 r
+                                                                                                ))
                                    ,
-                                                     elem -> JsPair.of(headPath,
-                                                                       elem
-                                                                      )
-                                                                   .ifElse(predicate,
-                                                                           p -> more(() -> reduce_(tail,
-                                                                                                   op,
-                                                                                                   fn,
-                                                                                                   predicate,
-                                                                                                   path,
-                                                                                                   reduceElem(p,
-                                                                                                              op,
-                                                                                                              fn,
-                                                                                                              result
-                                                                                                             )
-                                                                                                  )),
-                                                                           p -> more(() -> reduce_(tail,
-                                                                                                   op,
-                                                                                                   fn,
-                                                                                                   predicate,
-                                                                                                   path,
-                                                                                                   result
-                                                                                                  ))
-                                                                          )
+                                                              elem -> JsPair.of(headPath,
+                                                                                elem
+                                                                               )
+                                                                            .ifElse(predicate,
+                                                                                    p -> more(() -> reduce_(tail,
+                                                                                                            op,
+                                                                                                            fn,
+                                                                                                            predicate,
+                                                                                                            path,
+                                                                                                            reduceElem(p,
+                                                                                                                       op,
+                                                                                                                       fn,
+                                                                                                                       result
+                                                                                                                      )
+                                                                                                           )),
+                                                                                    p -> more(() -> reduce_(tail,
+                                                                                                            op,
+                                                                                                            fn,
+                                                                                                            predicate,
+                                                                                                            path,
+                                                                                                            result
+                                                                                                           ))
+                                                                                   )
 
-                                                    )
-                                   .apply(head.getValue());
+                                                             )
+                                                  .apply(head.getValue());
 
                                }
                               );
@@ -614,12 +614,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                               if (!map.contains(key)) return this;
                                               final JsPath tail = path.tail();
                                               return tail.ifEmptyElse(() -> of(map.remove(key)),
-                                                                      () -> ifJsonElse(json -> of(map.update(key,
-                                                                                                             json.remove(tail)
-                                                                                                            )),
-                                                                                       e -> this
-                                                                                      )
-                                                                      .apply(map.get(key))
+                                                                      () -> MatchFns.ifJsonElse(json -> of(map.update(key,
+                                                                                                                      json.remove(tail)
+                                                                                                                     )),
+                                                                                                e -> this
+                                                                                               )
+                                                                                    .apply(map.get(key))
                                                                      );
                                           },
                                           index -> this
@@ -669,15 +669,15 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                                         .map(key -> JsPair.of(path.key(key),
                                                                               obj.get(Key.of(key))
                                                                              ))
-                                                        .flatMap(pair -> Functions.ifValueElse(e -> Stream.of(pair),
-                                                                                               o -> streamOfObj(o,
-                                                                                                                pair.path
-                                                                                                               ),
-                                                                                               a -> streamOfArr(a,
-                                                                                                                pair.path
-                                                                                                               )
-                                                                                              )
-                                                                                  .apply(pair.elem))
+                                                        .flatMap(pair -> MatchFns.ifJsonElse(o -> streamOfObj(o,
+                                                                                                              pair.path
+                                                                                                             ),
+                                                                                             a -> streamOfArr(a,
+                                                                                                              pair.path
+                                                                                                             ),
+                                                                                             e -> Stream.of(pair)
+                                                                                            )
+                                                                                 .apply(pair.elem))
                                               );
 
     }
@@ -774,35 +774,37 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                                        ARRAY_AS
                                                       ));
 
-        return ifNothingElse(() -> put(head.getKey(),
-                                       head.getValue(),
-                                       () -> tailCall
-                                      ),
-                             ifPredicateElse(e -> e.isJson() && isSameType(head.getValue()).test(e),
-                                             it ->
-                                             {
-                                                 Json<?> obj = a.get(JsPath.empty()
-                                                                           .key(head.getKey()))
-                                                                .asJson();
-                                                 Json<?> obj1 = head.getValue()
-                                                                    .asJson();
+        return MatchFns.ifNothingElse(() -> put(head.getKey(),
+                                                head.getValue(),
+                                                () -> tailCall
+                                               ),
+                                      MatchFns.ifPredicateElse(e -> e.isJson() && MatchFns.isSameType(head.getValue())
+                                                                                          .test(e),
+                                                               it ->
+                                                               {
+                                                                   Json<?> obj = a.get(JsPath.empty()
+                                                                                             .key(head.getKey()))
+                                                                                  .asJson();
+                                                                   Json<?> obj1 = head.getValue()
+                                                                                      .asJson();
 
-                                                 Trampoline<? extends Json<?>> headCall = more(() -> union_(obj,
-                                                                                                            obj1,
-                                                                                                            ARRAY_AS
-                                                                                                           )
-                                                                                              );
+                                                                   Trampoline<? extends Json<?>> headCall = more(() -> union_(obj,
+                                                                                                                              obj1,
+                                                                                                                              ARRAY_AS
+                                                                                                                             )
+                                                                                                                );
 
-                                                 return put_(JsPath.of(head.getKey()),
-                                                             () -> headCall,
-                                                             () -> tailCall
-                                                            );
-                                             },
-                                             it -> tailCall
-                                            )
+                                                                   return put_(JsPath.of(head.getKey()),
+                                                                               () -> headCall,
+                                                                               () -> tailCall
+                                                                              );
+                                                               },
+                                                               it -> tailCall
+                                                              )
 
-                            ).apply(a.get(JsPath.empty()
-                                                .key(head.getKey())));
+                                     )
+                       .apply(a.get(JsPath.empty()
+                                          .key(head.getKey())));
 
 
     }
@@ -823,34 +825,36 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                                                           tail
                                                          ));
 
-        return ifNothingElse(() -> put(head.getKey(),
-                                       head.getValue(),
-                                       () -> tailCall
-                                      ),
-                             ifPredicateElse(e -> e.isJson() && isSameType(head.getValue()).test(e),
-                                             it ->
-                                             {
-                                                 Json<?> obj = a.get(JsPath.empty()
-                                                                           .key(head.getKey()))
-                                                                .asJson();
-                                                 Json<?> obj1 = head.getValue()
-                                                                    .asJson();
+        return MatchFns.ifNothingElse(() -> put(head.getKey(),
+                                                head.getValue(),
+                                                () -> tailCall
+                                               ),
+                                      MatchFns.ifPredicateElse(e -> e.isJson() && MatchFns.isSameType(head.getValue())
+                                                                                          .test(e),
+                                                               it ->
+                                                               {
+                                                                   Json<?> obj = a.get(JsPath.empty()
+                                                                                             .key(head.getKey()))
+                                                                                  .asJson();
+                                                                   Json<?> obj1 = head.getValue()
+                                                                                      .asJson();
 
-                                                 Trampoline<? extends Json<?>> headCall = more(() -> combiner_(obj,
-                                                                                                               obj1
-                                                                                                              )
-                                                                                              );
+                                                                   Trampoline<? extends Json<?>> headCall = more(() -> combiner_(obj,
+                                                                                                                                 obj1
+                                                                                                                                )
+                                                                                                                );
 
-                                                 return put_(JsPath.of(head.getKey()),
-                                                             () -> headCall,
-                                                             () -> tailCall
-                                                            );
-                                             },
-                                             it -> tailCall
-                                            )
+                                                                   return put_(JsPath.of(head.getKey()),
+                                                                               () -> headCall,
+                                                                               () -> tailCall
+                                                                              );
+                                                               },
+                                                               it -> tailCall
+                                                              )
 
-                            ).apply(a.get(JsPath.empty()
-                                                .key(head.getKey())));
+                                     )
+                       .apply(a.get(JsPath.empty()
+                                          .key(head.getKey())));
 
 
     }
@@ -888,25 +892,26 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> extends Abst
                               final Trampoline<JsObj> tailCall
                              )
     {
-        return ifJsonElse(elem -> put(head.getKey(),
-                                      elem,
-                                      () -> tailCall
-                                     ),
-                          elem -> JsPair.of(headPath,
-                                            elem
-                                           )
-                                        .ifElse(predicate,
-                                                p -> put(head.getKey(),
-                                                         fn.apply(p),
-                                                         () -> tailCall
-                                                        ),
-                                                p -> put(head.getKey(),
-                                                         elem,
-                                                         () -> tailCall
+        return MatchFns.ifJsonElse(elem -> put(head.getKey(),
+                                               elem,
+                                               () -> tailCall
+                                              ),
+                                   elem -> JsPair.of(headPath,
+                                                     elem
+                                                    )
+                                                 .ifElse(predicate,
+                                                         p -> put(head.getKey(),
+                                                                  fn.apply(p),
+                                                                  () -> tailCall
+                                                                 ),
+                                                         p -> put(head.getKey(),
+                                                                  elem,
+                                                                  () -> tailCall
+                                                                 )
                                                         )
-                                               )
 
-                         ).apply(head.getValue());
+                                  )
+                       .apply(head.getValue());
     }
 
 

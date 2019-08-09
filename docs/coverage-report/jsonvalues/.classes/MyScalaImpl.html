@@ -55,13 +55,13 @@
 </td>
 </tr>
   <tr>
-    <td class="name">MyScalaImpl$Map</td>
+    <td class="name">MyScalaImpl$1</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (20/ 20)
+    (1/ 1)
   </span>
 </td>
 <td class="coverageStat">
@@ -69,7 +69,26 @@
     100%
   </span>
   <span class="absValue">
-    (38/ 38)
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">MyScalaImpl$Map</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/ 22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (103/ 103)
   </span>
 </td>
   </tr>
@@ -96,18 +115,18 @@
     <td class="name">MyScalaImpl$Vector</td>
 <td class="coverageStat">
   <span class="percent">
-    90.5%
+    91.3%
   </span>
   <span class="absValue">
-    (19/ 21)
+    (21/ 23)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    82.4%
+    93%
   </span>
   <span class="absValue">
-    (28/ 34)
+    (80/ 86)
   </span>
 </td>
   </tr>
@@ -134,18 +153,18 @@
   <td class="name"><strong>total</strong></td>
 <td class="coverageStat">
   <span class="percent">
-    89.4%
+    90.4%
   </span>
   <span class="absValue">
-    (42/ 47)
+    (47/ 52)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    87.3%
+    94.9%
   </span>
   <span class="absValue">
-    (69/ 79)
+    (187/ 197)
   </span>
 </td>
 </tr>
@@ -170,352 +189,621 @@
 <i>13</i>&nbsp;import java.util.Collection;
 <i>14</i>&nbsp;import java.util.Optional;
 <i>15</i>&nbsp;import java.util.Set;
-<i>16</i>&nbsp;import java.util.function.UnaryOperator;
-<i>17</i>&nbsp;import java.util.stream.Stream;
-<i>18</i>&nbsp;
-<i>19</i>&nbsp;class MyScalaImpl
-<i>20</i>&nbsp;{
-<i>21</i>&nbsp;    private MyScalaImpl()
-<b class="nc"><i>22</i>&nbsp;    {</b>
-<b class="nc"><i>23</i>&nbsp;    }</b>
-<i>24</i>&nbsp;
-<i>25</i>&nbsp;    static final class Map implements MyMap&lt;Map&gt;
-<i>26</i>&nbsp;    {
-<b class="fc"><i>27</i>&nbsp;        static final HashMap&lt;String, JsElem&gt; EMPTY_HASH_MAP = new HashMap&lt;&gt;();</b>
-<b class="fc"><i>28</i>&nbsp;        static final Map EMPTY = new Map();</b>
-<i>29</i>&nbsp;        private final scala.collection.immutable.Map&lt;String, JsElem&gt; map;
-<i>30</i>&nbsp;
-<i>31</i>&nbsp;        Map()
-<b class="fc"><i>32</i>&nbsp;        {</b>
-<b class="fc"><i>33</i>&nbsp;            this.map = EMPTY_HASH_MAP;</b>
-<b class="fc"><i>34</i>&nbsp;        }</b>
-<i>35</i>&nbsp;
-<i>36</i>&nbsp;        Map(final scala.collection.immutable.Map&lt;String, JsElem&gt; map)
-<b class="fc"><i>37</i>&nbsp;        {</b>
-<b class="fc"><i>38</i>&nbsp;            this.map = map;</b>
-<b class="fc"><i>39</i>&nbsp;        }</b>
-<i>40</i>&nbsp;
-<i>41</i>&nbsp;        static AbstractFunction1&lt;String, String&gt; af1(UnaryOperator&lt;String&gt; uo)
-<i>42</i>&nbsp;        {
-<b class="fc"><i>43</i>&nbsp;            return new AbstractFunction1&lt;String, String&gt;()</b>
-<b class="fc"><i>44</i>&nbsp;            {</b>
-<i>45</i>&nbsp;                @Override
-<i>46</i>&nbsp;                public String apply(final String str)
-<i>47</i>&nbsp;                {
-<b class="fc"><i>48</i>&nbsp;                    return uo.apply(str);</b>
-<i>49</i>&nbsp;                }
-<i>50</i>&nbsp;            };
-<i>51</i>&nbsp;        }
-<i>52</i>&nbsp;
-<i>53</i>&nbsp;        @Override
-<i>54</i>&nbsp;        public java.util.Iterator&lt;java.util.Map.Entry&lt;String, JsElem&gt;&gt; iterator()
-<i>55</i>&nbsp;        {
-<b class="fc"><i>56</i>&nbsp;            final Iterator&lt;Tuple2&lt;String, JsElem&gt;&gt; iterator = map.iterator();</b>
-<b class="fc"><i>57</i>&nbsp;            return JavaConverters.asJavaIterator(iterator.map(it -&gt; new AbstractMap.SimpleEntry&lt;&gt;(it._1,</b>
-<i>58</i>&nbsp;                                                                                                  it._2
-<i>59</i>&nbsp;                                                              )
-<i>60</i>&nbsp;                                                             ));
-<i>61</i>&nbsp;        }
-<i>62</i>&nbsp;
-<i>63</i>&nbsp;        @Override
-<i>64</i>&nbsp;        public boolean contains(final String key)
-<i>65</i>&nbsp;        {
-<b class="fc"><i>66</i>&nbsp;            return map.contains(key);</b>
-<i>67</i>&nbsp;        }
-<i>68</i>&nbsp;
-<i>69</i>&nbsp;
-<i>70</i>&nbsp;        @Override
-<i>71</i>&nbsp;        public final Set&lt;String&gt; fields()
-<i>72</i>&nbsp;        {
-<b class="fc"><i>73</i>&nbsp;            return JavaConverters.setAsJavaSet(map.keys()</b>
-<b class="fc"><i>74</i>&nbsp;                                                  .toSet());</b>
-<i>75</i>&nbsp;
-<i>76</i>&nbsp;        }
+<i>16</i>&nbsp;import java.util.function.Predicate;
+<i>17</i>&nbsp;import java.util.function.UnaryOperator;
+<i>18</i>&nbsp;import java.util.stream.Stream;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import static jsonvalues.Constants.*;
+<i>21</i>&nbsp;import static jsonvalues.JsBool.FALSE;
+<i>22</i>&nbsp;import static jsonvalues.JsBool.TRUE;
+<i>23</i>&nbsp;import static jsonvalues.JsNull.NULL;
+<i>24</i>&nbsp;import static jsonvalues.JsParser.Event.END_ARRAY;
+<i>25</i>&nbsp;import static jsonvalues.JsParser.Event.END_OBJECT;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;class MyScalaImpl
+<i>28</i>&nbsp;{
+<i>29</i>&nbsp;    private MyScalaImpl()
+<b class="nc"><i>30</i>&nbsp;    {</b>
+<b class="nc"><i>31</i>&nbsp;    }</b>
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;    static final class Map implements MyMap&lt;Map&gt;</b>
+<i>34</i>&nbsp;    {
+<b class="fc"><i>35</i>&nbsp;        static final HashMap&lt;String, JsElem&gt; EMPTY_HASH_MAP = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>36</i>&nbsp;        static final Map EMPTY = new Map();</b>
+<i>37</i>&nbsp;        private final scala.collection.immutable.Map&lt;String, JsElem&gt; persistentMap;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;        Map()
+<b class="fc"><i>40</i>&nbsp;        {</b>
+<b class="fc"><i>41</i>&nbsp;            this.persistentMap = EMPTY_HASH_MAP;</b>
+<b class="fc"><i>42</i>&nbsp;        }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;        Map(final scala.collection.immutable.Map&lt;String, JsElem&gt; map)
+<b class="fc"><i>45</i>&nbsp;        {</b>
+<b class="fc"><i>46</i>&nbsp;            this.persistentMap = map;</b>
+<b class="fc"><i>47</i>&nbsp;        }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;        static AbstractFunction1&lt;String, String&gt; af1(UnaryOperator&lt;String&gt; uo)
+<i>50</i>&nbsp;        {
+<b class="fc"><i>51</i>&nbsp;            return new AbstractFunction1&lt;String, String&gt;()</b>
+<b class="fc"><i>52</i>&nbsp;            {</b>
+<i>53</i>&nbsp;                @Override
+<i>54</i>&nbsp;                public String apply(final String str)
+<i>55</i>&nbsp;                {
+<b class="fc"><i>56</i>&nbsp;                    return uo.apply(str);</b>
+<i>57</i>&nbsp;                }
+<i>58</i>&nbsp;            };
+<i>59</i>&nbsp;        }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;        @Override
+<i>62</i>&nbsp;        public java.util.Iterator&lt;java.util.Map.Entry&lt;String, JsElem&gt;&gt; iterator()
+<i>63</i>&nbsp;        {
+<b class="fc"><i>64</i>&nbsp;            final Iterator&lt;Tuple2&lt;String, JsElem&gt;&gt; iterator = persistentMap.iterator();</b>
+<b class="fc"><i>65</i>&nbsp;            return JavaConverters.asJavaIterator(iterator.map(it -&gt; new AbstractMap.SimpleEntry&lt;&gt;(it._1,</b>
+<i>66</i>&nbsp;                                                                                                  it._2
+<i>67</i>&nbsp;                                                              )
+<i>68</i>&nbsp;                                                             ));
+<i>69</i>&nbsp;        }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;        @Override
+<i>72</i>&nbsp;        public boolean contains(final String key)
+<i>73</i>&nbsp;        {
+<b class="fc"><i>74</i>&nbsp;            return persistentMap.contains(key);</b>
+<i>75</i>&nbsp;        }
+<i>76</i>&nbsp;
 <i>77</i>&nbsp;
 <i>78</i>&nbsp;        @Override
-<i>79</i>&nbsp;        public JsElem get(final String key)
+<i>79</i>&nbsp;        public final Set&lt;String&gt; fields()
 <i>80</i>&nbsp;        {
-<i>81</i>&nbsp;
-<b class="fc"><i>82</i>&nbsp;            return map.apply(key);</b>
-<i>83</i>&nbsp;        }
-<i>84</i>&nbsp;
-<i>85</i>&nbsp;        @Override
-<i>86</i>&nbsp;        public Optional&lt;JsElem&gt; getOptional(final String key)
-<i>87</i>&nbsp;        {
-<b class="fc"><i>88</i>&nbsp;            return map.contains(key) ? Optional.of(map.get(key)</b>
-<b class="fc"><i>89</i>&nbsp;                                                      .get()) : Optional.empty();</b>
-<i>90</i>&nbsp;        }
-<i>91</i>&nbsp;
-<i>92</i>&nbsp;        @Override
-<i>93</i>&nbsp;        public int hashCode()
-<i>94</i>&nbsp;        {
-<b class="fc"><i>95</i>&nbsp;            return ((HashMap&lt;String, JsElem&gt;) map).hashCode();</b>
-<i>96</i>&nbsp;        }
-<i>97</i>&nbsp;
-<i>98</i>&nbsp;        @Override
-<i>99</i>&nbsp;        public java.util.Map.Entry&lt;String, JsElem&gt; head()
-<i>100</i>&nbsp;        {
-<b class="fc"><i>101</i>&nbsp;            if (this.isEmpty()) throw new UnsupportedOperationException(&quot;head parse empty map&quot;);</b>
-<i>102</i>&nbsp;
-<b class="fc"><i>103</i>&nbsp;            final Tuple2&lt;String, JsElem&gt; head = map.head();</b>
-<i>104</i>&nbsp;
-<b class="fc"><i>105</i>&nbsp;            return new AbstractMap.SimpleEntry&lt;&gt;(head._1,</b>
-<i>106</i>&nbsp;                                                 head._2
-<i>107</i>&nbsp;            );
-<i>108</i>&nbsp;        }
-<i>109</i>&nbsp;
-<i>110</i>&nbsp;        @Override
-<i>111</i>&nbsp;        public boolean isEmpty()
-<i>112</i>&nbsp;        {
-<b class="fc"><i>113</i>&nbsp;            return map.isEmpty();</b>
-<i>114</i>&nbsp;        }
-<i>115</i>&nbsp;
-<i>116</i>&nbsp;        @Override
-<i>117</i>&nbsp;        public Map remove(final String key)
-<i>118</i>&nbsp;        {
-<b class="fc"><i>119</i>&nbsp;            return new Map(((HashMap&lt;String, JsElem&gt;) map).$minus(key));</b>
-<i>120</i>&nbsp;        }
-<i>121</i>&nbsp;
-<i>122</i>&nbsp;        @Override
-<i>123</i>&nbsp;        public int size()
-<i>124</i>&nbsp;        {
-<b class="fc"><i>125</i>&nbsp;            return map.size();</b>
-<i>126</i>&nbsp;        }
-<i>127</i>&nbsp;
-<i>128</i>&nbsp;        @Override
-<i>129</i>&nbsp;        public Map tail(String head)
-<i>130</i>&nbsp;        {
-<b class="fc"><i>131</i>&nbsp;            if (this.isEmpty()) throw new UnsupportedOperationException(&quot;tail of empty map&quot;);</b>
-<i>132</i>&nbsp;
-<b class="fc"><i>133</i>&nbsp;            return new Map(((HashMap&lt;String, JsElem&gt;) map).$minus(head));</b>
-<i>134</i>&nbsp;
+<b class="fc"><i>81</i>&nbsp;            return JavaConverters.setAsJavaSet(persistentMap.keys()</b>
+<b class="fc"><i>82</i>&nbsp;                                                            .toSet());</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;        }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;        @Override
+<i>87</i>&nbsp;        public JsElem get(final String key)
+<i>88</i>&nbsp;        {
+<i>89</i>&nbsp;
+<b class="fc"><i>90</i>&nbsp;            return persistentMap.apply(key);</b>
+<i>91</i>&nbsp;        }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;        @Override
+<i>94</i>&nbsp;        public Optional&lt;JsElem&gt; getOptional(final String key)
+<i>95</i>&nbsp;        {
+<b class="fc"><i>96</i>&nbsp;            return persistentMap.contains(key) ? Optional.of(persistentMap.get(key)</b>
+<b class="fc"><i>97</i>&nbsp;                                                                          .get()) : Optional.empty();</b>
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;        @Override
+<i>101</i>&nbsp;        public int hashCode()
+<i>102</i>&nbsp;        {
+<b class="fc"><i>103</i>&nbsp;            return ((HashMap&lt;String, JsElem&gt;) persistentMap).hashCode();</b>
+<i>104</i>&nbsp;        }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;        @Override
+<i>107</i>&nbsp;        public java.util.Map.Entry&lt;String, JsElem&gt; head()
+<i>108</i>&nbsp;        {
+<b class="fc"><i>109</i>&nbsp;            if (this.isEmpty()) throw new UnsupportedOperationException(&quot;head of empty map&quot;);</b>
+<i>110</i>&nbsp;
+<b class="fc"><i>111</i>&nbsp;            final Tuple2&lt;String, JsElem&gt; head = persistentMap.head();</b>
+<i>112</i>&nbsp;
+<b class="fc"><i>113</i>&nbsp;            return new AbstractMap.SimpleEntry&lt;&gt;(head._1,</b>
+<i>114</i>&nbsp;                                                 head._2
+<i>115</i>&nbsp;            );
+<i>116</i>&nbsp;        }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;        @Override
+<i>119</i>&nbsp;        public boolean isEmpty()
+<i>120</i>&nbsp;        {
+<b class="fc"><i>121</i>&nbsp;            return persistentMap.isEmpty();</b>
+<i>122</i>&nbsp;        }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;        @Override
+<i>125</i>&nbsp;        @SuppressWarnings(&quot;squid:S00117&quot;) // api de scala uses $ to name methods
+<i>126</i>&nbsp;        public Map remove(final String key)
+<i>127</i>&nbsp;        {
+<b class="fc"><i>128</i>&nbsp;            return new Map(((HashMap&lt;String, JsElem&gt;) persistentMap).$minus(key));</b>
+<i>129</i>&nbsp;        }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;        @Override
+<i>132</i>&nbsp;        public int size()
+<i>133</i>&nbsp;        {
+<b class="fc"><i>134</i>&nbsp;            return persistentMap.size();</b>
 <i>135</i>&nbsp;        }
 <i>136</i>&nbsp;
 <i>137</i>&nbsp;        @Override
-<i>138</i>&nbsp;        public String toString()
-<i>139</i>&nbsp;        {
-<b class="fc"><i>140</i>&nbsp;            if (map.isEmpty()) return EMPTY_OBJ_AS_STR;</b>
-<i>141</i>&nbsp;
-<i>142</i>&nbsp;
-<b class="fc"><i>143</i>&nbsp;            return map.keysIterator()</b>
-<b class="fc"><i>144</i>&nbsp;                      .map(af1(key -&gt; MAP_PAIR_TO_STR.apply(key,</b>
-<b class="fc"><i>145</i>&nbsp;                                                            map.apply(key)</b>
-<i>146</i>&nbsp;                                                           )))
-<b class="fc"><i>147</i>&nbsp;                      .mkString(OPEN_BRACKET,</b>
-<i>148</i>&nbsp;                                COMMA,
-<i>149</i>&nbsp;                                CLOSE_BRACKET
-<i>150</i>&nbsp;                               );
-<i>151</i>&nbsp;        }
-<i>152</i>&nbsp;
-<i>153</i>&nbsp;        @Override
-<i>154</i>&nbsp;        public Map update(final String key,
-<i>155</i>&nbsp;                          final JsElem je
-<i>156</i>&nbsp;                         )
-<i>157</i>&nbsp;        {
-<b class="fc"><i>158</i>&nbsp;            return new Map(map.updated(key,</b>
-<i>159</i>&nbsp;                                       je
-<i>160</i>&nbsp;                                      ));
-<i>161</i>&nbsp;        }
-<i>162</i>&nbsp;
-<i>163</i>&nbsp;
-<i>164</i>&nbsp;
-<i>165</i>&nbsp;        @Override
-<i>166</i>&nbsp;        public Map updateAll(final java.util.Map&lt;String, JsElem&gt; map)
-<i>167</i>&nbsp;        {
-<b class="fc"><i>168</i>&nbsp;            scala.collection.immutable.Map&lt;String, JsElem&gt; immap = this.map;</b>
-<b class="fc"><i>169</i>&nbsp;            for (java.util.Map.Entry&lt;String, JsElem&gt; entry : map.entrySet())</b>
-<b class="fc"><i>170</i>&nbsp;                immap = immap.updated(entry.getKey(),</b>
-<b class="fc"><i>171</i>&nbsp;                                      entry.getValue()</b>
-<i>172</i>&nbsp;                                     );
-<b class="fc"><i>173</i>&nbsp;            return new Map(immap);</b>
-<i>174</i>&nbsp;        }
-<i>175</i>&nbsp;
-<i>176</i>&nbsp;        @Override
-<i>177</i>&nbsp;        public boolean equals(@Nullable Object obj)
-<i>178</i>&nbsp;        {
-<b class="fc"><i>179</i>&nbsp;            return this.eq(obj);</b>
-<i>180</i>&nbsp;        }
-<i>181</i>&nbsp;    }
-<i>182</i>&nbsp;
-<i>183</i>&nbsp;    static final class Vector implements MyVector&lt;Vector&gt;
-<i>184</i>&nbsp;    {
-<i>185</i>&nbsp;
-<b class="fc"><i>186</i>&nbsp;        static final scala.collection.immutable.Vector&lt;JsElem&gt; EMPTY_VECTOR = new scala.collection.immutable.Vector&lt;&gt;(0,</b>
-<i>187</i>&nbsp;                                                                                                                      0,
-<i>188</i>&nbsp;                                                                                                                      0
-<i>189</i>&nbsp;        );
-<b class="fc"><i>190</i>&nbsp;        static final CanBuildFrom&lt;scala.collection.immutable.Vector&lt;JsElem&gt;, JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; bf = new CanBuildFrom&lt;scala.collection.immutable.Vector&lt;JsElem&gt;, JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt;()</b>
-<b class="fc"><i>191</i>&nbsp;        {</b>
-<i>192</i>&nbsp;            @Override
-<i>193</i>&nbsp;            public Builder&lt;JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; apply()
+<i>138</i>&nbsp;        @SuppressWarnings(&quot;squid:S00117&quot;) // api de scala uses $ to name methods
+<i>139</i>&nbsp;        public Map tail(String head)
+<i>140</i>&nbsp;        {
+<b class="fc"><i>141</i>&nbsp;            if (this.isEmpty()) throw new UnsupportedOperationException(&quot;tail of empty map&quot;);</b>
+<b class="fc"><i>142</i>&nbsp;            return new Map(((HashMap&lt;String, JsElem&gt;) persistentMap).$minus(head));</b>
+<i>143</i>&nbsp;        }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;        @Override
+<i>146</i>&nbsp;        public String toString()
+<i>147</i>&nbsp;        {
+<b class="fc"><i>148</i>&nbsp;            if (persistentMap.isEmpty()) return Constants.EMPTY_OBJ_AS_STR;</b>
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;
+<b class="fc"><i>151</i>&nbsp;            return persistentMap.keysIterator()</b>
+<b class="fc"><i>152</i>&nbsp;                                .map(af1(key -&gt; String.format(&quot;\&quot;%s\&quot;:%s&quot;,</b>
+<i>153</i>&nbsp;                                                              key,
+<b class="fc"><i>154</i>&nbsp;                                                              persistentMap.apply(key)</b>
+<i>155</i>&nbsp;                                                             )))
+<b class="fc"><i>156</i>&nbsp;                                .mkString(Constants.OPEN_CURLY,</b>
+<i>157</i>&nbsp;                                          COMMA,
+<i>158</i>&nbsp;                                          Constants.CLOSE_CURLY
+<i>159</i>&nbsp;                                         );
+<i>160</i>&nbsp;        }
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;        @Override
+<i>163</i>&nbsp;        public Map update(final String key,
+<i>164</i>&nbsp;                          final JsElem je
+<i>165</i>&nbsp;                         )
+<i>166</i>&nbsp;        {
+<b class="fc"><i>167</i>&nbsp;            return new Map(persistentMap.updated(key,</b>
+<i>168</i>&nbsp;                                                 je
+<i>169</i>&nbsp;                                                ));
+<i>170</i>&nbsp;        }
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;        @Override
+<i>174</i>&nbsp;        public Map updateAll(final java.util.Map&lt;String, JsElem&gt; map)
+<i>175</i>&nbsp;        {
+<b class="fc"><i>176</i>&nbsp;            scala.collection.immutable.Map&lt;String, JsElem&gt; newMap = this.persistentMap;</b>
+<b class="fc"><i>177</i>&nbsp;            for (java.util.Map.Entry&lt;String, JsElem&gt; entry : map.entrySet())</b>
+<b class="fc"><i>178</i>&nbsp;                newMap = newMap.updated(entry.getKey(),</b>
+<b class="fc"><i>179</i>&nbsp;                                        entry.getValue()</b>
+<i>180</i>&nbsp;                                       );
+<b class="fc"><i>181</i>&nbsp;            return new Map(newMap);</b>
+<i>182</i>&nbsp;        }
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;        @Override
+<i>185</i>&nbsp;        public boolean equals(@Nullable Object obj)
+<i>186</i>&nbsp;        {
+<b class="fc"><i>187</i>&nbsp;            return this.eq(obj);</b>
+<i>188</i>&nbsp;        }
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;        MyScalaImpl.Map parse(final JsParser parser) throws MalformedJson
+<i>191</i>&nbsp;        {
+<b class="fc"><i>192</i>&nbsp;            MyScalaImpl.Map newRoot = this;</b>
+<b class="fc"><i>193</i>&nbsp;            while (parser.next() != END_OBJECT)</b>
 <i>194</i>&nbsp;            {
-<b class="nc"><i>195</i>&nbsp;                return scala.collection.immutable.Vector.&lt;JsElem&gt;canBuildFrom().apply();</b>
-<i>196</i>&nbsp;            }
-<i>197</i>&nbsp;
-<i>198</i>&nbsp;            @Override
-<i>199</i>&nbsp;            public Builder&lt;JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; apply(final scala.collection.immutable.Vector&lt;JsElem&gt; v)
-<i>200</i>&nbsp;            {
-<b class="nc"><i>201</i>&nbsp;                return scala.collection.immutable.Vector.&lt;JsElem&gt;canBuildFrom().apply();</b>
-<i>202</i>&nbsp;            }
-<i>203</i>&nbsp;        };
-<i>204</i>&nbsp;
-<b class="fc"><i>205</i>&nbsp;        static final Vector EMPTY = new Vector(EMPTY_VECTOR);</b>
-<i>206</i>&nbsp;        private final scala.collection.immutable.Vector&lt;JsElem&gt; vector;
-<i>207</i>&nbsp;
-<i>208</i>&nbsp;
-<i>209</i>&nbsp;        Vector(final scala.collection.immutable.Vector&lt;JsElem&gt; vector)
-<b class="fc"><i>210</i>&nbsp;        {</b>
-<b class="fc"><i>211</i>&nbsp;            this.vector = vector;</b>
-<b class="fc"><i>212</i>&nbsp;        }</b>
-<i>213</i>&nbsp;
-<i>214</i>&nbsp;        @Override
-<i>215</i>&nbsp;        public Vector add(final Collection&lt;? extends JsElem&gt; list)
-<i>216</i>&nbsp;        {
-<b class="fc"><i>217</i>&nbsp;            scala.collection.immutable.Vector&lt;JsElem&gt; r = this.vector;</b>
-<b class="fc"><i>218</i>&nbsp;            for (final JsElem jsElem : list) r = r.appendBack(jsElem);</b>
-<b class="fc"><i>219</i>&nbsp;            return new Vector(r);</b>
-<i>220</i>&nbsp;        }
-<i>221</i>&nbsp;
-<i>222</i>&nbsp;
-<i>223</i>&nbsp;        @Override
-<i>224</i>&nbsp;        public Vector add(final Vector that)
-<i>225</i>&nbsp;        {
-<b class="nc"><i>226</i>&nbsp;            return new Vector(vector.$plus$plus(that.vector,</b>
-<i>227</i>&nbsp;                                                bf
-<i>228</i>&nbsp;                                               ));
-<i>229</i>&nbsp;        }
-<i>230</i>&nbsp;
-<i>231</i>&nbsp;        @Override
-<i>232</i>&nbsp;        public Vector appendBack(final JsElem elem)
-<i>233</i>&nbsp;        {
-<b class="fc"><i>234</i>&nbsp;            return new Vector(vector.appendBack(elem));</b>
-<i>235</i>&nbsp;        }
-<i>236</i>&nbsp;
-<i>237</i>&nbsp;        @Override
-<i>238</i>&nbsp;        public Vector appendFront(final JsElem elem)
-<i>239</i>&nbsp;        {
-<b class="fc"><i>240</i>&nbsp;            return new Vector(vector.appendFront(elem));</b>
-<i>241</i>&nbsp;        }
+<b class="fc"><i>195</i>&nbsp;                final String key = parser.getString();</b>
+<b class="fc"><i>196</i>&nbsp;                JsParser.Event elem = parser.next();</b>
+<b class="fc"><i>197</i>&nbsp;                assert elem != null;</b>
+<b class="fc"><i>198</i>&nbsp;                switch (elem)</b>
+<i>199</i>&nbsp;                {
+<i>200</i>&nbsp;                    case VALUE_STRING:
+<b class="fc"><i>201</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<b class="fc"><i>202</i>&nbsp;                                                 parser.getJsString()</b>
+<i>203</i>&nbsp;                                                );
+<b class="fc"><i>204</i>&nbsp;                        break;</b>
+<i>205</i>&nbsp;                    case VALUE_NUMBER:
+<b class="fc"><i>206</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<b class="fc"><i>207</i>&nbsp;                                                 parser.getJsNumber()</b>
+<i>208</i>&nbsp;                                                );
+<b class="fc"><i>209</i>&nbsp;                        break;</b>
+<i>210</i>&nbsp;                    case VALUE_FALSE:
+<b class="fc"><i>211</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<i>212</i>&nbsp;                                                 FALSE
+<i>213</i>&nbsp;                                                );
+<b class="fc"><i>214</i>&nbsp;                        break;</b>
+<i>215</i>&nbsp;                    case VALUE_TRUE:
+<b class="fc"><i>216</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<i>217</i>&nbsp;                                                 TRUE
+<i>218</i>&nbsp;                                                );
+<b class="fc"><i>219</i>&nbsp;                        break;</b>
+<i>220</i>&nbsp;                    case VALUE_NULL:
+<b class="fc"><i>221</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<i>222</i>&nbsp;                                                 NULL
+<i>223</i>&nbsp;                                                );
+<b class="fc"><i>224</i>&nbsp;                        break;</b>
+<i>225</i>&nbsp;                    case START_OBJECT:
+<b class="fc"><i>226</i>&nbsp;                        final MyScalaImpl.Map newObj = EMPTY.parse(parser);</b>
+<b class="fc"><i>227</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<i>228</i>&nbsp;                                                 new JsObjImmutable(newObj)
+<i>229</i>&nbsp;                                                );
+<b class="fc"><i>230</i>&nbsp;                        break;</b>
+<i>231</i>&nbsp;                    case START_ARRAY:
+<b class="fc"><i>232</i>&nbsp;                        final MyScalaImpl.Vector newArr = MyScalaImpl.Vector.EMPTY.parse(parser);</b>
+<b class="fc"><i>233</i>&nbsp;                        newRoot = newRoot.update(key,</b>
+<i>234</i>&nbsp;                                                 new JsArrayImmutable(newArr)
+<i>235</i>&nbsp;                                                );
+<i>236</i>&nbsp;                        break;
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;                }
+<b class="fc"><i>239</i>&nbsp;            }</b>
+<b class="fc"><i>240</i>&nbsp;            return newRoot;</b>
+<i>241</i>&nbsp;
 <i>242</i>&nbsp;
-<i>243</i>&nbsp;        @Override
-<i>244</i>&nbsp;        public boolean contains(final JsElem e)
-<i>245</i>&nbsp;        {
-<b class="fc"><i>246</i>&nbsp;            return vector.contains(e);</b>
-<i>247</i>&nbsp;        }
-<i>248</i>&nbsp;
-<i>249</i>&nbsp;        @Override
-<i>250</i>&nbsp;        public JsElem get(final int index)
-<i>251</i>&nbsp;        {
-<b class="fc"><i>252</i>&nbsp;            return vector.apply(index);</b>
-<i>253</i>&nbsp;        }
-<i>254</i>&nbsp;
-<i>255</i>&nbsp;        @Override
-<i>256</i>&nbsp;        public int hashCode()
-<i>257</i>&nbsp;        {
-<b class="fc"><i>258</i>&nbsp;            return vector.hashCode();</b>
-<i>259</i>&nbsp;        }
-<i>260</i>&nbsp;
-<i>261</i>&nbsp;        @Override
-<i>262</i>&nbsp;        public JsElem head()
-<i>263</i>&nbsp;        {
-<b class="fc"><i>264</i>&nbsp;            return vector.head();</b>
-<i>265</i>&nbsp;        }
-<i>266</i>&nbsp;
-<i>267</i>&nbsp;        @Override
-<i>268</i>&nbsp;        public Vector init()
-<i>269</i>&nbsp;        {
-<b class="fc"><i>270</i>&nbsp;            return new Vector(vector.init());</b>
-<i>271</i>&nbsp;        }
-<i>272</i>&nbsp;
-<i>273</i>&nbsp;        @Override
-<i>274</i>&nbsp;        public boolean isEmpty()
-<i>275</i>&nbsp;        {
-<b class="fc"><i>276</i>&nbsp;            return vector.isEmpty();</b>
-<i>277</i>&nbsp;        }
-<i>278</i>&nbsp;
-<i>279</i>&nbsp;        @Override
-<i>280</i>&nbsp;        public java.util.Iterator&lt;JsElem&gt; iterator()
-<i>281</i>&nbsp;        {
-<b class="fc"><i>282</i>&nbsp;            return JavaConverters.asJavaIterator(vector.iterator()</b>
-<b class="fc"><i>283</i>&nbsp;                                                       .toIterator());</b>
-<i>284</i>&nbsp;        }
-<i>285</i>&nbsp;
-<i>286</i>&nbsp;        @Override
-<i>287</i>&nbsp;        public JsElem last()
-<i>288</i>&nbsp;        {
-<b class="fc"><i>289</i>&nbsp;            return vector.last();</b>
-<i>290</i>&nbsp;        }
-<i>291</i>&nbsp;
-<i>292</i>&nbsp;        @Override
-<i>293</i>&nbsp;        public String toString()
-<i>294</i>&nbsp;        {
-<b class="fc"><i>295</i>&nbsp;            if (vector.isEmpty()) return EMPTY_ARR_AS_STR;</b>
-<i>296</i>&nbsp;
-<b class="fc"><i>297</i>&nbsp;            return vector.mkString(OPEN_BRACKET,</b>
-<i>298</i>&nbsp;                                   COMMA,
-<i>299</i>&nbsp;                                   CLOSE_BRACKET
-<i>300</i>&nbsp;                                  );
-<i>301</i>&nbsp;        }
+<i>243</i>&nbsp;        }
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;        MyScalaImpl.Map parse(final JsParser parser,
+<i>246</i>&nbsp;                              final ParseOptions.Options options,
+<i>247</i>&nbsp;                              final JsPath path
+<i>248</i>&nbsp;                             ) throws MalformedJson
+<i>249</i>&nbsp;        {
+<i>250</i>&nbsp;
+<b class="fc"><i>251</i>&nbsp;            MyScalaImpl.Map newRoot = this;</b>
+<b class="fc"><i>252</i>&nbsp;            final Predicate&lt;JsPair&gt; condition = p -&gt; options.elemFilter.test(p) &amp;&amp; options.keyFilter.test(p.path);</b>
+<b class="fc"><i>253</i>&nbsp;            while (parser.next() != END_OBJECT)</b>
+<i>254</i>&nbsp;            {
+<b class="fc"><i>255</i>&nbsp;                final String key = options.keyMap.apply(parser.getString());</b>
+<b class="fc"><i>256</i>&nbsp;                final JsPath currentPath = path.key(key);</b>
+<b class="fc"><i>257</i>&nbsp;                JsParser.Event elem = parser.next();</b>
+<i>258</i>&nbsp;                final JsPair pair;
+<b class="fc"><i>259</i>&nbsp;                assert elem != null;</b>
+<b class="fc"><i>260</i>&nbsp;                switch (elem)</b>
+<i>261</i>&nbsp;                {
+<i>262</i>&nbsp;                    case VALUE_STRING:
+<b class="fc"><i>263</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<b class="fc"><i>264</i>&nbsp;                                         parser.getJsString()</b>
+<i>265</i>&nbsp;                                        );
+<b class="fc"><i>266</i>&nbsp;                        newRoot = (condition.test(pair)) ? newRoot.update(key,</b>
+<b class="fc"><i>267</i>&nbsp;                                                                          options.elemMap.apply(pair)</b>
+<i>268</i>&nbsp;                                                                         ) : newRoot;
+<b class="fc"><i>269</i>&nbsp;                        break;</b>
+<i>270</i>&nbsp;                    case VALUE_NUMBER:
+<b class="fc"><i>271</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<b class="fc"><i>272</i>&nbsp;                                         parser.getJsNumber()</b>
+<i>273</i>&nbsp;                                        );
+<b class="fc"><i>274</i>&nbsp;                        newRoot = (condition.test(pair)) ? newRoot.update(key,</b>
+<b class="fc"><i>275</i>&nbsp;                                                                          options.elemMap.apply(pair)</b>
+<i>276</i>&nbsp;                                                                         ) : newRoot;
+<b class="fc"><i>277</i>&nbsp;                        break;</b>
+<i>278</i>&nbsp;                    case VALUE_TRUE:
+<b class="fc"><i>279</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<i>280</i>&nbsp;                                         TRUE
+<i>281</i>&nbsp;                                        );
+<b class="fc"><i>282</i>&nbsp;                        newRoot = (condition.test(pair)) ? newRoot.update(key,</b>
+<b class="fc"><i>283</i>&nbsp;                                                                          options.elemMap.apply(pair)</b>
+<i>284</i>&nbsp;                                                                         ) : newRoot;
+<b class="fc"><i>285</i>&nbsp;                        break;</b>
+<i>286</i>&nbsp;                    case VALUE_FALSE:
+<b class="fc"><i>287</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<i>288</i>&nbsp;                                         FALSE
+<i>289</i>&nbsp;                                        );
+<b class="fc"><i>290</i>&nbsp;                        newRoot = (condition.test(pair)) ? newRoot.update(key,</b>
+<b class="fc"><i>291</i>&nbsp;                                                                          options.elemMap.apply(pair)</b>
+<i>292</i>&nbsp;                                                                         ) : newRoot;
+<b class="fc"><i>293</i>&nbsp;                        break;</b>
+<i>294</i>&nbsp;                    case VALUE_NULL:
+<b class="fc"><i>295</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<i>296</i>&nbsp;                                         NULL
+<i>297</i>&nbsp;                                        );
+<b class="fc"><i>298</i>&nbsp;                        newRoot = (condition.test(pair)) ? newRoot.update(key,</b>
+<b class="fc"><i>299</i>&nbsp;                                                                          options.elemMap.apply(pair)</b>
+<i>300</i>&nbsp;                                                                         ) : newRoot;
+<b class="fc"><i>301</i>&nbsp;                        break;</b>
 <i>302</i>&nbsp;
-<i>303</i>&nbsp;        @Override
-<i>304</i>&nbsp;        public Vector remove(final int index)
-<i>305</i>&nbsp;        {
-<i>306</i>&nbsp;
-<i>307</i>&nbsp;
-<b class="fc"><i>308</i>&nbsp;            if (index == 0) return new Vector(vector.tail());</b>
-<b class="fc"><i>309</i>&nbsp;            if (index == vector.size() - 1) return new Vector(vector.init());</b>
-<i>310</i>&nbsp;
-<b class="nc"><i>311</i>&nbsp;            Tuple2&lt;scala.collection.immutable.Vector&lt;JsElem&gt;, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; tuple = vector.splitAt(index);</b>
-<i>312</i>&nbsp;
-<i>313</i>&nbsp;
-<b class="nc"><i>314</i>&nbsp;            return new Vector(tuple._1.init()</b>
-<b class="nc"><i>315</i>&nbsp;                                      .$plus$plus(tuple._2,</b>
-<i>316</i>&nbsp;                                                  bf
-<i>317</i>&nbsp;                                                 ));
-<i>318</i>&nbsp;        }
-<i>319</i>&nbsp;
-<i>320</i>&nbsp;        @Override
-<i>321</i>&nbsp;        public int size()
-<i>322</i>&nbsp;        {
-<b class="fc"><i>323</i>&nbsp;            return vector.size();</b>
-<i>324</i>&nbsp;        }
-<i>325</i>&nbsp;
-<i>326</i>&nbsp;        @Override
-<i>327</i>&nbsp;        public Stream&lt;JsElem&gt; stream()
-<i>328</i>&nbsp;        {
-<b class="nc"><i>329</i>&nbsp;            return JavaConverters.seqAsJavaList(vector)</b>
-<b class="nc"><i>330</i>&nbsp;                                 .stream();</b>
-<i>331</i>&nbsp;        }
-<i>332</i>&nbsp;
-<i>333</i>&nbsp;        @Override
-<i>334</i>&nbsp;        public Vector tail()
-<i>335</i>&nbsp;        {
-<b class="fc"><i>336</i>&nbsp;            return new Vector(vector.tail());</b>
-<i>337</i>&nbsp;        }
-<i>338</i>&nbsp;
-<i>339</i>&nbsp;        @Override
-<i>340</i>&nbsp;        public Vector update(final int index,
-<i>341</i>&nbsp;                             final JsElem ele
-<i>342</i>&nbsp;                            )
-<i>343</i>&nbsp;        {
-<b class="fc"><i>344</i>&nbsp;            return new Vector(vector.updateAt(index,</b>
-<i>345</i>&nbsp;                                              ele
-<i>346</i>&nbsp;                                             ));
-<i>347</i>&nbsp;        }
-<i>348</i>&nbsp;
-<i>349</i>&nbsp;        @Override
-<i>350</i>&nbsp;        public boolean equals(final @Nullable Object that)
-<i>351</i>&nbsp;        {
-<b class="fc"><i>352</i>&nbsp;            return this.eq(that);</b>
-<i>353</i>&nbsp;        }
-<i>354</i>&nbsp;    }
-<i>355</i>&nbsp;}
+<i>303</i>&nbsp;                    case START_OBJECT:
+<b class="fc"><i>304</i>&nbsp;                        if (options.keyFilter.test(currentPath))</b>
+<i>305</i>&nbsp;                        {
+<b class="fc"><i>306</i>&nbsp;                            newRoot = newRoot.update(key,</b>
+<b class="fc"><i>307</i>&nbsp;                                                     new JsObjImmutable(EMPTY.parse(parser,</b>
+<i>308</i>&nbsp;                                                                                    options,
+<i>309</i>&nbsp;                                                                                    currentPath
+<i>310</i>&nbsp;                                                                                   ))
+<i>311</i>&nbsp;                                                    );
+<i>312</i>&nbsp;                        }
+<i>313</i>&nbsp;                        break;
+<i>314</i>&nbsp;                    case START_ARRAY:
+<b class="fc"><i>315</i>&nbsp;                        if (options.keyFilter.test(currentPath))</b>
+<i>316</i>&nbsp;                        {
+<b class="fc"><i>317</i>&nbsp;                            newRoot = newRoot.update(key,</b>
+<b class="fc"><i>318</i>&nbsp;                                                     new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser,</b>
+<i>319</i>&nbsp;                                                                                                         options,
+<b class="fc"><i>320</i>&nbsp;                                                                                                         currentPath.index(-1)</b>
+<i>321</i>&nbsp;                                                                                                        ))
+<i>322</i>&nbsp;                                                    );
+<i>323</i>&nbsp;                        }
+<i>324</i>&nbsp;                        break;
+<i>325</i>&nbsp;                }
+<b class="fc"><i>326</i>&nbsp;            }</b>
+<b class="fc"><i>327</i>&nbsp;            return newRoot;</b>
+<i>328</i>&nbsp;        }
+<i>329</i>&nbsp;    }
+<i>330</i>&nbsp;
+<b class="fc"><i>331</i>&nbsp;    static final class Vector implements MyVector&lt;Vector&gt;</b>
+<i>332</i>&nbsp;    {
+<i>333</i>&nbsp;
+<b class="fc"><i>334</i>&nbsp;        static final scala.collection.immutable.Vector&lt;JsElem&gt; EMPTY_VECTOR = new scala.collection.immutable.Vector&lt;&gt;(0,</b>
+<i>335</i>&nbsp;                                                                                                                      0,
+<i>336</i>&nbsp;                                                                                                                      0
+<i>337</i>&nbsp;        );
+<b class="fc"><i>338</i>&nbsp;        static final CanBuildFrom&lt;scala.collection.immutable.Vector&lt;JsElem&gt;, JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; bf = new CanBuildFrom&lt;scala.collection.immutable.Vector&lt;JsElem&gt;, JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt;()</b>
+<b class="fc"><i>339</i>&nbsp;        {</b>
+<i>340</i>&nbsp;            @Override
+<i>341</i>&nbsp;            public Builder&lt;JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; apply()
+<i>342</i>&nbsp;            {
+<b class="nc"><i>343</i>&nbsp;                return scala.collection.immutable.Vector.&lt;JsElem&gt;canBuildFrom().apply();</b>
+<i>344</i>&nbsp;            }
+<i>345</i>&nbsp;
+<i>346</i>&nbsp;            @Override
+<i>347</i>&nbsp;            public Builder&lt;JsElem, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; apply(final scala.collection.immutable.Vector&lt;JsElem&gt; v)
+<i>348</i>&nbsp;            {
+<b class="nc"><i>349</i>&nbsp;                return scala.collection.immutable.Vector.&lt;JsElem&gt;canBuildFrom().apply();</b>
+<i>350</i>&nbsp;            }
+<i>351</i>&nbsp;        };
+<i>352</i>&nbsp;
+<b class="fc"><i>353</i>&nbsp;        static final Vector EMPTY = new Vector(EMPTY_VECTOR);</b>
+<i>354</i>&nbsp;        private final scala.collection.immutable.Vector&lt;JsElem&gt; vector;
+<i>355</i>&nbsp;
+<i>356</i>&nbsp;
+<i>357</i>&nbsp;        Vector(final scala.collection.immutable.Vector&lt;JsElem&gt; vector)
+<b class="fc"><i>358</i>&nbsp;        {</b>
+<b class="fc"><i>359</i>&nbsp;            this.vector = vector;</b>
+<b class="fc"><i>360</i>&nbsp;        }</b>
+<i>361</i>&nbsp;
+<i>362</i>&nbsp;        @Override
+<i>363</i>&nbsp;        public Vector add(final Collection&lt;? extends JsElem&gt; list)
+<i>364</i>&nbsp;        {
+<b class="fc"><i>365</i>&nbsp;            scala.collection.immutable.Vector&lt;JsElem&gt; r = this.vector;</b>
+<b class="fc"><i>366</i>&nbsp;            for (final JsElem jsElem : list) r = r.appendBack(jsElem);</b>
+<b class="fc"><i>367</i>&nbsp;            return new Vector(r);</b>
+<i>368</i>&nbsp;        }
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;
+<i>371</i>&nbsp;        @Override
+<i>372</i>&nbsp;        @SuppressWarnings(&quot;squid:S00117&quot;) // api de scala uses $ to name methods
+<i>373</i>&nbsp;        public Vector add(final Vector that)
+<i>374</i>&nbsp;        {
+<b class="nc"><i>375</i>&nbsp;            return new Vector(vector.$plus$plus(that.vector,</b>
+<i>376</i>&nbsp;                                                bf
+<i>377</i>&nbsp;                                               ));
+<i>378</i>&nbsp;        }
+<i>379</i>&nbsp;
+<i>380</i>&nbsp;        @Override
+<i>381</i>&nbsp;        public Vector appendBack(final JsElem elem)
+<i>382</i>&nbsp;        {
+<b class="fc"><i>383</i>&nbsp;            return new Vector(vector.appendBack(elem));</b>
+<i>384</i>&nbsp;        }
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;        @Override
+<i>387</i>&nbsp;        public Vector appendFront(final JsElem elem)
+<i>388</i>&nbsp;        {
+<b class="fc"><i>389</i>&nbsp;            return new Vector(vector.appendFront(elem));</b>
+<i>390</i>&nbsp;        }
+<i>391</i>&nbsp;
+<i>392</i>&nbsp;        @Override
+<i>393</i>&nbsp;        public boolean contains(final JsElem e)
+<i>394</i>&nbsp;        {
+<b class="fc"><i>395</i>&nbsp;            return vector.contains(e);</b>
+<i>396</i>&nbsp;        }
+<i>397</i>&nbsp;
+<i>398</i>&nbsp;        @Override
+<i>399</i>&nbsp;        public JsElem get(final int index)
+<i>400</i>&nbsp;        {
+<b class="fc"><i>401</i>&nbsp;            return vector.apply(index);</b>
+<i>402</i>&nbsp;        }
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;        @Override
+<i>405</i>&nbsp;        public int hashCode()
+<i>406</i>&nbsp;        {
+<b class="fc"><i>407</i>&nbsp;            return vector.hashCode();</b>
+<i>408</i>&nbsp;        }
+<i>409</i>&nbsp;
+<i>410</i>&nbsp;        @Override
+<i>411</i>&nbsp;        public JsElem head()
+<i>412</i>&nbsp;        {
+<b class="fc"><i>413</i>&nbsp;            return vector.head();</b>
+<i>414</i>&nbsp;        }
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;        @Override
+<i>417</i>&nbsp;        public Vector init()
+<i>418</i>&nbsp;        {
+<b class="fc"><i>419</i>&nbsp;            return new Vector(vector.init());</b>
+<i>420</i>&nbsp;        }
+<i>421</i>&nbsp;
+<i>422</i>&nbsp;        @Override
+<i>423</i>&nbsp;        public boolean isEmpty()
+<i>424</i>&nbsp;        {
+<b class="fc"><i>425</i>&nbsp;            return vector.isEmpty();</b>
+<i>426</i>&nbsp;        }
+<i>427</i>&nbsp;
+<i>428</i>&nbsp;        @Override
+<i>429</i>&nbsp;        public java.util.Iterator&lt;JsElem&gt; iterator()
+<i>430</i>&nbsp;        {
+<b class="fc"><i>431</i>&nbsp;            return JavaConverters.asJavaIterator(vector.iterator()</b>
+<b class="fc"><i>432</i>&nbsp;                                                       .toIterator());</b>
+<i>433</i>&nbsp;        }
+<i>434</i>&nbsp;
+<i>435</i>&nbsp;        @Override
+<i>436</i>&nbsp;        public JsElem last()
+<i>437</i>&nbsp;        {
+<b class="fc"><i>438</i>&nbsp;            return vector.last();</b>
+<i>439</i>&nbsp;        }
+<i>440</i>&nbsp;
+<i>441</i>&nbsp;        @Override
+<i>442</i>&nbsp;        public String toString()
+<i>443</i>&nbsp;        {
+<b class="fc"><i>444</i>&nbsp;            if (vector.isEmpty()) return Constants.EMPTY_ARR_AS_STR;</b>
+<i>445</i>&nbsp;
+<b class="fc"><i>446</i>&nbsp;            return vector.mkString(OPEN_BRACKET,</b>
+<i>447</i>&nbsp;                                   COMMA,
+<i>448</i>&nbsp;                                   CLOSE_BRACKET
+<i>449</i>&nbsp;                                  );
+<i>450</i>&nbsp;        }
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;        @Override
+<i>453</i>&nbsp;        @SuppressWarnings(&quot;squid:S00117&quot;) // api de scala uses $ to name methods
+<i>454</i>&nbsp;        public Vector remove(final int index)
+<i>455</i>&nbsp;        {
+<i>456</i>&nbsp;
+<i>457</i>&nbsp;
+<b class="fc"><i>458</i>&nbsp;            if (index == 0) return new Vector(vector.tail());</b>
+<b class="fc"><i>459</i>&nbsp;            if (index == vector.size() - 1) return new Vector(vector.init());</b>
+<i>460</i>&nbsp;
+<b class="nc"><i>461</i>&nbsp;            Tuple2&lt;scala.collection.immutable.Vector&lt;JsElem&gt;, scala.collection.immutable.Vector&lt;JsElem&gt;&gt; tuple = vector.splitAt(index);</b>
+<i>462</i>&nbsp;
+<i>463</i>&nbsp;
+<b class="nc"><i>464</i>&nbsp;            return new Vector(tuple._1.init()</b>
+<b class="nc"><i>465</i>&nbsp;                                      .$plus$plus(tuple._2,</b>
+<i>466</i>&nbsp;                                                  bf
+<i>467</i>&nbsp;                                                 ));
+<i>468</i>&nbsp;        }
+<i>469</i>&nbsp;
+<i>470</i>&nbsp;        @Override
+<i>471</i>&nbsp;        public int size()
+<i>472</i>&nbsp;        {
+<b class="fc"><i>473</i>&nbsp;            return vector.size();</b>
+<i>474</i>&nbsp;        }
+<i>475</i>&nbsp;
+<i>476</i>&nbsp;        @Override
+<i>477</i>&nbsp;        public Stream&lt;JsElem&gt; stream()
+<i>478</i>&nbsp;        {
+<b class="nc"><i>479</i>&nbsp;            return JavaConverters.seqAsJavaList(vector)</b>
+<b class="nc"><i>480</i>&nbsp;                                 .stream();</b>
+<i>481</i>&nbsp;        }
+<i>482</i>&nbsp;
+<i>483</i>&nbsp;        @Override
+<i>484</i>&nbsp;        public Vector tail()
+<i>485</i>&nbsp;        {
+<b class="fc"><i>486</i>&nbsp;            return new Vector(vector.tail());</b>
+<i>487</i>&nbsp;        }
+<i>488</i>&nbsp;
+<i>489</i>&nbsp;        @Override
+<i>490</i>&nbsp;        public Vector update(final int index,
+<i>491</i>&nbsp;                             final JsElem ele
+<i>492</i>&nbsp;                            )
+<i>493</i>&nbsp;        {
+<b class="fc"><i>494</i>&nbsp;            return new Vector(vector.updateAt(index,</b>
+<i>495</i>&nbsp;                                              ele
+<i>496</i>&nbsp;                                             ));
+<i>497</i>&nbsp;        }
+<i>498</i>&nbsp;
+<i>499</i>&nbsp;        @Override
+<i>500</i>&nbsp;        public boolean equals(final @Nullable Object that)
+<i>501</i>&nbsp;        {
+<b class="fc"><i>502</i>&nbsp;            return this.eq(that);</b>
+<i>503</i>&nbsp;        }
+<i>504</i>&nbsp;
+<i>505</i>&nbsp;        MyScalaImpl.Vector parse(final JsParser parser) throws MalformedJson
+<i>506</i>&nbsp;        {
+<i>507</i>&nbsp;
+<i>508</i>&nbsp;            JsParser.Event elem;
+<b class="fc"><i>509</i>&nbsp;            MyScalaImpl.Vector newRoot = this;</b>
+<b class="fc"><i>510</i>&nbsp;            while ((elem = parser.next()) != END_ARRAY)</b>
+<i>511</i>&nbsp;            {
+<b class="fc"><i>512</i>&nbsp;                assert elem != null;</b>
+<b class="fc"><i>513</i>&nbsp;                switch (elem)</b>
+<i>514</i>&nbsp;                {
+<i>515</i>&nbsp;                    case VALUE_STRING:
+<b class="fc"><i>516</i>&nbsp;                        newRoot = newRoot.appendBack(parser.getJsString());</b>
+<b class="fc"><i>517</i>&nbsp;                        break;</b>
+<i>518</i>&nbsp;                    case VALUE_NUMBER:
+<b class="fc"><i>519</i>&nbsp;                        newRoot = newRoot.appendBack(parser.getJsNumber());</b>
+<b class="fc"><i>520</i>&nbsp;                        break;</b>
+<i>521</i>&nbsp;                    case VALUE_FALSE:
+<b class="fc"><i>522</i>&nbsp;                        newRoot = newRoot.appendBack(FALSE);</b>
+<b class="fc"><i>523</i>&nbsp;                        break;</b>
+<i>524</i>&nbsp;                    case VALUE_TRUE:
+<b class="fc"><i>525</i>&nbsp;                        newRoot = newRoot.appendBack(TRUE);</b>
+<b class="fc"><i>526</i>&nbsp;                        break;</b>
+<i>527</i>&nbsp;                    case VALUE_NULL:
+<b class="fc"><i>528</i>&nbsp;                        newRoot = newRoot.appendBack(NULL);</b>
+<b class="fc"><i>529</i>&nbsp;                        break;</b>
+<i>530</i>&nbsp;                    case START_OBJECT:
+<b class="fc"><i>531</i>&nbsp;                        final MyScalaImpl.Map newObj = MyScalaImpl.Map.EMPTY.parse(parser);</b>
+<b class="fc"><i>532</i>&nbsp;                        newRoot = newRoot.appendBack(new JsObjImmutable(newObj));</b>
+<b class="fc"><i>533</i>&nbsp;                        break;</b>
+<i>534</i>&nbsp;
+<i>535</i>&nbsp;                    case START_ARRAY:
+<b class="fc"><i>536</i>&nbsp;                        final MyScalaImpl.Vector newVector = EMPTY.parse(parser);</b>
+<i>537</i>&nbsp;
+<b class="fc"><i>538</i>&nbsp;                        newRoot = newRoot.appendBack(new JsArrayImmutable(newVector));</b>
+<b class="fc"><i>539</i>&nbsp;                        break;</b>
+<i>540</i>&nbsp;                }
+<i>541</i>&nbsp;            }
+<i>542</i>&nbsp;
+<b class="fc"><i>543</i>&nbsp;            return newRoot;</b>
+<i>544</i>&nbsp;
+<i>545</i>&nbsp;
+<i>546</i>&nbsp;        }
+<i>547</i>&nbsp;
+<i>548</i>&nbsp;        MyScalaImpl.Vector parse(final JsParser parser,
+<i>549</i>&nbsp;                                 final ParseOptions.Options options,
+<i>550</i>&nbsp;                                 final JsPath path
+<i>551</i>&nbsp;                                ) throws MalformedJson
+<i>552</i>&nbsp;        {
+<i>553</i>&nbsp;            JsParser.Event elem;
+<b class="fc"><i>554</i>&nbsp;            MyScalaImpl.Vector newRoot = this;</b>
+<i>555</i>&nbsp;            JsPair pair;
+<b class="fc"><i>556</i>&nbsp;            final Predicate&lt;JsPair&gt; condition = p -&gt; options.elemFilter.test(p) &amp;&amp; options.keyFilter.test(p.path);</b>
+<b class="fc"><i>557</i>&nbsp;            while ((elem = parser.next()) != END_ARRAY)</b>
+<i>558</i>&nbsp;            {
+<b class="fc"><i>559</i>&nbsp;                assert elem != null;</b>
+<b class="fc"><i>560</i>&nbsp;                final JsPath currentPath = path.inc();</b>
+<b class="fc"><i>561</i>&nbsp;                switch (elem)</b>
+<i>562</i>&nbsp;                {
+<i>563</i>&nbsp;                    case VALUE_STRING:
+<i>564</i>&nbsp;
+<b class="fc"><i>565</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<b class="fc"><i>566</i>&nbsp;                                         parser.getJsString()</b>
+<i>567</i>&nbsp;                                        );
+<b class="fc"><i>568</i>&nbsp;                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;</b>
+<i>569</i>&nbsp;
+<b class="fc"><i>570</i>&nbsp;                        break;</b>
+<i>571</i>&nbsp;                    case VALUE_NUMBER:
+<b class="fc"><i>572</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<b class="fc"><i>573</i>&nbsp;                                         parser.getJsNumber()</b>
+<i>574</i>&nbsp;                                        );
+<b class="fc"><i>575</i>&nbsp;                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;</b>
+<i>576</i>&nbsp;
+<i>577</i>&nbsp;
+<b class="fc"><i>578</i>&nbsp;                        break;</b>
+<i>579</i>&nbsp;
+<i>580</i>&nbsp;                    case VALUE_TRUE:
+<b class="fc"><i>581</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<i>582</i>&nbsp;                                         TRUE
+<i>583</i>&nbsp;                                        );
+<b class="fc"><i>584</i>&nbsp;                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;</b>
+<i>585</i>&nbsp;
+<b class="fc"><i>586</i>&nbsp;                        break;</b>
+<i>587</i>&nbsp;                    case VALUE_FALSE:
+<b class="fc"><i>588</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<i>589</i>&nbsp;                                         FALSE
+<i>590</i>&nbsp;                                        );
+<b class="fc"><i>591</i>&nbsp;                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;</b>
+<b class="fc"><i>592</i>&nbsp;                        break;</b>
+<i>593</i>&nbsp;                    case VALUE_NULL:
+<b class="fc"><i>594</i>&nbsp;                        pair = JsPair.of(currentPath,</b>
+<i>595</i>&nbsp;                                         NULL
+<i>596</i>&nbsp;                                        );
+<b class="fc"><i>597</i>&nbsp;                        newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;</b>
+<b class="fc"><i>598</i>&nbsp;                        break;</b>
+<i>599</i>&nbsp;                    case START_OBJECT:
+<b class="fc"><i>600</i>&nbsp;                        if (options.keyFilter.test(currentPath))</b>
+<i>601</i>&nbsp;                        {
+<b class="fc"><i>602</i>&nbsp;                            newRoot = newRoot.appendBack(new JsObjImmutable(MyScalaImpl.Map.EMPTY.parse(parser,</b>
+<i>603</i>&nbsp;                                                                                                        options,
+<i>604</i>&nbsp;                                                                                                        currentPath
+<i>605</i>&nbsp;                                                                                                       )));
+<i>606</i>&nbsp;                        }
+<i>607</i>&nbsp;                        break;
+<i>608</i>&nbsp;                    case START_ARRAY:
+<b class="fc"><i>609</i>&nbsp;                        if (options.keyFilter.test(currentPath))</b>
+<i>610</i>&nbsp;                        {
+<b class="fc"><i>611</i>&nbsp;                            newRoot = newRoot.appendBack(new JsArrayImmutable(EMPTY.parse(parser,</b>
+<i>612</i>&nbsp;                                                                                          options,
+<b class="fc"><i>613</i>&nbsp;                                                                                          currentPath.index(-1)</b>
+<i>614</i>&nbsp;                                                                                         )));
+<i>615</i>&nbsp;                        }
+<i>616</i>&nbsp;
+<i>617</i>&nbsp;                        break;
+<i>618</i>&nbsp;                }
+<b class="fc"><i>619</i>&nbsp;            }</b>
+<b class="fc"><i>620</i>&nbsp;            return newRoot;</b>
+<i>621</i>&nbsp;        }
+<i>622</i>&nbsp;
+<i>623</i>&nbsp;    }
+<i>624</i>&nbsp;}
 </div>
 </div>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-07-31 10:50</div>
+    <div style="float:right;">generated on 2019-08-09 01:41</div>
 </div>
 </body>
 </html>

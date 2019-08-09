@@ -1,7 +1,7 @@
 package jsonvalues.specifications.mutable.jsobject
 
 import java.math.BigInteger
-
+import jsonvalues.JsElems
 import jsonvalues._
 import jsonvalues.specifications.BasePropSpec
 import org.scalacheck.Prop.forAll

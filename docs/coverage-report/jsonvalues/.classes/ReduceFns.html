@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ReduceFns</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ReduceFns (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReduceFns</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.2%
+  </span>
+  <span class="absValue">
+    (20/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.3%
+  </span>
+  <span class="absValue">
+    (36/ 37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Optional;
+<i>4</i>&nbsp;import java.util.function.BiFunction;
+<i>5</i>&nbsp;import java.util.function.BinaryOperator;
+<i>6</i>&nbsp;import java.util.function.Function;
+<i>7</i>&nbsp;import java.util.function.Predicate;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import static jsonvalues.Trampoline.done;
+<i>10</i>&nbsp;import static jsonvalues.Trampoline.more;
+<i>11</i>&nbsp;
+<b class="nc"><i>12</i>&nbsp;class ReduceFns</b>
+<i>13</i>&nbsp;{
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    static &lt;T&gt; BiFunction&lt;JsPair, Optional&lt;T&gt;, Optional&lt;T&gt;&gt; accumulateIf(final Predicate&lt;? super JsPair&gt; predicate,
+<i>16</i>&nbsp;                                                                         final Function&lt;? super JsPair, T&gt; map,
+<i>17</i>&nbsp;                                                                         final BinaryOperator&lt;T&gt; op
+<i>18</i>&nbsp;                                                                        )
+<i>19</i>&nbsp;    {
+<i>20</i>&nbsp;
+<b class="fc"><i>21</i>&nbsp;        return (pair, acc) -&gt;</b>
+<i>22</i>&nbsp;        {
+<b class="fc"><i>23</i>&nbsp;            if (!predicate.test(pair)) return acc;</b>
+<b class="fc"><i>24</i>&nbsp;            final T mapped = map.apply(pair);</b>
+<i>25</i>&nbsp;
+<b class="fc"><i>26</i>&nbsp;            final Optional&lt;T&gt; t = acc.map(it -&gt; op.apply(it,</b>
+<i>27</i>&nbsp;                                                         mapped
+<i>28</i>&nbsp;                                                        ));
+<b class="fc"><i>29</i>&nbsp;            if (t.isPresent()) return t;</b>
+<b class="fc"><i>30</i>&nbsp;            return Optional.ofNullable(mapped);</b>
+<i>31</i>&nbsp;        };
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    static &lt;T&gt; BiFunction&lt;Json&lt;?&gt;, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt; reduceJson_(final BiFunction&lt;JsPair, Optional&lt;T&gt;, Optional&lt;T&gt;&gt; accumulator,
+<i>36</i>&nbsp;                                                                                     final JsPath startingPath,
+<i>37</i>&nbsp;                                                                                     final boolean isRecursive
+<i>38</i>&nbsp;                                                                                    )
+<i>39</i>&nbsp;    {
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;        return (json, acc) -&gt;</b>
+<i>42</i>&nbsp;        {
+<b class="fc"><i>43</i>&nbsp;            if (json.isObj()) return reduceObj_(accumulator,</b>
+<i>44</i>&nbsp;                                                startingPath,
+<i>45</i>&nbsp;                                                isRecursive
+<b class="fc"><i>46</i>&nbsp;                                               ).apply(json.asJsObj(),</b>
+<i>47</i>&nbsp;                                                       acc
+<i>48</i>&nbsp;                                                      );
+<b class="fc"><i>49</i>&nbsp;            return reduceArr_(accumulator,</b>
+<b class="fc"><i>50</i>&nbsp;                              startingPath.index(-1),</b>
+<i>51</i>&nbsp;                              isRecursive
+<b class="fc"><i>52</i>&nbsp;                             ).apply(json.asJsArray(),</b>
+<i>53</i>&nbsp;                                     acc
+<i>54</i>&nbsp;                                    );
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;        };
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention: xx_ traverses the whole json
+<i>61</i>&nbsp;    static &lt;T&gt; BiFunction&lt;JsObj, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt; reduceObj_(final BiFunction&lt;JsPair, Optional&lt;T&gt;, Optional&lt;T&gt;&gt; accumulator,
+<i>62</i>&nbsp;                                                                                  final JsPath startingPath,
+<i>63</i>&nbsp;                                                                                  final boolean isRecursive
+<i>64</i>&nbsp;                                                                                 )
+<i>65</i>&nbsp;    {
+<i>66</i>&nbsp;
+<b class="fc"><i>67</i>&nbsp;        return (obj, acc) -&gt; obj.ifEmptyElse(done(acc),</b>
+<i>68</i>&nbsp;                                             (head, tail) -&gt;
+<i>69</i>&nbsp;                                             {
+<b class="fc"><i>70</i>&nbsp;                                                 final JsPath headPath = startingPath.key(head.getKey());</b>
+<b class="fc"><i>71</i>&nbsp;                                                 return MatchFns.ifJsonElse(json -&gt; isRecursive ? more(() -&gt; reduceJson_(accumulator,</b>
+<i>72</i>&nbsp;                                                                                                                         headPath,
+<i>73</i>&nbsp;                                                                                                                         isRecursive
+<b class="fc"><i>74</i>&nbsp;                                                                                                                        ).apply(json,</b>
+<i>75</i>&nbsp;                                                                                                                                acc
+<i>76</i>&nbsp;                                                                                                                               )
+<b class="fc"><i>77</i>&nbsp;                                                                                                      ).flatMap(headAcc -&gt; reduceObj_(accumulator,</b>
+<i>78</i>&nbsp;                                                                                                                                      startingPath,
+<i>79</i>&nbsp;                                                                                                                                      isRecursive
+<b class="fc"><i>80</i>&nbsp;                                                                                                                                     ).apply(tail,</b>
+<i>81</i>&nbsp;                                                                                                                                             headAcc
+<b class="fc"><i>82</i>&nbsp;                                                                                                                                            )) : more(() -&gt; reduceObj_(accumulator,</b>
+<i>83</i>&nbsp;                                                                                                                                                                       startingPath,
+<i>84</i>&nbsp;                                                                                                                                                                       isRecursive
+<b class="fc"><i>85</i>&nbsp;                                                                                                                                                                      ).apply(tail,</b>
+<i>86</i>&nbsp;                                                                                                                                                                              acc
+<i>87</i>&nbsp;                                                                                                                                                                             )
+<i>88</i>&nbsp;                                                                                                                                                     ),
+<b class="fc"><i>89</i>&nbsp;                                                                            elem -&gt; more(() -&gt; reduceObj_(accumulator,</b>
+<i>90</i>&nbsp;                                                                                                          startingPath,
+<i>91</i>&nbsp;                                                                                                          isRecursive
+<b class="fc"><i>92</i>&nbsp;                                                                                                         ).apply(tail,</b>
+<b class="fc"><i>93</i>&nbsp;                                                                                                                 accumulator.apply(JsPair.of(headPath,</b>
+<i>94</i>&nbsp;                                                                                                                                             elem
+<i>95</i>&nbsp;                                                                                                                                            ),
+<i>96</i>&nbsp;                                                                                                                                   acc
+<i>97</i>&nbsp;                                                                                                                                  )
+<i>98</i>&nbsp;                                                                                                                ))
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;                                                                           )
+<b class="fc"><i>101</i>&nbsp;                                                                .apply(head.getValue());</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;                                             }
+<i>104</i>&nbsp;                                            );
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention: xx_ traverses the whole json
+<i>111</i>&nbsp;    static &lt;T&gt; BiFunction&lt;JsArray, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt; reduceArr_(final BiFunction&lt;JsPair, Optional&lt;T&gt;, Optional&lt;T&gt;&gt; accumulator,
+<i>112</i>&nbsp;                                                                                    final JsPath startingPath,
+<i>113</i>&nbsp;                                                                                    final boolean isRecursive
+<i>114</i>&nbsp;                                                                                   )
+<i>115</i>&nbsp;    {
+<i>116</i>&nbsp;
+<b class="fc"><i>117</i>&nbsp;        return (arr, acc) -&gt; arr.ifEmptyElse(done(acc),</b>
+<i>118</i>&nbsp;                                             (head, tail) -&gt;
+<i>119</i>&nbsp;                                             {
+<b class="fc"><i>120</i>&nbsp;                                                 final JsPath headPath = startingPath.inc();</b>
+<i>121</i>&nbsp;
+<b class="fc"><i>122</i>&nbsp;                                                 return MatchFns.ifJsonElse(json -&gt; isRecursive ? more(() -&gt; reduceJson_(accumulator,</b>
+<i>123</i>&nbsp;                                                                                                                         headPath,
+<i>124</i>&nbsp;                                                                                                                         isRecursive
+<b class="fc"><i>125</i>&nbsp;                                                                                                                        ).apply(json,</b>
+<i>126</i>&nbsp;                                                                                                                                acc
+<i>127</i>&nbsp;                                                                                                                               )
+<b class="fc"><i>128</i>&nbsp;                                                                                                      ).flatMap(headAcc -&gt; reduceArr_(accumulator,</b>
+<i>129</i>&nbsp;                                                                                                                                      headPath,
+<i>130</i>&nbsp;                                                                                                                                      isRecursive
+<b class="fc"><i>131</i>&nbsp;                                                                                                                                     ).apply(tail,</b>
+<i>132</i>&nbsp;                                                                                                                                             headAcc
+<b class="fc"><i>133</i>&nbsp;                                                                                                                                            )) : more(() -&gt; reduceArr_(accumulator,</b>
+<i>134</i>&nbsp;                                                                                                                                                                       headPath,
+<i>135</i>&nbsp;                                                                                                                                                                       isRecursive
+<b class="fc"><i>136</i>&nbsp;                                                                                                                                                                      ).apply(tail,</b>
+<i>137</i>&nbsp;                                                                                                                                                                              acc
+<i>138</i>&nbsp;                                                                                                                                                                             )
+<i>139</i>&nbsp;                                                                                                                                                     ),
+<b class="fc"><i>140</i>&nbsp;                                                                            elem -&gt; more(() -&gt; reduceArr_(accumulator,</b>
+<i>141</i>&nbsp;                                                                                                          headPath,
+<i>142</i>&nbsp;                                                                                                          isRecursive
+<b class="fc"><i>143</i>&nbsp;                                                                                                         ).apply(tail,</b>
+<b class="fc"><i>144</i>&nbsp;                                                                                                                 accumulator.apply(JsPair.of(headPath,</b>
+<i>145</i>&nbsp;                                                                                                                                             elem
+<i>146</i>&nbsp;                                                                                                                                            ),
+<i>147</i>&nbsp;                                                                                                                                   acc
+<i>148</i>&nbsp;                                                                                                                                  )
+<i>149</i>&nbsp;                                                                                                                ))
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;                                                                           )
+<b class="fc"><i>152</i>&nbsp;                                                                .apply(head);</b>
+<i>153</i>&nbsp;                                             }
+<i>154</i>&nbsp;                                            );
+<i>155</i>&nbsp;    }
+<i>156</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-09 01:41</div>
+</div>
+</body>
+</html>

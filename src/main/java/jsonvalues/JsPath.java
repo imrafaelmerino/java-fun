@@ -327,7 +327,8 @@ public final class JsPath implements Comparable<JsPath>
      @param key the name of the key
      @return a new JsPath
      */
-    public static  JsPath fromKey(final String key){
+    public static JsPath fromKey(final String key)
+    {
         return EMPTY.key(requireNonNull(key));
     }
 
@@ -336,7 +337,8 @@ public final class JsPath implements Comparable<JsPath>
      @param i the index
      @return a new JsPath
      */
-    public static  JsPath fromIndex(final int i){
+    public static JsPath fromIndex(final int i)
+    {
         return EMPTY.index(i);
     }
 
@@ -344,7 +346,6 @@ public final class JsPath implements Comparable<JsPath>
     {
         if (requireNonNull(path).equals("")) return EMPTY.key("");
 
-        //errorProne warning https://errorprone.info/bugpattern/StringSplitter;
         String[] tokens = requireNonNull(path).split(REGEX_SEPARATOR,
                                                      -1
                                                     );

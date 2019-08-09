@@ -1,5 +1,6 @@
 target/
 .DS_Store/
+.DS_Store
 dependency-reduced-pom.xml
 *.iml
 .idea/
@@ -7,5 +8,8 @@ javadoc
 data
 benchmarking
 scripts/.tmp
+package.json
 scripts/libs
+node_modules/
 src/main/java/jsonvalue/libs/
+.changelogrc

@@ -75,95 +75,92 @@
 <div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
 <i>2</i>&nbsp;
 <i>3</i>&nbsp;import org.checkerframework.checker.nullness.qual.Nullable;
-<i>4</i>&nbsp;
-<i>5</i>&nbsp;import java.util.function.Predicate;
-<i>6</i>&nbsp;
-<i>7</i>&nbsp;/**
-<i>8</i>&nbsp; Represents an immutable json boolean. Only two instances are created: {@link #FALSE} and {@link #TRUE}
-<i>9</i>&nbsp; */
-<i>10</i>&nbsp;public final class JsBool implements JsElem
-<i>11</i>&nbsp;{
-<i>12</i>&nbsp;
-<i>13</i>&nbsp;    /**
-<i>14</i>&nbsp;     The singleton false value.
-<i>15</i>&nbsp;     */
-<b class="fc"><i>16</i>&nbsp;    public static final JsBool FALSE = new JsBool(false);</b>
-<i>17</i>&nbsp;    /**
-<i>18</i>&nbsp;     The singleton true value.
-<i>19</i>&nbsp;     */
-<b class="fc"><i>20</i>&nbsp;    public static final JsBool TRUE = new JsBool(true);</b>
-<i>21</i>&nbsp;
-<i>22</i>&nbsp;
-<i>23</i>&nbsp;    /**
-<i>24</i>&nbsp;     the boolean value.
-<i>25</i>&nbsp;     */
-<i>26</i>&nbsp;    public final boolean x;
-<i>27</i>&nbsp;
-<i>28</i>&nbsp;    private JsBool(final boolean x)
-<b class="fc"><i>29</i>&nbsp;    {</b>
-<b class="fc"><i>30</i>&nbsp;        this.x = x;</b>
-<b class="fc"><i>31</i>&nbsp;    }</b>
-<i>32</i>&nbsp;
-<i>33</i>&nbsp;
-<i>34</i>&nbsp;    /**
-<i>35</i>&nbsp;     Indicates whether some other object is &quot;equal to&quot; this json boolean.
-<i>36</i>&nbsp;     @param that the reference object with which to compare.
-<i>37</i>&nbsp;     @return true if &lt;code&gt;that&lt;/code&gt; is a JsBool with the same value as &lt;code&gt;this&lt;/code&gt; JsBool
-<i>38</i>&nbsp;     */
-<i>39</i>&nbsp;    @Override
-<i>40</i>&nbsp;    public boolean equals(final @Nullable Object that)
-<i>41</i>&nbsp;    {
-<b class="fc"><i>42</i>&nbsp;        if (this == that) return true;</b>
-<b class="fc"><i>43</i>&nbsp;        if (that == null || getClass() != that.getClass()) return false;</b>
-<b class="fc"><i>44</i>&nbsp;        final JsBool thatBool = (JsBool) that;</b>
-<b class="fc"><i>45</i>&nbsp;        return x == thatBool.x;</b>
-<i>46</i>&nbsp;    }
-<i>47</i>&nbsp;
-<i>48</i>&nbsp;    /**
-<i>49</i>&nbsp;     Returns the hashcode of this json boolean.
-<i>50</i>&nbsp;     @return 1 if true, 0 if false
-<i>51</i>&nbsp;     */
-<i>52</i>&nbsp;    @Override
-<i>53</i>&nbsp;    public int hashCode()
-<i>54</i>&nbsp;    {
-<b class="fc"><i>55</i>&nbsp;        return x ? 1 : 0;</b>
-<i>56</i>&nbsp;    }
-<i>57</i>&nbsp;
-<i>58</i>&nbsp;    /**
-<i>59</i>&nbsp;     Negates this json boolean (implementation of ! operator).
-<i>60</i>&nbsp;     @return the inverse value of this
-<i>61</i>&nbsp;     */
-<i>62</i>&nbsp;    public JsBool negate()
-<i>63</i>&nbsp;    {
-<b class="fc"><i>64</i>&nbsp;        return JsBool.of(!x);</b>
-<i>65</i>&nbsp;    }
-<i>66</i>&nbsp;
-<i>67</i>&nbsp;    /**
-<i>68</i>&nbsp;     * Static factory method to create a JsBool from a boolean primitive type.
-<i>69</i>&nbsp;     * @param b the boolean value
-<i>70</i>&nbsp;     * @return either {@link JsBool#TRUE} or {@link JsBool#FALSE}
-<i>71</i>&nbsp;     */
-<i>72</i>&nbsp;    public static JsBool of(boolean b)
-<i>73</i>&nbsp;    {
-<b class="fc"><i>74</i>&nbsp;        return b ? TRUE : FALSE;</b>
-<i>75</i>&nbsp;    }
-<i>76</i>&nbsp;
-<i>77</i>&nbsp;    /**
-<i>78</i>&nbsp;     *
-<i>79</i>&nbsp;     * @return &quot;true&quot; or &quot;false&quot;
-<i>80</i>&nbsp;     */
-<i>81</i>&nbsp;    @Override
-<i>82</i>&nbsp;    public String toString()
-<i>83</i>&nbsp;    {
-<b class="fc"><i>84</i>&nbsp;        return String.valueOf(x);</b>
-<i>85</i>&nbsp;    }
-<i>86</i>&nbsp;}
+<i>4</i>&nbsp;/**
+<i>5</i>&nbsp; Represents an immutable json boolean. Only two instances are created: {@link #FALSE} and {@link #TRUE}
+<i>6</i>&nbsp; */
+<i>7</i>&nbsp;public final class JsBool implements JsElem
+<i>8</i>&nbsp;{
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    /**
+<i>11</i>&nbsp;     The singleton false value.
+<i>12</i>&nbsp;     */
+<b class="fc"><i>13</i>&nbsp;    public static final JsBool FALSE = new JsBool(false);</b>
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     The singleton true value.
+<i>16</i>&nbsp;     */
+<b class="fc"><i>17</i>&nbsp;    public static final JsBool TRUE = new JsBool(true);</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     the boolean value.
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    public final boolean x;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private JsBool(final boolean x)
+<b class="fc"><i>26</i>&nbsp;    {</b>
+<b class="fc"><i>27</i>&nbsp;        this.x = x;</b>
+<b class="fc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     Indicates whether some other object is &quot;equal to&quot; this json boolean.
+<i>33</i>&nbsp;     @param that the reference object with which to compare.
+<i>34</i>&nbsp;     @return true if &lt;code&gt;that&lt;/code&gt; is a JsBool with the same value as &lt;code&gt;this&lt;/code&gt; JsBool
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    @Override
+<i>37</i>&nbsp;    public boolean equals(final @Nullable Object that)
+<i>38</i>&nbsp;    {
+<b class="fc"><i>39</i>&nbsp;        if (this == that) return true;</b>
+<b class="fc"><i>40</i>&nbsp;        if (that == null || getClass() != that.getClass()) return false;</b>
+<b class="fc"><i>41</i>&nbsp;        final JsBool thatBool = (JsBool) that;</b>
+<b class="fc"><i>42</i>&nbsp;        return x == thatBool.x;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     Returns the hashcode of this json boolean.
+<i>47</i>&nbsp;     @return 1 if true, 0 if false
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public int hashCode()
+<i>51</i>&nbsp;    {
+<b class="fc"><i>52</i>&nbsp;        return x ? 1 : 0;</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     Negates this json boolean (implementation of ! operator).
+<i>57</i>&nbsp;     @return the inverse value of this
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public JsBool negate()
+<i>60</i>&nbsp;    {
+<b class="fc"><i>61</i>&nbsp;        return JsBool.of(!x);</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Static factory method to create a JsBool from a boolean primitive type.
+<i>66</i>&nbsp;     * @param b the boolean value
+<i>67</i>&nbsp;     * @return either {@link JsBool#TRUE} or {@link JsBool#FALSE}
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public static JsBool of(boolean b)
+<i>70</i>&nbsp;    {
+<b class="fc"><i>71</i>&nbsp;        return b ? TRUE : FALSE;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     *
+<i>76</i>&nbsp;     * @return &quot;true&quot; or &quot;false&quot;
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    @Override
+<i>79</i>&nbsp;    public String toString()
+<i>80</i>&nbsp;    {
+<b class="fc"><i>81</i>&nbsp;        return String.valueOf(x);</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;}
 </div>
 </div>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-07-31 10:50</div>
+    <div style="float:right;">generated on 2019-08-09 01:41</div>
 </div>
 </body>
 </html>

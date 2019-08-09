@@ -5,7 +5,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  Immutable pair which represents a JsElem of a Json and its JsPath location: (path, element).
@@ -33,6 +35,70 @@ public final class JsPair
         this.elem = elem;
     }
 
+    /**
+     Declarative way of implementing {@code  if(pair.elem.isInt()) return Pair.parse(pair.path, pair.elem.asJsInt().map(operator)) else return pair}
+     <p>
+     Examples:
+     <pre>
+     {@code
+     JsPair pair = JsPair.parse(JsPath.parse("a.b"),JsInt.parse(1))
+     pair.mapIfLong(l->l+10) // ('a'.'b', 11)
+
+     JsPair pair1 = JsPair.parse(JsPath.parse("a.b"),JsStr.parse("a"))
+     pair1.mapIfLong(l->l+10).equals(pair1) // true, same pair is returned
+     }
+     </pre>
+     @param operator the function to be applied to map the integer
+     @return the same this instance if the JsElem is not a JsInt or a new pair
+     */
+    public static Function<JsPair, JsPair> mapIfInt(IntUnaryOperator operator)
+    {
+
+        return pair ->
+        {
+            if (pair.elem.isInt()) return of(pair.path,
+                                             pair.elem.asJsInt()
+                                                             .map(operator)
+                                            );
+
+
+            return pair;
+        };
+
+    }
+
+    /**
+     Declarative way of implementing {@code  if(pair.elem.isStr()) return Pair.parse(pair.path, pair.elem.asJsStr().map(mapFn)) else return pair}
+     <p>
+     Examples:
+     <pre>
+     {@code
+     JsPair pair = JsPair.parse(JsPath.parse("a.b"),JsStr.parse("a"))
+     pair.mapIfStr(String::toUpperCase) // ('a'.'b', "A")
+
+     JsPair pair1 = JsPair.parse(JsPath.parse("a.b"),JsInt.parse(1))
+     pair1.mapIfStr(String::toUpperCase).equals(pair1) // true, same pair is returned
+     }
+     </pre>
+     @param fn the function to be applied to map the string of the JsStr
+     @return the same this instance if the JsElem is not a JsStr or a new pair
+     */
+    public static Function<JsPair, JsPair> mapIfStr(UnaryOperator<String> fn)
+    {
+
+        return pair ->
+        {
+            if (pair.elem.isStr()) return of(pair.path,
+                                             pair.elem.asJsStr()
+                                                             .map(fn)
+                                            );
+
+
+            return pair;
+        };
+
+    }
+
 
     /**
 
@@ -45,8 +111,8 @@ public final class JsPair
                             JsElem elem
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          Objects.requireNonNull(elem)
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          requireNonNull(elem)
         );
     }
 
@@ -60,10 +126,11 @@ public final class JsPair
                             int i
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsInt.of(i)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the double.
      @param path the path-like string
@@ -74,10 +141,11 @@ public final class JsPair
                             double d
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsDouble.of(d)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the long.
      @param path the path-like string
@@ -88,10 +156,11 @@ public final class JsPair
                             long l
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsLong.of(l)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the boolean.
      @param path the path-like string
@@ -102,10 +171,11 @@ public final class JsPair
                             boolean b
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
+        return new JsPair(JsPath.of(requireNonNull(path)),
                           JsBool.of(b)
         );
     }
+
     /**
      Returns a json pair from the path-like string and the string.
      @param path the path-like string
@@ -116,10 +186,11 @@ public final class JsPair
                             String s
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          JsStr.of(Objects.requireNonNull(s))
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          JsStr.of(requireNonNull(s))
         );
     }
+
     /**
      Returns a json pair from the path-like string and the big decimal.
      @param path the path-like string
@@ -130,10 +201,11 @@ public final class JsPair
                             BigDecimal bd
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          JsBigDec.of(Objects.requireNonNull(bd))
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          JsBigDec.of(requireNonNull(bd))
         );
     }
+
     /**
      Returns a json pair from the path-like string and the big integer.
      @param path the path-like string
@@ -144,8 +216,8 @@ public final class JsPair
                             BigInteger bi
                            )
     {
-        return new JsPair(JsPath.of(Objects.requireNonNull(path)),
-                          JsBigInt.of(Objects.requireNonNull(bi))
+        return new JsPair(JsPath.of(requireNonNull(path)),
+                          JsBigInt.of(requireNonNull(bi))
         );
     }
 
@@ -159,8 +231,8 @@ public final class JsPair
                             JsElem elem
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          Objects.requireNonNull(elem)
+        return new JsPair(requireNonNull(path),
+                          requireNonNull(elem)
         );
     }
 
@@ -174,10 +246,11 @@ public final class JsPair
                             int i
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsInt.of(i)
         );
     }
+
     /**
      Returns a json pair from the path and the double.
      @param path the JsPath
@@ -188,10 +261,11 @@ public final class JsPair
                             double d
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsDouble.of(d)
         );
     }
+
     /**
      Returns a json pair from the path and the long.
      @param path the JsPath
@@ -202,10 +276,11 @@ public final class JsPair
                             long l
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsLong.of(l)
         );
     }
+
     /**
      Returns a json pair from the path and the boolean.
      @param path the JsPath
@@ -216,10 +291,11 @@ public final class JsPair
                             boolean b
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
+        return new JsPair(requireNonNull(path),
                           JsBool.of(b)
         );
     }
+
     /**
      Returns a json pair from the path and the string.
      @param path the JsPath
@@ -230,10 +306,11 @@ public final class JsPair
                             String s
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          JsStr.of(Objects.requireNonNull(s))
+        return new JsPair(requireNonNull(path),
+                          JsStr.of(requireNonNull(s))
         );
     }
+
     /**
      Returns a json pair from the path and the big decimal.
      @param path the JsPath
@@ -244,10 +321,11 @@ public final class JsPair
                             BigDecimal bd
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          JsBigDec.of(Objects.requireNonNull(bd))
+        return new JsPair(requireNonNull(path),
+                          JsBigDec.of(requireNonNull(bd))
         );
     }
+
     /**
      Returns a json pair from the path and the big integer.
      @param path the JsPath
@@ -258,8 +336,8 @@ public final class JsPair
                             BigInteger bi
                            )
     {
-        return new JsPair(Objects.requireNonNull(path),
-                          JsBigInt.of(Objects.requireNonNull(bi))
+        return new JsPair(requireNonNull(path),
+                          JsBigInt.of(requireNonNull(bi))
         );
     }
 
@@ -314,10 +392,10 @@ public final class JsPair
      @param map the mapping function which maps the JsElem
      @return a new JsPair
      */
-    public JsPair mapElem(UnaryOperator<JsElem> map)
+    public JsPair mapElem(final UnaryOperator<JsElem> map)
     {
         return JsPair.of(this.path,
-                         map.apply(this.elem)
+                         requireNonNull(map).apply(this.elem)
                         );
     }
 
@@ -326,12 +404,52 @@ public final class JsPair
      @param map the mapping function which maps the JsPath
      @return a new JsPair
      */
-    public JsPair mapPath(UnaryOperator<JsPath> map)
+    public JsPair mapPath(final UnaryOperator<JsPath> map)
     {
-        return JsPair.of(map.apply(this.path),
+        return JsPair.of(requireNonNull(map).apply(this.path),
                          this.elem
                         );
     }
 
+    public <T> T ifJsonElse(final BiFunction<JsPath, Json<?>, T> ifJson,
+                            final BiFunction<JsPath, JsElem, T> ifNotJson
+                           )
+    {
+
+        return elem.isJson() ? requireNonNull(ifJson).apply(path,
+                                                            elem.asJson()
+                                                           ) : requireNonNull(ifNotJson).apply(path,
+                                                                                               elem
+                                                                                              );
+    }
+
+    /**
+     Declarative way of implementing an if-else. This pair is tested on a given predicate, executing
+     the ifTrue function when true and the ifFalse function otherwise
+     @param predicate the given predicate
+     @param ifTrue function to invoked when the predicate is evaluated to true, taking this pair as a parameter
+     @param ifFalse function to invoked when the predicate is evaluated to false, taking this pair as a parameter
+     @param <R> the type of the returned value
+     @return an object of type R
+     */
+    public <R> R ifElse(final Predicate<? super JsPair> predicate,
+                        final Function<? super JsPair, R> ifTrue,
+                        final Function<? super JsPair, R> ifFalse
+                       )
+    {
+        return requireNonNull(predicate).test(this) ? requireNonNull(ifTrue).apply(this) : requireNonNull(ifFalse).apply(this);
+    }
+
+    /**
+     Consumes this pair if it's evaluated to true o a given predicate
+     @param predicate the given predicate
+     @param consumer the consumer that it's invoked if the predicate is evaluated to true
+     */
+    public void consumeIf(final Predicate<JsPair> predicate,
+                          final Consumer<JsPair> consumer
+                         )
+    {
+        if (requireNonNull(predicate).test(this)) requireNonNull(consumer).accept(this);
+    }
 
 }

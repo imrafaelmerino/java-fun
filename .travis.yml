@@ -1,5 +1,5 @@
 language: java
-
+install: mvn install -DskipTests
 cache:
   directories:
     - $HOME/.m2
@@ -7,12 +7,13 @@ deploy:
   provider: script
   script: .travis/release.sh
   skip_cleanup: true
+  draft: true
   on:
     repo: imrafaelmerino/json-values
     tags: true
 addons:
   sonarcloud:
     organization: "imrafaelmerino"
+
 script:
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean verify sonar:sonar -Pcoverage -Dsonar.projectKey=imrafaelmerino_json-values

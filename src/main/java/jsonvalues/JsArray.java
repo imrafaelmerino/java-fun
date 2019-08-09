@@ -4,11 +4,13 @@ package jsonvalues;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.*;
+import static jsonvalues.Errors.errorIfImmutableArg;
+import static jsonvalues.Errors.errorIfMutableArg;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
 import static jsonvalues.JsParser.Event.START_ARRAY;
@@ -18,11 +20,11 @@ import static jsonvalues.MyScalaImpl.Vector.EMPTY;
  Represents a json array, which is an ordered list of elements. Two implementations are provided, an
  immutable which uses the persistent Scala Vector and a mutable which uses the conventional Java ArrayList.
  */
+@SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
 public interface JsArray extends Json<JsArray>, Iterable<JsElem>
 
 {
-     @SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
-     long serialVersionUID = 1L;
+    long serialVersionUID = 1L;
 
 
     /**
@@ -32,7 +34,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _empty_()
     {
-        return new JsArrayMutableImpl();
+        return new JsArrayMutable();
     }
 
     /**
@@ -47,8 +49,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final List<JsElem> list)
     {
-        throwErrorIfImmutableElemFound(requireNonNull(list));
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector(list));
+        return new JsArrayMutable(new MyJavaImpl.Vector(Errors.<List<JsElem>>errorIfAnyImmutable().apply(list)));
 
     }
 
@@ -62,7 +63,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsElem e)
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -77,8 +78,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e1
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -97,9 +98,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e2))
-                                                             .appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e2))
+                                                         .appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -118,10 +119,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e3
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e3))
-                                                             .appendFront(throwErrorIfImmutableElem(e2))
-                                                             .appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e3))
+                                                         .appendFront(errorIfImmutableArg.apply(e2))
+                                                         .appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -136,7 +137,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsArray _of_(final JsElem e,
                         final JsElem e1,
                         final JsElem e2,
@@ -144,11 +145,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e4
                        )
     {
-        return new JsArrayMutableImpl(new MyJavaImpl.Vector().appendFront(throwErrorIfImmutableElem(e4))
-                                                             .appendFront(throwErrorIfImmutableElem(e3))
-                                                             .appendFront(throwErrorIfImmutableElem(e2))
-                                                             .appendFront(throwErrorIfImmutableElem(e1))
-                                                             .appendFront(throwErrorIfImmutableElem(e)));
+        return new JsArrayMutable(new MyJavaImpl.Vector().appendFront(errorIfImmutableArg.apply(e4))
+                                                         .appendFront(errorIfImmutableArg.apply(e3))
+                                                         .appendFront(errorIfImmutableArg.apply(e2))
+                                                         .appendFront(errorIfImmutableArg.apply(e1))
+                                                         .appendFront(errorIfImmutableArg.apply(e)));
     }
 
     /**
@@ -164,7 +165,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsArray _of_(final JsElem e,
                         final JsElem e1,
                         final JsElem e2,
@@ -174,13 +175,13 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
         JsArray empty = _empty_();
-        for (JsElem other : requireNonNull(rest)) empty = empty.append(throwErrorIfImmutableElem(other));
+        for (JsElem other : requireNonNull(rest)) empty = empty.append(errorIfImmutableArg.apply(other));
 
-        return empty.prepend(throwErrorIfImmutableElem(e4))
-                    .prepend(throwErrorIfImmutableElem(e3))
-                    .prepend(throwErrorIfImmutableElem(e2))
-                    .prepend(throwErrorIfImmutableElem(e1))
-                    .prepend(throwErrorIfImmutableElem(e));
+        return empty.prepend(errorIfImmutableArg.apply(e4))
+                    .prepend(errorIfImmutableArg.apply(e3))
+                    .prepend(errorIfImmutableArg.apply(e2))
+                    .prepend(errorIfImmutableArg.apply(e1))
+                    .prepend(errorIfImmutableArg.apply(e));
 
 
     }
@@ -200,10 +201,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
             MyJavaImpl.Vector array = new MyJavaImpl.Vector();
-            Functions.parse(array,
-                            parser
-                           );
-            return new TryArr(new JsArrayMutableImpl(array));
+            array.parse(parser);
+            return new TryArr(new JsArrayMutable(array));
         }
 
         catch (MalformedJson e)
@@ -265,12 +264,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
             MyJavaImpl.Vector array = new MyJavaImpl.Vector();
-            Functions.parse(array,
-                            parser,
-                            options.create(),
-                            MINUS_ONE_INDEX
-                           );
-            return new TryArr(new JsArrayMutableImpl(array));
+            array.parse(parser,
+                        options.create(),
+                        JsPath.empty()
+                              .index(-1)
+                       );
+            return new TryArr(new JsArrayMutable(array));
         }
 
         catch (MalformedJson e)
@@ -331,10 +330,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get(),
+                            (a, b) -> CombinerFns.combiner_(a,
+                                                            b
+                                                           )
+                                                 .get(),
                             jsonvalues.JsArray::toImmutable
                            );
 
@@ -354,10 +353,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get()
+                            (a, b) -> CombinerFns.combiner_(a,
+                                                            b
+                                                           )
+                                                 .get()
                            );
 
     }
@@ -391,7 +390,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     static JsArray empty()
     {
-        return JsArrayImmutableImpl.EMPTY;
+        return JsArrayImmutable.EMPTY;
     }
 
     /**
@@ -426,8 +425,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     static JsArray of(final Collection<? extends JsElem> list)
     {
         if (requireNonNull(list).isEmpty()) return empty();
-        Functions.throwErrorIfMutableElemFound(list);
-        return new JsArrayImmutableImpl(EMPTY.add(list));
+        Errors.errorIfAnyMutable()
+              .apply(list);
+        return new JsArrayImmutable(EMPTY.add(list));
 
     }
 
@@ -440,7 +440,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     static JsArray of(JsElem e)
     {
-        return empty().prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -454,8 +454,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       final JsElem e1
                      )
     {
-        return empty().prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
 
     }
 
@@ -473,9 +473,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        return empty().prepend(throwErrorIfMutableElem(e2))
-                      .prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e2))
+                      .prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -493,10 +493,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       final JsElem e3
                      )
     {
-        return empty().prepend(throwErrorIfMutableElem(e3))
-                      .prepend(throwErrorIfMutableElem(e2))
-                      .prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e3))
+                      .prepend(errorIfMutableArg.apply(e2))
+                      .prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -518,11 +518,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       final JsElem e4
                      )
     {
-        return empty().prepend(throwErrorIfMutableElem(e4))
-                      .prepend(throwErrorIfMutableElem(e3))
-                      .prepend(throwErrorIfMutableElem(e2))
-                      .prepend(throwErrorIfMutableElem(e1))
-                      .prepend(throwErrorIfMutableElem(e));
+        return empty().prepend(errorIfMutableArg.apply(e4))
+                      .prepend(errorIfMutableArg.apply(e3))
+                      .prepend(errorIfMutableArg.apply(e2))
+                      .prepend(errorIfMutableArg.apply(e1))
+                      .prepend(errorIfMutableArg.apply(e));
     }
 
     /**
@@ -547,13 +547,13 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
         JsArray empty = empty();
-        for (JsElem other : requireNonNull(rest)) empty = empty.append(throwErrorIfMutableElem(other));
+        for (JsElem other : requireNonNull(rest)) empty = empty.append(errorIfMutableArg.apply(other));
 
-        return empty.prepend(throwErrorIfMutableElem(e4))
-                    .prepend(throwErrorIfMutableElem(e3))
-                    .prepend(throwErrorIfMutableElem(e2))
-                    .prepend(throwErrorIfMutableElem(e1))
-                    .prepend(throwErrorIfMutableElem(e));
+        return empty.prepend(errorIfMutableArg.apply(e4))
+                    .prepend(errorIfMutableArg.apply(e3))
+                    .prepend(errorIfMutableArg.apply(e2))
+                    .prepend(errorIfMutableArg.apply(e1))
+                    .prepend(errorIfMutableArg.apply(e));
 
 
     }
@@ -573,10 +573,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new JsArrayImmutableImpl(Functions.parse(EMPTY,
-                                                                       parser
-
-                                                                      )));
+            return new TryArr(new JsArrayImmutable(EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -604,11 +601,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new JsArrayImmutableImpl(Functions.parse(MyScalaImpl.Vector.EMPTY,
-                                                                       parser,
-                                                                       options.create(),
-                                                                       MINUS_ONE_INDEX
-                                                                      )));
+            return new TryArr(new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser,
+                                                                                  options.create(),
+                                                                                  JsPath.empty()
+                                                                                            .index(-1)
+                                                                                 )));
         }
 
         catch (MalformedJson e)
@@ -635,7 +632,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsStr.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -655,7 +652,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsStr.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -674,7 +671,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsInt.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -694,7 +691,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsInt.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -713,7 +710,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsLong.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -732,7 +729,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsBool.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -751,7 +748,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsDouble.of(a));
         }
-        return new JsArrayImmutableImpl(vector);
+        return new JsArrayImmutable(vector);
     }
 
     /**
@@ -771,7 +768,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsLong.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -791,7 +788,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsBool.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
     /**
@@ -811,7 +808,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         {
             vector = vector.appendBack(JsDouble.of(a));
         }
-        return new JsArrayMutableImpl(vector);
+        return new JsArrayMutable(vector);
     }
 
 
@@ -829,7 +826,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117")
+    //  perfectly fine _
     JsArray intersection(final JsArray that,
                          final TYPE ARRAY_AS
                         );
@@ -841,7 +839,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param that the other array
      @return a JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
+    //  naming convention: xx_ traverses the whole json
     JsArray intersection_(final JsArray that);
 
     /**
@@ -851,7 +850,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new json array of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117")
+    //  ARRAY_AS  should be a valid name
     JsArray union(final JsArray that,
                   final TYPE ARRAY_AS
                  );
@@ -864,7 +864,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param that the other array
      @return a new JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
+    @SuppressWarnings("squid:S00100")
+    //  naming convention: xx_ traverses the whole json
     JsArray union_(final JsArray that);
 
 
@@ -882,12 +883,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
 
         JsArray arr = empty().put(pair.path,
-                                  throwErrorIfMutableElem(pair.elem)
+                                  errorIfMutableArg.apply(pair.elem)
                                  );
         for (final JsPair p : pairs)
         {
             arr = arr.put(p.path,
-                          throwErrorIfMutableElem(p.elem)
+                          errorIfMutableArg.apply(p.elem)
                          );
         }
 
@@ -908,15 +909,32 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
 
         JsArray arr = _empty_().put(pair.path,
-                                    throwErrorIfImmutableElem(pair.elem)
+                                    errorIfMutableArg.apply(pair.elem)
                                    );
         for (final JsPair p : pairs)
         {
             arr.put(p.path,
-                    throwErrorIfImmutableElem(p.elem)
+                    errorIfMutableArg.apply(p.elem)
                    );
         }
 
         return arr;
+    }
+
+    default <T> Trampoline<T> ifEmptyElse(final Trampoline<T> empty,
+                                          final BiFunction<JsElem, JsArray, Trampoline<T>> fn
+                                         )
+    {
+
+        if (this.isEmpty()) return empty;
+
+        final JsElem head = this.head(); // when filtering mutable arrays, to remove indexes and not lose the track you have to iterate starting from the last
+
+        final JsArray tail = this.tail();
+
+        return fn.apply(head,
+                        tail
+                       );
+
     }
 }

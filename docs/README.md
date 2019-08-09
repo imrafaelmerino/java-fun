@@ -1,18 +1,13 @@
-<img src="https://img.shields.io/travis/imrafaelmerino/json-values/master"/>  
-<img src="https://img.shields.io/circleci/build/github/imrafaelmerino/json-values/master"/>  
+<img src="https://img.shields.io/travis/imrafaelmerino/json-values/master"/>   <img src="https://img.shields.io/circleci/build/github/imrafaelmerino/json-values/master"/>   [![Coverage](https://img.shields.io/badge/coverage-86-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html)
 
-[![Coverage](https://img.shields.io/badge/coverage-88-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html) 
-
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_index)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
 <img src="https://img.shields.io/badge/LOC-19797-blue"/>  <img src="https://img.shields.io/badge/HOC-67770-blue"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values)
+
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.2/jar)
 <img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>
 <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
-
 #### INTRODUCTION
 Welcome to **json-values**, the first-ever Json library in _Java_ that uses _persistent data structures_ 
 from _Scala_. _Java_ doesn't implement _persistent data structures_ natively; nevertheless, Scala does and 

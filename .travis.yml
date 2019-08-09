@@ -7,6 +7,7 @@ deploy:
   provider: script
   script: .travis/release.sh
   skip_cleanup: true
+  draft: true
   on:
     repo: imrafaelmerino/json-values
     tags: true

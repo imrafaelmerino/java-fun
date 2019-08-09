@@ -12,3 +12,4 @@ package.json
 scripts/libs
 node_modules/
 src/main/java/jsonvalue/libs/
+.changelogrc

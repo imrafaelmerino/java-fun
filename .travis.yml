@@ -1,5 +1,11 @@
 language: java
+env:
+  global:
+    - GPG_EXECUTABLE=gpg
 install: mvn install -DskipTests
+before_install:
+  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
 cache:
   directories:
     - $HOME/.m2
@@ -8,6 +14,12 @@ deploy:
   script: .travis/release.sh
   skip_cleanup: true
   draft: true
+  prerelease: true
+  name: Snowy
+  file:
+    - target/javadoc.zip
+    - target/sources.zip
+    - docs/CHANGELOG.md
   on:
     repo: imrafaelmerino/json-values
     tags: true

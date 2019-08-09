@@ -18,7 +18,7 @@ deploy:
 #     tags: true
  - provider: releases
    skip_cleanup: true
-   api_key: ${env.GITHUB_TOKEN}
+   api_key: $GITHUB_TOKEN
    draft: true
    prerelease: true
    name: Snowy

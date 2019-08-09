@@ -244,21 +244,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.6.0</version>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <executions>
-                            <execution><!-- Run our version calculation script -->
-                                <id>Generating change log</id>
-                                <configuration>
-                                    <commandlineArgs>v${project.version}</commandlineArgs>
-                                    <executable>scripts/changelog.sh</executable>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <version>1.6.8</version>
@@ -295,21 +280,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>de.jutzig</groupId>
-                        <artifactId>github-release-plugin</artifactId>
-                        <version>1.1.1</version>
-                        <configuration>
-                            <releaseName>Snowy</releaseName>
-                            <tag>v${project.version}</tag>
-                            <prerelease>true</prerelease>
-                            <fileSets>
-                                <fileSet>${project.build}/javadoc.zip</fileSet>
-                                <fileSet>${project.build}/sources.zip</fileSet>
-                                <fileSet>${project.basedir}/docs/CHANGELOG.md</fileSet>
-                            </fileSets>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

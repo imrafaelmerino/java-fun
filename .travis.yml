@@ -10,21 +10,21 @@ cache:
   directories:
     - $HOME/.m2
 deploy:
-# - provider: script
-#   script: .travis/release.sh
-#   skip_cleanup: true
-#   on:
-#     repo: imrafaelmerino/json-values
-#     tags: true
+ - provider: script
+   script: .travis/release.sh
+   skip_cleanup: true
+   on:
+     repo: imrafaelmerino/json-values
+     tags: true
  - provider: releases
    skip_cleanup: true
    api_key: $GITHUB_TOKEN
    draft: true
    prerelease: true
+   body:
    name: Snowy
    file:
-     - target/javadoc.zip
-     - target/sources.zip
+     - target/JAVADOC.zip
      - docs/CHANGELOG.md
    on:
      repo: imrafaelmerino/json-values

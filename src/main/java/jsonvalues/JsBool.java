@@ -1,9 +1,6 @@
 package jsonvalues;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.function.Predicate;
-
 /**
  Represents an immutable json boolean. Only two instances are created: {@link #FALSE} and {@link #TRUE}
  */

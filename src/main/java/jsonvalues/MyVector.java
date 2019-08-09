@@ -6,16 +6,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
-
-
 {
-
-    String EMPTY_ARR_AS_STR = "[]";
-    String OPEN_BRACKET = "[";
-    String CLOSE_BRACKET = "]";
-    String COMMA = ",";
-
-
     default boolean eq(final @Nullable Object that)
     {
         if (!(that instanceof MyVector)) return false;
@@ -25,15 +16,14 @@ interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
         final boolean thisEmpty = isEmpty();
         if (thatEmpty && thisEmpty) return true;
         if (this.size() != thatArray.size()) return false;
-        return YContainsX(this,
+        return yContainsX(this,
                           thatArray
-                         ) && YContainsX(thatArray,
+                         ) && yContainsX(thatArray,
                                          this
                                         );
-
     }
 
-    static boolean YContainsX(MyVector<?> x,
+    static boolean yContainsX(MyVector<?> x,
                               MyVector<?> y
                              )
     {

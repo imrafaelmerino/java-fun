@@ -78,6 +78,6 @@ public final class TryArr
     {
         if (arr != null) return arr;
         if (error != null) throw error;
-        throw new Error("TryArr.orElseThrow without arr nor exception");
+        throw new UnsupportedOperationException("TryArr.orElseThrow without arr nor exception");
     }
 }

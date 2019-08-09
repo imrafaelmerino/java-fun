@@ -69,7 +69,7 @@ public final class Try
         if (obj != null) return obj;
         if (arr != null) throw MalformedJson.expectedObj(arr.toString());
         if (error != null) throw error;
-        throw new Error("Try.objOrElseThrow without an arr nor obj nor exception");
+        throw new UnsupportedOperationException("Try.objOrElseThrow without an arr nor obj nor exception");
     }
 
     /**
@@ -83,7 +83,7 @@ public final class Try
         if (arr != null) return arr;
         if (obj != null) throw MalformedJson.expectedArray(obj.toString());
         if (error != null) throw error;
-        throw new Error("Try.arrOrElseThrow without an arr nor obj nor exception");
+        throw new UnsupportedOperationException("Try.arrOrElseThrow without an arr nor obj nor exception");
     }
 
     /**
@@ -97,7 +97,7 @@ public final class Try
         if (arr != null) return arr;
         if (obj != null) return obj;
         if (error != null) throw error;
-        throw new Error("Try.orElseThrow without an arr nor obj nor exception");
+        throw new UnsupportedOperationException("Try.orElseThrow without an arr nor obj nor exception");
     }
 
     /**
@@ -133,7 +133,7 @@ public final class Try
         if (arr != null) return Optional.of(arr);
         if (obj != null) return Optional.of(obj);
         if (error != null) return Optional.empty();
-        throw new Error("Try.toOptional without an arr nor obj nor exception");
+        throw new UnsupportedOperationException("Try.toOptional without an arr nor obj nor exception");
     }
 
 }

@@ -67,7 +67,7 @@ public final class TryObj
     {
         if (obj != null) return obj;
         if (error != null) throw error;
-        throw new Error("TryObj.orElseThrow without obj nor exception");
+        throw new UnsupportedOperationException("TryObj.orElseThrow without obj nor exception");
     }
 
     /**

@@ -1,0 +1,603 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JsObjImmutable</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JsObjImmutable (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JsObjImmutable</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.3%
+  </span>
+  <span class="absValue">
+    (56/ 62)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.9%
+  </span>
+  <span class="absValue">
+    (124/ 141)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.checkerframework.checker.nullness.qual.KeyFor;
+<i>4</i>&nbsp;import org.checkerframework.checker.nullness.qual.Nullable;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.io.IOException;
+<i>7</i>&nbsp;import java.io.NotSerializableException;
+<i>8</i>&nbsp;import java.io.ObjectInputStream;
+<i>9</i>&nbsp;import java.io.ObjectOutputStream;
+<i>10</i>&nbsp;import java.util.HashMap;
+<i>11</i>&nbsp;import java.util.Iterator;
+<i>12</i>&nbsp;import java.util.Map;
+<i>13</i>&nbsp;import java.util.Set;
+<i>14</i>&nbsp;import java.util.function.BiFunction;
+<i>15</i>&nbsp;import java.util.function.BiPredicate;
+<i>16</i>&nbsp;import java.util.function.Function;
+<i>17</i>&nbsp;import java.util.function.Predicate;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import static java.util.Objects.requireNonNull;
+<i>20</i>&nbsp;import static jsonvalues.MatchFns.ifJsonElse;
+<i>21</i>&nbsp;import static jsonvalues.MatchFns.ifObjElse;
+<i>22</i>&nbsp;import static jsonvalues.Trampoline.more;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;class JsObjImmutable extends AbstractJsObj&lt;MyScalaImpl.Map, JsArray&gt;
+<i>25</i>&nbsp;{
+<i>26</i>&nbsp;    public static final long serialVersionUID = 1L;
+<i>27</i>&nbsp;    @SuppressWarnings(&quot;squid:S3008&quot;)//EMPTY should be a valid name
+<b class="fc"><i>28</i>&nbsp;    static JsObjImmutable EMPTY = new JsObjImmutable(MyScalaImpl.Map.EMPTY);</b>
+<b class="fc"><i>29</i>&nbsp;    private static final JsPath EMPTY_PATH = JsPath.empty();</b>
+<i>30</i>&nbsp;    private transient volatile int hascode;
+<i>31</i>&nbsp;    private transient volatile @Nullable String str;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    JsObjImmutable(final MyScalaImpl.Map myMap)
+<i>35</i>&nbsp;    {
+<b class="fc"><i>36</i>&nbsp;        super(myMap);</b>
+<b class="fc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    @Override
+<i>40</i>&nbsp;    JsArray emptyArray()
+<i>41</i>&nbsp;    {
+<b class="fc"><i>42</i>&nbsp;        return JsArrayImmutable.EMPTY;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    @Override
+<i>46</i>&nbsp;    AbstractJsObj&lt;MyScalaImpl.Map, JsArray&gt; emptyObject()
+<i>47</i>&nbsp;    {
+<b class="fc"><i>48</i>&nbsp;        return EMPTY;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    //equals method is inherited, so it&#39;s implemented. The purpose of this method is to cache
+<i>52</i>&nbsp;    //the hashcode once calculated. the object is immutable and it won&#39;t change
+<i>53</i>&nbsp;    @SuppressWarnings(&quot;squid:S1206&quot;)
+<i>54</i>&nbsp;    @Override
+<i>55</i>&nbsp;    public final int hashCode()
+<i>56</i>&nbsp;    {
+<b class="fc"><i>57</i>&nbsp;        if (hascode != 0) return hascode;</b>
+<b class="fc"><i>58</i>&nbsp;        hascode = super.hashCode();</b>
+<b class="fc"><i>59</i>&nbsp;        return hascode;</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    @Override
+<i>64</i>&nbsp;    public Iterator&lt;Map.Entry&lt;String, JsElem&gt;&gt; iterator()
+<i>65</i>&nbsp;    {
+<b class="fc"><i>66</i>&nbsp;        return map.iterator();</b>
+<i>67</i>&nbsp;    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    @Override
+<i>70</i>&nbsp;    AbstractJsObj&lt;MyScalaImpl.Map, JsArray&gt; of(final MyScalaImpl.Map map)
+<i>71</i>&nbsp;    {
+<b class="fc"><i>72</i>&nbsp;        return new JsObjImmutable(map);</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    @Override
+<i>76</i>&nbsp;    public JsObj toImmutable()
+<i>77</i>&nbsp;    {
+<b class="fc"><i>78</i>&nbsp;        return this;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    @Override
+<i>82</i>&nbsp;    public JsObj toMutable()
+<i>83</i>&nbsp;    {
+<b class="fc"><i>84</i>&nbsp;        Map&lt;String, JsElem&gt; acc = new HashMap&lt;&gt;();</b>
+<i>85</i>&nbsp;        @SuppressWarnings(&quot;squid:S1905&quot;)// in return checkerframework does its job!
+<b class="fc"><i>86</i>&nbsp;        final Set&lt;@KeyFor(&quot;map&quot;) String&gt; keys = (Set&lt;@KeyFor(&quot;map&quot;) String&gt;) map.fields();</b>
+<b class="fc"><i>87</i>&nbsp;        keys.forEach(key -&gt; MatchFns.accept(val -&gt; acc.put(key,</b>
+<i>88</i>&nbsp;                                                           val
+<i>89</i>&nbsp;                                                          ),
+<b class="nc"><i>90</i>&nbsp;                                   obj -&gt; acc.put(key,</b>
+<b class="nc"><i>91</i>&nbsp;                                                  obj.toMutable()</b>
+<i>92</i>&nbsp;                                                 ),
+<b class="nc"><i>93</i>&nbsp;                                   arr -&gt; acc.put(key,</b>
+<b class="nc"><i>94</i>&nbsp;                                                  arr.toMutable()</b>
+<i>95</i>&nbsp;                                                 )
+<b class="nc"><i>96</i>&nbsp;                                           ).accept(map.get(key))</b>
+<i>97</i>&nbsp;                    );
+<b class="fc"><i>98</i>&nbsp;        return new JsObjMutable(new MyJavaImpl.Map(acc));</b>
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    @Override
+<i>104</i>&nbsp;    public final String toString()
+<i>105</i>&nbsp;    {
+<b class="fc"><i>106</i>&nbsp;        if (str != null) return str;</b>
+<b class="fc"><i>107</i>&nbsp;        str = super.toString();</b>
+<b class="fc"><i>108</i>&nbsp;        return str;</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    @Override
+<i>113</i>&nbsp;    public final JsObj mapElems(final Function&lt;? super JsPair, ? extends JsElem&gt; fn)
+<i>114</i>&nbsp;    {
+<i>115</i>&nbsp;
+<b class="fc"><i>116</i>&nbsp;        return mapElems(this,</b>
+<b class="fc"><i>117</i>&nbsp;                        requireNonNull(fn),</b>
+<b class="fc"><i>118</i>&nbsp;                        p -&gt; true,</b>
+<i>119</i>&nbsp;                        EMPTY_PATH
+<i>120</i>&nbsp;                       )
+<b class="fc"><i>121</i>&nbsp;        .get();</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    @Override
+<i>125</i>&nbsp;    public final JsObj mapElems(final Function&lt;? super JsPair, ? extends JsElem&gt; fn,
+<i>126</i>&nbsp;                                final Predicate&lt;? super JsPair&gt; predicate
+<i>127</i>&nbsp;                               )
+<i>128</i>&nbsp;    {
+<b class="nc"><i>129</i>&nbsp;        return mapElems(this,</b>
+<b class="nc"><i>130</i>&nbsp;                        requireNonNull(fn),</b>
+<i>131</i>&nbsp;                        predicate,
+<i>132</i>&nbsp;                        EMPTY_PATH
+<i>133</i>&nbsp;                       )
+<b class="nc"><i>134</i>&nbsp;        .get();</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    private Trampoline&lt;JsObj&gt; mapElems(final JsObj obj,
+<i>138</i>&nbsp;                                       final Function&lt;? super JsPair, ? extends JsElem&gt; fn,
+<i>139</i>&nbsp;                                       final Predicate&lt;? super JsPair&gt; predicate,
+<i>140</i>&nbsp;                                       final JsPath path
+<i>141</i>&nbsp;                                      )
+<i>142</i>&nbsp;    {
+<i>143</i>&nbsp;
+<b class="fc"><i>144</i>&nbsp;        return obj.ifEmptyElse(Trampoline.done(obj),</b>
+<i>145</i>&nbsp;                               (head, tail) -&gt;
+<i>146</i>&nbsp;                               {
+<b class="fc"><i>147</i>&nbsp;                                   final JsPath headPath = path.key(head.getKey());</b>
+<i>148</i>&nbsp;
+<b class="fc"><i>149</i>&nbsp;                                   final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; mapElems(tail,</b>
+<i>150</i>&nbsp;                                                                                                     fn,
+<i>151</i>&nbsp;                                                                                                     predicate,
+<i>152</i>&nbsp;                                                                                                     path
+<i>153</i>&nbsp;                                                                                                    ));
+<b class="fc"><i>154</i>&nbsp;                                   return ifJsonElse(headJson -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>155</i>&nbsp;                                                                                                                       headJson
+<i>156</i>&nbsp;                                                                                                                      )),
+<i>157</i>&nbsp;                                                     headElem -&gt;
+<i>158</i>&nbsp;                                                     {
+<b class="fc"><i>159</i>&nbsp;                                                         JsElem headMapped = JsPair.of(headPath,</b>
+<i>160</i>&nbsp;                                                                                       headElem
+<i>161</i>&nbsp;                                                                                      )
+<b class="fc"><i>162</i>&nbsp;                                                                                   .ifElse(predicate,</b>
+<b class="fc"><i>163</i>&nbsp;                                                                                           p -&gt; fn.apply(p),</b>
+<b class="nc"><i>164</i>&nbsp;                                                                                           p -&gt; headElem</b>
+<i>165</i>&nbsp;                                                                                          );
+<b class="fc"><i>166</i>&nbsp;                                                         return more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>167</i>&nbsp;                                                                                                                      headMapped
+<i>168</i>&nbsp;                                                                                                                     ));
+<i>169</i>&nbsp;                                                     }
+<i>170</i>&nbsp;
+<b class="fc"><i>171</i>&nbsp;                                                    ).apply(head.getValue());</b>
+<i>172</i>&nbsp;                               }
+<i>173</i>&nbsp;                              );
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;    }
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    @Override
+<i>179</i>&nbsp;    public final JsObj mapElems_(final Function&lt;? super JsPair, ? extends JsElem&gt; fn)
+<i>180</i>&nbsp;    {
+<b class="fc"><i>181</i>&nbsp;        return MapFns.mapElems_(requireNonNull(fn),</b>
+<b class="fc"><i>182</i>&nbsp;                                      p -&gt; true,</b>
+<i>183</i>&nbsp;                                EMPTY_PATH
+<i>184</i>&nbsp;                               )
+<b class="fc"><i>185</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>186</i>&nbsp;                     .get();</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;    @Override
+<i>190</i>&nbsp;    public final JsObj mapElems_(final Function&lt;? super JsPair, ? extends JsElem&gt; fn,
+<i>191</i>&nbsp;                                 final Predicate&lt;? super JsPair&gt; predicate
+<i>192</i>&nbsp;                                )
+<i>193</i>&nbsp;    {
+<b class="nc"><i>194</i>&nbsp;        return MapFns.mapElems_(requireNonNull(fn),</b>
+<b class="nc"><i>195</i>&nbsp;                                requireNonNull(predicate),</b>
+<i>196</i>&nbsp;                                EMPTY_PATH
+<i>197</i>&nbsp;                               )
+<b class="nc"><i>198</i>&nbsp;                     .apply(this)</b>
+<b class="nc"><i>199</i>&nbsp;                     .get();</b>
+<i>200</i>&nbsp;    }
+<i>201</i>&nbsp;
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;    @Override
+<i>204</i>&nbsp;    public final JsObj mapKeys(final Function&lt;? super JsPair, String&gt; fn)
+<i>205</i>&nbsp;    {
+<b class="fc"><i>206</i>&nbsp;        return MapFns.mapKeys(requireNonNull(fn),</b>
+<b class="fc"><i>207</i>&nbsp;                                    p -&gt; true,</b>
+<i>208</i>&nbsp;                              EMPTY_PATH
+<i>209</i>&nbsp;                             )
+<b class="fc"><i>210</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>211</i>&nbsp;                     .get();</b>
+<i>212</i>&nbsp;    }
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    @Override
+<i>215</i>&nbsp;    public final JsObj mapKeys(final Function&lt;? super JsPair, String&gt; fn,
+<i>216</i>&nbsp;                               final Predicate&lt;? super JsPair&gt; predicate
+<i>217</i>&nbsp;                              )
+<i>218</i>&nbsp;    {
+<b class="fc"><i>219</i>&nbsp;        return MapFns.mapKeys(requireNonNull(fn),</b>
+<b class="fc"><i>220</i>&nbsp;                              requireNonNull(predicate),</b>
+<i>221</i>&nbsp;                              EMPTY_PATH
+<i>222</i>&nbsp;                             )
+<b class="fc"><i>223</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>224</i>&nbsp;                     .get();</b>
+<i>225</i>&nbsp;    }
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    @Override
+<i>228</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention: xx_ traverses the whole json
+<i>229</i>&nbsp;    public final JsObj mapKeys_(final Function&lt;? super JsPair, String&gt; fn)
+<i>230</i>&nbsp;    {
+<b class="fc"><i>231</i>&nbsp;        return MapFns.mapKeys_(requireNonNull(fn),</b>
+<b class="fc"><i>232</i>&nbsp;                                     p -&gt; true,</b>
+<i>233</i>&nbsp;                               EMPTY_PATH
+<i>234</i>&nbsp;                              )
+<b class="fc"><i>235</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>236</i>&nbsp;                     .get();</b>
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    }
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;    @Override
+<i>241</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) // xx_ traverses the whole json
+<i>242</i>&nbsp;    public final JsObj mapKeys_(final Function&lt;? super JsPair, String&gt; fn,
+<i>243</i>&nbsp;                                final Predicate&lt;? super JsPair&gt; predicate
+<i>244</i>&nbsp;                               )
+<i>245</i>&nbsp;    {
+<b class="fc"><i>246</i>&nbsp;        return MapFns.mapKeys_(requireNonNull(fn),</b>
+<b class="fc"><i>247</i>&nbsp;                               requireNonNull(predicate),</b>
+<i>248</i>&nbsp;                               EMPTY_PATH
+<i>249</i>&nbsp;                              )
+<b class="fc"><i>250</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>251</i>&nbsp;                     .get();</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;
+<i>255</i>&nbsp;    @Override
+<i>256</i>&nbsp;    public final JsObj mapObjs(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn,
+<i>257</i>&nbsp;                               final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>258</i>&nbsp;                              )
+<i>259</i>&nbsp;    {
+<i>260</i>&nbsp;
+<b class="fc"><i>261</i>&nbsp;        return MapFns.mapJsObj(requireNonNull(fn),</b>
+<b class="fc"><i>262</i>&nbsp;                               requireNonNull(predicate),</b>
+<i>263</i>&nbsp;                               EMPTY_PATH
+<i>264</i>&nbsp;                              )
+<b class="fc"><i>265</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>266</i>&nbsp;                     .get();</b>
+<i>267</i>&nbsp;    }
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;    @Override
+<i>270</i>&nbsp;    public final JsObj mapObjs(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn)
+<i>271</i>&nbsp;    {
+<b class="fc"><i>272</i>&nbsp;        return MapFns.mapJsObj(requireNonNull(fn),</b>
+<b class="fc"><i>273</i>&nbsp;                               (path, obj) -&gt; true,</b>
+<i>274</i>&nbsp;                               EMPTY_PATH
+<i>275</i>&nbsp;                              )
+<b class="fc"><i>276</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>277</i>&nbsp;                     .get();</b>
+<i>278</i>&nbsp;    }
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;
+<i>281</i>&nbsp;    @Override
+<i>282</i>&nbsp;    public final JsObj mapObjs_(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn,
+<i>283</i>&nbsp;                                final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>284</i>&nbsp;                               )
+<i>285</i>&nbsp;    {
+<b class="fc"><i>286</i>&nbsp;        return MapFns.mapJsObj_(fn,</b>
+<i>287</i>&nbsp;                                predicate,
+<i>288</i>&nbsp;                                EMPTY_PATH
+<i>289</i>&nbsp;                               )
+<b class="fc"><i>290</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>291</i>&nbsp;                     .get();</b>
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    @Override
+<i>296</i>&nbsp;    public final JsObj mapObjs_(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn)
+<i>297</i>&nbsp;    {
+<b class="fc"><i>298</i>&nbsp;        return MapFns.mapJsObj_(fn,</b>
+<b class="fc"><i>299</i>&nbsp;                                (path, obj) -&gt; true,</b>
+<i>300</i>&nbsp;                                EMPTY_PATH
+<i>301</i>&nbsp;                               )
+<b class="fc"><i>302</i>&nbsp;                     .apply(this)</b>
+<b class="fc"><i>303</i>&nbsp;                     .get();</b>
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;    }
+<i>306</i>&nbsp;
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    @Override
+<i>309</i>&nbsp;    public final JsObj filterElems(final Predicate&lt;? super JsPair&gt; filter)
+<i>310</i>&nbsp;    {
+<b class="fc"><i>311</i>&nbsp;        return filterValues(this,</b>
+<b class="fc"><i>312</i>&nbsp;                            requireNonNull(filter),</b>
+<i>313</i>&nbsp;                            EMPTY_PATH
+<i>314</i>&nbsp;                           )
+<b class="fc"><i>315</i>&nbsp;        .get();</b>
+<i>316</i>&nbsp;    }
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;    private Trampoline&lt;JsObj&gt; filterValues(final JsObj obj,
+<i>319</i>&nbsp;                                           final Predicate&lt;? super JsPair&gt; predicate,
+<i>320</i>&nbsp;                                           final JsPath path
+<i>321</i>&nbsp;                                          )
+<i>322</i>&nbsp;    {
+<b class="fc"><i>323</i>&nbsp;        return obj.ifEmptyElse(Trampoline.done(obj),</b>
+<i>324</i>&nbsp;                               (head, tail) -&gt;
+<i>325</i>&nbsp;                               {
+<b class="fc"><i>326</i>&nbsp;                                   final JsPath headPath = path.key(head.getKey());</b>
+<i>327</i>&nbsp;
+<b class="fc"><i>328</i>&nbsp;                                   final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; filterValues(tail,</b>
+<i>329</i>&nbsp;                                                                                                         predicate,
+<i>330</i>&nbsp;                                                                                                         path
+<i>331</i>&nbsp;                                                                                                        ));
+<b class="fc"><i>332</i>&nbsp;                                   return ifJsonElse(headElem -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>333</i>&nbsp;                                                                                                                       headElem
+<i>334</i>&nbsp;                                                                                                                      )),
+<b class="fc"><i>335</i>&nbsp;                                                     headElem -&gt; JsPair.of(headPath,</b>
+<i>336</i>&nbsp;                                                                           headElem
+<i>337</i>&nbsp;                                                                          )
+<b class="fc"><i>338</i>&nbsp;                                                                       .ifElse(predicate,</b>
+<b class="fc"><i>339</i>&nbsp;                                                                               p -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>340</i>&nbsp;                                                                                                                                           headElem
+<i>341</i>&nbsp;                                                                                                                                          )),
+<b class="fc"><i>342</i>&nbsp;                                                                               p -&gt; tailCall</b>
+<i>343</i>&nbsp;                                                                              )
+<i>344</i>&nbsp;
+<i>345</i>&nbsp;                                                    )
+<b class="fc"><i>346</i>&nbsp;                                   .apply(head.getValue());</b>
+<i>347</i>&nbsp;
+<i>348</i>&nbsp;                               }
+<i>349</i>&nbsp;                              );
+<i>350</i>&nbsp;
+<i>351</i>&nbsp;    }
+<i>352</i>&nbsp;
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    @Override
+<i>355</i>&nbsp;    public final JsObj filterElems_(final Predicate&lt;? super JsPair&gt; filter)
+<i>356</i>&nbsp;    {
+<b class="fc"><i>357</i>&nbsp;        return FilterFns.filterObjElems_(requireNonNull(filter),</b>
+<b class="fc"><i>358</i>&nbsp;                                         JsPath.empty().index(-1)</b>
+<i>359</i>&nbsp;                                        )
+<b class="fc"><i>360</i>&nbsp;                        .apply(this)</b>
+<b class="fc"><i>361</i>&nbsp;                        .get();</b>
+<i>362</i>&nbsp;
+<i>363</i>&nbsp;    }
+<i>364</i>&nbsp;
+<i>365</i>&nbsp;    @Override
+<i>366</i>&nbsp;    public final JsObj filterObjs(final BiPredicate&lt;? super JsPath, ? super JsObj&gt; filter)
+<i>367</i>&nbsp;    {
+<b class="fc"><i>368</i>&nbsp;        return filterJsObjs(this,</b>
+<b class="fc"><i>369</i>&nbsp;                            requireNonNull(filter),</b>
+<i>370</i>&nbsp;                            EMPTY_PATH
+<i>371</i>&nbsp;                           )
+<b class="fc"><i>372</i>&nbsp;        .get();</b>
+<i>373</i>&nbsp;    }
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;    private Trampoline&lt;JsObj&gt; filterJsObjs(final JsObj obj,
+<i>376</i>&nbsp;                                           final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate,
+<i>377</i>&nbsp;                                           final JsPath path
+<i>378</i>&nbsp;                                          )
+<i>379</i>&nbsp;    {
+<b class="fc"><i>380</i>&nbsp;        return obj.ifEmptyElse(Trampoline.done(obj),</b>
+<i>381</i>&nbsp;                               (head, tail) -&gt;
+<i>382</i>&nbsp;                               {
+<b class="fc"><i>383</i>&nbsp;                                   final JsPath headPath = path.key(head.getKey());</b>
+<i>384</i>&nbsp;
+<b class="fc"><i>385</i>&nbsp;                                   final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; filterJsObjs(tail,</b>
+<i>386</i>&nbsp;                                                                                                         predicate,
+<i>387</i>&nbsp;                                                                                                         path
+<i>388</i>&nbsp;                                                                                                        ));
+<b class="fc"><i>389</i>&nbsp;                                   return ifObjElse(json -&gt; JsPair.of(headPath,</b>
+<i>390</i>&nbsp;                                                                      json
+<i>391</i>&nbsp;                                                                     )
+<b class="fc"><i>392</i>&nbsp;                                                                  .ifElse(p -&gt; predicate.test(p.path,</b>
+<i>393</i>&nbsp;                                                                                              json
+<i>394</i>&nbsp;                                                                                             ),
+<b class="fc"><i>395</i>&nbsp;                                                                          p -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>396</i>&nbsp;                                                                                                                                     json
+<i>397</i>&nbsp;                                                                                                                                    )),
+<b class="fc"><i>398</i>&nbsp;                                                                          p -&gt; tailCall</b>
+<i>399</i>&nbsp;                                                                         ),
+<b class="fc"><i>400</i>&nbsp;                                                    value -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>401</i>&nbsp;                                                                                                                   value
+<i>402</i>&nbsp;                                                                                                                  ))
+<i>403</i>&nbsp;                                                   )
+<b class="fc"><i>404</i>&nbsp;                                   .apply(head.getValue());</b>
+<i>405</i>&nbsp;                               }
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;                              );
+<i>408</i>&nbsp;    }
+<i>409</i>&nbsp;
+<i>410</i>&nbsp;
+<i>411</i>&nbsp;    @Override
+<i>412</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention: xx_ traverses the whole json
+<i>413</i>&nbsp;    public final JsObj filterObjs_(final BiPredicate&lt;? super JsPath, ? super JsObj&gt; filter)
+<i>414</i>&nbsp;    {
+<b class="fc"><i>415</i>&nbsp;        return FilterFns.filterObjObjs_(requireNonNull(filter),</b>
+<i>416</i>&nbsp;                                        EMPTY_PATH
+<i>417</i>&nbsp;                                       )
+<b class="fc"><i>418</i>&nbsp;                        .apply(this)</b>
+<b class="fc"><i>419</i>&nbsp;                        .get();</b>
+<i>420</i>&nbsp;
+<i>421</i>&nbsp;    }
+<i>422</i>&nbsp;
+<i>423</i>&nbsp;    @Override
+<i>424</i>&nbsp;    public final JsObj filterKeys(final Predicate&lt;? super JsPair&gt; filter)
+<i>425</i>&nbsp;    {
+<b class="fc"><i>426</i>&nbsp;        return filterKeys(this,</b>
+<b class="fc"><i>427</i>&nbsp;                          requireNonNull(filter),</b>
+<i>428</i>&nbsp;                          EMPTY_PATH
+<i>429</i>&nbsp;                         )
+<b class="fc"><i>430</i>&nbsp;        .get();</b>
+<i>431</i>&nbsp;    }
+<i>432</i>&nbsp;
+<i>433</i>&nbsp;    private Trampoline&lt;JsObj&gt; filterKeys(final JsObj obj,
+<i>434</i>&nbsp;                                         final Predicate&lt;? super JsPair&gt; predicate,
+<i>435</i>&nbsp;                                         final JsPath path
+<i>436</i>&nbsp;                                        )
+<i>437</i>&nbsp;    {
+<b class="fc"><i>438</i>&nbsp;        return obj.ifEmptyElse(Trampoline.done(obj),</b>
+<i>439</i>&nbsp;                               (head, tail) -&gt;
+<i>440</i>&nbsp;                               {
+<b class="fc"><i>441</i>&nbsp;                                   final JsPath headPath = path.key(head.getKey());</b>
+<i>442</i>&nbsp;
+<b class="fc"><i>443</i>&nbsp;                                   final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; filterKeys(tail,</b>
+<i>444</i>&nbsp;                                                                                                       predicate,
+<i>445</i>&nbsp;                                                                                                       path
+<i>446</i>&nbsp;                                                                                                      ));
+<b class="fc"><i>447</i>&nbsp;                                   return JsPair.of(headPath,</b>
+<b class="fc"><i>448</i>&nbsp;                                                    head.getValue()</b>
+<i>449</i>&nbsp;                                                   )
+<b class="fc"><i>450</i>&nbsp;                                                .ifElse(predicate,</b>
+<b class="fc"><i>451</i>&nbsp;                                                        p -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<b class="fc"><i>452</i>&nbsp;                                                                                                                    head.getValue()</b>
+<i>453</i>&nbsp;                                                                                                                   )),
+<i>454</i>&nbsp;
+<i>455</i>&nbsp;
+<b class="fc"><i>456</i>&nbsp;                                                        p -&gt; tailCall</b>
+<i>457</i>&nbsp;                                                       );
+<i>458</i>&nbsp;                               }
+<i>459</i>&nbsp;                              );
+<i>460</i>&nbsp;
+<i>461</i>&nbsp;
+<i>462</i>&nbsp;    }
+<i>463</i>&nbsp;
+<i>464</i>&nbsp;
+<i>465</i>&nbsp;    @Override
+<i>466</i>&nbsp;    public final JsObj filterKeys_(final Predicate&lt;? super JsPair&gt; filter)
+<i>467</i>&nbsp;    {
+<b class="fc"><i>468</i>&nbsp;        return FilterFns.filterObjKeys_(requireNonNull(filter),</b>
+<i>469</i>&nbsp;                                        EMPTY_PATH
+<i>470</i>&nbsp;                                       )
+<b class="fc"><i>471</i>&nbsp;                        .apply(this)</b>
+<b class="fc"><i>472</i>&nbsp;                        .get();</b>
+<i>473</i>&nbsp;
+<i>474</i>&nbsp;    }
+<i>475</i>&nbsp;
+<i>476</i>&nbsp;
+<i>477</i>&nbsp;    /**
+<i>478</i>&nbsp;     * Serialize this {@code ScalaJsObj} instance.
+<i>479</i>&nbsp;     *
+<i>480</i>&nbsp;     * @serialData The {@code String}) representation of this json object.
+<i>481</i>&nbsp;     */
+<i>482</i>&nbsp;    private void writeObject(ObjectOutputStream s) throws IOException
+<i>483</i>&nbsp;    {
+<b class="fc"><i>484</i>&nbsp;        s.defaultWriteObject();</b>
+<b class="fc"><i>485</i>&nbsp;        s.writeObject(toString());</b>
+<i>486</i>&nbsp;
+<b class="fc"><i>487</i>&nbsp;    }</b>
+<i>488</i>&nbsp;
+<i>489</i>&nbsp;    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
+<i>490</i>&nbsp;    {
+<b class="fc"><i>491</i>&nbsp;        s.defaultReadObject();</b>
+<b class="fc"><i>492</i>&nbsp;        final String json = (String) s.readObject();</b>
+<i>493</i>&nbsp;        try
+<i>494</i>&nbsp;        {
+<b class="fc"><i>495</i>&nbsp;            map = ((JsObjImmutable) JsObj.parse(json)</b>
+<b class="fc"><i>496</i>&nbsp;                                         .orElseThrow()).map;</b>
+<i>497</i>&nbsp;        }
+<b class="nc"><i>498</i>&nbsp;        catch (MalformedJson malformedJson)</b>
+<i>499</i>&nbsp;        {
+<b class="nc"><i>500</i>&nbsp;            throw new NotSerializableException(String.format(&quot;Error deserializing a string into the class %s: %s&quot;,</b>
+<b class="nc"><i>501</i>&nbsp;                                                             JsObj.class.getName(),</b>
+<b class="nc"><i>502</i>&nbsp;                                                             malformedJson.getMessage()</b>
+<i>503</i>&nbsp;                                                            ));
+<b class="fc"><i>504</i>&nbsp;        }</b>
+<i>505</i>&nbsp;
+<b class="fc"><i>506</i>&nbsp;    }</b>
+<i>507</i>&nbsp;
+<i>508</i>&nbsp;    @Override
+<i>509</i>&nbsp;    public boolean isMutable()
+<i>510</i>&nbsp;    {
+<b class="fc"><i>511</i>&nbsp;        return false;</b>
+<i>512</i>&nbsp;    }
+<i>513</i>&nbsp;
+<i>514</i>&nbsp;    @Override
+<i>515</i>&nbsp;    public boolean isImmutable()
+<i>516</i>&nbsp;    {
+<b class="fc"><i>517</i>&nbsp;        return true;</b>
+<i>518</i>&nbsp;    }
+<i>519</i>&nbsp;
+<i>520</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-09 01:41</div>
+</div>
+</body>
+</html>

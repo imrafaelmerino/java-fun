@@ -46,7 +46,7 @@ case class FreqsTypeOfArr(numberFreq: Int = 10,
                           longFreq  : Int = 10
                          )
 
-case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
+case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
                       intGen          : Gen[Int] = arbitrary[Int],
                       longGen         : Gen[Long] = arbitrary[Long],
                       doubleGen       : Gen[Double] = arbitrary[Double],
@@ -60,7 +60,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
                       objSizeGen      : Gen[Int] = Gen.choose(5,
                                                               8
                                                               ),
-                      keyGen          : Gen[String] = Gen.oneOf(Constants.ALPHABET),
+                      keyGen          : Gen[String] = Gen.oneOf(Characters.ALPHABET),
                       freqTypeOfNumber: FreqTypeOfNumber = new FreqTypeOfNumber,
                       freqTypeOfValue : FreqTypeOfValue = new FreqTypeOfValue,
                       freqTypeOfPair  : FreqTypeOfPair = new FreqTypeOfPair,
@@ -106,7 +106,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsNumberGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
   }
 
   val jsArrStrGen: Gen[JsArray] =
@@ -117,7 +117,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsStrGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 
@@ -129,7 +129,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsBoolGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 
@@ -141,7 +141,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsIntGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 
@@ -153,7 +153,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsDoubleGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 
@@ -166,7 +166,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsObj](size,
                                                 jsObjGen
                                                 )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 
@@ -178,7 +178,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsLongGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 
@@ -190,7 +190,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Constants.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsValueGen
                                                  )
-    } yield new JsArrayImmutableImpl(new MyScalaImpl.Vector(vector))
+    } yield new JsArrayImmutable(new MyScalaImpl.Vector(vector))
 
   }
 

@@ -1,0 +1,477 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JsArrayMutable</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JsArrayMutable (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JsArrayMutable</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.9%
+  </span>
+  <span class="absValue">
+    (34/ 37)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.5%
+  </span>
+  <span class="absValue">
+    (121/ 128)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.NotSerializableException;
+<i>5</i>&nbsp;import java.io.ObjectInputStream;
+<i>6</i>&nbsp;import java.io.ObjectOutputStream;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;import java.util.Iterator;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.function.BiFunction;
+<i>11</i>&nbsp;import java.util.function.BiPredicate;
+<i>12</i>&nbsp;import java.util.function.Function;
+<i>13</i>&nbsp;import java.util.function.Predicate;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import static java.util.Objects.requireNonNull;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;class JsArrayMutable extends AbstractJsArray&lt;MyJavaImpl.Vector, JsObj&gt;
+<i>18</i>&nbsp;{
+<i>19</i>&nbsp;    public static final long serialVersionUID = 1L;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    JsArrayMutable()
+<i>22</i>&nbsp;    {
+<b class="fc"><i>23</i>&nbsp;        super(new MyJavaImpl.Vector());</b>
+<b class="fc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    JsArrayMutable(final MyJavaImpl.Vector array)
+<i>28</i>&nbsp;    {
+<b class="fc"><i>29</i>&nbsp;        super(array);</b>
+<b class="fc"><i>30</i>&nbsp;    }</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    JsArray emptyArray()
+<i>34</i>&nbsp;    {
+<b class="fc"><i>35</i>&nbsp;        return new JsArrayMutable(new MyJavaImpl.Vector());</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Override
+<i>39</i>&nbsp;    JsObj emptyObject()
+<i>40</i>&nbsp;    {
+<b class="fc"><i>41</i>&nbsp;        return new JsObjMutable(new MyJavaImpl.Map());</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    JsArray of(final MyJavaImpl.Vector vector)
+<i>46</i>&nbsp;    {
+<b class="fc"><i>47</i>&nbsp;        return new JsArrayMutable(vector);</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public JsArray mapElems(final Function&lt;? super JsPair, ? extends JsElem&gt; fn)
+<i>52</i>&nbsp;    {
+<b class="fc"><i>53</i>&nbsp;        return FilterFns._mapElems_(requireNonNull(fn),</b>
+<b class="fc"><i>54</i>&nbsp;                                          p -&gt; true,</b>
+<b class="fc"><i>55</i>&nbsp;                                    JsPath.empty().index(-1)</b>
+<i>56</i>&nbsp;                                   )
+<b class="fc"><i>57</i>&nbsp;                        .apply(this,</b>
+<i>58</i>&nbsp;                                     this
+<i>59</i>&nbsp;                                    )
+<b class="fc"><i>60</i>&nbsp;                        .get();</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    @Override
+<i>64</i>&nbsp;    public JsArray mapElems(final Function&lt;? super JsPair, ? extends JsElem&gt; fn,
+<i>65</i>&nbsp;                            final Predicate&lt;? super JsPair&gt; predicate
+<i>66</i>&nbsp;                           )
+<i>67</i>&nbsp;    {
+<b class="fc"><i>68</i>&nbsp;        return FilterFns._mapElems_(requireNonNull(fn),</b>
+<b class="fc"><i>69</i>&nbsp;                                    requireNonNull(predicate),</b>
+<b class="fc"><i>70</i>&nbsp;                                    JsPath.empty().index(-1)</b>
+<i>71</i>&nbsp;                                   )
+<b class="fc"><i>72</i>&nbsp;                        .apply(this,</b>
+<i>73</i>&nbsp;                                     this
+<i>74</i>&nbsp;                                    )
+<b class="fc"><i>75</i>&nbsp;                        .get();</b>
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>81</i>&nbsp;    public JsArray mapElems_(final Function&lt;? super JsPair, ? extends JsElem&gt; fn)
+<i>82</i>&nbsp;    {
+<b class="fc"><i>83</i>&nbsp;        return MapFns._mapArrElems__(requireNonNull(fn),</b>
+<b class="fc"><i>84</i>&nbsp;                                           it -&gt; true,</b>
+<b class="fc"><i>85</i>&nbsp;                                     JsPath.empty().index(-1)</b>
+<i>86</i>&nbsp;                                    )
+<b class="fc"><i>87</i>&nbsp;                     .apply(this,</b>
+<i>88</i>&nbsp;                                  this
+<i>89</i>&nbsp;                                 )
+<b class="fc"><i>90</i>&nbsp;                     .get();</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    @Override
+<i>94</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>95</i>&nbsp;    public JsArray mapElems_(final Function&lt;? super JsPair, ? extends JsElem&gt; fn,
+<i>96</i>&nbsp;                             final Predicate&lt;? super JsPair&gt; predicate
+<i>97</i>&nbsp;                            )
+<i>98</i>&nbsp;    {
+<b class="fc"><i>99</i>&nbsp;        return MapFns._mapArrElems__(requireNonNull(fn),</b>
+<i>100</i>&nbsp;                                     predicate,
+<b class="fc"><i>101</i>&nbsp;                                     JsPath.empty().index(-1)</b>
+<i>102</i>&nbsp;                                    )
+<b class="fc"><i>103</i>&nbsp;                     .apply(this,</b>
+<i>104</i>&nbsp;                                  this
+<i>105</i>&nbsp;                                 )
+<b class="fc"><i>106</i>&nbsp;                     .get();</b>
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    @Override
+<i>111</i>&nbsp;    public JsArray toImmutable()
+<i>112</i>&nbsp;    {
+<b class="fc"><i>113</i>&nbsp;        List&lt;JsElem&gt; acc = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>114</i>&nbsp;        array.forEach(MatchFns.accept(acc::add,</b>
+<b class="fc"><i>115</i>&nbsp;                             obj -&gt; acc.add(obj.toImmutable()),</b>
+<b class="fc"><i>116</i>&nbsp;                             arr -&gt; acc.add(arr.toImmutable())</b>
+<i>117</i>&nbsp;                                     ));
+<b class="fc"><i>118</i>&nbsp;        return new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.add(acc));</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    public JsArray toMutable()
+<i>123</i>&nbsp;    {
+<b class="nc"><i>124</i>&nbsp;        return this;</b>
+<i>125</i>&nbsp;    }
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    @Override
+<i>129</i>&nbsp;    public final JsArray mapKeys(final Function&lt;? super JsPair, String&gt; fn)
+<i>130</i>&nbsp;    {
+<b class="fc"><i>131</i>&nbsp;        return this;</b>
+<i>132</i>&nbsp;    }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    @Override
+<i>135</i>&nbsp;    public final JsArray mapKeys(final Function&lt;? super JsPair, String&gt; fn,
+<i>136</i>&nbsp;                                 final Predicate&lt;? super JsPair&gt; predicate
+<i>137</i>&nbsp;                                )
+<i>138</i>&nbsp;    {
+<b class="fc"><i>139</i>&nbsp;        return this;</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    @Override
+<i>143</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>144</i>&nbsp;    public final JsArray mapKeys_(final Function&lt;? super JsPair, String&gt; fn)
+<i>145</i>&nbsp;    {
+<b class="fc"><i>146</i>&nbsp;        return MapFns._mapArrKeys__(requireNonNull(fn),</b>
+<b class="fc"><i>147</i>&nbsp;                                          it -&gt; true,</b>
+<b class="fc"><i>148</i>&nbsp;                                    JsPath.empty().index(-1)</b>
+<i>149</i>&nbsp;                                   )
+<b class="fc"><i>150</i>&nbsp;                     .apply(this,</b>
+<i>151</i>&nbsp;                                  this
+<i>152</i>&nbsp;                                 )
+<b class="fc"><i>153</i>&nbsp;                     .get();</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    @Override
+<i>157</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>158</i>&nbsp;    public final JsArray mapKeys_(final Function&lt;? super JsPair, String&gt; fn,
+<i>159</i>&nbsp;                                  final Predicate&lt;? super JsPair&gt; predicate
+<i>160</i>&nbsp;                                 )
+<i>161</i>&nbsp;    {
+<b class="fc"><i>162</i>&nbsp;        return MapFns._mapArrKeys__(requireNonNull(fn),</b>
+<b class="fc"><i>163</i>&nbsp;                                    requireNonNull(predicate),</b>
+<b class="fc"><i>164</i>&nbsp;                                    JsPath.empty()</b>
+<b class="fc"><i>165</i>&nbsp;                                                .index(-1)</b>
+<i>166</i>&nbsp;                                   )
+<b class="fc"><i>167</i>&nbsp;                     .apply(this,</b>
+<i>168</i>&nbsp;                                  this
+<i>169</i>&nbsp;                                 )
+<b class="fc"><i>170</i>&nbsp;                     .get();</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;    }
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;    @Override
+<i>176</i>&nbsp;    public final JsArray mapObjs(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn,
+<i>177</i>&nbsp;                                 final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>178</i>&nbsp;                                )
+<i>179</i>&nbsp;    {
+<i>180</i>&nbsp;
+<b class="fc"><i>181</i>&nbsp;        return MapFns._mapJsObj_(requireNonNull(fn),</b>
+<b class="fc"><i>182</i>&nbsp;                                 requireNonNull(predicate),</b>
+<b class="fc"><i>183</i>&nbsp;                                 JsPath.empty().index(-1)</b>
+<i>184</i>&nbsp;                                )
+<b class="fc"><i>185</i>&nbsp;                     .apply(this,</b>
+<i>186</i>&nbsp;                                  this
+<i>187</i>&nbsp;                                 )
+<b class="fc"><i>188</i>&nbsp;                     .get();</b>
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    }
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;    @Override
+<i>193</i>&nbsp;    public final JsArray mapObjs(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn)
+<i>194</i>&nbsp;    {
+<b class="fc"><i>195</i>&nbsp;        return MapFns._mapJsObj_(requireNonNull(fn),</b>
+<b class="fc"><i>196</i>&nbsp;                                 (a, r) -&gt; true,</b>
+<b class="fc"><i>197</i>&nbsp;                                 JsPath.empty().index(-1)</b>
+<i>198</i>&nbsp;                                )
+<b class="fc"><i>199</i>&nbsp;                     .apply(this,</b>
+<i>200</i>&nbsp;                                  this
+<i>201</i>&nbsp;                                 )
+<b class="fc"><i>202</i>&nbsp;                     .get();</b>
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    }
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;    @Override
+<i>207</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>208</i>&nbsp;    public final JsArray mapObjs_(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn,
+<i>209</i>&nbsp;                                  final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>210</i>&nbsp;                                 )
+<i>211</i>&nbsp;    {
+<i>212</i>&nbsp;
+<b class="fc"><i>213</i>&nbsp;        return MapFns._mapArrJsObj__(requireNonNull(fn),</b>
+<b class="fc"><i>214</i>&nbsp;                                     requireNonNull(predicate),</b>
+<b class="fc"><i>215</i>&nbsp;                                     JsPath.empty().index(-1)</b>
+<i>216</i>&nbsp;                                    )
+<b class="fc"><i>217</i>&nbsp;                     .apply(this,</b>
+<i>218</i>&nbsp;                                  this
+<i>219</i>&nbsp;                                 )
+<b class="fc"><i>220</i>&nbsp;                     .get();</b>
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;    }
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;    @Override
+<i>225</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>226</i>&nbsp;    public final JsArray mapObjs_(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn)
+<i>227</i>&nbsp;    {
+<b class="fc"><i>228</i>&nbsp;        return MapFns._mapArrJsObj__(requireNonNull(fn),</b>
+<b class="fc"><i>229</i>&nbsp;                                     (p, o) -&gt; true,</b>
+<b class="fc"><i>230</i>&nbsp;                                     JsPath.empty().index(-1)</b>
+<i>231</i>&nbsp;                                    )
+<b class="fc"><i>232</i>&nbsp;                     .apply(this,</b>
+<i>233</i>&nbsp;                                  this
+<i>234</i>&nbsp;                                 )
+<b class="fc"><i>235</i>&nbsp;                     .get();</b>
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;    }
+<i>238</i>&nbsp;
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;    @Override
+<i>241</i>&nbsp;    public JsArray filterElems(final Predicate&lt;? super JsPair&gt; predicate)
+<i>242</i>&nbsp;    {
+<b class="fc"><i>243</i>&nbsp;        JsPath currentPath = JsPath.fromIndex(-1);</b>
+<b class="fc"><i>244</i>&nbsp;        final Iterator&lt;JsElem&gt; iterator = this.iterator();</b>
+<b class="fc"><i>245</i>&nbsp;        while (iterator.hasNext())</b>
+<i>246</i>&nbsp;        {
+<b class="fc"><i>247</i>&nbsp;            currentPath = currentPath.inc();</b>
+<b class="fc"><i>248</i>&nbsp;            final JsPair pair = JsPair.of(currentPath,</b>
+<b class="fc"><i>249</i>&nbsp;                                          iterator.next()</b>
+<i>250</i>&nbsp;                                         );
+<b class="fc"><i>251</i>&nbsp;            if (pair.elem.isNotJson() &amp;&amp; predicate.negate()</b>
+<b class="fc"><i>252</i>&nbsp;                                                  .test(pair))</b>
+<b class="fc"><i>253</i>&nbsp;                iterator.remove();</b>
+<i>254</i>&nbsp;
+<b class="fc"><i>255</i>&nbsp;        }</b>
+<b class="fc"><i>256</i>&nbsp;        return this;</b>
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    @Override
+<i>261</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>262</i>&nbsp;    public final JsArray filterElems_(final Predicate&lt;? super JsPair&gt; filter)
+<i>263</i>&nbsp;    {
+<b class="fc"><i>264</i>&nbsp;        return filterValues_(this,</b>
+<b class="fc"><i>265</i>&nbsp;                             requireNonNull(filter),</b>
+<b class="fc"><i>266</i>&nbsp;                             JsPath.empty().index(-1)</b>
+<i>267</i>&nbsp;                            );
+<i>268</i>&nbsp;    }
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
+<i>271</i>&nbsp;    static JsArray filterValues_(final JsArray arr,
+<i>272</i>&nbsp;                                 final Predicate&lt;? super JsPair&gt; predicate,
+<i>273</i>&nbsp;                                 final JsPath path
+<i>274</i>&nbsp;                                )
+<i>275</i>&nbsp;    {
+<b class="fc"><i>276</i>&nbsp;        JsPath currentPath = path;</b>
+<b class="fc"><i>277</i>&nbsp;        final Iterator&lt;JsElem&gt; iterator = arr.iterator();</b>
+<b class="fc"><i>278</i>&nbsp;        while (iterator.hasNext())</b>
+<i>279</i>&nbsp;        {
+<b class="fc"><i>280</i>&nbsp;            currentPath = currentPath.inc();</b>
+<b class="fc"><i>281</i>&nbsp;            final JsPair pair = JsPair.of(currentPath,</b>
+<b class="fc"><i>282</i>&nbsp;                                          iterator.next()</b>
+<i>283</i>&nbsp;                                         );
+<b class="fc"><i>284</i>&nbsp;            if (pair.elem.isNotJson() &amp;&amp; predicate.negate()</b>
+<b class="fc"><i>285</i>&nbsp;                                                  .test(pair))</b>
+<b class="fc"><i>286</i>&nbsp;                iterator.remove();</b>
+<b class="fc"><i>287</i>&nbsp;            else if (pair.elem.isObj())</b>
+<b class="fc"><i>288</i>&nbsp;                JsObjMutable.filterValues_(pair.elem.asJsObj(),</b>
+<i>289</i>&nbsp;                                           predicate,
+<i>290</i>&nbsp;                                           currentPath
+<i>291</i>&nbsp;                                          );
+<b class="fc"><i>292</i>&nbsp;            else if (pair.elem.isArray())</b>
+<b class="fc"><i>293</i>&nbsp;                filterValues_(pair.elem.asJsArray(),</b>
+<i>294</i>&nbsp;                              predicate,
+<b class="fc"><i>295</i>&nbsp;                              currentPath.index(-1)</b>
+<i>296</i>&nbsp;                             );
+<b class="fc"><i>297</i>&nbsp;        }</b>
+<b class="fc"><i>298</i>&nbsp;        return arr;</b>
+<i>299</i>&nbsp;    }
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;    @Override
+<i>303</i>&nbsp;    public final JsArray filterObjs(final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate)
+<i>304</i>&nbsp;    {
+<b class="fc"><i>305</i>&nbsp;        JsPath currentPath = JsPath.fromIndex(-1);</b>
+<b class="fc"><i>306</i>&nbsp;        final Iterator&lt;JsElem&gt; iterator = this.iterator();</b>
+<b class="fc"><i>307</i>&nbsp;        while (iterator.hasNext())</b>
+<i>308</i>&nbsp;        {
+<b class="fc"><i>309</i>&nbsp;            currentPath = currentPath.inc();</b>
+<b class="fc"><i>310</i>&nbsp;            final JsElem next = iterator.next();</b>
+<b class="fc"><i>311</i>&nbsp;            if (next.isObj() &amp;&amp; predicate.negate()</b>
+<b class="fc"><i>312</i>&nbsp;                                         .test(currentPath,</b>
+<b class="fc"><i>313</i>&nbsp;                                               next.asJsObj()</b>
+<i>314</i>&nbsp;                                              )
+<b class="fc"><i>315</i>&nbsp;            ) iterator.remove();</b>
+<i>316</i>&nbsp;
+<b class="fc"><i>317</i>&nbsp;        }</b>
+<i>318</i>&nbsp;
+<b class="fc"><i>319</i>&nbsp;        return this;</b>
+<i>320</i>&nbsp;    }
+<i>321</i>&nbsp;
+<i>322</i>&nbsp;    @Override
+<i>323</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>324</i>&nbsp;    public final JsArray filterObjs_(final BiPredicate&lt;? super JsPath, ? super JsObj&gt; filter)
+<i>325</i>&nbsp;    {
+<b class="fc"><i>326</i>&nbsp;        return FilterFns._filterArrObjs__(requireNonNull(filter),</b>
+<b class="fc"><i>327</i>&nbsp;                                          JsPath.empty().index(-1)</b>
+<i>328</i>&nbsp;                                         )
+<b class="fc"><i>329</i>&nbsp;                        .apply(this);</b>
+<i>330</i>&nbsp;    }
+<i>331</i>&nbsp;
+<i>332</i>&nbsp;    @Override
+<i>333</i>&nbsp;    public final JsArray filterKeys(final Predicate&lt;? super JsPair&gt; filter)
+<i>334</i>&nbsp;    {
+<b class="nc"><i>335</i>&nbsp;        return this;</b>
+<i>336</i>&nbsp;    }
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;    @Override
+<i>339</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;) //  naming convention:  xx_ traverses the whole json
+<i>340</i>&nbsp;    public final JsArray filterKeys_(final Predicate&lt;? super JsPair&gt; filter)
+<i>341</i>&nbsp;    {
+<b class="fc"><i>342</i>&nbsp;        return FilterFns._filterArrKeys__(requireNonNull(filter),</b>
+<b class="fc"><i>343</i>&nbsp;                                          JsPath.empty().index(-1)</b>
+<i>344</i>&nbsp;                                         )
+<b class="fc"><i>345</i>&nbsp;                        .apply(this);</b>
+<i>346</i>&nbsp;
+<i>347</i>&nbsp;    }
+<i>348</i>&nbsp;
+<i>349</i>&nbsp;
+<i>350</i>&nbsp;    /**
+<i>351</i>&nbsp;     * Serialize this {@code JsArray} instance.
+<i>352</i>&nbsp;     *
+<i>353</i>&nbsp;     * @serialData The {@code String}) representation of this json array.
+<i>354</i>&nbsp;     */
+<i>355</i>&nbsp;    private void writeObject(ObjectOutputStream s) throws IOException
+<i>356</i>&nbsp;    {
+<b class="fc"><i>357</i>&nbsp;        s.defaultWriteObject();</b>
+<b class="fc"><i>358</i>&nbsp;        s.writeObject(toString());</b>
+<i>359</i>&nbsp;
+<b class="fc"><i>360</i>&nbsp;    }</b>
+<i>361</i>&nbsp;
+<i>362</i>&nbsp;    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
+<i>363</i>&nbsp;    {
+<b class="fc"><i>364</i>&nbsp;        s.defaultReadObject();</b>
+<b class="fc"><i>365</i>&nbsp;        final String json = (String) s.readObject();</b>
+<i>366</i>&nbsp;        try
+<i>367</i>&nbsp;        {
+<b class="fc"><i>368</i>&nbsp;            array = ((JsArrayMutable) JsArray._parse_(json)</b>
+<b class="fc"><i>369</i>&nbsp;                                             .orElseThrow()).array;</b>
+<i>370</i>&nbsp;        }
+<b class="nc"><i>371</i>&nbsp;        catch (MalformedJson malformedJson)</b>
+<i>372</i>&nbsp;        {
+<b class="nc"><i>373</i>&nbsp;            throw new NotSerializableException(String.format(&quot;Error deserializing a string into the class %s: %s&quot;,</b>
+<b class="nc"><i>374</i>&nbsp;                                                             JsArrayMutable.class.getName(),</b>
+<b class="nc"><i>375</i>&nbsp;                                                             malformedJson.getMessage()</b>
+<i>376</i>&nbsp;                                                            ));
+<b class="fc"><i>377</i>&nbsp;        }</b>
+<i>378</i>&nbsp;
+<b class="fc"><i>379</i>&nbsp;    }</b>
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;    @Override
+<i>382</i>&nbsp;    public boolean isMutable()
+<i>383</i>&nbsp;    {
+<b class="nc"><i>384</i>&nbsp;        return true;</b>
+<i>385</i>&nbsp;    }
+<i>386</i>&nbsp;
+<i>387</i>&nbsp;    @Override
+<i>388</i>&nbsp;    public boolean isImmutable()
+<i>389</i>&nbsp;    {
+<b class="fc"><i>390</i>&nbsp;        return false;</b>
+<i>391</i>&nbsp;    }
+<i>392</i>&nbsp;
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-09 01:41</div>
+</div>
+</body>
+</html>

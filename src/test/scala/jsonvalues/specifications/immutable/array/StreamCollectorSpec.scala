@@ -1,7 +1,7 @@
 package jsonvalues.specifications.immutable.array
 
 import java.math.BigInteger
-
+import jsonvalues.JsElems
 import jsonvalues.JsArray
 import jsonvalues.specifications.BasePropSpec
 import org.scalacheck.Prop.forAll

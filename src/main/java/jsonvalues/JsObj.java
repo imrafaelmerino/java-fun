@@ -3,14 +3,15 @@ package jsonvalues;
 import jsonvalues.JsArray.TYPE;
 
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collector;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Functions.throwErrorIfImmutableElem;
-import static jsonvalues.Functions.throwErrorIfMutableElem;
+import static jsonvalues.Errors.*;
 import static jsonvalues.JsParser.Event.START_OBJECT;
 import static jsonvalues.MyScalaImpl.Map.EMPTY;
 
@@ -19,10 +20,10 @@ import static jsonvalues.MyScalaImpl.Map.EMPTY;
  provided, an immutable which uses the persistent Scala HashMap, and a mutable which uses the conventional
  Java HashMap.
  */
+@SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
 public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 {
 
-    @SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
     long serialVersionUID = 1L;
 
     /**
@@ -32,7 +33,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static JsObj _empty_()
     {
-        return new JsObjMutableImpl();
+        return new JsObjMutable();
     }
 
     /**
@@ -50,7 +51,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     {
         return _empty_().put(JsPath.empty()
                                    .key(requireNonNull(key)),
-                             throwErrorIfImmutableElem(el)
+                             errorIfImmutableArg.apply(el)
                             );
     }
 
@@ -72,10 +73,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     {
 
         return _of_(requireNonNull(key1),
-                    throwErrorIfImmutableElem(el1)
+                    errorIfImmutableArg.apply(el1)
                    ).put(JsPath.empty()
                                .key(requireNonNull(key2)),
-                         throwErrorIfImmutableElem(el2)
+                         errorIfImmutableArg.apply(el2)
                         );
     }
 
@@ -92,7 +93,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -102,12 +103,12 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                      )
     {
         return _of_(requireNonNull(key1),
-                    throwErrorIfImmutableElem(el1),
+                    errorIfImmutableArg.apply(el1),
                     requireNonNull(key2),
-                    throwErrorIfImmutableElem(el2)
+                    errorIfImmutableArg.apply(el2)
                    ).put(JsPath.empty()
                                .key(requireNonNull(key3)),
-                         throwErrorIfImmutableElem(el3)
+                         errorIfImmutableArg.apply(el3)
                         );
     }
 
@@ -126,7 +127,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -138,14 +139,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                      )
     {
         return _of_(requireNonNull(key1),
-                    throwErrorIfImmutableElem(el1),
+                    errorIfImmutableArg.apply(el1),
                     requireNonNull(key2),
-                    throwErrorIfImmutableElem(el2),
+                    errorIfImmutableArg.apply(el2),
                     requireNonNull(key3),
-                    throwErrorIfImmutableElem(el3)
+                    errorIfImmutableArg.apply(el3)
                    ).put(JsPath.empty()
                                .key(requireNonNull(key4)),
-                         throwErrorIfImmutableElem(el4)
+                         errorIfImmutableArg.apply(el4)
                         );
     }
 
@@ -167,7 +168,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -181,16 +182,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                      )
     {
         return _of_(requireNonNull(key1),
-                    throwErrorIfImmutableElem(el1),
+                    errorIfImmutableArg.apply(el1),
                     requireNonNull(key2),
-                    throwErrorIfImmutableElem(el2),
+                    errorIfImmutableArg.apply(el2),
                     requireNonNull(key3),
-                    throwErrorIfImmutableElem(el3),
+                    errorIfImmutableArg.apply(el3),
                     requireNonNull(key4),
-                    throwErrorIfImmutableElem(el4)
+                    errorIfImmutableArg.apply(el4)
                    ).put(JsPath.empty()
                                .key(requireNonNull(key5)),
-                         throwErrorIfImmutableElem(el5)
+                         errorIfImmutableArg.apply(el5)
                         );
     }
 
@@ -213,7 +214,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
-    @SuppressWarnings({"squid:S00100","squid:S00107"})
+    @SuppressWarnings({"squid:S00100", "squid:S00107"})
     static JsObj _of_(final String key1,
                       final JsElem el1,
                       final String key2,
@@ -229,18 +230,18 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                      )
     {
         return _of_(requireNonNull(key1),
-                    throwErrorIfImmutableElem(el1),
+                    errorIfImmutableArg.apply(el1),
                     requireNonNull(key2),
-                    throwErrorIfImmutableElem(el2),
+                    errorIfImmutableArg.apply(el2),
                     requireNonNull(key3),
-                    throwErrorIfImmutableElem(el3),
+                    errorIfImmutableArg.apply(el3),
                     requireNonNull(key4),
-                    throwErrorIfImmutableElem(el4),
+                    errorIfImmutableArg.apply(el4),
                     requireNonNull(key5),
-                    throwErrorIfImmutableElem(el5)
+                    errorIfImmutableArg.apply(el5)
                    ).put(JsPath.empty()
                                .key(requireNonNull(key6)),
-                         throwErrorIfImmutableElem(el6)
+                         errorIfImmutableArg.apply(el6)
                         );
     }
 //
@@ -253,11 +254,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
-    static JsObj _of_(final java.util.Map<String,JsElem> map)
+    static JsObj _of_(final java.util.Map<String, JsElem> map)
     {
-        Functions.throwErrorIfImmutableElemFound(Objects.requireNonNull(map)
-                                                        .values());
-        return new JsObjMutableImpl(new MyJavaImpl.Map(map));
+        Errors.<Collection<JsElem>>errorIfAnyImmutable().apply(Objects.requireNonNull(map)
+                                                                      .values());
+        return new JsObjMutable(new MyJavaImpl.Map(map));
     }
 
     /**
@@ -274,10 +275,8 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
             MyJavaImpl.Map obj = new MyJavaImpl.Map();
-            Functions.parse(obj,
-                            parser
-                           );
-            return new TryObj(new JsObjMutableImpl(obj));
+            obj.parse(parser);
+            return new TryObj(new JsObjMutable(obj));
         }
 
         catch (MalformedJson e)
@@ -340,12 +339,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
             MyJavaImpl.Map obj = new MyJavaImpl.Map();
-            Functions.parse(obj,
-                            parser,
-                            options.create(),
-                            JsPath.empty()
-                           );
-            return new TryObj(new JsObjMutableImpl(obj));
+            obj.parse(parser,
+                      options.create(),
+                      JsPath.empty()
+                     );
+            return new TryObj(new JsObjMutable(obj));
         }
 
         catch (MalformedJson e)
@@ -369,14 +367,15 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get(),
+                            (a, b) -> CombinerFns.combiner_(a,
+                                                            b
+                                                           )
+                                                 .get(),
                             jsonvalues.JsObj::toImmutable
                            );
 
     }
+
 
     /**
      Returns a collector that accumulates the pairs from a stream into an mutable object.
@@ -391,10 +390,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> Functions.combiner_(a,
-                                                          b
-                                                         )
-                                               .get()
+                            (a, b) -> CombinerFns.combiner_(a,
+                                                            b
+                                                           )
+                                                 .get()
                            );
 
     }
@@ -405,7 +404,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static JsObj empty()
     {
-        return JsObjImmutableImpl.EMPTY;
+        return JsObjImmutable.EMPTY;
     }
 
 
@@ -438,7 +437,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     {
         return empty().put(JsPath.empty()
                                  .key(requireNonNull(key)),
-                           throwErrorIfMutableElem(el)
+                           errorIfMutableArg.apply(el)
                           );
     }
 
@@ -460,10 +459,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     {
 
         return of(requireNonNull(key1),
-                  throwErrorIfMutableElem(el1)
+                  errorIfMutableArg.apply(el1)
                  ).put(JsPath.empty()
                              .key(requireNonNull(key2)),
-                       throwErrorIfMutableElem(el2)
+                       errorIfMutableArg.apply(el2)
                       );
     }
 
@@ -489,12 +488,12 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                    )
     {
         return of(requireNonNull(key1),
-                  throwErrorIfMutableElem(el1),
+                  errorIfMutableArg.apply(el1),
                   requireNonNull(key2),
-                  throwErrorIfMutableElem(el2)
+                  errorIfMutableArg.apply(el2)
                  ).put(JsPath.empty()
                              .key(requireNonNull(key3)),
-                       throwErrorIfMutableElem(el3)
+                       errorIfMutableArg.apply(el3)
                       );
     }
 
@@ -525,14 +524,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                    )
     {
         return of(requireNonNull(key1),
-                  throwErrorIfMutableElem(el1),
+                  errorIfMutableArg.apply(el1),
                   requireNonNull(key2),
-                  throwErrorIfMutableElem(el2),
+                  errorIfMutableArg.apply(el2),
                   requireNonNull(key3),
-                  throwErrorIfMutableElem(el3)
+                  errorIfMutableArg.apply(el3)
                  ).put(JsPath.empty()
                              .key(requireNonNull(key4)),
-                       throwErrorIfMutableElem(el4)
+                       errorIfMutableArg.apply(el4)
                       );
     }
 
@@ -567,16 +566,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                    )
     {
         return of(requireNonNull(key1),
-                  throwErrorIfMutableElem(el1),
+                  errorIfMutableArg.apply(el1),
                   requireNonNull(key2),
-                  throwErrorIfMutableElem(el2),
+                  errorIfMutableArg.apply(el2),
                   requireNonNull(key3),
-                  throwErrorIfMutableElem(el3),
+                  errorIfMutableArg.apply(el3),
                   requireNonNull(key4),
-                  throwErrorIfMutableElem(el4)
+                  errorIfMutableArg.apply(el4)
                  ).put(JsPath.empty()
                              .key(requireNonNull(key5)),
-                       throwErrorIfMutableElem(el5)
+                       errorIfMutableArg.apply(el5)
                       );
     }
 
@@ -615,18 +614,18 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                    )
     {
         return of(requireNonNull(key1),
-                  throwErrorIfMutableElem(el1),
+                  errorIfMutableArg.apply(el1),
                   requireNonNull(key2),
-                  throwErrorIfMutableElem(el2),
+                  errorIfMutableArg.apply(el2),
                   requireNonNull(key3),
-                  throwErrorIfMutableElem(el3),
+                  errorIfMutableArg.apply(el3),
                   requireNonNull(key4),
-                  throwErrorIfMutableElem(el4),
+                  errorIfMutableArg.apply(el4),
                   requireNonNull(key5),
-                  throwErrorIfMutableElem(el5)
+                  errorIfMutableArg.apply(el5)
                  ).put(JsPath.empty()
                              .key(requireNonNull(key6)),
-                       throwErrorIfMutableElem(el6)
+                       errorIfMutableArg.apply(el6)
                       );
     }
 
@@ -639,8 +638,8 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     static JsObj of(final java.util.Map<String, JsElem> map)
     {
         if (requireNonNull(map).isEmpty()) return empty();
-        Functions.throwErrorIfMutableElemFound(map.values());
-        return new JsObjImmutableImpl(EMPTY.updateAll(map));
+        Errors.errorIfAnyMutable().apply(map.values());
+        return new JsObjImmutable(EMPTY.updateAll(map));
     }
 
     /**
@@ -650,23 +649,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static TryObj parse(final String str)
     {
-
         try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new JsObjImmutableImpl(Functions.parse(EMPTY,
-                                                                     parser
-
-                                                                    )));
+            return new TryObj(new JsObjImmutable(EMPTY.parse(parser)));
         }
-
         catch (MalformedJson e)
         {
             return new TryObj(e);
         }
-
-
     }
 
 
@@ -682,26 +674,19 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         final ParseOptions options
                        )
     {
-
         try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
             JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new JsObjImmutableImpl(Functions.parse(EMPTY,
-                                                                     parser,
-                                                                     options.create(),
-                                                                     JsPath.empty()
-
-                                                                    )));
+            return new TryObj(new JsObjImmutable(EMPTY.parse(parser,
+                                                             options.create(),
+                                                             JsPath.empty()
+                                                            )));
         }
-
         catch (MalformedJson e)
         {
-
             return new TryObj(e);
         }
-
-
     }
 
 
@@ -732,13 +717,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
+    @SuppressWarnings("squid:S00117")
+    //  ARRAY_AS  should be a valid name
     JsObj intersection(final JsObj that,
                        final TYPE ARRAY_AS
                       );
 
 
-
-     /**
+    /**
      Returns the intersection of this object and another given as parameter applying recursively
      the intersection to those elements which are Json of the same type and are located at the same key
      and defining characteristics like order and duplicates occurrence in arrays with the given ARRAY_AS
@@ -747,8 +733,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
-     @SuppressWarnings("squid:S00117") //  perfectly fine _
-     JsObj intersection_(final JsObj that,
+    // squid:S00100_ naming convention: xx_ traverses the whole json
+    // squid:S00117 ARRAY_AS should be a valid name
+    @SuppressWarnings({"squid:S00117", "squid:S00100"})
+    JsObj intersection_(final JsObj that,
                         final TYPE ARRAY_AS
                        );
 
@@ -770,11 +758,13 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+
+    // squid:S00100:  naming convention: _xx_ returns immutable object
+    // squid:squid:S00117: ARRAY_AS should be a valid name
+    @SuppressWarnings({"squid:S00100", "squid:S00117"})
     JsObj union_(final JsObj that,
                  final TYPE ARRAY_AS
                 );
-
 
 
     /**
@@ -790,12 +780,12 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                    )
     {
         JsObj obj = empty().put(requireNonNull(pair.path),
-                                throwErrorIfMutableElem(pair.elem)
+                                errorIfMutableArg.apply(pair.elem)
                                );
         for (JsPair p : others)
         {
             obj = obj.put(requireNonNull(p.path),
-                          throwErrorIfMutableElem(p.elem)
+                          errorIfMutableArg.apply(p.elem)
                          );
         }
         return obj;
@@ -815,15 +805,33 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                      )
     {
         JsObj obj = _empty_().put(requireNonNull(pair.path),
-                                  throwErrorIfImmutableElem(pair.elem)
+                                  errorIfImmutableArg.apply(pair.elem)
                                  );
         for (JsPair p : others)
         {
             obj.put(requireNonNull(p.path),
-                    throwErrorIfImmutableElem(p.elem)
+                    errorIfImmutableArg.apply(p.elem)
                    );
         }
         return obj;
+    }
+
+    default <T> Trampoline<T> ifEmptyElse(final Trampoline<T> empty,
+                                          final BiFunction<Map.Entry<String, JsElem>, JsObj, Trampoline<T>> fn
+                                         )
+    {
+
+
+        if (this.isEmpty()) return empty;
+
+        final Map.Entry<String, JsElem> head = this.head();
+
+        final JsObj tail = this.tail(head.getKey());
+
+        return fn.apply(head,
+                        tail
+                       );
+
     }
 
 

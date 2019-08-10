@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.AbstractJsArray.streamOfArr;
 import static jsonvalues.JsNothing.NOTHING;
-import static jsonvalues.ReduceFns.reduceObj_;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -465,16 +464,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return reduceObj_(ReduceFns.accumulateIf(predicate,
-                                                 map,
-                                                 op
-                                                ),
-                          JsPath.empty(),
-                          false
-                         ).apply(this,
-                                 Optional.empty()
-                                )
-                          .get();
+        return new MapReduce<>(predicate,map,op).reduce(this);
     }
 
 
@@ -485,16 +475,8 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return reduceObj_(ReduceFns.accumulateIf(predicate,
-                                                 map,
-                                                 op
-                                                ),
-                          JsPath.empty(),
-                          true
-                         ).apply(this,
-                                 Optional.empty()
-                                )
-                          .get();
+        return new MapReduce<>(predicate,map,op).reduce_(this);
+
     }
 
     @Override

@@ -330,10 +330,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> CombinerFns.combiner_(a,
-                                                            b
-                                                           )
-                                                 .get(),
+                            (a, b) -> new ArrCombiner(a,
+                                                      b
+                            ).combine()
+                             .get(),
                             jsonvalues.JsArray::toImmutable
                            );
 
@@ -353,10 +353,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> CombinerFns.combiner_(a,
-                                                            b
-                                                           )
-                                                 .get()
+                            (a, b) -> new ArrCombiner(a,
+                                                      b
+                            ).combine()
+                             .get()
                            );
 
     }
@@ -604,7 +604,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             return new TryArr(new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser,
                                                                                   options.create(),
                                                                                   JsPath.empty()
-                                                                                            .index(-1)
+                                                                                        .index(-1)
                                                                                  )));
         }
 

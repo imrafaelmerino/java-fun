@@ -12,6 +12,47 @@ import static jsonvalues.Trampoline.more;
 
 class MapFns
 {
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
+    static BiFunction<JsArray, JsArray, Trampoline<JsArray>> _mapElems_(final Function<? super JsPair, ? extends JsElem> fn,
+                                                                        final Predicate<? super JsPair> predicate,
+                                                                        final JsPath path
+                                                                       )
+    {
+
+
+        return (acc, remaining) -> remaining.ifEmptyElse(done(acc),
+                                                         (head, tail) ->
+                                                         {
+                                                             final JsPath headPath = path.inc();
+
+                                                             final Trampoline<JsArray> tailCall = more(() -> _mapElems_(fn,
+                                                                                                                        predicate,
+                                                                                                                        headPath
+                                                                                                                       ).apply(acc,
+                                                                                                                               tail
+                                                                                                                              ));
+
+                                                             return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.put(new JsPath(headPath.last()),
+                                                                                                                             elem
+                                                                                                                            )),
+                                                                               elem -> JsPair.of(headPath,
+                                                                                                 elem
+                                                                                                )
+                                                                                             .ifElse(predicate,
+                                                                                                     p -> more(() -> tailCall).map(tailResult -> tailResult.put(new JsPath(headPath.last()),
+                                                                                                                                                                fn.apply(p)
+                                                                                                                                                               )),
+                                                                                                     p -> more(() -> tailCall).map(tailResult -> tailResult.put(new JsPath(headPath.last()),
+                                                                                                                                                                elem
+                                                                                                                                                               ))
+                                                                                                    )
+                                                                              ).apply(head);
+
+
+                                                         }
+                                                        );
+    }
+
     static Function<JsArray, Trampoline<JsArray>> mapArrJsObj(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                                               final BiPredicate<? super JsPath, ? super JsObj> predicate,
                                                               final JsPath startingPath
@@ -562,6 +603,7 @@ class MapFns
 
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention: x_ traverses the whole json recursively
     private static Function<Json<?>, Trampoline<? extends Json<?>>> mapJsonElems_(final Function<? super JsPair, ? extends JsElem> fn,
                                                                                   final Predicate<? super JsPair> predicate,
                                                                                   final JsPath startingPath
@@ -579,6 +621,7 @@ class MapFns
 
     }
 
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns an immutable object, x_ traverses the whole json recursively
     private static Function<Json<?>, Trampoline<? extends Json<?>>> _mapJsonElems__(final Function<? super JsPair, ? extends JsElem> fn,
                                                                                     final Predicate<? super JsPair> predicate,
                                                                                     final JsPath startingPath
@@ -691,48 +734,45 @@ class MapFns
                                                                                                                       ).apply(acc,
                                                                                                                               tail
                                                                                                                              ));
-                                                             return ifJsonElse(json ->
-                                                                               {
-                                                                                   return JsPair.of(headPath,
-                                                                                                    json
-                                                                                                   )
-                                                                                                .ifElse(p -> predicate.test(p.path,
-                                                                                                                            json
-                                                                                                                           ),
-                                                                                                        p ->
-                                                                                                        {
-                                                                                                            final JsObj mapped = fn.apply(headPath,
-                                                                                                                                          json
-                                                                                                                                         );
+                                                             return ifJsonElse(json -> JsPair.of(headPath,
+                                                                                                 json
+                                                                                                )
+                                                                                             .ifElse(p -> predicate.test(p.path,
+                                                                                                                         json
+                                                                                                                        ),
+                                                                                                     p ->
+                                                                                                     {
+                                                                                                         final JsObj mapped = fn.apply(headPath,
+                                                                                                                                       json
+                                                                                                                                      );
 
-                                                                                                            return more(() -> tailCall).flatMap(tailResult -> _mapJsObj__(fn,
-                                                                                                                                                                          predicate,
-                                                                                                                                                                          headPath
-                                                                                                                                                                         ).apply(mapped,
-                                                                                                                                                                                 mapped
-                                                                                                                                                                                )
-                                                                                                                                                                          .map(mapped_ ->
-                                                                                                                                                                               tailResult.put(head.getKey(),
-                                                                                                                                                                                              mapped_
-                                                                                                                                                                                             )
-                                                                                                                                                                              )
-                                                                                                                                               );
+                                                                                                         return more(() -> tailCall).flatMap(tailResult -> _mapJsObj__(fn,
+                                                                                                                                                                       predicate,
+                                                                                                                                                                       headPath
+                                                                                                                                                                      ).apply(mapped,
+                                                                                                                                                                              mapped
+                                                                                                                                                                             )
+                                                                                                                                                                       .map(headMappedResult ->
+                                                                                                                                                                            tailResult.put(head.getKey(),
+                                                                                                                                                                                           headMappedResult
+                                                                                                                                                                                          )
+                                                                                                                                                                           )
+                                                                                                                                            );
 
-                                                                                                        },
-                                                                                                        p -> more(() -> tailCall).flatMap(tailResult -> _mapJsObj__(fn,
-                                                                                                                                                                    predicate,
-                                                                                                                                                                    headPath
-                                                                                                                                                                   ).apply(json,
-                                                                                                                                                                           json
-                                                                                                                                                                          )
-                                                                                                                                                                    .map(it ->
-                                                                                                                                                                         tailResult.put(head.getKey(),
-                                                                                                                                                                                        it
-                                                                                                                                                                                       )
-                                                                                                                                                                        )
-                                                                                                                                         )
-                                                                                                       );
-                                                                               }
+                                                                                                     },
+                                                                                                     p -> more(() -> tailCall).flatMap(tailResult -> _mapJsObj__(fn,
+                                                                                                                                                                 predicate,
+                                                                                                                                                                 headPath
+                                                                                                                                                                ).apply(json,
+                                                                                                                                                                        json
+                                                                                                                                                                       )
+                                                                                                                                                                 .map(it ->
+                                                                                                                                                                      tailResult.put(head.getKey(),
+                                                                                                                                                                                     it
+                                                                                                                                                                                    )
+                                                                                                                                                                     )
+                                                                                                                                      )
+                                                                                                    )
                                                              ,
                                                                                arr -> more(() -> tailCall).flatMap(tailResult -> _mapArrJsObj__(fn,
                                                                                                                                                 predicate,
@@ -874,6 +914,7 @@ class MapFns
     }
 
 
+    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns an immutable object
     private static Function<Json<?>, Trampoline<? extends Json<?>>> _mapJsonKeys_(final Function<? super JsPair, String> fn,
                                                                                   final Predicate<? super JsPair> predicate,
                                                                                   final JsPath startingPath

@@ -9,6 +9,7 @@ import static jsonvalues.Trampoline.more;
 public class SetTheoryFns
 {
 
+    private SetTheoryFns(){}
 
     //squid:S1452 -> private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
     //squid:S00100 ->  naming convention: xx_ traverses the whole json

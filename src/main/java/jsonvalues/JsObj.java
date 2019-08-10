@@ -11,7 +11,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collector;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Errors.*;
+import static jsonvalues.Errors.errorIfImmutableArg;
+import static jsonvalues.Errors.errorIfMutableArg;
 import static jsonvalues.JsParser.Event.START_OBJECT;
 import static jsonvalues.MyScalaImpl.Map.EMPTY;
 
@@ -367,10 +368,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> CombinerFns.combiner_(a,
-                                                            b
-                                                           )
-                                                 .get(),
+                            (a, b) -> new ObjCombiner(a,
+                                                      b
+                            ).combine()
+                             .get(),
                             jsonvalues.JsObj::toImmutable
                            );
 
@@ -390,10 +391,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> CombinerFns.combiner_(a,
-                                                            b
-                                                           )
-                                                 .get()
+                            (a, b) -> new ObjCombiner(a,
+                                                      b
+                            ).combine()
+                             .get()
+
                            );
 
     }
@@ -638,7 +640,8 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     static JsObj of(final java.util.Map<String, JsElem> map)
     {
         if (requireNonNull(map).isEmpty()) return empty();
-        Errors.errorIfAnyMutable().apply(map.values());
+        Errors.errorIfAnyMutable()
+              .apply(map.values());
         return new JsObjImmutable(EMPTY.updateAll(map));
     }
 

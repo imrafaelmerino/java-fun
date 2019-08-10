@@ -50,14 +50,15 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @Override
     public JsArray mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return FilterFns._mapElems_(requireNonNull(fn),
-                                          p -> true,
-                                    JsPath.empty().index(-1)
-                                   )
-                        .apply(this,
-                                     this
-                                    )
-                        .get();
+        return MapFns._mapElems_(requireNonNull(fn),
+                                 p -> true,
+                                 JsPath.empty()
+                                       .index(-1)
+                                )
+                     .apply(this,
+                            this
+                           )
+                     .get();
     }
 
     @Override
@@ -65,14 +66,15 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
                             final Predicate<? super JsPair> predicate
                            )
     {
-        return FilterFns._mapElems_(requireNonNull(fn),
-                                    requireNonNull(predicate),
-                                    JsPath.empty().index(-1)
-                                   )
-                        .apply(this,
-                                     this
-                                    )
-                        .get();
+        return MapFns._mapElems_(requireNonNull(fn),
+                                 requireNonNull(predicate),
+                                 JsPath.empty()
+                                       .index(-1)
+                                )
+                     .apply(this,
+                            this
+                           )
+                     .get();
     }
 
 
@@ -81,12 +83,13 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     public JsArray mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
         return MapFns._mapArrElems__(requireNonNull(fn),
-                                           it -> true,
-                                     JsPath.empty().index(-1)
+                                     it -> true,
+                                     JsPath.empty()
+                                           .index(-1)
                                     )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -98,11 +101,12 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFns._mapArrElems__(requireNonNull(fn),
                                      predicate,
-                                     JsPath.empty().index(-1)
+                                     JsPath.empty()
+                                           .index(-1)
                                     )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -112,8 +116,8 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         List<JsElem> acc = new ArrayList<>();
         array.forEach(MatchFns.accept(acc::add,
-                             obj -> acc.add(obj.toImmutable()),
-                             arr -> acc.add(arr.toImmutable())
+                                      obj -> acc.add(obj.toImmutable()),
+                                      arr -> acc.add(arr.toImmutable())
                                      ));
         return new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.add(acc));
 
@@ -144,12 +148,13 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
         return MapFns._mapArrKeys__(requireNonNull(fn),
-                                          it -> true,
-                                    JsPath.empty().index(-1)
+                                    it -> true,
+                                    JsPath.empty()
+                                          .index(-1)
                                    )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -162,11 +167,11 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
         return MapFns._mapArrKeys__(requireNonNull(fn),
                                     requireNonNull(predicate),
                                     JsPath.empty()
-                                                .index(-1)
+                                          .index(-1)
                                    )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
 
     }
@@ -180,11 +185,12 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
 
         return MapFns._mapJsObj_(requireNonNull(fn),
                                  requireNonNull(predicate),
-                                 JsPath.empty().index(-1)
+                                 JsPath.empty()
+                                       .index(-1)
                                 )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
 
     }
@@ -194,11 +200,12 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFns._mapJsObj_(requireNonNull(fn),
                                  (a, r) -> true,
-                                 JsPath.empty().index(-1)
+                                 JsPath.empty()
+                                       .index(-1)
                                 )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
 
     }
@@ -212,11 +219,12 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
 
         return MapFns._mapArrJsObj__(requireNonNull(fn),
                                      requireNonNull(predicate),
-                                     JsPath.empty().index(-1)
+                                     JsPath.empty()
+                                           .index(-1)
                                     )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
 
     }
@@ -227,11 +235,12 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return MapFns._mapArrJsObj__(requireNonNull(fn),
                                      (p, o) -> true,
-                                     JsPath.empty().index(-1)
+                                     JsPath.empty()
+                                           .index(-1)
                                     )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
 
     }
@@ -263,7 +272,8 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     {
         return filterValues_(this,
                              requireNonNull(filter),
-                             JsPath.empty().index(-1)
+                             JsPath.empty()
+                                   .index(-1)
                             );
     }
 
@@ -324,7 +334,8 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
         return FilterFns._filterArrObjs__(requireNonNull(filter),
-                                          JsPath.empty().index(-1)
+                                          JsPath.empty()
+                                                .index(-1)
                                          )
                         .apply(this);
     }
@@ -339,10 +350,10 @@ class JsArrayMutable extends AbstractJsArray<MyJavaImpl.Vector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return FilterFns._filterArrKeys__(requireNonNull(filter),
-                                          JsPath.empty().index(-1)
-                                         )
-                        .apply(this);
+        return new ArrFilterKey(this)._filter__(JsPath.empty()
+                                                      .index(-1),
+                                                requireNonNull(filter)
+                                               );
 
     }
 

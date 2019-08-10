@@ -593,18 +593,10 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return ReduceFns.reduceArr_(ReduceFns.accumulateIf(predicate,
-                                                           map,
-                                                           op
-                                                          ),
-                                    JsPath.empty()
-                                          .index(-1),
-                                    false
-                                   )
-                        .apply(this,
-                               Optional.empty()
-                              )
-                        .get();
+        return new MapReduce<>(predicate,
+                               map,
+                               op).reduce(this);
+
 
     }
 
@@ -616,18 +608,10 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return ReduceFns.reduceArr_(ReduceFns.accumulateIf(predicate,
-                                                           map,
-                                                           op
-                                                          ),
-                                    JsPath.empty()
-                                          .index(-1),
-                                    true
-                                   )
-                        .apply(this,
-                               Optional.empty()
-                              )
-                        .get();
+        return new MapReduce<>(predicate,
+                               map,
+                               op).reduce_(this);
+
     }
 
     @Override

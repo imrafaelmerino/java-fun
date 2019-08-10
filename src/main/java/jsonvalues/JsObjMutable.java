@@ -84,13 +84,14 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
         keys.forEach(key -> MatchFns.accept(val -> acc.put(key,
                                                            val
                                                           ),
-                                   obj -> acc.put(key,
-                                                  obj.toImmutable()
-                                                 ),
-                                   arr -> acc.put(key,
-                                                  arr.toImmutable()
-                                                 )
-                                           ).accept(map.get(key))
+                                            obj -> acc.put(key,
+                                                           obj.toImmutable()
+                                                          ),
+                                            arr -> acc.put(key,
+                                                           arr.toImmutable()
+                                                          )
+                                           )
+                                    .accept(map.get(key))
                     );
         return new JsObjImmutable(MyScalaImpl.Map.EMPTY.updateAll(acc));
 
@@ -180,12 +181,12 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
         return MapFns._mapElems__(requireNonNull(fn),
-                                        p -> true,
+                                  p -> true,
                                   JsPath.empty()
                                  )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -200,8 +201,8 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
                                   JsPath.empty()
                                  )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -276,12 +277,12 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
         return MapFns._mapKeys__(requireNonNull(fn),
-                                       p -> true,
+                                 p -> true,
                                  JsPath.empty()
                                 )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
 
     }
@@ -297,8 +298,8 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
                                  JsPath.empty()
                                 )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -389,8 +390,8 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
                                   JsPath.empty()
                                  )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -403,8 +404,8 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
                                   JsPath.empty()
                                  )
                      .apply(this,
-                                  this
-                                 )
+                            this
+                           )
                      .get();
     }
 
@@ -504,29 +505,16 @@ class JsObjMutable extends AbstractJsObj<MyJavaImpl.Map, JsArrayMutable>
     @Override
     public final JsObj filterKeys(final Predicate<? super JsPair> predicate)
     {
-        JsPath path = JsPath.empty();
-        final Iterator<Map.Entry<String, JsElem>> iterator = this.iterator();
-        while (iterator.hasNext())
-        {
-            final Map.Entry<String, JsElem> entry = iterator.next();
-            final JsPair pair = JsPair.of(path.key(entry.getKey()),
-                                          entry.getValue()
-                                         );
-            if (predicate.negate()
-                         .test(pair))
-                iterator.remove();
-        }
-        return this;
+        return new ObjFilterKey(this)._filter_(requireNonNull(predicate));
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return FilterFns._filterObjKeys__(requireNonNull(filter),
-                                          JsPath.empty()
-                                         )
-                        .apply(this);
+        return new ObjFilterKey(this)._filter__(JsPath.empty(),
+                                                requireNonNull(filter)
+                                               );
 
     }
 

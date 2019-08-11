@@ -26,7 +26,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
 {
     long serialVersionUID = 1L;
 
-
     /**
      Returns a mutable empty array.
      @return mutable empty JsArray
@@ -52,7 +51,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         return new MyMutableJsArray(new MyJavaVector(MyErrors.<List<JsElem>>errorIfAnyImmutable().apply(list)));
 
     }
-
 
     /**
      Returns a mutable one-element array.
@@ -97,7 +95,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsElem e2
                        )
     {
-
         return new MyMutableJsArray(new MyJavaVector().appendFront(errorIfImmutableArg.apply(e2))
                                                       .appendFront(errorIfImmutableArg.apply(e1))
                                                       .appendFront(errorIfImmutableArg.apply(e)));
@@ -194,9 +191,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static TryArr _parse_(final String str)
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))
-        )
-        )
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
             MyJsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
@@ -277,8 +272,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
 
             return new TryArr(e);
         }
-
-
     }
 
     /**
@@ -881,7 +874,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                       JsPair... pairs
                      )
     {
-
         JsArray arr = empty().put(pair.path,
                                   errorIfMutableArg.apply(pair.elem)
                                  );
@@ -891,7 +883,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                           errorIfMutableArg.apply(p.elem)
                          );
         }
-
         return arr;
     }
 
@@ -907,7 +898,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         final JsPair... pairs
                        )
     {
-
         JsArray arr = _empty_().put(pair.path,
                                     errorIfMutableArg.apply(pair.elem)
                                    );
@@ -917,7 +907,6 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                     errorIfMutableArg.apply(p.elem)
                    );
         }
-
         return arr;
     }
 
@@ -925,16 +914,11 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                           final BiFunction<JsElem, JsArray, Trampoline<T>> fn
                                          )
     {
-
         if (this.isEmpty()) return empty;
-
         final JsElem head = this.head(); // when filtering mutable arrays, to remove indexes and not lose the track you have to iterate starting from the last
-
         final JsArray tail = this.tail();
-
         return fn.apply(head,
                         tail
                        );
-
     }
 }

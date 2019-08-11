@@ -15,7 +15,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
 {
-
     /**
      the big integer value.
      */

@@ -5,20 +5,17 @@ import java.util.function.Predicate;
 import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
-public class OpFilterImmutableObjElems extends OpFilterElems<JsObj>
+class OpFilterImmutableObjElems extends OpFilterElems<JsObj>
 {
-
-
     OpFilterImmutableObjElems(final JsObj a)
     {
         super(a
              );
     }
-
     @Override
-    public Trampoline<JsObj> filter_(final JsPath startingPath,
-                                     final Predicate<? super JsPair> predicate
-                                    )
+    Trampoline<JsObj> filter_(final JsPath startingPath,
+                              final Predicate<? super JsPair> predicate
+                             )
     {
         return json.ifEmptyElse(Trampoline.done(json),
                                 (head, tail) ->
@@ -66,9 +63,9 @@ public class OpFilterImmutableObjElems extends OpFilterElems<JsObj>
     }
 
     @Override
-    public Trampoline<JsObj> filter(final JsPath startingPath,
-                                    final Predicate<? super JsPair> predicate
-                                   )
+    Trampoline<JsObj> filter(final JsPath startingPath,
+                             final Predicate<? super JsPair> predicate
+                            )
     {
         return json.ifEmptyElse(Trampoline.done(json),
                                 (head, tail) ->
@@ -96,5 +93,4 @@ public class OpFilterImmutableObjElems extends OpFilterElems<JsObj>
                                 }
                                );
     }
-
 }

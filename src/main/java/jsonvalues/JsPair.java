@@ -411,6 +411,14 @@ public final class JsPair
                         );
     }
 
+    /**
+     Declarative way of implementing an if(json)return T; else return T; where T is computed by the
+     given functions
+     @param ifJson function that returns a T and is invoked if the element of this pair is a json
+     @param ifNotJson function that returns a T and is invoked if the element of this pair is not a json
+     @param <T> type of the result
+     @return object of type T
+     */
     public <T> T ifJsonElse(final BiFunction<JsPath, Json<?>, T> ifJson,
                             final BiFunction<JsPath, JsElem, T> ifNotJson
                            )
@@ -423,7 +431,15 @@ public final class JsPair
                                                                                               );
     }
 
-
+    /**
+     Declarative way of implementing an if(obj)return T; else if(array) return T;  else return T; where
+     T is computed by the given functions
+     @param ifJsOb function that returns a T and is invoked if the element of this pair is a json object
+     @param ifJsArr function that returns a T and is invoked if the element of this pair is not a json array
+     @param ifNotJson function that returns a T and is invoked if the element of this pair is not a json
+     @param <T> type of the result
+     @return object of type T
+     */
     public <T> T ifJsonElse(final BiFunction<JsPath, JsObj, T> ifJsOb,
                             final BiFunction<JsPath, JsArray, T> ifJsArr,
                             final BiFunction<JsPath, JsElem, T> ifNotJson

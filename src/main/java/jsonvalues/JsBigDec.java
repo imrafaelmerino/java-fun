@@ -18,7 +18,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
 {
-
     /**
      The big decimal value
      */

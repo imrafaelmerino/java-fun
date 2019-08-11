@@ -743,14 +743,12 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         final TYPE ARRAY_AS
                        );
 
-
     /**
      Returns the union of this object and another given as a parameter.
      @param that the other object
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
     JsObj union(final JsObj that);
-
 
     /**
      Returns the union of this object and another given as parameter applying recursively the union

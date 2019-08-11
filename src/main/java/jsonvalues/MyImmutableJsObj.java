@@ -142,6 +142,7 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     }
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn,
                                  final Predicate<? super JsPair> predicate
                                 )
@@ -227,6 +228,7 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
 
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
@@ -239,6 +241,7 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     }
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
         return new OpMapImmutableObjObjs(this).map_(requireNonNull(fn),

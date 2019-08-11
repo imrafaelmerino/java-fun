@@ -3,7 +3,7 @@ package jsonvalues;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-public class OpFilterMutableArrElems extends OpFilterElems<JsArray>
+class OpFilterMutableArrElems extends OpFilterElems<JsArray>
 {
     OpFilterMutableArrElems(final JsArray json)
     {

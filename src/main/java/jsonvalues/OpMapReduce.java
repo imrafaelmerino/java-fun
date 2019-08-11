@@ -9,16 +9,16 @@ import java.util.function.Predicate;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class MapReduce<T>
+class OpMapReduce<T>
 {
 
     private final BiFunction<JsPair, Optional<T>, Optional<T>> accumulator;
 
 
-    MapReduce(final Predicate<? super JsPair> predicate,
-              final Function<? super JsPair, T> map,
-              final BinaryOperator<T> op
-             )
+    OpMapReduce(final Predicate<? super JsPair> predicate,
+                final Function<? super JsPair, T> map,
+                final BinaryOperator<T> op
+               )
     {
         this.accumulator = (pair, acc) ->
         {
@@ -165,7 +165,7 @@ class MapReduce<T>
                                              (head, tail) ->
                                              {
                                                  final JsPath headPath = startingPath.key(head.getKey());
-                                                 return MatchFns.ifJsonElse(headJson -> reduceHeadJsonTail.apply(headPath,
+                                                 return MatchExp.ifJsonElse(headJson -> reduceHeadJsonTail.apply(headPath,
                                                                                                                  headJson
                                                                                                                 )
                                                                                                           .apply(tail,
@@ -203,7 +203,7 @@ class MapReduce<T>
                                              {
                                                  final JsPath headPath = startingPath.inc();
 
-                                                 return MatchFns.ifJsonElse(json -> reduceHeadJsonTail.apply(headPath,
+                                                 return MatchExp.ifJsonElse(json -> reduceHeadJsonTail.apply(headPath,
                                                                                                              json
                                                                                                             )
                                                                                                       .apply(tail,

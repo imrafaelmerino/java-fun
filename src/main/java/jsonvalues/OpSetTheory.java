@@ -2,14 +2,14 @@ package jsonvalues;
 
 import java.util.Map;
 
-import static jsonvalues.MatchFns.isSameType;
+import static jsonvalues.MatchExp.isSameType;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-public class SetTheoryFns
+public class OpSetTheory
 {
 
-    private SetTheoryFns(){}
+    private OpSetTheory(){}
 
     //squid:S1452 -> private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr
     //squid:S00100 ->  naming convention: xx_ traverses the whole json
@@ -21,17 +21,17 @@ public class SetTheoryFns
                                                       )
     {
 
-        if (a.isObj() && b.isObj()) return AbstractJsObj.intersection_(a.asJsObj(),
-                                                                       b.asJsObj(),
-                                                                       ARRAY_AS
-                                                                      );
-        if (ARRAY_AS == JsArray.TYPE.LIST) return AbstractJsArray.intersection_(a.asJsArray(),
-                                                                                b.asJsArray()
-                                                                               );
-        return AbstractJsArray.intersection(a.asJsArray(),
-                                            b.asJsArray(),
-                                            ARRAY_AS
-                                           );
+        if (a.isObj() && b.isObj()) return MyAbstractJsObj.intersection_(a.asJsObj(),
+                                                                         b.asJsObj(),
+                                                                         ARRAY_AS
+                                                                        );
+        if (ARRAY_AS == JsArray.TYPE.LIST) return MyAbstractJsArray.intersection_(a.asJsArray(),
+                                                                                  b.asJsArray()
+                                                                                 );
+        return MyAbstractJsArray.intersection(a.asJsArray(),
+                                              b.asJsArray(),
+                                              ARRAY_AS
+                                             );
 
 
     }
@@ -146,10 +146,10 @@ public class SetTheoryFns
                                                        ARRAY_AS
                                                       ));
 
-        return MatchFns.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
                                                                                   head.getValue()
                                                                                  )),
-                                      MatchFns.ifPredicateElse(e -> e.isJson() && isSameType(head.getValue())
+                                      MatchExp.ifPredicateElse(e -> e.isJson() && isSameType(head.getValue())
                                                                                           .test(e),
                                                                it ->
                                                                {

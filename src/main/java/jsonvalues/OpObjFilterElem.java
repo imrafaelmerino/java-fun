@@ -2,15 +2,15 @@ package jsonvalues;
 
 import java.util.function.Predicate;
 
-import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
-public class ObjFilterElem extends FilterElem<JsObj>
+public class OpObjFilterElem extends OpFilterElem<JsObj>
 {
 
 
-    ObjFilterElem(final JsObj a
-                 )
+    OpObjFilterElem(final JsObj a
+                   )
     {
         super(a
              );
@@ -26,9 +26,9 @@ public class ObjFilterElem extends FilterElem<JsObj>
                                 {
                                     final JsPath headPath = startingPath.key(head.getKey());
 
-                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new ObjFilterElem(tail).filter_(startingPath,
-                                                                                                                             predicate
-                                                                                                                            )
+                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new OpObjFilterElem(tail).filter_(startingPath,
+                                                                                                                               predicate
+                                                                                                                              )
                                                                                       );
                                     return ifJsonElse(headJson -> more(() -> tailCall).flatMap(tailResult -> filterJson_(headJson,
                                                                                                                          headPath,
@@ -67,9 +67,9 @@ public class ObjFilterElem extends FilterElem<JsObj>
                                 {
                                     final JsPath headPath = startingPath.key(head.getKey());
 
-                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new ObjFilterElem(tail).filter(startingPath,
-                                                                                                                            predicate
-                                                                                                                           ));
+                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new OpObjFilterElem(tail).filter(startingPath,
+                                                                                                                              predicate
+                                                                                                                             ));
                                     return ifJsonElse(headElem -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
                                                                                                                         headElem
                                                                                                                        )),

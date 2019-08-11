@@ -15,14 +15,14 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
-import static jsonvalues.AbstractJsObj.streamOfObj;
-import static jsonvalues.MatchFns.ifJsonElse;
-import static jsonvalues.MatchFns.isSameType;
+import static jsonvalues.MyAbstractJsObj.streamOfObj;
+import static jsonvalues.MatchExp.ifJsonElse;
+import static jsonvalues.MatchExp.isSameType;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 
-abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implements JsArray
+abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> implements JsArray
 
 {
     public static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
 
     protected transient T array;
 
-    AbstractJsArray(T array)
+    MyAbstractJsArray(T array)
     {
         this.array = array;
     }
@@ -49,7 +49,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(array.update(index,
                                                                                                                       arr.appendAll(elems)
                                                                                                                      )),
                                                                                                e -> of(nullPadding(index,
@@ -101,7 +101,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(array.update(index,
                                                                                                                       arr.append(elem)
                                                                                                                      )),
                                                                                                e -> of(nullPadding(index,
@@ -173,7 +173,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(array.update(index,
                                                                                                                       arr.prependAll(elems)
                                                                                                                      )),
                                                                                                e -> of(nullPadding(index,
@@ -226,7 +226,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                           index ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(array.update(index,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(array.update(index,
                                                                                                                       arr.prepend(elem)
                                                                                                                      )),
                                                                                                e -> of(nullPadding(index,
@@ -305,8 +305,8 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
     public final boolean equals(final @Nullable Object that)
     {
         if (this == that) return true;
-        if (!(that instanceof AbstractJsArray)) return false;
-        final AbstractJsArray<?, ?> thatArray = (AbstractJsArray) that;
+        if (!(that instanceof MyAbstractJsArray)) return false;
+        final MyAbstractJsArray<?, ?> thatArray = (MyAbstractJsArray) that;
         return this.array.equals(thatArray.array);
 
     }
@@ -496,10 +496,10 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
             final Json<?> obj = head.asJson();
             final Json<?> obj1 = otherHead.asJson();
 
-            Trampoline<? extends Json<?>> headCall = more(() -> SetTheoryFns.intersection_(obj,
-                                                                                           obj1,
-                                                                                           JsArray.TYPE.LIST
-                                                                                          ));
+            Trampoline<? extends Json<?>> headCall = more(() -> OpSetTheory.intersection_(obj,
+                                                                                          obj1,
+                                                                                          JsArray.TYPE.LIST
+                                                                                         ));
 
             return more(() -> tailCall).flatMap(tailResult -> headCall.map(tailResult::prepend));
 
@@ -545,7 +545,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                           {
                                               final JsPath tail = path.tail();
 
-                                              return tail.ifEmptyElse(() -> MatchFns.ifNothingElse(() -> this,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifNothingElse(() -> this,
                                                                                                    elem -> of(nullPadding(index,
                                                                                                                           array,
                                                                                                                           elem
@@ -593,9 +593,9 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return new MapReduce<>(predicate,
-                               map,
-                               op).reduce(this);
+        return new OpMapReduce<>(predicate,
+                                 map,
+                                 op).reduce(this);
 
 
     }
@@ -608,9 +608,9 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return new MapReduce<>(predicate,
-                               map,
-                               op).reduce_(this);
+        return new OpMapReduce<>(predicate,
+                                 map,
+                                 op).reduce_(this);
 
     }
 
@@ -685,7 +685,7 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                                                                          array.get(Index.of(pair))
 
                                                                                         ))
-                                                             .flatMap(pair -> MatchFns.ifJsonElse(o -> streamOfObj(o,
+                                                             .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                                    pair.path
                                                                                                                   ),
                                                                                                   a -> streamOfArr(a,
@@ -724,11 +724,11 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                               )
     {
 
-        return SetTheoryFns.union(this,
-                                  requireNonNull(that),
-                                  requireNonNull(ARRAY_AS)
-                                 )
-                           .get();
+        return OpSetTheory.union(this,
+                                 requireNonNull(that),
+                                 requireNonNull(ARRAY_AS)
+                                )
+                          .get();
     }
 
 
@@ -738,10 +738,10 @@ abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implement
                                )
     {
 
-        return SetTheoryFns.union_(this,
-                                   requireNonNull(that)
-                                  )
-                           .get();
+        return OpSetTheory.union_(this,
+                                  requireNonNull(that)
+                                 )
+                          .get();
     }
 
     private Trampoline<JsArray> appendAllBackTrampoline(final JsArray arr1,

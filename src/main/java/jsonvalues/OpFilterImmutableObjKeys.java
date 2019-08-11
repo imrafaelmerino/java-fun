@@ -1,22 +1,20 @@
 package jsonvalues;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.function.Predicate;
 
-import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
-public class ObjFilterKey extends FilterKey<JsObj>
+ class OpFilterImmutableObjKeys extends OpFilterKeys<JsObj>
 {
 
-    ObjFilterKey(final JsObj json)
+    OpFilterImmutableObjKeys(final JsObj json)
     {
         super(json);
     }
 
     @Override
-    public Trampoline<JsObj> filter_(final JsPath startingPath,
+     Trampoline<JsObj> filter_(final JsPath startingPath,
                               final Predicate<? super JsPair> predicate
                              )
     {
@@ -24,9 +22,9 @@ public class ObjFilterKey extends FilterKey<JsObj>
                                 (head, tail) ->
                                 {
                                     final JsPath headPath = startingPath.key(head.getKey());
-                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new ObjFilterKey(tail).filter_(startingPath,
-                                                                                                                            predicate
-                                                                                                                           ));
+                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new OpFilterImmutableObjKeys(tail).filter_(startingPath,
+                                                                                                                                        predicate
+                                                                                                                                       ));
                                     return JsPair.of(headPath,
                                                      head.getValue()
                                                     )
@@ -54,7 +52,7 @@ public class ObjFilterKey extends FilterKey<JsObj>
     }
 
     @Override
-    public Trampoline<JsObj> filter(final Predicate<? super JsPair> predicate
+     Trampoline<JsObj> filter(final Predicate<? super JsPair> predicate
                             )
     {
         return json.ifEmptyElse(Trampoline.done(json),
@@ -63,7 +61,7 @@ public class ObjFilterKey extends FilterKey<JsObj>
                                     final JsPath headPath = JsPath.empty()
                                                                   .key(head.getKey());
 
-                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new ObjFilterKey(tail).filter(predicate));
+                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new OpFilterImmutableObjKeys(tail).filter(predicate));
                                     return JsPair.of(headPath,
                                                      head.getValue()
                                                     )
@@ -79,51 +77,5 @@ public class ObjFilterKey extends FilterKey<JsObj>
                                );
     }
 
-    @Override
-    public JsObj _filter_(final Predicate<? super JsPair> predicate)
-    {
-        JsPath path = JsPath.empty();
-        final Iterator<Map.Entry<String, JsElem>> iterator = json.iterator();
-        while (iterator.hasNext())
-        {
-            final Map.Entry<String, JsElem> entry = iterator.next();
-            final JsPair pair = JsPair.of(path.key(entry.getKey()),
-                                          entry.getValue()
-                                         );
-            if (predicate.negate()
-                         .test(pair))
-                iterator.remove();
-        }
-        return json;
-    }
 
-    @Override
-    public JsObj _filter__(final JsPath startingPath,
-                    final Predicate<? super JsPair> predicate
-                   )
-    {
-        final Iterator<Map.Entry<String, JsElem>> iterator = json.iterator();
-        while (iterator.hasNext())
-        {
-            final Map.Entry<String, JsElem> entry = iterator.next();
-            final JsPair pair = JsPair.of(startingPath.key(entry.getKey()),
-                                          entry.getValue()
-                                         );
-            if (predicate.negate()
-                         .test(pair))
-                iterator.remove();
-            else if (pair.elem.isObj())
-                new ObjFilterKey(pair.elem.asJsObj())._filter__(pair.path,
-                                                                predicate
-                                                               );
-            else if (pair.elem.isArray())
-                new ArrFilterKey(pair.elem.asJsArray())._filter__(pair.path.index(-1),
-                                                                  predicate
-                                                                 );
-        }
-
-        return json;
-
-
-    }
 }

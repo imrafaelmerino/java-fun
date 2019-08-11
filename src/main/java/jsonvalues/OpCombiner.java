@@ -1,13 +1,13 @@
 package jsonvalues;
 
- abstract class Combiner<T>
+ abstract class OpCombiner<T>
 {
     final T a;
     final T b;
 
-     Combiner(final T a,
-             final T b
-            )
+     OpCombiner(final T a,
+                final T b
+               )
     {
         this.a = a;
         this.b = b;
@@ -17,11 +17,11 @@ package jsonvalues;
                                           Json<?> d
                                          )
     {
-        if (c.isObj() && d.isObj()) return new ObjCombiner(c.asJsObj(),
-                                                           d.asJsObj()
+        if (c.isObj() && d.isObj()) return new OpObjCombiner(c.asJsObj(),
+                                                             d.asJsObj()
         ).combine();
-        return new ArrCombiner(c.asJsArray(),
-                               d.asJsArray()
+        return new OpArrCombiner(c.asJsArray(),
+                                 d.asJsArray()
         ).combine();
     }
 

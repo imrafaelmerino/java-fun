@@ -1,34 +1,36 @@
 package jsonvalues;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.function.BiPredicate;
 
-import static jsonvalues.MatchFns.ifJsonElse;
-import static jsonvalues.MatchFns.ifObjElse;
+import static jsonvalues.MatchExp.ifJsonElse;
+import static jsonvalues.MatchExp.ifObjElse;
 import static jsonvalues.Trampoline.more;
 
-public class ObjFilterObjs extends FilterObj<JsObj>
+public class OpObjFilterObjs extends OpFilterObj<JsObj>
 {
 
 
-    public ObjFilterObjs(final JsObj json)
+    public OpObjFilterObjs(final JsObj json)
     {
         super(json);
     }
 
     @Override
     public Trampoline<JsObj> filter(final JsPath startingPath,
-                             final BiPredicate<? super JsPath, ? super JsObj> predicate
+                                    final BiPredicate<? super JsPath, ? super JsObj> predicate
 
-                            )
+                                   )
     {
         return json.ifEmptyElse(Trampoline.done(json),
                                 (head, tail) ->
                                 {
                                     final JsPath headPath = startingPath.key(head.getKey());
 
-                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new ObjFilterObjs(tail).filter(startingPath,
-                                                                                                                            predicate
-                                                                                                                           ));
+                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new OpObjFilterObjs(tail).filter(startingPath,
+                                                                                                                              predicate
+                                                                                                                             ));
                                     return ifObjElse(json -> JsPair.of(headPath,
                                                                        json
                                                                       )
@@ -52,8 +54,8 @@ public class ObjFilterObjs extends FilterObj<JsObj>
 
     @Override
     public Trampoline<JsObj> filter_(final JsPath startingPath,
-                              final BiPredicate<? super JsPath, ? super JsObj> predicate
-                             )
+                                     final BiPredicate<? super JsPath, ? super JsObj> predicate
+                                    )
     {
 
 
@@ -62,9 +64,9 @@ public class ObjFilterObjs extends FilterObj<JsObj>
                                 {
                                     final JsPath headPath = startingPath.key(head.getKey());
 
-                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new ObjFilterObjs(tail).filter_(startingPath,
-                                                                                                                             predicate
-                                                                                                                            ));
+                                    final Trampoline<JsObj> tailCall = Trampoline.more(() -> new OpObjFilterObjs(tail).filter_(startingPath,
+                                                                                                                               predicate
+                                                                                                                              ));
                                     return ifJsonElse(headJson -> JsPair.of(headPath,
                                                                             headJson
                                                                            )
@@ -83,10 +85,10 @@ public class ObjFilterObjs extends FilterObj<JsObj>
                                                                                                                  ),
                                                                                 p -> tailCall
                                                                                ),
-                                                      headArray -> more(() -> tailCall).flatMap(tailResult -> new ArrFilterObjs(headArray).filter_(headPath.index(-1),
-                                                                                                                                                   predicate
-                                                                                                                                                  )
-                                                                                                                                          .map(headFiltered ->
+                                                      headArray -> more(() -> tailCall).flatMap(tailResult -> new OpArrFilterObjs(headArray).filter_(headPath.index(-1),
+                                                                                                                                                     predicate
+                                                                                                                                                    )
+                                                                                                                                            .map(headFiltered ->
                                                                                                                                                tailResult.put(head.getKey(),
                                                                                                                                                               headFiltered
                                                                                                                                                              )
@@ -100,6 +102,59 @@ public class ObjFilterObjs extends FilterObj<JsObj>
                                 }
 
                                );
+
+    }
+
+    @Override
+    JsObj _filter_(final JsPath startingPath,
+                   final BiPredicate<? super JsPath, ? super JsObj> predicate
+                  )
+    {
+        JsPath path = JsPath.empty();
+        final Iterator<Map.Entry<String, JsElem>> iterator = json.iterator();
+        while (iterator.hasNext())
+        {
+            final Map.Entry<String, JsElem> entry = iterator.next();
+            final JsElem value = entry.getValue();
+            if (value.isObj() && predicate.negate()
+                                          .test(path.key(entry.getKey()),
+                                                value.asJsObj()
+                                               )
+            ) iterator.remove();
+        }
+        return json;
+    }
+
+    @Override
+    JsObj _filter__(final JsPath startingPath,
+                    final BiPredicate<? super JsPath, ? super JsObj> predicate
+                   )
+    {
+        final Iterator<Map.Entry<String, JsElem>> iterator = json.iterator();
+        while (iterator.hasNext())
+        {
+            final Map.Entry<String, JsElem> entry = iterator.next();
+            final JsPair pair = JsPair.of(startingPath.key(entry.getKey()),
+                                          entry.getValue()
+                                         );
+            if (pair.elem.isJson())
+            {
+                if (pair.elem.isObj() && predicate.negate()
+                                                  .test(pair.path,
+                                                        pair.elem.asJsObj()
+                                                       )
+                ) iterator.remove();
+                else if (pair.elem.isObj()) new OpObjFilterObjs(pair.elem.asJsObj())._filter__(pair.path,
+                                                                                               predicate
+                                                                                              );
+                else if (pair.elem.isArray()) new OpArrFilterObjs(pair.elem.asJsArray())._filter__(pair.path.index(-1),
+                                                                                                   predicate
+                                                                                                  );
+
+            }
+
+        }
+        return json;
 
     }
 

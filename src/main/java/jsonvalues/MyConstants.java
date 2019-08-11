@@ -1,6 +1,6 @@
 package jsonvalues;
 
-final class Constants
+final class MyConstants
 {
 
     static final String OPEN_CURLY = "{";
@@ -11,7 +11,7 @@ final class Constants
     static final String OPEN_BRACKET = "[";
     static final String EMPTY_OBJ_AS_STR = "{}";
 
-    private Constants()
+    private MyConstants()
     {
     }
 }

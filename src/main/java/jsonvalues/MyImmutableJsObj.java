@@ -17,20 +17,20 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
-class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
+class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
 {
     public static final long serialVersionUID = 1L;
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
-    static JsObjImmutable EMPTY = new JsObjImmutable(MyScalaImpl.Map.EMPTY);
+    static MyImmutableJsObj EMPTY = new MyImmutableJsObj(MyScalaMap.EMPTY);
     private static final JsPath EMPTY_PATH = JsPath.empty();
     private transient volatile int hascode;
     private transient volatile @Nullable String str;
 
 
-    JsObjImmutable(final MyScalaImpl.Map myMap)
+    MyImmutableJsObj(final MyScalaMap myMap)
     {
         super(myMap);
     }
@@ -38,11 +38,11 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     JsArray emptyArray()
     {
-        return JsArrayImmutable.EMPTY;
+        return MyImmutableJsArray.EMPTY;
     }
 
     @Override
-    AbstractJsObj<MyScalaImpl.Map, JsArray> emptyObject()
+    MyAbstractJsObj<MyScalaMap, JsArray> emptyObject()
     {
         return EMPTY;
     }
@@ -66,9 +66,9 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     }
 
     @Override
-    AbstractJsObj<MyScalaImpl.Map, JsArray> of(final MyScalaImpl.Map map)
+    MyAbstractJsObj<MyScalaMap, JsArray> of(final MyScalaMap map)
     {
-        return new JsObjImmutable(map);
+        return new MyImmutableJsObj(map);
     }
 
     @Override
@@ -83,7 +83,7 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
         Map<String, JsElem> acc = new HashMap<>();
         @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
         final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) map.fields();
-        keys.forEach(key -> MatchFns.accept(val -> acc.put(key,
+        keys.forEach(key -> MatchExp.accept(val -> acc.put(key,
                                                            val
                                                           ),
                                             obj -> acc.put(key,
@@ -95,7 +95,7 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                            )
                                     .accept(map.get(key))
                     );
-        return new JsObjMutable(new MyJavaImpl.Map(acc));
+        return new MyMutableJsObj(new MyJavaMap(acc));
 
     }
 
@@ -178,12 +178,12 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return MapFns.mapElems_(requireNonNull(fn),
+        return OpMap.mapElems_(requireNonNull(fn),
                                 p -> true,
-                                EMPTY_PATH
-                               )
-                     .apply(this)
-                     .get();
+                               EMPTY_PATH
+                              )
+                    .apply(this)
+                    .get();
     }
 
     @Override
@@ -191,24 +191,24 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                  final Predicate<? super JsPair> predicate
                                 )
     {
-        return MapFns.mapElems_(requireNonNull(fn),
-                                requireNonNull(predicate),
-                                EMPTY_PATH
-                               )
-                     .apply(this)
-                     .get();
+        return OpMap.mapElems_(requireNonNull(fn),
+                               requireNonNull(predicate),
+                               EMPTY_PATH
+                              )
+                    .apply(this)
+                    .get();
     }
 
 
     @Override
     public final JsObj mapKeys(final Function<? super JsPair, String> fn)
     {
-        return MapFns.mapKeys(requireNonNull(fn),
+        return OpMap.mapKeys(requireNonNull(fn),
                               p -> true,
-                              EMPTY_PATH
-                             )
-                     .apply(this)
-                     .get();
+                             EMPTY_PATH
+                            )
+                    .apply(this)
+                    .get();
     }
 
     @Override
@@ -216,24 +216,24 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                final Predicate<? super JsPair> predicate
                               )
     {
-        return MapFns.mapKeys(requireNonNull(fn),
-                              requireNonNull(predicate),
-                              EMPTY_PATH
-                             )
-                     .apply(this)
-                     .get();
+        return OpMap.mapKeys(requireNonNull(fn),
+                             requireNonNull(predicate),
+                             EMPTY_PATH
+                            )
+                    .apply(this)
+                    .get();
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return MapFns.mapKeys_(requireNonNull(fn),
+        return OpMap.mapKeys_(requireNonNull(fn),
                                p -> true,
-                               EMPTY_PATH
-                              )
-                     .apply(this)
-                     .get();
+                              EMPTY_PATH
+                             )
+                    .apply(this)
+                    .get();
 
     }
 
@@ -243,12 +243,12 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return MapFns.mapKeys_(requireNonNull(fn),
-                               requireNonNull(predicate),
-                               EMPTY_PATH
-                              )
-                     .apply(this)
-                     .get();
+        return OpMap.mapKeys_(requireNonNull(fn),
+                              requireNonNull(predicate),
+                              EMPTY_PATH
+                             )
+                    .apply(this)
+                    .get();
     }
 
 
@@ -258,23 +258,23 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                               )
     {
 
-        return MapFns.mapJsObj(requireNonNull(fn),
-                               requireNonNull(predicate),
-                               EMPTY_PATH
-                              )
-                     .apply(this)
-                     .get();
+        return OpMap.mapJsObj(requireNonNull(fn),
+                              requireNonNull(predicate),
+                              EMPTY_PATH
+                             )
+                    .apply(this)
+                    .get();
     }
 
     @Override
     public final JsObj mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return MapFns.mapJsObj(requireNonNull(fn),
-                               (path, obj) -> true,
-                               EMPTY_PATH
-                              )
-                     .apply(this)
-                     .get();
+        return OpMap.mapJsObj(requireNonNull(fn),
+                              (path, obj) -> true,
+                              EMPTY_PATH
+                             )
+                    .apply(this)
+                    .get();
     }
 
 
@@ -283,24 +283,24 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
     {
-        return MapFns.mapJsObj_(fn,
-                                predicate,
-                                EMPTY_PATH
-                               )
-                     .apply(this)
-                     .get();
+        return OpMap.mapJsObj_(fn,
+                               predicate,
+                               EMPTY_PATH
+                              )
+                    .apply(this)
+                    .get();
 
     }
 
     @Override
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return MapFns.mapJsObj_(fn,
-                                (path, obj) -> true,
-                                EMPTY_PATH
-                               )
-                     .apply(this)
-                     .get();
+        return OpMap.mapJsObj_(fn,
+                               (path, obj) -> true,
+                               EMPTY_PATH
+                              )
+                    .apply(this)
+                    .get();
 
     }
 
@@ -308,33 +308,33 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @Override
     public final JsObj filterElems(final Predicate<? super JsPair> filter)
     {
-        return new ObjFilterElem(this).filter(JsPath.empty(),
-                                              requireNonNull(filter)
-                                             )
+        return new OpObjFilterElem(this).filter(JsPath.empty(),
+                                                requireNonNull(filter)
+                                               )
 
-                                      .get();
+                                        .get();
     }
 
 
     @Override
     public final JsObj filterElems_(final Predicate<? super JsPair> filter)
     {
-        return new ObjFilterElem(this).filter_(JsPath.empty(),
-                                               requireNonNull(filter)
-                                              )
+        return new OpObjFilterElem(this).filter_(JsPath.empty(),
+                                                 requireNonNull(filter)
+                                                )
 
-                                      .get();
+                                        .get();
 
     }
 
     @Override
     public final JsObj filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new ObjFilterObjs(this).filter(JsPath.empty(),
-                                              requireNonNull(filter)
-                                             )
+        return new OpObjFilterObjs(this).filter(JsPath.empty(),
+                                                requireNonNull(filter)
+                                               )
 
-                                      .get();
+                                        .get();
     }
 
 
@@ -342,29 +342,29 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new ObjFilterObjs(this).filter_(JsPath.empty(),
-                                               requireNonNull(filter)
-                                              )
+        return new OpObjFilterObjs(this).filter_(JsPath.empty(),
+                                                 requireNonNull(filter)
+                                                )
 
-                                      .get();
+                                        .get();
 
     }
 
     @Override
     public final JsObj filterKeys(final Predicate<? super JsPair> filter)
     {
-        return new ObjFilterKey(this).filter(filter)
-                                     .get();
+        return new OpFilterImmutableObjKeys(this).filter(filter)
+                                                 .get();
 
     }
 
     @Override
     public JsObj filterKeys_(final Predicate<? super JsPair> filter)
     {
-        return new ObjFilterKey(this).filter_(JsPath.empty(),
-                                              filter
-                                             )
-                                     .get();
+        return new OpFilterImmutableObjKeys(this).filter_(JsPath.empty(),
+                                                          filter
+                                                         )
+                                                 .get();
     }
 
 
@@ -386,8 +386,8 @@ class JsObjImmutable extends AbstractJsObj<MyScalaImpl.Map, JsArray>
         final String json = (String) s.readObject();
         try
         {
-            map = ((JsObjImmutable) JsObj.parse(json)
-                                         .orElseThrow()).map;
+            map = ((MyImmutableJsObj) JsObj.parse(json)
+                                           .orElseThrow()).map;
         }
         catch (MalformedJson malformedJson)
         {

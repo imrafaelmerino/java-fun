@@ -2,14 +2,14 @@ package jsonvalues;
 
 import java.util.function.Predicate;
 
-import static jsonvalues.MatchFns.ifJsonElse;
+import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
- class ArrFilterElem extends FilterElem<JsArray>
+ class OpArrFilterElem extends OpFilterElem<JsArray>
 {
 
 
-    ArrFilterElem(final JsArray a)
+    OpArrFilterElem(final JsArray a)
     {
         super(a);
     }
@@ -25,9 +25,9 @@ import static jsonvalues.Trampoline.more;
 
                                     final JsPath headPath = startingPath.inc();
 
-                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new ArrFilterElem(tail).filter(headPath,
-                                                                                                                              predicate
-                                                                                                                             ));
+                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpArrFilterElem(tail).filter(headPath,
+                                                                                                                                predicate
+                                                                                                                               ));
                                     return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.prepend(elem)),
                                                       elem -> JsPair.of(headPath,
                                                                         elem
@@ -54,9 +54,9 @@ import static jsonvalues.Trampoline.more;
 
                                     final JsPath headPath = startingPath.inc();
 
-                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new ArrFilterElem(tail).filter_(headPath,
-                                                                                                                               predicate
-                                                                                                                              ));
+                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpArrFilterElem(tail).filter_(headPath,
+                                                                                                                                 predicate
+                                                                                                                                ));
                                     return ifJsonElse(headJson -> more(() -> tailCall).flatMap(tailResult -> filterJson_(headJson,
                                                                                                                          headPath,
                                                                                                                          predicate

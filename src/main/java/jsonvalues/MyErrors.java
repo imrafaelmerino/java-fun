@@ -8,10 +8,12 @@ import java.util.function.UnaryOperator;
 
 import static java.lang.String.format;
 
-class Errors
+class MyErrors
 {
 
-    private Errors(){}
+    private MyErrors()
+    {
+    }
 
     static UnaryOperator<JsElem> errorIfMutableArg = e -> errorIfMutable(() -> format("All the args have to be immutable. Mutable arg found: %s ",
                                                                                       e
@@ -23,17 +25,17 @@ class Errors
     static <T extends Collection<? extends JsElem>> UnaryOperator<T> errorIfAnyMutable()
 
     {
-        return l -> Errors.<T>errorIfAnyMutable(e -> format("The list contains a mutable element: %s",
-                                                            e
-                                                           )).apply(l);
+        return l -> MyErrors.<T>errorIfAnyMutable(e -> format("The list contains a mutable element: %s",
+                                                              e
+                                                             )).apply(l);
     }
 
 
     static <T extends Collection<? extends JsElem>> UnaryOperator<T> errorIfAnyImmutable()
     {
-        return l -> Errors.<T>errorIfAnyImmutable(e -> format("The list contains an immutable element: %s",
-                                                              e
-                                                             )).apply(l);
+        return l -> MyErrors.<T>errorIfAnyImmutable(e -> format("The list contains an immutable element: %s",
+                                                                e
+                                                               )).apply(l);
     }
 
     private static UnaryOperator<JsElem> errorIfMutable(Supplier<String> message)

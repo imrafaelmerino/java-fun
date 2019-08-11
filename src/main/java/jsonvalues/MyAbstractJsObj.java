@@ -14,20 +14,20 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.AbstractJsArray.streamOfArr;
+import static jsonvalues.MyAbstractJsArray.streamOfArr;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 
-abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements JsObj
+abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements JsObj
 {
 
     public static final long serialVersionUID = 1L;
 
     protected transient T map;
 
-    AbstractJsObj(final T myMap)
+    MyAbstractJsObj(final T myMap)
     {
         assert myMap != null;
         this.map = myMap;
@@ -44,7 +44,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
                                                                                                                     arr.appendAll(elems)
                                                                                                                    )),
                                                                                                el -> of(map.update(head,
@@ -93,7 +93,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
                                                                                                                     arr.append(elem)
                                                                                                                    )),
                                                                                                el -> of(map.update(head,
@@ -144,7 +144,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
                                                                                                                     arr.prependAll(elems)
                                                                                                                    )),
                                                                                                el -> of(map.update(head,
@@ -194,7 +194,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                    .match(head ->
                                           {
                                               final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchFns.ifArrElse(arr -> of(map.update(head,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
                                                                                                                     arr.prepend(elem)
                                                                                                                    )),
                                                                                                el -> of(map.update(head,
@@ -240,8 +240,8 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
     public final boolean equals(final @Nullable Object that)
     {
         if (this == that) return true;
-        if (!(that instanceof AbstractJsObj)) return false;
-        final AbstractJsObj<?, ?> thatObj = (AbstractJsObj) that;
+        if (!(that instanceof MyAbstractJsObj)) return false;
+        final MyAbstractJsObj<?, ?> thatObj = (MyAbstractJsObj) that;
         return this.map.equals(thatObj.map);
     }
 
@@ -372,17 +372,17 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                   ));
 
             } else if (head.getValue()
-                           .isJson() && MatchFns.isSameType(headOtherElement)
+                           .isJson() && MatchExp.isSameType(headOtherElement)
                                                 .test(head.getValue()))
             {//different but same container
                 Json<?> obj = head.getValue()
                                   .asJson();
                 Json<?> obj1 = headOtherElement.asJson();
 
-                Trampoline<? extends Json<?>> headCall = more(() -> SetTheoryFns.intersection_(obj,
-                                                                                               obj1,
-                                                                                               ARRAY_AS
-                                                                                              )
+                Trampoline<? extends Json<?>> headCall = more(() -> OpSetTheory.intersection_(obj,
+                                                                                              obj1,
+                                                                                              ARRAY_AS
+                                                                                             )
                                                              );
                 return more(() -> tailCall).flatMap(json -> headCall
                                                     .map(it -> json.put(head.getKey(),
@@ -421,7 +421,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                           {
                                               final JsPath tail = path.tail();
 
-                                              return tail.ifEmptyElse(() -> MatchFns.ifNothingElse(() -> this,
+                                              return tail.ifEmptyElse(() -> MatchExp.ifNothingElse(() -> this,
                                                                                                    elem -> of(map.update(head,
                                                                                                                          elem
                                                                                                                         ))
@@ -464,7 +464,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return new MapReduce<>(predicate,map,op).reduce(this);
+        return new OpMapReduce<>(predicate, map, op).reduce(this);
     }
 
 
@@ -475,7 +475,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return new MapReduce<>(predicate,map,op).reduce_(this);
+        return new OpMapReduce<>(predicate, map, op).reduce_(this);
 
     }
 
@@ -489,7 +489,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                               if (!map.contains(key)) return this;
                                               final JsPath tail = path.tail();
                                               return tail.ifEmptyElse(() -> of(map.remove(key)),
-                                                                      () -> MatchFns.ifJsonElse(json -> of(map.update(key,
+                                                                      () -> MatchExp.ifJsonElse(json -> of(map.update(key,
                                                                                                                       json.remove(tail)
                                                                                                                      )),
                                                                                                 e -> this
@@ -544,7 +544,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                         .map(key -> JsPair.of(path.key(key),
                                                                               obj.get(Key.of(key))
                                                                              ))
-                                                        .flatMap(pair -> MatchFns.ifJsonElse(o -> streamOfObj(o,
+                                                        .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                               pair.path
                                                                                                              ),
                                                                                              a -> streamOfArr(a,
@@ -619,11 +619,11 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
         requireNonNull(ARRAY_AS);
         return ifEmptyElse(() -> that,
                            () -> that.ifEmptyElse(() -> this,
-                                                  () -> SetTheoryFns.union_(this,
-                                                                            that,
-                                                                            ARRAY_AS
-                                                                           )
-                                                                    .get()
+                                                  () -> OpSetTheory.union_(this,
+                                                                           that,
+                                                                           ARRAY_AS
+                                                                          )
+                                                                   .get()
                                                  )
                           );
 

@@ -6,10 +6,10 @@ import java.util.function.*;
 
 import static java.util.Objects.requireNonNull;
 
-public class MatchFns
+public class MatchExp
 {
 
-    private MatchFns()
+    private MatchExp()
     {
     }
 

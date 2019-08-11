@@ -6,13 +6,13 @@ import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 
-public class ObjCombiner extends Combiner<JsObj>
+public class OpObjCombiner extends OpCombiner<JsObj>
 {
 
 
-    public ObjCombiner(final JsObj a,
-                final JsObj b
-               )
+    public OpObjCombiner(final JsObj a,
+                         final JsObj b
+                        )
     {
         super(a,
               b
@@ -31,14 +31,14 @@ public class ObjCombiner extends Combiner<JsObj>
 
         JsObj tail = b.tail(head.getKey());
 
-        Trampoline<JsObj> tailCall = more(() -> new ObjCombiner(a,
-                                                                tail
+        Trampoline<JsObj> tailCall = more(() -> new OpObjCombiner(a,
+                                                                  tail
         ).combine());
 
-        return MatchFns.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
                                                                                   head.getValue()
                                                                                  )),
-                                      MatchFns.ifPredicateElse(e -> e.isJson() && MatchFns.isSameType(head.getValue())
+                                      MatchExp.ifPredicateElse(e -> e.isJson() && MatchExp.isSameType(head.getValue())
                                                                                           .test(e),
                                                                it ->
                                                                {

@@ -2,12 +2,12 @@ package jsonvalues;
 
 import java.util.function.Predicate;
 
- abstract class FilterElem<T>
+abstract class OpFilterElem<T>
 {
 
     final T json;
 
-    FilterElem(final T json)
+    OpFilterElem(final T json)
     {
         this.json = json;
     }
@@ -19,20 +19,20 @@ import java.util.function.Predicate;
                                              )
     {
 
-        return json.isObj() ? new ObjFilterElem(json.asJsObj()).filter_(startingPath,
-                                                                        predicate
-                                                                       ) :
-        new ArrFilterElem(json.asJsArray()).filter_(startingPath.index(-1),
-                                                    predicate
-                                                   );
+        return json.isObj() ? new OpObjFilterElem(json.asJsObj()).filter_(startingPath,
+                                                                          predicate
+                                                                         ) :
+        new OpArrFilterElem(json.asJsArray()).filter_(startingPath.index(-1),
+                                                      predicate
+                                                     );
 
     }
 
-     abstract Trampoline<T> filter_(final JsPath startingPath,
+    abstract Trampoline<T> filter_(final JsPath startingPath,
                                    final Predicate<? super JsPair> predicate
                                   );
 
-     abstract Trampoline<T> filter(final JsPath startingPath,
+    abstract Trampoline<T> filter(final JsPath startingPath,
                                   final Predicate<? super JsPair> predicate
                                  );
 

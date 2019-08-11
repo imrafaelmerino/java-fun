@@ -53,15 +53,15 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static jsonvalues.JsParser.Event.*;
-import static jsonvalues.JsParser.Tokenizer.Token.*;
+import static jsonvalues.MyJsParser.Event.*;
+import static jsonvalues.MyJsParser.Tokenizer.Token.*;
 
-class JsParser implements Closeable
+class MyJsParser implements Closeable
 {
-    private static final JsParser.BufferPool pool = new JsParser.BufferPool();
+    private static final MyJsParser.BufferPool pool = new MyJsParser.BufferPool();
 
     /**
-     * An event from {@code JsParser}.
+     * An event from {@code MyJsParser}.
      */
     enum Event
     {
@@ -87,7 +87,7 @@ class JsParser implements Closeable
         VALUE_STRING,
         /**
          * Number value in a JSON array or object. The position of the parser is
-         * after the number value. {@code JsParser} provides the following
+         * after the number value. {@code MyJsParser} provides the following
          * methods to access the number value: {@link #getInt},
          * {@link #getLong}, and {@link #getBigDecimal}.
          */
@@ -123,7 +123,7 @@ class JsParser implements Closeable
     private final Stack stack = new Stack();
     private final Tokenizer tokenizer;
 
-    JsParser(Reader reader)
+    MyJsParser(Reader reader)
     {
         tokenizer = new Tokenizer(Objects.requireNonNull(reader),
                                   pool
@@ -1048,7 +1048,7 @@ class JsParser implements Closeable
             );
         }
 
-        // Gives the parser location. Used for JsParser.getLocation
+        // Gives the parser location. Used for MyJsParser.getLocation
         Location getLocation()
         {
             return new Location(lineNo,

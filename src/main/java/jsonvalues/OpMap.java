@@ -5,12 +5,12 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static jsonvalues.MatchFns.ifJsonElse;
-import static jsonvalues.MatchFns.ifObjElse;
+import static jsonvalues.MatchExp.ifJsonElse;
+import static jsonvalues.MatchExp.ifObjElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class MapFns
+class OpMap
 {
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static BiFunction<JsArray, JsArray, Trampoline<JsArray>> _mapElems_(final Function<? super JsPair, ? extends JsElem> fn,

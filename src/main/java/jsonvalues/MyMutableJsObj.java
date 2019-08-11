@@ -144,13 +144,11 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
     @Override
     public final JsObj mapKeys(final Function<? super JsPair, String> fn)
     {
-        return mapKeys(this,
-                       this,
-                       requireNonNull(fn),
-                       p -> true,
-                       JsPath.empty()
-                      )
-        .get();
+        return new OpMapMutableObjKeys(this).map(requireNonNull(fn),
+                                                 it -> true,
+                                                 JsPath.empty()
+                                                )
+                                            .get();
     }
 
     @Override
@@ -158,66 +156,23 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                                final Predicate<? super JsPair> predicate
                               )
     {
-        return mapKeys(this,
-                       this,
-                       requireNonNull(fn),
-                       requireNonNull(predicate),
-                       JsPath.empty()
-                      )
-        .get();
+        return new OpMapMutableObjKeys(this).map(requireNonNull(fn),
+                                                 requireNonNull(predicate),
+                                                 JsPath.empty()
+                                                )
+                                            .get();
     }
 
-    private Trampoline<JsObj> mapKeys(final JsObj acc,
-                                      final JsObj remaining,
-                                      final Function<? super JsPair, String> fn,
-                                      final Predicate<? super JsPair> predicate,
-                                      final JsPath path
-                                     )
-    {
-
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-                                         final JsPath headPath = path.key(head.getKey());
-                                         final Trampoline<JsObj> tailCall = more(() -> mapKeys(acc,
-                                                                                               remaining.tail(head.getKey()),
-                                                                                               fn,
-                                                                                               predicate,
-                                                                                               path
-                                                                                              ));
-                                         return JsPair.of(headPath,
-                                                          head.getValue()
-                                                         )
-                                                      .ifElse(predicate,
-                                                              p -> more(() -> tailCall).map(it ->
-                                                                                            {
-                                                                                                it.remove(head.getKey());
-                                                                                                return it.put(fn.apply(p),
-                                                                                                              p.elem
-                                                                                                             );
-                                                                                            }),
-                                                              p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
-                                                                                                                         p.elem
-                                                                                                                        ))
-                                                             );
-                                     }
-                                    );
-
-
-    }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return OpMap._mapKeys__(requireNonNull(fn),
-                                p -> true,
-                                JsPath.empty()
-                               )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableObjKeys(this).map_(requireNonNull(fn),
+                                                  it -> true,
+                                                  JsPath.empty()
+                                                 )
+                                            .get();
 
     }
 
@@ -227,14 +182,11 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return OpMap._mapKeys__(requireNonNull(fn),
-                                requireNonNull(predicate),
-                                JsPath.empty()
-                               )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableObjKeys(this).map_(requireNonNull(fn),
+                                                  requireNonNull(predicate),
+                                                  JsPath.empty()
+                                                 )
+                                            .get();
     }
 
 

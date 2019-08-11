@@ -139,10 +139,10 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                             )
     {
         return new OpMapImmutableArrElems(this).map_(requireNonNull(fn),
-                                                    requireNonNull(predicate),
-                                                    JsPath.empty()
-                                                          .index(-1)
-                                                   )
+                                                     requireNonNull(predicate),
+                                                     JsPath.empty()
+                                                           .index(-1)
+                                                    )
                                                .get();
     }
 
@@ -164,13 +164,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return OpMap.mapArrKeys_(requireNonNull(fn),
-                                 it -> true,
-                                 JsPath.empty()
-                                       .index(-1)
-                                )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrKeys(this).map_(requireNonNull(fn),
+                                                    it -> true,
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                              .get();
     }
 
     @Override
@@ -179,13 +178,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                                   final Predicate<? super JsPair> predicate
                                  )
     {
-        return OpMap.mapArrKeys_(requireNonNull(fn),
-                                 requireNonNull(predicate),
-                                 JsPath.empty()
-                                       .index(-1)
-                                )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrKeys(this).map_(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                              .get();
 
     }
 

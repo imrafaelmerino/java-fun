@@ -58,7 +58,7 @@ public final class JsPair
         {
             if (pair.elem.isInt()) return of(pair.path,
                                              pair.elem.asJsInt()
-                                                             .map(operator)
+                                                      .map(operator)
                                             );
 
 
@@ -90,7 +90,7 @@ public final class JsPair
         {
             if (pair.elem.isStr()) return of(pair.path,
                                              pair.elem.asJsStr()
-                                                             .map(fn)
+                                                      .map(fn)
                                             );
 
 
@@ -421,6 +421,23 @@ public final class JsPair
                                                            ) : requireNonNull(ifNotJson).apply(path,
                                                                                                elem
                                                                                               );
+    }
+
+
+    public <T> T ifJsonElse(final BiFunction<JsPath, JsObj, T> ifJsOb,
+                            final BiFunction<JsPath, JsArray, T> ifJsArr,
+                            final BiFunction<JsPath, JsElem, T> ifNotJson
+                           )
+    {
+        if (elem.isObj()) return requireNonNull(ifJsOb).apply(path,
+                                                              elem.asJsObj()
+                                                             );
+        if (elem.isArray()) return requireNonNull(ifJsArr).apply(path,
+                                                                 elem.asJsArray()
+                                                                );
+        return requireNonNull(ifNotJson).apply(path,
+                                               elem
+                                              );
     }
 
     /**

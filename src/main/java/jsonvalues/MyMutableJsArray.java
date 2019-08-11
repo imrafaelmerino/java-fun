@@ -134,15 +134,12 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return OpMap._mapArrKeys__(requireNonNull(fn),
-                                   it -> true,
-                                   JsPath.empty()
-                                         .index(-1)
-                                  )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableArrKeys(this).map_(requireNonNull(fn),
+                                                  it -> true,
+                                                  JsPath.empty()
+                                                        .index(-1)
+                                                 )
+                                            .get();
     }
 
     @Override
@@ -151,15 +148,12 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
                                   final Predicate<? super JsPair> predicate
                                  )
     {
-        return OpMap._mapArrKeys__(requireNonNull(fn),
-                                   requireNonNull(predicate),
-                                   JsPath.empty()
-                                         .index(-1)
-                                  )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableArrKeys(this).map_(requireNonNull(fn),
+                                                  requireNonNull(predicate),
+                                                  JsPath.empty()
+                                                        .index(-1)
+                                                 )
+                                            .get();
 
     }
 

@@ -4,13 +4,13 @@ import static jsonvalues.MatchExp.isSameType;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class OpArrCombiner extends OpCombiner<JsArray>
+class OpCombinerArrs extends OpCombiner<JsArray>
 {
 
 
-    OpArrCombiner(final JsArray a,
-                  final JsArray b
-                 )
+    OpCombinerArrs(final JsArray a,
+                   final JsArray b
+                  )
     {
         super(a,
               b
@@ -28,8 +28,8 @@ class OpArrCombiner extends OpCombiner<JsArray>
         final JsElem head = a.head();
         final JsElem otherHead = b.head();
 
-        final Trampoline<JsArray> tailCall = new OpArrCombiner(a.tail(),
-                                                               b.tail()
+        final Trampoline<JsArray> tailCall = new OpCombinerArrs(a.tail(),
+                                                                b.tail()
         ).combine();
         if (head.isJson() && isSameType(otherHead).test(head))
         {

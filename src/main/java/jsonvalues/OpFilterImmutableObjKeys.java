@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
- class OpFilterImmutableObjKeys extends OpFilterKeys<JsObj>
+class OpFilterImmutableObjKeys extends OpFilterKeys<JsObj>
 {
 
     OpFilterImmutableObjKeys(final JsObj json)
@@ -14,7 +14,7 @@ import static jsonvalues.Trampoline.more;
     }
 
     @Override
-     Trampoline<JsObj> filter_(final JsPath startingPath,
+    Trampoline<JsObj> filter_(final JsPath startingPath,
                               final Predicate<? super JsPair> predicate
                              )
     {
@@ -29,22 +29,27 @@ import static jsonvalues.Trampoline.more;
                                                      head.getValue()
                                                     )
                                                  .ifElse(predicate,
-                                                         p -> ifJsonElse(headJson -> more(() -> tailCall).flatMap(tailResult -> filterJson_(headJson,
-                                                                                                                                            headPath,
-                                                                                                                                            predicate
-
-                                                                                                                                           )
-                                                                                                                  .map(headMapped ->
-                                                                                                                       tailResult.put(head.getKey(),
-                                                                                                                                      headMapped
-                                                                                                                                     )
-                                                                                                                      )
-                                                                                                                 ),
+                                                         p -> ifJsonElse(headObj -> more(() -> tailCall).flatMap(tailResult -> new OpFilterImmutableObjKeys(headObj).filter_(headPath,
+                                                                                                                                                                             predicate
+                                                                                                                                                                            )
+                                                                                                                                                                    .map(headMapped ->
+                                                                                                                                                                         tailResult.put(head.getKey(),
+                                                                                                                                                                                        headMapped
+                                                                                                                                                                                       )
+                                                                                                                                                                        )),
+                                                                         headArray -> more(() -> tailCall).flatMap(tailResult -> new OpFilterImmutableArrKeys(headArray).filter_(headPath.index(-1),
+                                                                                                                                                                                 predicate
+                                                                                                                                                                                )
+                                                                                                                                                                        .map(headMapped ->
+                                                                                                                                                                             tailResult.put(head.getKey(),
+                                                                                                                                                                                            headMapped
+                                                                                                                                                                                           )
+                                                                                                                                                                            )),
                                                                          headElem -> more(() -> tailCall).map(it -> it.put(head.getKey(),
                                                                                                                            headElem
                                                                                                                           ))
-
-                                                                        ).apply(head.getValue()),
+                                                                        )
+                                                         .apply(head.getValue()),
                                                          p -> tailCall
                                                         );
                                 }
@@ -52,7 +57,7 @@ import static jsonvalues.Trampoline.more;
     }
 
     @Override
-     Trampoline<JsObj> filter(final Predicate<? super JsPair> predicate
+    Trampoline<JsObj> filter(final Predicate<? super JsPair> predicate
                             )
     {
         return json.ifEmptyElse(Trampoline.done(json),

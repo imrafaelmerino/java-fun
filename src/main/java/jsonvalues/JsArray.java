@@ -330,8 +330,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> new OpArrCombiner(a,
-                                                        b
+                            (a, b) -> new OpCombinerArrs(a,
+                                                         b
                             ).combine()
                              .get(),
                             jsonvalues.JsArray::toImmutable
@@ -353,8 +353,8 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> new OpArrCombiner(a,
-                                                        b
+                            (a, b) -> new OpCombinerArrs(a,
+                                                         b
                             ).combine()
                              .get()
                            );

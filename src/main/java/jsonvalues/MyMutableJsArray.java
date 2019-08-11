@@ -5,7 +5,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -50,15 +49,12 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     @Override
     public JsArray mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return OpMap._mapElems_(requireNonNull(fn),
-                                p -> true,
-                                JsPath.empty()
-                                      .index(-1)
-                               )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableArrElems(this).map(requireNonNull(fn),
+                                                  p -> true,
+                                                  JsPath.empty()
+                                                        .index(-1)
+                                                 )
+                                             .get();
     }
 
     @Override
@@ -66,15 +62,12 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
                             final Predicate<? super JsPair> predicate
                            )
     {
-        return OpMap._mapElems_(requireNonNull(fn),
-                                requireNonNull(predicate),
-                                JsPath.empty()
-                                      .index(-1)
-                               )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableArrElems(this).map(requireNonNull(fn),
+                                                  requireNonNull(predicate),
+                                                  JsPath.empty()
+                                                        .index(-1)
+                                                 )
+                                             .get();
     }
 
 
@@ -82,15 +75,12 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public JsArray mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return OpMap._mapArrElems__(requireNonNull(fn),
-                                    it -> true,
-                                    JsPath.empty()
-                                          .index(-1)
-                                   )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableArrElems(this).map_(requireNonNull(fn),
+                                                   p -> true,
+                                                   JsPath.empty()
+                                                         .index(-1)
+                                                  )
+                                             .get();
     }
 
     @Override
@@ -99,15 +89,12 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
                              final Predicate<? super JsPair> predicate
                             )
     {
-        return OpMap._mapArrElems__(requireNonNull(fn),
-                                    predicate,
-                                    JsPath.empty()
-                                          .index(-1)
-                                   )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableArrElems(this).map_(requireNonNull(fn),
+                                                   requireNonNull(predicate),
+                                                   JsPath.empty()
+                                                         .index(-1)
+                                                  )
+                                             .get();
     }
 
 
@@ -247,22 +234,13 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
 
 
     @Override
-    public JsArray filterElems(final Predicate<? super JsPair> predicate)
+    public JsArray filterElems(final Predicate<? super JsPair> filter)
     {
-        JsPath currentPath = JsPath.fromIndex(-1);
-        final Iterator<JsElem> iterator = this.iterator();
-        while (iterator.hasNext())
-        {
-            currentPath = currentPath.inc();
-            final JsPair pair = JsPair.of(currentPath,
-                                          iterator.next()
-                                         );
-            if (pair.elem.isNotJson() && predicate.negate()
-                                                  .test(pair))
-                iterator.remove();
-
-        }
-        return this;
+        return new OpFilterMutableArrElems(this).filter(JsPath.empty()
+                                                              .index(-1),
+                                                        filter
+                                                       )
+                                                .get();
 
     }
 
@@ -270,62 +248,33 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
-        return filterValues_(this,
-                             requireNonNull(filter),
-                             JsPath.empty()
-                                   .index(-1)
-                            );
-    }
-
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
-    static JsArray filterValues_(final JsArray arr,
-                                 final Predicate<? super JsPair> predicate,
-                                 final JsPath path
-                                )
-    {
-        JsPath currentPath = path;
-        final Iterator<JsElem> iterator = arr.iterator();
-        while (iterator.hasNext())
-        {
-            currentPath = currentPath.inc();
-            final JsPair pair = JsPair.of(currentPath,
-                                          iterator.next()
-                                         );
-            if (pair.elem.isNotJson() && predicate.negate()
-                                                  .test(pair))
-                iterator.remove();
-            else if (pair.elem.isObj())
-                MyMutableJsObj.filterValues_(pair.elem.asJsObj(),
-                                             predicate,
-                                             currentPath
-                                            );
-            else if (pair.elem.isArray())
-                filterValues_(pair.elem.asJsArray(),
-                              predicate,
-                              currentPath.index(-1)
-                             );
-        }
-        return arr;
+        return new OpFilterMutableArrElems(this).filter_(JsPath.empty()
+                                                               .index(-1),
+                                                         filter
+                                                        )
+                                                .get();
     }
 
 
     @Override
     public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new OpArrFilterObjs(this)._filter_(JsPath.empty()
-                                                        .index(-1),
-                                                  filter
-                                                 );
+        return new OpFilterMutableArrObjs(this).filter(JsPath.empty()
+                                                             .index(-1),
+                                                       filter
+                                                      )
+                                               .get();
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new OpArrFilterObjs(this)._filter__(JsPath.empty()
-                                                         .index(-1),
-                                                   filter
-                                                  );
+        return new OpFilterMutableArrObjs(this).filter_(JsPath.empty()
+                                                              .index(-1),
+                                                        filter
+                                                       )
+                                               .get();
     }
 
     @Override

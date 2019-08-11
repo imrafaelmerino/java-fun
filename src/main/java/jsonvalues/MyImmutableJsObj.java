@@ -157,12 +157,11 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     @Override
     public final JsObj mapKeys(final Function<? super JsPair, String> fn)
     {
-        return OpMap.mapKeys(requireNonNull(fn),
-                             p -> true,
-                             EMPTY_PATH
-                            )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjKeys(this).map(requireNonNull(fn),
+                                                   it -> true,
+                                                   EMPTY_PATH
+                                                  )
+                                              .get();
     }
 
     @Override
@@ -170,24 +169,22 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                final Predicate<? super JsPair> predicate
                               )
     {
-        return OpMap.mapKeys(requireNonNull(fn),
-                             requireNonNull(predicate),
-                             EMPTY_PATH
-                            )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjKeys(this).map(requireNonNull(fn),
+                                                   requireNonNull(predicate),
+                                                   EMPTY_PATH
+                                                  )
+                                              .get();
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
-        return OpMap.mapKeys_(requireNonNull(fn),
-                              p -> true,
-                              EMPTY_PATH
-                             )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjKeys(this).map_(requireNonNull(fn),
+                                                    it -> true,
+                                                    EMPTY_PATH
+                                                   )
+                                              .get();
 
     }
 
@@ -197,12 +194,11 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return OpMap.mapKeys_(requireNonNull(fn),
-                              requireNonNull(predicate),
-                              EMPTY_PATH
-                             )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjKeys(this).map_(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    EMPTY_PATH
+                                                   )
+                                              .get();
     }
 
 

@@ -208,23 +208,21 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                               )
     {
 
-        return OpMap.mapJsObj(requireNonNull(fn),
-                              requireNonNull(predicate),
-                              EMPTY_PATH
-                             )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjObjs(this).map(requireNonNull(fn),
+                                                   requireNonNull(predicate),
+                                                   JsPath.empty()
+                                                  )
+                                              .get();
     }
 
     @Override
     public final JsObj mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return OpMap.mapJsObj(requireNonNull(fn),
-                              (path, obj) -> true,
-                              EMPTY_PATH
-                             )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjObjs(this).map(requireNonNull(fn),
+                                                   (p, o) -> true,
+                                                   JsPath.empty()
+                                                  )
+                                              .get();
     }
 
 
@@ -233,25 +231,21 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
     {
-        return OpMap.mapJsObj_(fn,
-                               predicate,
-                               EMPTY_PATH
-                              )
-                    .apply(this)
-                    .get();
-
+        return new OpMapImmutableObjObjs(this).map_(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    JsPath.empty()
+                                                   )
+                                              .get();
     }
 
     @Override
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return OpMap.mapJsObj_(fn,
-                               (path, obj) -> true,
-                               EMPTY_PATH
-                              )
-                    .apply(this)
-                    .get();
-
+        return new OpMapImmutableObjObjs(this).map_(requireNonNull(fn),
+                                                    (p, o) -> true,
+                                                    JsPath.empty()
+                                                   )
+                                              .get();
     }
 
 

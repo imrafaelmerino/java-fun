@@ -194,13 +194,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                                 )
     {
 
-        return OpMap.mapArrJsObj(requireNonNull(fn),
-                                 requireNonNull(predicate),
-                                 JsPath.empty()
-                                       .index(-1)
-                                )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrObjs(this).map(requireNonNull(fn),
+                                                   requireNonNull(predicate),
+                                                   JsPath.empty()
+                                                         .index(-1)
+                                                  )
+                                              .get();
 
     }
 
@@ -208,13 +207,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @Override
     public final JsArray mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return OpMap.mapArrJsObj(requireNonNull(fn),
-                                 (p, o) -> true,
-                                 JsPath.empty()
-                                       .index(-1)
-                                )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrObjs(this).map(requireNonNull(fn),
+                                                   (p, o) -> true,
+                                                   JsPath.empty()
+                                                         .index(-1)
+                                                  )
+                                              .get();
     }
 
     @Override
@@ -222,25 +220,23 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                                   final BiPredicate<? super JsPath, ? super JsObj> predicate
                                  )
     {
-        return OpMap.mapArrJsObj_(requireNonNull(fn),
-                                  requireNonNull(predicate),
-                                  JsPath.empty()
-                                        .index(-1)
-                                 )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrObjs(this).map_(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                              .get();
     }
 
     @Override
     public final JsArray mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return OpMap.mapArrJsObj_(requireNonNull(fn),
-                                  (p, o) -> true,
-                                  JsPath.empty()
-                                        .index(-1)
-                                 )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrObjs(this).map_(requireNonNull(fn),
+                                                    (p, o) -> true,
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                              .get();
     }
 
 

@@ -16,9 +16,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MatchExp.ifObjElse;
-import static jsonvalues.Trampoline.done;
-import static jsonvalues.Trampoline.more;
 
 class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
 {
@@ -57,7 +54,6 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
     {
         return new MyMutableJsObj(map);
     }
-
 
     @Override
     public JsObj toImmutable()
@@ -114,7 +110,6 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                                                  )
                                              .get();
     }
-
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
@@ -196,72 +191,21 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                               )
     {
 
-        return mapJsObj(this,
-                        this,
-                        requireNonNull(fn),
-                        requireNonNull(predicate),
-                        JsPath.empty()
-                       )
-        .get();
+        return new OpMapMutableObjObjs(this).map(requireNonNull(fn),
+                                                 requireNonNull(predicate),
+                                                 JsPath.empty()
+                                                )
+                                            .get();
     }
 
     @Override
     public final JsObj mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return mapJsObj(this,
-                        this,
-                        requireNonNull(fn),
-                        (p, o) -> true,
-                        JsPath.empty()
-                       )
-        .get();
-    }
-
-    private Trampoline<JsObj> mapJsObj(final JsObj acc,
-                                       final JsObj remaining,
-                                       final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
-                                       final BiPredicate<? super JsPath, ? super JsObj> predicate,
-                                       final JsPath path
-                                      )
-    {
-        return remaining.ifEmptyElse(done(acc),
-                                     (head, tail) ->
-                                     {
-                                         final JsPath headPath = path.key(head.getKey());
-
-                                         final Trampoline<JsObj> tailCall = more(() -> mapJsObj(acc,
-                                                                                                tail,
-                                                                                                fn,
-                                                                                                predicate,
-                                                                                                path
-                                                                                               ));
-                                         return ifObjElse(obj -> JsPair.of(headPath,
-                                                                           obj
-                                                                          )
-                                                                       .ifElse(p -> predicate.test(p.path,
-                                                                                                   obj
-                                                                                                  ),
-                                                                               p ->
-                                                                               {
-                                                                                   obj.remove(head.getKey());
-                                                                                   return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
-                                                                                                                                                fn.apply(p.path,
-                                                                                                                                                         obj
-                                                                                                                                                        )
-                                                                                                                                               ));
-                                                                               },
-                                                                               p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
-                                                                                                                                          p.elem
-                                                                                                                                         ))
-                                                                              ),
-                                                          value -> more(() -> tailCall).map(it -> it.put(head.getKey(),
-                                                                                                         value
-                                                                                                        ))
-                                                         )
-                                         .apply(head.getValue());
-                                     }
-
-                                    );
+        return new OpMapMutableObjObjs(this).map(requireNonNull(fn),
+                                                 (p, o) -> true,
+                                                 JsPath.empty()
+                                                )
+                                            .get();
     }
 
 
@@ -271,28 +215,22 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                                 final BiPredicate<? super JsPath, ? super JsObj> predicate
                                )
     {
-        return OpMap._mapJsObj__(requireNonNull(fn),
-                                 requireNonNull(predicate),
-                                 JsPath.empty()
-                                )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableObjObjs(this).map_(requireNonNull(fn),
+                                                  requireNonNull(predicate),
+                                                  JsPath.empty()
+                                                 )
+                                            .get();
     }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsObj mapObjs_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn)
     {
-        return OpMap._mapJsObj__(requireNonNull(fn),
-                                 (p, o) -> true,
-                                 JsPath.empty()
-                                )
-                    .apply(this,
-                           this
-                          )
-                    .get();
+        return new OpMapMutableObjObjs(this).map_(requireNonNull(fn),
+                                                  (p, o) -> true,
+                                                  JsPath.empty()
+                                                 )
+                                            .get();
     }
 
 
@@ -336,7 +274,6 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                                                .get();
     }
 
-
     @Override
     public final JsObj filterKeys(final Predicate<? super JsPair> filter)
     {
@@ -362,7 +299,6 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
         s.writeObject(toString());
 
     }
-
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
     {

@@ -14,6 +14,9 @@ class OpFilterMutableArrKeys extends OpFilterKeys<JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
+        assert startingPath.last()
+                           .isIndex(i -> i == -1);
+
         for (final JsElem elem : json)
         {
             startingPath = startingPath.inc();

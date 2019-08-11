@@ -100,13 +100,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @Override
     public final JsArray mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return OpMap.mapArrElems(requireNonNull(fn),
-                                  p -> true,
-                                 JsPath.empty()
-                                        .index(-1)
-                                )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrElems(this).map(requireNonNull(fn),
+                                                    p -> true,
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                               .get();
 
     }
 
@@ -115,25 +114,23 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                             final Predicate<? super JsPair> predicate
                            )
     {
-        return OpMap.mapArrElems(requireNonNull(fn),
-                                 requireNonNull(predicate),
-                                 JsPath.empty()
-                                        .index(-1)
-                                )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrElems(this).map(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                               .get();
     }
 
     @Override
     public JsArray mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return OpMap.mapArrElems_(requireNonNull(fn),
-                                   it -> true,
-                                  JsPath.empty()
-                                         .index(-1)
-                                 )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrElems(this).map_(requireNonNull(fn),
+                                                     p -> true,
+                                                     JsPath.empty()
+                                                           .index(-1)
+                                                    )
+                                               .get();
     }
 
     @Override
@@ -141,13 +138,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                              final Predicate<? super JsPair> predicate
                             )
     {
-        return OpMap.mapArrElems_(requireNonNull(fn),
-                                  requireNonNull(predicate),
-                                  JsPath.empty()
-                                         .index(-1)
-                                 )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableArrElems(this).map_(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    JsPath.empty()
+                                                          .index(-1)
+                                                   )
+                                               .get();
     }
 
     @Override
@@ -169,9 +165,9 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     public final JsArray mapKeys_(final Function<? super JsPair, String> fn)
     {
         return OpMap.mapArrKeys_(requireNonNull(fn),
-                                  it -> true,
+                                 it -> true,
                                  JsPath.empty()
-                                        .index(-1)
+                                       .index(-1)
                                 )
                     .apply(this)
                     .get();
@@ -186,7 +182,7 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         return OpMap.mapArrKeys_(requireNonNull(fn),
                                  requireNonNull(predicate),
                                  JsPath.empty()
-                                        .index(-1)
+                                       .index(-1)
                                 )
                     .apply(this)
                     .get();
@@ -203,7 +199,7 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         return OpMap.mapArrJsObj(requireNonNull(fn),
                                  requireNonNull(predicate),
                                  JsPath.empty()
-                                        .index(-1)
+                                       .index(-1)
                                 )
                     .apply(this)
                     .get();
@@ -217,7 +213,7 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         return OpMap.mapArrJsObj(requireNonNull(fn),
                                  (p, o) -> true,
                                  JsPath.empty()
-                                        .index(-1)
+                                       .index(-1)
                                 )
                     .apply(this)
                     .get();
@@ -231,7 +227,7 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         return OpMap.mapArrJsObj_(requireNonNull(fn),
                                   requireNonNull(predicate),
                                   JsPath.empty()
-                                         .index(-1)
+                                        .index(-1)
                                  )
                     .apply(this)
                     .get();
@@ -243,7 +239,7 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         return OpMap.mapArrJsObj_(requireNonNull(fn),
                                   (p, o) -> true,
                                   JsPath.empty()
-                                         .index(-1)
+                                        .index(-1)
                                  )
                     .apply(this)
                     .get();
@@ -253,12 +249,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @Override
     public final JsArray filterElems(final Predicate<? super JsPair> filter)
     {
-        return new OpArrFilterElem(this).filter(JsPath.empty()
-                                                      .index(-1),
-                                                requireNonNull(filter)
-                                               )
+        return new OpFilterImmutableArrElems(this).filter(JsPath.empty()
+                                                                .index(-1),
+                                                          requireNonNull(filter)
+                                                         )
 
-                                        .get();
+                                                  .get();
     }
 
 
@@ -266,22 +262,23 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
     public final JsArray filterElems_(final Predicate<? super JsPair> filter)
     {
-        return new OpArrFilterElem(this).filter_(JsPath.empty()
-                                                       .index(-1),
-                                                 requireNonNull(filter)
-                                                )
+        return new OpFilterImmutableArrElems(this).filter_(JsPath.empty()
+                                                                 .index(-1),
+                                                           requireNonNull(filter)
+                                                          )
 
-                                        .get();
+                                                  .get();
     }
 
     @Override
     public final JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new OpArrFilterObjs(this).filter(JsPath.empty().index(-1),
-                                                requireNonNull(filter)
-                                               )
+        return new OpFilterImmutableArrObjs(this).filter(JsPath.empty()
+                                                               .index(-1),
+                                                         requireNonNull(filter)
+                                                        )
 
-                                        .get();
+                                                 .get();
     }
 
 
@@ -289,10 +286,11 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsArray filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new OpArrFilterObjs(this).filter_(JsPath.empty().index(-1),
-                                                 requireNonNull(filter)
-                                                )
-                                        .get();
+        return new OpFilterImmutableArrObjs(this).filter_(JsPath.empty()
+                                                                .index(-1),
+                                                          requireNonNull(filter)
+                                                         )
+                                                 .get();
     }
 
 
@@ -307,7 +305,8 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     {
         return new OpFilterImmutableArrKeys(this).filter_(JsPath.empty()
                                                                 .index(-1),
-                                                          filter)
+                                                          filter
+                                                         )
                                                  .get();
     }
 

@@ -1,0 +1,83 @@
+package jsonvalues;
+
+import java.util.function.Predicate;
+
+import static jsonvalues.MatchExp.ifJsonElse;
+import static jsonvalues.Trampoline.more;
+
+class OpFilterImmutableArrElems extends OpFilterElems<JsArray>
+{
+
+
+    OpFilterImmutableArrElems(final JsArray a)
+    {
+        super(a);
+    }
+
+    @Override
+    Trampoline<JsArray> filter(final JsPath startingPath,
+                               final Predicate<? super JsPair> predicate
+                              )
+    {
+        return json.ifEmptyElse(Trampoline.done(json),
+                                (head, tail) ->
+                                {
+
+                                    final JsPath headPath = startingPath.inc();
+
+                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpFilterImmutableArrElems(tail).filter(headPath,
+                                                                                                                                          predicate
+                                                                                                                                         ));
+                                    return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.prepend(elem)),
+                                                      elem -> JsPair.of(headPath,
+                                                                        elem
+                                                                       )
+                                                                    .ifElse(predicate,
+                                                                            p -> more(() -> tailCall).map(it -> it.prepend(elem)),
+                                                                            p -> tailCall
+                                                                           )
+                                                     )
+                                    .apply(head);
+                                }
+                               );
+    }
+
+
+    @Override
+    Trampoline<JsArray> filter_(final JsPath startingPath,
+                                final Predicate<? super JsPair> predicate
+                               )
+    {
+        return json.ifEmptyElse(Trampoline.done(json),
+                                (head, tail) ->
+                                {
+
+                                    final JsPath headPath = startingPath.inc();
+
+                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpFilterImmutableArrElems(tail).filter_(headPath,
+                                                                                                                                           predicate
+                                                                                                                                          ));
+                                    return ifJsonElse(headObj -> more(() -> tailCall).flatMap(tailResult -> new OpFilterImmutableObjElems(headObj).filter_(headPath,
+                                                                                                                                                           predicate
+                                                                                                                                                          )
+                                                                                                                                                  .map(tailResult::prepend)
+                                                                                             )
+                                    ,
+                                                      headArray -> more(() -> tailCall).flatMap(tailResult -> new OpFilterImmutableArrElems(headArray).filter_(headPath.index(-1),
+                                                                                                                                                               predicate
+                                                                                                                                                              )
+                                                                                                                                                      .map(tailResult::prepend)
+                                                                                               ),
+                                                      headElem -> JsPair.of(headPath,
+                                                                            headElem
+                                                                           )
+                                                                        .ifElse(predicate,
+                                                                                p -> more(() -> tailCall).map(tailResult -> tailResult.prepend(headElem)),
+                                                                                p -> tailCall
+                                                                               )
+                                                     )
+                                    .apply(head);
+                                }
+                               );
+    }
+}

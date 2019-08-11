@@ -17,8 +17,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MatchExp.ifJsonElse;
-import static jsonvalues.Trampoline.more;
 
 class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
 {
@@ -113,12 +111,11 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     public final JsObj mapElems(final Function<? super JsPair, ? extends JsElem> fn)
     {
 
-        return mapElems(this,
-                        requireNonNull(fn),
-                        p -> true,
-                        EMPTY_PATH
-                       )
-        .get();
+        return new OpMapImmutableObjElems(this).map(requireNonNull(fn),
+                                                    p -> true,
+                                                    EMPTY_PATH
+                                                   )
+                                               .get();
     }
 
     @Override
@@ -126,64 +123,22 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                 final Predicate<? super JsPair> predicate
                                )
     {
-        return mapElems(this,
-                        requireNonNull(fn),
-                        predicate,
-                        EMPTY_PATH
-                       )
-        .get();
+        return new OpMapImmutableObjElems(this).map(requireNonNull(fn),
+                                                    requireNonNull(predicate),
+                                                    EMPTY_PATH
+                                                   )
+                                               .get();
     }
 
-    private Trampoline<JsObj> mapElems(final JsObj obj,
-                                       final Function<? super JsPair, ? extends JsElem> fn,
-                                       final Predicate<? super JsPair> predicate,
-                                       final JsPath path
-                                      )
-    {
-
-        return obj.ifEmptyElse(Trampoline.done(obj),
-                               (head, tail) ->
-                               {
-                                   final JsPath headPath = path.key(head.getKey());
-
-                                   final Trampoline<JsObj> tailCall = Trampoline.more(() -> mapElems(tail,
-                                                                                                     fn,
-                                                                                                     predicate,
-                                                                                                     path
-                                                                                                    ));
-                                   return ifJsonElse(headJson -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
-                                                                                                                       headJson
-                                                                                                                      )),
-                                                     headElem ->
-                                                     {
-                                                         JsElem headMapped = JsPair.of(headPath,
-                                                                                       headElem
-                                                                                      )
-                                                                                   .ifElse(predicate,
-                                                                                           fn::apply,
-                                                                                           p -> headElem
-                                                                                          );
-                                                         return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
-                                                                                                                      headMapped
-                                                                                                                     ));
-                                                     }
-
-                                                    ).apply(head.getValue());
-                               }
-                              );
-
-
-    }
 
     @Override
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
     {
-        return OpMap.mapElems_(requireNonNull(fn),
-                                p -> true,
-                               EMPTY_PATH
-                              )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjElems(this).map_(requireNonNull(fn),
+                                                     p -> true,
+                                                     EMPTY_PATH
+                                                    )
+                                               .get();
     }
 
     @Override
@@ -191,12 +146,11 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                  final Predicate<? super JsPair> predicate
                                 )
     {
-        return OpMap.mapElems_(requireNonNull(fn),
-                               requireNonNull(predicate),
-                               EMPTY_PATH
-                              )
-                    .apply(this)
-                    .get();
+        return new OpMapImmutableObjElems(this).map_(requireNonNull(fn),
+                                                     requireNonNull(predicate),
+                                                     EMPTY_PATH
+                                                    )
+                                               .get();
     }
 
 
@@ -204,7 +158,7 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     public final JsObj mapKeys(final Function<? super JsPair, String> fn)
     {
         return OpMap.mapKeys(requireNonNull(fn),
-                              p -> true,
+                             p -> true,
                              EMPTY_PATH
                             )
                     .apply(this)
@@ -229,7 +183,7 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     public final JsObj mapKeys_(final Function<? super JsPair, String> fn)
     {
         return OpMap.mapKeys_(requireNonNull(fn),
-                               p -> true,
+                              p -> true,
                               EMPTY_PATH
                              )
                     .apply(this)
@@ -308,33 +262,33 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     @Override
     public final JsObj filterElems(final Predicate<? super JsPair> filter)
     {
-        return new OpObjFilterElem(this).filter(JsPath.empty(),
-                                                requireNonNull(filter)
-                                               )
+        return new OpFilterImmutableObjElems(this).filter(JsPath.empty(),
+                                                          requireNonNull(filter)
+                                                         )
 
-                                        .get();
+                                                  .get();
     }
 
 
     @Override
     public final JsObj filterElems_(final Predicate<? super JsPair> filter)
     {
-        return new OpObjFilterElem(this).filter_(JsPath.empty(),
-                                                 requireNonNull(filter)
-                                                )
+        return new OpFilterImmutableObjElems(this).filter_(JsPath.empty(),
+                                                           requireNonNull(filter)
+                                                          )
 
-                                        .get();
+                                                  .get();
 
     }
 
     @Override
     public final JsObj filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new OpObjFilterObjs(this).filter(JsPath.empty(),
-                                                requireNonNull(filter)
-                                               )
+        return new OpFilterImmutableObjObjs(this).filter(JsPath.empty(),
+                                                         requireNonNull(filter)
+                                                        )
 
-                                        .get();
+                                                 .get();
     }
 
 
@@ -342,11 +296,11 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
     public final JsObj filterObjs_(final BiPredicate<? super JsPath, ? super JsObj> filter)
     {
-        return new OpObjFilterObjs(this).filter_(JsPath.empty(),
-                                                 requireNonNull(filter)
-                                                )
+        return new OpFilterImmutableObjObjs(this).filter_(JsPath.empty(),
+                                                          requireNonNull(filter)
+                                                         )
 
-                                        .get();
+                                                 .get();
 
     }
 

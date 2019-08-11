@@ -17,11 +17,11 @@ package jsonvalues;
                                           Json<?> d
                                          )
     {
-        if (c.isObj() && d.isObj()) return new OpObjCombiner(c.asJsObj(),
-                                                             d.asJsObj()
+        if (c.isObj() && d.isObj()) return new OpCombinerObjs(c.asJsObj(),
+                                                              d.asJsObj()
         ).combine();
-        return new OpArrCombiner(c.asJsArray(),
-                                 d.asJsArray()
+        return new OpCombinerArrs(c.asJsArray(),
+                                  d.asJsArray()
         ).combine();
     }
 

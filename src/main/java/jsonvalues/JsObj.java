@@ -368,8 +368,8 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> new OpObjCombiner(a,
-                                                        b
+                            (a, b) -> new OpCombinerObjs(a,
+                                                         b
                             ).combine()
                              .get(),
                             jsonvalues.JsObj::toImmutable
@@ -391,8 +391,8 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> new OpObjCombiner(a,
-                                                        b
+                            (a, b) -> new OpCombinerObjs(a,
+                                                         b
                             ).combine()
                              .get()
 

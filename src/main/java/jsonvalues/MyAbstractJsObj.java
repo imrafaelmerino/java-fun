@@ -14,8 +14,9 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MyAbstractJsArray.streamOfArr;
 import static jsonvalues.JsNothing.NOTHING;
+import static jsonvalues.MatchExp.isSameType;
+import static jsonvalues.MyAbstractJsArray.streamOfArr;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -343,10 +344,10 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
     }
 
     @SuppressWarnings({"squid:S00117", "squid:S00100"}) // ARRAY_AS should be a valid name for an enum constant, naming convention _
-    static Trampoline<JsObj> intersection_(final JsObj a,
-                                           final JsObj b,
-                                           final JsArray.TYPE ARRAY_AS
-                                          )
+    private Trampoline<JsObj> intersection_(final JsObj a,
+                                            final JsObj b,
+                                            final JsArray.TYPE ARRAY_AS
+                                           )
     {
         if (a.isEmpty()) return done(a);
         if (b.isEmpty()) return done(b);
@@ -379,10 +380,10 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                   .asJson();
                 Json<?> obj1 = headOtherElement.asJson();
 
-                Trampoline<? extends Json<?>> headCall = more(() -> OpSetTheory.intersection_(obj,
-                                                                                              obj1,
-                                                                                              ARRAY_AS
-                                                                                             )
+                Trampoline<? extends Json<?>> headCall = more(() -> () -> new OpIntersectionJsons().intersection_(obj,
+                                                                                                                  obj1,
+                                                                                                                  ARRAY_AS
+                                                                                                                 )
                                                              );
                 return more(() -> tailCall).flatMap(json -> headCall
                                                     .map(it -> json.put(head.getKey(),
@@ -464,7 +465,10 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return new OpMapReduce<>(predicate, map, op).reduce(this);
+        return new OpMapReduce<>(predicate,
+                                 map,
+                                 op
+        ).reduce(this);
     }
 
 
@@ -475,7 +479,10 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                          final Predicate<? super JsPair> predicate
                                         )
     {
-        return new OpMapReduce<>(predicate, map, op).reduce_(this);
+        return new OpMapReduce<>(predicate,
+                                 map,
+                                 op
+        ).reduce_(this);
 
     }
 
@@ -619,13 +626,63 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
         requireNonNull(ARRAY_AS);
         return ifEmptyElse(() -> that,
                            () -> that.ifEmptyElse(() -> this,
-                                                  () -> OpSetTheory.union_(this,
-                                                                           that,
-                                                                           ARRAY_AS
-                                                                          )
-                                                                   .get()
+                                                  () -> union_(this,
+                                                               that,
+                                                               ARRAY_AS
+                                                              )
+                                                  .get()
                                                  )
                           );
+
+    }
+
+    //squid:S00117 ARRAY_AS should be a valid name
+    //squid:S00100 naming convention: xx_ traverses the whole json
+    @SuppressWarnings({"squid:S00117", "squid:S00100"}) //  ARRAY_AS  should be a valid name
+    private Trampoline<JsObj> union_(final JsObj a,
+                                     final JsObj b,
+                                     final JsArray.TYPE ARRAY_AS
+                                    )
+    {
+
+        if (b.isEmpty()) return done(a);
+        Map.Entry<String, JsElem> head = b.head();
+        JsObj tail = b.tail(head.getKey());
+        Trampoline<JsObj> tailCall = more(() -> union_(a,
+                                                       tail,
+                                                       ARRAY_AS
+                                                      ));
+        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                  head.getValue()
+                                                                                 )),
+                                      MatchExp.ifPredicateElse(e -> e.isJson() && isSameType(head.getValue())
+                                                               .test(e),
+                                                               it ->
+                                                               {
+                                                                   Json<?> obj = a.get(JsPath.empty()
+                                                                                             .key(head.getKey()))
+                                                                                  .asJson();
+                                                                   Json<?> obj1 = head.getValue()
+                                                                                      .asJson();
+
+                                                                   Trampoline<? extends Json<?>> headCall = more(() -> () -> new OpUnionJsons().union_(obj,
+                                                                                                                                                       obj1,
+                                                                                                                                                       ARRAY_AS
+                                                                                                                                                      )
+                                                                                                                );
+                                                                   return more(() -> tailCall).flatMap(tailResult -> headCall.map(headUnion_ ->
+                                                                                                                                  tailResult.put(head.getKey(),
+                                                                                                                                                 headUnion_
+                                                                                                                                                )
+                                                                                                                                 )
+                                                                                                      );
+                                                               },
+                                                               it -> tailCall
+                                                              )
+                                     )
+                       .apply(a.get(JsPath.empty()
+                                          .key(head.getKey())));
+
 
     }
 

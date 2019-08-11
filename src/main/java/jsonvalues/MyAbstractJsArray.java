@@ -1,6 +1,7 @@
 package jsonvalues;
 
 
+import jsonvalues.JsArray.TYPE;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Iterator;
@@ -15,9 +16,9 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
-import static jsonvalues.MyAbstractJsObj.streamOfObj;
 import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.MatchExp.isSameType;
+import static jsonvalues.MyAbstractJsObj.streamOfObj;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -477,9 +478,9 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     }
 
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
-    static Trampoline<JsArray> intersection_(final JsArray a,
-                                             final JsArray b
-                                            )
+    private Trampoline<JsArray> intersection_(final JsArray a,
+                                              final JsArray b
+                                             )
     {
         if (a.isEmpty()) return done(a);
         if (b.isEmpty()) return done(b);
@@ -496,10 +497,10 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
             final Json<?> obj = head.asJson();
             final Json<?> obj1 = otherHead.asJson();
 
-            Trampoline<? extends Json<?>> headCall = more(() -> OpSetTheory.intersection_(obj,
-                                                                                          obj1,
-                                                                                          JsArray.TYPE.LIST
-                                                                                         ));
+            Trampoline<? extends Json<?>> headCall = more(() -> () -> new OpIntersectionJsons().intersection_(obj,
+                                                                                                              obj1,
+                                                                                                              JsArray.TYPE.LIST
+                                                                                                             ));
 
             return more(() -> tailCall).flatMap(tailResult -> headCall.map(tailResult::prepend));
 
@@ -595,7 +596,8 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     {
         return new OpMapReduce<>(predicate,
                                  map,
-                                 op).reduce(this);
+                                 op
+        ).reduce(this);
 
 
     }
@@ -610,7 +612,8 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     {
         return new OpMapReduce<>(predicate,
                                  map,
-                                 op).reduce_(this);
+                                 op
+        ).reduce_(this);
 
     }
 
@@ -720,17 +723,73 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     @Override
     @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
     public final JsArray union(final JsArray that,
-                               final TYPE ARRAY_AS
+                               final JsArray.TYPE ARRAY_AS
                               )
     {
-
-        return OpSetTheory.union(this,
-                                 requireNonNull(that),
-                                 requireNonNull(ARRAY_AS)
-                                )
-                          .get();
+        return union(this,
+                     requireNonNull(that),
+                     requireNonNull(ARRAY_AS)
+                    ).get();
     }
 
+    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name
+    private Trampoline<JsArray> union(JsArray a,
+                                      JsArray b,
+                                      JsArray.TYPE ARRAY_AS
+                                     )
+    {
+        switch (ARRAY_AS)
+        {
+            case SET:
+                return unionAsSet(a,
+                                  b
+                                 );
+            case LIST:
+                return unionAsList(a,
+                                   b
+                                  );
+            case MULTISET:
+                return unionAsMultiSet(a,
+                                       b
+                                      );
+        }
+        throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
+    }
+
+    private static Trampoline<JsArray> unionAsList(final JsArray a,
+                                                   final JsArray b
+                                                  )
+    {
+        if (b.isEmpty()) return done(a);
+        if (a.isEmpty()) return done(b);
+        final Trampoline<JsArray> tailCall = unionAsList(a.tail(),
+                                                         b.tail()
+                                                        );
+        return more(() -> tailCall).map(it -> it.prepend(a.head()));
+    }
+
+    private static Trampoline<JsArray> unionAsMultiSet(final JsArray a,
+                                                       final JsArray b
+                                                      )
+    {
+        if (b.isEmpty()) return done(a);
+        if (a.isEmpty()) return done(b);
+        return more(() -> () -> a.appendAll(b));
+    }
+
+    private static Trampoline<JsArray> unionAsSet(final JsArray a,
+                                                  final JsArray b
+                                                 )
+    {
+        if (b.isEmpty()) return done(a);
+        if (a.isEmpty()) return done(b);
+        JsElem last = b.last();
+        final Trampoline<JsArray> initCall = unionAsSet(a,
+                                                        b.init()
+                                                       );
+        if (!a.containsElem(last)) return more(() -> initCall).map(it -> it.append(last));
+        return more(() -> initCall);
+    }
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
@@ -738,10 +797,36 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
                                )
     {
 
-        return OpSetTheory.union_(this,
-                                  requireNonNull(that)
-                                 )
-                          .get();
+        return union_(this,
+                      requireNonNull(that)
+                     )
+        .get();
+    }
+
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
+    private Trampoline<JsArray> union_(final JsArray a,
+                                       final JsArray b
+                                      )
+    {
+        if (b.isEmpty()) return done(a);
+        if (a.isEmpty()) return done(b);
+        final JsElem head = a.head();
+        final JsElem otherHead = b.head();
+        final Trampoline<JsArray> tailCall = union_(a.tail(),
+                                                    b.tail()
+                                                   );
+        if (head.isJson() && isSameType(otherHead).test(head))
+        {
+            final Json<?> obj = head.asJson();
+            final Json<?> obj1 = otherHead.asJson();
+            Trampoline<? extends Json<?>> headCall = more(() -> () -> new OpUnionJsons().union_(obj,
+                                                                                                obj1,
+                                                                                                JsArray.TYPE.LIST
+                                                                                               ));
+            return more(() -> tailCall).flatMap(tailResult -> headCall.map(tailResult::prepend));
+
+        }
+        return more(() -> tailCall).map(it -> it.prepend(head));
     }
 
     private Trampoline<JsArray> appendAllBackTrampoline(final JsArray arr1,

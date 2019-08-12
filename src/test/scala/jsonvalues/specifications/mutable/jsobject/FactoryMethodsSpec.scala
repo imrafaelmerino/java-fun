@@ -150,8 +150,10 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
 
+            val function: JsPair => JsElem = (pair:JsPair) => pair.mapIfStr(_ => "hi").elem
+
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemMap(JsPair.mapIfStr(_ => "hi").andThen(_.elem))
+                                       ParseOptions.builder().withElemMap(ScalaToJava.function(function))
                                        )
 
             parsed.orElseThrow().stream_().filter(p=> p.elem.isStr).allMatch(p=> p.elem.isStr(s => s.equals("hi")))

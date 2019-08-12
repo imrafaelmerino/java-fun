@@ -180,11 +180,10 @@ class MyJsParser implements Closeable
 
     private abstract class Context
     {
-        Context next = new NoneContext();
-
         abstract Event getNextEvent() throws MalformedJson;
     }
 
+    //
     private final class NoneContext extends Context
     {
         @Override
@@ -213,14 +212,14 @@ class MyJsParser implements Closeable
         {
             Token token;
             if (currentEvent == KEY_NAME) token = tokenizer.matchColonToken();
-            else if (currentEvent == Event.START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
+            else if (currentEvent == START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
             else token = tokenizer.nextToken();
             if (token == EOF) return throwUnexpectedEOFException(token);
             if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken());
             if (token == CURLYCLOSE)
             {
                 currentContext = stack.pop();
-                return Event.END_OBJECT;
+                return END_OBJECT;
             }
             if (firstValue) firstValue = false;
             else if (token != COMMA) throw expectedValueOrJsonBeginning(token,
@@ -297,7 +296,7 @@ class MyJsParser implements Closeable
         {
             stack.push(currentContext);
             currentContext = new ObjectContext();
-            return Event.START_OBJECT;
+            return START_OBJECT;
         }
         if (token == SQUAREOPEN)
         {

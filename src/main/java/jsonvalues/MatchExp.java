@@ -6,6 +6,10 @@ import java.util.function.*;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ Java doesn't support Pattern Matching but we can implement some matching expressions using high
+ order functions.
+ */
 public class MatchExp
 {
 
@@ -19,10 +23,10 @@ public class MatchExp
      @param ifObj the consumer to be invoked if this JsElem is a JsObj
      @param ifArray the consumer to be invoked if this JsElem is a JsArray
      */
-    static Consumer<JsElem> accept(final Consumer<JsElem> ifValue,
-                                   final Consumer<JsObj> ifObj,
-                                   final Consumer<JsArray> ifArray
-                                  )
+    public static Consumer<JsElem> accept(final Consumer<JsElem> ifValue,
+                                          final Consumer<JsObj> ifObj,
+                                          final Consumer<JsArray> ifArray
+                                         )
     {
         requireNonNull(ifValue);
         requireNonNull(ifObj);

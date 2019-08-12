@@ -13,3 +13,4 @@ scripts/libs
 node_modules/
 src/main/java/jsonvalue/libs/
 .changelogrc
+migrar_a_wiki

@@ -80,4 +80,90 @@ public final class JsBool implements JsElem
     {
         return String.valueOf(x);
     }
+
+    @Override
+    public boolean isObj()
+    {
+        return false;
+    }
+
+    public boolean isArray()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isNothing()
+    {
+        return false;
+    }
+
+
+    @Override
+    public boolean isNull()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isNumber()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBool()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isTrue()
+    {
+        return x;
+    }
+
+    @Override
+    public boolean isFalse()
+    {
+        return !x;
+    }
+
+    @Override
+    public boolean isInt()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isDouble()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBigDec()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isLong()
+    {
+        return false;
+    }
+
+
+
+    @Override
+    public boolean isStr()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBigInt()
+    {
+        return false;
+    }
 }

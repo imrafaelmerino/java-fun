@@ -83,134 +83,126 @@
 <i>9</i>&nbsp; */
 <i>10</i>&nbsp;public final class Index implements Position
 <i>11</i>&nbsp;{
-<i>12</i>&nbsp;
-<i>13</i>&nbsp;
-<i>14</i>&nbsp;    /**
-<i>15</i>&nbsp;     * The index number.
-<i>16</i>&nbsp;     */
-<i>17</i>&nbsp;    public final int n;
-<i>18</i>&nbsp;
-<i>19</i>&nbsp;    private Index(final int n)
-<b class="fc"><i>20</i>&nbsp;    {</b>
-<b class="fc"><i>21</i>&nbsp;        this.n = n;</b>
-<b class="fc"><i>22</i>&nbsp;    }</b>
-<i>23</i>&nbsp;
-<i>24</i>&nbsp;    /**
-<i>25</i>&nbsp;     * Returns a new instance witch represents the given index in an array. The special index -1
-<i>26</i>&nbsp;     * points to the last element of an array.
-<i>27</i>&nbsp;     *
-<i>28</i>&nbsp;     * @param index the given position
-<i>29</i>&nbsp;     * @return an Index object
-<i>30</i>&nbsp;     * @throws IndexOutOfBoundsException if the index is less than -1
-<i>31</i>&nbsp;     */
-<i>32</i>&nbsp;    public static Index of(final int index)
-<i>33</i>&nbsp;    {
-<b class="fc"><i>34</i>&nbsp;        if (index &lt; -1) throw new IndexOutOfBoundsException(String.format(&quot;%s is not between [-1,U+221E)&quot;,</b>
-<b class="nc"><i>35</i>&nbsp;                                                                          index</b>
-<i>36</i>&nbsp;                                                                         ));
-<b class="fc"><i>37</i>&nbsp;        return new Index(index);</b>
-<i>38</i>&nbsp;    }
-<i>39</i>&nbsp;
-<i>40</i>&nbsp;
-<i>41</i>&nbsp;    /**
-<i>42</i>&nbsp;     Compares this index with another given position. If the given position is an index, both are
-<i>43</i>&nbsp;     compared numerically, if it&#39;s a key, both are compared lexicographically.
-<i>44</i>&nbsp;     @param o the given position
-<i>45</i>&nbsp;     @return 0 if they are equal, +1 if this is greater, -1 otherwise
-<i>46</i>&nbsp;     */
-<i>47</i>&nbsp;    @Override
-<i>48</i>&nbsp;    public int compareTo(final Position o)
-<i>49</i>&nbsp;    {
-<b class="fc"><i>50</i>&nbsp;        if (Objects.requireNonNull(o)</b>
-<b class="fc"><i>51</i>&nbsp;                   .isIndex()) return Integer.compare(n,o.asIndex().n);</b>
-<b class="fc"><i>52</i>&nbsp;        return toString().compareTo(o.asKey().name);</b>
-<i>53</i>&nbsp;    }
-<i>54</i>&nbsp;
-<i>55</i>&nbsp;
-<i>56</i>&nbsp;    /**
-<i>57</i>&nbsp;
-<i>58</i>&nbsp;     Returns true.
-<i>59</i>&nbsp;     @return true
-<i>60</i>&nbsp;     */
-<i>61</i>&nbsp;    @Override
-<i>62</i>&nbsp;    public boolean isIndex()
-<i>63</i>&nbsp;    {
-<b class="fc"><i>64</i>&nbsp;        return true;</b>
-<i>65</i>&nbsp;    }
-<i>66</i>&nbsp;
-<i>67</i>&nbsp;    /**
-<i>68</i>&nbsp;     Returns false.
-<i>69</i>&nbsp;     @return false
-<i>70</i>&nbsp;     */
-<i>71</i>&nbsp;    @Override
-<i>72</i>&nbsp;    public boolean isKey()
-<i>73</i>&nbsp;    {
-<b class="fc"><i>74</i>&nbsp;        return false;</b>
-<i>75</i>&nbsp;    }
-<i>76</i>&nbsp;
-<i>77</i>&nbsp;
-<i>78</i>&nbsp;    /**
-<i>79</i>&nbsp;     Throws an UnsupportedOperationException.
-<i>80</i>&nbsp;     * @throws UnsupportedOperationException an Index can&#39;t be casted into an Key
-<i>81</i>&nbsp;     */
-<i>82</i>&nbsp;    @Override
-<i>83</i>&nbsp;    public Key asKey()
-<i>84</i>&nbsp;    {
-<b class="fc"><i>85</i>&nbsp;        throw new UnsupportedOperationException(&quot;asKey of index&quot;);</b>
-<i>86</i>&nbsp;    }
-<i>87</i>&nbsp;
-<i>88</i>&nbsp;    /**
-<i>89</i>&nbsp;     Returns this index.
-<i>90</i>&nbsp;     * @return this object
-<i>91</i>&nbsp;     */
-<i>92</i>&nbsp;    @Override
-<i>93</i>&nbsp;    public Index asIndex()
-<i>94</i>&nbsp;    {
-<b class="fc"><i>95</i>&nbsp;        return this;</b>
-<i>96</i>&nbsp;    }
-<i>97</i>&nbsp;
-<i>98</i>&nbsp;
-<i>99</i>&nbsp;    /**
-<i>100</i>&nbsp;     * Returns the value of the index as a string.
-<i>101</i>&nbsp;     * @return the value of the index as a string
-<i>102</i>&nbsp;     */
-<i>103</i>&nbsp;    @Override
-<i>104</i>&nbsp;    public String toString()
-<i>105</i>&nbsp;    {
-<b class="fc"><i>106</i>&nbsp;        return String.valueOf(n);</b>
-<i>107</i>&nbsp;    }
-<i>108</i>&nbsp;
-<i>109</i>&nbsp;
-<i>110</i>&nbsp;    /**
-<i>111</i>&nbsp;     Returns true if that is an index and both have the same value.
-<i>112</i>&nbsp;     * @param that other object
-<i>113</i>&nbsp;     * @return true if both objects are indexes representing the same position
-<i>114</i>&nbsp;     */
-<i>115</i>&nbsp;    @Override
-<i>116</i>&nbsp;    public boolean equals(final @Nullable Object that)
-<i>117</i>&nbsp;    {
-<b class="fc"><i>118</i>&nbsp;        if (that == null || getClass() != that.getClass()) return false;</b>
-<b class="fc"><i>119</i>&nbsp;        if (this == that) return true;</b>
-<b class="fc"><i>120</i>&nbsp;        final Index thatObj = (Index) that;</b>
-<b class="fc"><i>121</i>&nbsp;        return n == thatObj.n;</b>
-<i>122</i>&nbsp;    }
-<i>123</i>&nbsp;
-<i>124</i>&nbsp;    /**
-<i>125</i>&nbsp;     Returns the hashcode of this index.
-<i>126</i>&nbsp;     * @return the index value
-<i>127</i>&nbsp;     */
-<i>128</i>&nbsp;    @Override
-<i>129</i>&nbsp;    public int hashCode()
-<i>130</i>&nbsp;    {
-<b class="fc"><i>131</i>&nbsp;        return n;</b>
-<i>132</i>&nbsp;    }
-<i>133</i>&nbsp;}
+<i>12</i>&nbsp;    /**
+<i>13</i>&nbsp;     * The index number.
+<i>14</i>&nbsp;     */
+<i>15</i>&nbsp;    public final int n;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    private Index(final int n)
+<b class="fc"><i>18</i>&nbsp;    {</b>
+<b class="fc"><i>19</i>&nbsp;        this.n = n;</b>
+<b class="fc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * Returns a new instance witch represents the given index in an array. The special index -1
+<i>24</i>&nbsp;     * points to the last element of an array.
+<i>25</i>&nbsp;     *
+<i>26</i>&nbsp;     * @param index the given position
+<i>27</i>&nbsp;     * @return an Index object
+<i>28</i>&nbsp;     * @throws IndexOutOfBoundsException if the index is less than -1
+<i>29</i>&nbsp;     */
+<i>30</i>&nbsp;    public static Index of(final int index)
+<i>31</i>&nbsp;    {
+<b class="pc"><i>32</i>&nbsp;        if (index &lt; -1) throw new IndexOutOfBoundsException(String.format(&quot;%s is not between [-1,U+221E)&quot;,</b>
+<b class="nc"><i>33</i>&nbsp;                                                                          index</b>
+<i>34</i>&nbsp;                                                                         ));
+<b class="fc"><i>35</i>&nbsp;        return new Index(index);</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     Compares this index with another given position. If the given position is an index, both are
+<i>40</i>&nbsp;     compared numerically, if it&#39;s a key, both are compared lexicographically.
+<i>41</i>&nbsp;     @param o the given position
+<i>42</i>&nbsp;     @return 0 if they are equal, +1 if this is greater, -1 otherwise
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public int compareTo(final Position o)
+<i>46</i>&nbsp;    {
+<b class="fc"><i>47</i>&nbsp;        if (Objects.requireNonNull(o)</b>
+<b class="pc"><i>48</i>&nbsp;                   .isIndex()) return Integer.compare(n,o.asIndex().n);</b>
+<b class="fc"><i>49</i>&nbsp;        return toString().compareTo(o.asKey().name);</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     Returns true.
+<i>54</i>&nbsp;     @return true
+<i>55</i>&nbsp;     */
+<i>56</i>&nbsp;    @Override
+<i>57</i>&nbsp;    public boolean isIndex()
+<i>58</i>&nbsp;    {
+<b class="fc"><i>59</i>&nbsp;        return true;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     Returns false.
+<i>64</i>&nbsp;     @return false
+<i>65</i>&nbsp;     */
+<i>66</i>&nbsp;    @Override
+<i>67</i>&nbsp;    public boolean isKey()
+<i>68</i>&nbsp;    {
+<b class="fc"><i>69</i>&nbsp;        return false;</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     Throws an UnsupportedOperationException.
+<i>74</i>&nbsp;     * @throws UnsupportedOperationException an Index can&#39;t be casted into an Key
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    @Override
+<i>77</i>&nbsp;    public Key asKey()
+<i>78</i>&nbsp;    {
+<b class="fc"><i>79</i>&nbsp;        throw new UnsupportedOperationException(&quot;asKey of index&quot;);</b>
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /**
+<i>83</i>&nbsp;     Returns this index.
+<i>84</i>&nbsp;     * @return this object
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    @Override
+<i>87</i>&nbsp;    public Index asIndex()
+<i>88</i>&nbsp;    {
+<b class="fc"><i>89</i>&nbsp;        return this;</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    /**
+<i>93</i>&nbsp;     * Returns the value of the index as a string.
+<i>94</i>&nbsp;     * @return the value of the index as a string
+<i>95</i>&nbsp;     */
+<i>96</i>&nbsp;    @Override
+<i>97</i>&nbsp;    public String toString()
+<i>98</i>&nbsp;    {
+<b class="fc"><i>99</i>&nbsp;        return String.valueOf(n);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     Returns true if that is an index and both have the same value.
+<i>104</i>&nbsp;     * @param that other object
+<i>105</i>&nbsp;     * @return true if both objects are indexes representing the same position
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    @Override
+<i>108</i>&nbsp;    public boolean equals(final @Nullable Object that)
+<i>109</i>&nbsp;    {
+<b class="pc"><i>110</i>&nbsp;        if (that == null || getClass() != that.getClass()) return false;</b>
+<b class="pc"><i>111</i>&nbsp;        if (this == that) return true;</b>
+<b class="fc"><i>112</i>&nbsp;        final Index thatObj = (Index) that;</b>
+<b class="pc"><i>113</i>&nbsp;        return n == thatObj.n;</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    /**
+<i>117</i>&nbsp;     Returns the hashcode of this index.
+<i>118</i>&nbsp;     * @return the index value
+<i>119</i>&nbsp;     */
+<i>120</i>&nbsp;    @Override
+<i>121</i>&nbsp;    public int hashCode()
+<i>122</i>&nbsp;    {
+<b class="fc"><i>123</i>&nbsp;        return n;</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;}
 </div>
 </div>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-08-09 01:41</div>
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
 </div>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <name>json-values</name>
     <description>json-values is a functional Java library to work with immutable jsons using persistent data structures.</description>
     <url>https://github.com/imrafaelmerino/json-values</url>
@@ -257,6 +257,33 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>de.jutzig</groupId>
+                        <artifactId>github-release-plugin</artifactId>
+                        <version>1.1.1</version>
+                        <configuration>
+                            <releaseName>Snowy</releaseName>
+                            <tag>v${project.version}</tag>
+                            <fileSets>
+                                <fileSet>${project.build}/javadoc.zip</fileSet>
+                                <fileSet>${project.build}/sources.zip</fileSet>
+                                <fileSet>${project.basedir}/docs/CHANGELOG.md</fileSet>
+                            </fileSets>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

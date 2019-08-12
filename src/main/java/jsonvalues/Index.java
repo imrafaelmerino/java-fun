@@ -9,8 +9,6 @@ import java.util.Objects;
  */
 public final class Index implements Position
 {
-
-
     /**
      * The index number.
      */
@@ -37,7 +35,6 @@ public final class Index implements Position
         return new Index(index);
     }
 
-
     /**
      Compares this index with another given position. If the given position is an index, both are
      compared numerically, if it's a key, both are compared lexicographically.
@@ -52,9 +49,7 @@ public final class Index implements Position
         return toString().compareTo(o.asKey().name);
     }
 
-
     /**
-
      Returns true.
      @return true
      */
@@ -73,7 +68,6 @@ public final class Index implements Position
     {
         return false;
     }
-
 
     /**
      Throws an UnsupportedOperationException.
@@ -95,7 +89,6 @@ public final class Index implements Position
         return this;
     }
 
-
     /**
      * Returns the value of the index as a string.
      * @return the value of the index as a string
@@ -105,7 +98,6 @@ public final class Index implements Position
     {
         return String.valueOf(n);
     }
-
 
     /**
      Returns true if that is an index and both have the same value.

@@ -1,0 +1,310 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpMapReduce</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpMapReduce (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpMapReduce</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (28/ 28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (69/ 69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Optional;
+<i>4</i>&nbsp;import java.util.function.BiFunction;
+<i>5</i>&nbsp;import java.util.function.BinaryOperator;
+<i>6</i>&nbsp;import java.util.function.Function;
+<i>7</i>&nbsp;import java.util.function.Predicate;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import static jsonvalues.Trampoline.done;
+<i>10</i>&nbsp;import static jsonvalues.Trampoline.more;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;class OpMapReduce&lt;T&gt;
+<i>13</i>&nbsp;{
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private final BiFunction&lt;JsPair, Optional&lt;T&gt;, Optional&lt;T&gt;&gt; accumulator;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    OpMapReduce(final Predicate&lt;? super JsPair&gt; predicate,
+<i>19</i>&nbsp;                final Function&lt;? super JsPair, T&gt; map,
+<i>20</i>&nbsp;                final BinaryOperator&lt;T&gt; op
+<i>21</i>&nbsp;               )
+<b class="fc"><i>22</i>&nbsp;    {</b>
+<b class="fc"><i>23</i>&nbsp;        this.accumulator = (pair, acc) -&gt;</b>
+<i>24</i>&nbsp;        {
+<b class="fc"><i>25</i>&nbsp;            if (!predicate.test(pair)) return acc;</b>
+<b class="fc"><i>26</i>&nbsp;            final T mapped = map.apply(pair);</b>
+<b class="fc"><i>27</i>&nbsp;            final Optional&lt;T&gt; t = acc.map(it -&gt; op.apply(it,</b>
+<i>28</i>&nbsp;                                                         mapped
+<i>29</i>&nbsp;                                                        ));
+<b class="fc"><i>30</i>&nbsp;            if (t.isPresent()) return t;</b>
+<b class="fc"><i>31</i>&nbsp;            return Optional.ofNullable(mapped);</b>
+<i>32</i>&nbsp;        };
+<b class="fc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;)
+<i>36</i>&nbsp;        //  naming convention, _ -&gt; traverses the whole json recursively
+<i>37</i>&nbsp;    Optional&lt;T&gt; reduce_(JsObj obj)
+<i>38</i>&nbsp;    {
+<b class="fc"><i>39</i>&nbsp;        return reduceObj(JsPath.empty(),</b>
+<b class="fc"><i>40</i>&nbsp;                         reduceHeadJsonAndObjTail_()</b>
+<b class="fc"><i>41</i>&nbsp;                        ).apply(obj,</b>
+<b class="fc"><i>42</i>&nbsp;                                Optional.empty()</b>
+<i>43</i>&nbsp;                               )
+<b class="fc"><i>44</i>&nbsp;                         .get();</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    Optional&lt;T&gt; reduce(JsObj obj)
+<i>48</i>&nbsp;    {
+<b class="fc"><i>49</i>&nbsp;        return reduceObj(JsPath.empty(),</b>
+<b class="fc"><i>50</i>&nbsp;                         reduceHeadJsonAndObjTail()</b>
+<b class="fc"><i>51</i>&nbsp;                        ).apply(obj,</b>
+<b class="fc"><i>52</i>&nbsp;                                Optional.empty()</b>
+<i>53</i>&nbsp;                               )
+<b class="fc"><i>54</i>&nbsp;                         .get();</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;)
+<i>58</i>&nbsp;        //  naming convention, _ -&gt; traverses the whole json recursively
+<i>59</i>&nbsp;    Optional&lt;T&gt; reduce_(JsArray arr)
+<i>60</i>&nbsp;    {
+<b class="fc"><i>61</i>&nbsp;        return reduceArr(JsPath.empty()</b>
+<b class="fc"><i>62</i>&nbsp;                               .index(-1),</b>
+<b class="fc"><i>63</i>&nbsp;                         reduceHeadJsonAndArrayTail_()</b>
+<b class="fc"><i>64</i>&nbsp;                        ).apply(arr,</b>
+<b class="fc"><i>65</i>&nbsp;                                Optional.empty()</b>
+<i>66</i>&nbsp;                               )
+<b class="fc"><i>67</i>&nbsp;                         .get();</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    Optional&lt;T&gt; reduce(JsArray arr)
+<i>71</i>&nbsp;    {
+<b class="fc"><i>72</i>&nbsp;        return reduceArr(JsPath.empty()</b>
+<b class="fc"><i>73</i>&nbsp;                               .index(-1),</b>
+<b class="fc"><i>74</i>&nbsp;                         reduceHeadJsonAndArrayTail()</b>
+<b class="fc"><i>75</i>&nbsp;                        ).apply(arr,</b>
+<b class="fc"><i>76</i>&nbsp;                                Optional.empty()</b>
+<i>77</i>&nbsp;                               )
+<b class="fc"><i>78</i>&nbsp;                         .get();</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    private BiFunction&lt;JsPath, Json&lt;?&gt;, BiFunction&lt;JsObj, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt;&gt; reduceHeadJsonAndObjTail()
+<i>82</i>&nbsp;    {
+<i>83</i>&nbsp;
+<b class="fc"><i>84</i>&nbsp;        return (headPath, headJson) -&gt; (tail, acc) -&gt; Trampoline.more(() -&gt; reduceObj(headPath.init(),</b>
+<b class="fc"><i>85</i>&nbsp;                                                                                      reduceHeadJsonAndObjTail()</b>
+<b class="fc"><i>86</i>&nbsp;                                                                                     ).apply(tail,</b>
+<i>87</i>&nbsp;                                                                                             acc
+<i>88</i>&nbsp;                                                                                            )
+<i>89</i>&nbsp;                                                                     );
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    private BiFunction&lt;JsPath, Json&lt;?&gt;, BiFunction&lt;JsArray, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt;&gt; reduceHeadJsonAndArrayTail()
+<i>93</i>&nbsp;    {
+<i>94</i>&nbsp;
+<b class="fc"><i>95</i>&nbsp;        return (headPath, headJson) -&gt; (tail, acc) -&gt; Trampoline.more(() -&gt; reduceArr(headPath,</b>
+<b class="fc"><i>96</i>&nbsp;                                                                                      reduceHeadJsonAndArrayTail()</b>
+<b class="fc"><i>97</i>&nbsp;                                                                                     ).apply(tail,</b>
+<i>98</i>&nbsp;                                                                                             acc
+<i>99</i>&nbsp;                                                                                            )
+<i>100</i>&nbsp;                                                                     );
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;)
+<i>104</i>&nbsp;    //  naming convention, _ -&gt; traverses the whole json recursively
+<i>105</i>&nbsp;    private BiFunction&lt;JsPath, Json&lt;?&gt;, BiFunction&lt;JsObj, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt;&gt; reduceHeadJsonAndObjTail_()
+<i>106</i>&nbsp;    {
+<b class="fc"><i>107</i>&nbsp;        return (headPath, headJson) -&gt; (tail, acc) -&gt; more(() -&gt; reduceJson(acc).apply(headPath,</b>
+<i>108</i>&nbsp;                                                                                       headJson
+<i>109</i>&nbsp;                                                                                      )
+<b class="fc"><i>110</i>&nbsp;                                                          ).flatMap(headAcc -&gt;</b>
+<b class="fc"><i>111</i>&nbsp;                                                                    reduceObj(headPath.init(),</b>
+<b class="fc"><i>112</i>&nbsp;                                                                              reduceHeadJsonAndObjTail_()</b>
+<i>113</i>&nbsp;                                                                             ).
+<b class="fc"><i>114</i>&nbsp;                                                                              apply(tail,</b>
+<i>115</i>&nbsp;                                                                                    headAcc
+<i>116</i>&nbsp;                                                                                   ));
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;)
+<i>121</i>&nbsp;    //  naming convention: xx_ traverses the whole json
+<i>122</i>&nbsp;    private BiFunction&lt;JsPath, Json&lt;?&gt;, BiFunction&lt;JsArray, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt;&gt; reduceHeadJsonAndArrayTail_()
+<i>123</i>&nbsp;    {
+<b class="fc"><i>124</i>&nbsp;        return (headPath, headJson) -&gt; (tail, acc) -&gt; more(() -&gt; reduceJson(acc).apply(headPath,</b>
+<i>125</i>&nbsp;                                                                                       headJson
+<i>126</i>&nbsp;                                                                                      )
+<b class="fc"><i>127</i>&nbsp;                                                          ).flatMap(headAcc -&gt;</b>
+<b class="fc"><i>128</i>&nbsp;                                                                    reduceArr(headPath,</b>
+<b class="fc"><i>129</i>&nbsp;                                                                              reduceHeadJsonAndArrayTail_()</b>
+<i>130</i>&nbsp;                                                                             ).
+<b class="fc"><i>131</i>&nbsp;                                                                              apply(tail,</b>
+<i>132</i>&nbsp;                                                                                    headAcc
+<i>133</i>&nbsp;                                                                                   ));
+<i>134</i>&nbsp;    }
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    private BiFunction&lt;JsPath, Json&lt;?&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt; reduceJson(final Optional&lt;T&gt; acc)
+<i>138</i>&nbsp;    {
+<i>139</i>&nbsp;
+<b class="fc"><i>140</i>&nbsp;        return (headPath, headJson) -&gt;</b>
+<i>141</i>&nbsp;        {
+<b class="fc"><i>142</i>&nbsp;            if (headJson.isObj()) return reduceObj(headPath,</b>
+<b class="fc"><i>143</i>&nbsp;                                                   reduceHeadJsonAndObjTail_()</b>
+<b class="fc"><i>144</i>&nbsp;                                                  ).apply(headJson.asJsObj(),</b>
+<i>145</i>&nbsp;                                                          acc
+<i>146</i>&nbsp;                                                         );
+<b class="fc"><i>147</i>&nbsp;            return reduceArr(headPath.index(-1),</b>
+<b class="fc"><i>148</i>&nbsp;                             reduceHeadJsonAndArrayTail_()</b>
+<b class="fc"><i>149</i>&nbsp;                            ).apply(headJson.asJsArray(),</b>
+<i>150</i>&nbsp;                                    acc
+<i>151</i>&nbsp;                                   );
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;        };
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;)
+<i>158</i>&nbsp;    //  naming convention: xx_ traverses the whole json
+<i>159</i>&nbsp;    private BiFunction&lt;JsObj, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt; reduceObj(final JsPath startingPath,
+<i>160</i>&nbsp;                                                                              final BiFunction&lt;JsPath, Json&lt;?&gt;, BiFunction&lt;JsObj, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt;&gt; reduceHeadJsonTail
+<i>161</i>&nbsp;                                                                             )
+<i>162</i>&nbsp;    {
+<i>163</i>&nbsp;
+<b class="fc"><i>164</i>&nbsp;        return (obj, acc) -&gt; obj.ifEmptyElse(done(acc),</b>
+<i>165</i>&nbsp;                                             (head, tail) -&gt;
+<i>166</i>&nbsp;                                             {
+<b class="fc"><i>167</i>&nbsp;                                                 final JsPath headPath = startingPath.key(head.getKey());</b>
+<b class="fc"><i>168</i>&nbsp;                                                 return MatchExp.ifJsonElse(headJson -&gt; reduceHeadJsonTail.apply(headPath,</b>
+<i>169</i>&nbsp;                                                                                                                 headJson
+<i>170</i>&nbsp;                                                                                                                )
+<b class="fc"><i>171</i>&nbsp;                                                                                                          .apply(tail,</b>
+<i>172</i>&nbsp;                                                                                                                 acc
+<i>173</i>&nbsp;                                                                                                                ),
+<b class="fc"><i>174</i>&nbsp;                                                                            headElem -&gt; more(() -&gt; reduceObj(startingPath,</b>
+<i>175</i>&nbsp;                                                                                                             reduceHeadJsonTail
+<b class="fc"><i>176</i>&nbsp;                                                                                                            ).apply(tail,</b>
+<b class="fc"><i>177</i>&nbsp;                                                                                                                    accumulator.apply(JsPair.of(headPath,</b>
+<i>178</i>&nbsp;                                                                                                                                                headElem
+<i>179</i>&nbsp;                                                                                                                                               ),
+<i>180</i>&nbsp;                                                                                                                                      acc
+<i>181</i>&nbsp;                                                                                                                                     )
+<i>182</i>&nbsp;                                                                                                                   ))
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;                                                                           )
+<b class="fc"><i>185</i>&nbsp;                                                                .apply(head.getValue());</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;                                             }
+<i>188</i>&nbsp;                                            );
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    }
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;    @SuppressWarnings(&quot;squid:S00100&quot;)
+<i>195</i>&nbsp;    //  naming convention: xx_ traverses the whole json
+<i>196</i>&nbsp;    private BiFunction&lt;JsArray, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt; reduceArr(final JsPath startingPath,
+<i>197</i>&nbsp;                                                                                final BiFunction&lt;JsPath, Json&lt;?&gt;, BiFunction&lt;JsArray, Optional&lt;T&gt;, Trampoline&lt;Optional&lt;T&gt;&gt;&gt;&gt; reduceHeadJsonTail
+<i>198</i>&nbsp;                                                                               )
+<i>199</i>&nbsp;    {
+<i>200</i>&nbsp;
+<b class="fc"><i>201</i>&nbsp;        return (arr, acc) -&gt; arr.ifEmptyElse(done(acc),</b>
+<i>202</i>&nbsp;                                             (head, tail) -&gt;
+<i>203</i>&nbsp;                                             {
+<b class="fc"><i>204</i>&nbsp;                                                 final JsPath headPath = startingPath.inc();</b>
+<i>205</i>&nbsp;
+<b class="fc"><i>206</i>&nbsp;                                                 return MatchExp.ifJsonElse(json -&gt; reduceHeadJsonTail.apply(headPath,</b>
+<i>207</i>&nbsp;                                                                                                             json
+<i>208</i>&nbsp;                                                                                                            )
+<b class="fc"><i>209</i>&nbsp;                                                                                                      .apply(tail,</b>
+<i>210</i>&nbsp;                                                                                                             acc
+<i>211</i>&nbsp;                                                                                                            ),
+<b class="fc"><i>212</i>&nbsp;                                                                            elem -&gt; more(() -&gt; reduceArr(headPath,</b>
+<i>213</i>&nbsp;                                                                                                         reduceHeadJsonTail
+<b class="fc"><i>214</i>&nbsp;                                                                                                        ).apply(tail,</b>
+<b class="fc"><i>215</i>&nbsp;                                                                                                                accumulator.apply(JsPair.of(headPath,</b>
+<i>216</i>&nbsp;                                                                                                                                            elem
+<i>217</i>&nbsp;                                                                                                                                           ),
+<i>218</i>&nbsp;                                                                                                                                  acc
+<i>219</i>&nbsp;                                                                                                                                 )
+<i>220</i>&nbsp;                                                                                                               ))
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;                                                                           )
+<b class="fc"><i>223</i>&nbsp;                                                                .apply(head);</b>
+<i>224</i>&nbsp;                                             }
+<i>225</i>&nbsp;                                            );
+<i>226</i>&nbsp;    }
+<i>227</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
+</div>
+</body>
+</html>

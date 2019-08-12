@@ -52,8 +52,8 @@ public class TestJsArray
 
 
         final int result = supplier.get()
-                                   .mapElems(JsPair.mapIfInt(i -> i + 100)
-                                                   .andThen(p -> p.elem)
+                                   .mapElems(p -> p.mapIfInt(i -> i + 100)
+                                             .elem
                                             )
                                    .reduce(Integer::sum,
                                            pair -> pair.elem.asJsInt().x,
@@ -67,8 +67,7 @@ public class TestJsArray
                                );
 
         final int result1 = supplier.get()
-                                    .mapElems(JsPair.mapIfInt(i -> i + 100)
-                                                    .andThen(p -> p.elem),
+                                    .mapElems(p -> p.mapIfInt(i -> i + 100).elem,
                                               p -> p.elem.isInt(i -> i > 1)
                                              )
                                     .reduce(Integer::sum,
@@ -119,8 +118,7 @@ public class TestJsArray
                                 );
 
 
-        final int result = arr.mapElems(JsPair.mapIfInt(i -> i + 100)
-                                              .andThen(p -> p.elem)
+        final int result = arr.mapElems(p -> p.mapIfInt(i -> i + 100).elem
                                        )
                               .reduce(Integer::sum,
                                       pair -> pair.elem.asJsInt().x,
@@ -148,8 +146,7 @@ public class TestJsArray
                                );
 
 
-        final int result2 = arr.mapElems_(JsPair.mapIfInt(i -> i + 100)
-                                                .andThen(p -> p.elem)
+        final int result2 = arr.mapElems_(p -> p.mapIfInt(i -> i + 100).elem
                                          )
                                .reduce_(Integer::sum,
                                         pair -> pair.elem.asJsInt().x,
@@ -230,12 +227,9 @@ public class TestJsArray
                                               NULL
                                              )
                                   );
-        arr.mapElems(JsPair.mapIfStr(String::toLowerCase)
-                           .andThen(p -> p.elem)); // arr is mutable
+        arr.mapElems(p -> p.mapIfStr(String::toLowerCase).elem); // arr is mutable
 
         // ["a","b","c","d","e"]
-
-
         Assertions.assertEquals(arr,
                                 JsArray._of_(JsArray._of_(NULL,
                                                           TRUE
@@ -265,17 +259,16 @@ public class TestJsArray
                                    JsStr.of("G")
                                   );
 
-        arr.mapElems(JsPair.mapIfStr(String::toLowerCase)
-                           .andThen(p -> p.elem))
+        arr.mapElems(p -> p.mapIfStr(String::toLowerCase).elem)
            .filterElems(p -> p.elem.isStr(letter -> Comparator.<String>naturalOrder()
            .compare(letter,
                     "d"
                    ) < 0));
-        Assertions.assertEquals(arr,
-                                JsArray._of_("a",
+        Assertions.assertEquals(JsArray._of_("a",
                                              "b",
                                              "c"
-                                            )
+                                            ),
+                                arr
                                );
 
     }
@@ -325,8 +318,7 @@ public class TestJsArray
         final JsArray array = JsArray._parse_(str,
                                               ParseOptions.builder()
                                                           .withElemFilter(p -> p.elem.isInt())
-                                                          .withElemMap(JsPair.mapIfInt(i -> i + 1)
-                                                                             .andThen(p -> p.elem))
+                                                          .withElemMap(p -> p.mapIfInt(i -> i + 1).elem)
                                              )
                                      .orElseThrow();
 
@@ -848,8 +840,7 @@ public class TestJsArray
                                  JsInt.of(2),
                                  JsObj.empty()
                                 );
-        JsArray newArr = arr.mapElems(JsPair.mapIfInt(i -> i + 10)
-                                            .andThen(p -> p.elem),
+        JsArray newArr = arr.mapElems(p -> p.mapIfInt(i -> i + 10).elem,
                                       p -> p.elem.isInt()
                                      );
 
@@ -876,8 +867,7 @@ public class TestJsArray
                                  JsStr.of("c")
                                 );
 
-        final JsArray newArr = arr.mapElems(JsPair.mapIfStr(String::toUpperCase)
-                                                  .andThen(p -> p.elem));
+        final JsArray newArr = arr.mapElems(p -> p.mapIfStr(String::toUpperCase).elem);
 
         Assertions.assertNotEquals(arr,
                                    newArr
@@ -949,14 +939,13 @@ public class TestJsArray
                                  JsStr.of("G")
                                 );
 
-        JsArray arr1 = arr.mapElems(pair -> JsPair.mapIfStr(s ->
-                                                           {
-                                                               final int index = pair.path.last()
-                                                                                          .asIndex().n;
-                                                               return s.concat(String.valueOf(index));
-                                                           })
-                                                  .andThen(p -> p.elem)
-                                                  .apply(pair)
+        JsArray arr1 = arr.mapElems(pair -> pair.mapIfStr(s ->
+                                                            {
+                                                                final int index = pair.path.last()
+                                                                                           .asIndex().n;
+                                                                return s.concat(String.valueOf(index));
+                                                            })
+                                                  .elem
                                    );
 
         Assertions.assertNotEquals(arr,
@@ -1055,7 +1044,8 @@ public class TestJsArray
         final JsArray arr = JsArray.parse("[1,2,3,true,false,null,[null,true,4]]",
                                           ParseOptions.builder()
                                                       .withElemFilter(p -> p.elem.isInt())
-                                                      .withElemMap(p -> JsElems.mapIfInt(i -> i + 10).apply(p.elem))
+                                                      .withElemMap(p -> JsElems.mapIfInt(i -> i + 10)
+                                                                               .apply(p.elem))
                                          )
                                    .orElseThrow();
 

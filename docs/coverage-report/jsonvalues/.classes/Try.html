@@ -140,10 +140,10 @@
 <i>66</i>&nbsp;     */
 <i>67</i>&nbsp;    public JsObj objOrElseThrow() throws MalformedJson
 <i>68</i>&nbsp;    {
-<b class="fc"><i>69</i>&nbsp;        if (obj != null) return obj;</b>
+<b class="pc"><i>69</i>&nbsp;        if (obj != null) return obj;</b>
 <b class="fc"><i>70</i>&nbsp;        if (arr != null) throw MalformedJson.expectedObj(arr.toString());</b>
 <b class="fc"><i>71</i>&nbsp;        if (error != null) throw error;</b>
-<b class="nc"><i>72</i>&nbsp;        throw new UnsupportedOperationException(&quot;Try.objOrElseThrow without an arr nor obj nor exception&quot;);</b>
+<b class="nc"><i>72</i>&nbsp;        throw new Error(&quot;Try.objOrElseThrow without an arr nor obj nor exception&quot;);</b>
 <i>73</i>&nbsp;    }
 <i>74</i>&nbsp;
 <i>75</i>&nbsp;    /**
@@ -154,10 +154,10 @@
 <i>80</i>&nbsp;     */
 <i>81</i>&nbsp;    public JsArray arrOrElseThrow() throws MalformedJson
 <i>82</i>&nbsp;    {
-<b class="fc"><i>83</i>&nbsp;        if (arr != null) return arr;</b>
+<b class="pc"><i>83</i>&nbsp;        if (arr != null) return arr;</b>
 <b class="fc"><i>84</i>&nbsp;        if (obj != null) throw MalformedJson.expectedArray(obj.toString());</b>
 <b class="fc"><i>85</i>&nbsp;        if (error != null) throw error;</b>
-<b class="nc"><i>86</i>&nbsp;        throw new UnsupportedOperationException(&quot;Try.arrOrElseThrow without an arr nor obj nor exception&quot;);</b>
+<b class="nc"><i>86</i>&nbsp;        throw new Error(&quot;Try.arrOrElseThrow without an arr nor obj nor exception&quot;);</b>
 <i>87</i>&nbsp;    }
 <i>88</i>&nbsp;
 <i>89</i>&nbsp;    /**
@@ -168,11 +168,11 @@
 <i>94</i>&nbsp;     */
 <i>95</i>&nbsp;    public Json&lt;?&gt; orElseThrow() throws MalformedJson
 <i>96</i>&nbsp;    {
-<b class="fc"><i>97</i>&nbsp;        if (arr != null) return arr;</b>
+<i>97</i>&nbsp;        if (arr != null) return arr;
 <b class="fc"><i>98</i>&nbsp;        if (obj != null) return obj;</b>
 <b class="fc"><i>99</i>&nbsp;        if (error != null) throw error;</b>
-<b class="nc"><i>100</i>&nbsp;        throw new UnsupportedOperationException(&quot;Try.orElseThrow without an arr nor obj nor exception&quot;);</b>
-<i>101</i>&nbsp;    }
+<b class="fc"><i>100</i>&nbsp;        throw new Error(&quot;Try.orElseThrow without an arr nor obj nor exception&quot;);</b>
+<b class="nc"><i>101</i>&nbsp;    }</b>
 <i>102</i>&nbsp;
 <i>103</i>&nbsp;    /**
 <i>104</i>&nbsp;     Returns the computed JsArray if the parsed string is a well-formed json array, returning the JsArray
@@ -182,8 +182,8 @@
 <i>108</i>&nbsp;     */
 <i>109</i>&nbsp;    public JsArray arrOrElse(Supplier&lt;JsArray&gt; other)
 <i>110</i>&nbsp;    {
-<b class="fc"><i>111</i>&nbsp;        return arr != null ? arr : other.get();</b>
-<i>112</i>&nbsp;    }
+<i>111</i>&nbsp;        return arr != null ? arr : other.get();
+<b class="fc"><i>112</i>&nbsp;    }</b>
 <i>113</i>&nbsp;
 <i>114</i>&nbsp;    /**
 <i>115</i>&nbsp;     Returns the computed JsObj if the parsed string is a well-formed json object, returning the JsObj
@@ -193,8 +193,8 @@
 <i>119</i>&nbsp;     */
 <i>120</i>&nbsp;    public JsObj objOrElse(Supplier&lt;JsObj&gt; other)
 <i>121</i>&nbsp;    {
-<b class="fc"><i>122</i>&nbsp;        return obj != null ? obj : other.get();</b>
-<i>123</i>&nbsp;    }
+<i>122</i>&nbsp;        return obj != null ? obj : other.get();
+<b class="fc"><i>123</i>&nbsp;    }</b>
 <i>124</i>&nbsp;
 <i>125</i>&nbsp;    /**
 <i>126</i>&nbsp;     Returns the computed Json wrapped in an optional if the parsed string is a well-formed json,
@@ -204,11 +204,11 @@
 <i>130</i>&nbsp;     */
 <i>131</i>&nbsp;    public Optional&lt;Json&lt;?&gt;&gt; toOptional()
 <i>132</i>&nbsp;    {
-<b class="nc"><i>133</i>&nbsp;        if (arr != null) return Optional.of(arr);</b>
+<i>133</i>&nbsp;        if (arr != null) return Optional.of(arr);
 <b class="nc"><i>134</i>&nbsp;        if (obj != null) return Optional.of(obj);</b>
 <b class="nc"><i>135</i>&nbsp;        if (error != null) return Optional.empty();</b>
-<b class="nc"><i>136</i>&nbsp;        throw new UnsupportedOperationException(&quot;Try.toOptional without an arr nor obj nor exception&quot;);</b>
-<i>137</i>&nbsp;    }
+<b class="nc"><i>136</i>&nbsp;        throw new Error(&quot;Try.toOptional without an arr nor obj nor exception&quot;);</b>
+<b class="nc"><i>137</i>&nbsp;    }</b>
 <i>138</i>&nbsp;
 <i>139</i>&nbsp;}
 <i>140</i>&nbsp;
@@ -217,7 +217,7 @@
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-08-09 01:41</div>
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
 </div>
 </body>
 </html>

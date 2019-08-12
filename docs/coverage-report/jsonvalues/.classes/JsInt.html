@@ -50,18 +50,18 @@
 </td>
 <td class="coverageStat">
   <span class="percent">
-    66.7%
+    75.9%
   </span>
   <span class="absValue">
-    (10/ 15)
+    (22/ 29)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    74.1%
+    78%
   </span>
   <span class="absValue">
-    (20/ 27)
+    (32/ 41)
   </span>
 </td>
 </tr>
@@ -128,145 +128,111 @@
 <i>54</i>&nbsp;    {
 <i>55</i>&nbsp;
 <b class="fc"><i>56</i>&nbsp;        if (this == that) return true;</b>
-<b class="fc"><i>57</i>&nbsp;        if (that == null) return false;</b>
+<b class="pc"><i>57</i>&nbsp;        if (that == null) return false;</b>
 <b class="fc"><i>58</i>&nbsp;        if (!(that instanceof JsNumber)) return false;</b>
 <b class="fc"><i>59</i>&nbsp;        final JsNumber number = (JsNumber) that;</b>
 <i>60</i>&nbsp;
 <b class="fc"><i>61</i>&nbsp;        if (number.isInt()) return x == number.asJsInt().x;</b>
 <b class="fc"><i>62</i>&nbsp;        if (number.isLong()) return (long) x == number.asJsLong().x;</b>
-<b class="fc"><i>63</i>&nbsp;        if (number.isBigInt()) return equals(number.asJsBigInt());</b>
-<b class="fc"><i>64</i>&nbsp;        if (number.isBigDec()) return equals(number.asJsBigDec());</b>
-<b class="fc"><i>65</i>&nbsp;        if (number.isDouble()) return equals(number.asJsDouble());</b>
-<i>66</i>&nbsp;
-<b class="nc"><i>67</i>&nbsp;        return false;</b>
-<i>68</i>&nbsp;    }
-<i>69</i>&nbsp;
-<i>70</i>&nbsp;    /**
-<i>71</i>&nbsp;     Returns the hashcode of this json integer.
-<i>72</i>&nbsp;     @return hashcode of this JsInt
-<i>73</i>&nbsp;     */
-<i>74</i>&nbsp;    @Override
-<i>75</i>&nbsp;    public int hashCode()
-<i>76</i>&nbsp;    {
-<b class="fc"><i>77</i>&nbsp;        return x;</b>
-<i>78</i>&nbsp;    }
-<i>79</i>&nbsp;
-<i>80</i>&nbsp;
-<i>81</i>&nbsp;    /**
-<i>82</i>&nbsp;     * @return a string representation of the integer value.
-<i>83</i>&nbsp;     * @see Integer#toString() Integer.toString
-<i>84</i>&nbsp;     */
-<i>85</i>&nbsp;    @Override
-<i>86</i>&nbsp;    public String toString()
-<i>87</i>&nbsp;    {
-<b class="fc"><i>88</i>&nbsp;        return Integer.toString(x);</b>
-<i>89</i>&nbsp;    }
-<i>90</i>&nbsp;
-<i>91</i>&nbsp;    /**
-<i>92</i>&nbsp;     * Static factory method to create a JsInt from an integer primitive type.
-<i>93</i>&nbsp;     * @param n the integer primitive type
-<i>94</i>&nbsp;     * @return a new JsInt
-<i>95</i>&nbsp;     */
-<i>96</i>&nbsp;    public static JsInt of(int n)
-<i>97</i>&nbsp;    {
-<b class="fc"><i>98</i>&nbsp;        return new JsInt(n);</b>
-<i>99</i>&nbsp;    }
-<i>100</i>&nbsp;
-<i>101</i>&nbsp;    /**
-<i>102</i>&nbsp;     Maps this json integer into another one.
-<i>103</i>&nbsp;     @param fn the mapping function
-<i>104</i>&nbsp;     @return a new JsInt
-<i>105</i>&nbsp;     */
-<i>106</i>&nbsp;    public JsInt map(IntUnaryOperator fn)
-<i>107</i>&nbsp;    {
-<b class="fc"><i>108</i>&nbsp;        return JsInt.of(requireNonNull(fn).applyAsInt(x));</b>
-<i>109</i>&nbsp;    }
-<i>110</i>&nbsp;
-<i>111</i>&nbsp;    /**
-<i>112</i>&nbsp;     adds up this integer to the specified one
-<i>113</i>&nbsp;     @param that the specified integer
-<i>114</i>&nbsp;     @return the sum of both integers
-<i>115</i>&nbsp;     */
-<i>116</i>&nbsp;    public JsInt plus(JsInt that)
-<i>117</i>&nbsp;    {
-<b class="nc"><i>118</i>&nbsp;        return JsInt.of(x + that.x);</b>
-<i>119</i>&nbsp;    }
-<i>120</i>&nbsp;
-<i>121</i>&nbsp;    /**
-<i>122</i>&nbsp;     subtract this integer from the specified one
-<i>123</i>&nbsp;     @param that the specified integer
-<i>124</i>&nbsp;     @return this integer minus the specified one
-<i>125</i>&nbsp;     */
-<i>126</i>&nbsp;    public JsInt minus(JsInt that)
-<i>127</i>&nbsp;    {
-<b class="nc"><i>128</i>&nbsp;        return JsInt.of(x - that.x);</b>
-<i>129</i>&nbsp;    }
-<i>130</i>&nbsp;
-<i>131</i>&nbsp;    /**
-<i>132</i>&nbsp;     multiplies this integer by the specified one
-<i>133</i>&nbsp;     @param that the specified integer
-<i>134</i>&nbsp;     @return this integer times the specified one
-<i>135</i>&nbsp;     */
-<i>136</i>&nbsp;    public JsInt times(JsInt that)
-<i>137</i>&nbsp;    {
-<b class="nc"><i>138</i>&nbsp;        return JsInt.of(x * that.x);</b>
-<i>139</i>&nbsp;    }
-<i>140</i>&nbsp;
-<i>141</i>&nbsp;    /**
-<i>142</i>&nbsp;     Tests the value of this json integer on a predicate.
-<i>143</i>&nbsp;     @param predicate the predicate
-<i>144</i>&nbsp;     @return true if this integer satisfies the predicate
-<i>145</i>&nbsp;     */
-<i>146</i>&nbsp;    public boolean test(IntPredicate predicate)
-<i>147</i>&nbsp;    {
-<b class="fc"><i>148</i>&nbsp;        return requireNonNull(predicate).test(x);</b>
-<i>149</i>&nbsp;    }
-<i>150</i>&nbsp;
-<i>151</i>&nbsp;    /**
-<i>152</i>&nbsp;     returns true if this integer and the specified biginteger represent the same number
-<i>153</i>&nbsp;     @param jsBigInt the specified JsBigInt
-<i>154</i>&nbsp;     @return true if both JsElem are the same value
-<i>155</i>&nbsp;     */
-<i>156</i>&nbsp;    public boolean equals(JsBigInt jsBigInt)
-<i>157</i>&nbsp;    {
-<b class="fc"><i>158</i>&nbsp;        return requireNonNull(jsBigInt).equals(this);</b>
-<i>159</i>&nbsp;    }
-<i>160</i>&nbsp;    /**
-<i>161</i>&nbsp;     returns true if this integer and the specified bigdecimal represent the same number
-<i>162</i>&nbsp;     @param jsBigDec the specified JsBigDec
-<i>163</i>&nbsp;     @return true if both JsElem are the same value
-<i>164</i>&nbsp;     */
-<i>165</i>&nbsp;    public boolean equals(JsBigDec jsBigDec)
-<i>166</i>&nbsp;    {
-<b class="fc"><i>167</i>&nbsp;        return requireNonNull(jsBigDec).equals(this);</b>
-<i>168</i>&nbsp;    }
-<i>169</i>&nbsp;    /**
-<i>170</i>&nbsp;     returns true if this integer and the specified long represent the same number
-<i>171</i>&nbsp;     @param jsLong the specified JsLong
-<i>172</i>&nbsp;     @return true if both JsElem are the same value
-<i>173</i>&nbsp;     */
-<i>174</i>&nbsp;    public boolean equals(JsLong jsLong)
-<i>175</i>&nbsp;    {
-<b class="nc"><i>176</i>&nbsp;        return requireNonNull(jsLong).equals(this);</b>
-<i>177</i>&nbsp;    }
-<i>178</i>&nbsp;    /**
-<i>179</i>&nbsp;     returns true if this integer and the specified double represent the same number
-<i>180</i>&nbsp;     @param jsDouble the specified JsDouble
-<i>181</i>&nbsp;     @return true if both JsElem are the same value
-<i>182</i>&nbsp;     */
-<i>183</i>&nbsp;    public boolean equals(JsDouble jsDouble)
-<i>184</i>&nbsp;    {
-<b class="fc"><i>185</i>&nbsp;        return (double) x == requireNonNull(jsDouble).x;</b>
-<i>186</i>&nbsp;    }
-<i>187</i>&nbsp;
-<i>188</i>&nbsp;
-<i>189</i>&nbsp;}
+<b class="fc"><i>63</i>&nbsp;</b>
+<b class="fc"><i>64</i>&nbsp;        if (number.isBigInt())</b>
+<b class="pc"><i>65</i>&nbsp;            return Functions.equals(number.asJsBigInt().x,</b>
+<i>66</i>&nbsp;                                    x
+<b class="nc"><i>67</i>&nbsp;                                   );</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;        if (number.isBigDec())
+<i>70</i>&nbsp;            return Functions.equals(number.asJsBigDec().x,
+<i>71</i>&nbsp;                                    x
+<i>72</i>&nbsp;                                   );
+<i>73</i>&nbsp;        if (number.isDouble()) return (double) x == number.asJsDouble().x;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;        return false;
+<i>76</i>&nbsp;    }
+<b class="fc"><i>77</i>&nbsp;</b>
+<i>78</i>&nbsp;    /**
+<i>79</i>&nbsp;     Returns the hashcode of this json integer.
+<i>80</i>&nbsp;     @return hashcode of this JsInt
+<i>81</i>&nbsp;     */
+<i>82</i>&nbsp;    @Override
+<i>83</i>&nbsp;    public int hashCode()
+<i>84</i>&nbsp;    {
+<i>85</i>&nbsp;        return Functions.hashCode(x);
+<i>86</i>&nbsp;    }
+<i>87</i>&nbsp;
+<b class="fc"><i>88</i>&nbsp;</b>
+<i>89</i>&nbsp;    /**
+<i>90</i>&nbsp;     * @return a string representation of the integer value.
+<i>91</i>&nbsp;     * @see Integer#toString() Integer.toString
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    @Override
+<i>94</i>&nbsp;    public String toString()
+<i>95</i>&nbsp;    {
+<i>96</i>&nbsp;        return Integer.toString(x);
+<i>97</i>&nbsp;    }
+<b class="fc"><i>98</i>&nbsp;</b>
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * Static factory method to create a JsInt from an integer primitive type.
+<i>101</i>&nbsp;     * @param n the integer primitive type
+<i>102</i>&nbsp;     * @return a new JsInt
+<i>103</i>&nbsp;     */
+<i>104</i>&nbsp;    public static JsInt of(int n)
+<i>105</i>&nbsp;    {
+<i>106</i>&nbsp;        return new JsInt(n);
+<i>107</i>&nbsp;    }
+<b class="fc"><i>108</i>&nbsp;</b>
+<i>109</i>&nbsp;    /**
+<i>110</i>&nbsp;     Maps this json integer into another one.
+<i>111</i>&nbsp;     @param fn the mapping function
+<i>112</i>&nbsp;     @return a new JsInt
+<i>113</i>&nbsp;     */
+<i>114</i>&nbsp;    public JsInt map(IntUnaryOperator fn)
+<i>115</i>&nbsp;    {
+<i>116</i>&nbsp;        return JsInt.of(requireNonNull(fn).applyAsInt(x));
+<i>117</i>&nbsp;    }
+<b class="nc"><i>118</i>&nbsp;</b>
+<i>119</i>&nbsp;    /**
+<i>120</i>&nbsp;     adds up this integer to the specified one
+<i>121</i>&nbsp;     @param that the specified integer
+<i>122</i>&nbsp;     @return the sum of both integers
+<i>123</i>&nbsp;     */
+<i>124</i>&nbsp;    public JsInt plus(JsInt that){
+<i>125</i>&nbsp;        return JsInt.of(x+that.x);
+<i>126</i>&nbsp;    }
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;    /**</b>
+<i>129</i>&nbsp;     subtract this integer from the specified one
+<i>130</i>&nbsp;     @param that the specified integer
+<i>131</i>&nbsp;     @return this integer minus the specified one
+<i>132</i>&nbsp;     */
+<i>133</i>&nbsp;    public JsInt minus(JsInt that){
+<i>134</i>&nbsp;        return JsInt.of(x-that.x);
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;    /**
+<i>137</i>&nbsp;     multiplies this integer by the specified one
+<b class="nc"><i>138</i>&nbsp;     @param that the specified integer</b>
+<i>139</i>&nbsp;     @return this integer times the specified one
+<i>140</i>&nbsp;     */
+<i>141</i>&nbsp;    public JsInt times(JsInt that){
+<i>142</i>&nbsp;        return JsInt.of(x*that.x);
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    /**
+<i>146</i>&nbsp;     Tests the value of this json integer on a predicate.
+<i>147</i>&nbsp;     @param predicate the predicate
+<b class="fc"><i>148</i>&nbsp;     @return true if this integer satisfies the predicate</b>
+<i>149</i>&nbsp;     */
+<i>150</i>&nbsp;    public boolean test(IntPredicate predicate)
+<i>151</i>&nbsp;    {
+<i>152</i>&nbsp;        return predicate.test(x);
+<i>153</i>&nbsp;    }
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;}
 </div>
 </div>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-08-09 01:41</div>
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
 </div>
 </body>
 </html>

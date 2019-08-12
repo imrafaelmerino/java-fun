@@ -835,6 +835,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
     }
 
+    @Override
+    default boolean isObj()
+    {
+        return true;
+    }
 
+    @Override
+    default boolean isArray()
+    {
+        return false;
+    }
 }
 

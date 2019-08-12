@@ -40,6 +40,7 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
         return new MyMutableJsObj(new MyJavaMap());
     }
 
+
     @Override
     JsArray of(final MyJavaVector vector)
     {

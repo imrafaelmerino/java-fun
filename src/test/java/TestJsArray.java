@@ -271,11 +271,10 @@ public class TestJsArray
            .compare(letter,
                     "d"
                    ) < 0));
-        Assertions.assertEquals(arr,
-                                JsArray._of_("a",
+        Assertions.assertEquals(JsArray._of_("a",
                                              "b",
                                              "c"
-                                            )
+                                            ),arr
                                );
 
     }

@@ -48,26 +48,17 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsBool
      */
-    default boolean isBool()
-    {
-        return this instanceof JsBool;
-    }
+    boolean isBool();
 
     /**
      @return true if this JsElem is a JsBool and it's true
      */
-    default boolean isTrue()
-    {
-        return asJsBool().x;
-    }
+    boolean isTrue();
 
     /**
      @return true if this JsElem is a JsBool and it's false
      */
-    default boolean isFalse()
-    {
-        return asJsBool().x;
-    }
+    boolean isFalse();
 
     /**
      @return this JsElem as a JsInt
@@ -91,10 +82,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsInt
      */
-    default boolean isInt()
-    {
-        return this instanceof JsInt;
-    }
+    boolean isInt();
 
     /**
      Returns true if this elem is a JsInt and satisfies the given predicate
@@ -128,10 +116,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsDouble
      */
-    default boolean isDouble()
-    {
-        return this instanceof JsDouble;
-    }
+    boolean isDouble();
 
     /**
      Returns true if this elem is a JsDouble and satisfies the given predicate
@@ -166,10 +151,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsBigDec
      */
-    default boolean isBigDec()
-    {
-        return this instanceof JsBigDec;
-    }
+    boolean isBigDec();
 
     /**
      Returns true if this elem is a JsBigDec and satisfies the given predicate
@@ -204,10 +186,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsLong
      */
-    default boolean isLong()
-    {
-        return this instanceof JsLong;
-    }
+    boolean isLong();
 
     /**
      Returns true if this elem is a JsLong and satisfies the given predicate
@@ -242,7 +221,7 @@ public interface JsElem
      */
     default boolean isJson()
     {
-        return this instanceof JsObj || this instanceof JsArray;
+        return isObj() || isArray();
     }
 
     /**
@@ -285,10 +264,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsObj
      */
-    default boolean isObj()
-    {
-        return this instanceof JsObj;
-    }
+    boolean isObj();
 
     /**
      Returns true if this elem is a JsObj and satisfies the given predicate
@@ -322,10 +298,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsArray
      */
-    default boolean isArray()
-    {
-        return this instanceof JsArray;
-    }
+    boolean isArray();
 
     /**
      Returns true if this elem is a JsArray and satisfies the given predicate
@@ -359,10 +332,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsStr
      */
-    default boolean isStr()
-    {
-        return this instanceof JsStr;
-    }
+    boolean isStr();
 
     /**
      Returns true if this elem is a JsStr and satisfies the given predicate
@@ -398,10 +368,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsBigInt
      */
-    default boolean isBigInt()
-    {
-        return this instanceof JsBigInt;
-    }
+    boolean isBigInt();
 
     /**
      Returns true if this elem is a JsBigInt and satisfies the given predicate
@@ -591,18 +558,12 @@ public interface JsElem
     /**
      @return true if this element is null
      */
-    default boolean isNull()
-    {
-        return this instanceof JsNull;
-    }
+    boolean isNull();
 
     /**
      @return true if this element is JsNothing
      */
-    default boolean isNothing()
-    {
-        return this instanceof JsNothing;
-    }
+    boolean isNothing();
 
     /**
      @return true if this element is not null

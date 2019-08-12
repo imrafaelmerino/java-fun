@@ -195,5 +195,88 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
         return requireNonNull(jsDouble).equals(this);
     }
 
+    @Override
+    public boolean isObj()
+    {
+        return false;
+    }
+
+    public boolean isArray()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isNothing()
+    {
+        return false;
+    }
+
+
+    @Override
+    public boolean isNull()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isNumber()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBool()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isTrue()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isFalse()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isInt()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isDouble()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBigDec()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isLong()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isStr()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isBigInt()
+    {
+        return true;
+    }
 
 }

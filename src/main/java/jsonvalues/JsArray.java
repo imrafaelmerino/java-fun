@@ -9,10 +9,10 @@ import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MyErrors.errorIfImmutableArg;
-import static jsonvalues.MyErrors.errorIfMutableArg;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
+import static jsonvalues.MyErrors.errorIfImmutableArg;
+import static jsonvalues.MyErrors.errorIfMutableArg;
 import static jsonvalues.MyJsParser.Event.START_ARRAY;
 import static jsonvalues.MyScalaVector.EMPTY;
 
@@ -597,7 +597,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             return new TryArr(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
                                                                                options.create(),
                                                                                JsPath.empty()
-                                                                                        .index(-1)
+                                                                                     .index(-1)
                                                                               )));
         }
 
@@ -920,5 +920,17 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         return fn.apply(head,
                         tail
                        );
+    }
+
+    @Override
+    default boolean isObj()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isArray()
+    {
+        return true;
     }
 }

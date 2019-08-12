@@ -1491,7 +1491,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             if (event == START_ARRAY) return new Try(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
                                                                                                       options.create(),
                                                                                                       JsPath.empty()
-                                                                                                                   .index(-1)
+                                                                                                            .index(-1)
 
                                                                                                      )));
             return new Try(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser,
@@ -2974,5 +2974,75 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     boolean isImmutable();
 
+    @Override
+    default boolean isNothing()
+    {
+        return false;
+    }
 
+    @Override
+    default boolean isNull()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isNumber()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isBool()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isStr()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isTrue()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isFalse()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isInt()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isDouble()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isBigDec()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isLong()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isBigInt()
+    {
+        return false;
+    }
 }

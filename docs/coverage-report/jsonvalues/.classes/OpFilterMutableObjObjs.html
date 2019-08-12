@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpFilterMutableObjObjs</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpFilterMutableObjObjs (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpFilterMutableObjObjs</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (28/ 28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Iterator;
+<i>4</i>&nbsp;import java.util.Map;
+<i>5</i>&nbsp;import java.util.function.BiPredicate;
+<i>6</i>&nbsp;
+<b class="fc"><i>7</i>&nbsp;class OpFilterMutableObjObjs extends OpFilterObjs&lt;JsObj&gt;</b>
+<i>8</i>&nbsp;{
+<i>9</i>&nbsp;    OpFilterMutableObjObjs(final JsObj json)
+<i>10</i>&nbsp;    {
+<b class="fc"><i>11</i>&nbsp;        super(json);</b>
+<b class="fc"><i>12</i>&nbsp;    }</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    @Override
+<i>15</i>&nbsp;    Trampoline&lt;JsObj&gt; filter(final JsPath startingPath,
+<i>16</i>&nbsp;                             final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>17</i>&nbsp;                            )
+<i>18</i>&nbsp;    {
+<b class="fc"><i>19</i>&nbsp;        assert startingPath.isEmpty();</b>
+<b class="fc"><i>20</i>&nbsp;        final Iterator&lt;Map.Entry&lt;String, JsElem&gt;&gt; iterator = json.iterator();</b>
+<b class="fc"><i>21</i>&nbsp;        while (iterator.hasNext())</b>
+<i>22</i>&nbsp;        {
+<b class="fc"><i>23</i>&nbsp;            final Map.Entry&lt;String, JsElem&gt; entry = iterator.next();</b>
+<b class="fc"><i>24</i>&nbsp;            final JsElem value = entry.getValue();</b>
+<b class="fc"><i>25</i>&nbsp;            if (value.isObj() &amp;&amp; predicate.negate()</b>
+<b class="fc"><i>26</i>&nbsp;                                          .test(startingPath.key(entry.getKey()),</b>
+<b class="fc"><i>27</i>&nbsp;                                                value.asJsObj()</b>
+<i>28</i>&nbsp;                                               )
+<b class="fc"><i>29</i>&nbsp;            ) iterator.remove();</b>
+<b class="fc"><i>30</i>&nbsp;        }</b>
+<b class="fc"><i>31</i>&nbsp;        return Trampoline.done(json);</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Override
+<i>35</i>&nbsp;    Trampoline&lt;JsObj&gt; filter_(final JsPath startingPath,
+<i>36</i>&nbsp;                              final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>37</i>&nbsp;                             )
+<i>38</i>&nbsp;    {
+<b class="fc"><i>39</i>&nbsp;        final Iterator&lt;Map.Entry&lt;String, JsElem&gt;&gt; iterator = json.iterator();</b>
+<b class="fc"><i>40</i>&nbsp;        while (iterator.hasNext())</b>
+<i>41</i>&nbsp;        {
+<b class="fc"><i>42</i>&nbsp;            final Map.Entry&lt;String, JsElem&gt; entry = iterator.next();</b>
+<b class="fc"><i>43</i>&nbsp;            final JsPair pair = JsPair.of(startingPath.key(entry.getKey()),</b>
+<b class="fc"><i>44</i>&nbsp;                                          entry.getValue()</b>
+<i>45</i>&nbsp;                                         );
+<b class="fc"><i>46</i>&nbsp;            if (pair.elem.isJson())</b>
+<i>47</i>&nbsp;            {
+<b class="fc"><i>48</i>&nbsp;                if (pair.elem.isObj() &amp;&amp; predicate.negate()</b>
+<b class="fc"><i>49</i>&nbsp;                                                  .test(pair.path,</b>
+<b class="fc"><i>50</i>&nbsp;                                                        pair.elem.asJsObj()</b>
+<i>51</i>&nbsp;                                                       )
+<b class="fc"><i>52</i>&nbsp;                ) iterator.remove();</b>
+<b class="fc"><i>53</i>&nbsp;                else if (pair.elem.isObj()) new OpFilterMutableObjObjs(pair.elem.asJsObj()).filter_(pair.path,</b>
+<i>54</i>&nbsp;                                                                                                    predicate
+<i>55</i>&nbsp;                                                                                                   );
+<b class="fc"><i>56</i>&nbsp;                else if (pair.elem.isArray()) new OpFilterMutableArrObjs(pair.elem.asJsArray()).filter_(pair.path.index(-1),</b>
+<i>57</i>&nbsp;                                                                                                        predicate
+<i>58</i>&nbsp;                                                                                                       );
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;            }
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;        }</b>
+<b class="fc"><i>63</i>&nbsp;        return Trampoline.done(json);</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
+</div>
+</body>
+</html>

@@ -29,8 +29,7 @@ class OpCombinerObjs extends OpCombiner<JsObj>
         return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
                                                                                   head.getValue()
                                                                                  )),
-                                      MatchExp.ifPredicateElse(e -> e.isJson() && MatchExp.isSameType(head.getValue())
-                                                                                          .test(e),
+                                      MatchExp.ifPredicateElse(e -> e.isJson() && e.isSameType(head.getValue()),
                                                                it ->
                                                                {
                                                                    Json<?> obj = a.get(JsPath.empty()

@@ -1,6 +1,5 @@
 package jsonvalues;
 
-import static jsonvalues.MatchExp.isSameType;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -31,7 +30,7 @@ class OpCombinerArrs extends OpCombiner<JsArray>
         final Trampoline<JsArray> tailCall = new OpCombinerArrs(a.tail(),
                                                                 b.tail()
         ).combine();
-        if (head.isJson() && isSameType(otherHead).test(head))
+        if (head.isJson() && head.isSameType(otherHead))
         {
             final Json<?> obj = head.asJson();
             final Json<?> obj1 = otherHead.asJson();

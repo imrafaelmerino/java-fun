@@ -1,7 +1,6 @@
 package jsonvalues;
 
 
-import jsonvalues.JsArray.TYPE;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Iterator;
@@ -17,7 +16,6 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
 import static jsonvalues.MatchExp.ifJsonElse;
-import static jsonvalues.MatchExp.isSameType;
 import static jsonvalues.MyAbstractJsObj.streamOfObj;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
@@ -492,7 +490,7 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
                                                                 b.tail()
                                                                );
 
-        if (head.isJson() && isSameType(otherHead).test(head))
+        if (head.isJson() && head.isSameType(otherHead))
         {
             final Json<?> obj = head.asJson();
             final Json<?> obj1 = otherHead.asJson();
@@ -815,7 +813,7 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
         final Trampoline<JsArray> tailCall = union_(a.tail(),
                                                     b.tail()
                                                    );
-        if (head.isJson() && isSameType(otherHead).test(head))
+        if (head.isJson() && head.isSameType(otherHead))
         {
             final Json<?> obj = head.asJson();
             final Json<?> obj1 = otherHead.asJson();

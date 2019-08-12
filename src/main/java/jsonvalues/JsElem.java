@@ -51,6 +51,16 @@ public interface JsElem
     boolean isBool();
 
     /**
+     returns true if this elem and the given have the same type
+     @param that the given elem
+     @return true if this JsElem and the given have the same type
+     */
+    default boolean isSameType(final JsElem that)
+    {
+        return this.getClass() == requireNonNull(that).getClass();
+    }
+
+    /**
      @return true if this JsElem is a JsBool and it's true
      */
     boolean isTrue();

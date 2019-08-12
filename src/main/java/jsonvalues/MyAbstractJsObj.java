@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsNothing.NOTHING;
-import static jsonvalues.MatchExp.isSameType;
 import static jsonvalues.MyAbstractJsArray.streamOfArr;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
@@ -373,8 +372,8 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                                                   ));
 
             } else if (head.getValue()
-                           .isJson() && MatchExp.isSameType(headOtherElement)
-                                                .test(head.getValue()))
+                           .isJson() && head.getValue()
+                                            .isSameType(headOtherElement))
             {//different but same container
                 Json<?> obj = head.getValue()
                                   .asJson();
@@ -655,8 +654,7 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
         return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
                                                                                   head.getValue()
                                                                                  )),
-                                      MatchExp.ifPredicateElse(e -> e.isJson() && isSameType(head.getValue())
-                                                               .test(e),
+                                      MatchExp.ifPredicateElse(e -> e.isJson() && e.isSameType(head.getValue()),
                                                                it ->
                                                                {
                                                                    Json<?> obj = a.get(JsPath.empty()

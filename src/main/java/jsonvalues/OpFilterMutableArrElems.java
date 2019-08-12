@@ -11,26 +11,27 @@ class OpFilterMutableArrElems extends OpFilterElems<JsArray>
     }
 
     @Override
-    Trampoline<JsArray> filter_(JsPath startingPath,
+    Trampoline<JsArray> filter_(final JsPath startingPath,
                                 final Predicate<? super JsPair> predicate
                                )
     {
+        JsPath currentPath = startingPath;
         final Iterator<JsElem> iterator = json.iterator();
         while (iterator.hasNext())
         {
-            startingPath = startingPath.inc();
-            final JsPair pair = JsPair.of(startingPath,
+            currentPath = currentPath.inc();
+            final JsPair pair = JsPair.of(currentPath,
                                           iterator.next()
                                          );
             if (pair.elem.isNotJson() && predicate.negate()
                                                   .test(pair))
                 iterator.remove();
             else if (pair.elem.isObj())
-                new OpFilterMutableObjElems(pair.elem.asJsObj()).filter_(startingPath,
+                new OpFilterMutableObjElems(pair.elem.asJsObj()).filter_(currentPath,
                                                                          predicate
                                                                         );
             else if (pair.elem.isArray())
-                new OpFilterMutableArrElems(pair.elem.asJsArray()).filter_(startingPath.index(-1),
+                new OpFilterMutableArrElems(pair.elem.asJsArray()).filter_(currentPath.index(-1),
                                                                            predicate
                                                                           );
         }
@@ -38,17 +39,19 @@ class OpFilterMutableArrElems extends OpFilterElems<JsArray>
     }
 
     @Override
-    Trampoline<JsArray> filter(JsPath startingPath,
+    Trampoline<JsArray> filter(final JsPath startingPath,
                                final Predicate<? super JsPair> predicate
                               )
     {
         assert startingPath.last()
                            .isIndex(i -> i == -1);
+        JsPath currentPath = startingPath;
+
         final Iterator<JsElem> iterator = json.iterator();
         while (iterator.hasNext())
         {
-            startingPath = startingPath.inc();
-            final JsPair pair = JsPair.of(startingPath,
+            currentPath = currentPath.inc();
+            final JsPair pair = JsPair.of(currentPath,
                                           iterator.next()
                                          );
             if (pair.elem.isNotJson() && predicate.negate()

@@ -502,12 +502,11 @@ public class TestJsObj
                                                  Assertions.assertEquals(pair.elem,
                                                                          obj.get(pair.path)
                                                                         );
-                                                 return JsPair.mapIfStr(String::toLowerCase)
-                                                              .apply(pair).elem;
+                                                 return pair.mapIfStr(String::toLowerCase).elem;
                                              });
 
             final Optional<String> reduced_ = obj1.reduce_(String::concat,
-                                                          p ->
+                                                           p ->
                                                            {
                                                                Assertions.assertEquals(p.elem,
                                                                                        obj1.get(p.path)
@@ -1582,9 +1581,7 @@ public class TestJsObj
                                                  supplier.get()
                                                          .get(pair.path)
                                                 );
-                         return JsPair.mapIfInt(i -> i + 10)
-                                      .andThen(p -> p.elem)
-                                      .apply(pair);
+                         return pair.mapIfInt(i -> i + 10).elem;
                      },
                      p -> p.elem.isInt()
                     );
@@ -1602,9 +1599,8 @@ public class TestJsObj
                                                    supplier.get()
                                                            .get(pair.path)
                                                   );
-                           return JsPair.mapIfInt(i -> i + 10)
-                                        .andThen(p -> p.elem)
-                                        .apply(pair);
+                           return pair.mapIfInt(i -> i + 10).elem;
+
                        },
                        p -> p.elem.isInt()
                       );

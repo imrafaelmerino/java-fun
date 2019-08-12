@@ -36,67 +36,54 @@ public final class JsPair
     }
 
     /**
-     Declarative way of implementing {@code  if(pair.elem.isInt()) return Pair.parse(pair.path, pair.elem.asJsInt().map(operator)) else return pair}
-     <p>
-     Examples:
-     <pre>
+     Declarative way of implementing {@code  if(pair.elem.isInt()) return Pair.of(pair.path, pair.elem.asJsInt().map(operator)) else return pair}
      {@code
-     JsPair pair = JsPair.parse(JsPath.parse("a.b"),JsInt.parse(1))
+     JsPair pair = JsPair.of(JsPath.of("a.b"),JsInt.of(1))
      pair.mapIfLong(l->l+10) // ('a'.'b', 11)
 
-     JsPair pair1 = JsPair.parse(JsPath.parse("a.b"),JsStr.parse("a"))
+     JsPair pair1 = JsPair.of(JsPath.of("a.b"),JsStr.of("a"))
      pair1.mapIfLong(l->l+10).equals(pair1) // true, same pair is returned
      }
      </pre>
      @param operator the function to be applied to map the integer
      @return the same this instance if the JsElem is not a JsInt or a new pair
      */
-    public static Function<JsPair, JsPair> mapIfInt(IntUnaryOperator operator)
+    public JsPair mapIfInt(IntUnaryOperator operator)
     {
 
-        return pair ->
-        {
-            if (pair.elem.isInt()) return of(pair.path,
-                                             pair.elem.asJsInt()
-                                                      .map(operator)
-                                            );
+        if (this.elem.isInt()) return of(path,
+                                         elem.asJsInt()
+                                             .map(operator)
+                                        );
 
 
-            return pair;
-        };
-
+        return this;
     }
 
     /**
-     Declarative way of implementing {@code  if(pair.elem.isStr()) return Pair.parse(pair.path, pair.elem.asJsStr().map(mapFn)) else return pair}
+     Declarative way of implementing {@code  if(pair.elem.isStr()) return Pair.of(pair.path, pair.elem.asJsStr().map(mapFn)) else return pair}
      <p>
      Examples:
      <pre>
      {@code
-     JsPair pair = JsPair.parse(JsPath.parse("a.b"),JsStr.parse("a"))
+     JsPair pair = JsPair.of(JsPath.of("a.b"),JsStr.of("a"))
      pair.mapIfStr(String::toUpperCase) // ('a'.'b', "A")
 
-     JsPair pair1 = JsPair.parse(JsPath.parse("a.b"),JsInt.parse(1))
+     JsPair pair1 = JsPair.of(JsPath.of("a.b"),JsInt.of(1))
      pair1.mapIfStr(String::toUpperCase).equals(pair1) // true, same pair is returned
      }
      </pre>
      @param fn the function to be applied to map the string of the JsStr
      @return the same this instance if the JsElem is not a JsStr or a new pair
      */
-    public static Function<JsPair, JsPair> mapIfStr(UnaryOperator<String> fn)
+    public JsPair mapIfStr(UnaryOperator<String> fn)
     {
 
-        return pair ->
-        {
-            if (pair.elem.isStr()) return of(pair.path,
-                                             pair.elem.asJsStr()
-                                                      .map(fn)
-                                            );
-
-
-            return pair;
-        };
-
+        if (this.elem.isStr()) return of(path,
+                                         elem.asJsStr()
+                                             .map(fn)
+                                        );
+        return this;
     }
 
 

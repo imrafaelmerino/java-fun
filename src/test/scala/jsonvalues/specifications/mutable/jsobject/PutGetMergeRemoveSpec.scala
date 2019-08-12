@@ -4,7 +4,7 @@ import java.math.BigInteger
 import java.util._
 import java.util.function.BiFunction
 
-import jsonvalues.MatchFns._
+import jsonvalues.MatchExp._
 import jsonvalues._
 import jsonvalues.specifications.BasePropSpec
 import org.scalacheck.Arbitrary

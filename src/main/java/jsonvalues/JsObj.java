@@ -11,9 +11,10 @@ import java.util.function.BiFunction;
 import java.util.stream.Collector;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Errors.*;
-import static jsonvalues.JsParser.Event.START_OBJECT;
-import static jsonvalues.MyScalaImpl.Map.EMPTY;
+import static jsonvalues.MyErrors.errorIfImmutableArg;
+import static jsonvalues.MyErrors.errorIfMutableArg;
+import static jsonvalues.MyJsParser.Event.START_OBJECT;
+import static jsonvalues.MyScalaMap.EMPTY;
 
 /**
  Represents a json object, which is an unordered set of name/element pairs. Two implementations are
@@ -33,7 +34,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static JsObj _empty_()
     {
-        return new JsObjMutable();
+        return new MyMutableJsObj();
     }
 
     /**
@@ -256,9 +257,9 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsObj _of_(final java.util.Map<String, JsElem> map)
     {
-        Errors.<Collection<JsElem>>errorIfAnyImmutable().apply(Objects.requireNonNull(map)
-                                                                      .values());
-        return new JsObjMutable(new MyJavaImpl.Map(map));
+        MyErrors.<Collection<JsElem>>errorIfAnyImmutable().apply(Objects.requireNonNull(map)
+                                                                        .values());
+        return new MyMutableJsObj(new MyJavaMap(map));
     }
 
     /**
@@ -270,13 +271,13 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static TryObj _parse_(final String str)
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
-            JsParser.Event keyEvent = parser.next();
+            MyJsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            MyJavaImpl.Map obj = new MyJavaImpl.Map();
+            MyJavaMap obj = new MyJavaMap();
             obj.parse(parser);
-            return new TryObj(new JsObjMutable(obj));
+            return new TryObj(new MyMutableJsObj(obj));
         }
 
         catch (MalformedJson e)
@@ -334,16 +335,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                          )
     {
 
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
-            JsParser.Event keyEvent = parser.next();
+            MyJsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            MyJavaImpl.Map obj = new MyJavaImpl.Map();
+            MyJavaMap obj = new MyJavaMap();
             obj.parse(parser,
                       options.create(),
                       JsPath.empty()
                      );
-            return new TryObj(new JsObjMutable(obj));
+            return new TryObj(new MyMutableJsObj(obj));
         }
 
         catch (MalformedJson e)
@@ -367,10 +368,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toImmutable() : pair.elem
                                                   ),
-                            (a, b) -> CombinerFns.combiner_(a,
-                                                            b
-                                                           )
-                                                 .get(),
+                            (a, b) -> new OpCombinerObjs(a,
+                                                         b
+                            ).combine()
+                             .get(),
                             jsonvalues.JsObj::toImmutable
                            );
 
@@ -390,10 +391,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                                    pair.elem.isJson() ? pair.elem.asJson()
                                                                                  .toMutable() : pair.elem
                                                   ),
-                            (a, b) -> CombinerFns.combiner_(a,
-                                                            b
-                                                           )
-                                                 .get()
+                            (a, b) -> new OpCombinerObjs(a,
+                                                         b
+                            ).combine()
+                             .get()
+
                            );
 
     }
@@ -404,7 +406,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static JsObj empty()
     {
-        return JsObjImmutable.EMPTY;
+        return MyImmutableJsObj.EMPTY;
     }
 
 
@@ -638,8 +640,9 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     static JsObj of(final java.util.Map<String, JsElem> map)
     {
         if (requireNonNull(map).isEmpty()) return empty();
-        Errors.errorIfAnyMutable().apply(map.values());
-        return new JsObjImmutable(EMPTY.updateAll(map));
+        MyErrors.errorIfAnyMutable()
+                .apply(map.values());
+        return new MyImmutableJsObj(EMPTY.updateAll(map));
     }
 
     /**
@@ -649,11 +652,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static TryObj parse(final String str)
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
-            JsParser.Event keyEvent = parser.next();
+            MyJsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new JsObjImmutable(EMPTY.parse(parser)));
+            return new TryObj(new MyImmutableJsObj(EMPTY.parse(parser)));
         }
         catch (MalformedJson e)
         {
@@ -674,14 +677,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         final ParseOptions options
                        )
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
-            JsParser.Event keyEvent = parser.next();
+            MyJsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new JsObjImmutable(EMPTY.parse(parser,
-                                                             options.create(),
-                                                             JsPath.empty()
-                                                            )));
+            return new TryObj(new MyImmutableJsObj(EMPTY.parse(parser,
+                                                               options.create(),
+                                                               JsPath.empty()
+                                                              )));
         }
         catch (MalformedJson e)
         {
@@ -740,14 +743,12 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         final TYPE ARRAY_AS
                        );
 
-
     /**
      Returns the union of this object and another given as a parameter.
      @param that the other object
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
     JsObj union(final JsObj that);
-
 
     /**
      Returns the union of this object and another given as parameter applying recursively the union
@@ -834,6 +835,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
     }
 
+    @Override
+    default boolean isObj()
+    {
+        return true;
+    }
 
+    @Override
+    default boolean isArray()
+    {
+        return false;
+    }
 }
 

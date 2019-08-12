@@ -92,6 +92,7 @@ public final class Try
      @return a Json
      @throws MalformedJson if the parsed string is not a well-formed json
      */
+    @SuppressWarnings("squid:S1452") // parsing a str into a json, unknown type (obj or arr). If the caller knows the type, they can use TryArr or TryObj
     public Json<?> orElseThrow() throws MalformedJson
     {
         if (arr != null) return arr;

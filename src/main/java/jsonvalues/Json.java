@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsNothing.NOTHING;
-import static jsonvalues.JsParser.Event.START_ARRAY;
+import static jsonvalues.MyJsParser.Event.START_ARRAY;
 
 /**
  <pre>
@@ -81,21 +81,21 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static Try _parse_(final String str)
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
 
-            final JsParser.Event event = parser.next();
+            final MyJsParser.Event event = parser.next();
 
             if (event == START_ARRAY)
             {
-                final MyJavaImpl.Vector array = new MyJavaImpl.Vector();
+                final MyJavaVector array = new MyJavaVector();
                 array.parse(parser);
-                return new Try(new JsArrayMutable(array));
+                return new Try(new MyMutableJsArray(array));
             }
 
-            final MyJavaImpl.Map obj = new MyJavaImpl.Map();
+            final MyJavaMap obj = new MyJavaMap();
             obj.parse(parser);
-            return new Try(new JsObjMutable(obj));
+            return new Try(new MyMutableJsObj(obj));
         }
         catch (MalformedJson e)
         {
@@ -118,25 +118,25 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                        final ParseOptions options
                       )
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
-            final JsParser.Event event = parser.next();
+            final MyJsParser.Event event = parser.next();
             if (event == START_ARRAY)
             {
-                final MyJavaImpl.Vector array = new MyJavaImpl.Vector();
+                final MyJavaVector array = new MyJavaVector();
                 array.parse(parser,
                             options.create(),
                             JsPath.empty()
                                   .index(-1)
                            );
-                return new Try(new JsArrayMutable(array));
+                return new Try(new MyMutableJsArray(array));
             }
-            final MyJavaImpl.Map obj = new MyJavaImpl.Map();
+            final MyJavaMap obj = new MyJavaMap();
             obj.parse(parser,
                       options.create(),
                       JsPath.empty()
                      );
-            return new Try(new JsObjMutable(obj));
+            return new Try(new MyMutableJsObj(obj));
         }
 
         catch (MalformedJson e)
@@ -298,7 +298,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               final Supplier<? extends JsElem> supplier
                              )
     {
-        return MatchFns.ifArrElse(it -> append(path,
+        return MatchExp.ifArrElse(it -> append(path,
                                                Objects.requireNonNull(supplier)
                                                       .get()
                                               ),
@@ -325,7 +325,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
                                 )
     {
-        return MatchFns.ifArrElse(it -> appendAll(path,
+        return MatchExp.ifArrElse(it -> appendAll(path,
                                                   requireNonNull(supplier).get()
                                                  ),
                                   it ->
@@ -492,7 +492,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         requireNonNull(supplier);
-        return MatchFns.ifArrElse(it -> prependAll(path,
+        return MatchExp.ifArrElse(it -> prependAll(path,
                                                    supplier.get()
                                                   ),
                                   it ->
@@ -656,7 +656,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
         requireNonNull(path);
         requireNonNull(supplier);
-        return MatchFns.ifArrElse(it -> prepend(path,
+        return MatchExp.ifArrElse(it -> prepend(path,
                                                 supplier.get()
                                                ),
                                   it ->
@@ -685,7 +685,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         requireNonNull(path);
-        return MatchFns.ifArrElse(it -> prepend(path,
+        return MatchExp.ifArrElse(it -> prepend(path,
                                                 number,
                                                 others
                                                ),
@@ -715,7 +715,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         requireNonNull(path);
-        return MatchFns.ifArrElse(it -> prepend(path,
+        return MatchExp.ifArrElse(it -> prepend(path,
                                                 number,
                                                 others
                                                ),
@@ -745,7 +745,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         requireNonNull(path);
-        return MatchFns.ifArrElse(it -> prepend(path,
+        return MatchExp.ifArrElse(it -> prepend(path,
                                                 number,
                                                 others
                                                ),
@@ -775,7 +775,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         requireNonNull(path);
-        return MatchFns.ifArrElse(it -> prepend(path,
+        return MatchExp.ifArrElse(it -> prepend(path,
                                                 str,
                                                 others
                                                ),
@@ -805,7 +805,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
 
         requireNonNull(path);
-        return MatchFns.ifArrElse(it -> prepend(path,
+        return MatchExp.ifArrElse(it -> prepend(path,
                                                 bool,
                                                 others
                                                ),
@@ -924,7 +924,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default Optional<JsArray> getArray(final JsPath path)
     {
-        final Function<JsElem, Optional<JsArray>> ifElse = MatchFns.ifArrElse(Optional::of,
+        final Function<JsElem, Optional<JsArray>> ifElse = MatchExp.ifArrElse(Optional::of,
                                                                               it -> Optional.empty()
                                                                              );
         return ifElse.apply(this.get(requireNonNull(path)));
@@ -950,7 +950,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default Optional<BigDecimal> getBigDecimal(final JsPath path)
     {
-        final Function<JsElem, Optional<BigDecimal>> ifElse = MatchFns.ifDecimalElse(it -> Optional.of(BigDecimal.valueOf(it)),
+        final Function<JsElem, Optional<BigDecimal>> ifElse = MatchExp.ifDecimalElse(it -> Optional.of(BigDecimal.valueOf(it)),
                                                                                      Optional::of,
                                                                                      it -> Optional.empty()
                                                                                     );
@@ -976,7 +976,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default Optional<BigInteger> getBigInt(final JsPath path)
     {
-        final Function<JsElem, Optional<BigInteger>> ifElse = MatchFns.ifIntegralElse(it -> Optional.of(BigInteger.valueOf(it)),
+        final Function<JsElem, Optional<BigInteger>> ifElse = MatchExp.ifIntegralElse(it -> Optional.of(BigInteger.valueOf(it)),
                                                                                       it -> Optional.of(BigInteger.valueOf(it)),
                                                                                       Optional::of,
                                                                                       e -> Optional.empty()
@@ -1003,7 +1003,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default Optional<Boolean> getBool(final JsPath path)
     {
-        final Function<JsElem, Optional<Boolean>> fn = MatchFns.ifBoolElse(Optional::of,
+        final Function<JsElem, Optional<Boolean>> fn = MatchExp.ifBoolElse(Optional::of,
                                                                            it -> Optional.empty()
                                                                           );
         return fn.apply(this.get(requireNonNull(path)));
@@ -1030,7 +1030,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default OptionalDouble getDouble(final JsPath path)
     {
-        return MatchFns.ifDecimalElse(OptionalDouble::of,
+        return MatchExp.ifDecimalElse(OptionalDouble::of,
                                       bd -> JsBigDec.of(bd)
                                                     .doubleValueExact(),
                                       elem -> OptionalDouble.empty()
@@ -1061,7 +1061,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default OptionalInt getInt(final JsPath path)
     {
-        return MatchFns.ifIntegralElse(OptionalInt::of,
+        return MatchExp.ifIntegralElse(OptionalInt::of,
                                        l -> JsLong.of(l)
                                                   .intValueExact(),
                                        bi -> JsBigInt.of(bi)
@@ -1092,7 +1092,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default OptionalLong getLong(final JsPath path)
     {
-        return MatchFns.ifIntegralElse(OptionalLong::of,
+        return MatchExp.ifIntegralElse(OptionalLong::of,
                                        OptionalLong::of,
                                        bi -> JsBigInt.of(bi)
                                                      .longValueExact(),
@@ -1122,7 +1122,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default Optional<JsObj> getObj(final JsPath path)
     {
-        final Function<JsElem, Optional<JsObj>> ifElse = MatchFns.ifObjElse(Optional::of,
+        final Function<JsElem, Optional<JsObj>> ifElse = MatchExp.ifObjElse(Optional::of,
                                                                             it -> Optional.empty()
                                                                            );
         return ifElse.apply(this.get(requireNonNull(path)));
@@ -1148,7 +1148,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     default Optional<String> getStr(final JsPath path)
     {
-        final Function<JsElem, Optional<String>> ifStrElseFn = MatchFns.ifStrElse(Optional::of,
+        final Function<JsElem, Optional<String>> ifStrElseFn = MatchExp.ifStrElse(Optional::of,
                                                                                   it -> Optional.empty()
                                                                                  );
         return ifStrElseFn.apply(this.get(requireNonNull(path)));
@@ -1452,16 +1452,16 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     static Try parse(String str)
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
 
-            final JsParser.Event event = parser.next();
+            final MyJsParser.Event event = parser.next();
             if (event == START_ARRAY)
             {
-                return new Try(new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser)
+                return new Try(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser)
                 ));
             }
-            return new Try(new JsObjImmutable(MyScalaImpl.Map.EMPTY.parse(parser)));
+            return new Try(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -1484,21 +1484,21 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                      ParseOptions options
                     )
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
         {
 
-            final JsParser.Event event = parser.next();
-            if (event == START_ARRAY) return new Try(new JsArrayImmutable(MyScalaImpl.Vector.EMPTY.parse(parser,
-                                                                                                         options.create(),
-                                                                                                         JsPath.empty()
-                                                                                                                   .index(-1)
+            final MyJsParser.Event event = parser.next();
+            if (event == START_ARRAY) return new Try(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
+                                                                                                      options.create(),
+                                                                                                      JsPath.empty()
+                                                                                                            .index(-1)
 
-                                                                                                        )));
-            return new Try(new JsObjImmutable(MyScalaImpl.Map.EMPTY.parse(parser,
-                                                                          options.create(),
-                                                                          JsPath.empty()
+                                                                                                     )));
+            return new Try(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser,
+                                                                       options.create(),
+                                                                       JsPath.empty()
 
-                                                                         )));
+                                                                      )));
         }
 
         catch (MalformedJson e)
@@ -1970,7 +1970,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               final int... others
                              )
     {
-        return MatchFns.ifArrElse(it -> append(path,
+        return MatchExp.ifArrElse(it -> append(path,
                                                number,
                                                others
                                               ),
@@ -1997,7 +1997,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               final long... others
                              )
     {
-        return MatchFns.ifArrElse(it -> append(path,
+        return MatchExp.ifArrElse(it -> append(path,
                                                number,
                                                others
                                               ),
@@ -2025,7 +2025,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               final String... others
                              )
     {
-        return MatchFns.ifArrElse(it -> append(path,
+        return MatchExp.ifArrElse(it -> append(path,
                                                str,
                                                others
                                               ),
@@ -2053,7 +2053,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               final boolean... others
                              )
     {
-        return MatchFns.ifArrElse(it -> append(path,
+        return MatchExp.ifArrElse(it -> append(path,
                                                number,
                                                others
                                               ),
@@ -2081,7 +2081,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               final double... others
                              )
     {
-        return MatchFns.ifArrElse(it -> append(path,
+        return MatchExp.ifArrElse(it -> append(path,
                                                number,
                                                others
                                               ),
@@ -2838,7 +2838,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default OptionalInt size(final JsPath path)
     {
 
-        return MatchFns.ifJsonElse(it -> OptionalInt.of(it.size()),
+        return MatchExp.ifJsonElse(it -> OptionalInt.of(it.size()),
                                    it -> OptionalInt.empty()
                                   )
                        .apply(get(requireNonNull(path)));
@@ -2856,7 +2856,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     default OptionalInt size_(final JsPath path)
     {
 
-        return MatchFns.ifJsonElse(it -> OptionalInt.of(it.size_()),
+        return MatchExp.ifJsonElse(it -> OptionalInt.of(it.size_()),
                                    it -> OptionalInt.empty()
                                   )
                        .apply(get(requireNonNull(path)));
@@ -2974,5 +2974,75 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     boolean isImmutable();
 
+    @Override
+    default boolean isNothing()
+    {
+        return false;
+    }
 
+    @Override
+    default boolean isNull()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isNumber()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isBool()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isStr()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isTrue()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isFalse()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isInt()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isDouble()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isBigDec()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isLong()
+    {
+        return false;
+    }
+
+    @Override
+    default boolean isBigInt()
+    {
+        return false;
+    }
 }

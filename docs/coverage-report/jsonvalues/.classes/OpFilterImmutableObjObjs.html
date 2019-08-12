@@ -1,0 +1,188 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpFilterImmutableObjObjs</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpFilterImmutableObjObjs (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpFilterImmutableObjObjs</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (25/ 25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.function.BiPredicate;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import static jsonvalues.MatchExp.ifJsonElse;
+<i>6</i>&nbsp;import static jsonvalues.MatchExp.ifObjElse;
+<i>7</i>&nbsp;import static jsonvalues.Trampoline.more;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;class OpFilterImmutableObjObjs extends OpFilterObjs&lt;JsObj&gt;
+<i>10</i>&nbsp;{
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    OpFilterImmutableObjObjs(final JsObj json)
+<i>14</i>&nbsp;    {
+<b class="fc"><i>15</i>&nbsp;        super(json);</b>
+<b class="fc"><i>16</i>&nbsp;    }</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    @Override
+<i>19</i>&nbsp;    Trampoline&lt;JsObj&gt; filter(final JsPath startingPath,
+<i>20</i>&nbsp;                             final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;                            )
+<i>23</i>&nbsp;    {
+<b class="fc"><i>24</i>&nbsp;        return json.ifEmptyElse(Trampoline.done(json),</b>
+<i>25</i>&nbsp;                                (head, tail) -&gt;
+<i>26</i>&nbsp;                                {
+<b class="fc"><i>27</i>&nbsp;                                    final JsPath headPath = startingPath.key(head.getKey());</b>
+<i>28</i>&nbsp;
+<b class="fc"><i>29</i>&nbsp;                                    final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; new OpFilterImmutableObjObjs(tail).filter(startingPath,</b>
+<i>30</i>&nbsp;                                                                                                                                       predicate
+<i>31</i>&nbsp;                                                                                                                                      ));
+<b class="fc"><i>32</i>&nbsp;                                    return ifObjElse(json -&gt; JsPair.of(headPath,</b>
+<i>33</i>&nbsp;                                                                       json
+<i>34</i>&nbsp;                                                                      )
+<b class="fc"><i>35</i>&nbsp;                                                                   .ifElse(p -&gt; predicate.test(p.path,</b>
+<i>36</i>&nbsp;                                                                                               json
+<i>37</i>&nbsp;                                                                                              ),
+<b class="fc"><i>38</i>&nbsp;                                                                           p -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>39</i>&nbsp;                                                                                                                                      json
+<i>40</i>&nbsp;                                                                                                                                     )),
+<b class="fc"><i>41</i>&nbsp;                                                                           p -&gt; tailCall</b>
+<i>42</i>&nbsp;                                                                          ),
+<b class="fc"><i>43</i>&nbsp;                                                     value -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>44</i>&nbsp;                                                                                                                    value
+<i>45</i>&nbsp;                                                                                                                   ))
+<i>46</i>&nbsp;                                                    )
+<b class="fc"><i>47</i>&nbsp;                                    .apply(head.getValue());</b>
+<i>48</i>&nbsp;                                }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;                               );
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    @Override
+<i>54</i>&nbsp;    Trampoline&lt;JsObj&gt; filter_(final JsPath startingPath,
+<i>55</i>&nbsp;                              final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate
+<i>56</i>&nbsp;                             )
+<i>57</i>&nbsp;    {
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;
+<b class="fc"><i>60</i>&nbsp;        return json.ifEmptyElse(Trampoline.done(json),</b>
+<i>61</i>&nbsp;                                (head, tail) -&gt;
+<i>62</i>&nbsp;                                {
+<b class="fc"><i>63</i>&nbsp;                                    final JsPath headPath = startingPath.key(head.getKey());</b>
+<i>64</i>&nbsp;
+<b class="fc"><i>65</i>&nbsp;                                    final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; new OpFilterImmutableObjObjs(tail).filter_(startingPath,</b>
+<i>66</i>&nbsp;                                                                                                                                        predicate
+<i>67</i>&nbsp;                                                                                                                                       ));
+<b class="fc"><i>68</i>&nbsp;                                    return ifJsonElse(headObj -&gt; JsPair.of(headPath,</b>
+<i>69</i>&nbsp;                                                                           headObj
+<i>70</i>&nbsp;                                                                          )
+<b class="fc"><i>71</i>&nbsp;                                                                       .ifElse(p -&gt; predicate.test(p.path,</b>
+<i>72</i>&nbsp;                                                                                                   headObj
+<i>73</i>&nbsp;                                                                                                  ),
+<b class="fc"><i>74</i>&nbsp;                                                                               p -&gt; more(() -&gt; tailCall).flatMap(tailResult -&gt; new OpFilterImmutableObjObjs(headObj).filter_(headPath,</b>
+<i>75</i>&nbsp;                                                                                                                                                                             predicate
+<i>76</i>&nbsp;                                                                                                                                                                            )
+<b class="fc"><i>77</i>&nbsp;                                                                                                                                                                    .map(headFiltered -&gt;</b>
+<b class="fc"><i>78</i>&nbsp;                                                                                                                                                                         tailResult.put(head.getKey(),</b>
+<i>79</i>&nbsp;                                                                                                                                                                                        headFiltered
+<i>80</i>&nbsp;                                                                                                                                                                                       )
+<i>81</i>&nbsp;                                                                                                                                                                        )
+<i>82</i>&nbsp;                                                                                                                ),
+<b class="fc"><i>83</i>&nbsp;                                                                               p -&gt; tailCall</b>
+<i>84</i>&nbsp;                                                                              ),
+<b class="fc"><i>85</i>&nbsp;                                                      headArray -&gt; more(() -&gt; tailCall).flatMap(tailResult -&gt; new OpFilterImmutableArrObjs(headArray).filter_(headPath.index(-1),</b>
+<i>86</i>&nbsp;                                                                                                                                                              predicate
+<i>87</i>&nbsp;                                                                                                                                                             )
+<b class="fc"><i>88</i>&nbsp;                                                                                                                                                     .map(headFiltered -&gt;</b>
+<b class="fc"><i>89</i>&nbsp;                                                                                                                                                          tailResult.put(head.getKey(),</b>
+<i>90</i>&nbsp;                                                                                                                                                                         headFiltered
+<i>91</i>&nbsp;                                                                                                                                                                        )
+<i>92</i>&nbsp;                                                                                                                                                         )
+<i>93</i>&nbsp;                                                                                               ),
+<b class="fc"><i>94</i>&nbsp;                                                      headElem -&gt; more(() -&gt; tailCall).map(it -&gt; it.put(head.getKey(),</b>
+<i>95</i>&nbsp;                                                                                                        headElem
+<i>96</i>&nbsp;                                                                                                       ))
+<i>97</i>&nbsp;                                                     )
+<b class="fc"><i>98</i>&nbsp;                                    .apply(head.getValue());</b>
+<i>99</i>&nbsp;                                }
+<i>100</i>&nbsp;                               );
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    }
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
+</div>
+</body>
+</html>

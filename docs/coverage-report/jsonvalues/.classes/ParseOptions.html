@@ -112,7 +112,7 @@
 <b class="fc"><i>12</i>&nbsp;    private Function&lt;? super JsPair,? extends JsElem&gt; map = pair -&gt; pair.elem;</b>
 <b class="fc"><i>13</i>&nbsp;    private Predicate&lt;? super JsPair&gt; filter = pair -&gt; true;</b>
 <b class="fc"><i>14</i>&nbsp;    private UnaryOperator&lt;String&gt; keyMap = k -&gt; k;</b>
-<b class="fc"><i>15</i>&nbsp;    private Predicate&lt;JsPath&gt; keyFilter = k -&gt; true;</b>
+<b class="fc"><i>15</i>&nbsp;    private Predicate&lt;? super JsPath&gt; keyFilter = k -&gt; true;</b>
 <i>16</i>&nbsp;
 <i>17</i>&nbsp;    /**
 <i>18</i>&nbsp;     static factory method to create a builder to customize the parsing of a string into a json.
@@ -149,7 +149,7 @@
 <i>49</i>&nbsp;     @param keyFilter the predicate to filter
 <i>50</i>&nbsp;     @return this ParseOptions builder
 <i>51</i>&nbsp;     */
-<i>52</i>&nbsp;    public ParseOptions withKeyFilter(final Predicate&lt;JsPath&gt; keyFilter)
+<i>52</i>&nbsp;    public ParseOptions withKeyFilter(final Predicate&lt;? super JsPath&gt; keyFilter)
 <i>53</i>&nbsp;    {
 <b class="fc"><i>54</i>&nbsp;        this.keyFilter = keyFilter;</b>
 <b class="fc"><i>55</i>&nbsp;        return this;</b>
@@ -171,7 +171,7 @@
 <i>71</i>&nbsp;     @param map the map function which takes as input a JsPair and returns the new JsElem
 <i>72</i>&nbsp;     @return this ParseOptions builder
 <i>73</i>&nbsp;     */
-<i>74</i>&nbsp;    public ParseOptions withElemMap(final Function&lt;JsPair, JsElem&gt; map)
+<i>74</i>&nbsp;    public ParseOptions withElemMap(final Function&lt;? super JsPair, ? extends JsElem&gt; map)
 <i>75</i>&nbsp;    {
 <b class="fc"><i>76</i>&nbsp;        this.map = map;</b>
 <b class="fc"><i>77</i>&nbsp;        return this;</b>
@@ -203,7 +203,7 @@
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-08-09 01:41</div>
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
 </div>
 </body>
 </html>

@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpMapImmutableObjObjs</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">jsonvalues</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpMapImmutableObjObjs (jsonvalues)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpMapImmutableObjObjs</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (30/ 30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package jsonvalues;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.function.BiFunction;
+<i>4</i>&nbsp;import java.util.function.BiPredicate;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import static jsonvalues.MatchExp.ifJsonElse;
+<i>7</i>&nbsp;import static jsonvalues.MatchExp.ifObjElse;
+<i>8</i>&nbsp;import static jsonvalues.Trampoline.more;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;class OpMapImmutableObjObjs extends OpMapObjs&lt;JsObj&gt;
+<i>11</i>&nbsp;{
+<i>12</i>&nbsp;    OpMapImmutableObjObjs(final JsObj json)
+<i>13</i>&nbsp;    {
+<b class="fc"><i>14</i>&nbsp;        super(json);</b>
+<b class="fc"><i>15</i>&nbsp;    }</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    @Override
+<i>18</i>&nbsp;    Trampoline&lt;JsObj&gt; map(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn,
+<i>19</i>&nbsp;                          final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate,
+<i>20</i>&nbsp;                          final JsPath startingPath
+<i>21</i>&nbsp;                         )
+<i>22</i>&nbsp;    {
+<b class="fc"><i>23</i>&nbsp;        return json.ifEmptyElse(Trampoline.done(json),</b>
+<i>24</i>&nbsp;                                (head, tail) -&gt;
+<i>25</i>&nbsp;                                {
+<b class="fc"><i>26</i>&nbsp;                                    final JsPath headPath = startingPath.key(head.getKey());</b>
+<i>27</i>&nbsp;
+<b class="fc"><i>28</i>&nbsp;                                    final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; new OpMapImmutableObjObjs(tail).map(fn,</b>
+<i>29</i>&nbsp;                                                                                                                                 predicate,
+<i>30</i>&nbsp;                                                                                                                                 startingPath
+<i>31</i>&nbsp;                                                                                                                                ));
+<b class="fc"><i>32</i>&nbsp;                                    return ifObjElse(headObj -&gt; more(() -&gt; tailCall).map(tailResult -&gt;</b>
+<i>33</i>&nbsp;                                                                                         {
+<b class="fc"><i>34</i>&nbsp;                                                                                             final JsElem headMapped = JsPair.of(headPath,</b>
+<i>35</i>&nbsp;                                                                                                                                 headObj
+<i>36</i>&nbsp;                                                                                                                                )
+<b class="fc"><i>37</i>&nbsp;                                                                                                                             .ifElse(p -&gt; predicate.test(p.path,</b>
+<i>38</i>&nbsp;                                                                                                                                                         headObj
+<i>39</i>&nbsp;                                                                                                                                                        ),
+<b class="fc"><i>40</i>&nbsp;                                                                                                                                     p -&gt; fn.apply(p.path,</b>
+<i>41</i>&nbsp;                                                                                                                                                   headObj
+<i>42</i>&nbsp;                                                                                                                                                  ),
+<b class="fc"><i>43</i>&nbsp;                                                                                                                                     p -&gt; p.elem</b>
+<i>44</i>&nbsp;                                                                                                                                    );
+<b class="fc"><i>45</i>&nbsp;                                                                                             return tailResult.put(head.getKey(),</b>
+<i>46</i>&nbsp;                                                                                                                   headMapped
+<i>47</i>&nbsp;                                                                                                                  );
+<i>48</i>&nbsp;                                                                                         }),
+<b class="fc"><i>49</i>&nbsp;                                                     headElem -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>50</i>&nbsp;                                                                                                                       headElem
+<i>51</i>&nbsp;                                                                                                                      ))
+<i>52</i>&nbsp;                                                    )
+<b class="fc"><i>53</i>&nbsp;                                    .apply(head.getValue());</b>
+<i>54</i>&nbsp;                                }
+<i>55</i>&nbsp;                               );
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    @Override
+<i>59</i>&nbsp;    Trampoline&lt;JsObj&gt; map_(final BiFunction&lt;? super JsPath, ? super JsObj, JsObj&gt; fn,
+<i>60</i>&nbsp;                           final BiPredicate&lt;? super JsPath, ? super JsObj&gt; predicate,
+<i>61</i>&nbsp;                           final JsPath startingPath
+<i>62</i>&nbsp;                          )
+<i>63</i>&nbsp;    {
+<b class="fc"><i>64</i>&nbsp;        return json.ifEmptyElse(Trampoline.done(json),</b>
+<i>65</i>&nbsp;                                (head, tail) -&gt;
+<i>66</i>&nbsp;                                {
+<b class="fc"><i>67</i>&nbsp;                                    final JsPath headPath = startingPath.key(head.getKey());</b>
+<b class="fc"><i>68</i>&nbsp;                                    final Trampoline&lt;JsObj&gt; tailCall = Trampoline.more(() -&gt; new OpMapImmutableObjObjs(tail).map_(fn,</b>
+<i>69</i>&nbsp;                                                                                                                                  predicate,
+<i>70</i>&nbsp;                                                                                                                                  startingPath
+<i>71</i>&nbsp;                                                                                                                                 )
+<i>72</i>&nbsp;                                                                                      );
+<b class="fc"><i>73</i>&nbsp;                                    return ifJsonElse(headObj -&gt;</b>
+<i>74</i>&nbsp;                                                      {
+<b class="fc"><i>75</i>&nbsp;                                                          JsObj headMapped = JsPair.of(headPath,</b>
+<i>76</i>&nbsp;                                                                                       headObj
+<i>77</i>&nbsp;                                                                                      )
+<b class="fc"><i>78</i>&nbsp;                                                                                   .ifElse(p -&gt; predicate.test(headPath,</b>
+<i>79</i>&nbsp;                                                                                                               headObj
+<i>80</i>&nbsp;                                                                                                              ),
+<b class="fc"><i>81</i>&nbsp;                                                                                           p -&gt; fn.apply(headPath,</b>
+<i>82</i>&nbsp;                                                                                                         headObj
+<i>83</i>&nbsp;                                                                                                        ),
+<b class="fc"><i>84</i>&nbsp;                                                                                           p -&gt; headObj</b>
+<i>85</i>&nbsp;                                                                                          );
+<b class="fc"><i>86</i>&nbsp;                                                          return more(() -&gt; tailCall).flatMap(tailResult -&gt; new OpMapImmutableObjObjs(headMapped).map_(fn,</b>
+<i>87</i>&nbsp;                                                                                                                                                       predicate,
+<i>88</i>&nbsp;                                                                                                                                                       headPath
+<i>89</i>&nbsp;                                                                                                                                                      )
+<b class="fc"><i>90</i>&nbsp;                                                                                                                                                 .map(headMappedResult -&gt;</b>
+<b class="fc"><i>91</i>&nbsp;                                                                                                                                                      tailResult.put(head.getKey(),</b>
+<i>92</i>&nbsp;                                                                                                                                                                     headMappedResult
+<i>93</i>&nbsp;                                                                                                                                                                    )
+<i>94</i>&nbsp;                                                                                                                                                     )
+<i>95</i>&nbsp;                                                                                             );
+<i>96</i>&nbsp;                                                      },
+<b class="fc"><i>97</i>&nbsp;                                                      headArray -&gt; more(() -&gt; tailCall).flatMap(tailResult -&gt; new OpMapImmutableArrObjs(headArray).map_(fn,</b>
+<i>98</i>&nbsp;                                                                                                                                                        predicate,
+<b class="fc"><i>99</i>&nbsp;                                                                                                                                                        headPath.index(-1)</b>
+<i>100</i>&nbsp;                                                                                                                                                       )
+<b class="fc"><i>101</i>&nbsp;                                                                                                                                                  .map(headResult -&gt;</b>
+<b class="fc"><i>102</i>&nbsp;                                                                                                                                                       tailResult.put(head.getKey(),</b>
+<i>103</i>&nbsp;                                                                                                                                                                      headResult
+<i>104</i>&nbsp;                                                                                                                                                                     )
+<i>105</i>&nbsp;                                                                                                                                                      )
+<i>106</i>&nbsp;                                                                                               ),
+<b class="fc"><i>107</i>&nbsp;                                                      headElement -&gt; more(() -&gt; tailCall).map(tailResult -&gt; tailResult.put(head.getKey(),</b>
+<i>108</i>&nbsp;                                                                                                                           headElement
+<i>109</i>&nbsp;                                                                                                                          ))
+<i>110</i>&nbsp;                                                     )
+<b class="fc"><i>111</i>&nbsp;                                    .apply(head.getValue());</b>
+<i>112</i>&nbsp;                                }
+<i>113</i>&nbsp;                               );
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
+</div>
+</body>
+</html>

@@ -139,9 +139,9 @@
 <i>65</i>&nbsp;     */
 <i>66</i>&nbsp;    public JsObj orElseThrow() throws MalformedJson
 <i>67</i>&nbsp;    {
-<b class="fc"><i>68</i>&nbsp;        if (obj != null) return obj;</b>
+<b class="pc"><i>68</i>&nbsp;        if (obj != null) return obj;</b>
 <b class="fc"><i>69</i>&nbsp;        if (error != null) throw error;</b>
-<b class="nc"><i>70</i>&nbsp;        throw new UnsupportedOperationException(&quot;TryObj.orElseThrow without obj nor exception&quot;);</b>
+<b class="nc"><i>70</i>&nbsp;        throw new Error(&quot;TryObj.orElseThrow without obj nor exception&quot;);</b>
 <i>71</i>&nbsp;    }
 <i>72</i>&nbsp;
 <i>73</i>&nbsp;    /**
@@ -161,7 +161,7 @@
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-08-09 01:41</div>
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
 </div>
 </body>
 </html>

@@ -117,7 +117,7 @@
 <i>43</i>&nbsp;    public int compareTo(final Position o)
 <i>44</i>&nbsp;    {
 <b class="fc"><i>45</i>&nbsp;        if (Objects.requireNonNull(o)</b>
-<b class="fc"><i>46</i>&nbsp;                   .isKey()) return name.compareTo(o.asKey().name);</b>
+<b class="pc"><i>46</i>&nbsp;                   .isKey()) return name.compareTo(o.asKey().name);</b>
 <b class="nc"><i>47</i>&nbsp;        return name.compareTo(o.asIndex().toString());</b>
 <i>48</i>&nbsp;
 <i>49</i>&nbsp;    }
@@ -183,8 +183,8 @@
 <i>109</i>&nbsp;    @Override
 <i>110</i>&nbsp;    public boolean equals(final @Nullable Object that)
 <i>111</i>&nbsp;    {
-<b class="fc"><i>112</i>&nbsp;        if (that == null || getClass() != that.getClass()) return false;</b>
-<b class="fc"><i>113</i>&nbsp;        if (this == that) return true;</b>
+<b class="pc"><i>112</i>&nbsp;        if (that == null || getClass() != that.getClass()) return false;</b>
+<b class="pc"><i>113</i>&nbsp;        if (this == that) return true;</b>
 <b class="fc"><i>114</i>&nbsp;        final Key thatObj = (Key) that;</b>
 <b class="fc"><i>115</i>&nbsp;        return name.equals(thatObj.name);</b>
 <i>116</i>&nbsp;    }
@@ -204,7 +204,7 @@
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2019-08-09 01:41</div>
+    <div style="float:right;">generated on 2019-08-13 01:03</div>
 </div>
 </body>
 </html>

@@ -1,11 +1,11 @@
-<img src="https://img.shields.io/travis/imrafaelmerino/json-values/master"/>   <img src="https://img.shields.io/circleci/build/github/imrafaelmerino/json-values/master"/>   [![Coverage](https://img.shields.io/badge/coverage-86-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html)
+<img src="https://img.shields.io/travis/imrafaelmerino/json-values/master"/>   <img src="https://img.shields.io/circleci/build/github/imrafaelmerino/json-values/master"/>   [![Coverage](https://img.shields.io/badge/coverage-88-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
-<img src="https://img.shields.io/badge/LOC-16061-blue"/>  <img src="https://img.shields.io/badge/HOC-176875-blue"/>
+<img src="https://img.shields.io/badge/LOC-19923-blue"/>  <img src="https://img.shields.io/badge/HOC-194756-blue"/>
 
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.3/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.4/jar)
 <img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>
 <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
 #### INTRODUCTION
@@ -50,7 +50,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.4</version>
 </dependency>
 ```
 and that's all. It's a zero-dependency library, so you won't have to go through a kind of dependency hell to get it working. 

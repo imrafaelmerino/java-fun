@@ -293,8 +293,7 @@ public class TestsUnionAndIntersection
     public void test_map_values_mutable_array()
     {
 
-        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
-                                                             .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
         JsArray array = JsArray._of_(JsStr.of("A"),
                                      JsStr.of("B")
                                     );
@@ -322,8 +321,7 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_values_immutable_array() throws MalformedJson
     {
-        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
-                                                             .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
 
 
         JsArray array = JsArray.of(JsStr.of("A"),
@@ -375,8 +373,7 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_values_mutable_obj()
     {
-        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
-                                                             .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
 
         JsObj obj = JsObj._of_("a",
                                JsStr.of("A"),
@@ -410,8 +407,7 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_values_immutable_obj()
     {
-        final Function<JsPair, JsElem> toLowerCaseFn = JsPair.mapIfStr(String::toLowerCase)
-                                                             .andThen(p -> p.elem);
+        final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
 
         JsObj obj = JsObj.of("a",
                              JsStr.of("A"),
@@ -870,17 +866,25 @@ public class TestsUnionAndIntersection
 
         Assertions.assertEquals(d,
                                 d.intersection(e,
-                                               SET));
+                                               SET
+                                              )
+                               );
 
         Assertions.assertEquals(f,
                                 d.intersection(e,
-                                               MULTISET));
+                                               MULTISET
+                                              )
+                               );
         Assertions.assertEquals(f,
                                 d.intersection(e,
-                                               LIST));
+                                               LIST
+                                              )
+                               );
         Assertions.assertEquals(i,
                                 d.intersection_(e,
-                                                LIST));
+                                                LIST
+                                               )
+                               );
 
 
     }

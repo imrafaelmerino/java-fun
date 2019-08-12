@@ -1,20 +1,38 @@
-# json-values
+# JSON-VALUES
+## v0.1.4  ( Tue Aug 13 2019 01:32:18 GMT+0200 (CEST) )
 
-## v1.0.0  ( Fri Aug 09 2019 00:55:03 GMT+0200 (CEST) )
 
+## Breaking changes
+
+  - **methods signature change**
+    - due to [bd440e40](https://github.com/imrafaelmerino/json-values.git/commit/bd440e40855a4367e984dc3087f17fb4dbcb57da),
+  method signature change if you are using JsPair.mapIfInt or JsPair.mapIfStr
+
+fix #13
+
+  ([bd440e40](https://github.com/imrafaelmerino/json-values.git/commit/bd440e40855a4367e984dc3087f17fb4dbcb57da))
+
+
+
+ 
 ## Features
 
-  - **new public methods**
-    - refactor some methods and make them public
-  ([dd2e4f87](https://github.com/imrafaelmerino/json-values.git/commit/dd2e4f8787f694f8a0c8f14483d1a8e98c4a9cc0))
+  - **integrations**
+    - integration with different CI tools
+  ([2aabf011](https://github.com/imrafaelmerino/json-values.git/commit/2aabf01132558dd4be0c8612a50d067234ce8bb1))
 
-  - **pattern matching**
-    - implement different match expressions using functions
-  ([05695a85](https://github.com/imrafaelmerino/json-values.git/commit/05695a85db0afbe3749e0ea84b87333cd15ccfa4))
+  - **method**
+    - method isSameType in JsElem
+  ([c904a54a](https://github.com/imrafaelmerino/json-values.git/commit/c904a54a244a1484621a9a528b0c0533bafd9471))
+
+  - **methods signature change**
+    - static methods mapIfStr and mapIfInt in JsPair aren't static anymore
+  ([bd440e40](https://github.com/imrafaelmerino/json-values.git/commit/bd440e40855a4367e984dc3087f17fb4dbcb57da))
+
+  - **travis/github**
+    - travis and GitHub Releases
+  ([ce0b4637](https://github.com/imrafaelmerino/json-values.git/commit/ce0b46375f1dfe7035d856622eaa8120299934e5))
 
 
 
 
-
----
-<sub><sup>*Generated with [git-changelog](https://github.com/rafinskipg/git-changelog). If you have any problems or suggestions, create an issue.* :) **Thanks** </sub></sup>

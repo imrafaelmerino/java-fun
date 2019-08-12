@@ -1,5 +1,7 @@
 package jsonvalues;
+
 import jsonvalues.MyJsTokenizer.Token;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
@@ -176,9 +178,9 @@ class MyJsParser implements Closeable
     }
 
 
-    private abstract static class Context
+    private abstract class Context
     {
-        Context next;
+        Context next = new NoneContext();
 
         abstract Event getNextEvent() throws MalformedJson;
     }

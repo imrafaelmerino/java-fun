@@ -183,7 +183,6 @@ final class MyScalaMap implements MyMap<MyScalaMap>
         {
             final String key = parser.getString();
             MyJsParser.Event elem = parser.next();
-            assert elem != null;
             switch (elem)
             {
                 case VALUE_STRING:

@@ -197,7 +197,6 @@ final class MyScalaVector implements MyVector<MyScalaVector>
         MyScalaVector newRoot = this;
         while ((elem = parser.next()) != END_ARRAY)
         {
-            assert elem != null;
             switch (elem)
             {
                 case VALUE_STRING:

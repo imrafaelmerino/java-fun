@@ -12,7 +12,7 @@ public class ParseOptions
     private Function<? super JsPair,? extends JsElem> map = pair -> pair.elem;
     private Predicate<? super JsPair> filter = pair -> true;
     private UnaryOperator<String> keyMap = k -> k;
-    private Predicate<JsPath> keyFilter = k -> true;
+    private Predicate<? super JsPath> keyFilter = k -> true;
 
     /**
      static factory method to create a builder to customize the parsing of a string into a json.
@@ -49,7 +49,7 @@ public class ParseOptions
      @param keyFilter the predicate to filter
      @return this ParseOptions builder
      */
-    public ParseOptions withKeyFilter(final Predicate<JsPath> keyFilter)
+    public ParseOptions withKeyFilter(final Predicate<? super JsPath> keyFilter)
     {
         this.keyFilter = keyFilter;
         return this;
@@ -71,7 +71,7 @@ public class ParseOptions
      @param map the map function which takes as input a JsPair and returns the new JsElem
      @return this ParseOptions builder
      */
-    public ParseOptions withElemMap(final Function<JsPair, JsElem> map)
+    public ParseOptions withElemMap(final Function<? super JsPair, ? extends JsElem> map)
     {
         this.map = map;
         return this;

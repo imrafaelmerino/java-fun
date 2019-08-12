@@ -37,14 +37,6 @@ public final class JsPair
 
     /**
      Declarative way of implementing {@code  if(pair.elem.isInt()) return Pair.of(pair.path, pair.elem.asJsInt().map(operator)) else return pair}
-     {@code
-     JsPair pair = JsPair.of(JsPath.of("a.b"),JsInt.of(1))
-     pair.mapIfLong(l->l+10) // ('a'.'b', 11)
-
-     JsPair pair1 = JsPair.of(JsPath.of("a.b"),JsStr.of("a"))
-     pair1.mapIfLong(l->l+10).equals(pair1) // true, same pair is returned
-     }
-     </pre>
      @param operator the function to be applied to map the integer
      @return the same this instance if the JsElem is not a JsInt or a new pair
      */
@@ -62,17 +54,6 @@ public final class JsPair
 
     /**
      Declarative way of implementing {@code  if(pair.elem.isStr()) return Pair.of(pair.path, pair.elem.asJsStr().map(mapFn)) else return pair}
-     <p>
-     Examples:
-     <pre>
-     {@code
-     JsPair pair = JsPair.of(JsPath.of("a.b"),JsStr.of("a"))
-     pair.mapIfStr(String::toUpperCase) // ('a'.'b', "A")
-
-     JsPair pair1 = JsPair.of(JsPath.of("a.b"),JsInt.of(1))
-     pair1.mapIfStr(String::toUpperCase).equals(pair1) // true, same pair is returned
-     }
-     </pre>
      @param fn the function to be applied to map the string of the JsStr
      @return the same this instance if the JsElem is not a JsStr or a new pair
      */

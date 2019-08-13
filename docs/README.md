@@ -2,11 +2,9 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
-<img src="https://img.shields.io/badge/LOC-20584-blue"/>  <img src="https://img.shields.io/badge/HOC-210000-blue"/>
-
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
-
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.4/jar)
+
 <img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>
 <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
 

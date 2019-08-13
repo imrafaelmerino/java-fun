@@ -4,10 +4,12 @@
 
 <img src="https://img.shields.io/badge/LOC-20584-blue"/>  <img src="https://img.shields.io/badge/HOC-210000-blue"/>
 
+[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
 
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.4/jar)
 <img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>
 <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
+
 #### INTRODUCTION
 Welcome to **json-values**, the first-ever Json library in _Java_ that uses _persistent data structures_ 
 from _Scala_. _Java_ doesn't implement _persistent data structures_ natively; nevertheless, Scala does and 

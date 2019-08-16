@@ -308,6 +308,7 @@ public interface JsElem
     /**
      @return true if this JsElem is a JsArray
      */
+
     boolean isArray();
 
     /**

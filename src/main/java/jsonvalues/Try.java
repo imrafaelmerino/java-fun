@@ -126,9 +126,11 @@ public final class Try
     /**
      Returns the computed Json wrapped in an optional if the parsed string is a well-formed json,
      returning an empty optional otherwise.
-     @return  Optional.empty() if the parsed string is not a well-formed json, returning an
+     @return Optional.empty() if the parsed string is not a well-formed json, returning an
      Optional containing the computed Json otherwise.
      */
+    //squid:S1452: The returned object is created parsing a string, there's no way to know the type of the json
+    @SuppressWarnings("squid:S1452")
     public Optional<Json<?>> toOptional()
     {
         if (arr != null) return Optional.of(arr);

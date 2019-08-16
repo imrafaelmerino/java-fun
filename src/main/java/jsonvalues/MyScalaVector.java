@@ -10,10 +10,10 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static jsonvalues.MyConstants.*;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
+import static jsonvalues.MyConstants.*;
 import static jsonvalues.MyJsParser.Event.END_ARRAY;
 
 final class MyScalaVector implements MyVector<MyScalaVector>
@@ -98,12 +98,16 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @Override
     public JsElem head()
     {
+        if (this.isEmpty()) throw UserError.headOfEmptyArr();
+
         return vector.head();
     }
 
     @Override
     public MyScalaVector init()
     {
+        if (this.isEmpty()) throw UserError.initOfEmptyArr();
+
         return new MyScalaVector(vector.init());
     }
 
@@ -123,6 +127,8 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @Override
     public JsElem last()
     {
+        if (this.isEmpty()) throw UserError.lastOfEmptyArr();
+
         return vector.last();
     }
 
@@ -151,8 +157,8 @@ final class MyScalaVector implements MyVector<MyScalaVector>
 
         return new MyScalaVector(tuple._1.init()
                                          .$plus$plus(tuple._2,
-                                              bf
-                                             ));
+                                                     bf
+                                                    ));
     }
 
     @Override
@@ -171,6 +177,8 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @Override
     public MyScalaVector tail()
     {
+        if (this.isEmpty()) throw UserError.tailOfEmptyArr();
+
         return new MyScalaVector(vector.tail());
     }
 
@@ -224,6 +232,8 @@ final class MyScalaVector implements MyVector<MyScalaVector>
 
                     newRoot = newRoot.appendBack(new MyImmutableJsArray(newVector));
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
             }
         }
 
@@ -300,8 +310,11 @@ final class MyScalaVector implements MyVector<MyScalaVector>
                                                                                         currentPath.index(-1)
                                                                                        )));
                     }
-
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
+
             }
         }
         return newRoot;

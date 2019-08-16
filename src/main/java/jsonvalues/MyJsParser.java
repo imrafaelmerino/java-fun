@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Deque;
 import java.util.Objects;
-import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static jsonvalues.MyJsParser.Event.*;
 import static jsonvalues.MyJsTokenizer.Token.*;
@@ -80,7 +81,7 @@ class MyJsParser implements Closeable
 
     private Context currentContext = new NoneContext();
     private Event currentEvent = NOTHING;
-    private final Stack<Context> stack = new Stack<>();
+    private final Deque<Context> stack = new ConcurrentLinkedDeque<>();
     private final MyJsTokenizer tokenizer;
 
     private boolean isIntegralNumber()
@@ -158,7 +159,8 @@ class MyJsParser implements Closeable
 
     Event next() throws MalformedJson
     {
-        return currentEvent = currentContext.getNextEvent();
+        currentEvent = currentContext.getNextEvent();
+        return currentEvent;
     }
 
     @Override
@@ -177,17 +179,16 @@ class MyJsParser implements Closeable
         }
     }
 
-
-    private abstract class Context
+    private interface Context
     {
-        abstract Event getNextEvent() throws MalformedJson;
+        Event getNextEvent() throws MalformedJson;
     }
 
-    //
-    private final class NoneContext extends Context
+
+    private final class NoneContext implements Context
     {
         @Override
-        Event getNextEvent() throws MalformedJson
+        public Event getNextEvent() throws MalformedJson
         {
             return nextValueOrJsonBeginning(tokenizer.nextToken());
         }
@@ -203,12 +204,12 @@ class MyJsParser implements Closeable
                                          );
     }
 
-    private final class ObjectContext extends Context
+    private final class ObjectContext implements Context
     {
         private boolean firstValue = true;
 
         @Override
-        Event getNextEvent() throws MalformedJson
+        public Event getNextEvent() throws MalformedJson
         {
             Token token;
             if (currentEvent == KEY_NAME) token = tokenizer.matchColonToken();
@@ -253,12 +254,12 @@ class MyJsParser implements Closeable
         }
     }
 
-    private final class ArrayContext extends Context
+    private final class ArrayContext implements Context
     {
         private boolean firstValue = true;
 
         @Override
-        Event getNextEvent() throws MalformedJson
+        public Event getNextEvent() throws MalformedJson
         {
             Token token = tokenizer.nextToken();
             if (token == EOF)

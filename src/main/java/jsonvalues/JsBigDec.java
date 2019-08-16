@@ -41,7 +41,8 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
 
 
     /**
-     Indicates whether some other object is "equal to" this json big decimal. Numbers of different types are equals if the have the same value:
+     Indicates whether some other object is "equal to" this json big decimal. Numbers of different
+     types are equals if the have the same value:
      {@code
      JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsDouble.of(1.00))
      JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsInt.of(1))
@@ -49,7 +50,6 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
      JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsBigDec.of(BigDecimal.valueOf(1.00)))
      JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsLong.of(1))
      }
-
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this
      */
@@ -60,13 +60,11 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         if (that == null) return false;
         if (!(that instanceof JsNumber)) return false;
         final JsNumber number = (JsNumber) that;
-
         if (number.isBigDec()) return x.compareTo(number.asJsBigDec().x) == 0;
         if (number.isBigInt()) return equals(number.asJsBigInt());
         if (number.isInt()) return equals(number.asJsInt());
         if (number.isLong()) return equals(number.asJsLong());
         if (number.isDouble()) return equals(number.asJsDouble());
-
         return false;
     }
 
@@ -81,7 +79,8 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         if (optInt.isPresent()) return optInt.getAsInt();
 
         final OptionalLong optLong = longValueExact();
-        if (optLong.isPresent()) return JsLong.of(optLong.getAsLong()).hashCode();
+        if (optLong.isPresent()) return JsLong.of(optLong.getAsLong())
+                                              .hashCode();
 
         final Optional<BigInteger> optBigInt = bigIntegerExact();
         return optBigInt.map(BigInteger::hashCode)
@@ -146,6 +145,7 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         }
 
     }
+
     /**
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code int}.
      @return this bigdecimal as an int wrapped in an OptionalInt
@@ -192,6 +192,7 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         return OptionalDouble.of(value);
 
     }
+
     /**
      returns true if this bigdecimal and the specified biginteger represent the same number
      @param jsBigInt the specified JsBigInt
@@ -214,6 +215,7 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         final OptionalInt optional = intValueExact();
         return optional.isPresent() && optional.getAsInt() == requireNonNull(jsInt).x;
     }
+
     /**
      returns true if this bigdecimal and the specified long represent the same number
      @param jsLong the specified JsLong
@@ -224,6 +226,7 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         final OptionalLong optional = longValueExact();
         return optional.isPresent() && optional.getAsLong() == requireNonNull(jsLong).x;
     }
+
     /**
      returns true if this bigdecimal and the specified double represent the same number
      @param jsDouble the specified JsDouble
@@ -235,54 +238,6 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
         //errorProne warning BigDecimalEquals -> compareTo instead of equals so 2.0 = 2.000
         return BigDecimal.valueOf(requireNonNull(jsDouble).x)
                          .compareTo(x) == 0;
-    }
-
-    @Override
-    public boolean isObj()
-    {
-        return false;
-    }
-
-    public boolean isArray()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNothing()
-    {
-        return false;
-    }
-
-
-    @Override
-    public boolean isNull()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNumber()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isBool()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isTrue()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFalse()
-    {
-        return false;
     }
 
     @Override
@@ -305,12 +260,6 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
 
     @Override
     public boolean isLong()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isStr()
     {
         return false;
     }

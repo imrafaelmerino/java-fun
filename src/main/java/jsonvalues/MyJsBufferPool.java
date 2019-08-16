@@ -12,7 +12,8 @@ class MyJsBufferPool
 {
     // volatile since multiple threads may access queue reference
     private
-    volatile WeakReference<ConcurrentLinkedQueue<char[]>> queue = new WeakReference<>(new ConcurrentLinkedQueue<>());
+    final ConcurrentLinkedQueue<WeakReference<char[]>> queue = new ConcurrentLinkedQueue<>();
+
 
     /**
      * Gets a new object from the pool.
@@ -23,27 +24,18 @@ class MyJsBufferPool
      */
     final char[] take()
     {
-        return Optional.ofNullable(getQueue().poll())
-                       .orElseGet(() -> new char[4096]);
-
+        WeakReference<char[]> weakReference = Optional.ofNullable(queue.poll())
+                                                      .orElseGet(() -> new WeakReference<>(new char[4096]));
+        return Optional.ofNullable(weakReference.get()).orElseGet(()->new char[4096]);
     }
 
-    private ConcurrentLinkedQueue<char[]> getQueue()
-    {
-        ConcurrentLinkedQueue<char[]> d;
-        d = queue.get();
-        if (d != null) return d;
-        d = new ConcurrentLinkedQueue<>();
-        queue = new WeakReference<>(d);
-        return d;
-    }
 
     /**
      * Returns an object back to the pool.
      */
     final void recycle(char[] t)
     {
-        getQueue().offer(t);
+        queue.offer(new WeakReference<>(t));
     }
 
 }

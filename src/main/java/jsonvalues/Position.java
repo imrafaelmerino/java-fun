@@ -5,13 +5,13 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
 /**
  Represents the location of a first-level element in a json, either a Key in a JsObj or an Index in
  a JsArray.
  */
 public interface Position extends Comparable<Position>
 {
-
     /**
      {@inheritDoc}
      */

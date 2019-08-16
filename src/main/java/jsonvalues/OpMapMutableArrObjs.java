@@ -76,6 +76,7 @@ class OpMapMutableArrObjs extends OpMapObjs<JsArray>
     }
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     Trampoline<JsArray> map_(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
                              final BiPredicate<? super JsPath, ? super JsObj> predicate,
                              final JsPath startingPath
@@ -88,7 +89,7 @@ class OpMapMutableArrObjs extends OpMapObjs<JsArray>
                     startingPath
                    );
     }
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     private Trampoline<JsArray> map_(final JsArray acc,
                                      final JsArray remaining,
                                      final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,

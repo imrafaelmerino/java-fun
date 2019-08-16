@@ -41,9 +41,9 @@ class OpCombinerObjs extends OpCombiner<JsObj>
                                                                                                                                obj1
                                                                                                                               )
                                                                                                                 );
-                                                                   return more(() -> tailCall).flatMap(tailResult -> headCall.map(headCombined_ ->
+                                                                   return more(() -> tailCall).flatMap(tailResult -> headCall.map(headResult ->
                                                                                                                                   tailResult.put(head.getKey(),
-                                                                                                                                                 headCombined_
+                                                                                                                                                 headResult
                                                                                                                                                 )
                                                                                                                                  )
                                                                                                       );

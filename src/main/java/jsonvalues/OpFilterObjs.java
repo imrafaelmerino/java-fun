@@ -16,6 +16,7 @@ abstract class OpFilterObjs<T>
                                   final BiPredicate<? super JsPath, ? super JsObj> predicate
                                  );
 
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     abstract Trampoline<T> filter_(final JsPath startingPath,
                                    final BiPredicate<? super JsPath, ? super JsObj> predicate
                                   );

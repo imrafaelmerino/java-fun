@@ -8,6 +8,7 @@ import scala.collection.immutable.HashMap;
 import scala.runtime.AbstractFunction1;
 
 import java.util.AbstractMap;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -75,15 +76,20 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     @Override
     public JsElem get(final String key)
     {
-
-        return persistentMap.apply(key);
+        try
+        {
+            return persistentMap.apply(key);
+        }
+        catch (NoSuchElementException e)
+        {
+            throw InternalError.keyNotFound(key);
+        }
     }
 
     @Override
     public Optional<JsElem> getOptional(final String key)
     {
-        return persistentMap.contains(key) ? Optional.of(persistentMap.get(key)
-                                                                      .get()) : Optional.empty();
+        return persistentMap.contains(key) ? Optional.of(persistentMap.get(key).get()) : Optional.empty();
     }
 
     @Override
@@ -95,7 +101,7 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     @Override
     public java.util.Map.Entry<String, JsElem> head()
     {
-        if (this.isEmpty()) throw new UnsupportedOperationException("head of empty map");
+        if (this.isEmpty()) throw UserError.headOfEmptyObj();
 
         final Tuple2<String, JsElem> head = persistentMap.head();
 
@@ -127,7 +133,7 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
     public MyScalaMap tail(String head)
     {
-        if (this.isEmpty()) throw new UnsupportedOperationException("tail of empty map");
+        if (this.isEmpty()) throw UserError.tailOfEmptyObj();
         return new MyScalaMap(((HashMap<String, JsElem>) persistentMap).$minus(head));
     }
 
@@ -222,6 +228,9 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                                              new MyImmutableJsArray(newArr)
                                             );
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
 
             }
         }
@@ -310,6 +319,8 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                                                 );
                     }
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
             }
         }
         return newRoot;

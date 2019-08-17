@@ -118,6 +118,35 @@ public class TestJsPath
         Assertions.assertEquals(JsPath.of("'a'.'b'.+.1"), JsPath.of("a.b.%20.1"));
     }
 
+    @Test
+    public void test_starts_with()
+    {
 
+        final JsPath path = JsPath.of("a.b.c.0.1");
+        Assertions.assertTrue(path.startsWith(JsPath.empty()));
+        Assertions.assertTrue(path.startsWith("a"));
+        Assertions.assertTrue(path.startsWith("a.b"));
+        Assertions.assertTrue(path.startsWith("a.b.c"));
+        Assertions.assertTrue(path.startsWith("a.b.c.0"));
+        Assertions.assertTrue(path.startsWith("a.b.c.0.1"));
+        Assertions.assertFalse(path.startsWith("a.b.c.0.1.a"));
+    }
+    @Test
+    public void test_ends_with()
+    {
+        final JsPath path = JsPath.of("a.b.c.0.1");
+        Assertions.assertTrue(path.endsWith(JsPath.empty()));
+        Assertions.assertTrue(path.endsWith("1"));
+        Assertions.assertTrue(path.endsWith("0.1"));
+        Assertions.assertTrue(path.endsWith("c.0.1"));
+        Assertions.assertTrue(path.endsWith("b.c.0.1"));
+        Assertions.assertTrue(path.endsWith("a.b.c.0.1"));
+        Assertions.assertFalse(path.endsWith("a.b.c.0.1.a"));
+    }
+    @Test
+    public void test_same(){
+        final JsPath path = JsPath.of("a.b.c.d.0");
+        Assertions.assertTrue(path.same("a.b.c.d.0"));
+    }
 
 }

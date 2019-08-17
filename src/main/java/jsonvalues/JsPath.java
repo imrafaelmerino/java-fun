@@ -544,6 +544,69 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
+     return true if this path and a given path-like string represent the same location.
+     @param path the given path-like string
+     @return true if this JsPath and given path-like string represent the same location
+     */
+    public boolean same(String path)
+    {
+        return JsPath.of(requireNonNull(path))
+                     .equals(this);
+    }
+
+    /**
+     returns true if this path starts with the given path-like string
+     @param path the given path-like string
+     @return true if this JsPath starts with the given path-like string
+     */
+    public boolean startsWith(String path)
+    {
+        return startsWith(of(requireNonNull(path)));
+    }
+
+    /**
+     returns true if this path starts with the given path. If the given path is JsPath.empty(), it
+     always returns true
+     @param path the given path
+     @return true if this JsPath starts with the given JsPath
+     */
+    public boolean startsWith(JsPath path)
+    {
+        if (requireNonNull(path).isEmpty()) return true;
+        if (this.isEmpty()) return false;
+
+        return this.head()
+                   .equals(path.head()) && this.tail()
+                                               .startsWith(path.tail());
+    }
+
+    /**
+     returns true if this path ends with the given path. If the given path is JsPath.empty(), it
+     always returns true
+     @param path the given path
+     @return true if this JsPath ends with the given JsPath
+     */
+    public boolean endsWith(JsPath path)
+    {
+        if (requireNonNull(path).isEmpty()) return true;
+        if (this.isEmpty()) return false;
+
+        return this.last()
+                   .equals(path.last()) && this.init()
+                                               .endsWith(path.init());
+    }
+
+    /**
+     returns true if this path ends with the given path-like string
+     @param path the given path-like string
+     @return true if this JsPath ends with the given path-like string
+     */
+    public boolean endsWith(String path)
+    {
+        return endsWith(of(requireNonNull(path)));
+    }
+
+    /**
      Returns the hashcode of this path
      @return hashcode of this JsPath
      */

@@ -61,7 +61,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
 </dependency>
 ```
 and that's all. It's a **zero-dependency** library, so you won't have to go through a kind of dependency hell to get it working. 

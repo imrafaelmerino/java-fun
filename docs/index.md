@@ -16,7 +16,7 @@
  - [Stream and collectors](#stream-collectors)
     - [Streams](#streams)
     - [Object collectors](#object-collectors)
-    - [Array collectorse](#array-collectors)
+    - [Array collectors](#array-collectors)
  - [Filter, map and reduce](#filter-map-reduce)
    - [Filter](#filter)
    - [Map](#map)

@@ -19,7 +19,7 @@ public interface Trampoline<T> extends Supplier<T>
      is invoked, this trampoline is executed and then the result is mapped.
      @param fn the map function, from T to R
      @param <R> type of the result
-     @return  a Trampoline of type R
+     @return a Trampoline of type R
      */
     default <R> Trampoline<R> map(Function<? super T, ? extends R> fn)
     {

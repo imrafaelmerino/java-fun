@@ -3,16 +3,12 @@ package jsonvalues;
 import jsonvalues.JsArray.TYPE;
 
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collector;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MyErrors.errorIfImmutableArg;
-import static jsonvalues.MyErrors.errorIfMutableArg;
 import static jsonvalues.MyJsParser.Event.START_OBJECT;
 import static jsonvalues.MyScalaMap.EMPTY;
 
@@ -50,9 +46,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       final JsElem el
                      )
     {
+        if (requireNonNull(el).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(el);
         return _empty_().put(JsPath.empty()
                                    .key(requireNonNull(key)),
-                             errorIfImmutableArg.apply(el)
+                             el
                             );
     }
 
@@ -72,12 +69,13 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       final JsElem el2
                      )
     {
+        if (requireNonNull(el2).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(el2);
 
-        return _of_(requireNonNull(key1),
-                    errorIfImmutableArg.apply(el1)
+        return _of_(key1,
+                    el1
                    ).put(JsPath.empty()
                                .key(requireNonNull(key2)),
-                         errorIfImmutableArg.apply(el2)
+                         el2
                         );
     }
 
@@ -103,13 +101,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       final JsElem el3
                      )
     {
-        return _of_(requireNonNull(key1),
-                    errorIfImmutableArg.apply(el1),
-                    requireNonNull(key2),
-                    errorIfImmutableArg.apply(el2)
+        if (requireNonNull(el3).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(el3);
+        return _of_(key1,
+                    el1,
+                    key2,
+                    el2
                    ).put(JsPath.empty()
                                .key(requireNonNull(key3)),
-                         errorIfImmutableArg.apply(el3)
+                         el3
                         );
     }
 
@@ -139,15 +138,17 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       final JsElem el4
                      )
     {
-        return _of_(requireNonNull(key1),
-                    errorIfImmutableArg.apply(el1),
-                    requireNonNull(key2),
-                    errorIfImmutableArg.apply(el2),
-                    requireNonNull(key3),
-                    errorIfImmutableArg.apply(el3)
+        if (requireNonNull(el4).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(el4);
+
+        return _of_(key1,
+                    el1,
+                    key2,
+                    el2,
+                    key3,
+                    el3
                    ).put(JsPath.empty()
                                .key(requireNonNull(key4)),
-                         errorIfImmutableArg.apply(el4)
+                         el4
                         );
     }
 
@@ -182,17 +183,19 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       final JsElem el5
                      )
     {
-        return _of_(requireNonNull(key1),
-                    errorIfImmutableArg.apply(el1),
-                    requireNonNull(key2),
-                    errorIfImmutableArg.apply(el2),
-                    requireNonNull(key3),
-                    errorIfImmutableArg.apply(el3),
-                    requireNonNull(key4),
-                    errorIfImmutableArg.apply(el4)
+        if (requireNonNull(el5).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(el5);
+
+        return _of_(key1,
+                    el1,
+                    key2,
+                    el2,
+                    key3,
+                    el3,
+                    key4,
+                    el4
                    ).put(JsPath.empty()
                                .key(requireNonNull(key5)),
-                         errorIfImmutableArg.apply(el5)
+                         el5
                         );
     }
 
@@ -230,19 +233,21 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       final JsElem el6
                      )
     {
-        return _of_(requireNonNull(key1),
-                    errorIfImmutableArg.apply(el1),
-                    requireNonNull(key2),
-                    errorIfImmutableArg.apply(el2),
-                    requireNonNull(key3),
-                    errorIfImmutableArg.apply(el3),
-                    requireNonNull(key4),
-                    errorIfImmutableArg.apply(el4),
-                    requireNonNull(key5),
-                    errorIfImmutableArg.apply(el5)
+        if (requireNonNull(el6).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(el6);
+
+        return _of_(key1,
+                    el1,
+                    key2,
+                    el2,
+                    key3,
+                    el3,
+                    key4,
+                    el4,
+                    key5,
+                    el5
                    ).put(JsPath.empty()
                                .key(requireNonNull(key6)),
-                         errorIfImmutableArg.apply(el6)
+                         el6
                         );
     }
 //
@@ -257,8 +262,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsObj _of_(final java.util.Map<String, JsElem> map)
     {
-        MyErrors.<Collection<JsElem>>errorIfAnyImmutable().apply(Objects.requireNonNull(map)
-                                                                        .values());
+        requireNonNull(map).values()
+                           .stream()
+                           .filter(e -> e.isJson(Json::isImmutable))
+                           .findFirst()
+                           .ifPresent(UserError::mutableArgExpected);
         return new MyMutableJsObj(new MyJavaMap(map));
     }
 
@@ -297,8 +305,8 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @return true if both objs are equals
      */
     @SuppressWarnings("squid:S00117") //  perfectly fine _
-    default boolean equals(JsObj that,
-                           TYPE ARRAY_AS
+    default boolean equals(final JsObj that,
+                           final TYPE ARRAY_AS
                           )
     {
         if (isEmpty()) return that.isEmpty();
@@ -437,9 +445,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsElem el
                    )
     {
+        if (requireNonNull(el).isJson(Json::isMutable)) throw UserError.immutableArgExpected(el);
+
         return empty().put(JsPath.empty()
                                  .key(requireNonNull(key)),
-                           errorIfMutableArg.apply(el)
+                           el
                           );
     }
 
@@ -459,12 +469,13 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsElem el2
                    )
     {
+        if (requireNonNull(el2).isJson(Json::isMutable)) throw UserError.immutableArgExpected(el2);
 
-        return of(requireNonNull(key1),
-                  errorIfMutableArg.apply(el1)
+        return of(key1,
+                  el1
                  ).put(JsPath.empty()
                              .key(requireNonNull(key2)),
-                       errorIfMutableArg.apply(el2)
+                       el2
                       );
     }
 
@@ -489,13 +500,15 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsElem el3
                    )
     {
-        return of(requireNonNull(key1),
-                  errorIfMutableArg.apply(el1),
-                  requireNonNull(key2),
-                  errorIfMutableArg.apply(el2)
+        if (requireNonNull(el3).isJson(Json::isMutable)) throw UserError.immutableArgExpected(el3);
+
+        return of(key1,
+                  el1,
+                  key2,
+                  el2
                  ).put(JsPath.empty()
                              .key(requireNonNull(key3)),
-                       errorIfMutableArg.apply(el3)
+                       el3
                       );
     }
 
@@ -525,15 +538,17 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsElem el4
                    )
     {
-        return of(requireNonNull(key1),
-                  errorIfMutableArg.apply(el1),
-                  requireNonNull(key2),
-                  errorIfMutableArg.apply(el2),
-                  requireNonNull(key3),
-                  errorIfMutableArg.apply(el3)
+        if (requireNonNull(el4).isJson(Json::isMutable)) throw UserError.immutableArgExpected(el4);
+
+        return of(key1,
+                  el1,
+                  key2,
+                  el2,
+                  key3,
+                  el3
                  ).put(JsPath.empty()
                              .key(requireNonNull(key4)),
-                       errorIfMutableArg.apply(el4)
+                       el4
                       );
     }
 
@@ -567,17 +582,18 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsElem el5
                    )
     {
-        return of(requireNonNull(key1),
-                  errorIfMutableArg.apply(el1),
-                  requireNonNull(key2),
-                  errorIfMutableArg.apply(el2),
-                  requireNonNull(key3),
-                  errorIfMutableArg.apply(el3),
-                  requireNonNull(key4),
-                  errorIfMutableArg.apply(el4)
+        if (requireNonNull(el5).isJson(Json::isMutable)) throw UserError.immutableArgExpected(el5);
+        return of(key1,
+                  el1,
+                  key2,
+                  el2,
+                  key3,
+                  el3,
+                  key4,
+                  el4
                  ).put(JsPath.empty()
                              .key(requireNonNull(key5)),
-                       errorIfMutableArg.apply(el5)
+                       el5
                       );
     }
 
@@ -615,19 +631,20 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsElem el6
                    )
     {
-        return of(requireNonNull(key1),
-                  errorIfMutableArg.apply(el1),
-                  requireNonNull(key2),
-                  errorIfMutableArg.apply(el2),
-                  requireNonNull(key3),
-                  errorIfMutableArg.apply(el3),
-                  requireNonNull(key4),
-                  errorIfMutableArg.apply(el4),
-                  requireNonNull(key5),
-                  errorIfMutableArg.apply(el5)
+        if (requireNonNull(el6).isJson(Json::isMutable)) throw UserError.immutableArgExpected(el6);
+        return of(key1,
+                  el1,
+                  key2,
+                  el2,
+                  key3,
+                  el3,
+                  key4,
+                  el4,
+                  key5,
+                  el5
                  ).put(JsPath.empty()
                              .key(requireNonNull(key6)),
-                       errorIfMutableArg.apply(el6)
+                       el6
                       );
     }
 
@@ -640,8 +657,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     static JsObj of(final java.util.Map<String, JsElem> map)
     {
         if (requireNonNull(map).isEmpty()) return empty();
-        MyErrors.errorIfAnyMutable()
-                .apply(map.values());
+        requireNonNull(map).values()
+                           .stream()
+                           .filter(e -> e.isJson(Json::isMutable))
+                           .findFirst()
+                           .ifPresent(UserError::immutableArgExpected);
         return new MyImmutableJsObj(EMPTY.updateAll(map));
     }
 
@@ -780,13 +800,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                     final JsPair... others
                    )
     {
-        JsObj obj = empty().put(requireNonNull(pair.path),
-                                errorIfMutableArg.apply(pair.elem)
+        if (requireNonNull(pair).elem.isJson(Json::isMutable)) throw UserError.immutableArgExpected(pair.elem);
+        JsObj obj = empty().put(pair.path,
+                                pair.elem
                                );
         for (JsPair p : others)
         {
-            obj = obj.put(requireNonNull(p.path),
-                          errorIfMutableArg.apply(p.elem)
+            if (requireNonNull(p).elem.isJson(Json::isMutable)) throw UserError.immutableArgExpected(p.elem);
+
+            obj = obj.put(p.path,
+                          p.elem
                          );
         }
         return obj;
@@ -805,13 +828,17 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                       JsPair... others
                      )
     {
-        JsObj obj = _empty_().put(requireNonNull(pair.path),
-                                  errorIfImmutableArg.apply(pair.elem)
+        if (requireNonNull(pair).elem.isJson(Json::isImmutable)) throw UserError.mutableArgExpected(pair.elem);
+
+        JsObj obj = _empty_().put(pair.path,
+                                  pair.elem
                                  );
         for (JsPair p : others)
         {
-            obj.put(requireNonNull(p.path),
-                    errorIfImmutableArg.apply(p.elem)
+            if (requireNonNull(p).elem.isJson(Json::isImmutable)) throw UserError.mutableArgExpected(p.elem);
+
+            obj.put(p.path,
+                    p.elem
                    );
         }
         return obj;

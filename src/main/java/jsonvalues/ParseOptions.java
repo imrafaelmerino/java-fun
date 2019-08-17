@@ -9,7 +9,7 @@ import java.util.function.UnaryOperator;
  */
 public class ParseOptions
 {
-    private Function<? super JsPair,? extends JsElem> map = pair -> pair.elem;
+    private Function<? super JsPair, ? extends JsElem> map = pair -> pair.elem;
     private Predicate<? super JsPair> filter = pair -> true;
     private UnaryOperator<String> keyMap = k -> k;
     private Predicate<? super JsPath> keyFilter = k -> true;

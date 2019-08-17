@@ -86,7 +86,7 @@ public final class JsBool implements JsElem
     {
         return false;
     }
-
+    @Override
     public boolean isArray()
     {
         return false;
@@ -97,7 +97,6 @@ public final class JsBool implements JsElem
     {
         return false;
     }
-
 
     @Override
     public boolean isNull()
@@ -152,8 +151,6 @@ public final class JsBool implements JsElem
     {
         return false;
     }
-
-
 
     @Override
     public boolean isStr()

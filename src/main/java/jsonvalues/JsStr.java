@@ -20,7 +20,7 @@ public final class JsStr implements JsElem, Comparable<JsStr>
      */
     public final String x;
 
-    JsStr(String x)
+    private JsStr(String x)
     {
         this.x = x;
     }
@@ -108,7 +108,7 @@ public final class JsStr implements JsElem, Comparable<JsStr>
     {
         return false;
     }
-
+    @Override
     public boolean isArray()
     {
         return false;

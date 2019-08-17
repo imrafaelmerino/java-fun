@@ -11,9 +11,7 @@ import static jsonvalues.Trampoline.more;
 
 class OpMapReduce<T>
 {
-
     private final BiFunction<JsPair, Optional<T>, Optional<T>> accumulator;
-
 
     OpMapReduce(final Predicate<? super JsPair> predicate,
                 final Function<? super JsPair, T> map,
@@ -133,7 +131,6 @@ class OpMapReduce<T>
                                                                                    ));
     }
 
-
     private BiFunction<JsPath, Json<?>, Trampoline<Optional<T>>> reduceJson(final Optional<T> acc)
     {
 
@@ -152,7 +149,6 @@ class OpMapReduce<T>
 
         };
     }
-
 
     @SuppressWarnings("squid:S00100")
     //  naming convention: xx_ traverses the whole json
@@ -189,7 +185,6 @@ class OpMapReduce<T>
 
 
     }
-
 
     @SuppressWarnings("squid:S00100")
     //  naming convention: xx_ traverses the whole json

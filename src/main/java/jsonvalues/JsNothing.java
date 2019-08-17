@@ -66,7 +66,6 @@ public final class JsNothing implements JsElem
         return true;
     }
 
-
     @Override
     public boolean isNull()
     {

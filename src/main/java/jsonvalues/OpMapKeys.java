@@ -1,9 +1,5 @@
 package jsonvalues;
 
-import jsonvalues.JsPair;
-import jsonvalues.JsPath;
-import jsonvalues.Trampoline;
-
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -21,7 +17,7 @@ abstract class OpMapKeys<T>
                                final Predicate<? super JsPair> predicate,
                                final JsPath startingPath
                               );
-
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     abstract Trampoline<T> map_(final Function<? super JsPair, String> fn,
                                 final Predicate<? super JsPair> predicate,
                                 final JsPath startingPath

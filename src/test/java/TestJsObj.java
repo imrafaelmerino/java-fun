@@ -395,21 +395,21 @@ public class TestJsObj
     public void head_and_tail_of_empty_obj_returns_exception()
     {
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsObj.empty()
                                            .head()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsObj._empty_()
                                            .head()
                                );
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsObj.empty()
                                            .tail("a")
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsObj._empty_()
                                            .tail("a")
                                );
@@ -1343,14 +1343,14 @@ public class TestJsObj
     public void error_when_mixing_implementations()
     {
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsObj._of_("a",
                                                  JsObj.of("a",
                                                           NULL
                                                          )
                                                 )
                                );
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray._of_(NULL,
                                                    TRUE,
                                                    FALSE,
@@ -1359,7 +1359,7 @@ public class TestJsObj
                                                            )
                                                   )
                                );
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsObj.of("a",
                                                JsObj._of_("a",
                                                           NULL
@@ -1367,7 +1367,7 @@ public class TestJsObj
                                               )
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray.of(NULL,
                                                  TRUE,
                                                  FALSE,
@@ -1377,7 +1377,7 @@ public class TestJsObj
                                                 )
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray._of_(Arrays.asList(JsArray.of(1,
                                                                             2
                                                                            ))

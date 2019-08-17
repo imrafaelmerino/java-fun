@@ -288,7 +288,8 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
         s.writeObject(toString());
 
     }
-
+    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
+    @SuppressWarnings("squid:S4508")
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
     {
         s.defaultReadObject();

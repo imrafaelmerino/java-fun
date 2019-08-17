@@ -48,7 +48,7 @@ public final class TryObj
     /**
      Returns the computed json object wrapped in an optional if the parsed string is a well-formed
      json object, returning an empty optional otherwise.
-     @return  an Optional containing a JsObj or Optional.empty() if the given string is not a
+     @return an Optional containing a JsObj or Optional.empty() if the given string is not a
      well-formed json object.
      */
     public Optional<JsObj> toOptional()

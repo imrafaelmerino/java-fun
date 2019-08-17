@@ -163,7 +163,7 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     /**
      * Converts this {@code double} to a {@code BigInteger}, checking for lost information.  An empty
      * optional is returned if this {@code double} has a nonzero fractional part.
-     @return  this double as an bigint wrapped in an Optional
+     @return this double as an bigint wrapped in an Optional
      */
     public Optional<BigInteger> bigIntegerExact()
     {
@@ -177,6 +177,7 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
             return Optional.empty();
         }
     }
+
     /**
      returns true if this double and the specified bigdecimal represent the same number
      @param jsBigDec the specified JsBigDec
@@ -186,6 +187,7 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     {
         return requireNonNull(jsBigDec).equals(this);
     }
+
     /**
      returns true if this double and the specified biginteger represent the same number
      @param jsBigInt the specified JsBigInt
@@ -194,10 +196,11 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     public boolean equals(JsBigInt jsBigInt)
     {
 
-        final Optional<BigInteger> x = bigIntegerExact();
-        return x.isPresent() && x.get()
+        final Optional<BigInteger> y = bigIntegerExact();
+        return y.isPresent() && y.get()
                                  .equals(requireNonNull(jsBigInt).x);
     }
+
     /**
      returns true if this double and the specified long represent the same number
      @param jsLong the specified JsLong
@@ -207,6 +210,7 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     {
         return requireNonNull(jsLong).equals(this);
     }
+
     /**
      returns true if this double and the specified integer represent the same number
      @param jsInt the specified JsInt
@@ -215,54 +219,6 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     public boolean equals(JsInt jsInt)
     {
         return requireNonNull(jsInt).equals(this);
-    }
-
-    @Override
-    public boolean isObj()
-    {
-        return false;
-    }
-
-    public boolean isArray()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNothing()
-    {
-        return false;
-    }
-
-
-    @Override
-    public boolean isNull()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNumber()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isBool()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isTrue()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFalse()
-    {
-        return false;
     }
 
     @Override
@@ -285,13 +241,6 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
 
     @Override
     public boolean isLong()
-    {
-        return false;
-    }
-
-
-    @Override
-    public boolean isStr()
     {
         return false;
     }

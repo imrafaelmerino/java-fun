@@ -51,6 +51,7 @@ class OpMapImmutableObjElems extends OpMapElems<JsObj>
     }
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     Trampoline<JsObj> map_(final Function<? super JsPair, ? extends JsElem> fn,
                            final Predicate<? super JsPair> predicate,
                            final JsPath startingPath

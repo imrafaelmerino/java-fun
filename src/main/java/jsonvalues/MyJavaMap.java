@@ -52,7 +52,7 @@ class MyJavaMap implements MyMap<MyJavaMap>
     @Override
     public JsElem get(final String key)
     {
-        if (!elements.containsKey(key)) throw new NoSuchElementException("key " + key + " not found");
+        if (!elements.containsKey(key)) throw InternalError.keyNotFound(key);
         return elements.get(key);
     }
 
@@ -65,7 +65,7 @@ class MyJavaMap implements MyMap<MyJavaMap>
     @Override
     public java.util.Map.Entry<String, JsElem> head()
     {
-        if (this.isEmpty()) throw new UnsupportedOperationException("head of empty map");
+        if (this.isEmpty()) throw UserError.headOfEmptyObj();
         return elements.keySet()
                        .stream()
                        .findFirst()
@@ -118,7 +118,7 @@ class MyJavaMap implements MyMap<MyJavaMap>
     @Override
     public MyJavaMap tail(final String head)
     {
-        if (this.isEmpty()) throw new UnsupportedOperationException("tail of empty map");
+        if (this.isEmpty()) throw UserError.tailOfEmptyObj();
         final java.util.Map<String, JsElem> tail = elements.keySet()
                                                            .stream()
                                                            .filter(key -> !key.equals(head))
@@ -209,6 +209,9 @@ class MyJavaMap implements MyMap<MyJavaMap>
                                 new MyMutableJsArray(arr)
                                );
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
 
             }
 
@@ -314,6 +317,9 @@ class MyJavaMap implements MyMap<MyJavaMap>
                                    );
                     }
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
             }
 
 

@@ -48,7 +48,7 @@ public final class TryArr
     /**
      Returns the computed JsArray wrapped in an optional if the parsed string is a well-formed json
      array, returning an empty optional otherwise.
-     @return  Optional.empty() if the parsed string is not a well-formed json array, or an
+     @return Optional.empty() if the parsed string is not a well-formed json array, or an
      Optional containing the computed JsArray otherwise.
      */
     public Optional<JsArray> toOptional()

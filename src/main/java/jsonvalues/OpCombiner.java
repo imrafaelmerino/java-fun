@@ -13,13 +13,14 @@ package jsonvalues;
         this.b = b;
     }
 
+    //squid:S1452: method not exposed to the user of the api. Avoid some duplicate code
+    @SuppressWarnings("squid:S1452")
     Trampoline<? extends Json<?>> combine(Json<?> c,
                                           Json<?> d
                                          )
     {
         if (c.isObj() && d.isObj()) return new OpCombinerObjs(c.asJsObj(),
-                                                              d.asJsObj()
-        ).combine();
+                                                              d.asJsObj()).combine();
         return new OpCombinerArrs(c.asJsArray(),
                                   d.asJsArray()
         ).combine();

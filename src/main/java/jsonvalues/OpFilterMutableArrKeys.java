@@ -10,6 +10,7 @@ class OpFilterMutableArrKeys extends OpFilterKeys<JsArray>
     }
 
     @Override
+    @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json recursively
     Trampoline<JsArray> filter_(JsPath startingPath,
                                 final Predicate<? super JsPair> predicate
                                )

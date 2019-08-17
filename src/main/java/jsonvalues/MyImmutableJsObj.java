@@ -25,7 +25,11 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     static MyImmutableJsObj EMPTY = new MyImmutableJsObj(MyScalaMap.EMPTY);
     private static final JsPath EMPTY_PATH = JsPath.empty();
     private transient volatile int hascode;
-    private transient volatile @Nullable String str;
+    //squid:S3077: doesn't make any sese, volatile is perfectly valid here an as a matter of fact
+    //is a recomendation from Efective Java to apply the idiom single check for lazy initialization
+    @SuppressWarnings("squid:S3077")
+    @Nullable
+    private transient volatile String str;
 
 
     MyImmutableJsObj(final MyScalaMap myMap)
@@ -45,16 +49,19 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
         return EMPTY;
     }
 
-    //equals method is inherited, so it's implemented. The purpose of this method is to cache
-    //the hashcode once calculated. the object is immutable and it won't change
+    /**
+     equals method is inherited, so it's implemented. The purpose of this method is to cache
+     the hashcode once calculated. the object is immutable and it won't change
+     Single-check idiom  Item 83 from Effective Java
+     */
     @SuppressWarnings("squid:S1206")
     @Override
     public final int hashCode()
     {
-        if (hascode != 0) return hascode;
-        hascode = super.hashCode();
-        return hascode;
-
+        int result = hascode;
+        if (result == 0)
+            hascode = result = super.hashCode();
+        return result;
     }
 
     @Override
@@ -98,13 +105,16 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     }
 
 
+    /**
+     // Single-check idiom  Item 83 from effective java
+     */
     @Override
     public final String toString()
     {
-        if (str != null) return str;
-        str = super.toString();
-        return str;
-
+        String result = str;
+        if (result == null)
+            str = result = super.toString();
+        return result;
     }
 
     @Override
@@ -327,6 +337,8 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
 
     }
 
+    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
+    @SuppressWarnings("squid:S4508")
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
     {
         s.defaultReadObject();

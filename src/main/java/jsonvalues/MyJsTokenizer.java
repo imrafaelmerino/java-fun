@@ -119,9 +119,7 @@ final class MyJsTokenizer implements Closeable
         SQUARECLOSE(END_ARRAY,
                     false
         ),
-        EOF(
-        false
-        );
+        EOF(false);
         private MyJsParser.Event event;
         private final boolean value;
 
@@ -187,10 +185,7 @@ final class MyJsTokenizer implements Closeable
             int ch = read();
             if (ch >= 0x20 && ch != 0x22 && ch != 0x5c)
             {
-                if (!inPlace)
-                {
-                    buf[storeEnd] = (char) ch;
-                }
+                if (!inPlace) buf[storeEnd] = (char) ch;
                 storeEnd++;
                 continue;
             }
@@ -237,18 +232,7 @@ final class MyJsTokenizer implements Closeable
                 break;
             case 'u':
             {
-                int unicode = 0;
-                for (int i = 0; i < 4; i++)
-                {
-                    int ch3 = read();
-                    int digit = (ch3 >= 0 && ch3 < HEX_LENGTH) ? HEX[ch3] : -1;
-                    if (digit < 0)
-                        throw MalformedJson.unexpectedChar(ch3,
-                                                           getLastCharLocation()
-                                                          );
-                    unicode = (unicode << 4) | digit;
-                }
-                buf[storeEnd++] = (char) unicode;
+                readUnicodeChars();
                 break;
             }
             default:
@@ -256,6 +240,22 @@ final class MyJsTokenizer implements Closeable
                                                    getLastCharLocation()
                                                   );
         }
+    }
+
+    private void readUnicodeChars() throws MalformedJson
+    {
+        int unicode = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            int ch3 = read();
+            int digit = (ch3 >= 0 && ch3 < HEX_LENGTH) ? HEX[ch3] : -1;
+            if (digit < 0)
+                throw MalformedJson.unexpectedChar(ch3,
+                                                   getLastCharLocation()
+                                                  );
+            unicode = (unicode << 4) | digit;
+        }
+        buf[storeEnd++] = (char) unicode;
     }
 
 

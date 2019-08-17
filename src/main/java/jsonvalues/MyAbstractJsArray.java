@@ -385,9 +385,10 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
                 return intersectionAsMultiSet(a,
                                               b
                                              );
+            default:
+                throw InternalError.arrayOptionNotImplemented(ARRAY_AS.name());
         }
 
-        throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
     }
 
     static Trampoline<JsArray> put(final JsPath path,
@@ -750,8 +751,9 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
                 return unionAsMultiSet(a,
                                        b
                                       );
+            default:
+                throw InternalError.arrayOptionNotImplemented(ARRAY_AS.name());
         }
-        throw new IllegalArgumentException(ARRAY_AS.name() + " option not supported");
     }
 
     private static Trampoline<JsArray> unionAsList(final JsArray a,

@@ -11,22 +11,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
+import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.MyJsParser.Event.END_ARRAY;
 
 class MyJavaVector implements MyVector<MyJavaVector>
 {
-
     private List<JsElem> elements;
-
 
     MyJavaVector(final List<JsElem> pvector)
     {
         elements = pvector;
-
     }
 
     MyJavaVector()
@@ -87,14 +84,14 @@ class MyJavaVector implements MyVector<MyJavaVector>
     @Override
     public JsElem head()
     {
-        if (isEmpty()) throw new UnsupportedOperationException("head of empty vector");
+        if (isEmpty()) throw UserError.headOfEmptyArr();
         return elements.get(0);
     }
 
     @Override
     public MyJavaVector init()
     {
-        if (isEmpty()) throw new UnsupportedOperationException("init of empty vector");
+        if (isEmpty()) throw UserError.initOfEmptyArr();
         return new MyJavaVector(IntStream.range(0,
                                                 elements.size() - 1
                                                )
@@ -118,7 +115,7 @@ class MyJavaVector implements MyVector<MyJavaVector>
     @Override
     public JsElem last()
     {
-        if (isEmpty()) throw new UnsupportedOperationException("last of empty vector");
+        if (isEmpty()) throw UserError.lastOfEmptyArr();
         return elements.get(size() - 1);
     }
 
@@ -157,7 +154,7 @@ class MyJavaVector implements MyVector<MyJavaVector>
     @Override
     public MyJavaVector tail()
     {
-        if (isEmpty()) throw new UnsupportedOperationException("tail of empty vector");
+        if (isEmpty()) throw UserError.tailOfEmptyArr();
 
         return new MyJavaVector(elements.stream()
                                         .skip(1)
@@ -215,6 +212,9 @@ class MyJavaVector implements MyVector<MyJavaVector>
                     arr.parse(parser);
                     this.appendBack(new MyMutableJsArray(arr));
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
             }
         }
     }
@@ -298,6 +298,9 @@ class MyJavaVector implements MyVector<MyJavaVector>
                         this.appendBack(new MyMutableJsArray(arr));
                     }
                     break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
             }
         }
     }

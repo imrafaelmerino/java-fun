@@ -299,7 +299,8 @@ class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
         s.writeObject(toString());
 
     }
-
+    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
+    @SuppressWarnings("squid:S4508")
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
     {
         s.defaultReadObject();

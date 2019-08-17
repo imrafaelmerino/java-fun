@@ -185,55 +185,6 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
         return (double) x == requireNonNull(jsDouble).x;
     }
 
-
-    @Override
-    public boolean isObj()
-    {
-        return false;
-    }
-
-    public boolean isArray()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNothing()
-    {
-        return false;
-    }
-
-
-    @Override
-    public boolean isNull()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNumber()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isBool()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isTrue()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFalse()
-    {
-        return false;
-    }
-
     @Override
     public boolean isInt()
     {
@@ -254,12 +205,6 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
 
     @Override
     public boolean isLong()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isStr()
     {
         return false;
     }

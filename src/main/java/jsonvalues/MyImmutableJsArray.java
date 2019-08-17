@@ -21,8 +21,12 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
 
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
     static MyImmutableJsArray EMPTY = new MyImmutableJsArray(MyScalaVector.EMPTY);
-    private volatile int hascode;
-    private volatile @Nullable String str;
+    private transient volatile int hascode;
+    //squid:S3077: doesn't make any sese, volatile is perfectly valid here an as a matter of fact
+    //is a recomendation from Efective Java to apply the idiom single check for lazy initialization
+    @SuppressWarnings("squid:S3077")
+    @Nullable
+    private transient volatile String str;
 
     MyImmutableJsArray(final MyScalaVector array)
     {
@@ -41,16 +45,20 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         return MyImmutableJsObj.EMPTY;
     }
 
-    //equals method is inherited, so it's implemented. The purpose of this method is to cache
-    //the hashcode once calculated. the object is immutable and it won't change
+
+    /**
+     equals method is inherited, so it's implemented. The purpose of this method is to cache
+     the hashcode once calculated. the object is immutable and it won't change
+     Single-check idiom  Item 83 from Effective Java
+     */
     @SuppressWarnings("squid:S1206")
     @Override
     public final int hashCode()
     {
-        if (hascode != 0) return hascode;
-        hascode = super.hashCode();
-        return hascode;
-
+        int result = hascode;
+        if (result == 0)
+            hascode = result = super.hashCode();
+        return result;
     }
 
     @Override
@@ -89,11 +97,15 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     }
 
     @Override
+    /**
+     Single-check idiom  Item 83 from Effective Java
+     */
     public final String toString()
     {
-        if (str != null) return str;
-        str = super.toString();
-        return str;
+        String result = str;
+        if (result == null)
+            str = result = super.toString();
+        return result;
 
     }
 
@@ -316,6 +328,8 @@ class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         s.writeObject(toString());
     }
 
+    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
+    @SuppressWarnings("squid:S4508")
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
     {
         s.defaultReadObject();

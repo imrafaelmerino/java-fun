@@ -27,9 +27,9 @@ public class TestJsArray
                                 JsStr.of("a")
                                );
 
-        Assertions.assertEquals(arr.tail()
-                                   .head(),
-                                NULL
+        Assertions.assertEquals(NULL,
+                                arr.tail()
+                                   .head()
                                );
     }
 
@@ -62,8 +62,8 @@ public class TestJsArray
                                    .orElse(-1);
 
 
-        Assertions.assertEquals(result,
-                                203
+        Assertions.assertEquals(203,
+                                result
                                );
 
         final int result1 = supplier.get()
@@ -137,12 +137,12 @@ public class TestJsArray
                                .orElse(-1);
 
 
-        Assertions.assertEquals(result,
-                                203
+        Assertions.assertEquals(203,
+                                result
                                );
 
-        Assertions.assertEquals(result1,
-                                203
+        Assertions.assertEquals(203,
+                                result1
                                );
 
 
@@ -665,7 +665,7 @@ public class TestJsArray
 
                              );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray.empty()
                                              .head()
                                );
@@ -685,7 +685,7 @@ public class TestJsArray
                              );
 
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray._empty_()
                                              .head()
                                );
@@ -716,7 +716,7 @@ public class TestJsArray
                                    .init()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray.empty()
                                              .init()
                                );
@@ -741,7 +741,7 @@ public class TestJsArray
                                      .init()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray._empty_()
                                              .init()
                                );
@@ -789,7 +789,7 @@ public class TestJsArray
                                      .last()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray._empty_()
                                              .last()
                                );
@@ -940,12 +940,12 @@ public class TestJsArray
                                 );
 
         JsArray arr1 = arr.mapElems(pair -> pair.mapIfStr(s ->
-                                                            {
-                                                                final int index = pair.path.last()
-                                                                                           .asIndex().n;
-                                                                return s.concat(String.valueOf(index));
-                                                            })
-                                                  .elem
+                                                          {
+                                                              final int index = pair.path.last()
+                                                                                         .asIndex().n;
+                                                              return s.concat(String.valueOf(index));
+                                                          })
+                                    .elem
                                    );
 
         Assertions.assertNotEquals(arr,
@@ -1030,7 +1030,7 @@ public class TestJsArray
                                 _arr_.tail()
                                ); //  ["b","c"]
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray._empty_()
                                              .tail()
                                );

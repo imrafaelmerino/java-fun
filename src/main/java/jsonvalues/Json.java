@@ -1714,8 +1714,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         if (requireNonNull(predicate).test(elem)) return put(path,
                                                              requireNonNull(fn).apply(elem)
                                                             );
-
-        @SuppressWarnings("unchecked") final T t = (T) this;  //this is an instance of T (recursive type));
+        //this is an instance of T (recursive type))
+        @SuppressWarnings("unchecked") final T t = (T) this;
 
         return t;
 
@@ -2957,7 +2957,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
 
-    default T map(Function<T, T> fn)
+    default T map(UnaryOperator<T> fn)
     {
         //this is an instance of T (recursive type)
         @SuppressWarnings("unchecked") T o = fn.apply((T) this);

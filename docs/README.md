@@ -34,21 +34,20 @@ to represent a Json.
 manipulate them.
 * _It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures_. —Alan Perlis. 
 
-**json-values** has taken a lot of inspiration from Scala as well, as a matter of fact, it's been implemented following both the object oriented
-and functional paradigms, as Scala promotes. By the way, at this moment I'm working on implementing [**json-values** in Scala](https://github.com/imrafaelmerino/json-scala-values), and it's
-being a delightful and enriching experience.
+**json-values** has taken much inspiration from Scala as well, as a matter of fact, it's been implemented following both the object-oriented
+and functional paradigms, as Scala promotes.
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
-* You need to deal with Jsons, and you want to program following a functional style, **using functions and immutable types (or values)** 
+* You need to deal with Jsons, and you want to program following a functional style, **using functions and immutable types (or values)**,
 but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide Persistent Data Structures**.
 The thing is that Java 8 brought functions, lambdas, lazy evaluation to some extent, streams... but, without immutability, 
 something is still missing, and as _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
-* You manipulate Jsons all the time and you'd like to do it with less ceremony and with spending no time googleling the solution because the library/framework
+* You manipulate Jsons all the time, and you'd like to do it with less ceremony and with spending no time googling the solution because the library/framework
 you are using is to complex. **json-values** is declarative and takes advantages of all the new features that were introduced 
-in Java 8, like functions, suppliers, streams and collectors, making json manipulation simple, fast and efficient. 
+in Java 8, like functions, suppliers, streams, and collectors, making json manipulation simple, fast, and efficient. 
 * You may be thinking, ok, great, I agree with all the described above, but, there are some scenarios where I still need a mutable Json as, after all, I'm programming in Java. 
 With **json-values**, you can go from a mutable Json to an immutable one, back and forth, and the API to manipulate 
-them is exactly the same, being both implementations hidden to the user. 
-* Simplicity matters and I 'd argue that **json-values** is simple.
+them is the same, being both implementations hidden to the user. 
+* Simplicity matters, and I 'd argue that **json-values** is simple.
 * As a developer, I'm convinced that code should wins arguments, so let me enumerate some examples, where I
 left the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
@@ -70,8 +69,9 @@ a.intersection(b)
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
 data structure shows very well the essence of **json-values**.
 ## <a name="notwhatfor"><a/> When not to use it
-**json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for Enterprise Object Oriented Programming. So, don't
-create yet another fancy abstraction with a bunch of getters and setters or a complex DSL over the API. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart Halloway** is a 
+**json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for 
+Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters 
+or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart Halloway** is a 
 great talk that elaborates ironically on this point.
 ## <a name="requirements"><a/> Requirements
 Java 8 or greater.

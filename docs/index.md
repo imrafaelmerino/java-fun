@@ -713,12 +713,18 @@ Assertions.assertTrue(b.equals(c, TYPE.SET));
 Assertions.assertFalse(b.equals(c, TYPE.MULTISET));
 ```
 ## <a name="exceptions-errors"></a> Exceptions and errors
-Exceptions and errors are both treated as Exceptions in Java and most of the mainstream languages, but, conceptually, they are quite different. Errors mean that someone has to fix something; it could be an error of the user of the library or an error of the library itself. On the other hand, exceptions are expected in irregular situations at runtime, like accessing a non-existing file. No matter what you do, the
-file could be deleted anytime by any other process, and the only thing you can do is to handle that possibility. 
-**json-values** use the native unchecked exception _UnsupportedException_ when the client of the library makes an error,
-for example, getting the head of an empty array, which means that the programmer needs to change something, 
-for example, adding a guard condition. Another error could be to pass in null to a method, in which case it throws a  NullPointerException. No method in the library accepts null as a parameter.
-The only exception in the API is the checked MalformedJson, which occurs when parsing a not well-formed string into a Json.
+Exceptions and errors are both treated as Exceptions in Java and most of the mainstream languages, but, conceptually, 
+they are quite different. Errors mean that someone has to fix something; it could be an error of the user of the library 
+or an error of the library itself. On the other hand, exceptions are expected in irregular situations at runtime, like
+ accessing a non-existing file. No matter what you do, the file could be deleted anytime by any other process, and the 
+ only thing you can do is to handle that possibility. 
+ 
+**json-values** uses the custom unchecked exception _UserError_ when the client of the library makes an error,
+for example, getting the head of an empty array, which means that the programmer needs to change something to fix the bug. 
+Another error could be to pass in null to a method, in which case it throws a NullPointerException. No method in the library 
+but _equals_ accepts null as a parameter. _InternalError_ is another custom unchecked exception that is thrown when an
+error made by the developers is detected.
+The only exception in the API is the custom checked MalformedJson, which occurs when parsing a not well-formed string into a Json.
 
 ## <a name="trampolines"></a> Trampolines
 **Json-values**, naturally, uses recursion all the time. To not blow up the stack, tail-recursive method 

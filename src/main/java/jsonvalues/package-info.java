@@ -9,7 +9,7 @@
  </ul>
  Only three exceptions are thrown by the library:
  <ul>
- <li>the unchecked UnsupportedOperationException, when the client makes a programming error.</li>
+ <li>the unchecked UserError, when the client makes a programming error.</li>
  <li>the checked MalformedJson, when a string can not be parsed into a json.</li>
  <li>the unchecked NullPointerException, when a method receives a null parameter.</li>
  </ul>

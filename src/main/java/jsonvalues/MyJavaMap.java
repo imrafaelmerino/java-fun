@@ -72,7 +72,7 @@ class MyJavaMap implements MyMap<MyJavaMap>
                        .map(key -> new AbstractMap.SimpleEntry<>(key,
                                                                  elements.get(key)
                        ))
-                       .orElseThrow(() -> new UnsupportedOperationException("Map not empty without a key!"));
+                       .orElseThrow(() ->  InternalError.notEmptyMapWithoutAKey());
     }
 
     @Override

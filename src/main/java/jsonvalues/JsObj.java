@@ -38,7 +38,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key name of the key
      @param el JsElem to be associated to the key
      @return a mutable one-pair JsObj
-     @throws UnsupportedOperationException if the elem is an immutable Json
+     @throws UserError if the elem is an immutable Json
 
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
@@ -60,7 +60,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key2 name of a key
      @param el2 JsElem to be associated to the key2
      @return a two-pair mutable JsObj
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsObj _of_(final String key1,
@@ -88,7 +88,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key3 name of a key
      @param el3  JsElem to be associated to the key3
      @return a three-pair mutable JsObj
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
@@ -123,7 +123,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key4 name of a key
      @param el4  JsElem to be associated to the key4
      @return a mutable four-pair JsObj
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
@@ -165,7 +165,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key5 name parse a key
      @param el5  JsElem to be associated to the key5
      @return a mutable five-element JsObj
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
 
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -214,7 +214,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key6 name parse a key
      @param el6  JsElem to be associated to the key6
      @return a mutable six-element JsObj
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
@@ -250,14 +250,13 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                          el6
                         );
     }
-//
+
 
     /**
      Returns a mutable object from a map of elements.
      @param map the map of JsElem
      @return a mutable JsObj
-     @throws UnsupportedOperationException if an elem of the map is an immutable Json
-
+     @throws UserError if an elem of the map is an immutable Json
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsObj _of_(final java.util.Map<String, JsElem> map)
@@ -429,7 +428,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      and tail to process a JsObj, the key of the pair returned must be passed in to get the tail using
      the method {@link #tail(String)}.
      @return an arbitrary {@code Map.Entry<String,JsElem>} of this JsObj
-     @throws UnsupportedOperationException if this json object is empty
+     @throws UserError if this json object is empty
      */
     Map.Entry<String, JsElem> head();
 
@@ -439,7 +438,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key  name of the key
      @param el  JsElem to be associated to the key
      @return an immutable one-element JsObj
-     @throws UnsupportedOperationException if the elem is a mutable Json
+     @throws UserError if the elem is a mutable Json
      */
     static JsObj of(final String key,
                     final JsElem el
@@ -460,7 +459,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key2 name of a key
      @param el2  JsElem to be associated to the key2
      @return an immutable two-element JsObj
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
 
      */
     static JsObj of(final String key1,
@@ -488,7 +487,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key3 name of a key
      @param el3  JsElem to be associated to the key3
      @return an immutable three-element JsObj
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     @SuppressWarnings("squid:S00107")
@@ -523,7 +522,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key4 name of a key
      @param el4 JsElem to be associated to the key4
      @return an immutable four-element JsObj
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
 
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -565,7 +564,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key5 name of a key
      @param el5 JsElem to be associated to the key5
      @return an immutable five-element JsObj
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
 
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -612,7 +611,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param key6 name of a key
      @param el6 JsElem to be associated to the key6
      @return an immutable six-element JsObj
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
 
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -652,7 +651,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      Returns a immutable object from a map of elements.
      @param map the map of JsElem
      @return an immutable JsObj
-     @throws UnsupportedOperationException if an elem of the map is a mutable Json
+     @throws UserError if an elem of the map is a mutable Json
      */
     static JsObj of(final java.util.Map<String, JsElem> map)
     {
@@ -729,13 +728,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      Returns a new object with all the entries of this json object except the one with the given key.
      @param key the given key, which associated pair will be excluded
      @return a new JsObj
-     @throws UnsupportedOperationException if this json object is empty
+     @throws UserError if this json object is empty
      */
     JsObj tail(final String key);
 
     /**
-     Returns the intersection of this object and another, defining characteristics like order and duplicates
-     occurrence in arrays with the given ARRAY_AS parameter.
+     {@code this.intersection(that, SET)} returns an array with the elements that exist in both {@code this} and {@code that}
+     {@code this.intersection(that, MULTISET)} returns an array with the elements that exist in both {@code this} and {@code that},
+     being duplicates allowed.
+     {@code this.intersection(that, LIST)} returns an array with the elements that exist in both {@code this} and {@code that},
+     and are located at the same position.
      @param that the other obj
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
@@ -748,10 +750,9 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
 
     /**
-     Returns the intersection of this object and another given as parameter applying recursively
-     the intersection to those elements which are Json of the same type and are located at the same key
-     and defining characteristics like order and duplicates occurrence in arrays with the given ARRAY_AS
-     parameter.
+     {@code this.intersection_(that)} behaves as {@code this.intersection(that, LIST)}, but for those elements
+     that are containers of the same type and are located at the same position, the result is their
+     intersection.  So this operation is kind of a 'recursive' intersection.
      @param that the other object
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
@@ -764,18 +765,21 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                        );
 
     /**
-     Returns the union of this object and another given as a parameter.
-     @param that the other object
+     returns {@code this} json object plus those pairs from the given json object {@code that} which
+     keys don't exist in {@code this}. Taking that into account, it's not a commutative operation unless
+     the elements associated with the keys that exist in both json objects are equals.
+     @param that the given json object
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
     JsObj union(final JsObj that);
 
     /**
-     Returns the union of this object and another given as parameter applying recursively the union
-     to those elements which are Json of the same type and are located at the same key
-     and defining characteristics like order and duplicates occurrence in arrays with the given ARRAY_AS
-     parameter.
-     @param that the other object
+     behaves like the {@link JsObj#union(JsObj)} but, for those keys that exit in both {@code this}
+     and {@code that} json objects,
+     which associated elements are **containers of the same type**, the result is their union. In this
+     case, we can specify if arrays are considered Sets, Lists, or MultiSets. So this operation is kind of a
+     'recursive' union.
+     @param that the given json object
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsObj of the same type as the inputs (mutable or immutable)
      */
@@ -793,7 +797,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param pair a pair
      @param others more optional pairs
      @return an immutable JsObject
-     @throws UnsupportedOperationException if an elem of a pair is mutable
+     @throws UserError if an elem of a pair is mutable
 
      */
     static JsObj of(final JsPair pair,
@@ -821,7 +825,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      @param pair a pair
      @param others more optional pairs
      @return a mutable JsObject
-     @throws UnsupportedOperationException if an elem of a pair is immutable
+     @throws UserError if an elem of a pair is immutable
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsObj _of_(JsPair pair,

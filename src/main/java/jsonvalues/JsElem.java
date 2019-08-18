@@ -27,7 +27,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsBool
-     @throws UnsupportedOperationException if this JsElem is not a JsBool
+     @throws UserError if this JsElem is not a JsBool
      */
     default JsBool asJsBool()
     {
@@ -37,10 +37,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsBool",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsBool(this);
 
         }
     }
@@ -72,7 +69,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsInt
-     @throws UnsupportedOperationException if this JsElem is not a JsInt
+     @throws UserError if this JsElem is not a JsInt
      */
     default JsInt asJsInt()
     {
@@ -82,10 +79,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsInt",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsInt(this);
         }
     }
 
@@ -106,7 +100,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsDouble
-     @throws UnsupportedOperationException if this JsElem is not a JsDouble
+     @throws UserError if this JsElem is not a JsDouble
      */
     default JsDouble asJsDouble()
     {
@@ -116,10 +110,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsDouble",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsDouble(this);
         }
     }
 
@@ -140,7 +131,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsBigDec
-     @throws UnsupportedOperationException if this JsElem is not a JsBigDec or a JsDouble
+     @throws UserError if this JsElem is not a JsBigDec or a JsDouble
      */
     default JsBigDec asJsBigDec()
     {
@@ -151,10 +142,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsBigDec",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsBigDec(this);
         }
     }
 
@@ -175,7 +163,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsLong
-     @throws UnsupportedOperationException if this JsElem is not a JsLong or a JsInt
+     @throws UserError if this JsElem is not a JsLong or a JsInt
      */
     default JsLong asJsLong()
     {
@@ -186,10 +174,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsLong",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsLong(this);
         }
     }
 
@@ -210,19 +195,16 @@ public interface JsElem
 
     /**
      @return this JsElem as a Json
-     @throws UnsupportedOperationException if this JsElem is not a JsObj or a JsArray
+     @throws UserError if this JsElem is not a JsObj or a JsArray
      */
-    //Json<?> has only two possible types: JsObj or JsArr,
+    //S1452: Json<?> has only two possible types: JsObj or JsArr,
     @SuppressWarnings("squid:S1452")
     default Json<?> asJson()
     {
 
         if (isObj()) return asJsObj();
         else if (isArray()) return asJsArray();
-        else throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                   "asJson",
-                                                                   this.getClass()
-                                                                  ));
+        else throw UserError.isNotAJson(this);
 
     }
 
@@ -254,7 +236,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsObj
-     @throws UnsupportedOperationException if this JsElem is not a JsObj
+     @throws UserError if this JsElem is not a JsObj
      */
     default JsObj asJsObj()
     {
@@ -264,10 +246,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsObj",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsObj(this);
         }
     }
 
@@ -288,7 +267,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsArray
-     @throws UnsupportedOperationException if this JsElem is not a JsArray
+     @throws UserError if this JsElem is not a JsArray
      */
     default JsArray asJsArray()
     {
@@ -298,10 +277,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsArray",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsArray(this);
         }
     }
 
@@ -323,7 +299,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsStr
-     @throws UnsupportedOperationException if this JsElem is not a JsStr
+     @throws UserError if this JsElem is not a JsStr
      */
     default JsStr asJsStr()
     {
@@ -333,10 +309,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsStr",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsString(this);
         }
     }
 
@@ -357,7 +330,7 @@ public interface JsElem
 
     /**
      @return this JsElem as a JsBigInt
-     @throws UnsupportedOperationException if this JsElem is not a JsBigInt or JsLong or JsInt
+     @throws UserError if this JsElem is not a JsBigInt or JsLong or JsInt
      */
     default JsBigInt asJsBigInt()
     {
@@ -369,10 +342,7 @@ public interface JsElem
         }
         catch (ClassCastException e)
         {
-            throw new UnsupportedOperationException(String.format("%s of %s",
-                                                                  "asJsBigInt",
-                                                                  this.getClass()
-                                                                 ));
+            throw UserError.isNotAJsBigInt(this);
         }
     }
 

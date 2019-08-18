@@ -1,4 +1,5 @@
 import jsonvalues.JsPath;
+import jsonvalues.UserError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -94,7 +95,7 @@ public class TestJsPath
     public void path_dec(){
         Assertions.assertEquals(JsPath.of("a.b.0"),JsPath.of("a.b.1").dec());
 
-        Assertions.assertThrows(UnsupportedOperationException.class,()->JsPath.of("a").dec());
+        Assertions.assertThrows(UserError.class,()->JsPath.of("a").dec());
     }
 
     @Test
@@ -102,12 +103,12 @@ public class TestJsPath
         Assertions.assertTrue(JsPath.of("a").last().isKey());
         Assertions.assertFalse(JsPath.of("a").last().isIndex());
         Assertions.assertTrue(JsPath.of("a").last().isKey(i->i.equals("a")));
-        Assertions.assertThrows(UnsupportedOperationException.class,()->JsPath.of("0").last().asKey());
+        Assertions.assertThrows(UserError.class, ()->JsPath.of("0").last().asKey());
 
         Assertions.assertTrue(JsPath.of("0").last().isIndex());
         Assertions.assertFalse(JsPath.of("0").last().isKey());
         Assertions.assertTrue(JsPath.of("0").last().isIndex(i->i==0));
-        Assertions.assertThrows(UnsupportedOperationException.class,()->JsPath.of("a").last().asIndex());
+        Assertions.assertThrows(UserError.class,()->JsPath.of("a").last().asIndex());
 
     }
 

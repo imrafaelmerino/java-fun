@@ -2,7 +2,7 @@ package jsonvalues;
 
 /**
  Exception that models a programming error made by the user. The user has a bug in their code and something
- has to be fixed. A suggestion in the message of the exception is suggested
+ has to be fixed. Part of the exception message is a suggestion to fix the bug.
  */
 public class UserError extends RuntimeException
 {
@@ -27,6 +27,138 @@ public class UserError extends RuntimeException
                                           ));
     }
 
+    static UserError isNotAJsBool(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsBool expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isBool() before invoking asJsBool()"
+                                          ));
+    }
+
+    static UserError isNotAJsInt(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsInt expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isInt() before invoking asJsInt()"
+                                          ));
+    }
+
+    static UserError isNotAJsLong(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsLong expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isLong() or isInt() before invoking asJsLong()"
+                                          ));
+    }
+
+    static UserError isNotAJsDouble(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsDouble expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isDouble() or isDecimal() before invoking asJsDouble()"
+                                          ));
+    }
+
+    static UserError isNotAJsBigInt(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsBigInt expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isBigInt() or isIntegral() before invoking asJsBigInt()"
+                                          ));
+    }
+
+    static UserError isNotAJsBigDec(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsBigDec expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isBigDec() or isDecimal() before invoking asJsBigDec()"
+                                          ));
+    }
+
+    static UserError isNotAJsArray(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsArray expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isArray() before invoking asJsArray()"
+                                          ));
+    }
+
+    static UserError isNotAJsObj(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsObj expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isObj() before invoking asJsObj()"
+                                          ));
+    }
+
+    static UserError isNotAJson(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Json expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isJson() or isArray() or isObj() before invoking asJson()"
+                                          ));
+    }
+
+    static UserError isNotAJsString(final JsElem elem)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsStr expected, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isStr() before invoking asJsStr()"
+                                          ));
+    }
+
+    static UserError lastOfEmptyPath()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "last() of empty path",
+                                           "call the guard condition isEmpty() before invoking last()"
+                                          ));
+    }
+
+    static UserError headOfEmptyPath()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "head() of empty path",
+                                           "call the guard condition isEmpty() before invoking head()"
+                                          ));
+    }
+
+    static UserError tailOfEmptyPath()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "tail() of empty path",
+                                           "call the guard condition isEmpty() before invoking tail()"
+                                          ));
+    }
+
+    static UserError initOfEmptyPath()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "init() of empty path",
+                                           "call the guard condition isEmpty() before invoking init()"
+                                          ));
+    }
+
     static <T extends JsElem> UserError mutableArgExpected(T arg)
     {
         return new UserError(String.format(GENERAL_MESSAGE,
@@ -44,15 +176,6 @@ public class UserError extends RuntimeException
                                            GUARD_OBJ_CONDITION_SUGGESTION
                                           ));
     }
-
-    static UserError lastOfEmptyObj()
-    {
-        return new UserError(String.format(GENERAL_MESSAGE,
-                                           "last of empty map",
-                                           GUARD_OBJ_CONDITION_SUGGESTION
-                                          ));
-    }
-
 
     static UserError tailOfEmptyObj()
     {
@@ -103,5 +226,43 @@ public class UserError extends RuntimeException
                                           ));
     }
 
+    static UserError asKeyOfIndex()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "asKey() of index",
+                                           "use the guard condition position.isKey() before"
+                                          ));
+    }
 
+    static UserError asIndexOfKey()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "asIndex() of key",
+                                           "use the guard condition position.isIndex() before"
+                                          ));
+    }
+
+    static UserError incOfKey()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "inc() of key",
+                                           "use the guard condition last().isIndex() before invoking inc()"
+                                          ));
+    }
+
+    static UserError decOfKey()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "dec() of key",
+                                           "use the guard condition last().isIndex() before invoking dec()"
+                                          ));
+    }
+
+    static UserError trampolineNotCompleted()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "trampoline not completed",
+                                           "Before calling the method get() on a trampoline, make sure a Trampoline.done() status is returned"
+                                          ));
+    }
 }

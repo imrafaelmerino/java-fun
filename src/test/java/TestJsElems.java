@@ -153,78 +153,78 @@ public class TestJsElems
     @Test
     public void jselem_casting_exceptions()
     {
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)
                                            .asJson()
                                );
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)
                                            .asJsStr()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)
                                            .asJsObj()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsStr.of("1")
                                            .asJsInt()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsStr.of("1")
                                            .asJsBigInt()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsStr.of("1")
                                            .asJsBigDec()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsDouble.of(1d)
                                               .asJsInt()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsDouble.of(1d)
                                               .asJsStr()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsLong.of(1)
                                             .asJsStr()
                                );
 
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .asJsStr()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .asJsArray()
                                );
 
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .asJsDouble()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .asJsInt()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .asJsLong()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .asJsBool()
                                );

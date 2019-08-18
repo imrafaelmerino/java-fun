@@ -100,7 +100,7 @@ public interface Trampoline<T> extends Supplier<T>
                                      )
                              .filter(Trampoline::complete)
                              .findFirst()
-                             .orElseThrow(() -> new UnsupportedOperationException("Trampoline.result but not completed"))
+                             .orElseThrow(UserError::trampolineNotCompleted)
                              .get();
             }
         };

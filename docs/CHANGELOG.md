@@ -1,9 +1,26 @@
 # JSON-VALUES
-## v0.1.5  ( Sat Aug 17 2019 20:07:24 GMT+0200 (CEST) )
+## v0.1.6  ( Mon Aug 19 2019 01:00:50 GMT+0200 (CEST) )
+
+
+## Breaking changes
+
+  - **errors**
+    - due to [14220a82](https://github.com/imrafaelmerino/json-values.git/commit/14220a82ef8a7a2a46055f4824dc575aac3db236),
+  UnsupportedOperationException is not returned anymore
+
+fix #23
+
+  ([14220a82](https://github.com/imrafaelmerino/json-values.git/commit/14220a82ef8a7a2a46055f4824dc575aac3db236))
+
+
 
 
 ## Features
 
-  - **JsPath**
-    - new methods implemented
-  ([8d905fbf](https://github.com/imrafaelmerino/json-values.git/commit/8d905fbf5024011209bba966a2cfd71658126b8f))
+  - **errors**
+    - userError and InternalError exceptions
+  ([14220a82](https://github.com/imrafaelmerino/json-values.git/commit/14220a82ef8a7a2a46055f4824dc575aac3db236))
+
+
+
+

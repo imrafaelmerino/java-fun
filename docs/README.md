@@ -2,8 +2,8 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
-[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/0.1.5)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.5)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.5/jar)
+[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/0.1.6)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.6)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.6/jar)
 
 <img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>  <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
 
@@ -81,7 +81,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
 </dependency>
 ```
 and that's all. It's a **zero-dependency** library, so you won't have to go through a kind of dependency hell to get it working. 

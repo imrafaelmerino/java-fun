@@ -59,13 +59,13 @@ public final class Key implements Position
     }
 
     /**
-     throws UnsupportedOperationException.
-     * @throws UnsupportedOperationException a Key can't be casted into an Index
+     throws an UserError exception.
+     * @throws UserError a Key can't be casted into an Index
      */
     @Override
     public Index asIndex()
     {
-        throw new UnsupportedOperationException("key.asIndex");
+        throw UserError.asIndexOfKey();
     }
 
 

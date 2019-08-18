@@ -156,10 +156,11 @@ public final class JsPath implements Comparable<JsPath>
     /**
      Returns the head of this path if it's not empty, throwing an exception otherwise.
      @return the head of the path witch is an object of type Position representing and Index or a Key
-     @throws UnsupportedOperationException if the path is empty
+     @throws UserError if the path is empty
      */
     public Position head()
     {
+        if (isEmpty()) throw UserError.headOfEmptyPath();
         return positions.head();
 
     }
@@ -211,17 +212,17 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
-     Returns a new path incrementing the last index by one, throwing an UnsupportedOperationException
+     Returns a new path incrementing the last index by one, throwing an UserError
      if the last Position is not an index
      @return a new JsPath with the last index incremented by one
-     @throws UnsupportedOperationException if the last position is not an Index
+     @throws UserError if the last position is not an Index
      */
     public JsPath inc()
     {
 
         return last().match(key ->
                             {
-                                throw new UnsupportedOperationException("inc parse Key. Index was expected.");
+                                throw UserError.incOfKey();
                             },
                             i -> this.init()
                                      .index(i + 1)
@@ -231,17 +232,17 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
-     Returns a new path decrementing the last index by one, throwing an UnsupportedOperationException
+     Returns a new path decrementing the last index by one, throwing an UserError
      if the last Position is not an index
      @return a new JsPath with the last index decremented by one
-     @throws UnsupportedOperationException if the last position is not an Index
+     @throws UserError if the last position is not an Index
      */
     public JsPath dec()
     {
 
         return last().match(key ->
                             {
-                                throw new UnsupportedOperationException("dec parse Key. Index was expected.");
+                                throw UserError.decOfKey();
                             },
                             i -> this.init()
                                      .index(i - 1)
@@ -264,11 +265,12 @@ public final class JsPath implements Comparable<JsPath>
     /**
      Returns a new path without the last Position of this path.
      @return a new JsPath without the last Position of this JsPath
-     @throws UnsupportedOperationException if the JsPath is empty
+     @throws UserError if the JsPath is empty
      */
     public JsPath init()
     {
-        return positions.isEmpty() ? EMPTY : new JsPath(positions.init());
+        if (isEmpty()) throw UserError.initOfEmptyPath();
+        return new JsPath(positions.init());
 
     }
 
@@ -307,10 +309,11 @@ public final class JsPath implements Comparable<JsPath>
      returns the last parse <code>this</code> JsPath if it's not empty or a exception otherwise.
      @return the last parse the JsPath witch is an object parse type Position representing and Index or a Key
 
-     @throws UnsupportedOperationException if the JsPath is empty
+     @throws UserError if the JsPath is empty
      */
     public Position last()
     {
+        if (isEmpty()) throw UserError.lastOfEmptyPath();
         return positions.last();
     }
 
@@ -361,12 +364,12 @@ public final class JsPath implements Comparable<JsPath>
 
      @return a JsPath without the head parse <code>this</code> JsPath
 
-     @throws UnsupportedOperationException if the JsPath is empty
+     @throws UserError if the JsPath is empty
      */
     public JsPath tail()
     {
+        if (isEmpty()) throw UserError.tailOfEmptyPath();
         return new JsPath(positions.tail());
-
     }
 
     /**
@@ -381,8 +384,6 @@ public final class JsPath implements Comparable<JsPath>
     public String toString()
     {
         if (positions.isEmpty()) return "";
-
-
         return positions.iterator()
                         .map(new AbstractFunction1<Position, String>()
                         {
@@ -405,7 +406,7 @@ public final class JsPath implements Comparable<JsPath>
                                                      catch (UnsupportedEncodingException e)
                                                      {
 
-                                                         throw new IllegalArgumentException(e);
+                                                         throw InternalError.encodingNotSupported(e);
 
                                                      }
                                                  },
@@ -432,7 +433,7 @@ public final class JsPath implements Comparable<JsPath>
 
             boolean isNumeric = isNumeric(token);
             if (isNumeric)
-                return Index.of(Integer.valueOf(token));
+                return Index.of(Integer.parseInt(token));
             //token="'" case is covered before
             if (token.startsWith("'") && token.endsWith("'"))
                 return Key.of(URLDecoder.decode(token.substring(1,
@@ -447,7 +448,7 @@ public final class JsPath implements Comparable<JsPath>
         }
         catch (UnsupportedEncodingException e)
         {
-            throw new IllegalArgumentException(e);
+            throw InternalError.encodingNotSupported(e);
         }
     }
 

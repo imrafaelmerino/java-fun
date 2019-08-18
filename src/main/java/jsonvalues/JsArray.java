@@ -38,10 +38,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      Returns a mutable array copying the reference of the collection of elements. Since the reference
      is copied, changes in the array are reflected in the list and vice versa. If the collection is
      immutable (created using List.of or Arrays.asList factory methods for example), every modification
-     in the array will throw an UnsupportedOperationException.
+     in the array will throw an UserError.
      @param list the Collection of JsElem from which reference the JsArray will be created
      @return a mutable JsArray
-     @throws UnsupportedOperationException if an elem of the list is an immutable Json
+     @throws UserError if an elem of the list is an immutable Json
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final List<JsElem> list)
@@ -56,11 +56,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
         return new MyMutableJsArray(new MyJavaVector(list));
 
     }
+
     /**
      Returns a mutable one-element array.
      @param e the JsElem
      @return a mutable one-element JsArray
-     @throws UnsupportedOperationException if the elem is an immutable Json
+     @throws UserError if the elem is an immutable Json
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsElem e)
@@ -74,7 +75,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e a JsElem
      @param e1 a JsElem
      @return a mutable two-element JsArray
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsElem e,
@@ -92,7 +93,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e1 a JsElem
      @param e2 a JsElem
      @return a mutable three-element JsArray
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
 
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
@@ -116,7 +117,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e2 a JsElem
      @param e3 a JsElem
      @return a mutable four-element JsArray
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsElem e,
@@ -141,7 +142,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e3 a JsElem
      @param e4 a JsElem
      @return a mutable five-element JsArray
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
@@ -171,7 +172,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e4 a JsElem
      @param rest more optional JsElem
      @return a mutable  JsArray
-     @throws UnsupportedOperationException if an elem is an immutable Json
+     @throws UserError if an elem is an immutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     // squid:S00100: naming convention: _xx_ returns immutable object
@@ -407,14 +408,14 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     /**
      Returns the first element of this array.
      @return the first JsElem of this JsArray
-     @throws UnsupportedOperationException if this JsArray is empty
+     @throws UserError if this JsArray is empty
      */
     JsElem head();
 
     /**
      Returns all the elements of this array except the last one.
      @return JsArray with all the JsElem except the last one
-     @throws UnsupportedOperationException if this JsArray is empty
+     @throws UserError if this JsArray is empty
      */
     JsArray init();
 
@@ -422,7 +423,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     /**
      Returns the last element of this array.
      @return the last JsElem of this JsArray
-     @throws UnsupportedOperationException if this JsArray is empty
+     @throws UserError if this JsArray is empty
      */
     JsElem last();
 
@@ -430,7 +431,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      Returns an immutable array from the collection of elements.
      @param list the Collection of JsElem from which the JsArray will be created
      @return an immutable JsArray
-     @throws UnsupportedOperationException if an elem of the list is a mutable Json
+     @throws UserError if an elem of the list is a mutable Json
 
      */
     static JsArray of(final Collection<? extends JsElem> list)
@@ -451,7 +452,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      Returns an immutable one-element array.
      @param e the JsElem
      @return a mutable JsArray
-     @throws UnsupportedOperationException if the elem is a mutable Json
+     @throws UserError if the elem is a mutable Json
 
      */
     static JsArray of(JsElem e)
@@ -466,7 +467,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e a JsElem
      @param e1 a JsElem
      @return an immutable two-element JsArray
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
      */
     static JsArray of(final JsElem e,
                       final JsElem e1
@@ -482,7 +483,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e1 a JsElem
      @param e2 a JsElem
      @return an immutable three-element JsArray
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
      */
     static JsArray of(final JsElem e,
                       final JsElem e1,
@@ -503,7 +504,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e2 a JsElem
      @param e3 a JsElem
      @return an immutable four-element JsArray
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
      */
     static JsArray of(final JsElem e,
                       final JsElem e1,
@@ -527,7 +528,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e3 a JsElem
      @param e4 a JsElem
      @return an immutable five-element JsArray
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     @SuppressWarnings("squid:S00107")
@@ -556,7 +557,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param e4 a JsElem
      @param rest more optional JsElem
      @return an immutable JsArray
-     @throws UnsupportedOperationException if an elem is a mutable Json
+     @throws UserError if an elem is a mutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     @SuppressWarnings("squid:S00107")
@@ -841,13 +842,17 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     /**
      Returns a json array consisting of all elements of this array except the first one.
      @return a JsArray consisting of all the elements of this JsArray except the head
-     @throws UnsupportedOperationException if this JsArray is empty.
+     @throws UserError if this JsArray is empty.
      */
     JsArray tail();
 
     /**
-     Returns the intersection of this array and another given as a parameter, defining characteristics
-     like order and duplicates occurrence with the given ARRAY_AS parameter.
+     {@code this.intersection(that, SET)} returns an array with the elements that exist in both {@code this}
+     and {@code that}.
+     {@code this.intersection(that, MULTISET)} returns an array with the elements that exist in both
+     {@code this} and {@code that}, being duplicates allowed.
+     {@code this.intersection(that, LIST)} returns an array with the elements that exist in both {@code this}
+     and {@code that} and are located at the same position.
      @param that the other array
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsArray of the same type as the inputs (mutable or immutable)
@@ -859,9 +864,9 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                         );
 
     /**
-     Returns the intersection of this array and another given as parameter considering both {@link TYPE#LIST}lists
-     and applying recursively the intersection to those elements which are Json of the same type and
-     are located at the same position.
+     {@code this.intersection_(that)} behaves as {@code this.intersection(that, LIST)}, but for those
+     elements that are containers of the same type and are located at the same position, the result
+     is their intersection. So this operation is kind of a recursive intersection
      @param that the other array
      @return a JsArray of the same type as the inputs (mutable or immutable)
      */
@@ -870,8 +875,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     JsArray intersection_(final JsArray that);
 
     /**
-     Returns the union of this array and another, defining characteristics like order and duplicates
-     occurrence with the given ARRAY_AS parameter.
+     {@code this.union(that, SET)} returns {@code this} plus those elements from {@code that} that
+     don't exist in {@code this}.
+     {@code this.union(that, MULTISET)} returns {@code this} plus those elements from {@code that}
+     appended to the back.
+     {@code this.union(that, LIST)} returns {@code this} plus those elements from {@code that} which
+     position is {@code >= this.size()}.
      @param that the other array
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new json array of the same type as the inputs (mutable or immutable)
@@ -884,9 +893,10 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
 
 
     /**
-     Returns the union of this array and another given as parameter considering both {@link TYPE#LIST}lists
-     and applying recursively the union to those elements which are Json of the same type and are located
-     at the same position.
+     returns {@code this} plus those elements from {@code that} which position is  {@code >= this.size()},
+     and, at the positions where a container of the same type exists in both {@code this} and {@code that},
+     the result is their union. This operations doesn't make any sense if arrays are not considered lists,
+     because there is no notion of order.
      @param that the other array
      @return a new JsArray of the same type as the inputs (mutable or immutable)
      */
@@ -900,7 +910,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param pair a pair
      @param others more optional pairs
      @return an immutable JsArray
-     @throws UnsupportedOperationException if an elem of a pair is mutable
+     @throws UserError if an elem of a pair is mutable
 
      */
     static JsArray of(JsPair pair,
@@ -927,7 +937,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param pair a pair
      @param others more optional pairs
      @return a mutable JsArray
-     @throws UnsupportedOperationException if an elem of a pair is immutable
+     @throws UserError if an elem of a pair is immutable
      */
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _of_(final JsPair pair,

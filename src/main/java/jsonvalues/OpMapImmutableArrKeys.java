@@ -19,7 +19,7 @@ class OpMapImmutableArrKeys extends OpMapKeys<JsArray>
                             final JsPath startingPath
                            )
     {
-        throw new UnsupportedOperationException("map keys of array");
+        throw InternalError.opNotSupportedForArrays();
     }
 
     @Override

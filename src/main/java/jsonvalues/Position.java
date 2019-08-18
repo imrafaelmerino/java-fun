@@ -20,14 +20,14 @@ public interface Position extends Comparable<Position>
     /**
      Casts this position into a Key, throwing an exception if it's an index.
      @return this position as a Key
-     @throws UnsupportedOperationException if this position is an Index
+     @throws UserError if this position is an Index
      */
     Key asKey();
 
     /**
      Casts this position into an Index, throwing an exception if it's a Key.
      @return this position as an Index
-     @throws UnsupportedOperationException if this position is an Key
+     @throws UserError if this position is an Key
      */
     Index asIndex();
 

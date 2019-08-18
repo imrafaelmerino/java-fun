@@ -70,13 +70,13 @@ public final class Index implements Position
     }
 
     /**
-     Throws an UnsupportedOperationException.
-     * @throws UnsupportedOperationException an Index can't be casted into an Key
+     throws an UserError exception.
+     * @throws UserError an Index can't be casted into a Key
      */
     @Override
     public Key asKey()
     {
-        throw new UnsupportedOperationException("asKey of index");
+        throw UserError.asKeyOfIndex();
     }
 
     /**

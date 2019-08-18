@@ -40,7 +40,7 @@ class OpFilterMutableArrKeys extends OpFilterKeys<JsArray>
     @Override
     Trampoline<JsArray> filter(final Predicate<? super JsPair> predicate)
     {
-        throw new UnsupportedOperationException("filter keys of array");
+        throw InternalError.opNotSupportedForArrays();
 
     }
 }

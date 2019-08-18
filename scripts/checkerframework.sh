@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#BY THIS TIME (1-JULY-2019) JAVA 8 IS REQUIRED
+#BY THIS TIME (1-JULY-2019) JAVA 8 IS REQUIRED TO RUN CHECKERFRAMEWORK
 JAVA_PATH=${HOME}/.sdkman/candidates/java/8.0.181-oracle/bin/java
 CURRENT_DIR=$(dirname "$0")
 LIB_DIR=${CURRENT_DIR}/libs
@@ -17,3 +17,6 @@ ${JAVA_PATH} -Dfile.encoding=UTF8 -jar ${LIB_DIR}/checker-framework-2.8.2/checke
 -cp "${CLASSPATH}" \
 -d ${WORK_DIR}/classes/ \
 @/${WORK_DIR}/sources.txt
+
+rm -rf ${WORK_DIR}/classes
+rm ${WORK_DIR}/sources.txt

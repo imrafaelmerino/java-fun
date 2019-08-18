@@ -357,7 +357,7 @@ public class TestJsArray
                                                        JsStr.of("b")
                                                       )
                                         );
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> arr.remove("-1")
                                );
 
@@ -769,7 +769,7 @@ public class TestJsArray
                                    .last()
                                );
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray.empty()
                                              .last()
                                );
@@ -1014,7 +1014,7 @@ public class TestJsArray
                                 arr.tail()
                                ); //  ["b","c"]
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> JsArray.empty()
                                              .tail()
                                );

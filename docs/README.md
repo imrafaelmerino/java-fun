@@ -2,7 +2,7 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
-[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
+[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/0.1.5)
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.5)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.5/jar)
 
 <img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>  <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
@@ -35,7 +35,7 @@ manipulate them.
 * _It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures_. —Alan Perlis. 
 
 **json-values** has taken a lot of inspiration from Scala as well, as a matter of fact, it's been implemented following both the object oriented
-and functional paradigms, as Scala promotes. By the way, at this moment I'm working on implementing **json-values** in Scala, and it's
+and functional paradigms, as Scala promotes. By the way, at this moment I'm working on implementing [**json-values** in Scala](https://github.com/imrafaelmerino/json-scala-values), and it's
 being a delightful and enriching experience.
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 * You need to deal with Jsons, and you want to program following a functional style, **using functions and immutable types (or values)** 
@@ -49,6 +49,26 @@ in Java 8, like functions, suppliers, streams and collectors, making json manipu
 With **json-values**, you can go from a mutable Json to an immutable one, back and forth, and the API to manipulate 
 them is exactly the same, being both implementations hidden to the user. 
 * Simplicity matters and I 'd argue that **json-values** is simple.
+* As a developer, I'm convinced that code should wins arguments, so let me enumerate some examples, where I
+left the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
+details)
+```
+json.mapKeys(toSneakeCase)
+obj.stream().parallel().map(toSneakCase).collect(JsObj.collector())
+json.mapElems(trim, ifStr)
+json.filterKeys(key.startsWith("field_"))
+json.filterElems(isNotNull)
+json.reduce(plus, ifInt.and(path.startsWith("a.b")))
+json.putIfAbsent("a.b", ()-> getElem)
+json.apppendIfPresent("c.d", ()-> getElem)
+json.prependAll("a.b", list)
+a.union(b, JsArray.TYPE.SET)
+a.union(b, JsArray.TYPE.LIST)
+a.union(b, JsArray.TYPE.MULTISET)
+a.intersection(b)
+```
+I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
+data structure shows very well the essence of **json-values**.
 ## <a name="notwhatfor"><a/> When not to use it
 **json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for Enterprise Object Oriented Programming. So, don't
 create yet another fancy abstraction with a bunch of getters and setters or a complex DSL over the API. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart Halloway** is a 

@@ -35,7 +35,7 @@ public class InternalError extends RuntimeException
         return new InternalError(e);
     }
 
-    public static InternalError  notEmptyMapWithoutAKey()
+    public static InternalError notEmptyMapWithoutAKey()
     {
         return new InternalError("A calculation on a non empty map was expected to return a result.");
     }
@@ -52,6 +52,13 @@ public class InternalError extends RuntimeException
                                               ));
     }
 
+//    static InternalError patchOpNotSupported(final OpPatch.OP op)
+//    {
+//        return new InternalError(String.format("The path operation %s is not supported and an UserError had to be returned while validating the operations.",
+//                                               op.name()
+//                                              ));
+//    }
+
     static InternalError tokenNotExpected(String token)
     {
         return new InternalError(String.format("token %s not expected during parsing",
@@ -62,5 +69,10 @@ public class InternalError extends RuntimeException
     static InternalError tryComputationWithNoResult(String message)
     {
         return new InternalError(message);
+    }
+
+    static InternalError tryPatchComputationWithNoResult()
+    {
+        return new InternalError("TryPatch.orElseThrow() with nor result nor error");
     }
 }

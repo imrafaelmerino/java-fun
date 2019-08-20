@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.org/imrafaelmerino/json-values)     [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg?style=svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)     [![Coverage](https://img.shields.io/badge/coverage-86-green)](https://imrafaelmerino.github.io/json-values/coverage-report/index.html)
+[![Build Status](https://travis-ci.org/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.org/imrafaelmerino/json-values)     [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)     [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
@@ -48,22 +48,32 @@ in Java 8, like functions, suppliers, streams, and collectors, making json manip
 With **json-values**, you can go from a mutable Json to an immutable one, back and forth, and the API to manipulate 
 them is the same, being both implementations hidden to the user. 
 * Simplicity matters, and I 'd argue that **json-values** is simple.
-* As a developer, I'm convinced that code should wins arguments, so let me enumerate some examples, where I
-left the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
+* As a developer, I'm convinced that code should win arguments, so let me enumerate some examples, where I
+leave the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
 ```
 json.mapKeys(toSneakeCase)
+
 obj.stream().parallel().map(toSneakCase).collect(JsObj.collector())
+
 json.mapElems(trim, ifStr)
+
 json.filterKeys(key.startsWith("field_"))
+
 json.filterElems(isNotNull)
+
 json.reduce(plus, ifInt.and(path.startsWith("a.b")))
+
 json.putIfAbsent("a.b", ()-> getElem)
-json.apppendIfPresent("c.d", ()-> getElem)
+
+json.appendIfPresent("c.d", ()-> getElem)
+
 json.prependAll("a.b", list)
+
 a.union(b, JsArray.TYPE.SET)
 a.union(b, JsArray.TYPE.LIST)
 a.union(b, JsArray.TYPE.MULTISET)
+
 a.intersection(b)
 ```
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent

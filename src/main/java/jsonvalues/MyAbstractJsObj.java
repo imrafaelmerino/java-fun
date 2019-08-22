@@ -459,6 +459,15 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
 
 
     @Override
+    public final Optional<JsObj> add(final JsPath path,
+                                     final Function<? super JsElem, ? extends JsElem> fn
+                                    )
+    {
+       return null;
+    }
+
+
+    @Override
     public final <R> Optional<R> reduce(final BinaryOperator<R> op,
                                         final Function<? super JsPair, R> map,
                                         final Predicate<? super JsPair> predicate

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
+final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 

@@ -7,7 +7,7 @@ import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class OpMapMutableArrElems extends OpMapElems<JsArray>
+final class OpMapMutableArrElems extends OpMapElems<JsArray>
 {
     OpMapMutableArrElems(final JsArray json)
     {

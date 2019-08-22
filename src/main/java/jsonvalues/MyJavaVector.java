@@ -17,7 +17,7 @@ import static jsonvalues.JsNull.NULL;
 import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.MyJsParser.Event.END_ARRAY;
 
-class MyJavaVector implements MyVector<MyJavaVector>
+final class MyJavaVector implements MyVector<MyJavaVector>
 {
     private List<JsElem> elements;
 
@@ -135,8 +135,16 @@ class MyJavaVector implements MyVector<MyJavaVector>
     @Override
     public MyJavaVector remove(final int index)
     {
-        elements.remove(index);
-        return this;
+        try
+        {
+            elements.remove(index);
+            return this;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            throw UserError.unsupportedOperationOnlist(elements.getClass());
+        }
+
     }
 
     @Override
@@ -170,6 +178,15 @@ class MyJavaVector implements MyVector<MyJavaVector>
         elements.set(index,
                      ele
                     );
+        return this;
+    }
+
+    @Override
+    public MyJavaVector add(final int index,
+                            final JsElem ele
+                           )
+    {
+        elements.add(index,ele);
         return this;
     }
 

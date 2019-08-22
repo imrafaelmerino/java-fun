@@ -51,6 +51,10 @@ interface MyVector<T extends MyVector<T>> extends Iterable<JsElem>
              JsElem ele
             );
 
+    T add(int index,
+          JsElem ele
+         );
+
     T remove(int index);
 
     JsElem head();

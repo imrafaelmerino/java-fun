@@ -981,4 +981,20 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
         return true;
     }
+
+    @Override
+    default TryPatch<JsArray> patch(final JsArray ops)
+    {
+        return Patch.of(this,
+                        requireNonNull(ops)
+                       );
+    }
+
+    @Override
+    default TryPatch<JsArray> patch(final String ops)
+    {
+        return Patch.of(this,
+                        requireNonNull(ops)
+                       );
+    }
 }

@@ -3,7 +3,7 @@ package jsonvalues;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class OpCombinerArrs extends OpCombiner<JsArray>
+final class OpCombinerArrs extends OpCombiner<JsArray>
 {
 
 

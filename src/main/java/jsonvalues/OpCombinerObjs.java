@@ -5,7 +5,7 @@ import java.util.Map;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class OpCombinerObjs extends OpCombiner<JsObj>
+final class OpCombinerObjs extends OpCombiner<JsObj>
 {
     OpCombinerObjs(final JsObj a,
                    final JsObj b

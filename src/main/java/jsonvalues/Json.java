@@ -1524,6 +1524,127 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
           final Function<? super JsElem, ? extends JsElem> fn
          );
 
+    Optional<T> add(final JsPath path,
+                    final Function<? super JsElem, ? extends JsElem> fn
+                   );
+
+    default Optional<T> add(final String path,
+                            final Function<? super JsElem, ? extends JsElem> fn
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   requireNonNull(fn)
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final JsElem elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> requireNonNull(elem)
+                  );
+    }
+
+    default Optional<T> add(final String path,
+                            final JsElem elem
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   requireNonNull(elem)
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final int elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsInt.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final String path,
+                            final int elem
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   elem
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final double elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsDouble.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final String path,
+                            final double elem
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   elem
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final long elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsLong.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final String path,
+                            final long elem
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   elem
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final String elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsStr.of(requireNonNull(elem))
+                  );
+    }
+
+    default Optional<T> add(final String path,
+                            final String elem
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   requireNonNull(elem)
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final boolean elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsBool.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final String path,
+                            final boolean elem
+                           )
+    {
+        return add(JsPath.of(requireNonNull(path)),
+                   elem
+                  );
+    }
+
     /**
      Inserts the element returned by the function at the path in this json, replacing any existing
      element in the path and filling with {@link jsonvalues.JsNull} empty indexes in arrays when
@@ -3045,4 +3166,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
         return false;
     }
+
+    TryPatch<T> patch(JsArray ops);
+
+    TryPatch<T> patch(String ops);
 }

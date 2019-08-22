@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import static jsonvalues.MyJsParser.Event.*;
 import static jsonvalues.MyJsTokenizer.Token.*;
 
-class MyJsParser implements Closeable
+final class MyJsParser implements Closeable
 {
     private static final MyJsBufferPool pool = new MyJsBufferPool();
 

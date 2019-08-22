@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
+final class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
 {
     public static final long serialVersionUID = 1L;
 

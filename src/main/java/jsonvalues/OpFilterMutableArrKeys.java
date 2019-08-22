@@ -2,7 +2,7 @@ package jsonvalues;
 
 import java.util.function.Predicate;
 
-class OpFilterMutableArrKeys extends OpFilterKeys<JsArray>
+final class OpFilterMutableArrKeys extends OpFilterKeys<JsArray>
 {
     OpFilterMutableArrKeys(final JsArray json)
     {

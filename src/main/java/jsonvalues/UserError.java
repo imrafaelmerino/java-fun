@@ -4,7 +4,7 @@ package jsonvalues;
  Exception that models a programming error made by the user. The user has a bug in their code and something
  has to be fixed. Part of the exception message is a suggestion to fix the bug.
  */
-public class UserError extends RuntimeException
+public final class UserError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
     private static final String GUARD_ARR_CONDITION_SUGGESTION = "use the guard condition arr.isEmpty() before";
@@ -263,6 +263,14 @@ public class UserError extends RuntimeException
         return new UserError(String.format(GENERAL_MESSAGE,
                                            "trampoline not completed",
                                            "Before calling the method get() on a trampoline, make sure a Trampoline.done() status is returned"
+                                          ));
+    }
+
+     static UserError unsupportedOperationOnlist(final Class<?> listClass)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "Unsupported operation supported by the list from which the JsArray was created.",
+                                           String.format("Is the list %s unmodifiable?",listClass)
                                           ));
     }
 }

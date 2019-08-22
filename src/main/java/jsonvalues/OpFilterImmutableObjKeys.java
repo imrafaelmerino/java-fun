@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
-class OpFilterImmutableObjKeys extends OpFilterKeys<JsObj>
+final class OpFilterImmutableObjKeys extends OpFilterKeys<JsObj>
 {
 
     OpFilterImmutableObjKeys(final JsObj json)

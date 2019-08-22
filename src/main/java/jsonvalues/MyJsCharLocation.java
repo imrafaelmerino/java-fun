@@ -1,6 +1,6 @@
 package jsonvalues;
 
-class MyJsCharLocation
+final class MyJsCharLocation
 {
     private final long columnNo;
     private final long lineNo;

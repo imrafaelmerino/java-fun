@@ -7,7 +7,7 @@ import java.util.function.UnaryOperator;
 /**
  Builder with different options to customize the parsing of a string into a json.
  */
-public class ParseOptions
+public final class ParseOptions
 {
     private Function<? super JsPair, ? extends JsElem> map = pair -> pair.elem;
     private Predicate<? super JsPair> filter = pair -> true;

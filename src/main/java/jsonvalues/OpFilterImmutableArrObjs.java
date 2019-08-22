@@ -6,7 +6,7 @@ import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.MatchExp.ifObjElse;
 import static jsonvalues.Trampoline.more;
 
-class OpFilterImmutableArrObjs extends OpFilterObjs<JsArray>
+final class OpFilterImmutableArrObjs extends OpFilterObjs<JsArray>
 {
 
 

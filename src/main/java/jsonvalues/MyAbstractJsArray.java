@@ -588,6 +588,15 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     }
 
     @Override
+    public final Optional<JsArray> add(final JsPath path,
+                                       final Function<? super JsElem, ? extends JsElem> fn
+                                      )
+    {
+        return null;
+    }
+
+
+    @Override
     public final <R> Optional<R> reduce(final BinaryOperator<R> op,
                                         final Function<? super JsPair, R> map,
                                         final Predicate<? super JsPair> predicate

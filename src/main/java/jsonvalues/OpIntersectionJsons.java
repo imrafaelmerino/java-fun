@@ -1,6 +1,6 @@
 package jsonvalues;
 
-class OpIntersectionJsons
+final class OpIntersectionJsons
 {
 
     //squid:S1452 -> private method not exposed to the user. the wildcard allows to refactor some code, and Json<?> has only two possible types: JsObj or JsArr

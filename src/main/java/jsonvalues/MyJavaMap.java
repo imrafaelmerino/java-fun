@@ -14,7 +14,7 @@ import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
 import static jsonvalues.MyJsParser.Event.END_OBJECT;
 
-class MyJavaMap implements MyMap<MyJavaMap>
+final class MyJavaMap implements MyMap<MyJavaMap>
 {
 
     private java.util.Map<String, JsElem> elements;

@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import static jsonvalues.Trampoline.more;
 
-class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
+final class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
 {
     OpMapImmutableObjKeys(final JsObj json)
     {

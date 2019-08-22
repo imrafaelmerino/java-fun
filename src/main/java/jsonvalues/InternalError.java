@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
  Exception that models an internal error made by a developer. An issue in GitHub should be open reporting
  the exception message.
  */
-public class InternalError extends RuntimeException
+public final  class InternalError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
     private static final String GENERAL_MESSAGE = "Create an issue in https://github.com/imrafaelmerino/values: %s.";
@@ -30,17 +30,17 @@ public class InternalError extends RuntimeException
                                               ));
     }
 
-    public static InternalError encodingNotSupported(final UnsupportedEncodingException e)
+     static InternalError encodingNotSupported(final UnsupportedEncodingException e)
     {
         return new InternalError(e);
     }
 
-    public static InternalError notEmptyMapWithoutAKey()
+     static InternalError notEmptyMapWithoutAKey()
     {
         return new InternalError("A calculation on a non empty map was expected to return a result.");
     }
 
-    public static InternalError opNotSupportedForArrays()
+     static InternalError opNotSupportedForArrays()
     {
         return new InternalError("A JsArray doesn't have keys. Don't call this method.");
     }
@@ -51,6 +51,7 @@ public class InternalError extends RuntimeException
                                                key
                                               ));
     }
+
 
 //    static InternalError patchOpNotSupported(final OpPatch.OP op)
 //    {

@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
+final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 

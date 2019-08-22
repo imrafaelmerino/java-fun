@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.Trampoline.more;
 
-class OpMapImmutableArrElems extends OpMapElems<JsArray>
+final class OpMapImmutableArrElems extends OpMapElems<JsArray>
 {
     OpMapImmutableArrElems(final JsArray json)
     {

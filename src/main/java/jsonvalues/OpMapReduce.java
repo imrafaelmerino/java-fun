@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class OpMapReduce<T>
+final class OpMapReduce<T>
 {
     private final BiFunction<JsPair, Optional<T>, Optional<T>> accumulator;
 

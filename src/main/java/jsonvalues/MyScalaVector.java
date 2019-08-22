@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
 import scala.collection.generic.CanBuildFrom;
+import scala.collection.immutable.Vector;
 import scala.collection.mutable.Builder;
 
 import java.util.Collection;
@@ -19,30 +20,30 @@ import static jsonvalues.MyJsParser.Event.END_ARRAY;
 final class MyScalaVector implements MyVector<MyScalaVector>
 {
 
-    static final scala.collection.immutable.Vector<JsElem> EMPTY_VECTOR = new scala.collection.immutable.Vector<>(0,
-                                                                                                                  0,
-                                                                                                                  0
+    static final Vector<JsElem> EMPTY_VECTOR = new scala.collection.immutable.Vector<>(0,
+                                                                                       0,
+                                                                                       0
     );
-    static final CanBuildFrom<scala.collection.immutable.Vector<JsElem>, JsElem, scala.collection.immutable.Vector<JsElem>> bf = new CanBuildFrom<scala.collection.immutable.Vector<JsElem>, JsElem, scala.collection.immutable.Vector<JsElem>>()
+    static final CanBuildFrom<Vector<JsElem>, JsElem, Vector<JsElem>> bf = new CanBuildFrom<Vector<JsElem>, JsElem, Vector<JsElem>>()
     {
         @Override
-        public Builder<JsElem, scala.collection.immutable.Vector<JsElem>> apply()
+        public Builder<JsElem, Vector<JsElem>> apply()
         {
             return scala.collection.immutable.Vector.<JsElem>canBuildFrom().apply();
         }
 
         @Override
-        public Builder<JsElem, scala.collection.immutable.Vector<JsElem>> apply(final scala.collection.immutable.Vector<JsElem> v)
+        public Builder<JsElem, Vector<JsElem>> apply(final Vector<JsElem> v)
         {
             return scala.collection.immutable.Vector.<JsElem>canBuildFrom().apply();
         }
     };
 
     static final MyScalaVector EMPTY = new MyScalaVector(EMPTY_VECTOR);
-    private final scala.collection.immutable.Vector<JsElem> vector;
+    private final Vector<JsElem> vector;
 
 
-    MyScalaVector(final scala.collection.immutable.Vector<JsElem> vector)
+    MyScalaVector(final Vector<JsElem> vector)
     {
         this.vector = vector;
     }
@@ -50,7 +51,7 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @Override
     public MyScalaVector add(final Collection<? extends JsElem> list)
     {
-        scala.collection.immutable.Vector<JsElem> r = this.vector;
+        Vector<JsElem> r = this.vector;
         for (final JsElem jsElem : list) r = r.appendBack(jsElem);
         return new MyScalaVector(r);
     }
@@ -147,15 +148,25 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
     public MyScalaVector remove(final int index)
     {
-
-
         if (index == 0) return new MyScalaVector(vector.tail());
         if (index == vector.size() - 1) return new MyScalaVector(vector.init());
 
-        Tuple2<scala.collection.immutable.Vector<JsElem>, scala.collection.immutable.Vector<JsElem>> tuple = vector.splitAt(index);
-
-
+        Tuple2<Vector<JsElem>, Vector<JsElem>> tuple = vector.splitAt(index);
         return new MyScalaVector(tuple._1.init()
+                                         .$plus$plus(tuple._2,
+                                                     bf
+                                                    ));
+    }
+
+    @Override
+    public MyScalaVector add(final int index,
+                             final JsElem ele
+                            )
+    {
+        if (index == 0) return new MyScalaVector(vector.appendFront(ele));
+        if (index == vector.size() - 1) return new MyScalaVector(vector.appendBack(ele));
+        Tuple2<Vector<JsElem>, Vector<JsElem>> tuple = vector.splitAt(index);
+        return new MyScalaVector(tuple._1.appendBack(ele)
                                          .$plus$plus(tuple._2,
                                                      bf
                                                     ));
@@ -192,6 +203,7 @@ final class MyScalaVector implements MyVector<MyScalaVector>
                                                 ));
     }
 
+
     @Override
     public boolean equals(final @Nullable Object that)
     {
@@ -200,7 +212,6 @@ final class MyScalaVector implements MyVector<MyScalaVector>
 
     MyScalaVector parse(final MyJsParser parser) throws MalformedJson
     {
-
         MyJsParser.Event elem;
         MyScalaVector newRoot = this;
         while ((elem = parser.next()) != END_ARRAY)
@@ -226,19 +237,15 @@ final class MyScalaVector implements MyVector<MyScalaVector>
                     final MyScalaMap newObj = MyScalaMap.EMPTY.parse(parser);
                     newRoot = newRoot.appendBack(new MyImmutableJsObj(newObj));
                     break;
-
                 case START_ARRAY:
                     final MyScalaVector newVector = EMPTY.parse(parser);
-
                     newRoot = newRoot.appendBack(new MyImmutableJsArray(newVector));
                     break;
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
             }
         }
-
         return newRoot;
-
 
     }
 

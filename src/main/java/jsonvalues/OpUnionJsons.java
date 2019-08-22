@@ -1,6 +1,6 @@
 package jsonvalues;
 
-class OpUnionJsons
+final class OpUnionJsons
 {
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,
     // squid:S00100: naming convention: xx_ traverses the whole json

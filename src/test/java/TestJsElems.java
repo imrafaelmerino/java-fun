@@ -14,25 +14,25 @@ public class TestJsElems
 {
 
     @Test
-    public void map_pairs()
+    public void test_map_pairs()
     {
 
-        Assertions.assertEquals(JsPair.of("a.b.2",
+        Assertions.assertEquals(JsPair.of(JsPath.of("/a/b/2"),
                                           JsInt.of(1)
                                          ),
-                                JsPair.of("a.b.1",
+                                JsPair.of(JsPath.of("/a/b/1"),
                                           JsInt.of(1)
                                          )
                                       .mapPath(JsPath::inc)
                                );
 
-        final JsPair pair1 = JsPair.of("a.b.1",
+        final JsPair pair1 = JsPair.of(JsPath.of("/a/b/1"),
                                        JsInt.of(1)
                                       )
                                    .mapElem(e -> e.asJsInt()
                                                   .map(i -> i + 1));
 
-        Assertions.assertEquals(JsPair.of("a.b.1",
+        Assertions.assertEquals(JsPair.of(JsPath.of("/a/b/1"),
                                           JsInt.of(2)
                                          ),
                                 pair1
@@ -41,7 +41,7 @@ public class TestJsElems
     }
 
     @Test
-    public void map_elements()
+    public void test_map_elements()
     {
 
         Assertions.assertEquals(JsInt.of(10),
@@ -151,7 +151,7 @@ public class TestJsElems
     }
 
     @Test
-    public void jselem_casting_exceptions()
+    public void test_jselem_casting_exceptions()
     {
         Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)

@@ -143,6 +143,14 @@ public final class UserError extends RuntimeException
                                           ));
     }
 
+    static UserError pathMalformed(final String path)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("malformed path: %s",path),
+                                           "Go to https://imrafaelmerino.github.io/json-values/#jspath"
+                                          ));
+    }
+
     static UserError tailOfEmptyPath()
     {
         return new UserError(String.format(GENERAL_MESSAGE,

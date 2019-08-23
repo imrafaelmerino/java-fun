@@ -290,17 +290,6 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
 
     }
 
-    static Trampoline<JsObj> put(final String key,
-                                 final JsElem elem,
-                                 final Trampoline<Trampoline<JsObj>> tail
-
-                                )
-    {
-        return more(tail).map(it -> it.put(JsPath.of(key),
-                                           elem
-                                          ));
-    }
-
     @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name for an enum constant
     private Trampoline<JsObj> intersection(final JsObj a,
                                            final JsObj b,
@@ -315,13 +304,13 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                                                           b,
                                                                           ARRAY_AS
                                                                          );
-        final JsElem bElem = b.get(head.getKey());
+        final JsElem bElem = b.get(JsPath.fromKey(head.getKey()));
 
         return ((bElem.isJson() && bElem.asJson()
                                         .equals(head.getValue(),
                                                 ARRAY_AS
                                                )) || bElem.equals(head.getValue())) ?
-        more(tailCall).map(it -> it.put(head.getKey(),
+        more(tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                         head.getValue()
                                        )) :
         more(tailCall);
@@ -358,16 +347,16 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                                                     b,
                                                                     ARRAY_AS
                                                                    ));
-        if (b.containsPath(head.getKey()))
+        if (b.containsPath(JsPath.fromKey(head.getKey())))
         {
 
-            final JsElem headOtherElement = b.get(JsPath.of(head.getKey()));
+            final JsElem headOtherElement = b.get(JsPath.fromKey(head.getKey()));
             if (headOtherElement.equals(head.getValue()))
             {
                 return more(() -> intersection_(tail,
                                                 b.tail(head.getKey()),
                                                 ARRAY_AS
-                                               )).map(it -> it.put(head.getKey(),
+                                               )).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                    head.getValue()
                                                                   ));
 
@@ -385,7 +374,7 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                                                                                                  )
                                                              );
                 return more(() -> tailCall).flatMap(json -> headCall
-                                                    .map(it -> json.put(head.getKey(),
+                                                    .map(it -> json.put(JsPath.fromKey(head.getKey()),
                                                                         it
                                                                        )
                                                         )
@@ -538,11 +527,15 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
     {
         return this.fields()
                    .stream()
-                   .flatMap(f -> Stream.of(JsPair.of(JsPath.of(f),
-                                                     this.get(f)
-                                                    )
-                                          )
-                           );
+                   .map(f ->
+                        {
+                            final JsPath key = JsPath.fromKey(f);
+                            return JsPair.of(key,
+                                             this.get(key)
+                                            );
+                        }
+
+                       );
     }
 
     static Stream<JsPair> streamOfObj(final JsObj obj,
@@ -613,7 +606,7 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
         return union(a,
                      tail
                     ).map(it ->
-                          it.putIfAbsent(JsPath.of(head.getKey()),
+                          it.putIfAbsent(JsPath.fromKey(head.getKey()),
                                          head::getValue
                                         ));
     }
@@ -660,7 +653,7 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                                        tail,
                                                        ARRAY_AS
                                                       ));
-        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                   head.getValue()
                                                                                  )),
                                       MatchExp.ifPredicateElse(e -> e.isJson() && e.isSameType(head.getValue()),
@@ -678,7 +671,7 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
                                                                                                                                                       )
                                                                                                                 );
                                                                    return more(() -> tailCall).flatMap(tailResult -> headCall.map(headUnion_ ->
-                                                                                                                                  tailResult.put(head.getKey(),
+                                                                                                                                  tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                  headUnion_
                                                                                                                                                 )
                                                                                                                                  )

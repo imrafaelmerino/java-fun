@@ -190,23 +190,20 @@ class SetTheoryOpsSpec extends BasePropSpec
                          SET
                          ).equals(obj)
 
-
               val result = obj.union_(b,
                                       TYPE.MULTISET
                                       )
-
 
               val result1 = obj.union_(b,
                                        SET
                                        )
 
-
               val result2 = obj.union_(b,
                                        TYPE.LIST
                                        )
 
-
-              result.size("a").orElse(0) == 6 && result1.size("a").orElse(0) == 5 && result2.size("a").orElse(0) == 3
+              val a = JsPath.fromKey("a")
+              result.size(a).orElse(0) == 6 && result1.size(a).orElse(0) == 5 && result2.size(a).orElse(0) == 3
 
 
           }

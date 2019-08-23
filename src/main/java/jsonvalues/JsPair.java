@@ -69,134 +69,13 @@ public final class JsPair
 
 
     /**
-
-     Returns a json pair from the path-like string and the json element.
-     @param path the path-like string
-     @param elem the JsElem
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            JsElem elem
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          requireNonNull(elem)
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the integer.
-     @param path the path-like string
-     @param i the integer
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            int i
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsInt.of(i)
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the double.
-     @param path the path-like string
-     @param d the double
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            double d
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsDouble.of(d)
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the long.
-     @param path the path-like string
-     @param l the long
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            long l
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsLong.of(l)
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the boolean.
-     @param path the path-like string
-     @param b the boolean
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            boolean b
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsBool.of(b)
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the string.
-     @param path the path-like string
-     @param s the string
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            String s
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsStr.of(requireNonNull(s))
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the big decimal.
-     @param path the path-like string
-     @param bd the big decimal
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            BigDecimal bd
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsBigDec.of(requireNonNull(bd))
-        );
-    }
-
-    /**
-     Returns a json pair from the path-like string and the big integer.
-     @param path the path-like string
-     @param bi the big integer
-     @return an immutable JsPair
-     */
-    public static JsPair of(String path,
-                            BigInteger bi
-                           )
-    {
-        return new JsPair(JsPath.of(requireNonNull(path)),
-                          JsBigInt.of(requireNonNull(bi))
-        );
-    }
-
-    /**
      Returns a json pair from the path and the json element.
      @param path the JsPath object
      @param elem the JsElem
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            JsElem elem
+    public static JsPair of(final JsPath path,
+                            final JsElem elem
                            )
     {
         return new JsPair(requireNonNull(path),
@@ -210,8 +89,8 @@ public final class JsPair
      @param i the integer
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            int i
+    public static JsPair of(final JsPath path,
+                            final int i
                            )
     {
         return new JsPair(requireNonNull(path),

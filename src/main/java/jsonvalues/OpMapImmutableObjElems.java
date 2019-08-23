@@ -28,7 +28,7 @@ final class OpMapImmutableObjElems extends OpMapElems<JsObj>
                                                                                                                                   predicate,
                                                                                                                                   startingPath
                                                                                                                                  ));
-                                    return ifJsonElse(headJson -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                    return ifJsonElse(headJson -> more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                         headJson
                                                                                                                        )),
                                                       headElem ->
@@ -40,7 +40,7 @@ final class OpMapImmutableObjElems extends OpMapElems<JsObj>
                                                                                             fn::apply,
                                                                                             p -> headElem
                                                                                            );
-                                                          return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                          return more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                        headMapped
                                                                                                                       ));
                                                       }
@@ -71,7 +71,7 @@ final class OpMapImmutableObjElems extends OpMapElems<JsObj>
                                                                                                                                                        headPath
                                                                                                                                                       )
                                                                                                                                                  .map(headMapped ->
-                                                                                                                                                      tailResult.put(head.getKey(),
+                                                                                                                                                      tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                      headMapped
                                                                                                                                                                     )
                                                                                                                                                      )
@@ -81,7 +81,7 @@ final class OpMapImmutableObjElems extends OpMapElems<JsObj>
                                                                                                                                                      headPath.index(-1)
                                                                                                                                                     )
                                                                                                                                                .map(headMapped ->
-                                                                                                                                                    tailResult.put(head.getKey(),
+                                                                                                                                                    tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                    headMapped
                                                                                                                                                                   )
                                                                                                                                                    )
@@ -95,7 +95,7 @@ final class OpMapImmutableObjElems extends OpMapElems<JsObj>
                                                                                             fn::apply,
                                                                                             p -> headElem
                                                                                            );
-                                                          return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                          return more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                        headMapped
                                                                                                                       ));
                                                       }

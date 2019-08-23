@@ -14,7 +14,7 @@ public class TestsUnionAndIntersection
 {
 
     @Test
-    public void _1_testUnion() throws MalformedJson
+    public void test_1_testUnion() throws MalformedJson
     {
 
 
@@ -59,7 +59,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void _2_testUnion() throws MalformedJson
+    public void test_2_testUnion() throws MalformedJson
     {
 
 
@@ -100,9 +100,8 @@ public class TestsUnionAndIntersection
 
     }
 
-
     @Test
-    public void _3_testUnion() throws MalformedJson
+    public void test_3_testUnion() throws MalformedJson
     {
 
 
@@ -150,9 +149,8 @@ public class TestsUnionAndIntersection
 
     }
 
-
     @Test
-    public void _4_testUnion() throws MalformedJson
+    public void test_4_testUnion() throws MalformedJson
     {
 
 
@@ -197,7 +195,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void _5_testUnion() throws MalformedJson
+    public void test_5_testUnion() throws MalformedJson
     {
 
 
@@ -241,7 +239,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void _1_testIntersection() throws MalformedJson
+    public void test_1_testIntersection() throws MalformedJson
     {
 
 
@@ -264,9 +262,8 @@ public class TestsUnionAndIntersection
 
     }
 
-
     @Test
-    public void _2_testIntersection() throws MalformedJson
+    public void test_2_testIntersection() throws MalformedJson
     {
 
 
@@ -439,7 +436,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void map_keys_immutable_obj()
+    public void test_map_keys_immutable_obj()
     {
 
         JsObj obj = JsObj.of("a",
@@ -485,7 +482,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void map_keys_mutable_obj()
+    public void test_map_keys_mutable_obj()
     {
 
         JsObj obj = JsObj._of_("a",
@@ -531,7 +528,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void map_keys_immutable_array() throws MalformedJson
+    public void test_map_keys_immutable_array() throws MalformedJson
     {
 
         JsArray arr = JsArray.of(JsObj.of("a",
@@ -589,7 +586,7 @@ public class TestsUnionAndIntersection
     }
 
     @Test
-    public void map_keys_mutable_array() throws MalformedJson
+    public void test_map_keys_mutable_array() throws MalformedJson
     {
         Supplier<JsArray> supplier = () -> JsArray._of_(JsObj._of_("a",
                                                                    JsStr.of("A"),

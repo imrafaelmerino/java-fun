@@ -20,7 +20,7 @@ import static jsonvalues.JsPath.of;
 public class TestJsObj
 {
     @Test
-    public void creates_mutable_empty_object()
+    public void test_creates_mutable_empty_object()
     {
         JsObj obj = JsObj._empty_();
         Assertions.assertTrue(obj.isEmpty());
@@ -37,7 +37,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_empty_object()
+    public void test_creates_immutable_empty_object()
     {
         JsObj obj = JsObj.empty();
         Assertions.assertTrue(obj.isEmpty());
@@ -52,7 +52,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_one_element_object()
+    public void test_creates_mutable_one_element_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsInt.of(1)
@@ -73,7 +73,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_two_elements_object()
+    public void test_creates_mutable_two_elements_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsInt.of(1),
@@ -95,7 +95,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_two_elements_object()
+    public void test_creates_immutable_two_elements_object()
     {
         JsObj obj = JsObj.of("a",
                              JsInt.of(1),
@@ -117,7 +117,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_three_elements_object()
+    public void test_creates_mutable_three_elements_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsLong.of(10),
@@ -141,7 +141,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_three_elements_object()
+    public void test_creates_immutable_three_elements_object()
     {
         JsObj obj = JsObj.of("a",
                              JsLong.of(10),
@@ -165,7 +165,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_four_elements_object()
+    public void test_creates_mutable_four_elements_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsStr.of("A"),
@@ -201,7 +201,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_four_elements_object()
+    public void test_creates_immutable_four_elements_object()
     {
         JsObj obj = JsObj.of("a",
                              JsStr.of("A"),
@@ -250,7 +250,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_five_elements_object()
+    public void test_creates_mutable_five_elements_object()
     {
 
         JsObj obj = JsObj._of_("a",
@@ -275,7 +275,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_five_elements_object()
+    public void test_creates_immutable_five_elements_object()
     {
 
         JsObj obj = JsObj.of("a",
@@ -320,7 +320,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_object_from_pairs()
+    public void test_creates_mutable_object_from_pairs()
     {
 
         JsObj obj = JsObj._of_(JsPair.of(fromKey("a"),
@@ -356,7 +356,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_object_from_pairs()
+    public void test_creates_immutable_object_from_pairs()
     {
 
         JsObj obj = JsObj.of(JsPair.of(fromKey("a"),
@@ -393,7 +393,7 @@ public class TestJsObj
 
 
     @Test
-    public void head_and_tail_of_empty_obj_returns_exception()
+    public void test_head_and_tail_of_empty_obj_returns_exception()
     {
 
         Assertions.assertThrows(UserError.class,
@@ -417,7 +417,7 @@ public class TestJsObj
     }
 
     @Test
-    public void equals_and_hashcode()
+    public void test_equals_and_hashcode()
     {
         final JsObj obj = JsObj.of("a",
                                    JsInt.of(1),
@@ -448,7 +448,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_strings_to_lowercase_and_reduce()
+    public void test_map_strings_to_lowercase_and_reduce()
     {
 
         final JsObj immutable = JsObj.of("a",
@@ -547,7 +547,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_keys_to_uppercase_removing_trailing_white_spaces_mutable()
+    public void test_map_keys_to_uppercase_removing_trailing_white_spaces_mutable()
     {
 
         final Supplier<JsObj> supplier = () -> JsObj._of_(" a ",
@@ -606,7 +606,7 @@ public class TestJsObj
 
 
     @Test
-    public void map_keys_to_uppercase_removing_trailing_white_spaces_immutable()
+    public void test_map_keys_to_uppercase_removing_trailing_white_spaces_immutable()
     {
         final JsObj obj = JsObj.of(" a ",
                                    JsObj.of(" a1 ",
@@ -659,7 +659,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_keys_to_uppercase_removing_trailing_white_spaces_if_condition()
+    public void test_map_keys_to_uppercase_removing_trailing_white_spaces_if_condition()
     {
         final JsObj immutable = JsObj.of(" a ",
                                          JsObj.of(" a1 ",
@@ -745,7 +745,7 @@ public class TestJsObj
 
 
     @Test
-    public void filter_keys_immutable()
+    public void test_filter_keys_immutable()
     {
         final Supplier<JsObj> obj = () -> JsObj.of("a",
                                                    JsObj.of("a1",
@@ -811,7 +811,7 @@ public class TestJsObj
     }
 
     @Test
-    public void filter_keys_mutable()
+    public void test_filter_keys_mutable()
     {
 
 
@@ -885,7 +885,7 @@ public class TestJsObj
     }
 
     @Test
-    public void parse_string() throws MalformedJson
+    public void test_parse_string() throws MalformedJson
     {
         final JsObj mutable = JsObj._of_("a",
                                          JsObj._of_("a1",
@@ -960,7 +960,7 @@ public class TestJsObj
 
 
     @Test
-    public void filter_jsons_from_immutable() throws MalformedJson
+    public void test_filter_jsons_from_immutable() throws MalformedJson
     {
         final JsObj obj = JsObj.of("a",
                                    JsObj.of("R",
@@ -1017,7 +1017,7 @@ public class TestJsObj
 
 
     @Test
-    public void filter_jsons_from_mutable() throws MalformedJson
+    public void test_filter_jsons_from_mutable() throws MalformedJson
     {
         final Supplier<JsObj> supplier = () -> JsObj._of_("a",
                                                           JsObj._of_("R",
@@ -1090,7 +1090,7 @@ public class TestJsObj
     }
 
     @Test
-    public void filter_values_from_mutable_object() throws MalformedJson
+    public void test_filter_values_from_mutable_object() throws MalformedJson
     {
 
         Supplier<JsObj> supplier = () -> JsObj._of_("a",
@@ -1147,7 +1147,7 @@ public class TestJsObj
     }
 
     @Test
-    public void filter_values_from_immutable_object() throws MalformedJson
+    public void test_filter_values_from_immutable_object() throws MalformedJson
     {
 
         JsObj obj = JsObj.of("a",
@@ -1182,7 +1182,7 @@ public class TestJsObj
     }
 
     @Test
-    public void put_and_get()
+    public void test_put_and_get()
     {
         final JsObj empty = JsObj.empty();
         final JsObj a = empty.put(JsPath.fromKey("a"),
@@ -1198,7 +1198,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_json_obj_mutable()
+    public void test_map_json_obj_mutable()
     {
         Supplier<JsObj> supp = () -> JsObj._of_("a",
                                                 JsObj._empty_(),
@@ -1250,7 +1250,7 @@ public class TestJsObj
     }
 
     @Test
-    public void parse_with_options() throws MalformedJson
+    public void test_parse_with_options() throws MalformedJson
     {
         Supplier<JsObj> supplier = () -> JsObj._of_("a",
                                                     JsStr.of("1"),
@@ -1341,7 +1341,7 @@ public class TestJsObj
 
 
     @Test
-    public void error_when_mixing_implementations()
+    public void test_error_when_mixing_implementations()
     {
 
         Assertions.assertThrows(UserError.class,
@@ -1544,7 +1544,7 @@ public class TestJsObj
 
 
     @Test
-    public void map_values_mutable() throws MalformedJson
+    public void test_map_values_mutable() throws MalformedJson
     {
 
         Supplier<JsObj> supplier = () -> JsObj._of_("a",
@@ -1613,7 +1613,7 @@ public class TestJsObj
     }
 
     @Test
-    public void equals()
+    public void test_equals()
     {
 
         JsObj obj = JsObj.of("a",

@@ -8,7 +8,7 @@ public class TestJsPath
 
 
     @Test
-    public void to_string()
+    public void test_to_string()
     {
 
         Assertions.assertEquals("/a/b/0/1",
@@ -39,7 +39,7 @@ public class TestJsPath
     }
 
     @Test
-    public void jspath_comparator()
+    public void test_jspath_comparator()
     {
         Assertions.assertEquals("a".compareTo("b"),
                                 JsPath.of("/a/b")
@@ -58,7 +58,7 @@ public class TestJsPath
     }
 
     @Test
-    public void map_keys()
+    public void test_map_keys()
     {
 
         Assertions.assertEquals(JsPath.of("/a!/1/b!/1/c!"),
@@ -67,7 +67,7 @@ public class TestJsPath
                                );
     }
     @Test
-    public void equals()
+    public void test_equals()
     {
         Assertions.assertEquals(JsPath.of("#/a/b/c/d/0//%20"),
                                 JsPath.of("#/a/b/c/d/0//+"));
@@ -92,7 +92,7 @@ public class TestJsPath
     }
 
     @Test
-    public void path_dec(){
+    public void test_path_dec(){
         Assertions.assertEquals(JsPath.of("/a/b/0"),JsPath.of("/a/b/1").dec());
 
         Assertions.assertThrows(UserError.class,()->JsPath.of("a").dec());
@@ -113,7 +113,7 @@ public class TestJsPath
     }
 
     @Test
-    public void empty_key_equals(){
+    public void test_empty_key_equals(){
         Assertions.assertEquals(JsPath.empty().key(""), JsPath.of("#/"));
         Assertions.assertEquals(JsPath.empty().key(""), JsPath.of("/"));
         Assertions.assertEquals(JsPath.empty().key("."), JsPath.of("#/%2E"));

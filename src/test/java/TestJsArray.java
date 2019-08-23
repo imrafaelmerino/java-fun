@@ -249,7 +249,7 @@ public class TestJsArray
     }
 
     @Test
-    public void creation_mutable_json_array_containing_arbitrary_number_of_elements()
+    public void test_creation_mutable_json_array_containing_arbitrary_number_of_elements()
     {
         JsArray arr = JsArray._of_(JsStr.of("A"),
                                    JsStr.of("B"),
@@ -276,7 +276,7 @@ public class TestJsArray
 
 
     @Test
-    public void parse_string_into_mutable_json_array() throws MalformedJson
+    public void test_parse_string_into_mutable_json_array() throws MalformedJson
     {
 
         Assertions.assertEquals(JsArray._parse_("[1,2]")
@@ -312,7 +312,7 @@ public class TestJsArray
     }
 
     @Test
-    public void parse_string_into_mutable_json_array_mapping_and_filtering_elements_while_the_parsing() throws MalformedJson
+    public void test_parse_string_into_mutable_json_array_mapping_and_filtering_elements_while_the_parsing() throws MalformedJson
     {
 
         String str = "[1,2,3,true,false]";
@@ -333,7 +333,7 @@ public class TestJsArray
 
 
     @Test
-    public void creation_of_mutable_empty_json_array()
+    public void test_creation_of_mutable_empty_json_array()
     {
 
         JsArray arr = JsArray._empty_();
@@ -349,7 +349,7 @@ public class TestJsArray
     }
 
     @Test
-    public void modification_of_mutable_json_array_throws_exception_because_it_was_created_from_immutable_list()
+    public void test_modification_of_mutable_json_array_throws_exception_because_it_was_created_from_immutable_list()
     {
 
         //List.of creates and immutable list, so every modification throws an exception
@@ -366,7 +366,7 @@ public class TestJsArray
     }
 
     @Test
-    public void modifications_of_mutable_json_array_created_from_list_are_reflected_in_the_list()
+    public void test_modifications_of_mutable_json_array_created_from_list_are_reflected_in_the_list()
     {
 
         //List.of creates and immutable list, so every modification throws an exception
@@ -386,7 +386,7 @@ public class TestJsArray
 
 
     @Test
-    public void appending_a_json_array_to_the_back_of_another_json_array()
+    public void test_appending_a_json_array_to_the_back_of_another_json_array()
     {
         JsArray arr = JsArray.of("a",
                                  "b"
@@ -435,7 +435,7 @@ public class TestJsArray
 
 
     @Test
-    public void prepending_a_json_array_to_the_front_of_another_json_array()
+    public void test_prepending_a_json_array_to_the_front_of_another_json_array()
     {
         JsArray arr = JsArray.of("a",
                                  "b"
@@ -488,7 +488,7 @@ public class TestJsArray
 
 
     @Test
-    public void appends_one_or_more_elements_to_the_back_of_a_json_array()
+    public void test_appends_one_or_more_elements_to_the_back_of_a_json_array()
     {
 
         JsArray arr = JsArray.of("a",
@@ -524,7 +524,7 @@ public class TestJsArray
 
 
     @Test
-    public void prepend()
+    public void test_prepend()
     {
 
         JsArray arr = JsArray.of("a",
@@ -567,7 +567,7 @@ public class TestJsArray
 
 
     @Test
-    public void collecting_an_array_from_a_collector() throws MalformedJson
+    public void test_collecting_an_array_from_a_collector() throws MalformedJson
     {
 
         final JsArray arr = JsArray.of(JsStr.of("a"),
@@ -612,7 +612,7 @@ public class TestJsArray
 
 
     @Test
-    public void contains_element_in_js_array()
+    public void test_contains_element_in_js_array()
     {
         JsArray arr = JsArray.of(JsInt.of(1),
                                  TRUE,
@@ -640,7 +640,7 @@ public class TestJsArray
 
 
     @Test
-    public void empty_immutable_js_array_returns_the_same_instance()
+    public void test_empty_immutable_js_array_returns_the_same_instance()
     {
 
         Assertions.assertSame(JsArray.empty(),
@@ -752,7 +752,7 @@ public class TestJsArray
 
 
     @Test
-    public void last_returns_the_last_element_or_throws_exception_if_emtpy()
+    public void test_last_returns_the_last_element_or_throws_exception_if_emtpy()
     {
 
         JsArray arr = JsArray.of(JsInt.of(1),
@@ -1002,7 +1002,7 @@ public class TestJsArray
     }
 
     @Test
-    public void tail_of_json_array_returns_all_elements_except_first_one()
+    public void test_tail_of_json_array_returns_all_elements_except_first_one()
     {
 
         JsArray arr = JsArray.of("a",
@@ -1039,7 +1039,7 @@ public class TestJsArray
     }
 
     @Test
-    public void parse_string_into_immutable_json_array_with_options() throws MalformedJson
+    public void test_parse_string_into_immutable_json_array_with_options() throws MalformedJson
     {
 
         final JsArray arr = JsArray.parse("[1,2,3,true,false,null,[null,true,4]]",
@@ -1062,7 +1062,7 @@ public class TestJsArray
 
 
     @Test
-    public void static_factory_methods_from_primitives()
+    public void test_static_factory_methods_from_primitives()
     {
 
         JsArray arr = JsArray.of(1,
@@ -1146,7 +1146,7 @@ public class TestJsArray
     }
 
     @Test
-    public void traversing_mutable_json_array_by_an_iterator_and_removing_some_elements()
+    public void test_traversing_mutable_json_array_by_an_iterator_and_removing_some_elements()
     {
 
         final JsArray arr = JsArray._of_(1,
@@ -1169,7 +1169,7 @@ public class TestJsArray
     }
 
     @Test
-    public void create_immutable_json_array_from_one_or_more_pairs() throws MalformedJson
+    public void test_create_immutable_json_array_from_one_or_more_pairs() throws MalformedJson
     {
 
         final JsArray arr = JsArray.of(JsPair.of(JsPath.fromIndex(0),
@@ -1203,7 +1203,7 @@ public class TestJsArray
     }
 
     @Test
-    public void create_mutable_json_array_from_one_or_more_pairs() throws MalformedJson
+    public void test_create_mutable_json_array_from_one_or_more_pairs() throws MalformedJson
     {
 
         final JsArray arr = JsArray._of_(JsPair.of(JsPath.fromIndex(0),
@@ -1237,7 +1237,7 @@ public class TestJsArray
     }
 
     @Test
-    public void intersection() throws MalformedJson
+    public void test_intersection() throws MalformedJson
     {
 
         final JsArray arr1 = JsArray.parse("[{\"a\": 1, \"b\": [1,2,2]}]")
@@ -1293,7 +1293,7 @@ public class TestJsArray
     }
 
     @Test
-    public void equals_and_hashcode()
+    public void test_equals_and_hashcode()
     {
         final JsArray arr = JsArray.of(JsInt.of(1),
                                        JsBigInt.of(BigInteger.ONE),
@@ -1319,7 +1319,7 @@ public class TestJsArray
 
 
     @Test
-    public void reduce_strings()
+    public void test_reduce_strings()
     {
         final JsArray array = JsArray.of(JsStr.of("a"),
                                          JsStr.of("b"),
@@ -1365,7 +1365,7 @@ public class TestJsArray
     }
 
     @Test
-    public void filter_mutable_jsons() throws MalformedJson
+    public void test_filter_mutable_jsons() throws MalformedJson
     {
         Supplier<JsArray> supplier = () -> JsArray._of_(JsObj._of_("a",
                                                                    NULL
@@ -1430,7 +1430,7 @@ public class TestJsArray
     }
 
     @Test
-    public void filter_immutable_jsons() throws MalformedJson
+    public void test_filter_immutable_jsons() throws MalformedJson
     {
         JsArray arr = JsArray.of(JsObj.of("a",
                                           NULL
@@ -1488,7 +1488,7 @@ public class TestJsArray
     }
 
     @Test
-    public void filter_keys_mutable() throws MalformedJson
+    public void test_filter_keys_mutable() throws MalformedJson
     {
         JsArray array = JsArray._of_(JsObj._of_("a",
                                                 NULL,
@@ -1541,7 +1541,7 @@ public class TestJsArray
     }
 
     @Test
-    public void parse_with_options_mutable() throws MalformedJson
+    public void test_parse_with_options_mutable() throws MalformedJson
     {
         final Supplier<JsArray> supplier = () -> JsArray._of_(NULL,
                                                               JsArray._of_(1,
@@ -1572,7 +1572,7 @@ public class TestJsArray
     }
 
     @Test
-    public void parse_with_options_immutable() throws MalformedJson
+    public void test_parse_with_options_immutable() throws MalformedJson
     {
         final JsArray array = JsArray.of(NULL,
                                          JsArray.of(1,
@@ -1601,7 +1601,7 @@ public class TestJsArray
 
 
     @Test
-    public void map_json_immutable() throws MalformedJson
+    public void test_map_json_immutable() throws MalformedJson
     {
 
         JsArray arr = JsArray.of(JsObj.of("a",
@@ -1658,7 +1658,7 @@ public class TestJsArray
     }
 
     @Test
-    public void map_json_immutable_with_predicate() throws MalformedJson
+    public void test_map_json_immutable_with_predicate() throws MalformedJson
     {
 
         JsArray arr = JsArray.of(JsObj.of("a",
@@ -1718,7 +1718,7 @@ public class TestJsArray
     }
 
     @Test
-    public void map_json_mutable() throws MalformedJson
+    public void test_map_json_mutable() throws MalformedJson
     {
 
         Supplier<JsArray> supplier = () -> JsArray._of_(JsObj._of_("a",
@@ -2134,7 +2134,7 @@ public class TestJsArray
 
 
     @Test
-    public void equals_arr_of_str()
+    public void test_equals_arr_of_str()
     {
 
         final JsArray arr = JsArray.of("a",
@@ -2170,7 +2170,7 @@ public class TestJsArray
     }
 
     @Test
-    public void equals_arr_of_obj()
+    public void test_equals_arr_of_obj()
     {
 
         final JsArray arr = JsArray.of(JsObj.of("a",
@@ -2232,7 +2232,7 @@ public class TestJsArray
     }
 
     @Test
-    public void filter_keys_immutable() throws MalformedJson
+    public void test_filter_keys_immutable() throws MalformedJson
     {
         final JsArray arr = JsArray.of(NULL,
                                        TRUE,

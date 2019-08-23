@@ -14,7 +14,7 @@ public class TestJsElems
 {
 
     @Test
-    public void map_pairs()
+    public void test_map_pairs()
     {
 
         Assertions.assertEquals(JsPair.of(JsPath.of("/a/b/2"),
@@ -41,7 +41,7 @@ public class TestJsElems
     }
 
     @Test
-    public void map_elements()
+    public void test_map_elements()
     {
 
         Assertions.assertEquals(JsInt.of(10),
@@ -151,7 +151,7 @@ public class TestJsElems
     }
 
     @Test
-    public void jselem_casting_exceptions()
+    public void test_jselem_casting_exceptions()
     {
         Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)

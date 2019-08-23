@@ -55,18 +55,18 @@ class OpMapMutableObjObjs extends OpMapObjs<JsObj>
                                                                                                   ),
                                                                                p ->
                                                                                {
-                                                                                   obj.remove(head.getKey());
-                                                                                   return more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                   obj.remove(JsPath.fromKey(head.getKey()));
+                                                                                   return more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                 fn.apply(p.path,
                                                                                                                                                          obj
                                                                                                                                                         )
                                                                                                                                                ));
                                                                                },
-                                                                               p -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                               p -> more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                           p.elem
                                                                                                                                          ))
                                                                               ),
-                                                          value -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                          value -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                                          value
                                                                                                         ))
                                                          )
@@ -130,7 +130,7 @@ class OpMapMutableObjObjs extends OpMapObjs<JsObj>
                                                                                                                                             headPath
                                                                                                                                            )
                                                                                                                          .map(headMappedResult ->
-                                                                                                                              tailResult.put(head.getKey(),
+                                                                                                                              tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                              headMappedResult
                                                                                                                                             )
                                                                                                                              )
@@ -144,7 +144,7 @@ class OpMapMutableObjObjs extends OpMapObjs<JsObj>
                                                                                                                                       headPath
                                                                                                                                      )
                                                                                                                    .map(it ->
-                                                                                                                        tailResult.put(head.getKey(),
+                                                                                                                        tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                        it
                                                                                                                                       )
                                                                                                                        )
@@ -156,12 +156,12 @@ class OpMapMutableObjObjs extends OpMapObjs<JsObj>
                                                                                                                                                headPath.index(-1)
                                                                                                                                               )
                                                                                                                                          .map(it ->
-                                                                                                                                              tailResult.put(head.getKey(),
+                                                                                                                                              tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                              it
                                                                                                                                                             )
                                                                                                                                              )
                                                                                               ),
-                                                           value -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                           value -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                                           value
                                                                                                          ))
                                                           )

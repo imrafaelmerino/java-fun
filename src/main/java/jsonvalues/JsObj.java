@@ -313,10 +313,10 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
         return fields().stream()
                        .allMatch(field ->
                                  {
-                                     final boolean exists = that.containsPath(field);
+                                     final boolean exists = that.containsPath(JsPath.fromKey(field));
                                      if (!exists) return false;
-                                     final JsElem elem = get(field);
-                                     final JsElem thatElem = that.get(field);
+                                     final JsElem elem = get(JsPath.fromKey(field));
+                                     final JsElem thatElem = that.get(JsPath.fromKey(field));
                                      if (elem.isJson() && thatElem.isJson()) return elem.asJson()
                                                                                         .equals(thatElem,
                                                                                                 ARRAY_AS
@@ -324,7 +324,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                                      return elem.equals(thatElem);
                                  }) && that.fields()
                                            .stream()
-                                           .allMatch(this::containsPath);
+                                           .allMatch(f -> this.containsPath(JsPath.fromKey(f)));
     }
 
 
@@ -709,18 +709,6 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
         {
             return new TryObj(e);
         }
-    }
-
-
-    /**
-     Removes the key from this object if it's present.
-     @param key the key to be removed
-     @return a new JsObj without the key or the same this JsObj if the key is not present
-     */
-    @Override
-    default JsObj remove(final String key)
-    {
-        return remove(JsPath.of(requireNonNull(key)));
     }
 
 

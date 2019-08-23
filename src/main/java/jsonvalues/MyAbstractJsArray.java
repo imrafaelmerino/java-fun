@@ -664,10 +664,13 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
         return IntStream.range(0,
                                size()
                               )
-                        .mapToObj(Integer::toString)
-                        .flatMap(i -> Stream.of(JsPair.of(JsPath.of(i),
-                                                          get(i)
-                                                         )));
+                        .mapToObj(i ->
+                                  {
+                                      final JsPath path = JsPath.fromIndex(i);
+                                      return JsPair.of(path,
+                                                       get(path)
+                                                      );
+                                  });
 
     }
 

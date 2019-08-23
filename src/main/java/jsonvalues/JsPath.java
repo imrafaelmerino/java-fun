@@ -12,10 +12,7 @@ import scala.runtime.AbstractFunction1;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -345,18 +342,76 @@ public final class JsPath implements Comparable<JsPath>
         return EMPTY.index(i);
     }
 
-    public static JsPath of(final String path)
+
+    private static UnaryOperator<String> escape = token -> token.replaceAll("~1",
+                                                                            "/"
+                                                                           )
+                                                                .replaceAll("~0",
+                                                                            "~"
+                                                                           );
+
+    private static UnaryOperator<String> decode = token ->
     {
-        if (requireNonNull(path).equals("")) return EMPTY.key("");
+        try
+        {
+            return URLDecoder.decode(token,
+                                     UTF8
+                                    );
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw InternalError.encodingNotSupported(e);
+        }
+    };
 
-        String[] tokens = requireNonNull(path).split(REGEX_SEPARATOR,
-                                                     -1
-                                                    );
-        Vector<Position> vector = EMPTY_VECTOR;
-        for (String token : tokens)
-            vector = vector.appendBack(mapToField(token));
-        return new JsPath(vector);
+    public static JsPath of(String path)
+    {
+        if (requireNonNull(path).equals("")) return EMPTY;
+        if (path.equals("#")) return EMPTY;
+        if (path.equals("#/")) return fromKey("");
+        if (path.equals("/")) return fromKey("");
+        if (!path.startsWith("#/") && !path.startsWith("/")) throw UserError.pathMalformed(path);
+        if (path.startsWith("#")) return parse(mapTokenToPosition(t -> escape.andThen(decode)
+                                                                             .apply(t)),
+                                               "/"
+                                              ).apply(path.substring(2));
+        return parse(mapTokenToPosition(escape),
+                     "/"
+                    ).apply(path.substring(1));
+    }
 
+    private static Function<String, JsPath> parse(final Function<String, Position> mapFn,
+                                                  final String separator
+                                                 )
+    {
+        return path ->
+        {
+            String[] tokens = requireNonNull(path).split(separator,
+                                                         -1
+                                                        );
+            Vector<Position> vector = EMPTY_VECTOR;
+            for (String token : tokens) vector = vector.appendBack(mapFn.apply(token));
+            return new JsPath(vector);
+        };
+    }
+
+    private static Function<String, Position> mapTokenToPosition(final UnaryOperator<String> mapKeyFn)
+    {
+        return token ->
+        {
+            if (token.equals("")) return KEY_EMPTY;
+            if (token.equals("'")) return KEY_SINGLE_QUOTE;
+            boolean isNumeric = isNumeric(token);
+            if (isNumeric)
+                return Index.of(Integer.parseInt(token));
+            //token="'" case is covered before
+            if (token.startsWith("'") && token.endsWith("'"))
+                return Key.of(mapKeyFn.apply(token.substring(1,
+                                                             token.length() - 1
+                                                            ))
+                             );
+            return Key.of(mapKeyFn.apply(token));
+        };
     }
 
 
@@ -392,64 +447,19 @@ public final class JsPath implements Comparable<JsPath>
                             {
                                 return pos.match(key ->
                                                  {
-                                                     try
-                                                     {
-                                                         if (key.equals("")) return key;
-                                                         return isNumeric(key) ? String.format("'%s'",
-                                                                                               key
-                                                                                              ) : String.format("%s",
-                                                                                                                URLEncoder.encode(key,
-                                                                                                                                  UTF8
-                                                                                                                                 )
-                                                                                                               );
-                                                     }
-                                                     catch (UnsupportedEncodingException e)
-                                                     {
-
-                                                         throw InternalError.encodingNotSupported(e);
-
-                                                     }
+                                                     if (key.equals("")) return key;
+                                                     return isNumeric(key) ? String.format("'%s'",
+                                                                                           key
+                                                                                          ) : key;
                                                  },
                                                  Integer::toString
                                                 );
-
-
                             }
                         })
-                        .mkString("",
-                                  ".",
+                        .mkString("/",
+                                  "/",
                                   ""
                                  );
-
-    }
-
-    private static Position mapToField(final String token)
-    {
-        assert token != null;
-        try
-        {
-            if (token.equals("")) return KEY_EMPTY;
-            if (token.equals("'")) return KEY_SINGLE_QUOTE;
-
-            boolean isNumeric = isNumeric(token);
-            if (isNumeric)
-                return Index.of(Integer.parseInt(token));
-            //token="'" case is covered before
-            if (token.startsWith("'") && token.endsWith("'"))
-                return Key.of(URLDecoder.decode(token.substring(1,
-                                                                token.length() - 1
-                                                               ),
-                                                UTF8
-                                               ));
-
-            return Key.of(URLDecoder.decode(token,
-                                            UTF8
-                                           ));
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw InternalError.encodingNotSupported(e);
-        }
     }
 
     /**
@@ -544,26 +554,6 @@ public final class JsPath implements Comparable<JsPath>
 
     }
 
-    /**
-     return true if this path and a given path-like string represent the same location.
-     @param path the given path-like string
-     @return true if this JsPath and given path-like string represent the same location
-     */
-    public boolean same(String path)
-    {
-        return JsPath.of(requireNonNull(path))
-                     .equals(this);
-    }
-
-    /**
-     returns true if this path starts with the given path-like string
-     @param path the given path-like string
-     @return true if this JsPath starts with the given path-like string
-     */
-    public boolean startsWith(String path)
-    {
-        return startsWith(of(requireNonNull(path)));
-    }
 
     /**
      returns true if this path starts with the given path. If the given path is JsPath.empty(), it
@@ -595,16 +585,6 @@ public final class JsPath implements Comparable<JsPath>
         return this.last()
                    .equals(path.last()) && this.init()
                                                .endsWith(path.init());
-    }
-
-    /**
-     returns true if this path ends with the given path-like string
-     @param path the given path-like string
-     @return true if this JsPath ends with the given path-like string
-     */
-    public boolean endsWith(String path)
-    {
-        return endsWith(of(requireNonNull(path)));
     }
 
     /**

@@ -35,7 +35,7 @@ case class JsPathGens(lengthGen: Gen[Int] = Gen.choose(1,
   } yield new JsPath(arr)
 
 
-  val objectPathGen = for
+  val   objectPathGen = for
     {
     length <- lengthGen
     key <- keyFieldGen

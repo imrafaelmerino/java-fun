@@ -36,8 +36,8 @@ class AppendToArraySpec extends BasePropSpec
                                                   a
                                                   )
             array.getArray(path).get().size() == a.size() &&
-            a.get("0").equals(array.get(path.index(0))) &&
-            a.get("-1").equals(array.get(path.index(-1)))
+            a.get(JsPath.fromIndex(0)).equals(array.get(path.index(0))) &&
+            a.get(JsPath.fromIndex(-1)).equals(array.get(path.index(-1)))
           }
           )
   }

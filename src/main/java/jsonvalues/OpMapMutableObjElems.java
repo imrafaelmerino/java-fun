@@ -63,17 +63,17 @@ class OpMapMutableObjElems extends OpMapElems<JsObj>
                                                                                            path
                                                                                           ));
 
-                                         return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                         return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                                          elem
                                                                                                         )),
                                                            elem -> JsPair.of(headPath,
                                                                              elem
                                                                             )
                                                                          .ifElse(predicate,
-                                                                                 p -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                 p -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                                                             fn.apply(p)
                                                                                                                            )),
-                                                                                 p -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+                                                                                 p -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                                                             elem
                                                                                                                            ))
                                                                                 )
@@ -108,7 +108,7 @@ class OpMapMutableObjElems extends OpMapElems<JsObj>
                                                                                                            predicate,
                                                                                                            headPath
                                                                                                           )
-                                                                                        .map(headMapped -> tailResult.put(head.getKey(),
+                                                                                        .map(headMapped -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                           headMapped
                                                                                                                          )
                                                                                             )
@@ -117,7 +117,7 @@ class OpMapMutableObjElems extends OpMapElems<JsObj>
                                                                                                                                                         predicate,
                                                                                                                                                         headPath.index(-1)
                                                                                                                                                        )
-                                                                                                                                                  .map(headMapped -> tailResult.put(head.getKey(),
+                                                                                                                                                  .map(headMapped -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                                     headMapped
                                                                                                                                                                                    )
                                                                                                                                                       )
@@ -131,7 +131,7 @@ class OpMapMutableObjElems extends OpMapElems<JsObj>
                                                                                                                                             fn::apply,
                                                                                                                                             p -> headElem
                                                                                                                                            );
-                                                                                                    return tailResult.put(head.getKey(),
+                                                                                                    return tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                           headMapped
                                                                                                                          );
                                                                                                 })

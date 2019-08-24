@@ -36,7 +36,7 @@ public class TestJsPatchAdd
                                                                                                   JsInt.of(1)
                                                                                                  )
                                                                                              .build()
-                                                                                             .remove("0.path")
+                                                                                             .remove(JsPath.of("/0/path"))
                                                                                        )
                                                                                  .orElseThrow()
 
@@ -56,7 +56,7 @@ public class TestJsPatchAdd
                                                                                                   JsInt.of(1)
                                                                                                  )
                                                                                              .build()
-                                                                                             .remove("0.value")
+                                                                                             .remove(JsPath.of("/0/value"))
                                                                                        )
                                                                                  .orElseThrow()
 
@@ -126,7 +126,7 @@ public class TestJsPatchAdd
     {
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
                                                                   () -> JsArray.empty()
-                                                                               .patch(ops().add("a",
+                                                                               .patch(ops().add("/a",
                                                                                                 JsInt.of(1)
                                                                                                )
                                                                                            .build()
@@ -134,7 +134,7 @@ public class TestJsPatchAdd
                                                                                .orElseThrow()
                                                                  );
 
-        Assertions.assertEquals("Trying to add the key 'a' in an array. ADD operation can not be applied in [] at a",
+        Assertions.assertEquals("Trying to add the key 'a' in an array. ADD operation can not be applied in [] at /a",
                                 patchOpError.getMessage()
                                );
 
@@ -142,7 +142,7 @@ public class TestJsPatchAdd
                                                                    () -> JsObj.of("a",
                                                                                   JsArray.of(1)
                                                                                  )
-                                                                              .patch(ops().add("a.b",
+                                                                              .patch(ops().add("/a/b",
                                                                                                JsInt.of(1)
                                                                                               )
                                                                                           .build()
@@ -151,7 +151,7 @@ public class TestJsPatchAdd
 
                                                                   );
 
-        Assertions.assertEquals("Trying to add the key 'b' in an array. ADD operation can not be applied in {\"a\":[1]} at a.b",
+        Assertions.assertEquals("Trying to add the key 'b' in an array. ADD operation can not be applied in {\"a\":[1]} at /a/b",
                                 patchOpError1.getMessage()
                                );
     }
@@ -161,7 +161,7 @@ public class TestJsPatchAdd
     {
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
                                                                   () -> JsObj.empty()
-                                                                             .patch(ops().add("0",
+                                                                             .patch(ops().add("/0",
                                                                                               JsInt.of(1)
                                                                                              )
                                                                                          .build()
@@ -170,7 +170,7 @@ public class TestJsPatchAdd
 
                                                                  );
 
-        Assertions.assertEquals("Trying to add at the index '0' in an object. ADD operation can not be applied in {} at 0",
+        Assertions.assertEquals("Trying to add at the index '0' in an object. ADD operation can not be applied in {} at /0",
                                 patchOpError.getMessage()
                                );
 
@@ -178,7 +178,7 @@ public class TestJsPatchAdd
                                                                    () -> JsObj.of("a",
                                                                                   JsObj.empty()
                                                                                  )
-                                                                              .patch(ops().add("a.0",
+                                                                              .patch(ops().add("/a/0",
                                                                                                JsInt.of(1)
                                                                                               )
                                                                                           .build()
@@ -187,7 +187,7 @@ public class TestJsPatchAdd
 
                                                                   );
 
-        Assertions.assertEquals("Trying to add at the index '0' in an object. ADD operation can not be applied in {\"a\":{}} at a.0",
+        Assertions.assertEquals("Trying to add at the index '0' in an object. ADD operation can not be applied in {\"a\":{}} at /a/0",
                                 patchOpError1.getMessage()
                                );
     }
@@ -197,7 +197,7 @@ public class TestJsPatchAdd
     {
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
                                                                   () -> JsObj.empty()
-                                                                             .patch(ops().add("a.b",
+                                                                             .patch(ops().add("/a/b",
                                                                                               JsInt.of(1)
                                                                                              )
                                                                                          .build()
@@ -206,7 +206,7 @@ public class TestJsPatchAdd
 
                                                                  );
 
-        Assertions.assertEquals("Element located at 'a' is not a Json. ADD operation can not be applied in {} at a.b.",
+        Assertions.assertEquals("Element located at '/a' is not a Json. ADD operation can not be applied in {} at /a/b.",
                                 patchOpError.getMessage()
                                );
 
@@ -217,10 +217,10 @@ public class TestJsPatchAdd
     public void test_add_several_keys_to_object_successfully() throws PatchMalformed, PatchOpError
     {
         final JsObj o = JsObj.empty()
-                             .patch(ops().add("a",
+                             .patch(ops().add("/a",
                                               JsInt.of(1)
                                              )
-                                         .add("b",
+                                         .add("/b",
                                               JsBool.TRUE
                                              )
                                          .build()

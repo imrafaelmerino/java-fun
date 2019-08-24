@@ -1085,6 +1085,66 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
           final Function<? super JsElem, ? extends JsElem> fn
          );
 
+    Optional<T> add(final JsPath path,
+                    final Function<? super JsElem, ? extends JsElem> fn
+                   );
+
+
+    default Optional<T> add(final JsPath path,
+                            final JsElem elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> requireNonNull(elem)
+                  );
+    }
+
+
+    default Optional<T> add(final JsPath path,
+                            final int elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsInt.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final double elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsDouble.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final long elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsLong.of(elem)
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final String elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsStr.of(requireNonNull(elem))
+                  );
+    }
+
+    default Optional<T> add(final JsPath path,
+                            final boolean elem
+                           )
+    {
+        return add(requireNonNull(path),
+                   it -> JsBool.of(elem)
+                  );
+    }
+
 
     /**
      Inserts the element at the path in this json, replacing any existing element and filling with {@link jsonvalues.JsNull} empty
@@ -1111,6 +1171,110 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
         return put(path,
                    e -> element
+                  );
+    }
+
+
+    /**
+     Inserts the integer number at the path in this json, replacing any existing element and filling with {@link jsonvalues.JsNull}
+     empty indexes in arrays when necessary. The same instance is returned when the head of the path
+     is a key and this is an array or the head of the path is an index and this is an object or the
+     element is {@link JsNothing}
+     @param path  the path where the integer number will be inserted at
+     @param n the integer that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T put(final JsPath path,
+                  final int n
+                 )
+    {
+        return put(requireNonNull(path),
+                   JsInt.of(n)
+                  );
+    }
+
+
+    /**
+     Inserts the long number at the path in this json, replacing any existing element and filling with {@link jsonvalues.JsNull}
+     empty indexes in arrays when necessary. The same instance is returned when the head of the path
+     is a key and this is an array or the head of the path is an index and this is an object or the
+     element is {@link JsNothing}
+     @param path the path where the long number will be inserted at
+     @param n the long number that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T put(final JsPath path,
+                  final long n
+                 )
+    {
+        return put(requireNonNull(path),
+                   JsLong.of(n)
+                  );
+    }
+
+
+    /**
+     Inserts the string at the given path in this json, replacing any existing element in the path
+     and filling with {@link jsonvalues.JsNull} empty positions in arrays when necessary.
+     @param path the path where the string will be inserted at
+     @param str the string that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T put(final JsPath path,
+                  final String str
+                 )
+    {
+        return put(requireNonNull(path),
+                   JsStr.of(str)
+                  );
+    }
+
+
+    /**
+     Inserts the big integer number at the given path in this json, replacing any existing element
+     in teh path and filling with {@link jsonvalues.JsNull} empty positions in arrays when necessary.
+     @param path    the given path where the big integer number will be inserted at
+     @param bigint the big integer number that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T put(final JsPath path,
+                  final BigInteger bigint
+                 )
+    {
+        return put(requireNonNull(path),
+                   JsBigInt.of(requireNonNull(bigint))
+                  );
+    }
+
+    /**
+     Inserts the big decimal number at the given path in this json, replacing any existing element in
+     the path and filling with {@link jsonvalues.JsNull} empty positions in arrays when necessary.
+     @param path    the given path where the big decimal number will be inserted at
+     @param bigdecimal the big decimal number that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T put(final JsPath path,
+                  final BigDecimal bigdecimal
+                 )
+    {
+        return put(requireNonNull(path),
+                   e -> JsBigDec.of(requireNonNull(bigdecimal))
+                  );
+    }
+
+    /**
+     Inserts the boolean at the given path in this json, replacing any existing element in the path
+     and filling with {@link jsonvalues.JsNull} empty positions in arrays when necessary.
+     @param path  the given path where the boolean will be inserted at
+     @param bool the boolean that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T put(final JsPath path,
+                  final boolean bool
+                 )
+    {
+        return put(requireNonNull(path),
+                   JsBool.of(bool)
                   );
     }
 
@@ -1945,4 +2109,8 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     {
         return false;
     }
+
+    TryPatch<T> patch(JsArray ops);
+
+    TryPatch<T> patch(String ops);
 }

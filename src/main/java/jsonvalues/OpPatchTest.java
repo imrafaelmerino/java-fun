@@ -21,7 +21,7 @@ final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
 
     OpPatchTest(final JsObj op) throws PatchMalformed
     {
-        this.value = requireNonNull(op).get("value");
+        this.value = requireNonNull(op).get(JsPath.fromKey("value"));
         this.path = validatePath(op);
     }
 

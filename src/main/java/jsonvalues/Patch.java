@@ -180,7 +180,7 @@ public final class Patch
         {
             if (!elem.isObj()) throw PatchMalformed.operationIsNotAnObj(elem);
             final JsObj opObj = elem.asJsObj();
-            final Optional<String> op = opObj.getStr(OP_FIELD);
+            final Optional<String> op = opObj.getStr(JsPath.fromKey(OP_FIELD));
             if (!op.isPresent()) throw PatchMalformed.operationRequired(opObj);
             try
             {

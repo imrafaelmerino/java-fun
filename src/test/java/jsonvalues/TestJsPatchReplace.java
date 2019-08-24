@@ -15,7 +15,7 @@ public class TestJsPatchReplace
                                                                                  JsArray.of(1)
                                                                                 )
                                                                              .patch(Patch.ops()
-                                                                                         .replace("a.b",
+                                                                                         .replace("/a/b",
                                                                                                     JsInt.of(1)
                                                                                                    )
                                                                                          .build()
@@ -25,7 +25,7 @@ public class TestJsPatchReplace
 
                                                                  );
 
-        Assertions.assertEquals("Trying to remove a non-existing element. REMOVE operation can not be applied in {\"a\":[1]} at a.b",
+        Assertions.assertEquals("Trying to remove a non-existing element. REMOVE operation can not be applied in {\"a\":[1]} at /a/b",
                                 patchOpError.getMessage()
                                );
     }
@@ -41,7 +41,7 @@ public class TestJsPatchReplace
                                          )
                                 )
                              .patch(Patch.ops()
-                                         .replace("a.b",
+                                         .replace("/a/b",
                                                     JsBool.FALSE
                                                    )
                                          .build()

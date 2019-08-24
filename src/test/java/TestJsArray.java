@@ -358,7 +358,7 @@ public class TestJsArray
                                                        JsStr.of("b")
                                                       )
                                         );
-        Assertions.assertThrows(UnsupportedOperationException.class,
+        Assertions.assertThrows(UserError.class,
                                 () -> arr.remove(JsPath.fromIndex(-1))
                                );
 

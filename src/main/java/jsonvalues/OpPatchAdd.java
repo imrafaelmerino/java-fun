@@ -30,42 +30,21 @@ final class OpPatchAdd<T extends Json<T>> implements OpPatch<T>
     {
         Objects.requireNonNull(json);
         if (path.isEmpty()) return new TryPatch<>(json);
-        final JsPath init = path.init();
-        final Position last = path.last();
-        final JsElem parent = json.get(init);
-        if (!parent.isJson())
-            return new TryPatch<>(PatchOpError.parentIsNotAJson(init,
-                                                                json,
-                                                                path,
-                                                                Patch.OP.ADD.name()
-                                                                ));
-        if (parent.isObj() && last.isIndex())
-            return new TryPatch<>(PatchOpError.addingIndexIntoObject(last.asIndex().n,
-                                                                     json,
-                                                                     path,
-                                                                     Patch.OP.ADD.name()
-                                                                     ));
-
-        if (parent.isArray() && last.isKey())
-            return new TryPatch<>(PatchOpError.addingKeyIntoArray(last.asKey().name,
-                                                                  json,
-                                                                  path,
-                                                                  Patch.OP.ADD.name()
-                                                                  ));
-
-        return new TryPatch<>(json.put(path,
-                                       value
-                                      ));
-
+        try
+        {
+            return new TryPatch<>(json.add(path,
+                                            e -> value));
+        }
+        catch (UserError error)
+        {
+            return new TryPatch<>(PatchOpError.of(error));
+        }
     }
 
     @Override
     public String toString()
     {
-        return "OpPatchAdd{" +
-        "value=" + value +
-        ", path=" + path +
-        '}';
+        return "OpPatchAdd{" + "value=" + value + ", path=" + path + '}';
     }
 
     @Override

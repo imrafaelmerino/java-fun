@@ -1981,4 +1981,196 @@ public class TestJsObj
     }
 
 
+    @Test
+    void test_add_element_into_immutable_object_with_errors()
+    {
+
+
+        final UserError error1 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.empty()
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Parent not found at /a while applying add in {}. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
+                                error1.getMessage()
+                               );
+
+
+        final UserError error2 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.of("a",
+                                                                        JsArray.of(1)
+                                                                       )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add the key 'b' in an array. add operation can not be applied in {\"a\":[1]} at /a/b. Suggestion: call get(path).isObj() before.",
+                                error2.getMessage()
+                               );
+
+        final UserError error3 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.of("a",
+                                                                        JsObj.of("a",
+                                                                                 JsInt.of(1)
+                                                                                )
+                                                                       )
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in {\"a\":{\"a\":1}} at /a/0. Suggestion: call get(path).isArray() before.",
+                                error3.getMessage()
+                               );
+
+        final UserError error4 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.of("a",
+                                                                        JsStr.of("a")
+                                                                       )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Element located at '/a' is not a Json. add operation can not be applied in {\"a\":\"a\"} at /a/b. Suggestion: call get(path).isJson() before.",
+                                error4.getMessage()
+                               );
+
+
+    }
+
+    @Test
+    void test_add_element_into_mutable_object_with_errors()
+    {
+
+
+        final UserError error1 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._empty_()
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Parent not found at /a while applying add in {}. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
+                                error1.getMessage()
+                               );
+
+
+        final UserError error2 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._of_("a",
+                                                                          JsArray._of_(1)
+                                                                         )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add the key 'b' in an array. add operation can not be applied in {\"a\":[1]} at /a/b. Suggestion: call get(path).isObj() before.",
+                                error2.getMessage()
+                               );
+
+        final UserError error3 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._of_("a",
+                                                                          JsObj._of_("a",
+                                                                                     JsInt.of(1)
+                                                                                    )
+                                                                         )
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in {\"a\":{\"a\":1}} at /a/0. Suggestion: call get(path).isArray() before.",
+                                error3.getMessage()
+                               );
+
+        final UserError error4 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._of_("a",
+                                                                          JsStr.of("a")
+                                                                         )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Element located at '/a' is not a Json. add operation can not be applied in {\"a\":\"a\"} at /a/b. Suggestion: call get(path).isJson() before.",
+                                error4.getMessage()
+                               );
+
+
+    }
+
+    @Test
+    void test_add_element_into_immutable_json_recursively()
+    {
+
+        JsObj obj = JsObj.of("a",
+                             JsObj.of("b",
+                                      JsArray.of(1,
+                                                 2,
+                                                 3
+                                                ),
+                                      "c",
+                                      JsObj.of("d",
+                                               TRUE
+                                              )
+                                     )
+                            );
+
+        Assertions.assertEquals(JsArray.of(1,
+                                           2,
+                                           3,
+                                           4
+                                          ),
+                                obj.add(of("/a/b/-1"),
+                                        JsInt.of(4)
+                                       )
+                                   .get(JsPath.of("/a/b"))
+                               );
+
+        Assertions.assertEquals(JsArray.of(1,
+                                           2,
+                                           3,
+                                           4
+                                          ),
+                                obj.add(of("/a/b/3"),
+                                        JsInt.of(4)
+                                       )
+                                   .get(JsPath.of("/a/b"))
+                               );
+
+        Assertions.assertEquals(JsArray.of(4,
+                                           1,
+                                           2,
+                                           3
+                                          ),
+                                obj.add(of("/a/b/0"),
+                                        JsInt.of(4)
+                                       )
+                                   .get(JsPath.of("/a/b"))
+                               );
+
+
+        Assertions.assertEquals(FALSE,
+                                obj.add(of("/a/c/d"),
+                                        e -> e.asJsBool()
+                                              .negate()
+                                       )
+                                   .get(JsPath.of("/a/c/d"))
+                               );
+
+        Assertions.assertEquals(JsStr.of("bye!"),
+                                obj.add(of("/a/c/e"),
+                                        JsStr.of("bye!")
+                                       )
+                                   .get(JsPath.of("/a/c/e"))
+                               );
+
+    }
+
+
+
 }

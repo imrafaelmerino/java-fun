@@ -2320,4 +2320,284 @@ public class TestJsArray
         Assertions.assertFalse(_arr_.containsPath(JsPath.of("/1/b")));
     }
 
+    @Test
+    void test_add_element_into_non_empty_immutable_array()
+    {
+        final JsArray arr = JsArray.of(1);
+
+        final JsArray newArr = arr.add(JsPath.fromIndex(0),
+                                       JsInt.of(2)
+                                      );
+
+        Assertions.assertEquals(OptionalInt.of(2),
+                                newArr.getInt(JsPath.fromIndex(0))
+                               );
+
+        Assertions.assertEquals(2,
+                                newArr.size()
+                               );
+
+        Assertions.assertEquals(1,
+                                arr.size()
+                               );
+
+        JsArray arr2 = JsArray.of(JsArray.of(JsArray.of("a",
+                                                        "c",
+                                                        "d"
+                                                       )));
+
+        Assertions.assertEquals(JsArray.of("a",
+                                           "b",
+                                           "c",
+                                           "d"
+                                          ),
+                                arr2.add(JsPath.of("/0/0/1"),
+                                         JsStr.of("b")
+                                        )
+                                    .getArray(JsPath.of("/0/0"))
+                                    .get()
+                               );
+    }
+
+    @Test
+    void test_add_element_into_non_empty_mutable_array()
+    {
+        final JsArray arr = JsArray._of_(1);
+
+        arr.add(JsPath.fromIndex(0),
+                JsInt.of(2)
+               );
+
+        Assertions.assertEquals(OptionalInt.of(2),
+                                arr.getInt(JsPath.fromIndex(0))
+                               );
+
+        Assertions.assertEquals(2,
+                                arr.size()
+                               );
+        JsArray arr2 = JsArray._of_(JsArray._of_(JsArray._of_("a",
+                                                              "c",
+                                                              "d"
+                                                             )));
+        Assertions.assertEquals(JsArray._of_("a",
+                                             "b",
+                                             "c",
+                                             "d"
+                                            ),
+                                arr2.add(JsPath.of("/0/0/1"),
+                                         JsStr.of("b")
+                                        )
+                                    .getArray(JsPath.of("/0/0"))
+                                    .get()
+                               );
+    }
+
+    @Test
+    void test_add_element_into_empty_immutable_array()
+    {
+        final JsArray arr = JsArray.empty();
+
+        final JsArray newArr = arr.add(JsPath.fromIndex(0),
+                                       JsInt.of(2)
+                                      );
+
+        Assertions.assertEquals(OptionalInt.of(2),
+                                newArr.getInt(JsPath.fromIndex(0))
+                               );
+
+
+        final JsArray newArr1 = newArr.add(JsPath.fromIndex(-1),
+                                           JsInt.of(3)
+                                          );
+
+        Assertions.assertEquals(OptionalInt.of(3),
+                                newArr1.getInt(JsPath.fromIndex(1))
+                               );
+
+        Assertions.assertEquals(1,
+                                newArr.size()
+                               );
+    }
+
+    @Test
+    void test_add_element_into_empty_mutable_array()
+    {
+        final JsArray arr = JsArray._empty_();
+
+        arr.add(JsPath.fromIndex(0),
+                JsInt.of(2)
+               );
+
+        Assertions.assertEquals(OptionalInt.of(2),
+                                arr.getInt(JsPath.fromIndex(0))
+                               );
+
+
+        arr.add(JsPath.fromIndex(-1),
+                JsInt.of(3)
+               );
+
+        Assertions.assertEquals(OptionalInt.of(2),
+                                arr.getInt(JsPath.fromIndex(0))
+                               );
+        Assertions.assertEquals(OptionalInt.of(3),
+                                arr.getInt(JsPath.fromIndex(1))
+                               );
+
+    }
+
+    @Test
+    void test_add_element_into_immutable_array_with_errors()
+    {
+
+        final UserError error = Assertions.assertThrows(UserError.class,
+                                                        () -> JsArray.empty()
+                                                                     .add(1,
+                                                                          JsStr.of("hi")
+                                                                         )
+                                                       );
+
+        Assertions.assertEquals("Index out of bounds applying 'add'. Index: 1. Size of the array: 0. Suggestion: call the size method to know the length of the array before doing anything.",
+                                error.getMessage()
+                               );
+
+        final UserError error1 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray.empty()
+                                                                      .add(JsPath.of("/0/a"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Parent not found at /0 while applying add in []. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
+                                error1.getMessage()
+                               );
+
+
+        final UserError error2 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray.of(JsArray.of(JsArray.of(1)))
+                                                                      .add(JsPath.of("/0/a"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Trying to add the key 'a' in an array. add operation can not be applied in [[[1]]] at /0/a. Suggestion: call get(path).isObj() before.",
+                                error2.getMessage()
+                               );
+
+        final UserError error3 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray.of(JsObj.of("a",
+                                                                                   JsInt.of(1)
+                                                                                  ))
+                                                                      .add(JsPath.of("/0/0"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in [{\"a\":1}] at /0/0. Suggestion: call get(path).isArray() before.",
+                                error3.getMessage()
+                               );
+
+
+        final UserError error4 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray.of(JsStr.of("a"))
+                                                                      .add(JsPath.of("/0/0"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Element located at '/0' is not a Json. add operation can not be applied in [\"a\"] at /0/0. Suggestion: call get(path).isJson() before.",
+                                error4.getMessage()
+                               );
+
+
+    }
+
+    @Test
+    void test_add_element_into_mutable_array_with_errors()
+    {
+
+        final UserError error = Assertions.assertThrows(UserError.class,
+                                                        () -> JsArray._empty_()
+                                                                     .add(1,
+                                                                          JsStr.of("hi")
+                                                                         )
+                                                       );
+
+        Assertions.assertEquals("Index out of bounds applying 'add'. Index: 1. Size of the array: 0. Suggestion: call the size method to know the length of the array before doing anything",
+                                error.getMessage()
+                               );
+
+        final UserError error1 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray._empty_()
+                                                                      .add(JsPath.of("/0/a"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Parent not found at /0 while applying add in []. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
+                                error1.getMessage()
+                               );
+
+
+        final UserError error2 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray._of_(JsArray._of_(JsArray._of_(1)))
+                                                                      .add(JsPath.of("/0/a"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Trying to add the key 'a' in an array. add operation can not be applied in [[[1]]] at /0/a. Suggestion: call get(path).isObj() before.",
+                                error2.getMessage()
+                               );
+
+        final UserError error3 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray._of_(JsObj._of_("a",
+                                                                                       JsInt.of(1)
+                                                                                      ))
+                                                                      .add(JsPath.of("/0/0"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in [{\"a\":1}] at /0/0. Suggestion: call get(path).isArray() before.",
+                                error3.getMessage()
+                               );
+
+
+        final UserError error4 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsArray._of_(JsStr.of("a"))
+                                                                      .add(JsPath.of("/0/0"),
+                                                                           JsStr.of("hi")
+                                                                          )
+                                                        );
+
+        Assertions.assertEquals("Element located at '/0' is not a Json. add operation can not be applied in [\"a\"] at /0/0. Suggestion: call get(path).isJson() before.",
+                                error4.getMessage()
+                               );
+
+
+    }
+
+    @Test
+    void test_passing_empty_path()
+    {
+        JsArray arr = JsArray.of(JsObj.of("a",
+                                          JsStr.of("a")
+                                         ),
+                                 JsStr.of("a")
+                                );
+
+
+        final UserError error = Assertions.assertThrows(UserError.class,
+                                                        () -> arr.add(JsPath.empty(),
+                                                                      JsStr.of("a")
+                                                                     )
+                                                       );
+        Assertions.assertEquals("Empty path calling add method. Suggestion: check that the path is not empty calling path.isEmpty().",
+                                error.getMessage());
+
+        System.out.println(arr.prepend(JsPath.empty(),JsInt.of(1)));
+
+    }
+
 }

@@ -17,14 +17,10 @@ public class TestJsPatchRemove
                                                                                          .build()
                                                                                    )
                                                                              .orElseThrow()
-
                                                                  );
-
         Assertions.assertEquals("Trying to remove a non-existing element. REMOVE operation can not be applied in {} at /a",
                                 patchOpError.getMessage()
                                );
-
-
         final PatchOpError patchOpError1 = Assertions.assertThrows(PatchOpError.class,
                                                                    () -> JsObj.of("a",
                                                                                   JsStr.of("hi")
@@ -37,11 +33,9 @@ public class TestJsPatchRemove
                                                                                     )
                                                                               .orElseThrow()
                                                                   );
-
         Assertions.assertEquals("Trying to remove a non-existing element. REMOVE operation can not be applied in {} at /b",
                                 patchOpError1.getMessage()
                                );
-
     }
 
 

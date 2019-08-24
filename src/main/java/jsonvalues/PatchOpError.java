@@ -9,49 +9,14 @@ public final class PatchOpError extends Exception
         super(message);
     }
 
-    static PatchOpError parentIsNotAJson(final JsPath parent,
-                                         final Json<?> json,
-                                         final JsPath path,
-                                         final String op
-                                        )
+    private PatchOpError(final UserError error)
     {
-        return new PatchOpError(String.format("Element located at '%s' is not a Json. %s operation can not be applied in %s at %s.",
-                                              parent,
-                                              op,
-                                              json,
-                                              path
-                                             )
-        );
+        super(error.getMessage());
     }
 
-    static PatchOpError addingKeyIntoArray(final String key,
-                                           final Json<?> json,
-                                           final JsPath path,
-                                           final String op
-                                          )
+    static PatchOpError of(final UserError error)
     {
-        return new PatchOpError(String.format("Trying to add the key '%s' in an array. %s operation can not be applied in %s at %s",
-                                              key,
-                                              op,
-                                              json,
-                                              path
-                                             )
-        );
-    }
-
-    static PatchOpError addingIndexIntoObject(final int index,
-                                              final Json<?> json,
-                                              final JsPath path,
-                                              final String op
-                                             )
-    {
-        return new PatchOpError(String.format("Trying to add at the index '%s' in an object. %s operation can not be applied in %s at %s",
-                                              index,
-                                              op,
-                                              json,
-                                              path
-                                             )
-        );
+        return new PatchOpError(error);
     }
 
     static PatchOpError removingNonExistingValue(final JsPath path,

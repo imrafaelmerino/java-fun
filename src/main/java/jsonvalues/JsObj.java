@@ -873,13 +873,5 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         requireNonNull(ops)
                        );
     }
-
-    @Override
-    default TryPatch<JsObj> patch(final String ops)
-    {
-        return Patch.of(this,
-                        requireNonNull(ops)
-                       );
-    }
 }
 

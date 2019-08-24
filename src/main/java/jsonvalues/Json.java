@@ -260,6 +260,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                        .apply(get(requireNonNull(path)));
 
     }
+
     /**
      prepends all the elements of the array, starting from the head, to the array located at the path
      in this json. If the array at the path doesn't exist, a new one is created, replacing any existing 
@@ -753,6 +754,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         return ifStrElseFn.apply(this.get(requireNonNull(path)));
 
     }
+
     /**
      Declarative way parse implementing if(this.isEmpty()) return emptySupplier.get() else return
      nonEmptySupplier.get()
@@ -1006,6 +1008,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                    }
                   );
     }
+
     /**
      Tries to parse the string into an immutable json.
      @param str the string that will be parsed
@@ -1073,26 +1076,28 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
     /**
-     Inserts the element returned by the function at the path in this json, replacing any existing element and filling with {@link jsonvalues.JsNull} empty indexes in arrays when necessary.
-     The same instance is returned when the head of the path is a key and this is an array or the head of the path is an index and this is an object. In both cases the function is not invoked.
+     Inserts the element returned by the function at the path in this json, replacing any existing element
+     and filling with {@link jsonvalues.JsNull} empty indexes in arrays when necessary. The same instance
+     is returned when the head of the path is a key and this is an array or the head of the path is an index
+     and this is an object. In both cases the function is not invoked.
      The same instance is returned as well when the element returned by the function is {@link JsNothing}
      @param path    the JsPath object where the JsElem will be inserted at
-     @param fn the function that takes as an input the JsElem at the path and produces the JsElem to be inserted at the path
-
+     @param fn the function that takes as an input the JsElem at the path and produces the JsElem to
+     be inserted at the path
      @return the same instance or a new json of the same type T
      */
     T put(final JsPath path,
           final Function<? super JsElem, ? extends JsElem> fn
          );
 
-    Optional<T> add(final JsPath path,
-                    final Function<? super JsElem, ? extends JsElem> fn
-                   );
+    T add(final JsPath path,
+          final Function<? super JsElem, ? extends JsElem> fn
+         ) throws UserError;
 
 
-    default Optional<T> add(final JsPath path,
-                            final JsElem elem
-                           )
+    default T add(final JsPath path,
+                  final JsElem elem
+                 ) throws UserError
     {
         return add(requireNonNull(path),
                    it -> requireNonNull(elem)
@@ -1100,45 +1105,45 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
 
-    default Optional<T> add(final JsPath path,
-                            final int elem
-                           )
+    default T add(final JsPath path,
+                  final int elem
+                 ) throws UserError
     {
         return add(requireNonNull(path),
                    it -> JsInt.of(elem)
                   );
     }
 
-    default Optional<T> add(final JsPath path,
-                            final double elem
-                           )
+    default T add(final JsPath path,
+                  final double elem
+                 ) throws UserError
     {
         return add(requireNonNull(path),
                    it -> JsDouble.of(elem)
                   );
     }
 
-    default Optional<T> add(final JsPath path,
-                            final long elem
-                           )
+    default T add(final JsPath path,
+                  final long elem
+                 ) throws UserError
     {
         return add(requireNonNull(path),
                    it -> JsLong.of(elem)
                   );
     }
 
-    default Optional<T> add(final JsPath path,
-                            final String elem
-                           )
+    default T add(final JsPath path,
+                  final String elem
+                 ) throws UserError
     {
         return add(requireNonNull(path),
                    it -> JsStr.of(requireNonNull(elem))
                   );
     }
 
-    default Optional<T> add(final JsPath path,
-                            final boolean elem
-                           )
+    default T add(final JsPath path,
+                  final boolean elem
+                 ) throws UserError
     {
         return add(requireNonNull(path),
                    it -> JsBool.of(elem)
@@ -1853,6 +1858,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                               JsDouble.of(elem)
                              );
     }
+
     /**
      Inserts at the given path in this json, if some element is present, the element returned by the
      function.
@@ -1870,6 +1876,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
                     );
     }
+
     /**
      Performs a reduction on the values that satisfy the predicate in the first level of this json. The reduction is performed mapping
      each value with the mapping function and then applying the operator
@@ -1909,7 +1916,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      @param path the given JsPath object
      @return a json of the same type T
      */
-    T remove(final JsPath path);
+        T remove(final JsPath path);
 
     /**
      Returns the number of elements in the first level of this json
@@ -1991,6 +1998,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      @return an mutable Json
      */
     T toMutable();
+
     /**
      Returns true if an element exists in this json at the given path.
      @param path the JsPath
@@ -2111,6 +2119,4 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
     TryPatch<T> patch(JsArray ops);
-
-    TryPatch<T> patch(String ops);
 }

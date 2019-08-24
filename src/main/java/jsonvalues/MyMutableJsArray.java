@@ -29,6 +29,15 @@ final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     }
 
     @Override
+    public JsArray add(final int index,
+                       final JsElem elem
+                      )
+    {
+        return of(array.add(index,
+                            elem));
+    }
+
+    @Override
     JsArray emptyArray()
     {
         return new MyMutableJsArray(new MyJavaVector());
@@ -288,6 +297,7 @@ final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
         s.writeObject(toString());
 
     }
+
     //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
     @SuppressWarnings("squid:S4508")
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException

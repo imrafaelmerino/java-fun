@@ -11,23 +11,6 @@ public class TestJsPatchAdd
 
 
     @Test
-    public void test_array_of_operations_expected()
-    {
-
-        final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
-                                                                      () -> JsObj.empty()
-                                                                                 .patch(JsObj.empty()
-                                                                                             .toString()
-                                                                                       )
-                                                                                 .orElseThrow()
-                                                                     );
-
-        Assertions.assertEquals("patch is not an array of operations: {}",
-                                patchMalformed.getMessage()
-                               );
-    }
-
-    @Test
     public void test_add_operation_path_is_missing()
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
@@ -73,7 +56,6 @@ public class TestJsPatchAdd
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
                                                                       () -> JsObj.empty()
                                                                                  .patch(JsArray.of("should be a json object")
-                                                                                               .toString()
                                                                                        )
                                                                                  .orElseThrow()
 
@@ -93,7 +75,6 @@ public class TestJsPatchAdd
                                                                                                             JsStr.of("'not supported'")
                                                                                                            )
                                                                                                   )
-                                                                                               .toString()
                                                                                        )
                                                                                  .orElseThrow()
 
@@ -110,7 +91,6 @@ public class TestJsPatchAdd
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
                                                                       () -> JsObj.empty()
                                                                                  .patch(JsArray.of(JsObj.empty())
-                                                                                               .toString()
                                                                                        )
                                                                                  .orElseThrow()
 
@@ -134,7 +114,7 @@ public class TestJsPatchAdd
                                                                                .orElseThrow()
                                                                  );
 
-        Assertions.assertEquals("Trying to add the key 'a' in an array. ADD operation can not be applied in [] at /a",
+        Assertions.assertEquals("Trying to add the key 'a' in an array. add operation can not be applied in [] at /a. Suggestion: call get(path).isObj() before.",
                                 patchOpError.getMessage()
                                );
 
@@ -151,7 +131,7 @@ public class TestJsPatchAdd
 
                                                                   );
 
-        Assertions.assertEquals("Trying to add the key 'b' in an array. ADD operation can not be applied in {\"a\":[1]} at /a/b",
+        Assertions.assertEquals("Trying to add the key 'b' in an array. add operation can not be applied in {\"a\":[1]} at /a/b. Suggestion: call get(path).isObj() before.",
                                 patchOpError1.getMessage()
                                );
     }
@@ -170,7 +150,7 @@ public class TestJsPatchAdd
 
                                                                  );
 
-        Assertions.assertEquals("Trying to add at the index '0' in an object. ADD operation can not be applied in {} at /0",
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in {} at /0. Suggestion: call get(path).isArray() before.",
                                 patchOpError.getMessage()
                                );
 
@@ -187,7 +167,7 @@ public class TestJsPatchAdd
 
                                                                   );
 
-        Assertions.assertEquals("Trying to add at the index '0' in an object. ADD operation can not be applied in {\"a\":{}} at /a/0",
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in {\"a\":{}} at /a/0. Suggestion: call get(path).isArray() before.",
                                 patchOpError1.getMessage()
                                );
     }
@@ -205,11 +185,9 @@ public class TestJsPatchAdd
                                                                              .orElseThrow()
 
                                                                  );
-
-        Assertions.assertEquals("Element located at '/a' is not a Json. ADD operation can not be applied in {} at /a/b.",
+        Assertions.assertEquals("Parent not found at /a while applying add in {}. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
                                 patchOpError.getMessage()
                                );
-
     }
 
 

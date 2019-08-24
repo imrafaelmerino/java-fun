@@ -47,7 +47,7 @@ public final  class InternalError extends RuntimeException
 
     static InternalError keyNotFound(final String key)
     {
-        return new InternalError(String.format("key %s not found in map. Use contains(key) before of the method getOptional(key).",
+        return new InternalError(String.format("key %s not found in map. Use contains(key) before or the method getOptional(key).",
                                                key
                                               ));
     }

@@ -15,7 +15,8 @@ public final class Patch
     static final String PATH_FIELD = "path";
     static final String VALUE_FIELD = "value";
 
-    enum OP {ADD, REMOVE, MOVE, COPY, REPLACE, TEST}
+    enum OP
+    {ADD, REMOVE, MOVE, COPY, REPLACE, TEST}
 
 
     public static Builder ops()
@@ -74,8 +75,8 @@ public final class Patch
 
 
         public Builder test(final String path,
-                     final JsElem value
-                    )
+                            final JsElem value
+                           )
         {
             ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(path)),
@@ -90,8 +91,8 @@ public final class Patch
 
 
         public Builder move(final String from,
-                     final String to
-                    )
+                            final String to
+                           )
         {
             ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(to)),
@@ -104,8 +105,8 @@ public final class Patch
         }
 
         public Builder copy(final String from,
-                     final String to
-                    )
+                            final String to
+                           )
         {
             ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(to)),
@@ -150,24 +151,6 @@ public final class Patch
         {
             return new TryPatch<>(patchMalformed);
 
-        }
-
-    }
-
-    static <T extends Json<T>> TryPatch<T> of(final T json,
-                                              final String patch
-                                             )
-    {
-        try
-        {
-            return of(json,
-                      JsArray._parse_(patch)
-                             .orElseThrow()
-                     );
-        }
-        catch (MalformedJson malformedJson)
-        {
-            return new TryPatch<>(PatchMalformed.patchIsNotAnArray(patch));
         }
 
     }

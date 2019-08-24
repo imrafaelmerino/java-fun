@@ -142,7 +142,9 @@ final class MyJavaVector implements MyVector<MyJavaVector>
         }
         catch (UnsupportedOperationException e)
         {
-            throw UserError.unsupportedOperationOnlist(elements.getClass());
+            throw UserError.unsupportedOperationOnList(elements.getClass(),
+                                                       "remove"
+                                                      );
         }
 
     }
@@ -175,10 +177,28 @@ final class MyJavaVector implements MyVector<MyJavaVector>
                                final JsElem ele
                               )
     {
-        elements.set(index,
-                     ele
-                    );
-        return this;
+        try
+        {
+            elements.set(index,
+                         ele
+                        );
+            return this;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            throw UserError.unsupportedOperationOnList(elements.getClass(),
+                                                       "set"
+                                                      );
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+
+            throw UserError.indexOutOfBounds(this.size(),
+                                             index,
+                                             "set"
+                                            );
+        }
+
     }
 
     @Override
@@ -186,8 +206,30 @@ final class MyJavaVector implements MyVector<MyJavaVector>
                             final JsElem ele
                            )
     {
-        elements.add(index,ele);
-        return this;
+        try
+        {
+
+            if (index == - 1) elements.add(ele);
+            else elements.add(index,
+                              ele
+                             );
+            return this;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            throw UserError.unsupportedOperationOnList(elements.getClass(),
+                                                       "add"
+                                                      );
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+
+            throw UserError.indexOutOfBounds(this.size(),
+                                             index,
+                                             "add"
+                                            );
+        }
+
     }
 
     @Override

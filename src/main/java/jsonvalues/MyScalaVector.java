@@ -163,8 +163,13 @@ final class MyScalaVector implements MyVector<MyScalaVector>
                              final JsElem ele
                             )
     {
+
         if (index == 0) return new MyScalaVector(vector.appendFront(ele));
-        if (index == vector.size() - 1) return new MyScalaVector(vector.appendBack(ele));
+        if (index == -1 || index == vector.size()) return new MyScalaVector(vector.appendBack(ele));
+        if (index < -1 || index > vector.size()) throw UserError.indexOutOfBounds(vector.size(),
+                                                                                  index,
+                                                                                  "add"
+                                                                                 );
         Tuple2<Vector<JsElem>, Vector<JsElem>> tuple = vector.splitAt(index);
         return new MyScalaVector(tuple._1.appendBack(ele)
                                          .$plus$plus(tuple._2,

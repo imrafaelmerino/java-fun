@@ -7,24 +7,51 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.Patch.OP.*;
 
+/**
+Encapsulates a RFC 6902 implementation. Json patch operations can be applied to Jsons using the method
+ {@link Json#patch(JsArray)}.
+ */
 public final class Patch
 {
 
-    static final String FROM_FIELD = "from";
-    static final String OP_FIELD = "op";
-    static final String PATH_FIELD = "path";
-    static final String VALUE_FIELD = "value";
+    /**
+     field which contains the source location in MOVE and COPY operations
+     */
+    public static final String FROM_FIELD = "from";
+    /**
+     field which contains the name of the operation
+     */
+    public static final String OP_FIELD = "op";
 
-    enum OP
+    /**
+     field which contains the target location of an operation
+     */
+    public static final String PATH_FIELD = "path";
+    /**
+    field which contains the Json element to be used by the operation
+     */
+    public static final String VALUE_FIELD = "value";
+
+    /**
+     List of supported patch-operations
+     */
+    public enum OP
     {ADD, REMOVE, MOVE, COPY, REPLACE, TEST}
 
 
+    /**
+     return a new patch-operation builder
+     @return a new patch-operation builder
+     */
     public static Builder ops()
     {
         return new Builder();
     }
 
-    public final static class Builder
+    /**
+     represents a builder to create json-patch operations according to the RFC 6902 specification.
+     */
+    public static final class Builder
     {
         private Builder()
         {
@@ -33,6 +60,12 @@ public final class Patch
         private JsArray ops = JsArray._empty_();
 
 
+        /**
+         ADD operation.
+         @param path target location of the operation
+         @param value element to be added
+         @return this builder with an ADD operation appended
+         */
         public Builder add(final String path,
                            final JsElem value
                           )
@@ -48,6 +81,12 @@ public final class Patch
 
         }
 
+        /**
+         REPLACE operation.
+         @param path target location of the operation
+         @param value element to be replaced with
+         @return this builder with a REPLACE operation appended
+         */
         public Builder replace(final String path,
                                final JsElem value
                               )
@@ -63,6 +102,11 @@ public final class Patch
 
         }
 
+        /**
+         REMOVE operation.
+         @param path target location of the operation
+         @return this builder with a REMOVE operation appended
+         */
         public Builder remove(final String path)
         {
             ops.append(JsObj.of(PATH_FIELD,
@@ -73,7 +117,12 @@ public final class Patch
             return this;
         }
 
-
+        /**
+         TEST operation.
+         @param path target location of the operation
+         @param value element to be tested
+         @return this builder with a TEST operation appended
+         */
         public Builder test(final String path,
                             final JsElem value
                            )
@@ -89,7 +138,12 @@ public final class Patch
 
         }
 
-
+        /**
+         MOVE operation.
+         @param from target location of the operation
+         @param to source location of the operation
+         @return this builder with a MOVE operation appended
+         */
         public Builder move(final String from,
                             final String to
                            )
@@ -104,6 +158,12 @@ public final class Patch
             return this;
         }
 
+        /**
+         COPY operation.
+         @param from target location of the operation
+         @param to source location of the operation
+         @return this builder with a COPY operation appended
+         */
         public Builder copy(final String from,
                             final String to
                            )
@@ -114,21 +174,42 @@ public final class Patch
                                 JsStr.of(requireNonNull(from)),
                                 OP_FIELD,
                                 JsStr.of(COPY.name())
-                               ));
+                               )
+                      );
             return this;
         }
 
-        public JsArray build()
+        /**
+         returns the array of operations
+         @return a JsArray
+         */
+        public JsArray toArray()
         {
             return ops;
         }
+
+        /**
+         returns the array of operations as a string
+         @return a String
+         */
+        public String toString()
+        {
+            return ops.toString();
+        }
     }
 
+    /**
+     returns the result of a patch wrapped into a Try computation. If the operation doesn't fail,
+     a new json object is returned, so the given json never is mutated.
+     @param json the json that will be changed with an array of operations
+     @param array the array of operations
+     @param <T> the type of the object returned
+     @return a new json object or a PatchOpError wrapped into a TryPatch computation
+     */
     static <T extends Json<T>> TryPatch<T> of(final T json,
                                               final JsArray array
                                              )
     {
-
         try
         {
             final List<OpPatch<T>> ops = parseOps(array);
@@ -137,14 +218,11 @@ public final class Patch
             List<OpPatch<T>> tail = ops.subList(1,
                                                 ops.size()
                                                );
-            //todo pensar si aplicar json.isImmutable ? json : json.toImmutable or copy... para
-            //que si falla una operacion no afecte nada
-            TryPatch<T> accPatch = head.apply(json
-                                             );
-            for (OpPatch<T> op : tail)
-                accPatch = accPatch.flatMap(op::apply);
-            return accPatch;
 
+            T immutable = json.isMutable() ? json.toImmutable() : json;
+            TryPatch<T> accPatch = head.apply(immutable);
+            for (OpPatch<T> op : tail) accPatch = accPatch.flatMap(op::apply);
+            return json.isMutable() ? accPatch.map(Json<T>::toMutable) : accPatch;
         }
 
         catch (PatchMalformed patchMalformed)
@@ -187,6 +265,8 @@ public final class Patch
                     case TEST:
                         ops.add(new OpPatchTest<>(opObj));
                         break;
+                    default:
+                        throw InternalError.patchOperationNotSupported(op.get());
                 }
             }
             catch (IllegalArgumentException e)

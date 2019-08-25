@@ -1,5 +1,8 @@
 package jsonvalues;
 
+/**
+ Represents an error applying a patch.
+ */
 public final class PatchOpError extends Exception
 {
     private static final long serialVersionUID = 1L;

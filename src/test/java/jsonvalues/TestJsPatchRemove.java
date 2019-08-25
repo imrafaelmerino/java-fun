@@ -14,7 +14,7 @@ public class TestJsPatchRemove
                                                                   () -> JsObj.empty()
                                                                              .patch(Patch.ops()
                                                                                          .remove("/a")
-                                                                                         .build()
+                                                                                         .toArray()
                                                                                    )
                                                                              .orElseThrow()
                                                                  );
@@ -28,7 +28,7 @@ public class TestJsPatchRemove
                                                                               .patch(Patch.ops()
                                                                                           .remove("/a")
                                                                                           .remove("/b")
-                                                                                          .build()
+                                                                                          .toArray()
 
                                                                                     )
                                                                               .orElseThrow()

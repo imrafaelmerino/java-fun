@@ -18,7 +18,7 @@ public class TestJsPatchAdd
                                                                                  .patch(ops().add("a.b",
                                                                                                   JsInt.of(1)
                                                                                                  )
-                                                                                             .build()
+                                                                                             .toArray()
                                                                                              .remove(JsPath.of("/0/path"))
                                                                                        )
                                                                                  .orElseThrow()
@@ -38,7 +38,7 @@ public class TestJsPatchAdd
                                                                                  .patch(ops().add("a.b",
                                                                                                   JsInt.of(1)
                                                                                                  )
-                                                                                             .build()
+                                                                                             .toArray()
                                                                                              .remove(JsPath.of("/0/value"))
                                                                                        )
                                                                                  .orElseThrow()
@@ -109,7 +109,7 @@ public class TestJsPatchAdd
                                                                                .patch(ops().add("/a",
                                                                                                 JsInt.of(1)
                                                                                                )
-                                                                                           .build()
+                                                                                           .toArray()
                                                                                      )
                                                                                .orElseThrow()
                                                                  );
@@ -125,7 +125,7 @@ public class TestJsPatchAdd
                                                                               .patch(ops().add("/a/b",
                                                                                                JsInt.of(1)
                                                                                               )
-                                                                                          .build()
+                                                                                          .toArray()
                                                                                     )
                                                                               .orElseThrow()
 
@@ -144,7 +144,7 @@ public class TestJsPatchAdd
                                                                              .patch(ops().add("/0",
                                                                                               JsInt.of(1)
                                                                                              )
-                                                                                         .build()
+                                                                                         .toArray()
                                                                                    )
                                                                              .orElseThrow()
 
@@ -161,7 +161,7 @@ public class TestJsPatchAdd
                                                                               .patch(ops().add("/a/0",
                                                                                                JsInt.of(1)
                                                                                               )
-                                                                                          .build()
+                                                                                          .toArray()
                                                                                     )
                                                                               .orElseThrow()
 
@@ -180,7 +180,7 @@ public class TestJsPatchAdd
                                                                              .patch(ops().add("/a/b",
                                                                                               JsInt.of(1)
                                                                                              )
-                                                                                         .build()
+                                                                                         .toArray()
                                                                                    )
                                                                              .orElseThrow()
 
@@ -201,7 +201,7 @@ public class TestJsPatchAdd
                                          .add("/b",
                                               JsBool.TRUE
                                              )
-                                         .build()
+                                         .toArray()
                                    )
                              .orElseThrow();
 

@@ -14,8 +14,8 @@ class ParseStringIntoJsObjSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { obj =>
              val parsed = Json._parse_(obj.toString,
-                                      ParseOptions.builder().withKeyMap(it => it.toUpperCase)
-                                      ).objOrElseThrow()
+                                       ParseBuilder.builder().withKeyMap(it => it.toUpperCase)
+                                       ).objOrElseThrow()
             val s: stream.Stream[Position] = parsed.stream_().flatMap(it => it.path.stream())
 
 

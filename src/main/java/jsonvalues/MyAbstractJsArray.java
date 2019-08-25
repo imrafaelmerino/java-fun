@@ -519,7 +519,7 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     @Override
     public final JsArray add(JsPath path,
                              final Function<? super JsElem, ? extends JsElem> fn
-                            ) throws UserError
+                            )
     {
         if (requireNonNull(path).isEmpty()) throw UserError.pathEmpty("add");
         final JsPath tail = path.tail();

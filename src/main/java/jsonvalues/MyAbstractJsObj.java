@@ -394,7 +394,7 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
     @Override
     public final JsObj add(final JsPath path,
                            final Function<? super JsElem, ? extends JsElem> fn
-                          ) throws UserError
+                          )
     {
         if (requireNonNull(path).isEmpty()) throw UserError.pathEmpty("add");
         final JsPath tail = path.tail();

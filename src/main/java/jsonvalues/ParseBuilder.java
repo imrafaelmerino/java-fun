@@ -5,9 +5,9 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
- Builder with different options to customize the parsing of a string into a json.
+ Builder with different transformations to customize the parsing of a string into a json.
  */
-public final class ParseOptions
+public final class ParseBuilder
 {
     private Function<? super JsPair, ? extends JsElem> map = pair -> pair.elem;
     private Predicate<? super JsPair> filter = pair -> true;
@@ -18,9 +18,9 @@ public final class ParseOptions
      static factory method to create a builder to customize the parsing of a string into a json.
      @return a new builder instance
      */
-    public static ParseOptions builder()
+    public static ParseBuilder builder()
     {
-        return new ParseOptions();
+        return new ParseBuilder();
     }
 
     Options create()
@@ -33,45 +33,45 @@ public final class ParseOptions
     }
 
     /**
-     adds a predicate to this builder to filter the elements of the json to be parsed, removing those
-     pairs that are evaluated to false on the predicate.
+     adds a predicate to this builder to filter the elements of the json, removing those pairs that
+     are evaluated to false on the predicate.
      @param filter the predicate to filter pair of elements.
      @return this ParseOptions builder
      */
-    public ParseOptions withElemFilter(final Predicate<? super JsPair> filter)
+    public ParseBuilder withElemFilter(final Predicate<? super JsPair> filter)
     {
         this.filter = filter;
         return this;
     }
 
     /**
-     adds a function to this builder to filter the keys of the json to be parsed.
+     adds a function to this builder to filter the keys of the json.
      @param keyFilter the predicate to filter
      @return this ParseOptions builder
      */
-    public ParseOptions withKeyFilter(final Predicate<? super JsPath> keyFilter)
+    public ParseBuilder withKeyFilter(final Predicate<? super JsPath> keyFilter)
     {
         this.keyFilter = keyFilter;
         return this;
     }
 
     /**
-     adds a function to this builder to map the keys of the json to be parsed.
+     adds a function to this builder to map the keys of the json.
      @param keyMap the map function which takes as input the name of the key and returns the new key name
      @return this ParseOptions builder
      */
-    public ParseOptions withKeyMap(final UnaryOperator<String> keyMap)
+    public ParseBuilder withKeyMap(final UnaryOperator<String> keyMap)
     {
         this.keyMap = keyMap;
         return this;
     }
 
     /**
-     adds a function to this builder to map the elements of the json to be parsed
+     adds a function to this builder to map the elements of the json.
      @param map the map function which takes as input a JsPair and returns the new JsElem
      @return this ParseOptions builder
      */
-    public ParseOptions withElemMap(final Function<? super JsPair, ? extends JsElem> map)
+    public ParseBuilder withElemMap(final Function<? super JsPair, ? extends JsElem> map)
     {
         this.map = map;
         return this;

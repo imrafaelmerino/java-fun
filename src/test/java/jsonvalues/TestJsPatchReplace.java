@@ -18,7 +18,7 @@ public class TestJsPatchReplace
                                                                                          .replace("/a/b",
                                                                                                     JsInt.of(1)
                                                                                                    )
-                                                                                         .build()
+                                                                                         .toArray()
 
                                                                                    )
                                                                              .orElseThrow()
@@ -44,7 +44,7 @@ public class TestJsPatchReplace
                                          .replace("/a/b",
                                                     JsBool.FALSE
                                                    )
-                                         .build()
+                                         .toArray()
                                    )
                              .orElseThrow();
 

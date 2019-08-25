@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
  Exception that models an internal error made by a developer. An issue in GitHub should be open reporting
  the exception message.
  */
-public final  class InternalError extends RuntimeException
+public final class InternalError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
     private static final String GENERAL_MESSAGE = "Create an issue in https://github.com/imrafaelmerino/values: %s.";
@@ -52,13 +52,10 @@ public final  class InternalError extends RuntimeException
                                               ));
     }
 
-
-//    static InternalError patchOpNotSupported(final OpPatch.OP op)
-//    {
-//        return new InternalError(String.format("The path operation %s is not supported and an UserError had to be returned while validating the operations.",
-//                                               op.name()
-//                                              ));
-//    }
+    static InternalError patchOperationNotSupported(final String op)
+    {
+        return new InternalError(String.format("Patch operation '%s' not supported.",op));
+    }
 
     static InternalError tokenNotExpected(String token)
     {
@@ -75,5 +72,10 @@ public final  class InternalError extends RuntimeException
     static InternalError tryPatchComputationWithNoResult()
     {
         return new InternalError("TryPatch.orElseThrow() with nor result nor error");
+    }
+
+    static InternalError tryPatchSuccesfullWithNoResult()
+    {
+        return new InternalError("TryPatch: isSuccess is true but result is null");
     }
 }

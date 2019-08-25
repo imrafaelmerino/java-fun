@@ -925,13 +925,13 @@ public class TestJsObj
                                );
 
         final TryObj tryObjImmutable = JsObj.parse(str,
-                                                   ParseOptions.builder()
+                                                   ParseBuilder.builder()
                                                                .withKeyFilter(p -> !p.last()
                                                                                      .isKey(it -> it.startsWith("b")))
                                                   );
 
         final TryObj tryObjMutable = JsObj._parse_(str,
-                                                   ParseOptions.builder()
+                                                   ParseBuilder.builder()
                                                                .withKeyFilter(p -> !p.last()
                                                                                      .isKey(it -> it.startsWith("b")))
                                                   );
@@ -1279,7 +1279,7 @@ public class TestJsObj
                                         .filterElems_(p -> p.elem.isNotNull()),
                                 JsObj._parse_(supplier.get()
                                                       .toString(),
-                                              ParseOptions.builder()
+                                              ParseBuilder.builder()
                                                           .withElemFilter(p -> p.elem.isNotNull())
                                              )
                                      .orElseThrow()
@@ -1982,7 +1982,7 @@ public class TestJsObj
 
 
     @Test
-    void test_add_element_into_immutable_object_with_errors()
+    public void test_add_element_into_immutable_object_with_errors()
     {
 
 
@@ -2043,7 +2043,7 @@ public class TestJsObj
     }
 
     @Test
-    void test_add_element_into_mutable_object_with_errors()
+    public void test_add_element_into_mutable_object_with_errors()
     {
 
 
@@ -2104,7 +2104,7 @@ public class TestJsObj
     }
 
     @Test
-    void test_add_element_into_immutable_json_recursively()
+    public void test_add_element_into_immutable_json_recursively()
     {
 
         JsObj obj = JsObj.of("a",

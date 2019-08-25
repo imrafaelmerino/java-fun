@@ -3,6 +3,8 @@ import jsonvalues.UserError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class TestJsPath
 {
 
@@ -100,12 +102,12 @@ public class TestJsPath
 
     @Test
     public void test_position(){
-        Assertions.assertTrue(JsPath.of("/a").last().isKey());
+        assertTrue(JsPath.of("/a").last().isKey());
         Assertions.assertFalse(JsPath.of("/a").last().isIndex());
-        Assertions.assertTrue(JsPath.of("/a").last().isKey(i->i.equals("a")));
+        assertTrue(JsPath.of("/a").last().isKey(i->i.equals("a")));
         Assertions.assertThrows(UserError.class, ()->JsPath.of("/0").last().asKey());
 
-        Assertions.assertTrue(JsPath.of("/0").last().isIndex());
+        assertTrue(JsPath.of("/0").last().isIndex());
         Assertions.assertFalse(JsPath.of("/0").last().isKey());
         Assertions.assertTrue(JsPath.of("/0").last().isIndex(i->i==0));
         Assertions.assertThrows(UserError.class,()->JsPath.of("/a").last().asIndex());
@@ -126,24 +128,24 @@ public class TestJsPath
     {
 
         final JsPath path = JsPath.of("/a/b/c/0/1");
-        Assertions.assertTrue(path.startsWith(JsPath.empty()));
-        Assertions.assertTrue(path.startsWith(JsPath.of("/a")));
-        Assertions.assertTrue(path.startsWith(JsPath.of("/a/b")));
-        Assertions.assertTrue(path.startsWith(JsPath.of("/a/b/c")));
-        Assertions.assertTrue(path.startsWith(JsPath.of("/a/b/c/0")));
-        Assertions.assertTrue(path.startsWith(JsPath.of("#/a/b/c/0/1")));
+        assertTrue(path.startsWith(JsPath.empty()));
+        assertTrue(path.startsWith(JsPath.of("/a")));
+        assertTrue(path.startsWith(JsPath.of("/a/b")));
+        assertTrue(path.startsWith(JsPath.of("/a/b/c")));
+        assertTrue(path.startsWith(JsPath.of("/a/b/c/0")));
+        assertTrue(path.startsWith(JsPath.of("#/a/b/c/0/1")));
         Assertions.assertFalse(path.startsWith(JsPath.of("/a/b/c/0/1/a")));
     }
     @Test
     public void test_ends_with()
     {
         final JsPath path = JsPath.of("/a/b/c/0/1");
-        Assertions.assertTrue(path.endsWith(JsPath.empty()));
-        Assertions.assertTrue(path.endsWith(JsPath.of("/1")));
-        Assertions.assertTrue(path.endsWith(JsPath.of("/0/1")));
-        Assertions.assertTrue(path.endsWith(JsPath.of("/c/0/1")));
-        Assertions.assertTrue(path.endsWith(JsPath.of("/b/c/0/1")));
-        Assertions.assertTrue(path.endsWith(JsPath.of("/a/b/c/0/1")));
+        assertTrue(path.endsWith(JsPath.empty()));
+        assertTrue(path.endsWith(JsPath.of("/1")));
+        assertTrue(path.endsWith(JsPath.of("/0/1")));
+        assertTrue(path.endsWith(JsPath.of("/c/0/1")));
+        assertTrue(path.endsWith(JsPath.of("/b/c/0/1")));
+        assertTrue(path.endsWith(JsPath.of("/a/b/c/0/1")));
         Assertions.assertFalse(path.endsWith(JsPath.of("/a/b/c/0/1/a")));
     }
     @Test

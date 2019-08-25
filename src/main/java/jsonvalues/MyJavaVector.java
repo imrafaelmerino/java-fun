@@ -21,6 +21,8 @@ final class MyJavaVector implements MyVector<MyJavaVector>
 {
     private List<JsElem> elements;
 
+
+
     MyJavaVector(final List<JsElem> pvector)
     {
         elements = pvector;
@@ -279,7 +281,7 @@ final class MyJavaVector implements MyVector<MyJavaVector>
     }
 
     void parse(final MyJsParser parser,
-               final ParseOptions.Options options,
+               final ParseBuilder.Options options,
                final JsPath path
               ) throws MalformedJson
     {

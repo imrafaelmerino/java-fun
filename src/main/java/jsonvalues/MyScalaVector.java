@@ -255,7 +255,7 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     }
 
     MyScalaVector parse(final MyJsParser parser,
-                        final ParseOptions.Options options,
+                        final ParseBuilder.Options options,
                         final JsPath path
                        ) throws MalformedJson
     {

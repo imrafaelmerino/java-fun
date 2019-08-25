@@ -72,7 +72,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
                        .map(key -> new AbstractMap.SimpleEntry<>(key,
                                                                  elements.get(key)
                        ))
-                       .orElseThrow(() ->  InternalError.notEmptyMapWithoutAKey());
+                       .orElseThrow(InternalError::notEmptyMapWithoutAKey);
     }
 
     @Override
@@ -220,7 +220,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
     }
 
     void parse(final MyJsParser parser,
-               final ParseOptions.Options options,
+               final ParseBuilder.Options options,
                final JsPath path
               ) throws MalformedJson
     {

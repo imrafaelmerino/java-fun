@@ -16,7 +16,6 @@ import static jsonvalues.JsNull.NULL;
 public class TestJsArray
 {
 
-
     @Test
     public void test_creation_mutable_one_element_json_array()
     {
@@ -274,7 +273,6 @@ public class TestJsArray
 
     }
 
-
     @Test
     public void test_parse_string_into_mutable_json_array() throws MalformedJson
     {
@@ -317,7 +315,7 @@ public class TestJsArray
 
         String str = "[1,2,3,true,false]";
         final JsArray array = JsArray._parse_(str,
-                                              ParseOptions.builder()
+                                              ParseBuilder.builder()
                                                           .withElemFilter(p -> p.elem.isInt())
                                                           .withElemMap(p -> p.mapIfInt(i -> i + 1).elem)
                                              )
@@ -330,7 +328,6 @@ public class TestJsArray
                                             )
                                );
     }
-
 
     @Test
     public void test_creation_of_mutable_empty_json_array()
@@ -384,7 +381,6 @@ public class TestJsArray
 
     }
 
-
     @Test
     public void test_appending_a_json_array_to_the_back_of_another_json_array()
     {
@@ -432,7 +428,6 @@ public class TestJsArray
                                             )
                                );
     }
-
 
     @Test
     public void test_prepending_a_json_array_to_the_front_of_another_json_array()
@@ -486,7 +481,6 @@ public class TestJsArray
 
     }
 
-
     @Test
     public void test_appends_one_or_more_elements_to_the_back_of_a_json_array()
     {
@@ -521,7 +515,6 @@ public class TestJsArray
                                 _arr_
                                );
     }
-
 
     @Test
     public void test_prepend()
@@ -564,7 +557,6 @@ public class TestJsArray
 
 
     }
-
 
     @Test
     public void test_collecting_an_array_from_a_collector() throws MalformedJson
@@ -609,7 +601,6 @@ public class TestJsArray
                                );
 
     }
-
 
     @Test
     public void test_contains_element_in_js_array()
@@ -965,7 +956,6 @@ public class TestJsArray
                                );
     }
 
-
     @Test
     public void test_parse_string_into_immutable_json_array() throws MalformedJson
     {
@@ -1043,7 +1033,7 @@ public class TestJsArray
     {
 
         final JsArray arr = JsArray.parse("[1,2,3,true,false,null,[null,true,4]]",
-                                          ParseOptions.builder()
+                                          ParseBuilder.builder()
                                                       .withElemFilter(p -> p.elem.isInt())
                                                       .withElemMap(p -> JsElems.mapIfInt(i -> i + 10)
                                                                                .apply(p.elem))
@@ -1564,7 +1554,7 @@ public class TestJsArray
                                                       }),
                                 JsArray._parse_(supplier.get()
                                                         .toString(),
-                                                ParseOptions.builder()
+                                                ParseBuilder.builder()
                                                             .withElemFilter(p -> p.elem.isNotNull())
                                                )
                                        .orElseThrow()
@@ -1592,7 +1582,7 @@ public class TestJsArray
                                                        return p.elem.isNotNull();
                                                    }),
                                 JsArray.parse(array.toString(),
-                                              ParseOptions.builder()
+                                              ParseBuilder.builder()
                                                           .withElemFilter(p -> p.elem.isNotNull())
                                              )
                                        .orElseThrow()
@@ -2321,7 +2311,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_add_element_into_non_empty_immutable_array()
+    public void test_add_element_into_non_empty_immutable_array()
     {
         final JsArray arr = JsArray.of(1);
 
@@ -2360,7 +2350,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_add_element_into_non_empty_mutable_array()
+    public void test_add_element_into_non_empty_mutable_array()
     {
         final JsArray arr = JsArray._of_(1);
 
@@ -2393,7 +2383,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_add_element_into_empty_immutable_array()
+    public void test_add_element_into_empty_immutable_array()
     {
         final JsArray arr = JsArray.empty();
 
@@ -2420,7 +2410,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_add_element_into_empty_mutable_array()
+    public void test_add_element_into_empty_mutable_array()
     {
         final JsArray arr = JsArray._empty_();
 
@@ -2447,7 +2437,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_add_element_into_immutable_array_with_errors()
+    public void test_add_element_into_immutable_array_with_errors()
     {
 
         final UserError error = Assertions.assertThrows(UserError.class,
@@ -2513,7 +2503,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_add_element_into_mutable_array_with_errors()
+    public void test_add_element_into_mutable_array_with_errors()
     {
 
         final UserError error = Assertions.assertThrows(UserError.class,
@@ -2523,7 +2513,7 @@ public class TestJsArray
                                                                          )
                                                        );
 
-        Assertions.assertEquals("Index out of bounds applying 'add'. Index: 1. Size of the array: 0. Suggestion: call the size method to know the length of the array before doing anything",
+        Assertions.assertEquals("Index out of bounds applying 'add'. Index: 1. Size of the array: 0. Suggestion: call the size method to know the length of the array before doing anything.",
                                 error.getMessage()
                                );
 
@@ -2579,7 +2569,7 @@ public class TestJsArray
     }
 
     @Test
-    void test_passing_empty_path()
+    public void test_passing_empty_path()
     {
         JsArray arr = JsArray.of(JsObj.of("a",
                                           JsStr.of("a")

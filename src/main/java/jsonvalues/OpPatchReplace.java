@@ -1,28 +1,28 @@
 package jsonvalues;
 
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.Patch.PATH_FIELD;
+import static jsonvalues.Patch.VALUE_FIELD;
 
 final class OpPatchReplace<T extends Json<T>> implements OpPatch<T>
 {
     private final JsElem value;
     private final JsPath path;
 
-    OpPatchReplace(final JsPath path,
-                   final JsElem value
-
-                  )
-    {
-        this.value = Objects.requireNonNull(value);
-        this.path = Objects.requireNonNull(path);
-    }
-
     OpPatchReplace(final JsObj op) throws PatchMalformed
     {
-        this.value = validateValue(requireNonNull(op));
-        this.path = validatePath(op);
+        JsElem value = requireNonNull(op).get(JsPath.fromKey(VALUE_FIELD));
+        if (value.isNothing()) throw PatchMalformed.valueRequired(op);
+        this.value = value;
+        Optional<String> path = op.getStr(JsPath.fromKey(PATH_FIELD));
+        if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
+        this.path = JsPath.of(path.get());
     }
 
     @Override
@@ -49,7 +49,7 @@ final class OpPatchReplace<T extends Json<T>> implements OpPatch<T>
     }
 
     @Override
-    public boolean equals(final Object o)
+    public boolean equals(final @Nullable Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

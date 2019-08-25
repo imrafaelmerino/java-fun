@@ -1,8 +1,12 @@
 package jsonvalues;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.Patch.PATH_FIELD;
 
 final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
 {
@@ -10,7 +14,9 @@ final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
 
     OpPatchRemove(final JsObj op) throws PatchMalformed
     {
-        this.path = validatePath(requireNonNull(op));
+        Optional<String> path = requireNonNull(op).getStr(JsPath.fromKey(PATH_FIELD));
+        if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
+        this.path =  JsPath.of(path.get());
     }
 
     OpPatchRemove(final JsPath path)
@@ -40,7 +46,7 @@ final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
     }
 
     @Override
-    public boolean equals(final Object o)
+    public boolean equals(final @Nullable  Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

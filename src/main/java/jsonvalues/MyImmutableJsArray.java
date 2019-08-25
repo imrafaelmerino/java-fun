@@ -36,7 +36,7 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @Override
     public JsArray add(final int index,
                        final JsElem elem
-                      ) throws UserError
+                      )
     {
         return new MyImmutableJsArray(array.add(index,
                                                 elem));

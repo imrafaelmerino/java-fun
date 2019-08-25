@@ -1,35 +1,29 @@
 package jsonvalues;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.Patch.PATH_FIELD;
 
 final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
 {
     private final JsElem value;
     private final JsPath path;
-
-
-    OpPatchTest(final JsPath path,
-                final JsElem value
-
-               )
-    {
-        this.value = requireNonNull(value);
-        this.path = requireNonNull(path);
-    }
-
     OpPatchTest(final JsObj op) throws PatchMalformed
     {
         this.value = requireNonNull(op).get(JsPath.fromKey("value"));
-        this.path = validatePath(op);
+        Optional<String> path = op.getStr(JsPath.fromKey(PATH_FIELD));
+        if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
+        this.path =  JsPath.of(path.get());
     }
 
     @Override
     public TryPatch<T> apply(final T json
                             )
     {
-
         final JsElem elem = json.get(path);
         if (elem.isNothing()) return new TryPatch<>(PatchOpError.testingNonExistingValue(path,
                                                                                          json
@@ -39,17 +33,15 @@ final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
                                                                     value,
                                                                     elem
                                                                    ));
-
     }
 
     @Override
-    public boolean equals(final Object o)
+    public boolean equals(final @Nullable Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final OpPatchTest<?> that = (OpPatchTest<?>) o;
-        return value.equals(that.value) &&
-        path.equals(that.path);
+        return value.equals(that.value) && path.equals(that.path);
     }
 
     @Override

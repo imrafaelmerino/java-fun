@@ -240,7 +240,7 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     }
 
     MyScalaMap parse(final MyJsParser parser,
-                     final ParseOptions.Options options,
+                     final ParseBuilder.Options options,
                      final JsPath path
                     ) throws MalformedJson
     {

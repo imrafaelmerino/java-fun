@@ -1,5 +1,8 @@
 package jsonvalues;
 
+/**
+ Represents an error when an operation has a invalid schema and the patch can not be applied.
+ */
 public final class PatchMalformed extends Exception
 {
 

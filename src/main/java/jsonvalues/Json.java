@@ -106,16 +106,16 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
 
     /**
-     Tries to parse the string into a mutable json, performing some operations while the parsing.
+     Tries to parse the string into a mutable json, performing the specified transformations while the parsing.
      It's faster to do certain operations right while the parsing instead of doing the parsing and
      applying them later.
      @param str     the string that will be parsed.
-     @param options a builder with the filters and maps that, if specified, will be applied during the parsing
+     @param builder a builder with the transformations that, if specified, will be applied during the parsing
      @return a {@link Try} computation
      */
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static Try _parse_(final String str,
-                       final ParseOptions options
+                       final ParseBuilder builder
                       )
     {
         try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
@@ -125,7 +125,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             {
                 final MyJavaVector array = new MyJavaVector();
                 array.parse(parser,
-                            options.create(),
+                            builder.create(),
                             JsPath.empty()
                                   .index(-1)
                            );
@@ -133,7 +133,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
             }
             final MyJavaMap obj = new MyJavaMap();
             obj.parse(parser,
-                      options.create(),
+                      builder.create(),
                       JsPath.empty()
                      );
             return new Try(new MyMutableJsObj(obj));
@@ -1039,13 +1039,13 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
     /**
-     Tries to parse the string into an immutable json, performing some operations while the parsing.
+     Tries to parse the string into an immutable json, performing the specified transformations while the parsing.
      @param str     the string that will be parsed
-     @param options a Options with the filters and maps that will be applied during the parsing
+     @param builder a builder with the transformations that will be applied during the parsing
      @return a {@link Try} computation
      */
     static Try parse(String str,
-                     ParseOptions options
+                     ParseBuilder builder
                     )
     {
         try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
@@ -1053,13 +1053,13 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
             final MyJsParser.Event event = parser.next();
             if (event == START_ARRAY) return new Try(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
-                                                                                                      options.create(),
+                                                                                                      builder.create(),
                                                                                                       JsPath.empty()
                                                                                                             .index(-1)
 
                                                                                                      )));
             return new Try(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser,
-                                                                       options.create(),
+                                                                       builder.create(),
                                                                        JsPath.empty()
 
                                                                       )));
@@ -1076,9 +1076,9 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
     /**
-     Inserts the element returned by the function at the path in this json, replacing any existing element
+     Inserts the element returned by the function at the given path in this json, replacing any existing element
      and filling with {@link jsonvalues.JsNull} empty indexes in arrays when necessary. The same instance
-     is returned when the head of the path is a key and this is an array or the head of the path is an index
+     is returned when the path is empty, or the head of the path is a key and this is an array or the head of the path is an index
      and this is an object. In both cases the function is not invoked.
      The same instance is returned as well when the element returned by the function is {@link JsNothing}
      @param path    the JsPath object where the JsElem will be inserted at
@@ -1090,66 +1090,148 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
           final Function<? super JsElem, ? extends JsElem> fn
          );
 
+    /**
+     <pre>
+     Inserts the element returned by the function at the given path in this json, replacing any existing
+     element at that path. If the element can no be added, a UserError exception is thrown and the function
+     is not invoked. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param fn the function that returns the element to be inserted from the the existing element
+     @return a new json of the same type T
+     */
     T add(final JsPath path,
           final Function<? super JsElem, ? extends JsElem> fn
-         ) throws UserError;
+         );
 
-
+    /**
+     <pre>
+     Inserts the given element at the given path in this json, replacing any existing element at that path.
+     If the element can no be added, a UserError exception is thrown. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param elem the element to be inserted
+     @return a new json of the same type T
+     */
     default T add(final JsPath path,
                   final JsElem elem
-                 ) throws UserError
+                 )
     {
         return add(requireNonNull(path),
                    it -> requireNonNull(elem)
                   );
     }
 
-
+    /**
+     <pre>
+     Inserts the given integer at the given path in this json, replacing any existing element at that path.
+     If the element can no be added, a UserError exception is thrown. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param elem the integer to be inserted
+     @return a new json of the same type T
+     */
     default T add(final JsPath path,
                   final int elem
-                 ) throws UserError
+                 )
     {
         return add(requireNonNull(path),
                    it -> JsInt.of(elem)
                   );
     }
 
+    /**
+     <pre>
+     Inserts the given double at the given path in this json, replacing any existing element at that path.
+     If the element can no be added, a UserError exception is thrown. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param elem the double to be inserted
+     @return a new json of the same type T
+     */
     default T add(final JsPath path,
                   final double elem
-                 ) throws UserError
+                 )
     {
         return add(requireNonNull(path),
                    it -> JsDouble.of(elem)
                   );
     }
 
+    /**
+     <pre>
+     Inserts the given long at the given path in this json, replacing any existing element at that path.
+     If the element can no be added, a UserError exception is thrown. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param elem the long to be inserted
+     @return a new json of the same type T
+     */
     default T add(final JsPath path,
                   final long elem
-                 ) throws UserError
+                 )
     {
         return add(requireNonNull(path),
                    it -> JsLong.of(elem)
                   );
     }
 
+    /**
+     <pre>
+     Inserts the given string at the given path in this json, replacing any existing element at that path.
+     If the element can no be added, a UserError exception is thrown. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param elem the string to be inserted
+     @return a new json of the same type T
+     */
     default T add(final JsPath path,
                   final String elem
-                 ) throws UserError
+                 )
     {
         return add(requireNonNull(path),
                    it -> JsStr.of(requireNonNull(elem))
                   );
     }
 
+    /**
+     <pre>
+     Inserts the given boolean at the given path in this json, replacing any existing element at that path.
+     If the element can no be added, a UserError exception is thrown. The following scenarios produce an error:
+     .the input path is empty.
+     .there's no parent where to insert the element in, because it doesn't exist or it's no a Json or it's not a
+     Json of the expected type.
+     </pre>
+     @param path the given path
+     @param elem the boolean to be inserted
+     @return a new json of the same type T
+     */
     default T add(final JsPath path,
                   final boolean elem
-                 ) throws UserError
+                 )
     {
         return add(requireNonNull(path),
                    it -> JsBool.of(elem)
                   );
     }
-
 
     /**
      Inserts the element at the path in this json, replacing any existing element and filling with {@link jsonvalues.JsNull} empty
@@ -1916,7 +1998,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      @param path the given JsPath object
      @return a json of the same type T
      */
-        T remove(final JsPath path);
+    T remove(final JsPath path);
 
     /**
      Returns the number of elements in the first level of this json
@@ -2118,5 +2200,10 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
         return false;
     }
 
+    /**
+     Implementation of the Json Patch specification. Go to  https://tools.ietf.org/html/rfc6902 for further details.
+     @param ops operations to be applied to the json
+     @return a TryPatch computation
+     */
     TryPatch<T> patch(JsArray ops);
 }

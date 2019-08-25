@@ -2,7 +2,6 @@ package jsonvalues;
 
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.regex.qual.Regex;
 import scala.collection.JavaConverters;
 import scala.collection.generic.CanBuildFrom;
 import scala.collection.immutable.Vector;
@@ -19,23 +18,36 @@ import static java.util.Objects.requireNonNull;
 
 /**<pre>
  Represents the full path location of an element in a json. It's a list of {@link Position}. Exists
- two different ways of creating a JsPath:
+ two different ways to create a JsPath:
 
- - By a path-like string using the static factory method {@link JsPath#of(String)}, where the path follows
- the grammar:
+ - From a path-like string using the static factory method {@link JsPath#of(String)}, where the path
+ follows the Json Pointer specification <a href="http://tools.ietf.org/html/rfc6901">RFC 6901</a>.
+ In order to be able to use paths to put data in a Json, keys which name are numbers have to
+ to be single-quoted:
+ {@code
+ a={"0": true}
+ b=[false]
+ }
 
- path: position, position.path
- position: key, index
- key: string, 'string', 'number'
- index: number
- string: non-numeric characters <b>url-encoded</b>  (see https://www.json.org for more details)
- number: \d+
+ According to the rfc 6901:
+ the pointer /0 points to true in a, and to false in b.
+ In json-values it's slightly different:
+ /0 points to false in b, and /'0' points to true in a.
 
- When the name of a key is numeric, it has to be single-quoted, to distinguish indexes from
- keys. When the key is not numeric, single quotes are completely optional.
+ It's necessary to make that distinction because otherwise, there are scenarios when there is no way
+ to know if the user wants to insert an array or an object:
+ {@code
+ JsObj obj = empty.put("/a/0/0",true)
+ obj = {"a":[[true]]}       //valid result according to the rfc and json-values
+ obj = {"a":{"0":{"0":true} //valid result according to the rfc
+ }
 
- - By an API, using the methods {@link #key(String)} and {@link #index(int)}. In this case, keys don't have to
- be url-encoded.
+ - By an API, using the methods {@link #fromKey(String)} and {@link #fromIndex(int)} to create
+ a JsPath an then the methods {@link #index(int)}} and {@link #key(String)} to append keys or indexes:
+ {@code
+ JsPath a = JsPath.fromKey("a").index(0).key("b") =  /a/0/b
+ JsPath b = JsPath.fromIndex(0).key("a").index(0) =  /0/a/0
+ }
 
  For example, given the following Json object:
 
@@ -45,25 +57,28 @@ import static java.util.Objects.requireNonNull;
  "": ""
  }
 
- "" = ""                      //empty string is the empty key, which is a valid name for a key
- "'1'" = null                 //numeric keys have to be single-quoted
- "a.x.0.c.0" = 1
- "a.x.0.c.1" = 2
- "a.x.0.c.2..'1'" = true      // single quotes are only mandatory when the key is a number
- "a.x.0.c.2..+" = false       // + is url-decoded to the white-space
- "a.x.0.c.2..%27" = 4         // %27 is url-decoded to '
+ / = ""                      //an empty string is a valid name for a key
+ /'1' = null                 //numeric keys have to be single-quoted
+ /a/x/0/c/0 = 1
+ /a/x/0/c/1 = 2
+ /a/x/0/c/2//'1' = true      // single quotes are only mandatory when the key is a number
+
+ according to the rfc, # at the beginning indicates that the path is a fragment of an url and
+ therefore the keys have to be url-encoded:
+
+ #/a/x/0/c/2//+" = false     // + is url-decoded to the white-space
+ #/a/x/0/c/2//%27" = 4       // %27 is url-decoded to '
 
  and using the API:
 
  {@code
- JsPath empty = JsPath.empty();  // doesn't represent any path
- empty.key("") = ""
- empty.key("1") = null
- empty.key("a").key("x").index(0).key("c").index(0) = 1
- empty.key("a").key("x").index(0).key("c").index(1) = 2
- empty.key("a").key("x").index(0).key("c").index(2).key("").key("1") = true
- empty.key("a").key("x").index(0).key("c").index(2).key("").key(" ") = false  //and not key("+")
- empty.key("a").key("x").index(0).key("c").index(2).key("").key("'") = 4      //and not key("%27")
+ fromKey("") = ""
+ fromKey("1") = null
+ fromKey("a").key("x").index(0).key("c").index(0) = 1
+ fromKey("a").key("x").index(0).key("c").index(1) = 2
+ fromKey("a").key("x").index(0).key("c").index(2).key("").key("1") = true
+ fromKey("a").key("x").index(0).key("c").index(2).key("").key(" ") = false
+ fromKey("a").key("x").index(0).key("c").index(2).key("").key("'") = 4
  }
  </pre>
  */
@@ -95,7 +110,6 @@ public final class JsPath implements Comparable<JsPath>
                                                                       0
     );
     private static final JsPath EMPTY = new JsPath(EMPTY_VECTOR);
-    private static final @Regex String REGEX_SEPARATOR = "\\.";
 
     /**
      Returns the singleton empty path.
@@ -107,11 +121,6 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     private final Vector<Position> positions;
-
-    JsPath()
-    {
-        positions = EMPTY_VECTOR;
-    }
 
     JsPath(final Vector<Position> positions)
     {
@@ -428,12 +437,10 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
-     Returns a string representation of this path where key names are single quoted when they are numbers,
-     and encoded in application/x-www-form-urlencoded format when they are strings, and indexes are left
-     as they are, being each position separated from each other with a dot. White-space is encoded as +,
-     see {@link URLEncoder#encode(String, String)} for more details.
-     Examples:
-     @return a string representation of this JsPath following the pattern urlEncode(string).number.'number'...
+     Returns a string representation of this path following the format defined in the RFC 6901 with
+     the exception that keys which names are numbers are single-quoted.
+     Example: /a/b/0/'1'/
+     @return a string representation of this JsPath following the RFC 6901
      */
     @Override
     public String toString()
@@ -457,6 +464,45 @@ public final class JsPath implements Comparable<JsPath>
                             }
                         })
                         .mkString("/",
+                                  "/",
+                                  ""
+                                 );
+    }
+
+    /**
+     Returns a string representation of this path following the format defined in the RFC 6901 for uri
+     fragments, with the exception that keys which names are numbers are single-quoted
+     Example: #/a/b/0/'1'/c+d  where keys have been been url-encoded
+     @return a string representation of this JsPath following the RFC 6901
+     */
+    public String toUriFragment()
+    {
+        if (positions.isEmpty()) return "";
+        return positions.iterator()
+                        .map(new AbstractFunction1<Position, String>()
+                        {
+                            @Override
+                            public String apply(final Position pos)
+                            {
+                                return pos.match(key ->
+                                                 {
+                                                     if (key.equals("")) return key;
+                                                     try
+                                                     {
+                                                         return isNumeric(key) ? String.format("'%s'",
+                                                                                               key
+                                                                                              ) : URLEncoder.encode(key,UTF8);
+                                                     }
+                                                     catch (UnsupportedEncodingException e)
+                                                     {
+                                                         throw InternalError.encodingNotSupported(e);
+                                                     }
+                                                 },
+                                                 Integer::toString
+                                                );
+                            }
+                        })
+                        .mkString("#/",
                                   "/",
                                   ""
                                  );

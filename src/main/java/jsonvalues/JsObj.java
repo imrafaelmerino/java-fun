@@ -329,16 +329,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
 
     /**
-     Tries to parse the string into an mutable object, performing some operations while the parsing.
+     Tries to parse the string into an mutable object, performing the specified transformations while the parsing.
      It's faster to do certain operations right while the parsing instead of doing the parsing and
      applying them later.
      @param str  string to be parsed
-     @param options a Options with the filters and maps that will be applied during the parsing
+     @param builder builder with the transformations that will be applied during the parsing
      @return a {@link TryObj} computation
      */
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static TryObj _parse_(final String str,
-                          final ParseOptions options
+                          final ParseBuilder builder
                          )
     {
 
@@ -348,7 +348,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
             MyJavaMap obj = new MyJavaMap();
             obj.parse(parser,
-                      options.create(),
+                      builder.create(),
                       JsPath.empty()
                      );
             return new TryObj(new MyMutableJsObj(obj));
@@ -685,15 +685,15 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
 
 
     /**
-     Tries to parse the string into an immutable object, performing some operations during the parsing.
+     Tries to parse the string into an immutable object,  performing the specified transformations during the parsing.
      It's faster to do certain operations right while the parsing instead of doing the parsing and
      applying them later.
      @param str  string to be parsed
-     @param options a Options with the filters and maps that will be applied during the parsing
+     @param builder builder with the transformations that will be applied during the parsing
      @return a {@link TryObj} computation
      */
     static TryObj parse(final String str,
-                        final ParseOptions options
+                        final ParseBuilder builder
                        )
     {
         try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
@@ -701,7 +701,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
             MyJsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
             return new TryObj(new MyImmutableJsObj(EMPTY.parse(parser,
-                                                               options.create(),
+                                                               builder.create(),
                                                                JsPath.empty()
                                                               )));
         }

@@ -24,7 +24,7 @@ public class TestJsPatchMove
                                                       .move("/a/b",
                                                             "/b/1"
                                                            )
-                                                      .build());
+                                                      .toArray());
         Assertions.assertEquals(NOTHING,
                                 result.orElseThrow()
                                       .get(JsPath.of("/a/b"))
@@ -44,7 +44,7 @@ public class TestJsPatchMove
                                                              "/a"
                                                             )
                                                        .remove("/b/0")
-                                                       .build()
+                                                       .toArray()
                                                  );
         Assertions.assertEquals(JsInt.of(2),
                                 result2.orElseThrow()
@@ -61,7 +61,7 @@ public class TestJsPatchMove
                                                        .move("/a/b",
                                                              "/a"
                                                             )
-                                                       .build()
+                                                       .toArray()
                                                  );
         Assertions.assertTrue(result3.isFailure());
     }

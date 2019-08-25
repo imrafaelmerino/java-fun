@@ -152,8 +152,7 @@ final class MyScalaVector implements MyVector<MyScalaVector>
         if (index == vector.size() - 1) return new MyScalaVector(vector.init());
 
         Tuple2<Vector<JsElem>, Vector<JsElem>> tuple = vector.splitAt(index);
-        return new MyScalaVector(tuple._1.init()
-                                         .$plus$plus(tuple._2,
+        return new MyScalaVector(tuple._1.$plus$plus(tuple._2.tail(),
                                                      bf
                                                     ));
     }

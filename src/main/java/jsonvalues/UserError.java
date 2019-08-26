@@ -42,6 +42,16 @@ public final class UserError extends RuntimeException
                                           ));
     }
 
+    public static UserError indexWithLeadingZeros(final String token)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("index %s with leading zeros",
+                                                         token
+                                                        ),
+                                           "removes the leading zeros"
+                                          ));
+    }
+
     static UserError isNotAJsBool(final JsElem elem)
     {
         return new UserError(String.format(GENERAL_MESSAGE,

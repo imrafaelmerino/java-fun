@@ -1,3 +1,14 @@
+.path : creates a json path from a string
+    java.lang.String        →  JsPath.of($expr$)
+
+.fromKey : creates a json path from a key
+    java.lang.String        →  JsPath.fromKey($expr$)
+
+
+.fromIndex : convert a json path from an index
+    java.lang.Integer        →  JsPath.fromIndex($expr$)
+    NUMBER                   →  JsPath.fromIndex($expr$)
+
 .toJsInt : convert to json int
     java.lang.Integer        →  JsInt.of($expr$)
     NUMBER                   →  JsInt.of($expr$)

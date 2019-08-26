@@ -15,7 +15,7 @@ public class TestJsPatchAdd
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
                                                                       () -> JsObj.empty()
-                                                                                 .patch(ops().add("a.b",
+                                                                                 .patch(ops().add("/a/b",
                                                                                                   JsInt.of(1)
                                                                                                  )
                                                                                              .toArray()
@@ -28,6 +28,7 @@ public class TestJsPatchAdd
         Assertions.assertEquals("path is missing in {\"value\":1,\"op\":\"ADD\"}",
                                 patchMalformed.getMessage()
                                );
+
     }
 
     @Test
@@ -35,7 +36,7 @@ public class TestJsPatchAdd
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
                                                                       () -> JsObj.empty()
-                                                                                 .patch(ops().add("a.b",
+                                                                                 .patch(ops().add("/a/b",
                                                                                                   JsInt.of(1)
                                                                                                  )
                                                                                              .toArray()
@@ -45,7 +46,7 @@ public class TestJsPatchAdd
 
                                                                      );
 
-        Assertions.assertEquals("value is missing in {\"path\":\"a.b\",\"op\":\"ADD\"}",
+        Assertions.assertEquals("value is missing in {\"path\":\"/a/b\",\"op\":\"ADD\"}",
                                 patchMalformed.getMessage()
                                );
     }

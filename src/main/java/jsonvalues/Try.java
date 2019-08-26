@@ -20,7 +20,7 @@ public final class Try
     private @Nullable MalformedJson error;
 
     @EnsuresNonNull("#1")
-    Try(final JsObj obj)
+    public Try(final JsObj obj)
 
     {
         this.obj = obj;
@@ -28,14 +28,14 @@ public final class Try
     }
 
     @EnsuresNonNull("#1")
-    Try(final JsArray arr)
+    public Try(final JsArray arr)
     {
         this.arr = arr;
 
     }
 
     @EnsuresNonNull("#1")
-    Try(MalformedJson error)
+    public Try(MalformedJson error)
     {
         this.error = error;
     }

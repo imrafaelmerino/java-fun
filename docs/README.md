@@ -1,11 +1,12 @@
-[![Build Status](https://travis-ci.org/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.org/imrafaelmerino/json-values)     [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)     [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
+[![Build Status](https://travis-ci.org/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.org/imrafaelmerino/json-values)
+[![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)
+[![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)   [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
-[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/0.1.6)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/0.1.6)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/0.1.6/jar)
-
-<img src="https://img.shields.io/github/last-commit/imrafaelmerino/json-values"/>  <img src="https://img.shields.io/github/release-date-pre/imrafaelmerino/json-values"/>
+[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/1.0.0)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/1.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/1.0.0/jar)
 
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -41,8 +42,7 @@ and functional paradigms, as Scala promotes.
 but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide Persistent Data Structures**.
 The thing is that Java 8 brought functions, lambdas, lazy evaluation to some extent, streams... but, without immutability, 
 something is still missing, and as _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
-* You manipulate Jsons all the time, and you'd like to do it with less ceremony and with spending no time googling the solution because the library/framework
-you are using is to complex. **json-values** is declarative and takes advantages of all the new features that were introduced 
+* You manipulate Jsons all the time, and you'd like to do it with less ceremony. **json-values** is declarative and takes advantages of all the new features that were introduced 
 in Java 8, like functions, suppliers, streams, and collectors, making json manipulation simple, fast, and efficient. 
 * You may be thinking, ok, great, I agree with all the described above, but, there are some scenarios where I still need a mutable Json as, after all, I'm programming in Java. 
 With **json-values**, you can go from a mutable Json to an immutable one, back and forth, and the API to manipulate 
@@ -58,23 +58,33 @@ obj.stream().parallel().map(toSneakCase).collect(JsObj.collector())
 
 json.mapElems(trim, ifStr)
 
-json.filterKeys(key.startsWith("field_"))
+json.filterKeys(key.startsWith(JsPath.fromKey("_field")))
 
 json.filterElems(isNotNull)
 
-json.reduce(plus, ifInt.and(path.startsWith("a.b")))
+json.reduce(plus, ifInt)
 
-json.putIfAbsent("a.b", ()-> getElem)
+//RFC 6901
+json.putIfAbsent(JsPath.of("/a/b"), ()-> getElem)
 
-json.appendIfPresent("c.d", ()-> getElem)
+json.appendIfPresent(JsPath.of("/c/d"), ()-> getElem)
 
-json.prependAll("a.b", list)
+json.prependAll(JsPath.of("/a/b"), list)
 
 a.union(b, JsArray.TYPE.SET)
 a.union(b, JsArray.TYPE.LIST)
 a.union(b, JsArray.TYPE.MULTISET)
 
 a.intersection(b)
+
+//RFC 6902
+a.patch(Patch.ops().add("/a/b",
+                        JsInt.of(1)
+                       )
+                   .remove("/c/0")
+                   .toArray()
+       )
+
 ```
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
 data structure shows very well the essence of **json-values**.
@@ -91,7 +101,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>0.1.6</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 and that's all. It's a **zero-dependency** library, so you won't have to go through a kind of dependency hell to get it working. 

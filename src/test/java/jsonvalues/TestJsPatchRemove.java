@@ -38,5 +38,26 @@ public class TestJsPatchRemove
                                );
     }
 
+    @Test
+    public void test_from_array() throws PatchMalformed, PatchOpError
+    {
+        Assertions.assertEquals(JsArray.of(1,
+                                           3
+                                          ),
+                                JsArray.of(1,
+                                           2,
+                                           3,
+                                           4
+                                          )
+                                       .patch(Patch.ops()
+                                                   .remove("/1")
+                                                   .remove("/2")
+                                                   .toArray()
+
+                                             )
+                                       .orElseThrow()
+                               );
+    }
+
 
 }

@@ -385,6 +385,7 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
         }
 
     }
+
     private static Trampoline<JsArray> intersectionAsList(JsArray a,
                                                           JsArray b
                                                          )
@@ -568,12 +569,12 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
                                                                                               );
 
 
-                                                        return of(array.add(index,
-                                                                            headElem.asJson()
-                                                                                    .add(tail,
-                                                                                         fn
-                                                                                        )
-                                                                           ));
+                                                        return of(array.update(index,
+                                                                               headElem.asJson()
+                                                                                       .add(tail,
+                                                                                            fn
+                                                                                           )
+                                                                              ));
                                                     }
                                                    )
 

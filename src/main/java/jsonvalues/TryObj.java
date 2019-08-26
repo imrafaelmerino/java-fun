@@ -16,13 +16,13 @@ public final class TryObj
     private @Nullable MalformedJson error;
 
     @EnsuresNonNull("#1")
-    TryObj(final JsObj obj)
+    public TryObj(final JsObj obj)
     {
         this.obj = obj;
     }
 
     @EnsuresNonNull("#1")
-    TryObj(final MalformedJson error)
+    public TryObj(final MalformedJson error)
     {
         this.error = error;
     }

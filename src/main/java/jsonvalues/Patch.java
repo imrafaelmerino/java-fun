@@ -39,6 +39,7 @@ public final class Patch
     {ADD, REMOVE, MOVE, COPY, REPLACE, TEST}
 
 
+    private Patch(){}
     /**
      return a new patch-operation builder
      @return a new patch-operation builder
@@ -245,7 +246,7 @@ public final class Patch
             if (!op.isPresent()) throw PatchMalformed.operationRequired(opObj);
             try
             {
-                switch (valueOf(op.get()))
+                switch (valueOf(op.get().toUpperCase()))
                 {
                     case ADD:
                         ops.add(new OpPatchAdd<>(opObj));

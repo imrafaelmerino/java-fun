@@ -14,6 +14,7 @@ public final class ParseBuilder
     private UnaryOperator<String> keyMap = k -> k;
     private Predicate<? super JsPath> keyFilter = k -> true;
 
+    private ParseBuilder(){}
     /**
      static factory method to create a builder to customize the parsing of a string into a json.
      @return a new builder instance

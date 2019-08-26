@@ -68,59 +68,112 @@ public class TestJsPath
                                       .mapKeys(it -> it.concat("!"))
                                );
     }
+
     @Test
     public void test_equals()
     {
         Assertions.assertEquals(JsPath.of("#/a/b/c/d/0//%20"),
-                                JsPath.of("#/a/b/c/d/0//+"));
-        Assertions.assertEquals(JsPath.of("#/a/b/c/d/0//%20").hashCode(),
-                                JsPath.of("#/a/b/c/d/0//+").hashCode());
+                                JsPath.of("#/a/b/c/d/0//+")
+                               );
+        Assertions.assertEquals(JsPath.of("#/a/b/c/d/0//%20")
+                                      .hashCode(),
+                                JsPath.of("#/a/b/c/d/0//+")
+                                      .hashCode()
+                               );
 
         Assertions.assertEquals(JsPath.of("/1/2/3"),
-                                JsPath.of("/1/2/3"));
+                                JsPath.of("/1/2/3")
+                               );
 
-        Assertions.assertEquals(JsPath.of("/1/2/3").hashCode(),
-                                JsPath.of("/1/2/3").hashCode());
+        Assertions.assertEquals(JsPath.of("/1/2/3")
+                                      .hashCode(),
+                                JsPath.of("/1/2/3")
+                                      .hashCode()
+                               );
 
         Assertions.assertEquals(JsPath.of("#/a/1//+/'"),
                                 JsPath.of("#/a/1//+/%27")
                                );
 
-        Assertions.assertEquals(JsPath.of("#/a/1//+/'").hashCode(),
-                                JsPath.of("#/a/1//+/%27").hashCode()
+        Assertions.assertEquals(JsPath.of("#/a/1//+/'")
+                                      .hashCode(),
+                                JsPath.of("#/a/1//+/%27")
+                                      .hashCode()
                                );
 
 
     }
 
     @Test
-    public void test_path_dec(){
-        Assertions.assertEquals(JsPath.of("/a/b/0"),JsPath.of("/a/b/1").dec());
+    public void test_path_dec()
+    {
+        Assertions.assertEquals(JsPath.of("/a/b/0"),
+                                JsPath.of("/a/b/1")
+                                      .dec()
+                               );
 
-        Assertions.assertThrows(UserError.class,()->JsPath.of("a").dec());
+        Assertions.assertThrows(UserError.class,
+                                () -> JsPath.of("a")
+                                            .dec()
+                               );
     }
 
     @Test
-    public void test_position(){
-        assertTrue(JsPath.of("/a").last().isKey());
-        Assertions.assertFalse(JsPath.of("/a").last().isIndex());
-        assertTrue(JsPath.of("/a").last().isKey(i->i.equals("a")));
-        Assertions.assertThrows(UserError.class, ()->JsPath.of("/0").last().asKey());
+    public void test_position()
+    {
+        assertTrue(JsPath.of("/a")
+                         .last()
+                         .isKey());
+        Assertions.assertFalse(JsPath.of("/a")
+                                     .last()
+                                     .isIndex());
+        assertTrue(JsPath.of("/a")
+                         .last()
+                         .isKey(i -> i.equals("a")));
+        Assertions.assertThrows(UserError.class,
+                                () -> JsPath.of("/0")
+                                            .last()
+                                            .asKey()
+                               );
 
-        assertTrue(JsPath.of("/0").last().isIndex());
-        Assertions.assertFalse(JsPath.of("/0").last().isKey());
-        Assertions.assertTrue(JsPath.of("/0").last().isIndex(i->i==0));
-        Assertions.assertThrows(UserError.class,()->JsPath.of("/a").last().asIndex());
+        assertTrue(JsPath.of("/0")
+                         .last()
+                         .isIndex());
+        Assertions.assertFalse(JsPath.of("/0")
+                                     .last()
+                                     .isKey());
+        Assertions.assertTrue(JsPath.of("/0")
+                                    .last()
+                                    .isIndex(i -> i == 0));
+        Assertions.assertThrows(UserError.class,
+                                () -> JsPath.of("/a")
+                                            .last()
+                                            .asIndex()
+                               );
 
     }
 
     @Test
-    public void test_empty_key_equals(){
-        Assertions.assertEquals(JsPath.empty().key(""), JsPath.of("#/"));
-        Assertions.assertEquals(JsPath.empty().key(""), JsPath.of("/"));
-        Assertions.assertEquals(JsPath.empty().key("."), JsPath.of("#/%2E"));
-        Assertions.assertEquals(JsPath.of("#/a/b/+/1"), JsPath.of("#/a/b/%20/1"));
-        Assertions.assertEquals(JsPath.of("#/a/b/+/1"), JsPath.of("/a/b/ /1"));
+    public void test_empty_key_equals()
+    {
+        Assertions.assertEquals(JsPath.empty()
+                                      .key(""),
+                                JsPath.of("#/")
+                               );
+        Assertions.assertEquals(JsPath.empty()
+                                      .key(""),
+                                JsPath.of("/")
+                               );
+        Assertions.assertEquals(JsPath.empty()
+                                      .key("."),
+                                JsPath.of("#/%2E")
+                               );
+        Assertions.assertEquals(JsPath.of("#/a/b/+/1"),
+                                JsPath.of("#/a/b/%20/1")
+                               );
+        Assertions.assertEquals(JsPath.of("#/a/b/+/1"),
+                                JsPath.of("/a/b/ /1")
+                               );
     }
 
     @Test
@@ -136,6 +189,7 @@ public class TestJsPath
         assertTrue(path.startsWith(JsPath.of("#/a/b/c/0/1")));
         Assertions.assertFalse(path.startsWith(JsPath.of("/a/b/c/0/1/a")));
     }
+
     @Test
     public void test_ends_with()
     {
@@ -148,11 +202,24 @@ public class TestJsPath
         assertTrue(path.endsWith(JsPath.of("/a/b/c/0/1")));
         Assertions.assertFalse(path.endsWith(JsPath.of("/a/b/c/0/1/a")));
     }
+
     @Test
-    public void test_same(){
+    public void test_same()
+    {
         Assertions.assertEquals(JsPath.of("/a/b/c/d/0"),
                                 JsPath.of("#/a/b/c/d/0")
                                );
+    }
+
+    @Test
+    public void test_error_if_index_has_leading_zeros()
+    {
+        final UserError userError = Assertions.assertThrows(UserError.class,
+                                                            () -> JsPath.of("/a/01")
+                                                           );
+
+        Assertions.assertEquals("index 01 with leading zeros. Suggestion: removes the leading zeros.",
+                                userError.getMessage());
     }
 
 }

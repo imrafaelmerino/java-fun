@@ -3,7 +3,7 @@ package jsonvalues;
 import java.util.Iterator;
 import java.util.function.BiPredicate;
 
-class OpFilterMutableArrObjs extends OpFilterObjs<JsArray>
+final class OpFilterMutableArrObjs extends OpFilterObjs<JsArray>
 {
 
 

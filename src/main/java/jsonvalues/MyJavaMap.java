@@ -14,7 +14,7 @@ import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
 import static jsonvalues.MyJsParser.Event.END_OBJECT;
 
-class MyJavaMap implements MyMap<MyJavaMap>
+final class MyJavaMap implements MyMap<MyJavaMap>
 {
 
     private java.util.Map<String, JsElem> elements;
@@ -72,7 +72,7 @@ class MyJavaMap implements MyMap<MyJavaMap>
                        .map(key -> new AbstractMap.SimpleEntry<>(key,
                                                                  elements.get(key)
                        ))
-                       .orElseThrow(() ->  InternalError.notEmptyMapWithoutAKey());
+                       .orElseThrow(InternalError::notEmptyMapWithoutAKey);
     }
 
     @Override
@@ -220,7 +220,7 @@ class MyJavaMap implements MyMap<MyJavaMap>
     }
 
     void parse(final MyJsParser parser,
-               final ParseOptions.Options options,
+               final ParseBuilder.Options options,
                final JsPath path
               ) throws MalformedJson
     {

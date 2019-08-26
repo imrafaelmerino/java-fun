@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
  Exception that models an internal error made by a developer. An issue in GitHub should be open reporting
  the exception message.
  */
-public class InternalError extends RuntimeException
+public final class InternalError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
     private static final String GENERAL_MESSAGE = "Create an issue in https://github.com/imrafaelmerino/values: %s.";
@@ -30,26 +30,31 @@ public class InternalError extends RuntimeException
                                               ));
     }
 
-    public static InternalError encodingNotSupported(final UnsupportedEncodingException e)
+     static InternalError encodingNotSupported(final UnsupportedEncodingException e)
     {
         return new InternalError(e);
     }
 
-    public static InternalError  notEmptyMapWithoutAKey()
+     static InternalError notEmptyMapWithoutAKey()
     {
         return new InternalError("A calculation on a non empty map was expected to return a result.");
     }
 
-    public static InternalError opNotSupportedForArrays()
+     static InternalError opNotSupportedForArrays()
     {
         return new InternalError("A JsArray doesn't have keys. Don't call this method.");
     }
 
     static InternalError keyNotFound(final String key)
     {
-        return new InternalError(String.format("key %s not found in map. Use contains(key) before of the method getOptional(key).",
+        return new InternalError(String.format("key %s not found in map. Use contains(key) before or the method getOptional(key).",
                                                key
                                               ));
+    }
+
+    static InternalError patchOperationNotSupported(final String op)
+    {
+        return new InternalError(String.format("Patch operation '%s' not supported.",op));
     }
 
     static InternalError tokenNotExpected(String token)
@@ -62,5 +67,15 @@ public class InternalError extends RuntimeException
     static InternalError tryComputationWithNoResult(String message)
     {
         return new InternalError(message);
+    }
+
+    static InternalError tryPatchComputationWithNoResult()
+    {
+        return new InternalError("TryPatch.orElseThrow() with nor result nor error");
+    }
+
+    static InternalError tryPatchSuccesfullWithNoResult()
+    {
+        return new InternalError("TryPatch: isSuccess is true but result is null");
     }
 }

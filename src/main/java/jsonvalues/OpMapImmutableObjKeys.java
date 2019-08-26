@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import static jsonvalues.Trampoline.more;
 
-class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
+final class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
 {
     OpMapImmutableObjKeys(final JsObj json)
     {
@@ -37,7 +37,7 @@ class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
                                                                                                      fn,
                                                                                                      p -> head.getKey()
                                                                                                     );
-                                                              return tailResult.put(keyMapped,
+                                                              return tailResult.put(JsPath.fromKey(keyMapped),
                                                                                     head.getValue()
                                                                                    );
                                                           });
@@ -73,7 +73,7 @@ class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
                                                                                                                                                                           headPath
                                                                                                                                                                          )
                                                                                                                                                                     .map(headObjResult ->
-                                                                                                                                                                         tailResult.put(fn.apply(pair),
+                                                                                                                                                                         tailResult.put(JsPath.fromKey(fn.apply(pair)),
                                                                                                                                                                                         headObjResult
                                                                                                                                                                                        )
                                                                                                                                                                         )
@@ -84,12 +84,12 @@ class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
                                                                                                                                                                           headPath.index(-1)
                                                                                                                                                                          )
                                                                                                                                                                     .map(headArrResult ->
-                                                                                                                                                                         tailResult.put(fn.apply(pair),
+                                                                                                                                                                         tailResult.put(JsPath.fromKey(fn.apply(pair)),
                                                                                                                                                                                         headArrResult
                                                                                                                                                                                        )
                                                                                                                                                                         )
                                                                                                                    ),
-                                                                                       (path, headElem) -> more(() -> tailCall).map(tailResult -> tailResult.put(fn.apply(pair),
+                                                                                       (path, headElem) -> more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(fn.apply(pair)),
                                                                                                                                                                  headElem
                                                                                                                                                                 ))
                                                                                       ),
@@ -99,7 +99,7 @@ class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
                                                                                                                                                                             headPath
                                                                                                                                                                            )
                                                                                                                                                                       .map(headObjResult ->
-                                                                                                                                                                           tailResult.put(head.getKey(),
+                                                                                                                                                                           tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                                           headObjResult
                                                                                                                                                                                          )
                                                                                                                                                                           )
@@ -110,12 +110,12 @@ class OpMapImmutableObjKeys extends OpMapKeys<JsObj>
                                                                                                                                                                             headPath.index(-1)
                                                                                                                                                                            )
                                                                                                                                                                       .map(headArrResult ->
-                                                                                                                                                                           tailResult.put(head.getKey(),
+                                                                                                                                                                           tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                                           headArrResult
                                                                                                                                                                                          )
                                                                                                                                                                           )
                                                                                                                      ),
-                                                                                         (path, headElem) -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                                                         (path, headElem) -> more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                    headElem
                                                                                                                                                                   ))
                                                                                         )

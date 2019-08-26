@@ -9,7 +9,6 @@ import static jsonvalues.JsNull.NULL;
 public class TestsTry
 {
 
-
     @Test
     public void test_try_obj() throws MalformedJson
     {

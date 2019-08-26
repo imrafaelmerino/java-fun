@@ -16,13 +16,13 @@ public final class TryArr
     private @Nullable MalformedJson error;
 
     @EnsuresNonNull("#1")
-    TryArr(final JsArray arr)
+    public TryArr(final JsArray arr)
     {
         this.arr = arr;
     }
 
     @EnsuresNonNull("#1")
-    TryArr(final MalformedJson error)
+    public TryArr(final MalformedJson error)
     {
         this.error = error;
     }

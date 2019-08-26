@@ -5,7 +5,7 @@ import java.util.Map;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
-class OpCombinerObjs extends OpCombiner<JsObj>
+final class OpCombinerObjs extends OpCombiner<JsObj>
 {
     OpCombinerObjs(final JsObj a,
                    final JsObj b
@@ -26,7 +26,7 @@ class OpCombinerObjs extends OpCombiner<JsObj>
         Trampoline<JsObj> tailCall = more(new OpCombinerObjs(a,
                                                              tail
         )::combine);
-        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(head.getKey(),
+        return MatchExp.ifNothingElse(() -> more(() -> tailCall).map(it -> it.put(JsPath.fromKey(head.getKey()),
                                                                                   head.getValue()
                                                                                  )),
                                       MatchExp.ifPredicateElse(e -> e.isJson() && e.isSameType(head.getValue()),
@@ -42,7 +42,7 @@ class OpCombinerObjs extends OpCombiner<JsObj>
                                                                                                                               )
                                                                                                                 );
                                                                    return more(() -> tailCall).flatMap(tailResult -> headCall.map(headResult ->
-                                                                                                                                  tailResult.put(head.getKey(),
+                                                                                                                                  tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                  headResult
                                                                                                                                                 )
                                                                                                                                  )

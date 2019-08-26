@@ -1,20 +1,23 @@
 /**
  json-values is a one-package and zero-dependency library to work with jsons in a declarative and functional way.
- There are different static factory methods to create objects:
+ From now on, an immutable object is a value. There are different static factory methods to create objects:
  <ul>
- <li><code>of</code> methods to create immutable objects or values from primitive types.</li>
- <li><code>parse</code> methods to parse strings into immutable objects or values.</li>
- <li><code>_of_</code> methods to create mutable objects from primitive types.</li>
+ <li><code>of</code> methods to create values.</li>
+ <li><code>parse</code> methods to parse strings into immutable values.</li>
+ <li><code>_of_</code> methods to create mutable objects.</li>
  <li><code>_parse_</code> methods to parse strings into mutable objects.</li>
  </ul>
- Only three exceptions are thrown by the library:
+ Four exceptions are thrown by the library:
  <ul>
- <li>the unchecked UserError, when the client makes a programming error.</li>
- <li>the checked MalformedJson, when a string can not be parsed into a json.</li>
- <li>the unchecked NullPointerException, when a method receives a null parameter.</li>
+ <li>the custom unchecked {@link jsonvalues.UserError}, when the client makes a programming error. A suggestion in the message
+ to avoid the error is returned.</li>
+ <li>the custom unchecked {@link jsonvalues.InternalError}, when something unexpected happens because a developer made a mistake.
+ An issue in GitHub must be created</li>
+ <li>the checked {@link jsonvalues.MalformedJson}, when a string can not be parsed into a json.</li>
+ <li>the unchecked NullPointerException, when a method different than equals receives a null parameter.</li>
  </ul>
- All the methods which name ends with underscore are applied to the whole json recursively, and not only
- to the first level. For example:
+ All the methods which name ends with an underscore are applied to the whole json recursively, and not only
+ to its first level. For example:
  <pre>
  {@code
  x={"a":1, "b":[{"c":1, "d":true}]}

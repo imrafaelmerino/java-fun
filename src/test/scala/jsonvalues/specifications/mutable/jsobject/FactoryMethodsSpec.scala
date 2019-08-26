@@ -84,7 +84,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withKeyMap(it => it + "!")
+                                       ParseBuilder.builder().withKeyMap(it => it + "!")
                                        )
             val allKeysEndsWithExclamation: Predicate[_ >: JsPair] = p => p.path.stream().filter(pos => pos.isKey).allMatch(pos => pos.asKey().name.endsWith("!"))
             parsed.orElseThrow().stream_().allMatch(allKeysEndsWithExclamation)
@@ -98,7 +98,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemFilter(_ => false)
+                                       ParseBuilder.builder().withElemFilter(_ => false)
                                        )
             parsed.orElseThrow().stream_().filter(p => p.elem.isNotJson).findFirst().equals(Optional.empty)
           }
@@ -110,7 +110,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemFilter(p => p.elem.isNotNull)
+                                       ParseBuilder.builder().withElemFilter(p => p.elem.isNotNull)
                                        )
 
             parsed.orElseThrow().stream_().filter(p => p.elem.isNull).findFirst().equals(Optional.empty)
@@ -123,7 +123,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemFilter(p=> !p.elem.isStr)
+                                       ParseBuilder.builder().withElemFilter(p=> !p.elem.isStr)
                                        )
 
             parsed.orElseThrow().stream_().filter(p=>p.elem.isStr).findFirst().equals(Optional.empty)
@@ -137,7 +137,7 @@ class FactoryMethodsSpec extends BasePropSpec
           { js =>
 
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemFilter(p=> p.elem.isNotNumber)
+                                       ParseBuilder.builder().withElemFilter(p=> p.elem.isNotNumber)
                                        )
 
             parsed.orElseThrow().stream_().filter(p=> p.elem.isNumber).findFirst().equals(Optional.empty)
@@ -153,7 +153,7 @@ class FactoryMethodsSpec extends BasePropSpec
             val function: JsPair => JsElem = (pair:JsPair) => pair.mapIfStr(_ => "hi").elem
 
             val parsed = JsObj._parse_(js.toString,
-                                       ParseOptions.builder().withElemMap(ScalaToJava.function(function))
+                                       ParseBuilder.builder().withElemMap(ScalaToJava.function(function))
                                        )
 
             parsed.orElseThrow().stream_().filter(p=> p.elem.isStr).allMatch(p=> p.elem.isStr(s => s.equals("hi")))

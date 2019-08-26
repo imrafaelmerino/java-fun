@@ -259,16 +259,16 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     }
 
     /**
-     Tries to parse the string into a mutable array, performing some operations while the parsing.
+     Tries to parse the string into a mutable array, performing the specified transformations while the parsing.
      It's faster to do certain operations right while the parsing instead of doing the parsing and
      apply them later.
      @param str     the string that will be parsed.
-     @param options a builder with the filters and maps that, if specified, will be applied during the parsing
+     @param builder a builder with the transformations that, if specified, will be applied during the parsing
      @return a {@link TryArr} computation
      */
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static TryArr _parse_(final String str,
-                          final ParseOptions options
+                          final ParseBuilder builder
                          )
     {
 
@@ -279,7 +279,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
             MyJavaVector array = new MyJavaVector();
             array.parse(parser,
-                        options.create(),
+                        builder.create(),
                         JsPath.empty()
                               .index(-1)
                        );
@@ -612,14 +612,14 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     }
 
     /**
-     Tries to parse the string into an immutable array, performing some operations during the parsing.
+     Tries to parse the string into an immutable array, performing the specified transformations during the parsing.
      It's faster to do certain operations right while the parsing instead of doing the parsing and applying them later.
      @param str string to be parsed
-     @param options a Options with the filters and maps that will be applied during the parsing
+     @param builder builder with the transformations that will be applied during the parsing
      @return a {@link TryArr} computation
      */
     static TryArr parse(final String str,
-                        final ParseOptions options
+                        final ParseBuilder builder
                        )
     {
 
@@ -629,7 +629,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
             return new TryArr(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
-                                                                               options.create(),
+                                                                               builder.create(),
                                                                                JsPath.empty()
                                                                                      .index(-1)
                                                                               )));
@@ -702,7 +702,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     }
 
     /**
-     Returns a mutable array from one or more integers
+     Returns a mutable array from one or more integers.
      @param number an integer
      @param others more optional integers
      @return an mutable JsArray
@@ -981,4 +981,16 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
         return true;
     }
+
+    @Override
+    default TryPatch<JsArray> patch(final JsArray ops)
+    {
+        return Patch.of(this,
+                        requireNonNull(ops)
+                       );
+    }
+
+    JsArray add(int index,
+                JsElem elem
+               );
 }

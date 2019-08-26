@@ -17,9 +17,11 @@ import static jsonvalues.JsNull.NULL;
 import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.MyJsParser.Event.END_ARRAY;
 
-class MyJavaVector implements MyVector<MyJavaVector>
+final class MyJavaVector implements MyVector<MyJavaVector>
 {
     private List<JsElem> elements;
+
+
 
     MyJavaVector(final List<JsElem> pvector)
     {
@@ -135,8 +137,18 @@ class MyJavaVector implements MyVector<MyJavaVector>
     @Override
     public MyJavaVector remove(final int index)
     {
-        elements.remove(index);
-        return this;
+        try
+        {
+            elements.remove(index);
+            return this;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            throw UserError.unsupportedOperationOnList(elements.getClass(),
+                                                       "remove"
+                                                      );
+        }
+
     }
 
     @Override
@@ -167,10 +179,59 @@ class MyJavaVector implements MyVector<MyJavaVector>
                                final JsElem ele
                               )
     {
-        elements.set(index,
-                     ele
-                    );
-        return this;
+        try
+        {
+            elements.set(index,
+                         ele
+                        );
+            return this;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            throw UserError.unsupportedOperationOnList(elements.getClass(),
+                                                       "set"
+                                                      );
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+
+            throw UserError.indexOutOfBounds(this.size(),
+                                             index,
+                                             "set"
+                                            );
+        }
+
+    }
+
+    @Override
+    public MyJavaVector add(final int index,
+                            final JsElem ele
+                           )
+    {
+        try
+        {
+
+            if (index == - 1) elements.add(ele);
+            else elements.add(index,
+                              ele
+                             );
+            return this;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            throw UserError.unsupportedOperationOnList(elements.getClass(),
+                                                       "add"
+                                                      );
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+
+            throw UserError.indexOutOfBounds(this.size(),
+                                             index,
+                                             "add"
+                                            );
+        }
+
     }
 
     @Override
@@ -220,7 +281,7 @@ class MyJavaVector implements MyVector<MyJavaVector>
     }
 
     void parse(final MyJsParser parser,
-               final ParseOptions.Options options,
+               final ParseBuilder.Options options,
                final JsPath path
               ) throws MalformedJson
     {

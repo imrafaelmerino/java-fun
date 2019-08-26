@@ -4,7 +4,7 @@ package jsonvalues;
  Exception that models a programming error made by the user. The user has a bug in their code and something
  has to be fixed. Part of the exception message is a suggestion to fix the bug.
  */
-public class UserError extends RuntimeException
+public final class UserError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
     private static final String GUARD_ARR_CONDITION_SUGGESTION = "use the guard condition arr.isEmpty() before";
@@ -24,6 +24,31 @@ public class UserError extends RuntimeException
                                                          arg
                                                         ),
                                            "create an immutable object instead. Don't use _xxx_ methods"
+                                          ));
+    }
+
+    static UserError indexOutOfBounds(int size,
+                                      int index,
+                                      final String op
+                                     )
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Index out of bounds applying '%s'. Index: %s. Size of the array: %s",
+                                                         op,
+                                                         index,
+                                                         size
+                                                        ),
+                                           "call the size method to know the length of the array before doing anything"
+                                          ));
+    }
+
+    public static UserError indexWithLeadingZeros(final String token)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("index %s with leading zeros",
+                                                         token
+                                                        ),
+                                           "removes the leading zeros"
                                           ));
     }
 
@@ -140,6 +165,41 @@ public class UserError extends RuntimeException
         return new UserError(String.format(GENERAL_MESSAGE,
                                            "head() of empty path",
                                            "call the guard condition isEmpty() before invoking head()"
+                                          ));
+    }
+
+    static UserError parentNotFound(final JsPath parentPath,
+                                    final Json<?> json,
+                                    final String op
+                                   )
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Parent not found at %s while applying %s in %s",
+                                                         parentPath,
+                                                         op,
+                                                         json
+                                                        ),
+                                           "either check if the parent exists or call the put method, which always does the insertion"
+                                          ));
+    }
+
+    static UserError pathEmpty(final String op)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Empty path calling %s method",
+                                                         op
+                                                        ),
+                                           "check that the path is not empty calling path.isEmpty()"
+                                          ));
+    }
+
+    static UserError pathMalformed(final String path)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("malformed path: %s",
+                                                         path
+                                                        ),
+                                           "Go to https://imrafaelmerino.github.io/json-values/#jspath."
                                           ));
     }
 
@@ -264,5 +324,72 @@ public class UserError extends RuntimeException
                                            "trampoline not completed",
                                            "Before calling the method get() on a trampoline, make sure a Trampoline.done() status is returned"
                                           ));
+    }
+
+    static UserError unsupportedOperationOnList(final Class<?> listClass,
+                                                String op
+                                               )
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Unsupported operation '%s' on the list from which the JsArray was created",
+                                                         op
+                                                        ),
+                                           String.format("Is the list %s unmodifiable?",
+                                                         listClass
+                                                        )
+                                          ));
+    }
+
+    static UserError parentIsNotAJson(final JsPath parent,
+                                      final Json<?> json,
+                                      final JsPath path,
+                                      final String op
+                                     )
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Element located at '%s' is not a Json. %s operation can not be applied in %s at %s",
+                                                         parent,
+                                                         op,
+                                                         json,
+                                                         path
+                                                        ),
+                                           "call get(path).isJson() before"
+                                          ));
+    }
+
+    static UserError addingKeyIntoArray(final String key,
+                                        final Json<?> json,
+                                        final JsPath path,
+                                        final String op
+                                       )
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Trying to add the key '%s' in an array. %s operation can not be applied in %s at %s",
+                                                         key,
+                                                         op,
+                                                         json,
+                                                         path
+                                                        ),
+                                           "call get(path).isObj() before"
+                                          )
+        );
+    }
+
+    static UserError addingIndexIntoObject(final int index,
+                                           final Json<?> json,
+                                           final JsPath path,
+                                           final String op
+                                          )
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Trying to add at the index '%s' in an object. %s operation can not be applied in %s at %s",
+                                                         index,
+                                                         op,
+                                                         json,
+                                                         path
+                                                        ),
+                                           "call get(path).isArray() before"
+                                          )
+        );
     }
 }

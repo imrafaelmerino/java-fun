@@ -85,7 +85,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsArrGen)
           { js =>
             val parsed = JsArray.parse(js.toString,
-                                       ParseOptions.builder().withKeyMap(it => it + "!")
+                                       ParseBuilder.builder().withKeyMap(it => it + "!")
                                        )
             val allKeysEndsWithExclamation: Predicate[_ >: JsPair] = p => p.path.stream().filter(pos => pos.isKey).allMatch(pos => pos.asKey().name.endsWith("!"))
             parsed.orElseThrow().stream_().allMatch(allKeysEndsWithExclamation)
@@ -101,7 +101,7 @@ class FactoryMethodsSpec extends BasePropSpec
 
             val predicate: JsPair => Boolean = (pair: JsPair) => pair.path.last().isKey
             val parsed = JsArray.parse(js.toString,
-                                       ParseOptions.builder().withElemFilter(ScalaToJava.predicate(predicate))
+                                       ParseBuilder.builder().withElemFilter(ScalaToJava.predicate(predicate))
                                        )
             parsed.orElseThrow().stream_().filter(p => p.elem.isNotJson && p.path.last().isIndex).findFirst().equals(Optional.empty)
 
@@ -114,7 +114,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsArrGen)
           { js =>
             val parsed = JsArray.parse(js.toString,
-                                       ParseOptions.builder().withElemFilter(p => p.elem.isNotNull)
+                                       ParseBuilder.builder().withElemFilter(p => p.elem.isNotNull)
                                        )
 
             val value = parsed.orElseThrow().stream_().filter(p => p.elem.isNull).findFirst()
@@ -130,7 +130,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsArrGen)
           { js =>
             val parsed = JsArray.parse(js.toString,
-                                       ParseOptions.builder().withElemFilter(p => !p.elem.isStr
+                                       ParseBuilder.builder().withElemFilter(p => !p.elem.isStr
                                                                              )
                                        )
 
@@ -146,7 +146,7 @@ class FactoryMethodsSpec extends BasePropSpec
 
             val predicate: Predicate[JsPair] = (pair: JsPair) => pair.elem.isNotNumber
             val parsed = JsArray.parse(js.toString,
-                                       ParseOptions.builder().withElemFilter(predicate)
+                                       ParseBuilder.builder().withElemFilter(predicate)
                                        )
 
             parsed.orElseThrow().stream_().filter(p => p.elem.isNumber).findFirst().equals(Optional.empty)
@@ -159,7 +159,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsArrGen)
           { js =>
             val parsed = JsArray.parse(js.toString,
-                                       ParseOptions.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi").apply(p.elem))
+                                       ParseBuilder.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi").apply(p.elem))
                                        )
 
             parsed.orElseThrow().stream_().filter(p => p.elem.isStr).allMatch(p => p.elem.isStr(a => a.equals("hi")))

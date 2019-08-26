@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
-class OpFilterMutableObjObjs extends OpFilterObjs<JsObj>
+final class OpFilterMutableObjObjs extends OpFilterObjs<JsObj>
 {
     OpFilterMutableObjObjs(final JsObj json)
     {

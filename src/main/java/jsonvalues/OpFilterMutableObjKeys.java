@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Predicate;
 
-class OpFilterMutableObjKeys extends OpFilterKeys<JsObj>
+final class OpFilterMutableObjKeys extends OpFilterKeys<JsObj>
 {
 
     OpFilterMutableObjKeys(final JsObj json)

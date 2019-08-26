@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -18,7 +15,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
+final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
 {
     public static final long serialVersionUID = 1L;
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
@@ -211,6 +208,7 @@ class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                                    )
                                               .get();
     }
+
 
 
     @Override

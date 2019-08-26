@@ -2,7 +2,6 @@ package jsonvalues;
 
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.regex.qual.Regex;
 import scala.collection.JavaConverters;
 import scala.collection.generic.CanBuildFrom;
 import scala.collection.immutable.Vector;
@@ -12,33 +11,43 @@ import scala.runtime.AbstractFunction1;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
 /**<pre>
  Represents the full path location of an element in a json. It's a list of {@link Position}. Exists
- two different ways of creating a JsPath:
+ two different ways to create a JsPath:
 
- - By a path-like string using the static factory method {@link JsPath#of(String)}, where the path follows
- the grammar:
+ - From a path-like string using the static factory method {@link JsPath#of(String)}, where the path
+ follows the Json Pointer specification <a href="http://tools.ietf.org/html/rfc6901">RFC 6901</a>.
+ In order to be able to use paths to put data in a Json, keys which name are numbers have to
+ to be single-quoted:
+ {@code
+ a={"0": true}
+ b=[false]
+ }
 
- path: position, position.path
- position: key, index
- key: string, 'string', 'number'
- index: number
- string: non-numeric characters <b>url-encoded</b>  (see https://www.json.org for more details)
- number: \d+
+ According to the rfc 6901:
+ the pointer /0 points to true in a, and to false in b.
+ In json-values it's slightly different:
+ /0 points to false in b, and /'0' points to true in a.
 
- When the name of a key is numeric, it has to be single-quoted, to distinguish indexes from
- keys. When the key is not numeric, single quotes are completely optional.
+ It's necessary to make that distinction because otherwise, there are scenarios when there is no way
+ to know if the user wants to insert an array or an object:
+ {@code
+ JsObj obj = empty.put("/a/0/0",true)
+ obj = {"a":[[true]]}       //valid result according to the rfc and json-values
+ obj = {"a":{"0":{"0":true} //valid result according to the rfc
+ }
 
- - By an API, using the methods {@link #key(String)} and {@link #index(int)}. In this case, keys don't have to
- be url-encoded.
+ - By an API, using the methods {@link #fromKey(String)} and {@link #fromIndex(int)} to create
+ a JsPath an then the methods {@link #index(int)}} and {@link #key(String)} to append keys or indexes:
+ {@code
+ JsPath a = JsPath.fromKey("a").index(0).key("b") =  /a/0/b
+ JsPath b = JsPath.fromIndex(0).key("a").index(0) =  /0/a/0
+ }
 
  For example, given the following Json object:
 
@@ -48,25 +57,28 @@ import static java.util.Objects.requireNonNull;
  "": ""
  }
 
- "" = ""                      //empty string is the empty key, which is a valid name for a key
- "'1'" = null                 //numeric keys have to be single-quoted
- "a.x.0.c.0" = 1
- "a.x.0.c.1" = 2
- "a.x.0.c.2..'1'" = true      // single quotes are only mandatory when the key is a number
- "a.x.0.c.2..+" = false       // + is url-decoded to the white-space
- "a.x.0.c.2..%27" = 4         // %27 is url-decoded to '
+ / = ""                      //an empty string is a valid name for a key
+ /'1' = null                 //numeric keys have to be single-quoted
+ /a/x/0/c/0 = 1
+ /a/x/0/c/1 = 2
+ /a/x/0/c/2//'1' = true      // single quotes are only mandatory when the key is a number
+
+ according to the rfc, # at the beginning indicates that the path is a fragment of an url and
+ therefore the keys have to be url-encoded:
+
+ #/a/x/0/c/2//+" = false     // + is url-decoded to the white-space
+ #/a/x/0/c/2//%27" = 4       // %27 is url-decoded to '
 
  and using the API:
 
  {@code
- JsPath empty = JsPath.empty();  // doesn't represent any path
- empty.key("") = ""
- empty.key("1") = null
- empty.key("a").key("x").index(0).key("c").index(0) = 1
- empty.key("a").key("x").index(0).key("c").index(1) = 2
- empty.key("a").key("x").index(0).key("c").index(2).key("").key("1") = true
- empty.key("a").key("x").index(0).key("c").index(2).key("").key(" ") = false  //and not key("+")
- empty.key("a").key("x").index(0).key("c").index(2).key("").key("'") = 4      //and not key("%27")
+ fromKey("") = ""
+ fromKey("1") = null
+ fromKey("a").key("x").index(0).key("c").index(0) = 1
+ fromKey("a").key("x").index(0).key("c").index(1) = 2
+ fromKey("a").key("x").index(0).key("c").index(2).key("").key("1") = true
+ fromKey("a").key("x").index(0).key("c").index(2).key("").key(" ") = false
+ fromKey("a").key("x").index(0).key("c").index(2).key("").key("'") = 4
  }
  </pre>
  */
@@ -98,7 +110,6 @@ public final class JsPath implements Comparable<JsPath>
                                                                       0
     );
     private static final JsPath EMPTY = new JsPath(EMPTY_VECTOR);
-    private static final @Regex String REGEX_SEPARATOR = "\\.";
 
     /**
      Returns the singleton empty path.
@@ -110,11 +121,6 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     private final Vector<Position> positions;
-
-    JsPath()
-    {
-        positions = EMPTY_VECTOR;
-    }
 
     JsPath(final Vector<Position> positions)
     {
@@ -345,18 +351,79 @@ public final class JsPath implements Comparable<JsPath>
         return EMPTY.index(i);
     }
 
-    public static JsPath of(final String path)
+
+    private static UnaryOperator<String> escape = token -> token.replaceAll("~1",
+                                                                            "/"
+                                                                           )
+                                                                .replaceAll("~0",
+                                                                            "~"
+                                                                           );
+
+    private static UnaryOperator<String> decode = token ->
     {
-        if (requireNonNull(path).equals("")) return EMPTY.key("");
+        try
+        {
+            return URLDecoder.decode(token,
+                                     UTF8
+                                    );
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw InternalError.encodingNotSupported(e);
+        }
+    };
 
-        String[] tokens = requireNonNull(path).split(REGEX_SEPARATOR,
-                                                     -1
-                                                    );
-        Vector<Position> vector = EMPTY_VECTOR;
-        for (String token : tokens)
-            vector = vector.appendBack(mapToField(token));
-        return new JsPath(vector);
+    public static JsPath of(String path)
+    {
+        if (requireNonNull(path).equals("")) return EMPTY;
+        if (path.equals("#")) return EMPTY;
+        if (path.equals("#/")) return fromKey("");
+        if (path.equals("/")) return fromKey("");
+        if (!path.startsWith("#/") && !path.startsWith("/")) throw UserError.pathMalformed(path);
+        if (path.startsWith("#")) return parse(mapTokenToPosition(t -> escape.andThen(decode)
+                                                                             .apply(t)),
+                                               "/"
+                                              ).apply(path.substring(2));
+        return parse(mapTokenToPosition(escape),
+                     "/"
+                    ).apply(path.substring(1));
+    }
 
+    private static Function<String, JsPath> parse(final Function<String, Position> mapFn,
+                                                  final String separator
+                                                 )
+    {
+        return path ->
+        {
+            String[] tokens = requireNonNull(path).split(separator,
+                                                         -1
+                                                        );
+            Vector<Position> vector = EMPTY_VECTOR;
+            for (String token : tokens) vector = vector.appendBack(mapFn.apply(token));
+            return new JsPath(vector);
+        };
+    }
+
+    private static Function<String, Position> mapTokenToPosition(final UnaryOperator<String> mapKeyFn)
+    {
+        return token ->
+        {
+            if (token.equals("")) return KEY_EMPTY;
+            if (token.equals("'")) return KEY_SINGLE_QUOTE;
+            boolean isNumeric = isNumeric(token);
+            if (isNumeric)
+            {
+                if(token.length()>1 && token.startsWith("0"))throw UserError.indexWithLeadingZeros(token);
+                return Index.of(Integer.parseInt(token));
+            }
+            //token="'" case is covered before
+            if (token.startsWith("'") && token.endsWith("'"))
+                return Key.of(mapKeyFn.apply(token.substring(1,
+                                                             token.length() - 1
+                                                            ))
+                             );
+            return Key.of(mapKeyFn.apply(token));
+        };
     }
 
 
@@ -373,12 +440,10 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
-     Returns a string representation of this path where key names are single quoted when they are numbers,
-     and encoded in application/x-www-form-urlencoded format when they are strings, and indexes are left
-     as they are, being each position separated from each other with a dot. White-space is encoded as +,
-     see {@link URLEncoder#encode(String, String)} for more details.
-     Examples:
-     @return a string representation of this JsPath following the pattern urlEncode(string).number.'number'...
+     Returns a string representation of this path following the format defined in the RFC 6901 with
+     the exception that keys which names are numbers are single-quoted.
+     Example: /a/b/0/'1'/
+     @return a string representation of this JsPath following the RFC 6901
      */
     @Override
     public String toString()
@@ -392,64 +457,58 @@ public final class JsPath implements Comparable<JsPath>
                             {
                                 return pos.match(key ->
                                                  {
+                                                     if (key.equals("")) return key;
+                                                     return isNumeric(key) ? String.format("'%s'",
+                                                                                           key
+                                                                                          ) : key;
+                                                 },
+                                                 Integer::toString
+                                                );
+                            }
+                        })
+                        .mkString("/",
+                                  "/",
+                                  ""
+                                 );
+    }
+
+    /**
+     Returns a string representation of this path following the format defined in the RFC 6901 for uri
+     fragments, with the exception that keys which names are numbers are single-quoted
+     Example: #/a/b/0/'1'/c+d  where keys have been been url-encoded
+     @return a string representation of this JsPath following the RFC 6901
+     */
+    public String toUriFragment()
+    {
+        if (positions.isEmpty()) return "";
+        return positions.iterator()
+                        .map(new AbstractFunction1<Position, String>()
+                        {
+                            @Override
+                            public String apply(final Position pos)
+                            {
+                                return pos.match(key ->
+                                                 {
+                                                     if (key.equals("")) return key;
                                                      try
                                                      {
-                                                         if (key.equals("")) return key;
                                                          return isNumeric(key) ? String.format("'%s'",
                                                                                                key
-                                                                                              ) : String.format("%s",
-                                                                                                                URLEncoder.encode(key,
-                                                                                                                                  UTF8
-                                                                                                                                 )
-                                                                                                               );
+                                                                                              ) : URLEncoder.encode(key,UTF8);
                                                      }
                                                      catch (UnsupportedEncodingException e)
                                                      {
-
                                                          throw InternalError.encodingNotSupported(e);
-
                                                      }
                                                  },
                                                  Integer::toString
                                                 );
-
-
                             }
                         })
-                        .mkString("",
-                                  ".",
+                        .mkString("#/",
+                                  "/",
                                   ""
                                  );
-
-    }
-
-    private static Position mapToField(final String token)
-    {
-        assert token != null;
-        try
-        {
-            if (token.equals("")) return KEY_EMPTY;
-            if (token.equals("'")) return KEY_SINGLE_QUOTE;
-
-            boolean isNumeric = isNumeric(token);
-            if (isNumeric)
-                return Index.of(Integer.parseInt(token));
-            //token="'" case is covered before
-            if (token.startsWith("'") && token.endsWith("'"))
-                return Key.of(URLDecoder.decode(token.substring(1,
-                                                                token.length() - 1
-                                                               ),
-                                                UTF8
-                                               ));
-
-            return Key.of(URLDecoder.decode(token,
-                                            UTF8
-                                           ));
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw InternalError.encodingNotSupported(e);
-        }
     }
 
     /**
@@ -544,26 +603,6 @@ public final class JsPath implements Comparable<JsPath>
 
     }
 
-    /**
-     return true if this path and a given path-like string represent the same location.
-     @param path the given path-like string
-     @return true if this JsPath and given path-like string represent the same location
-     */
-    public boolean same(String path)
-    {
-        return JsPath.of(requireNonNull(path))
-                     .equals(this);
-    }
-
-    /**
-     returns true if this path starts with the given path-like string
-     @param path the given path-like string
-     @return true if this JsPath starts with the given path-like string
-     */
-    public boolean startsWith(String path)
-    {
-        return startsWith(of(requireNonNull(path)));
-    }
 
     /**
      returns true if this path starts with the given path. If the given path is JsPath.empty(), it
@@ -595,16 +634,6 @@ public final class JsPath implements Comparable<JsPath>
         return this.last()
                    .equals(path.last()) && this.init()
                                                .endsWith(path.init());
-    }
-
-    /**
-     returns true if this path ends with the given path-like string
-     @param path the given path-like string
-     @return true if this JsPath ends with the given path-like string
-     */
-    public boolean endsWith(String path)
-    {
-        return endsWith(of(requireNonNull(path)));
     }
 
     /**

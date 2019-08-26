@@ -7,7 +7,7 @@ import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.MatchExp.ifObjElse;
 import static jsonvalues.Trampoline.more;
 
-class OpMapImmutableObjObjs extends OpMapObjs<JsObj>
+final class OpMapImmutableObjObjs extends OpMapObjs<JsObj>
 {
     OpMapImmutableObjObjs(final JsObj json)
     {
@@ -42,11 +42,11 @@ class OpMapImmutableObjObjs extends OpMapObjs<JsObj>
                                                                                                                                                   ),
                                                                                                                                      p -> p.elem
                                                                                                                                     );
-                                                                                             return tailResult.put(head.getKey(),
+                                                                                             return tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                    headMapped
                                                                                                                   );
                                                                                          }),
-                                                     headElem -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                     headElem -> more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                        headElem
                                                                                                                       ))
                                                     )
@@ -88,7 +88,7 @@ class OpMapImmutableObjObjs extends OpMapObjs<JsObj>
                                                                                                                                                        headPath
                                                                                                                                                       )
                                                                                                                                                  .map(headMappedResult ->
-                                                                                                                                                      tailResult.put(head.getKey(),
+                                                                                                                                                      tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                      headMappedResult
                                                                                                                                                                     )
                                                                                                                                                      )
@@ -99,12 +99,12 @@ class OpMapImmutableObjObjs extends OpMapObjs<JsObj>
                                                                                                                                                         headPath.index(-1)
                                                                                                                                                        )
                                                                                                                                                   .map(headResult ->
-                                                                                                                                                       tailResult.put(head.getKey(),
+                                                                                                                                                       tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                                                                       headResult
                                                                                                                                                                      )
                                                                                                                                                       )
                                                                                                ),
-                                                      headElement -> more(() -> tailCall).map(tailResult -> tailResult.put(head.getKey(),
+                                                      headElement -> more(() -> tailCall).map(tailResult -> tailResult.put(JsPath.fromKey(head.getKey()),
                                                                                                                            headElement
                                                                                                                           ))
                                                      )

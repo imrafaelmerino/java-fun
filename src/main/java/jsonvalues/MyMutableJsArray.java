@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
+final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 
@@ -26,6 +26,15 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     MyMutableJsArray(final MyJavaVector array)
     {
         super(array);
+    }
+
+    @Override
+    public JsArray add(final int index,
+                       final JsElem elem
+                      )
+    {
+        return of(array.add(index,
+                            elem));
     }
 
     @Override
@@ -288,6 +297,7 @@ class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
         s.writeObject(toString());
 
     }
+
     //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
     @SuppressWarnings("squid:S4508")
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException

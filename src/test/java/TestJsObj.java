@@ -14,17 +14,18 @@ import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsNull.NULL;
+import static jsonvalues.JsPath.fromKey;
 import static jsonvalues.JsPath.of;
 
 public class TestJsObj
 {
     @Test
-    public void creates_mutable_empty_object()
+    public void test_creates_mutable_empty_object()
     {
         JsObj obj = JsObj._empty_();
         Assertions.assertTrue(obj.isEmpty());
 
-        final JsObj obj1 = obj.put("a",
+        final JsObj obj1 = obj.put(JsPath.fromKey("a"),
                                    1
                                   );// obj is mutable
         Assertions.assertEquals(1,
@@ -36,22 +37,22 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_empty_object()
+    public void test_creates_immutable_empty_object()
     {
         JsObj obj = JsObj.empty();
         Assertions.assertTrue(obj.isEmpty());
 
-        final JsObj obj1 = obj.put("a",
+        final JsObj obj1 = obj.put(JsPath.fromKey("a"),
                                    1
                                   );// obj is mutable
         Assertions.assertTrue(obj.isEmpty());
         Assertions.assertEquals(OptionalInt.of(1),
-                                obj1.getInt("a")
+                                obj1.getInt(JsPath.fromKey("a"))
                                );
     }
 
     @Test
-    public void creates_mutable_one_element_object()
+    public void test_creates_mutable_one_element_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsInt.of(1)
@@ -60,7 +61,7 @@ public class TestJsObj
                                 obj.size()
                                );
 
-        final JsObj obj1 = obj.put("b",
+        final JsObj obj1 = obj.put(JsPath.fromKey("b"),
                                    2
                                   );// obj is mutable
         Assertions.assertEquals(2,
@@ -72,7 +73,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_two_elements_object()
+    public void test_creates_mutable_two_elements_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsInt.of(1),
@@ -83,7 +84,7 @@ public class TestJsObj
                                 obj.size()
                                );
 
-        final JsObj obj1 = obj.remove("b");// obj is mutable
+        final JsObj obj1 = obj.remove(JsPath.fromKey("b"));// obj is mutable
         Assertions.assertEquals(1,
                                 obj.size()
                                );
@@ -94,7 +95,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_two_elements_object()
+    public void test_creates_immutable_two_elements_object()
     {
         JsObj obj = JsObj.of("a",
                              JsInt.of(1),
@@ -105,7 +106,7 @@ public class TestJsObj
                                 obj.size()
                                );
 
-        final JsObj obj1 = obj.remove("b");// obj is mutable
+        final JsObj obj1 = obj.remove(JsPath.fromKey("b"));// obj is mutable
         Assertions.assertEquals(2,
                                 obj.size()
                                );
@@ -116,7 +117,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_three_elements_object()
+    public void test_creates_mutable_three_elements_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsLong.of(10),
@@ -129,7 +130,7 @@ public class TestJsObj
                                 obj.size()
                                );
 
-        final JsObj obj1 = obj.remove("a");// obj is mutable
+        final JsObj obj1 = obj.remove(JsPath.fromKey("a"));// obj is mutable
         Assertions.assertEquals(2,
                                 obj.size()
                                );
@@ -140,7 +141,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_three_elements_object()
+    public void test_creates_immutable_three_elements_object()
     {
         JsObj obj = JsObj.of("a",
                              JsLong.of(10),
@@ -153,7 +154,7 @@ public class TestJsObj
                                 obj.size()
                                );
 
-        final JsObj obj1 = obj.remove("a");// obj is mutable
+        final JsObj obj1 = obj.remove(JsPath.fromKey("a"));// obj is mutable
         Assertions.assertEquals(3,
                                 obj.size()
                                );
@@ -164,7 +165,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_four_elements_object()
+    public void test_creates_mutable_four_elements_object()
     {
         JsObj obj = JsObj._of_("a",
                                JsStr.of("A"),
@@ -200,7 +201,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_immutable_four_elements_object()
+    public void test_creates_immutable_four_elements_object()
     {
         JsObj obj = JsObj.of("a",
                              JsStr.of("A"),
@@ -249,7 +250,7 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_five_elements_object()
+    public void test_creates_mutable_five_elements_object()
     {
 
         JsObj obj = JsObj._of_("a",
@@ -267,14 +268,14 @@ public class TestJsObj
         Assertions.assertEquals(5,
                                 obj.size()
                                );
-        obj.remove("b");
+        obj.remove(JsPath.fromKey("b"));
         Assertions.assertEquals(4,
                                 obj.size()
                                );
     }
 
     @Test
-    public void creates_immutable_five_elements_object()
+    public void test_creates_immutable_five_elements_object()
     {
 
         JsObj obj = JsObj.of("a",
@@ -319,22 +320,22 @@ public class TestJsObj
     }
 
     @Test
-    public void creates_mutable_object_from_pairs()
+    public void test_creates_mutable_object_from_pairs()
     {
 
-        JsObj obj = JsObj._of_(JsPair.of("a",
+        JsObj obj = JsObj._of_(JsPair.of(fromKey("a"),
                                          JsInt.of(1)
                                         ),
-                               JsPair.of("b",
+                               JsPair.of(fromKey("b"),
                                          JsInt.of(2)
                                         ),
-                               JsPair.of("c",
+                               JsPair.of(fromKey("c"),
                                          JsInt.of(3)
                                         ),
-                               JsPair.of("d.0.0",
+                               JsPair.of(of("/d/0/0"),
                                          JsInt.of(5)
                                         ),
-                               JsPair.of("d.0.1",
+                               JsPair.of(of("/d/0/1"),
                                          JsInt.of(6)
                                         )
                               );
@@ -348,29 +349,29 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(OptionalInt.of(6),
-                                obj.getInt("d.0.1")
+                                obj.getInt(of("/d/0/1"))
                                );
 
 
     }
 
     @Test
-    public void creates_immutable_object_from_pairs()
+    public void test_creates_immutable_object_from_pairs()
     {
 
-        JsObj obj = JsObj.of(JsPair.of("a",
+        JsObj obj = JsObj.of(JsPair.of(fromKey("a"),
                                        JsInt.of(1)
                                       ),
-                             JsPair.of("b",
+                             JsPair.of(fromKey("b"),
                                        JsInt.of(2)
                                       ),
-                             JsPair.of("c",
+                             JsPair.of(fromKey("c"),
                                        JsInt.of(3)
                                       ),
-                             JsPair.of("d.0.0",
+                             JsPair.of(of("/d/0/0"),
                                        JsInt.of(5)
                                       ),
-                             JsPair.of("d.0.1",
+                             JsPair.of(of("/d/0/1"),
                                        JsInt.of(6)
                                       )
                             );
@@ -384,7 +385,7 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(OptionalInt.of(6),
-                                obj.getInt("d.0.1")
+                                obj.getInt(of("/d/0/1"))
                                );
 
 
@@ -392,7 +393,7 @@ public class TestJsObj
 
 
     @Test
-    public void head_and_tail_of_empty_obj_returns_exception()
+    public void test_head_and_tail_of_empty_obj_returns_exception()
     {
 
         Assertions.assertThrows(UserError.class,
@@ -416,7 +417,7 @@ public class TestJsObj
     }
 
     @Test
-    public void equals_and_hashcode()
+    public void test_equals_and_hashcode()
     {
         final JsObj obj = JsObj.of("a",
                                    JsInt.of(1),
@@ -447,7 +448,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_strings_to_lowercase_and_reduce()
+    public void test_map_strings_to_lowercase_and_reduce()
     {
 
         final JsObj immutable = JsObj.of("a",
@@ -546,7 +547,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_keys_to_uppercase_removing_trailing_white_spaces_mutable()
+    public void test_map_keys_to_uppercase_removing_trailing_white_spaces_mutable()
     {
 
         final Supplier<JsObj> supplier = () -> JsObj._of_(" a ",
@@ -605,7 +606,7 @@ public class TestJsObj
 
 
     @Test
-    public void map_keys_to_uppercase_removing_trailing_white_spaces_immutable()
+    public void test_map_keys_to_uppercase_removing_trailing_white_spaces_immutable()
     {
         final JsObj obj = JsObj.of(" a ",
                                    JsObj.of(" a1 ",
@@ -658,7 +659,7 @@ public class TestJsObj
     }
 
     @Test
-    public void map_keys_to_uppercase_removing_trailing_white_spaces_if_condition()
+    public void test_map_keys_to_uppercase_removing_trailing_white_spaces_if_condition()
     {
         final JsObj immutable = JsObj.of(" a ",
                                          JsObj.of(" a1 ",
@@ -744,7 +745,7 @@ public class TestJsObj
 
 
     @Test
-    public void filter_keys_immutable()
+    public void test_filter_keys_immutable()
     {
         final Supplier<JsObj> obj = () -> JsObj.of("a",
                                                    JsObj.of("a1",
@@ -810,7 +811,7 @@ public class TestJsObj
     }
 
     @Test
-    public void filter_keys_mutable()
+    public void test_filter_keys_mutable()
     {
 
 
@@ -884,7 +885,7 @@ public class TestJsObj
     }
 
     @Test
-    public void parse_string() throws MalformedJson
+    public void test_parse_string() throws MalformedJson
     {
         final JsObj mutable = JsObj._of_("a",
                                          JsObj._of_("a1",
@@ -924,13 +925,13 @@ public class TestJsObj
                                );
 
         final TryObj tryObjImmutable = JsObj.parse(str,
-                                                   ParseOptions.builder()
+                                                   ParseBuilder.builder()
                                                                .withKeyFilter(p -> !p.last()
                                                                                      .isKey(it -> it.startsWith("b")))
                                                   );
 
         final TryObj tryObjMutable = JsObj._parse_(str,
-                                                   ParseOptions.builder()
+                                                   ParseBuilder.builder()
                                                                .withKeyFilter(p -> !p.last()
                                                                                      .isKey(it -> it.startsWith("b")))
                                                   );
@@ -959,7 +960,7 @@ public class TestJsObj
 
 
     @Test
-    public void filter_jsons_from_immutable() throws MalformedJson
+    public void test_filter_jsons_from_immutable() throws MalformedJson
     {
         final JsObj obj = JsObj.of("a",
                                    JsObj.of("R",
@@ -993,14 +994,14 @@ public class TestJsObj
                                                 Assertions.assertEquals(o,
                                                                         obj.get(p)
                                                                        );
-                                                return !o.containsPath("R");
+                                                return !o.containsPath(JsPath.fromKey("R"));
                                             });
         final JsObj result1 = obj.filterObjs_((p, o) ->
                                               {
                                                   Assertions.assertEquals(o,
                                                                           obj.get(p)
                                                                          );
-                                                  return !o.containsPath("R");
+                                                  return !o.containsPath(JsPath.fromKey("R"));
                                               });
 
 
@@ -1016,7 +1017,7 @@ public class TestJsObj
 
 
     @Test
-    public void filter_jsons_from_mutable() throws MalformedJson
+    public void test_filter_jsons_from_mutable() throws MalformedJson
     {
         final Supplier<JsObj> supplier = () -> JsObj._of_("a",
                                                           JsObj._of_("R",
@@ -1054,7 +1055,7 @@ public class TestJsObj
                                                                         supplier.get()
                                                                                 .get(p)
                                                                        );
-                                                return !o.containsPath("R");
+                                                return !o.containsPath(JsPath.fromKey("R"));
                                             });
         final JsObj obj1 = JsObj._parse_(supplier.get()
                                                  .toString())
@@ -1066,7 +1067,7 @@ public class TestJsObj
                                                                            supplier.get()
                                                                                    .get(p)
                                                                           );
-                                                   return !o.containsPath("R");
+                                                   return !o.containsPath(JsPath.fromKey("R"));
                                                });
 
 
@@ -1089,7 +1090,7 @@ public class TestJsObj
     }
 
     @Test
-    public void filter_values_from_mutable_object() throws MalformedJson
+    public void test_filter_values_from_mutable_object() throws MalformedJson
     {
 
         Supplier<JsObj> supplier = () -> JsObj._of_("a",
@@ -1146,7 +1147,7 @@ public class TestJsObj
     }
 
     @Test
-    public void filter_values_from_immutable_object() throws MalformedJson
+    public void test_filter_values_from_immutable_object() throws MalformedJson
     {
 
         JsObj obj = JsObj.of("a",
@@ -1181,23 +1182,23 @@ public class TestJsObj
     }
 
     @Test
-    public void put_and_get()
+    public void test_put_and_get()
     {
         final JsObj empty = JsObj.empty();
-        final JsObj a = empty.put("a",
+        final JsObj a = empty.put(JsPath.fromKey("a"),
                                   JsBigDec.of(BigDecimal.valueOf(0.1d))
                                  );
 
         Assertions.assertEquals(OptionalDouble.of(0.1d),
-                                a.getDouble("a")
+                                a.getDouble(fromKey("a"))
                                );
         Assertions.assertEquals(Optional.of(BigDecimal.valueOf(0.1d)),
-                                a.getBigDecimal("a")
+                                a.getBigDecimal(fromKey("a"))
                                );
     }
 
     @Test
-    public void map_json_obj_mutable()
+    public void test_map_json_obj_mutable()
     {
         Supplier<JsObj> supp = () -> JsObj._of_("a",
                                                 JsObj._empty_(),
@@ -1227,7 +1228,7 @@ public class TestJsObj
 
         final JsObj obj = supp.get();
 
-        obj.mapObjs_((p, o) -> o.put("path",
+        obj.mapObjs_((p, o) -> o.put(JsPath.fromKey("path"),
                                      p.toString()
                                     ),
                      (p, o) -> o.isEmpty()
@@ -1240,7 +1241,7 @@ public class TestJsObj
                          final JsPath path = it.path;
                          final JsObj o = ((JsObj) it.elem);
                          if (o.isEmpty()) Assertions.assertEquals(Optional.of(path.toString()),
-                                                                  obj.getStr(path.append(of("path")))
+                                                                  obj.getStr(path.append(fromKey("path")))
 
                                                                  );
 
@@ -1249,7 +1250,7 @@ public class TestJsObj
     }
 
     @Test
-    public void parse_with_options() throws MalformedJson
+    public void test_parse_with_options() throws MalformedJson
     {
         Supplier<JsObj> supplier = () -> JsObj._of_("a",
                                                     JsStr.of("1"),
@@ -1278,7 +1279,7 @@ public class TestJsObj
                                         .filterElems_(p -> p.elem.isNotNull()),
                                 JsObj._parse_(supplier.get()
                                                       .toString(),
-                                              ParseOptions.builder()
+                                              ParseBuilder.builder()
                                                           .withElemFilter(p -> p.elem.isNotNull())
                                              )
                                      .orElseThrow()
@@ -1289,15 +1290,15 @@ public class TestJsObj
     public void test_operations()
     {
 
-        JsObj obj = JsObj.of(JsPair.of("a.b.c",
+        JsObj obj = JsObj.of(JsPair.of(of("/a/b/c"),
                                        JsInt.of(1)
                                       ),
-                             JsPair.of("a.b.d",
+                             JsPair.of(of("/a/b/d"),
                                        JsInt.of(2)
                                       )
                             );
 
-        Assertions.assertEquals(obj.appendAll(JsPath.of("0"),
+        Assertions.assertEquals(obj.appendAll(JsPath.fromIndex(0),
                                               JsArray.of(1,
                                                          2
                                                         )
@@ -1305,7 +1306,7 @@ public class TestJsObj
                                 obj
                                );
 
-        Assertions.assertEquals(obj.prependAll(JsPath.of("0"),
+        Assertions.assertEquals(obj.prependAll(JsPath.fromIndex(0),
                                                JsArray.of(1,
                                                           2
                                                          )
@@ -1313,34 +1314,34 @@ public class TestJsObj
                                 obj
                                );
         Assertions.assertEquals(NOTHING,
-                                obj.get("0")
+                                obj.get(JsPath.fromIndex(0))
                                );
         Assertions.assertEquals(obj,
-                                obj.put("0",
+                                obj.put(JsPath.fromIndex(0),
                                         a -> NULL
                                        )
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove("a.0")
+                                obj.remove(of("/a/0"))
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove("0")
+                                obj.remove(JsPath.fromIndex(0))
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove("a.b.c.d")
+                                obj.remove(of("/a/b/c/d"))
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove("a.b.c.0")
+                                obj.remove(of("/a/b/c/0"))
                                );
     }
 
 
     @Test
-    public void error_when_mixing_implementations()
+    public void test_error_when_mixing_implementations()
     {
 
         Assertions.assertThrows(UserError.class,
@@ -1389,22 +1390,22 @@ public class TestJsObj
     @Test
     public void test_parse_into_immutable() throws MalformedJson
     {
-        JsObj obj = JsObj.of(JsPair.of("a.b.0",
+        JsObj obj = JsObj.of(JsPair.of(of("/a/b/0"),
                                        NULL
                                       ),
-                             JsPair.of("a.b.1",
+                             JsPair.of(of("/a/b/1"),
                                        TRUE
                                       ),
-                             JsPair.of("a.b.c",
+                             JsPair.of(of("/a/b/c"),
                                        FALSE
                                       ),
-                             JsPair.of("a.b.c.d",
+                             JsPair.of(of("/a/b/c/d"),
                                        JsInt.of(1)
                                       ),
-                             JsPair.of("a.a.a",
+                             JsPair.of(of("/a/a/a/"),
                                        JsStr.of("a")
                                       ),
-                             JsPair.of("a.b.0",
+                             JsPair.of(of("/a/b/0"),
                                        JsBigDec.of(BigDecimal.ONE)
                                       )
                             );
@@ -1424,22 +1425,22 @@ public class TestJsObj
     @Test
     public void test_parse_into_mutable() throws MalformedJson
     {
-        JsObj obj = JsObj._of_(JsPair.of("a.b.0",
+        JsObj obj = JsObj._of_(JsPair.of(of("/a/b/0"),
                                          NULL
                                         ),
-                               JsPair.of("a.b.1",
+                               JsPair.of(of("/a/b/1"),
                                          TRUE
                                         ),
-                               JsPair.of("a.b.c",
+                               JsPair.of(of("/a/b/c"),
                                          FALSE
                                         ),
-                               JsPair.of("a.b.c.d",
+                               JsPair.of(of("/a/b/c/d"),
                                          JsInt.of(1)
                                         ),
-                               JsPair.of("a.a.a",
+                               JsPair.of(of("/a/a/a"),
                                          JsStr.of("a")
                                         ),
-                               JsPair.of("a.b.0",
+                               JsPair.of(of("/a/b/0"),
                                          JsBigDec.of(BigDecimal.ONE)
                                         )
                               );
@@ -1500,7 +1501,7 @@ public class TestJsObj
                                                    );
 
 
-        final BiFunction<JsPath, JsObj, JsObj> addSizeFn = (path, json) -> json.put("size",
+        final BiFunction<JsPath, JsObj, JsObj> addSizeFn = (path, json) -> json.put(JsPath.fromKey("size"),
                                                                                     json.size()
                                                                                    );
         final JsObj obj = supplier.get();
@@ -1543,7 +1544,7 @@ public class TestJsObj
 
 
     @Test
-    public void map_values_mutable() throws MalformedJson
+    public void test_map_values_mutable() throws MalformedJson
     {
 
         Supplier<JsObj> supplier = () -> JsObj._of_("a",
@@ -1612,7 +1613,7 @@ public class TestJsObj
     }
 
     @Test
-    public void equals()
+    public void test_equals()
     {
 
         JsObj obj = JsObj.of("a",
@@ -1729,7 +1730,7 @@ public class TestJsObj
                             );
 
 
-        final BiFunction<JsPath, JsObj, JsObj> addSizeFn = (path, json) -> json.put("size",
+        final BiFunction<JsPath, JsObj, JsObj> addSizeFn = (path, json) -> json.put(JsPath.fromKey("size"),
                                                                                     json.size()
                                                                                    );
         final JsObj newObj = obj.mapObjs_((p, o) ->
@@ -1968,16 +1969,208 @@ public class TestJsObj
         Assertions.assertTrue(_obj_.containsElem_(JsInt.of(2)));
         Assertions.assertTrue(obj.containsElem_(NULL));
         Assertions.assertTrue(_obj_.containsElem_(NULL));
-        Assertions.assertTrue(obj.containsPath("b.0"));
-        Assertions.assertTrue(_obj_.containsPath("b.1.a"));
-        Assertions.assertTrue(obj.containsPath("a"));
-        Assertions.assertTrue(_obj_.containsPath("b"));
-        Assertions.assertFalse(obj.containsPath("3"));
-        Assertions.assertFalse(_obj_.containsPath("3"));
-        Assertions.assertFalse(obj.containsPath("1.b"));
-        Assertions.assertFalse(_obj_.containsPath("1.b"));
+        Assertions.assertTrue(obj.containsPath(of("/b/0")));
+        Assertions.assertTrue(_obj_.containsPath(of("/b/1/a")));
+        Assertions.assertTrue(obj.containsPath(JsPath.fromKey("a")));
+        Assertions.assertTrue(_obj_.containsPath(JsPath.fromKey("b")));
+        Assertions.assertFalse(obj.containsPath(JsPath.fromKey("3")));
+        Assertions.assertFalse(_obj_.containsPath(JsPath.fromKey("3")));
+        Assertions.assertFalse(obj.containsPath(of("/1/b")));
+        Assertions.assertFalse(_obj_.containsPath(of("/1/b")));
 
     }
+
+
+    @Test
+    public void test_add_element_into_immutable_object_with_errors()
+    {
+
+
+        final UserError error1 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.empty()
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Parent not found at /a while applying add in {}. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
+                                error1.getMessage()
+                               );
+
+
+        final UserError error2 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.of("a",
+                                                                        JsArray.of(1)
+                                                                       )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add the key 'b' in an array. add operation can not be applied in {\"a\":[1]} at /a/b. Suggestion: call get(path).isObj() before.",
+                                error2.getMessage()
+                               );
+
+        final UserError error3 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.of("a",
+                                                                        JsObj.of("a",
+                                                                                 JsInt.of(1)
+                                                                                )
+                                                                       )
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in {\"a\":{\"a\":1}} at /a/0. Suggestion: call get(path).isArray() before.",
+                                error3.getMessage()
+                               );
+
+        final UserError error4 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj.of("a",
+                                                                        JsStr.of("a")
+                                                                       )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Element located at '/a' is not a Json. add operation can not be applied in {\"a\":\"a\"} at /a/b. Suggestion: call get(path).isJson() before.",
+                                error4.getMessage()
+                               );
+
+
+    }
+
+    @Test
+    public void test_add_element_into_mutable_object_with_errors()
+    {
+
+
+        final UserError error1 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._empty_()
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Parent not found at /a while applying add in {}. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
+                                error1.getMessage()
+                               );
+
+
+        final UserError error2 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._of_("a",
+                                                                          JsArray._of_(1)
+                                                                         )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add the key 'b' in an array. add operation can not be applied in {\"a\":[1]} at /a/b. Suggestion: call get(path).isObj() before.",
+                                error2.getMessage()
+                               );
+
+        final UserError error3 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._of_("a",
+                                                                          JsObj._of_("a",
+                                                                                     JsInt.of(1)
+                                                                                    )
+                                                                         )
+                                                                    .add(JsPath.of("/a/0"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Trying to add at the index '0' in an object. add operation can not be applied in {\"a\":{\"a\":1}} at /a/0. Suggestion: call get(path).isArray() before.",
+                                error3.getMessage()
+                               );
+
+        final UserError error4 = Assertions.assertThrows(UserError.class,
+                                                         () -> JsObj._of_("a",
+                                                                          JsStr.of("a")
+                                                                         )
+                                                                    .add(JsPath.of("/a/b"),
+                                                                         JsStr.of("hi")
+                                                                        )
+                                                        );
+
+        Assertions.assertEquals("Element located at '/a' is not a Json. add operation can not be applied in {\"a\":\"a\"} at /a/b. Suggestion: call get(path).isJson() before.",
+                                error4.getMessage()
+                               );
+
+
+    }
+
+    @Test
+    public void test_add_element_into_immutable_json_recursively()
+    {
+
+        JsObj obj = JsObj.of("a",
+                             JsObj.of("b",
+                                      JsArray.of(1,
+                                                 2,
+                                                 3
+                                                ),
+                                      "c",
+                                      JsObj.of("d",
+                                               TRUE
+                                              )
+                                     )
+                            );
+
+        Assertions.assertEquals(JsArray.of(1,
+                                           2,
+                                           3,
+                                           4
+                                          ),
+                                obj.add(of("/a/b/-1"),
+                                        JsInt.of(4)
+                                       )
+                                   .get(JsPath.of("/a/b"))
+                               );
+
+        Assertions.assertEquals(JsArray.of(1,
+                                           2,
+                                           3,
+                                           4
+                                          ),
+                                obj.add(of("/a/b/3"),
+                                        JsInt.of(4)
+                                       )
+                                   .get(JsPath.of("/a/b"))
+                               );
+
+        Assertions.assertEquals(JsArray.of(4,
+                                           1,
+                                           2,
+                                           3
+                                          ),
+                                obj.add(of("/a/b/0"),
+                                        JsInt.of(4)
+                                       )
+                                   .get(JsPath.of("/a/b"))
+                               );
+
+
+        Assertions.assertEquals(FALSE,
+                                obj.add(of("/a/c/d"),
+                                        e -> e.asJsBool()
+                                              .negate()
+                                       )
+                                   .get(JsPath.of("/a/c/d"))
+                               );
+
+        Assertions.assertEquals(JsStr.of("bye!"),
+                                obj.add(of("/a/c/e"),
+                                        JsStr.of("bye!")
+                                       )
+                                   .get(JsPath.of("/a/c/e"))
+                               );
+
+    }
+
 
 
 }

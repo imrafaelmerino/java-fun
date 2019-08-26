@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.MyJsParser.Event.END_ARRAY;
 
 final class MyJavaVector implements MyVector<MyJavaVector>
@@ -124,13 +123,13 @@ final class MyJavaVector implements MyVector<MyJavaVector>
     @Override
     public String toString()
     {
-        if (elements.isEmpty()) return MyConstants.EMPTY_ARR_AS_STR;
+        if (elements.isEmpty()) return "[]";
 
         return elements.stream()
                        .map(JsElem::toString)
-                       .collect(Collectors.joining(COMMA,
-                                                   MyConstants.OPEN_BRACKET,
-                                                   MyConstants.CLOSE_BRACKET
+                       .collect(Collectors.joining(",",
+                                                   "[",
+                                                   "]"
                                                   ));
     }
 

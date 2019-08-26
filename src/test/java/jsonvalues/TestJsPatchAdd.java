@@ -19,7 +19,7 @@ public class TestJsPatchAdd
                                                                                                   JsInt.of(1)
                                                                                                  )
                                                                                              .toArray()
-                                                                                             .remove(JsPath.of("/0/path"))
+                                                                                             .remove(JsPath.path("/0/path"))
                                                                                        )
                                                                                  .orElseThrow()
 
@@ -40,7 +40,7 @@ public class TestJsPatchAdd
                                                                                                   JsInt.of(1)
                                                                                                  )
                                                                                              .toArray()
-                                                                                             .remove(JsPath.of("/0/value"))
+                                                                                             .remove(JsPath.path("/0/value"))
                                                                                        )
                                                                                  .orElseThrow()
 

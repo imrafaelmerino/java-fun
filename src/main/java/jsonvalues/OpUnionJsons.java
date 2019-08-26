@@ -1,5 +1,6 @@
 package jsonvalues;
 
+
 final class OpUnionJsons
 {
     // squid:S1452: Json<?> has only two possible types: JsObj or JsArr,

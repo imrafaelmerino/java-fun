@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Patch.PATH_FIELD;
 
 final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
 {
@@ -15,9 +14,9 @@ final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
     OpPatchTest(final JsObj op) throws PatchMalformed
     {
         this.value = requireNonNull(op).get(JsPath.fromKey("value"));
-        Optional<String> path = op.getStr(JsPath.fromKey(PATH_FIELD));
+        Optional<String> path = op.getStr(JsPath.fromKey("path"));
         if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.of(path.get());
+        this.path =  JsPath.path(path.get());
     }
 
     @Override

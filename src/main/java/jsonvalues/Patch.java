@@ -5,41 +5,24 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Patch.OP.*;
 
 /**
-Encapsulates a RFC 6902 implementation. Json patch operations can be applied to Jsons using the method
+ Encapsulates a RFC 6902 implementation. Json patch operations can be applied to Jsons using the method
  {@link Json#patch(JsArray)}.
  */
 public final class Patch
 {
-
-    /**
-     field which contains the source location in MOVE and COPY operations
-     */
-    public static final String FROM_FIELD = "from";
-    /**
-     field which contains the name of the operation
-     */
-    public static final String OP_FIELD = "op";
-
-    /**
-     field which contains the target location of an operation
-     */
-    public static final String PATH_FIELD = "path";
-    /**
-    field which contains the Json element to be used by the operation
-     */
-    public static final String VALUE_FIELD = "value";
-
     /**
      List of supported patch-operations
      */
-    public enum OP
+    private enum OP
     {ADD, REMOVE, MOVE, COPY, REPLACE, TEST}
 
 
-    private Patch(){}
+    private Patch()
+    {
+    }
+
     /**
      return a new patch-operation builder
      @return a new patch-operation builder
@@ -60,7 +43,6 @@ public final class Patch
 
         private JsArray ops = JsArray._empty_();
 
-
         /**
          ADD operation.
          @param path target location of the operation
@@ -71,15 +53,14 @@ public final class Patch
                            final JsElem value
                           )
         {
-            ops.append(JsObj.of(PATH_FIELD,
+            ops.append(JsObj.of("path",
                                 JsStr.of(requireNonNull(path)),
-                                OP_FIELD,
-                                JsStr.of(ADD.name()),
-                                VALUE_FIELD,
+                                "op",
+                                JsStr.of(OP.ADD.name()),
+                                "value",
                                 requireNonNull(value)
                                ));
             return this;
-
         }
 
         /**
@@ -92,12 +73,12 @@ public final class Patch
                                final JsElem value
                               )
         {
-            ops.append(JsObj.of(PATH_FIELD,
+            ops.append(JsObj.of("path",
                                 JsStr.of(requireNonNull(path)),
-                                VALUE_FIELD,
+                                "value",
                                 requireNonNull(value),
-                                OP_FIELD,
-                                JsStr.of(REPLACE.name())
+                                "op",
+                                JsStr.of(OP.REPLACE.name())
                                ));
             return this;
 
@@ -110,10 +91,10 @@ public final class Patch
          */
         public Builder remove(final String path)
         {
-            ops.append(JsObj.of(PATH_FIELD,
+            ops.append(JsObj.of("path",
                                 JsStr.of(requireNonNull(path)),
-                                OP_FIELD,
-                                JsStr.of(REMOVE.name())
+                                "op",
+                                JsStr.of(OP.REMOVE.name())
                                ));
             return this;
         }
@@ -128,12 +109,12 @@ public final class Patch
                             final JsElem value
                            )
         {
-            ops.append(JsObj.of(PATH_FIELD,
+            ops.append(JsObj.of("path",
                                 JsStr.of(requireNonNull(path)),
-                                VALUE_FIELD,
+                                "value",
                                 requireNonNull(value),
-                                OP_FIELD,
-                                JsStr.of(TEST.name())
+                                "op",
+                                JsStr.of(OP.TEST.name())
                                ));
             return this;
 
@@ -149,12 +130,12 @@ public final class Patch
                             final String to
                            )
         {
-            ops.append(JsObj.of(PATH_FIELD,
+            ops.append(JsObj.of("path",
                                 JsStr.of(requireNonNull(to)),
-                                FROM_FIELD,
+                                "from",
                                 JsStr.of(requireNonNull(from)),
-                                OP_FIELD,
-                                JsStr.of(MOVE.name())
+                                "op",
+                                JsStr.of(OP.MOVE.name())
                                ));
             return this;
         }
@@ -169,12 +150,12 @@ public final class Patch
                             final String to
                            )
         {
-            ops.append(JsObj.of(PATH_FIELD,
+            ops.append(JsObj.of("path",
                                 JsStr.of(requireNonNull(to)),
-                                FROM_FIELD,
+                                "from",
                                 JsStr.of(requireNonNull(from)),
-                                OP_FIELD,
-                                JsStr.of(COPY.name())
+                                "op",
+                                JsStr.of(OP.COPY.name())
                                )
                       );
             return this;
@@ -242,11 +223,12 @@ public final class Patch
         {
             if (!elem.isObj()) throw PatchMalformed.operationIsNotAnObj(elem);
             final JsObj opObj = elem.asJsObj();
-            final Optional<String> op = opObj.getStr(JsPath.fromKey(OP_FIELD));
+            final Optional<String> op = opObj.getStr(JsPath.fromKey("op"));
             if (!op.isPresent()) throw PatchMalformed.operationRequired(opObj);
             try
             {
-                switch (valueOf(op.get().toUpperCase()))
+                switch (OP.valueOf(op.get()
+                                     .toUpperCase()))
                 {
                     case ADD:
                         ops.add(new OpPatchAdd<>(opObj));

@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
  Represents the full path location of an element in a json. It's a list of {@link Position}. Exists
  two different ways to create a JsPath:
 
- - From a path-like string using the static factory method {@link JsPath#of(String)}, where the path
+ - From a path-like string using the static factory method {@link JsPath#path(String)}, where the path
  follows the Json Pointer specification <a href="http://tools.ietf.org/html/rfc6901">RFC 6901</a>.
  In order to be able to use paths to put data in a Json, keys which name are numbers have to
  to be single-quoted:
@@ -300,7 +300,7 @@ public final class JsPath implements Comparable<JsPath>
 
     /**
      creates a new JsPath appending the key to <code>this</code> JsPath.
-     @param key the key name to be appended in raw, without encoding nor single-quoting like in {@link JsPath#of(String)} )}
+     @param key the key name to be appended in raw, without encoding nor single-quoting like in {@link JsPath#path(String)} )}
      @return a JsPath with the key appended to the back
      */
     public JsPath key(String key)
@@ -373,7 +373,7 @@ public final class JsPath implements Comparable<JsPath>
         }
     };
 
-    public static JsPath of(String path)
+    public static JsPath path(String path)
     {
         if (requireNonNull(path).equals("")) return EMPTY;
         if (path.equals("#")) return EMPTY;

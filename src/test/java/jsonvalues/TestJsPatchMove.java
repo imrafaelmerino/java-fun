@@ -27,14 +27,14 @@ public class TestJsPatchMove
                                                       .toArray());
         Assertions.assertEquals(NOTHING,
                                 result.orElseThrow()
-                                      .get(JsPath.of("/a/b"))
+                                      .get(JsPath.path("/a/b"))
                                );
         Assertions.assertEquals(JsArray.of(1,
                                            2,
                                            3
                                           ),
                                 result.orElseThrow()
-                                      .get(JsPath.of("/b"))
+                                      .get(JsPath.path("/b"))
                                );
         final TryPatch<JsObj> result2 = obj.patch(Patch.ops()
                                                        .test("/a/b",
@@ -48,11 +48,11 @@ public class TestJsPatchMove
                                                  );
         Assertions.assertEquals(JsInt.of(2),
                                 result2.orElseThrow()
-                                       .get(JsPath.of("/a"))
+                                       .get(JsPath.path("/a"))
                                );
         Assertions.assertEquals(JsInt.of(3),
                                 result2.orElseThrow()
-                                       .get(JsPath.of("/b/0"))
+                                       .get(JsPath.path("/b/0"))
                                );
         final TryPatch<JsObj> result3 = obj.patch(Patch.ops()
                                                        .test("/a/b",

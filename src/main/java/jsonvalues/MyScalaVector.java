@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.MyConstants.*;
 import static jsonvalues.MyJsParser.Event.END_ARRAY;
 
 final class MyScalaVector implements MyVector<MyScalaVector>
@@ -136,11 +135,11 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @Override
     public String toString()
     {
-        if (vector.isEmpty()) return MyConstants.EMPTY_ARR_AS_STR;
+        if (vector.isEmpty()) return "[]";
 
-        return vector.mkString(OPEN_BRACKET,
-                               COMMA,
-                               CLOSE_BRACKET
+        return vector.mkString("[",
+                               ",",
+                               "]"
                               );
     }
 

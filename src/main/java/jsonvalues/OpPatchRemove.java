@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Patch.PATH_FIELD;
 
 final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
 {
@@ -14,9 +13,9 @@ final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
 
     OpPatchRemove(final JsObj op) throws PatchMalformed
     {
-        Optional<String> path = requireNonNull(op).getStr(JsPath.fromKey(PATH_FIELD));
+        Optional<String> path = requireNonNull(op).getStr(JsPath.fromKey("path"));
         if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.of(path.get());
+        this.path =  JsPath.path(path.get());
     }
 
     OpPatchRemove(final JsPath path)

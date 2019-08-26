@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static jsonvalues.MyConstants.*;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
@@ -98,7 +97,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
     @Override
     public String toString()
     {
-        if (elements.isEmpty()) return MyConstants.EMPTY_OBJ_AS_STR;
+        if (elements.isEmpty()) return "{}";
 
         return elements.keySet()
                        .stream()
@@ -107,9 +106,9 @@ final class MyJavaMap implements MyMap<MyJavaMap>
                                                  elements.get(key)
                                                 )
                            )
-                       .collect(Collectors.joining(COMMA,
-                                                   OPEN_CURLY,
-                                                   CLOSE_CURLY
+                       .collect(Collectors.joining(",",
+                                                   "{",
+                                                   "}"
                                                   )
                                );
 

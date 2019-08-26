@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
@@ -89,7 +88,8 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     @Override
     public Optional<JsElem> getOptional(final String key)
     {
-        return persistentMap.contains(key) ? Optional.of(persistentMap.get(key).get()) : Optional.empty();
+        return persistentMap.contains(key) ? Optional.of(persistentMap.get(key)
+                                                                      .get()) : Optional.empty();
     }
 
     @Override
@@ -140,7 +140,7 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     @Override
     public String toString()
     {
-        if (persistentMap.isEmpty()) return MyConstants.EMPTY_OBJ_AS_STR;
+        if (persistentMap.isEmpty()) return "{}";
 
 
         return persistentMap.keysIterator()
@@ -148,9 +148,9 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                                                           key,
                                                           persistentMap.apply(key)
                                                          )))
-                            .mkString(MyConstants.OPEN_CURLY,
-                                      COMMA,
-                                      MyConstants.CLOSE_CURLY
+                            .mkString("{",
+                                      ",",
+                                      "}"
                                      );
     }
 

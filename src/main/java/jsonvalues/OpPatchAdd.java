@@ -6,8 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Patch.PATH_FIELD;
-import static jsonvalues.Patch.VALUE_FIELD;
+
 
 final class OpPatchAdd<T extends Json<T>> implements OpPatch<T>
 {
@@ -25,12 +24,12 @@ final class OpPatchAdd<T extends Json<T>> implements OpPatch<T>
 
     OpPatchAdd(final JsObj op) throws PatchMalformed
     {
-        JsElem value = requireNonNull(op).get(JsPath.fromKey(VALUE_FIELD));
+        JsElem value = requireNonNull(op).get(JsPath.fromKey("value"));
         if (value.isNothing()) throw PatchMalformed.valueRequired(op);
         this.value = value;
-        Optional<String> path = op.getStr(JsPath.fromKey(PATH_FIELD));
+        Optional<String> path = op.getStr(JsPath.fromKey("path"));
         if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.of(path.get());
+        this.path =  JsPath.path(path.get());
     }
 
     @Override
@@ -72,6 +71,5 @@ final class OpPatchAdd<T extends Json<T>> implements OpPatch<T>
                             path
                            );
     }
-
 
 }

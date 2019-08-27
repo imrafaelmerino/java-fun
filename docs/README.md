@@ -5,8 +5,8 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
-[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/1.0.0)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/1.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/1.0.0/jar)
+[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values/2.0.0)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/2.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/2.0.0/jar)
 
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -101,7 +101,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 and that's all. It's a **zero-dependency** library, so you won't have to go through a kind of dependency hell to get it working. 
@@ -114,4 +114,6 @@ Go to https://imrafaelmerino.github.io/json-values/
 ## <a name="wth"><a/> Want to help
 I've set up a separate document for [contributors](./CONTRIBUTING.md).
 ## <a name="develop"><a/> Develop
-I've set up a separate document for [developers](./developers.md).
+I've set up a separate document for [developers](./developers.md). Things like why json-values is a one-package library, if it was developed using TDD or anything related to the
+development of the library can be found there. I'll be adding little by little more and more
+information.    

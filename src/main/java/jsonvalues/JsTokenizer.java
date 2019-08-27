@@ -7,11 +7,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static jsonvalues.MyJsParser.Event.*;
-import static jsonvalues.MyJsTokenizer.Token.*;
+import static jsonvalues.JsParser.Event.*;
+import static jsonvalues.JsTokenizer.Token.*;
 
 
-final class MyJsTokenizer implements Closeable
+final class JsTokenizer implements Closeable
 {
     /**
      Table to look up hex ch -> value (for e.g HEX['F'] = 15, HEX['5'] = 5)
@@ -38,7 +38,7 @@ final class MyJsTokenizer implements Closeable
     }
 
     private static final int HEX_LENGTH = HEX.length;
-    private final MyJsBufferPool bufferPool;
+    private final JsBufferPool bufferPool;
     private final Reader reader;
 
     /**
@@ -120,10 +120,10 @@ final class MyJsTokenizer implements Closeable
                     false
         ),
         EOF(false);
-        private MyJsParser.Event event;
+        private JsParser.Event event;
         private final boolean value;
 
-        Token(MyJsParser.Event event,
+        Token(JsParser.Event event,
               boolean value
              )
         {
@@ -137,7 +137,7 @@ final class MyJsTokenizer implements Closeable
             this.event = NOTHING;
         }
 
-        MyJsParser.Event getEvent()
+        JsParser.Event getEvent()
         {
             return event;
         }
@@ -148,9 +148,9 @@ final class MyJsTokenizer implements Closeable
         }
     }
 
-    MyJsTokenizer(final Reader reader,
-                  final MyJsBufferPool bufferPool
-                 )
+    JsTokenizer(final Reader reader,
+                final JsBufferPool bufferPool
+               )
     {
         this.reader = reader;
         this.bufferPool = bufferPool;
@@ -521,21 +521,21 @@ final class MyJsTokenizer implements Closeable
 
     // Gives the location of the last char. Used for
     // ParsingException.getLocation
-    MyJsCharLocation getLastCharLocation()
+    JsCharLocation getLastCharLocation()
     {
         // Already read the char, so subtracting -1
-        return new MyJsCharLocation(lineNo,
-                                    bufferOffset + readBegin - lastLineOffset,
-                                    bufferOffset + readBegin - 1
+        return new JsCharLocation(lineNo,
+                                  bufferOffset + readBegin - lastLineOffset,
+                                  bufferOffset + readBegin - 1
         );
     }
 
     // Gives the parser location. Used for MyJsParser.getLocation
-    MyJsCharLocation getLocation()
+    JsCharLocation getLocation()
     {
-        return new MyJsCharLocation(lineNo,
-                                    bufferOffset + readBegin - lastLineOffset + 1,
-                                    bufferOffset + readBegin
+        return new JsCharLocation(lineNo,
+                                  bufferOffset + readBegin - lastLineOffset + 1,
+                                  bufferOffset + readBegin
         );
     }
 

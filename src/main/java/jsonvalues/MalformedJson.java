@@ -31,8 +31,8 @@ public final class MalformedJson extends Exception
                                               ));
     }
 
-    static MalformedJson invalidToken(MyJsTokenizer.Token token,
-                                      MyJsCharLocation location,
+    static MalformedJson invalidToken(JsTokenizer.Token token,
+                                      JsCharLocation location,
                                       String expectedTokens
                                      )
     {
@@ -47,7 +47,7 @@ public final class MalformedJson extends Exception
 
 
     static MalformedJson unexpectedChar(int unexpected,
-                                        MyJsCharLocation location
+                                        JsCharLocation location
                                        )
     {
 
@@ -60,7 +60,7 @@ public final class MalformedJson extends Exception
     }
 
     static MalformedJson expectedChar(int unexpected,
-                                      MyJsCharLocation location,
+                                      JsCharLocation location,
                                       char expected
                                      )
     {
@@ -74,7 +74,7 @@ public final class MalformedJson extends Exception
     }
 
     static MalformedJson expectedChar(int unexpected,
-                                      MyJsCharLocation location,
+                                      JsCharLocation location,
                                       char expected,
                                       char expected1
                                      )

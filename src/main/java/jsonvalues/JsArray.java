@@ -11,8 +11,8 @@ import java.util.stream.IntStream;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
-import static jsonvalues.MyJsParser.Event.START_ARRAY;
-import static jsonvalues.MyScalaVector.EMPTY;
+import static jsonvalues.JsParser.Event.START_ARRAY;
+import static jsonvalues.ScalaVector.EMPTY;
 
 /**
  Represents a json array, which is an ordered list of elements. Two implementations are provided, an
@@ -31,7 +31,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100")//  naming convention: _xx_ returns immutable object
     static JsArray _empty_()
     {
-        return new MyMutableJsArray();
+        return new MutableJsArray();
     }
 
     /**
@@ -53,7 +53,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                                        {
                                            throw UserError.mutableArgExpected(e);
                                        });
-        return new MyMutableJsArray(new MyJavaVector(list));
+        return new MutableJsArray(new JavaVector(list));
 
     }
 
@@ -67,7 +67,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     static JsArray _of_(final JsElem e)
     {
         if (requireNonNull(e).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(e);
-        return new MyMutableJsArray(new MyJavaVector().appendFront(e));
+        return new MutableJsArray(new JavaVector().appendFront(e));
     }
 
     /**
@@ -210,13 +210,13 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static TryArr _parse_(final String str)
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-            MyJavaVector array = new MyJavaVector();
+            JavaVector array = new JavaVector();
             array.parse(parser);
-            return new TryArr(new MyMutableJsArray(array));
+            return new TryArr(new MutableJsArray(array));
         }
 
         catch (MalformedJson e)
@@ -273,17 +273,17 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     {
 
 
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-            MyJavaVector array = new MyJavaVector();
+            JavaVector array = new JavaVector();
             array.parse(parser,
                         builder.create(),
                         JsPath.empty()
                               .index(-1)
                        );
-            return new TryArr(new MyMutableJsArray(array));
+            return new TryArr(new MutableJsArray(array));
         }
 
         catch (MalformedJson e)
@@ -402,7 +402,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      */
     static JsArray empty()
     {
-        return MyImmutableJsArray.EMPTY;
+        return ImmutableJsArray.EMPTY;
     }
 
     /**
@@ -593,14 +593,14 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
     static TryArr parse(final String str)
     {
 
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))
         )
         )
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new MyImmutableJsArray(EMPTY.parse(parser)));
+            return new TryArr(new ImmutableJsArray(EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -623,16 +623,16 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-            return new TryArr(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
-                                                                               builder.create(),
-                                                                               JsPath.empty()
+            return new TryArr(new ImmutableJsArray(ScalaVector.EMPTY.parse(parser,
+                                                                           builder.create(),
+                                                                           JsPath.empty()
                                                                                      .index(-1)
-                                                                              )));
+                                                                          )));
         }
 
         catch (MalformedJson e)
@@ -654,12 +654,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        MyScalaVector vector = EMPTY.appendBack(JsStr.of(str));
+        ScalaVector vector = EMPTY.appendBack(JsStr.of(str));
         for (String a : others)
         {
             vector = vector.appendBack(JsStr.of(a));
         }
-        return new MyImmutableJsArray(vector);
+        return new ImmutableJsArray(vector);
     }
 
     /**
@@ -674,12 +674,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        MyJavaVector vector = new MyJavaVector().appendBack(JsStr.of(str));
+        JavaVector vector = new JavaVector().appendBack(JsStr.of(str));
         for (String a : others)
         {
             vector = vector.appendBack(JsStr.of(a));
         }
-        return new MyMutableJsArray(vector);
+        return new MutableJsArray(vector);
     }
 
     /**
@@ -693,12 +693,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        MyScalaVector vector = EMPTY.appendBack(JsInt.of(number));
+        ScalaVector vector = EMPTY.appendBack(JsInt.of(number));
         for (int a : others)
         {
             vector = vector.appendBack(JsInt.of(a));
         }
-        return new MyImmutableJsArray(vector);
+        return new ImmutableJsArray(vector);
     }
 
     /**
@@ -713,12 +713,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        MyJavaVector vector = new MyJavaVector().appendBack(JsInt.of(number));
+        JavaVector vector = new JavaVector().appendBack(JsInt.of(number));
         for (int a : others)
         {
             vector = vector.appendBack(JsInt.of(a));
         }
-        return new MyMutableJsArray(vector);
+        return new MutableJsArray(vector);
     }
 
     /**
@@ -732,12 +732,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        MyScalaVector vector = EMPTY.appendBack(JsLong.of(number));
+        ScalaVector vector = EMPTY.appendBack(JsLong.of(number));
         for (long a : others)
         {
             vector = vector.appendBack(JsLong.of(a));
         }
-        return new MyImmutableJsArray(vector);
+        return new ImmutableJsArray(vector);
     }
 
     /**
@@ -751,12 +751,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        MyScalaVector vector = EMPTY.appendBack(JsBool.of(bool));
+        ScalaVector vector = EMPTY.appendBack(JsBool.of(bool));
         for (boolean a : others)
         {
             vector = vector.appendBack(JsBool.of(a));
         }
-        return new MyImmutableJsArray(vector);
+        return new ImmutableJsArray(vector);
     }
 
     /**
@@ -770,12 +770,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                      )
     {
 
-        MyScalaVector vector = EMPTY.appendBack(JsDouble.of(number));
+        ScalaVector vector = EMPTY.appendBack(JsDouble.of(number));
         for (double a : others)
         {
             vector = vector.appendBack(JsDouble.of(a));
         }
-        return new MyImmutableJsArray(vector);
+        return new ImmutableJsArray(vector);
     }
 
     /**
@@ -790,12 +790,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        MyJavaVector vector = new MyJavaVector().appendBack(JsLong.of(number));
+        JavaVector vector = new JavaVector().appendBack(JsLong.of(number));
         for (long a : others)
         {
             vector = vector.appendBack(JsLong.of(a));
         }
-        return new MyMutableJsArray(vector);
+        return new MutableJsArray(vector);
     }
 
     /**
@@ -810,12 +810,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        MyJavaVector vector = new MyJavaVector().appendBack(JsBool.of(bool));
+        JavaVector vector = new JavaVector().appendBack(JsBool.of(bool));
         for (boolean a : others)
         {
             vector = vector.appendBack(JsBool.of(a));
         }
-        return new MyMutableJsArray(vector);
+        return new MutableJsArray(vector);
     }
 
     /**
@@ -830,12 +830,12 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
                        )
     {
 
-        MyJavaVector vector = new MyJavaVector().appendBack(JsDouble.of(number));
+        JavaVector vector = new JavaVector().appendBack(JsDouble.of(number));
         for (double a : others)
         {
             vector = vector.appendBack(JsDouble.of(a));
         }
-        return new MyMutableJsArray(vector);
+        return new MutableJsArray(vector);
     }
 
 

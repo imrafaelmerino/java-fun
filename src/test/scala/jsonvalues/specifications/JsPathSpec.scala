@@ -10,7 +10,7 @@ class JsPathSpec extends BasePropSpec
   {
     check(forAll(jsPathGen.pathGen)
           { path =>
-            path.equals(JsPath.of(path.toString)) && path.hashCode() == JsPath.of(path.toString).hashCode()
+            path.equals(JsPath.path(path.toString)) && path.hashCode() == JsPath.path(path.toString).hashCode()
           }
           )
   }

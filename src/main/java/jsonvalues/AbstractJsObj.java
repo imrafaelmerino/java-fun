@@ -16,18 +16,18 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.MatchExp.ifNothingElse;
-import static jsonvalues.MyAbstractJsArray.streamOfArr;
+import static jsonvalues.AbstractJsArray.streamOfArr;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 
-abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements JsObj
+abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements JsObj
 {
     public static final long serialVersionUID = 1L;
 
     protected transient T map;
 
-    MyAbstractJsObj(final T myMap)
+    AbstractJsObj(final T myMap)
     {
         assert myMap != null;
         this.map = myMap;
@@ -240,8 +240,8 @@ abstract class MyAbstractJsObj<T extends MyMap<T>, A extends JsArray> implements
     public final boolean equals(final @Nullable Object that)
     {
         if (this == that) return true;
-        if (!(that instanceof MyAbstractJsObj)) return false;
-        final MyAbstractJsObj<?, ?> thatObj = (MyAbstractJsObj) that;
+        if (!(that instanceof AbstractJsObj)) return false;
+        final AbstractJsObj<?, ?> thatObj = (AbstractJsObj) that;
         return this.map.equals(thatObj.map);
     }
 

@@ -17,12 +17,12 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
 import static jsonvalues.MatchExp.ifJsonElse;
 import static jsonvalues.MatchExp.ifNothingElse;
-import static jsonvalues.MyAbstractJsObj.streamOfObj;
+import static jsonvalues.AbstractJsObj.streamOfObj;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
 
-abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> implements JsArray
+abstract class AbstractJsArray<T extends MyVector<T>, O extends JsObj> implements JsArray
 
 {
     public static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
 
     protected transient T array;
 
-    MyAbstractJsArray(T array)
+    AbstractJsArray(T array)
     {
         this.array = array;
     }
@@ -306,8 +306,8 @@ abstract class MyAbstractJsArray<T extends MyVector<T>, O extends JsObj> impleme
     public final boolean equals(final @Nullable Object that)
     {
         if (this == that) return true;
-        if (!(that instanceof MyAbstractJsArray)) return false;
-        final MyAbstractJsArray<?, ?> thatArray = (MyAbstractJsArray) that;
+        if (!(that instanceof AbstractJsArray)) return false;
+        final AbstractJsArray<?, ?> thatArray = (AbstractJsArray) that;
         return this.array.equals(thatArray.array);
 
     }

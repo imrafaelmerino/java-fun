@@ -15,12 +15,12 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
+final class ImmutableJsArray extends AbstractJsArray<ScalaVector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
-    static MyImmutableJsArray EMPTY = new MyImmutableJsArray(MyScalaVector.EMPTY);
+    static ImmutableJsArray EMPTY = new ImmutableJsArray(ScalaVector.EMPTY);
     private transient volatile int hascode;
     //squid:S3077: doesn't make any sese, volatile is perfectly valid here an as a matter of fact
     //is a recomendation from Efective Java to apply the idiom single check for lazy initialization
@@ -28,7 +28,7 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @Nullable
     private transient volatile String str;
 
-    MyImmutableJsArray(final MyScalaVector array)
+    ImmutableJsArray(final ScalaVector array)
     {
         super(array);
     }
@@ -38,12 +38,12 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                        final JsElem elem
                       )
     {
-        return new MyImmutableJsArray(array.add(index,
-                                                elem));
+        return new ImmutableJsArray(array.add(index,
+                                              elem));
     }
 
     @Override
-    MyAbstractJsArray<MyScalaVector, JsObj> emptyArray()
+    AbstractJsArray<ScalaVector, JsObj> emptyArray()
     {
         return EMPTY;
     }
@@ -51,7 +51,7 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     @Override
     JsObj emptyObject()
     {
-        return MyImmutableJsObj.EMPTY;
+        return ImmutableJsObj.EMPTY;
     }
 
 
@@ -71,9 +71,9 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
     }
 
     @Override
-    JsArray of(final MyScalaVector vector)
+    JsArray of(final ScalaVector vector)
     {
-        return new MyImmutableJsArray(vector);
+        return new ImmutableJsArray(vector);
     }
 
     @Override
@@ -89,7 +89,7 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
                                       obj -> acc.add(obj.toMutable()),
                                       arr -> acc.add(arr.toMutable())
                                      ));
-        return new MyMutableJsArray(new MyJavaVector(acc));
+        return new MutableJsArray(new JavaVector(acc));
 
     }
 
@@ -345,8 +345,8 @@ final class MyImmutableJsArray extends MyAbstractJsArray<MyScalaVector, JsObj>
         final String json = (String) s.readObject();
         try
         {
-            array = ((MyImmutableJsArray) JsArray.parse(json)
-                                                 .orElseThrow()).array;
+            array = ((ImmutableJsArray) JsArray.parse(json)
+                                               .orElseThrow()).array;
         }
         catch (MalformedJson malformedJson)
         {

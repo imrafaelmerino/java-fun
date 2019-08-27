@@ -40,4 +40,3 @@ Property Based Testing with [ScalaCheck](https://www.scalacheck.org/).
 PBT is excellent, and if you think about it, computers are way better than humans at cranking out data, and 
 we should take advantage of that. The test coverage that is in [Codecov](https://codecov.io/gh/imrafaelmerino/json-values), corresponds to the test implemented
 using Junit. I haven't found a way of adding up bot test coverages from Junit and ScalaCheck.
-

@@ -14,48 +14,48 @@ import java.util.stream.Stream;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.MyJsParser.Event.END_ARRAY;
+import static jsonvalues.JsParser.Event.END_ARRAY;
 
-final class MyJavaVector implements MyVector<MyJavaVector>
+final class JavaVector implements MyVector<JavaVector>
 {
     private List<JsElem> elements;
 
 
 
-    MyJavaVector(final List<JsElem> pvector)
+    JavaVector(final List<JsElem> pvector)
     {
         elements = pvector;
     }
 
-    MyJavaVector()
+    JavaVector()
     {
         this.elements = new ArrayList<>();
     }
 
 
     @Override
-    public MyJavaVector add(final Collection<? extends JsElem> list)
+    public JavaVector add(final Collection<? extends JsElem> list)
     {
         elements.addAll(list);
         return this;
     }
 
     @Override
-    public MyJavaVector add(final MyJavaVector list)
+    public JavaVector add(final JavaVector list)
     {
         elements.addAll(list.elements);
         return this;
     }
 
     @Override
-    public MyJavaVector appendBack(final JsElem elem)
+    public JavaVector appendBack(final JsElem elem)
     {
         elements.add(elem);
         return this;
     }
 
     @Override
-    public MyJavaVector appendFront(final JsElem elem)
+    public JavaVector appendFront(final JsElem elem)
     {
         elements.add(0,
                      elem
@@ -90,14 +90,14 @@ final class MyJavaVector implements MyVector<MyJavaVector>
     }
 
     @Override
-    public MyJavaVector init()
+    public JavaVector init()
     {
         if (isEmpty()) throw UserError.initOfEmptyArr();
-        return new MyJavaVector(IntStream.range(0,
-                                                elements.size() - 1
-                                               )
-                                         .mapToObj(i -> elements.get(i))
-                                         .collect(Collectors.toList()));
+        return new JavaVector(IntStream.range(0,
+                                              elements.size() - 1
+                                             )
+                                       .mapToObj(i -> elements.get(i))
+                                       .collect(Collectors.toList()));
 
     }
 
@@ -134,7 +134,7 @@ final class MyJavaVector implements MyVector<MyJavaVector>
     }
 
     @Override
-    public MyJavaVector remove(final int index)
+    public JavaVector remove(final int index)
     {
         try
         {
@@ -163,20 +163,20 @@ final class MyJavaVector implements MyVector<MyJavaVector>
     }
 
     @Override
-    public MyJavaVector tail()
+    public JavaVector tail()
     {
         if (isEmpty()) throw UserError.tailOfEmptyArr();
 
-        return new MyJavaVector(elements.stream()
-                                        .skip(1)
-                                        .collect(Collectors.toList()));
+        return new JavaVector(elements.stream()
+                                      .skip(1)
+                                      .collect(Collectors.toList()));
 
     }
 
     @Override
-    public MyJavaVector update(final int index,
-                               final JsElem ele
-                              )
+    public JavaVector update(final int index,
+                             final JsElem ele
+                            )
     {
         try
         {
@@ -203,9 +203,9 @@ final class MyJavaVector implements MyVector<MyJavaVector>
     }
 
     @Override
-    public MyJavaVector add(final int index,
-                            final JsElem ele
-                           )
+    public JavaVector add(final int index,
+                          final JsElem ele
+                         )
     {
         try
         {
@@ -239,9 +239,9 @@ final class MyJavaVector implements MyVector<MyJavaVector>
         return this.eq(that);
     }
 
-    void parse(final MyJsParser parser) throws MalformedJson
+    void parse(final JsParser parser) throws MalformedJson
     {
-        MyJsParser.Event elem;
+        JsParser.Event elem;
         while ((elem = parser.next()) != END_ARRAY)
         {
             assert elem != null;
@@ -263,14 +263,14 @@ final class MyJavaVector implements MyVector<MyJavaVector>
                     this.appendBack(NULL);
                     break;
                 case START_OBJECT:
-                    final MyJavaMap obj = new MyJavaMap();
+                    final JavaMap obj = new JavaMap();
                     obj.parse(parser);
-                    this.appendBack(new MyMutableJsObj(obj));
+                    this.appendBack(new MutableJsObj(obj));
                     break;
                 case START_ARRAY:
-                    final MyJavaVector arr = new MyJavaVector();
+                    final JavaVector arr = new JavaVector();
                     arr.parse(parser);
-                    this.appendBack(new MyMutableJsArray(arr));
+                    this.appendBack(new MutableJsArray(arr));
                     break;
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
@@ -279,12 +279,12 @@ final class MyJavaVector implements MyVector<MyJavaVector>
         }
     }
 
-    void parse(final MyJsParser parser,
+    void parse(final JsParser parser,
                final ParseBuilder.Options options,
                final JsPath path
               ) throws MalformedJson
     {
-        MyJsParser.Event elem;
+        JsParser.Event elem;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
         while ((elem = parser.next()) != END_ARRAY)
         {
@@ -337,25 +337,25 @@ final class MyJavaVector implements MyVector<MyJavaVector>
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MyJavaMap obj = new MyJavaMap();
+                        final JavaMap obj = new JavaMap();
                         obj.parse(parser,
                                   options,
                                   currentPath
                                  );
-                        this.appendBack(new MyMutableJsObj(obj));
+                        this.appendBack(new MutableJsObj(obj));
                     }
                     break;
 
                 case START_ARRAY:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MyJavaVector arr = new MyJavaVector();
+                        final JavaVector arr = new JavaVector();
                         arr.parse(parser,
                                   options,
                                   currentPath.index(-1)
                                  );
 
-                        this.appendBack(new MyMutableJsArray(arr));
+                        this.appendBack(new MutableJsArray(arr));
                     }
                     break;
                 default:

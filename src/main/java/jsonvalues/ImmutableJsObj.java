@@ -15,11 +15,11 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
+final class ImmutableJsObj extends AbstractJsObj<ScalaMap, JsArray>
 {
     public static final long serialVersionUID = 1L;
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
-    static MyImmutableJsObj EMPTY = new MyImmutableJsObj(MyScalaMap.EMPTY);
+    static ImmutableJsObj EMPTY = new ImmutableJsObj(ScalaMap.EMPTY);
     private static final JsPath EMPTY_PATH = JsPath.empty();
     private transient volatile int hascode;
     //squid:S3077: doesn't make any sese, volatile is perfectly valid here an as a matter of fact
@@ -29,7 +29,7 @@ final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     private transient volatile String str;
 
 
-    MyImmutableJsObj(final MyScalaMap myMap)
+    ImmutableJsObj(final ScalaMap myMap)
     {
         super(myMap);
     }
@@ -37,11 +37,11 @@ final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     @Override
     JsArray emptyArray()
     {
-        return MyImmutableJsArray.EMPTY;
+        return ImmutableJsArray.EMPTY;
     }
 
     @Override
-    MyAbstractJsObj<MyScalaMap, JsArray> emptyObject()
+    AbstractJsObj<ScalaMap, JsArray> emptyObject()
     {
         return EMPTY;
     }
@@ -68,9 +68,9 @@ final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
     }
 
     @Override
-    MyAbstractJsObj<MyScalaMap, JsArray> of(final MyScalaMap map)
+    AbstractJsObj<ScalaMap, JsArray> of(final ScalaMap map)
     {
-        return new MyImmutableJsObj(map);
+        return new ImmutableJsObj(map);
     }
 
     @Override
@@ -97,7 +97,7 @@ final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
                                            )
                                     .accept(map.get(key))
                     );
-        return new MyMutableJsObj(new MyJavaMap(acc));
+        return new MutableJsObj(new JavaMap(acc));
 
     }
 
@@ -343,8 +343,8 @@ final class MyImmutableJsObj extends MyAbstractJsObj<MyScalaMap, JsArray>
         final String json = (String) s.readObject();
         try
         {
-            map = ((MyImmutableJsObj) JsObj.parse(json)
-                                           .orElseThrow()).map;
+            map = ((ImmutableJsObj) JsObj.parse(json)
+                                         .orElseThrow()).map;
         }
         catch (MalformedJson malformedJson)
         {

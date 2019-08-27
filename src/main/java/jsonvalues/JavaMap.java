@@ -11,19 +11,19 @@ import java.util.stream.Collectors;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.MyJsParser.Event.END_OBJECT;
+import static jsonvalues.JsParser.Event.END_OBJECT;
 
-final class MyJavaMap implements MyMap<MyJavaMap>
+final class JavaMap implements MyMap<JavaMap>
 {
 
     private java.util.Map<String, JsElem> elements;
 
-    MyJavaMap(final java.util.Map<String, JsElem> elements)
+    JavaMap(final java.util.Map<String, JsElem> elements)
     {
         this.elements = elements;
     }
 
-    MyJavaMap()
+    JavaMap()
     {
         this.elements = new HashMap<>();
     }
@@ -82,7 +82,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
 
 
     @Override
-    public MyJavaMap remove(final String key)
+    public JavaMap remove(final String key)
     {
         elements.remove(key);
         return this;
@@ -115,7 +115,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
     }
 
     @Override
-    public MyJavaMap tail(final String head)
+    public JavaMap tail(final String head)
     {
         if (this.isEmpty()) throw UserError.tailOfEmptyObj();
         final java.util.Map<String, JsElem> tail = elements.keySet()
@@ -125,14 +125,14 @@ final class MyJavaMap implements MyMap<MyJavaMap>
                                                                                      (@KeyFor("elements") String key) -> elements.get(key)
                                                                                     )
                                                                    );
-        return new MyJavaMap(tail);
+        return new JavaMap(tail);
 
     }
 
     @Override
-    public MyJavaMap update(final String key,
-                            final JsElem je
-                           )
+    public JavaMap update(final String key,
+                          final JsElem je
+                         )
     {
         elements.put(key,
                      je
@@ -141,7 +141,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
     }
 
     @Override
-    public MyJavaMap updateAll(final java.util.Map<String, JsElem> map)
+    public JavaMap updateAll(final java.util.Map<String, JsElem> map)
     {
         elements.putAll(map);
         return this;
@@ -160,12 +160,12 @@ final class MyJavaMap implements MyMap<MyJavaMap>
         return this.eq(obj);
     }
 
-    void parse(final MyJsParser parser) throws MalformedJson
+    void parse(final JsParser parser) throws MalformedJson
     {
         while (parser.next() != END_OBJECT)
         {
             final String key = parser.getString();
-            MyJsParser.Event elem = parser.next();
+            JsParser.Event elem = parser.next();
             assert elem != null;
             switch (elem)
             {
@@ -195,17 +195,17 @@ final class MyJavaMap implements MyMap<MyJavaMap>
                                );
                     break;
                 case START_OBJECT:
-                    final MyJavaMap obj = new MyJavaMap();
+                    final JavaMap obj = new JavaMap();
                     obj.parse(parser);
                     this.update(key,
-                                new MyMutableJsObj(obj)
+                                new MutableJsObj(obj)
                                );
                     break;
                 case START_ARRAY:
-                    final MyJavaVector arr = new MyJavaVector();
+                    final JavaVector arr = new JavaVector();
                     arr.parse(parser);
                     this.update(key,
-                                new MyMutableJsArray(arr)
+                                new MutableJsArray(arr)
                                );
                     break;
                 default:
@@ -218,7 +218,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
         }
     }
 
-    void parse(final MyJsParser parser,
+    void parse(final JsParser parser,
                final ParseBuilder.Options options,
                final JsPath path
               ) throws MalformedJson
@@ -228,7 +228,7 @@ final class MyJavaMap implements MyMap<MyJavaMap>
         {
             final String key = options.keyMap.apply(parser.getString());
             final JsPath currentPath = path.key(key);
-            MyJsParser.Event elem = parser.next();
+            JsParser.Event elem = parser.next();
             assert elem != null;
             switch (elem)
             {
@@ -293,26 +293,26 @@ final class MyJavaMap implements MyMap<MyJavaMap>
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MyJavaMap obj = new MyJavaMap();
+                        final JavaMap obj = new JavaMap();
                         obj.parse(parser,
                                   options,
                                   currentPath
                                  );
                         this.update(key,
-                                    new MyMutableJsObj(obj)
+                                    new MutableJsObj(obj)
                                    );
                     }
                     break;
                 case START_ARRAY:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MyJavaVector arr = new MyJavaVector();
+                        final JavaVector arr = new JavaVector();
                         arr.parse(parser,
                                   options,
                                   currentPath.index(-1)
                                  );
                         this.update(key,
-                                    new MyMutableJsArray(arr)
+                                    new MutableJsArray(arr)
                                    );
                     }
                     break;

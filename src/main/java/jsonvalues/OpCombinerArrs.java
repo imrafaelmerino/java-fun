@@ -5,8 +5,6 @@ import static jsonvalues.Trampoline.more;
 
 final class OpCombinerArrs extends OpCombiner<JsArray>
 {
-
-
     OpCombinerArrs(final JsArray a,
                    final JsArray b
                   )

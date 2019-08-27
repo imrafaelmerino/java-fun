@@ -17,30 +17,30 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
+final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
 {
     public static final long serialVersionUID = 1L;
 
-    MyMutableJsObj(final MyJavaMap map)
+    MutableJsObj(final JavaMap map)
     {
         super(map);
     }
 
-    MyMutableJsObj()
+    MutableJsObj()
     {
-        super(new MyJavaMap());
+        super(new JavaMap());
     }
 
     @Override
-    MyMutableJsArray emptyArray()
+    MutableJsArray emptyArray()
     {
-        return new MyMutableJsArray(new MyJavaVector());
+        return new MutableJsArray(new JavaVector());
     }
 
     @Override
     JsObj emptyObject()
     {
-        return new MyMutableJsObj(new MyJavaMap());
+        return new MutableJsObj(new JavaMap());
     }
 
     @Override
@@ -50,9 +50,9 @@ final class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
     }
 
     @Override
-    JsObj of(final MyJavaMap map)
+    JsObj of(final JavaMap map)
     {
-        return new MyMutableJsObj(map);
+        return new MutableJsObj(map);
     }
 
     @Override
@@ -73,7 +73,7 @@ final class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
                                            )
                                     .accept(map.get(key))
                     );
-        return new MyImmutableJsObj(MyScalaMap.EMPTY.updateAll(acc));
+        return new ImmutableJsObj(ScalaMap.EMPTY.updateAll(acc));
 
     }
 
@@ -307,8 +307,8 @@ final class MyMutableJsObj extends MyAbstractJsObj<MyJavaMap, MyMutableJsArray>
         final String json = (String) s.readObject();
         try
         {
-            map = ((MyMutableJsObj) JsObj._parse_(json)
-                                         .orElseThrow()).map;
+            map = ((MutableJsObj) JsObj._parse_(json)
+                                       .orElseThrow()).map;
         }
         catch (MalformedJson malformedJson)
         {

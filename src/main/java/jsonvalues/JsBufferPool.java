@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * char[] pool that pool instances of char[] which are expensive to create.
  *
  */
-final class MyJsBufferPool
+final class JsBufferPool
 {
     // volatile since multiple threads may access queue reference
     private

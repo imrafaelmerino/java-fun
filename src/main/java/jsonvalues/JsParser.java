@@ -1,6 +1,6 @@
 package jsonvalues;
 
-import jsonvalues.MyJsTokenizer.Token;
+import jsonvalues.JsTokenizer.Token;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -11,12 +11,12 @@ import java.util.Deque;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static jsonvalues.MyJsParser.Event.*;
-import static jsonvalues.MyJsTokenizer.Token.*;
+import static jsonvalues.JsParser.Event.*;
+import static jsonvalues.JsTokenizer.Token.*;
 
-final class MyJsParser implements Closeable
+final class JsParser implements Closeable
 {
-    private static final MyJsBufferPool pool = new MyJsBufferPool();
+    private static final JsBufferPool pool = new JsBufferPool();
 
     /**
      * An event from {@code MyJsParser}.
@@ -82,7 +82,7 @@ final class MyJsParser implements Closeable
     private Context currentContext = new NoneContext();
     private Event currentEvent = NOTHING;
     private final Deque<Context> stack = new ConcurrentLinkedDeque<>();
-    private final MyJsTokenizer tokenizer;
+    private final JsTokenizer tokenizer;
 
     private boolean isIntegralNumber()
     {
@@ -119,10 +119,10 @@ final class MyJsParser implements Closeable
         return tokenizer.getBigInteger();
     }
 
-    MyJsParser(Reader reader)
+    JsParser(Reader reader)
     {
-        tokenizer = new MyJsTokenizer(Objects.requireNonNull(reader),
-                                      pool
+        tokenizer = new JsTokenizer(Objects.requireNonNull(reader),
+                                    pool
         );
     }
 
@@ -147,12 +147,12 @@ final class MyJsParser implements Closeable
         return JsBigDec.of(getBigDecimal());
     }
 
-    MyJsCharLocation getLocation()
+    JsCharLocation getLocation()
     {
         return tokenizer.getLocation();
     }
 
-    private MyJsCharLocation getLastCharLocation()
+    private JsCharLocation getLastCharLocation()
     {
         return tokenizer.getLastCharLocation();
     }

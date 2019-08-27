@@ -9,8 +9,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collector;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.MyJsParser.Event.START_OBJECT;
-import static jsonvalues.MyScalaMap.EMPTY;
+import static jsonvalues.JsParser.Event.START_OBJECT;
+import static jsonvalues.ScalaMap.EMPTY;
 
 /**
  Represents a json object, which is an unordered set of name/element pairs. Two implementations are
@@ -30,7 +30,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static JsObj _empty_()
     {
-        return new MyMutableJsObj();
+        return new MutableJsObj();
     }
 
     /**
@@ -266,7 +266,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                            .filter(e -> e.isJson(Json::isImmutable))
                            .findFirst()
                            .ifPresent(UserError::mutableArgExpected);
-        return new MyMutableJsObj(new MyJavaMap(map));
+        return new MutableJsObj(new JavaMap(map));
     }
 
     /**
@@ -278,13 +278,13 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object, xx_ traverses the whole json
     static TryObj _parse_(final String str)
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            MyJavaMap obj = new MyJavaMap();
+            JavaMap obj = new JavaMap();
             obj.parse(parser);
-            return new TryObj(new MyMutableJsObj(obj));
+            return new TryObj(new MutableJsObj(obj));
         }
 
         catch (MalformedJson e)
@@ -342,16 +342,16 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                          )
     {
 
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            MyJavaMap obj = new MyJavaMap();
+            JavaMap obj = new JavaMap();
             obj.parse(parser,
                       builder.create(),
                       JsPath.empty()
                      );
-            return new TryObj(new MyMutableJsObj(obj));
+            return new TryObj(new MutableJsObj(obj));
         }
 
         catch (MalformedJson e)
@@ -413,7 +413,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static JsObj empty()
     {
-        return MyImmutableJsObj.EMPTY;
+        return ImmutableJsObj.EMPTY;
     }
 
 
@@ -661,7 +661,7 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                            .filter(e -> e.isJson(Json::isMutable))
                            .findFirst()
                            .ifPresent(UserError::immutableArgExpected);
-        return new MyImmutableJsObj(EMPTY.updateAll(map));
+        return new ImmutableJsObj(EMPTY.updateAll(map));
     }
 
     /**
@@ -671,11 +671,11 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
      */
     static TryObj parse(final String str)
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new MyImmutableJsObj(EMPTY.parse(parser)));
+            return new TryObj(new ImmutableJsObj(EMPTY.parse(parser)));
         }
         catch (MalformedJson e)
         {
@@ -696,14 +696,14 @@ public interface JsObj extends Json<JsObj>, Iterable<Map.Entry<String, JsElem>>
                         final ParseBuilder builder
                        )
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            MyJsParser.Event keyEvent = parser.next();
+            JsParser.Event keyEvent = parser.next();
             if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-            return new TryObj(new MyImmutableJsObj(EMPTY.parse(parser,
-                                                               builder.create(),
-                                                               JsPath.empty()
-                                                              )));
+            return new TryObj(new ImmutableJsObj(EMPTY.parse(parser,
+                                                             builder.create(),
+                                                             JsPath.empty()
+                                                            )));
         }
         catch (MalformedJson e)
         {

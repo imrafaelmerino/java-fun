@@ -15,7 +15,7 @@ import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsNull.NULL;
 import static jsonvalues.JsPath.fromKey;
-import static jsonvalues.JsPath.of;
+import static jsonvalues.JsPath.path;
 
 public class TestJsObj
 {
@@ -332,10 +332,10 @@ public class TestJsObj
                                JsPair.of(fromKey("c"),
                                          JsInt.of(3)
                                         ),
-                               JsPair.of(of("/d/0/0"),
+                               JsPair.of(path("/d/0/0"),
                                          JsInt.of(5)
                                         ),
-                               JsPair.of(of("/d/0/1"),
+                               JsPair.of(path("/d/0/1"),
                                          JsInt.of(6)
                                         )
                               );
@@ -349,7 +349,7 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(OptionalInt.of(6),
-                                obj.getInt(of("/d/0/1"))
+                                obj.getInt(path("/d/0/1"))
                                );
 
 
@@ -368,10 +368,10 @@ public class TestJsObj
                              JsPair.of(fromKey("c"),
                                        JsInt.of(3)
                                       ),
-                             JsPair.of(of("/d/0/0"),
+                             JsPair.of(path("/d/0/0"),
                                        JsInt.of(5)
                                       ),
-                             JsPair.of(of("/d/0/1"),
+                             JsPair.of(path("/d/0/1"),
                                        JsInt.of(6)
                                       )
                             );
@@ -385,7 +385,7 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(OptionalInt.of(6),
-                                obj.getInt(of("/d/0/1"))
+                                obj.getInt(path("/d/0/1"))
                                );
 
 
@@ -1290,10 +1290,10 @@ public class TestJsObj
     public void test_operations()
     {
 
-        JsObj obj = JsObj.of(JsPair.of(of("/a/b/c"),
+        JsObj obj = JsObj.of(JsPair.of(path("/a/b/c"),
                                        JsInt.of(1)
                                       ),
-                             JsPair.of(of("/a/b/d"),
+                             JsPair.of(path("/a/b/d"),
                                        JsInt.of(2)
                                       )
                             );
@@ -1323,7 +1323,7 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove(of("/a/0"))
+                                obj.remove(path("/a/0"))
                                );
 
         Assertions.assertEquals(obj,
@@ -1331,11 +1331,11 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove(of("/a/b/c/d"))
+                                obj.remove(path("/a/b/c/d"))
                                );
 
         Assertions.assertEquals(obj,
-                                obj.remove(of("/a/b/c/0"))
+                                obj.remove(path("/a/b/c/0"))
                                );
     }
 
@@ -1390,22 +1390,22 @@ public class TestJsObj
     @Test
     public void test_parse_into_immutable() throws MalformedJson
     {
-        JsObj obj = JsObj.of(JsPair.of(of("/a/b/0"),
+        JsObj obj = JsObj.of(JsPair.of(path("/a/b/0"),
                                        NULL
                                       ),
-                             JsPair.of(of("/a/b/1"),
+                             JsPair.of(path("/a/b/1"),
                                        TRUE
                                       ),
-                             JsPair.of(of("/a/b/c"),
+                             JsPair.of(path("/a/b/c"),
                                        FALSE
                                       ),
-                             JsPair.of(of("/a/b/c/d"),
+                             JsPair.of(path("/a/b/c/d"),
                                        JsInt.of(1)
                                       ),
-                             JsPair.of(of("/a/a/a/"),
+                             JsPair.of(path("/a/a/a/"),
                                        JsStr.of("a")
                                       ),
-                             JsPair.of(of("/a/b/0"),
+                             JsPair.of(path("/a/b/0"),
                                        JsBigDec.of(BigDecimal.ONE)
                                       )
                             );
@@ -1425,22 +1425,22 @@ public class TestJsObj
     @Test
     public void test_parse_into_mutable() throws MalformedJson
     {
-        JsObj obj = JsObj._of_(JsPair.of(of("/a/b/0"),
+        JsObj obj = JsObj._of_(JsPair.of(path("/a/b/0"),
                                          NULL
                                         ),
-                               JsPair.of(of("/a/b/1"),
+                               JsPair.of(path("/a/b/1"),
                                          TRUE
                                         ),
-                               JsPair.of(of("/a/b/c"),
+                               JsPair.of(path("/a/b/c"),
                                          FALSE
                                         ),
-                               JsPair.of(of("/a/b/c/d"),
+                               JsPair.of(path("/a/b/c/d"),
                                          JsInt.of(1)
                                         ),
-                               JsPair.of(of("/a/a/a"),
+                               JsPair.of(path("/a/a/a"),
                                          JsStr.of("a")
                                         ),
-                               JsPair.of(of("/a/b/0"),
+                               JsPair.of(path("/a/b/0"),
                                          JsBigDec.of(BigDecimal.ONE)
                                         )
                               );
@@ -1969,14 +1969,14 @@ public class TestJsObj
         Assertions.assertTrue(_obj_.containsElem_(JsInt.of(2)));
         Assertions.assertTrue(obj.containsElem_(NULL));
         Assertions.assertTrue(_obj_.containsElem_(NULL));
-        Assertions.assertTrue(obj.containsPath(of("/b/0")));
-        Assertions.assertTrue(_obj_.containsPath(of("/b/1/a")));
+        Assertions.assertTrue(obj.containsPath(path("/b/0")));
+        Assertions.assertTrue(_obj_.containsPath(path("/b/1/a")));
         Assertions.assertTrue(obj.containsPath(JsPath.fromKey("a")));
         Assertions.assertTrue(_obj_.containsPath(JsPath.fromKey("b")));
         Assertions.assertFalse(obj.containsPath(JsPath.fromKey("3")));
         Assertions.assertFalse(_obj_.containsPath(JsPath.fromKey("3")));
-        Assertions.assertFalse(obj.containsPath(of("/1/b")));
-        Assertions.assertFalse(_obj_.containsPath(of("/1/b")));
+        Assertions.assertFalse(obj.containsPath(path("/1/b")));
+        Assertions.assertFalse(_obj_.containsPath(path("/1/b")));
 
     }
 
@@ -1988,7 +1988,7 @@ public class TestJsObj
 
         final UserError error1 = Assertions.assertThrows(UserError.class,
                                                          () -> JsObj.empty()
-                                                                    .add(JsPath.of("/a/0"),
+                                                                    .add(JsPath.path("/a/0"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2002,7 +2002,7 @@ public class TestJsObj
                                                          () -> JsObj.of("a",
                                                                         JsArray.of(1)
                                                                        )
-                                                                    .add(JsPath.of("/a/b"),
+                                                                    .add(JsPath.path("/a/b"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2017,7 +2017,7 @@ public class TestJsObj
                                                                                  JsInt.of(1)
                                                                                 )
                                                                        )
-                                                                    .add(JsPath.of("/a/0"),
+                                                                    .add(JsPath.path("/a/0"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2030,7 +2030,7 @@ public class TestJsObj
                                                          () -> JsObj.of("a",
                                                                         JsStr.of("a")
                                                                        )
-                                                                    .add(JsPath.of("/a/b"),
+                                                                    .add(JsPath.path("/a/b"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2049,7 +2049,7 @@ public class TestJsObj
 
         final UserError error1 = Assertions.assertThrows(UserError.class,
                                                          () -> JsObj._empty_()
-                                                                    .add(JsPath.of("/a/0"),
+                                                                    .add(JsPath.path("/a/0"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2063,7 +2063,7 @@ public class TestJsObj
                                                          () -> JsObj._of_("a",
                                                                           JsArray._of_(1)
                                                                          )
-                                                                    .add(JsPath.of("/a/b"),
+                                                                    .add(JsPath.path("/a/b"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2078,7 +2078,7 @@ public class TestJsObj
                                                                                      JsInt.of(1)
                                                                                     )
                                                                          )
-                                                                    .add(JsPath.of("/a/0"),
+                                                                    .add(JsPath.path("/a/0"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2091,7 +2091,7 @@ public class TestJsObj
                                                          () -> JsObj._of_("a",
                                                                           JsStr.of("a")
                                                                          )
-                                                                    .add(JsPath.of("/a/b"),
+                                                                    .add(JsPath.path("/a/b"),
                                                                          JsStr.of("hi")
                                                                         )
                                                         );
@@ -2125,10 +2125,10 @@ public class TestJsObj
                                            3,
                                            4
                                           ),
-                                obj.add(of("/a/b/-1"),
+                                obj.add(path("/a/b/-1"),
                                         JsInt.of(4)
                                        )
-                                   .get(JsPath.of("/a/b"))
+                                   .get(JsPath.path("/a/b"))
                                );
 
         Assertions.assertEquals(JsArray.of(1,
@@ -2136,10 +2136,10 @@ public class TestJsObj
                                            3,
                                            4
                                           ),
-                                obj.add(of("/a/b/3"),
+                                obj.add(path("/a/b/3"),
                                         JsInt.of(4)
                                        )
-                                   .get(JsPath.of("/a/b"))
+                                   .get(JsPath.path("/a/b"))
                                );
 
         Assertions.assertEquals(JsArray.of(4,
@@ -2147,26 +2147,26 @@ public class TestJsObj
                                            2,
                                            3
                                           ),
-                                obj.add(of("/a/b/0"),
+                                obj.add(path("/a/b/0"),
                                         JsInt.of(4)
                                        )
-                                   .get(JsPath.of("/a/b"))
+                                   .get(JsPath.path("/a/b"))
                                );
 
 
         Assertions.assertEquals(FALSE,
-                                obj.add(of("/a/c/d"),
+                                obj.add(path("/a/c/d"),
                                         e -> e.asJsBool()
                                               .negate()
                                        )
-                                   .get(JsPath.of("/a/c/d"))
+                                   .get(JsPath.path("/a/c/d"))
                                );
 
         Assertions.assertEquals(JsStr.of("bye!"),
-                                obj.add(of("/a/c/e"),
+                                obj.add(path("/a/c/e"),
                                         JsStr.of("bye!")
                                        )
-                                   .get(JsPath.of("/a/c/e"))
+                                   .get(JsPath.path("/a/c/e"))
                                );
 
     }

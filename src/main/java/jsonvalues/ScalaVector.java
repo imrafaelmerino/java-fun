@@ -14,10 +14,9 @@ import java.util.stream.Stream;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.MyConstants.*;
-import static jsonvalues.MyJsParser.Event.END_ARRAY;
+import static jsonvalues.JsParser.Event.END_ARRAY;
 
-final class MyScalaVector implements MyVector<MyScalaVector>
+final class ScalaVector implements MyVector<ScalaVector>
 {
 
     static final Vector<JsElem> EMPTY_VECTOR = new scala.collection.immutable.Vector<>(0,
@@ -39,43 +38,43 @@ final class MyScalaVector implements MyVector<MyScalaVector>
         }
     };
 
-    static final MyScalaVector EMPTY = new MyScalaVector(EMPTY_VECTOR);
+    static final ScalaVector EMPTY = new ScalaVector(EMPTY_VECTOR);
     private final Vector<JsElem> vector;
 
 
-    MyScalaVector(final Vector<JsElem> vector)
+    ScalaVector(final Vector<JsElem> vector)
     {
         this.vector = vector;
     }
 
     @Override
-    public MyScalaVector add(final Collection<? extends JsElem> list)
+    public ScalaVector add(final Collection<? extends JsElem> list)
     {
         Vector<JsElem> r = this.vector;
         for (final JsElem jsElem : list) r = r.appendBack(jsElem);
-        return new MyScalaVector(r);
+        return new ScalaVector(r);
     }
 
 
     @Override
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
-    public MyScalaVector add(final MyScalaVector that)
+    public ScalaVector add(final ScalaVector that)
     {
-        return new MyScalaVector(vector.$plus$plus(that.vector,
-                                                   bf
-                                                  ));
+        return new ScalaVector(vector.$plus$plus(that.vector,
+                                                 bf
+                                                ));
     }
 
     @Override
-    public MyScalaVector appendBack(final JsElem elem)
+    public ScalaVector appendBack(final JsElem elem)
     {
-        return new MyScalaVector(vector.appendBack(elem));
+        return new ScalaVector(vector.appendBack(elem));
     }
 
     @Override
-    public MyScalaVector appendFront(final JsElem elem)
+    public ScalaVector appendFront(final JsElem elem)
     {
-        return new MyScalaVector(vector.appendFront(elem));
+        return new ScalaVector(vector.appendFront(elem));
     }
 
     @Override
@@ -105,11 +104,11 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     }
 
     @Override
-    public MyScalaVector init()
+    public ScalaVector init()
     {
         if (this.isEmpty()) throw UserError.initOfEmptyArr();
 
-        return new MyScalaVector(vector.init());
+        return new ScalaVector(vector.init());
     }
 
     @Override
@@ -136,42 +135,42 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     @Override
     public String toString()
     {
-        if (vector.isEmpty()) return MyConstants.EMPTY_ARR_AS_STR;
+        if (vector.isEmpty()) return "[]";
 
-        return vector.mkString(OPEN_BRACKET,
-                               COMMA,
-                               CLOSE_BRACKET
+        return vector.mkString("[",
+                               ",",
+                               "]"
                               );
     }
 
     @Override
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
-    public MyScalaVector remove(final int index)
+    public ScalaVector remove(final int index)
     {
-        if (index == 0) return new MyScalaVector(vector.tail());
-        if (index == vector.size() - 1) return new MyScalaVector(vector.init());
+        if (index == 0) return new ScalaVector(vector.tail());
+        if (index == vector.size() - 1) return new ScalaVector(vector.init());
 
         Tuple2<Vector<JsElem>, Vector<JsElem>> tuple = vector.splitAt(index);
-        return new MyScalaVector(tuple._1.$plus$plus(tuple._2.tail(),
-                                                     bf
-                                                    ));
+        return new ScalaVector(tuple._1.$plus$plus(tuple._2.tail(),
+                                                   bf
+                                                  ));
     }
 
     @Override
-    public MyScalaVector add(final int index,
-                             final JsElem ele
-                            )
+    public ScalaVector add(final int index,
+                           final JsElem ele
+                          )
     {
 
-        if (index == 0) return new MyScalaVector(vector.appendFront(ele));
-        if (index == -1 || index == vector.size()) return new MyScalaVector(vector.appendBack(ele));
+        if (index == 0) return new ScalaVector(vector.appendFront(ele));
+        if (index == -1 || index == vector.size()) return new ScalaVector(vector.appendBack(ele));
         if (index < -1 || index > vector.size()) throw UserError.indexOutOfBounds(vector.size(),
                                                                                   index,
                                                                                   "add"
                                                                                  );
         Tuple2<Vector<JsElem>, Vector<JsElem>> tuple = vector.splitAt(index);
-        return new MyScalaVector(tuple._1.appendBack(ele)
-                                         .$plus$plus(tuple._2,
+        return new ScalaVector(tuple._1.appendBack(ele)
+                                       .$plus$plus(tuple._2,
                                                      bf
                                                     ));
     }
@@ -190,21 +189,21 @@ final class MyScalaVector implements MyVector<MyScalaVector>
     }
 
     @Override
-    public MyScalaVector tail()
+    public ScalaVector tail()
     {
         if (this.isEmpty()) throw UserError.tailOfEmptyArr();
 
-        return new MyScalaVector(vector.tail());
+        return new ScalaVector(vector.tail());
     }
 
     @Override
-    public MyScalaVector update(final int index,
-                                final JsElem ele
-                               )
+    public ScalaVector update(final int index,
+                              final JsElem ele
+                             )
     {
-        return new MyScalaVector(vector.updateAt(index,
-                                                 ele
-                                                ));
+        return new ScalaVector(vector.updateAt(index,
+                                               ele
+                                              ));
     }
 
 
@@ -214,10 +213,10 @@ final class MyScalaVector implements MyVector<MyScalaVector>
         return this.eq(that);
     }
 
-    MyScalaVector parse(final MyJsParser parser) throws MalformedJson
+    ScalaVector parse(final JsParser parser) throws MalformedJson
     {
-        MyJsParser.Event elem;
-        MyScalaVector newRoot = this;
+        JsParser.Event elem;
+        ScalaVector newRoot = this;
         while ((elem = parser.next()) != END_ARRAY)
         {
             switch (elem)
@@ -238,12 +237,12 @@ final class MyScalaVector implements MyVector<MyScalaVector>
                     newRoot = newRoot.appendBack(NULL);
                     break;
                 case START_OBJECT:
-                    final MyScalaMap newObj = MyScalaMap.EMPTY.parse(parser);
-                    newRoot = newRoot.appendBack(new MyImmutableJsObj(newObj));
+                    final ScalaMap newObj = ScalaMap.EMPTY.parse(parser);
+                    newRoot = newRoot.appendBack(new ImmutableJsObj(newObj));
                     break;
                 case START_ARRAY:
-                    final MyScalaVector newVector = EMPTY.parse(parser);
-                    newRoot = newRoot.appendBack(new MyImmutableJsArray(newVector));
+                    final ScalaVector newVector = EMPTY.parse(parser);
+                    newRoot = newRoot.appendBack(new ImmutableJsArray(newVector));
                     break;
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
@@ -253,13 +252,13 @@ final class MyScalaVector implements MyVector<MyScalaVector>
 
     }
 
-    MyScalaVector parse(final MyJsParser parser,
-                        final ParseBuilder.Options options,
-                        final JsPath path
-                       ) throws MalformedJson
+    ScalaVector parse(final JsParser parser,
+                      final ParseBuilder.Options options,
+                      final JsPath path
+                     ) throws MalformedJson
     {
-        MyJsParser.Event elem;
-        MyScalaVector newRoot = this;
+        JsParser.Event elem;
+        ScalaVector newRoot = this;
         JsPair pair;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
         while ((elem = parser.next()) != END_ARRAY)
@@ -307,19 +306,19 @@ final class MyScalaVector implements MyVector<MyScalaVector>
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
                     {
-                        newRoot = newRoot.appendBack(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser,
-                                                                                                 options,
-                                                                                                 currentPath
-                                                                                                )));
+                        newRoot = newRoot.appendBack(new ImmutableJsObj(ScalaMap.EMPTY.parse(parser,
+                                                                                             options,
+                                                                                             currentPath
+                                                                                            )));
                     }
                     break;
                 case START_ARRAY:
                     if (options.keyFilter.test(currentPath))
                     {
-                        newRoot = newRoot.appendBack(new MyImmutableJsArray(EMPTY.parse(parser,
-                                                                                        options,
-                                                                                        currentPath.index(-1)
-                                                                                       )));
+                        newRoot = newRoot.appendBack(new ImmutableJsArray(EMPTY.parse(parser,
+                                                                                      options,
+                                                                                      currentPath.index(-1)
+                                                                                     )));
                     }
                     break;
                 default:

@@ -17,22 +17,22 @@ public class TestJsElems
     public void test_map_pairs()
     {
 
-        Assertions.assertEquals(JsPair.of(JsPath.of("/a/b/2"),
+        Assertions.assertEquals(JsPair.of(JsPath.path("/a/b/2"),
                                           JsInt.of(1)
                                          ),
-                                JsPair.of(JsPath.of("/a/b/1"),
+                                JsPair.of(JsPath.path("/a/b/1"),
                                           JsInt.of(1)
                                          )
                                       .mapPath(JsPath::inc)
                                );
 
-        final JsPair pair1 = JsPair.of(JsPath.of("/a/b/1"),
+        final JsPair pair1 = JsPair.of(JsPath.path("/a/b/1"),
                                        JsInt.of(1)
                                       )
                                    .mapElem(e -> e.asJsInt()
                                                   .map(i -> i + 1));
 
-        Assertions.assertEquals(JsPair.of(JsPath.of("/a/b/1"),
+        Assertions.assertEquals(JsPair.of(JsPath.path("/a/b/1"),
                                           JsInt.of(2)
                                          ),
                                 pair1

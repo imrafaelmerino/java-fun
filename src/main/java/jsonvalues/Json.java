@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsNothing.NOTHING;
-import static jsonvalues.MyJsParser.Event.START_ARRAY;
+import static jsonvalues.JsParser.Event.START_ARRAY;
 
 /**
  <pre>
@@ -81,21 +81,21 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
     static Try _parse_(final String str)
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
 
-            final MyJsParser.Event event = parser.next();
+            final JsParser.Event event = parser.next();
 
             if (event == START_ARRAY)
             {
-                final MyJavaVector array = new MyJavaVector();
+                final JavaVector array = new JavaVector();
                 array.parse(parser);
-                return new Try(new MyMutableJsArray(array));
+                return new Try(new MutableJsArray(array));
             }
 
-            final MyJavaMap obj = new MyJavaMap();
+            final JavaMap obj = new JavaMap();
             obj.parse(parser);
-            return new Try(new MyMutableJsObj(obj));
+            return new Try(new MutableJsObj(obj));
         }
         catch (MalformedJson e)
         {
@@ -118,25 +118,25 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                        final ParseBuilder builder
                       )
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
-            final MyJsParser.Event event = parser.next();
+            final JsParser.Event event = parser.next();
             if (event == START_ARRAY)
             {
-                final MyJavaVector array = new MyJavaVector();
+                final JavaVector array = new JavaVector();
                 array.parse(parser,
                             builder.create(),
                             JsPath.empty()
                                   .index(-1)
                            );
-                return new Try(new MyMutableJsArray(array));
+                return new Try(new MutableJsArray(array));
             }
-            final MyJavaMap obj = new MyJavaMap();
+            final JavaMap obj = new JavaMap();
             obj.parse(parser,
                       builder.create(),
                       JsPath.empty()
                      );
-            return new Try(new MyMutableJsObj(obj));
+            return new Try(new MutableJsObj(obj));
         }
 
         catch (MalformedJson e)
@@ -1016,16 +1016,16 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     static Try parse(String str)
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
 
-            final MyJsParser.Event event = parser.next();
+            final JsParser.Event event = parser.next();
             if (event == START_ARRAY)
             {
-                return new Try(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser)
+                return new Try(new ImmutableJsArray(ScalaVector.EMPTY.parse(parser)
                 ));
             }
-            return new Try(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser)));
+            return new Try(new ImmutableJsObj(ScalaMap.EMPTY.parse(parser)));
         }
 
         catch (MalformedJson e)
@@ -1048,21 +1048,21 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                      ParseBuilder builder
                     )
     {
-        try (MyJsParser parser = new MyJsParser(new StringReader(requireNonNull(str))))
+        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
         {
 
-            final MyJsParser.Event event = parser.next();
-            if (event == START_ARRAY) return new Try(new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
-                                                                                                      builder.create(),
-                                                                                                      JsPath.empty()
+            final JsParser.Event event = parser.next();
+            if (event == START_ARRAY) return new Try(new ImmutableJsArray(ScalaVector.EMPTY.parse(parser,
+                                                                                                  builder.create(),
+                                                                                                  JsPath.empty()
                                                                                                             .index(-1)
 
-                                                                                                     )));
-            return new Try(new MyImmutableJsObj(MyScalaMap.EMPTY.parse(parser,
-                                                                       builder.create(),
-                                                                       JsPath.empty()
+                                                                                                 )));
+            return new Try(new ImmutableJsObj(ScalaMap.EMPTY.parse(parser,
+                                                                   builder.create(),
+                                                                   JsPath.empty()
 
-                                                                      )));
+                                                                  )));
         }
 
         catch (MalformedJson e)

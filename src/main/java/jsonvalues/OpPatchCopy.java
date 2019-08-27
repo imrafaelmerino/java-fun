@@ -6,8 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.Patch.FROM_FIELD;
-import static jsonvalues.Patch.PATH_FIELD;
 
 final class OpPatchCopy<T extends Json<T>> implements OpPatch<T>
 {
@@ -17,12 +15,12 @@ final class OpPatchCopy<T extends Json<T>> implements OpPatch<T>
     OpPatchCopy(final JsObj op
                ) throws PatchMalformed
     {
-        Optional<String> from = requireNonNull(op).getStr(JsPath.fromKey(FROM_FIELD));
+        Optional<String> from = requireNonNull(op).getStr(JsPath.fromKey("from"));
         if (!from.isPresent()) throw PatchMalformed.fromRequired(op);
-        this.from = JsPath.of(from.get());
-        Optional<String> path = op.getStr(JsPath.fromKey(PATH_FIELD));
+        this.from = JsPath.path(from.get());
+        Optional<String> path = op.getStr(JsPath.fromKey("path"));
         if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.of(path.get());
+        this.path =  JsPath.path(path.get());
     }
 
 

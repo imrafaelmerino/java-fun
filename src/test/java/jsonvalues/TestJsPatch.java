@@ -469,9 +469,6 @@ public class TestJsPatch
 
             if (!error.isNothing())
             {
-
-                System.out.println(obj.get(JsPath.fromKey("comment")));
-
                 Assertions.assertEquals(expected,
                                         obj.get(JsPath.fromKey("doc"))
                                            .asJson()
@@ -481,7 +478,6 @@ public class TestJsPatch
                                        );
             } else
             {
-                System.out.println(obj.get(JsPath.fromKey("error")));
 
                 Assertions.assertThrows(Exception.class,
                                         () -> obj.get(JsPath.fromKey("doc"))

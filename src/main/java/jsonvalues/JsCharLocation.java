@@ -1,15 +1,15 @@
 package jsonvalues;
 
-final class MyJsCharLocation
+final class JsCharLocation
 {
     private final long columnNo;
     private final long lineNo;
     private final long offset;
 
-    MyJsCharLocation(long lineNo,
-                     long columnNo,
-                     long streamOffset
-                    )
+    JsCharLocation(long lineNo,
+                   long columnNo,
+                   long streamOffset
+                  )
     {
         this.lineNo = lineNo;
         this.columnNo = columnNo;

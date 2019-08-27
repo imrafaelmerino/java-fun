@@ -30,17 +30,17 @@ public final class InternalError extends RuntimeException
                                               ));
     }
 
-     static InternalError encodingNotSupported(final UnsupportedEncodingException e)
+    static InternalError encodingNotSupported(final UnsupportedEncodingException e)
     {
         return new InternalError(e);
     }
 
-     static InternalError notEmptyMapWithoutAKey()
+    static InternalError notEmptyMapWithoutAKey()
     {
         return new InternalError("A calculation on a non empty map was expected to return a result.");
     }
 
-     static InternalError opNotSupportedForArrays()
+    static InternalError opNotSupportedForArrays()
     {
         return new InternalError("A JsArray doesn't have keys. Don't call this method.");
     }
@@ -54,7 +54,8 @@ public final class InternalError extends RuntimeException
 
     static InternalError patchOperationNotSupported(final String op)
     {
-        return new InternalError(String.format("Patch operation '%s' not supported.",op));
+        return new InternalError(String.format("Patch operation '%s' not supported.",
+                                               op));
     }
 
     static InternalError tokenNotExpected(String token)

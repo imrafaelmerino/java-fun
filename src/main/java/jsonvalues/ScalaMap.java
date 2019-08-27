@@ -14,24 +14,23 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import static jsonvalues.MyConstants.COMMA;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.MyJsParser.Event.END_OBJECT;
+import static jsonvalues.JsParser.Event.END_OBJECT;
 
-final class MyScalaMap implements MyMap<MyScalaMap>
+final class ScalaMap implements MyMap<ScalaMap>
 {
     static final HashMap<String, JsElem> EMPTY_HASH_MAP = new HashMap<>();
-    static final MyScalaMap EMPTY = new MyScalaMap();
+    static final ScalaMap EMPTY = new ScalaMap();
     private final scala.collection.immutable.Map<String, JsElem> persistentMap;
 
-    MyScalaMap()
+    ScalaMap()
     {
         this.persistentMap = EMPTY_HASH_MAP;
     }
 
-    MyScalaMap(final scala.collection.immutable.Map<String, JsElem> map)
+    ScalaMap(final scala.collection.immutable.Map<String, JsElem> map)
     {
         this.persistentMap = map;
     }
@@ -89,7 +88,8 @@ final class MyScalaMap implements MyMap<MyScalaMap>
     @Override
     public Optional<JsElem> getOptional(final String key)
     {
-        return persistentMap.contains(key) ? Optional.of(persistentMap.get(key).get()) : Optional.empty();
+        return persistentMap.contains(key) ? Optional.of(persistentMap.get(key)
+                                                                      .get()) : Optional.empty();
     }
 
     @Override
@@ -118,9 +118,9 @@ final class MyScalaMap implements MyMap<MyScalaMap>
 
     @Override
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
-    public MyScalaMap remove(final String key)
+    public ScalaMap remove(final String key)
     {
-        return new MyScalaMap(((HashMap<String, JsElem>) persistentMap).$minus(key));
+        return new ScalaMap(((HashMap<String, JsElem>) persistentMap).$minus(key));
     }
 
     @Override
@@ -131,16 +131,16 @@ final class MyScalaMap implements MyMap<MyScalaMap>
 
     @Override
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
-    public MyScalaMap tail(String head)
+    public ScalaMap tail(String head)
     {
         if (this.isEmpty()) throw UserError.tailOfEmptyObj();
-        return new MyScalaMap(((HashMap<String, JsElem>) persistentMap).$minus(head));
+        return new ScalaMap(((HashMap<String, JsElem>) persistentMap).$minus(head));
     }
 
     @Override
     public String toString()
     {
-        if (persistentMap.isEmpty()) return MyConstants.EMPTY_OBJ_AS_STR;
+        if (persistentMap.isEmpty()) return "{}";
 
 
         return persistentMap.keysIterator()
@@ -148,32 +148,32 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                                                           key,
                                                           persistentMap.apply(key)
                                                          )))
-                            .mkString(MyConstants.OPEN_CURLY,
-                                      COMMA,
-                                      MyConstants.CLOSE_CURLY
+                            .mkString("{",
+                                      ",",
+                                      "}"
                                      );
     }
 
     @Override
-    public MyScalaMap update(final String key,
-                             final JsElem je
-                            )
+    public ScalaMap update(final String key,
+                           final JsElem je
+                          )
     {
-        return new MyScalaMap(persistentMap.updated(key,
-                                                    je
-                                                   ));
+        return new ScalaMap(persistentMap.updated(key,
+                                                  je
+                                                 ));
     }
 
 
     @Override
-    public MyScalaMap updateAll(final java.util.Map<String, JsElem> map)
+    public ScalaMap updateAll(final java.util.Map<String, JsElem> map)
     {
         scala.collection.immutable.Map<String, JsElem> newMap = this.persistentMap;
         for (java.util.Map.Entry<String, JsElem> entry : map.entrySet())
             newMap = newMap.updated(entry.getKey(),
                                     entry.getValue()
                                    );
-        return new MyScalaMap(newMap);
+        return new ScalaMap(newMap);
     }
 
     @Override
@@ -182,13 +182,13 @@ final class MyScalaMap implements MyMap<MyScalaMap>
         return this.eq(obj);
     }
 
-    MyScalaMap parse(final MyJsParser parser) throws MalformedJson
+    ScalaMap parse(final JsParser parser) throws MalformedJson
     {
-        MyScalaMap newRoot = this;
+        ScalaMap newRoot = this;
         while (parser.next() != END_OBJECT)
         {
             final String key = parser.getString();
-            MyJsParser.Event elem = parser.next();
+            JsParser.Event elem = parser.next();
             switch (elem)
             {
                 case VALUE_STRING:
@@ -217,15 +217,15 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                                             );
                     break;
                 case START_OBJECT:
-                    final MyScalaMap newObj = EMPTY.parse(parser);
+                    final ScalaMap newObj = EMPTY.parse(parser);
                     newRoot = newRoot.update(key,
-                                             new MyImmutableJsObj(newObj)
+                                             new ImmutableJsObj(newObj)
                                             );
                     break;
                 case START_ARRAY:
-                    final MyScalaVector newArr = MyScalaVector.EMPTY.parse(parser);
+                    final ScalaVector newArr = ScalaVector.EMPTY.parse(parser);
                     newRoot = newRoot.update(key,
-                                             new MyImmutableJsArray(newArr)
+                                             new ImmutableJsArray(newArr)
                                             );
                     break;
                 default:
@@ -239,19 +239,19 @@ final class MyScalaMap implements MyMap<MyScalaMap>
 
     }
 
-    MyScalaMap parse(final MyJsParser parser,
-                     final ParseBuilder.Options options,
-                     final JsPath path
-                    ) throws MalformedJson
+    ScalaMap parse(final JsParser parser,
+                   final ParseBuilder.Options options,
+                   final JsPath path
+                  ) throws MalformedJson
     {
 
-        MyScalaMap newRoot = this;
+        ScalaMap newRoot = this;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
         while (parser.next() != END_OBJECT)
         {
             final String key = options.keyMap.apply(parser.getString());
             final JsPath currentPath = path.key(key);
-            MyJsParser.Event elem = parser.next();
+            JsParser.Event elem = parser.next();
             final JsPair pair;
             assert elem != null;
             switch (elem)
@@ -301,10 +301,10 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
-                                                 new MyImmutableJsObj(EMPTY.parse(parser,
-                                                                                  options,
-                                                                                  currentPath
-                                                                                 ))
+                                                 new ImmutableJsObj(EMPTY.parse(parser,
+                                                                                options,
+                                                                                currentPath
+                                                                               ))
                                                 );
                     }
                     break;
@@ -312,10 +312,10 @@ final class MyScalaMap implements MyMap<MyScalaMap>
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
-                                                 new MyImmutableJsArray(MyScalaVector.EMPTY.parse(parser,
-                                                                                                  options,
-                                                                                                  currentPath.index(-1)
-                                                                                                 ))
+                                                 new ImmutableJsArray(ScalaVector.EMPTY.parse(parser,
+                                                                                              options,
+                                                                                              currentPath.index(-1)
+                                                                                             ))
                                                 );
                     }
                     break;

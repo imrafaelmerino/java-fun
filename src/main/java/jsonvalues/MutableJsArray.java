@@ -13,17 +13,17 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
+final class MutableJsArray extends AbstractJsArray<JavaVector, JsObj>
 {
     public static final long serialVersionUID = 1L;
 
-    MyMutableJsArray()
+    MutableJsArray()
     {
-        super(new MyJavaVector());
+        super(new JavaVector());
     }
 
 
-    MyMutableJsArray(final MyJavaVector array)
+    MutableJsArray(final JavaVector array)
     {
         super(array);
     }
@@ -40,20 +40,20 @@ final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
     @Override
     JsArray emptyArray()
     {
-        return new MyMutableJsArray(new MyJavaVector());
+        return new MutableJsArray(new JavaVector());
     }
 
     @Override
     JsObj emptyObject()
     {
-        return new MyMutableJsObj(new MyJavaMap());
+        return new MutableJsObj(new JavaMap());
     }
 
 
     @Override
-    JsArray of(final MyJavaVector vector)
+    JsArray of(final JavaVector vector)
     {
-        return new MyMutableJsArray(vector);
+        return new MutableJsArray(vector);
     }
 
     @Override
@@ -116,7 +116,7 @@ final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
                                       obj -> acc.add(obj.toImmutable()),
                                       arr -> acc.add(arr.toImmutable())
                                      ));
-        return new MyImmutableJsArray(MyScalaVector.EMPTY.add(acc));
+        return new ImmutableJsArray(ScalaVector.EMPTY.add(acc));
 
     }
 
@@ -306,13 +306,13 @@ final class MyMutableJsArray extends MyAbstractJsArray<MyJavaVector, JsObj>
         final String json = (String) s.readObject();
         try
         {
-            array = ((MyMutableJsArray) JsArray._parse_(json)
-                                               .orElseThrow()).array;
+            array = ((MutableJsArray) JsArray._parse_(json)
+                                             .orElseThrow()).array;
         }
         catch (MalformedJson malformedJson)
         {
             throw new NotSerializableException(String.format("Error deserializing a string into the class %s: %s",
-                                                             MyMutableJsArray.class.getName(),
+                                                             MutableJsArray.class.getName(),
                                                              malformedJson.getMessage()
                                                             ));
         }

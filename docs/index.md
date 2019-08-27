@@ -21,8 +21,10 @@
    - [Filter](#filter)
    - [Map](#map)
    - [Reduce](#reduce)
- - [Union](#union)
- - [Intersection](#intersection)
+ - [RFC 6902: Json Patch](#json-patch)  
+ - [Union and intersection](#union-and-intersection)
+   - [Union](#union)
+   - [Intersection](#intersection)
  - [Equality](#equality)
  - [Exceptions and errors](#exceptions-errors)
  - [Trampolines](#trampolines)
@@ -30,17 +32,24 @@
  - [Tools](#tools)
  
 ## <a name="jspath"></a> JsPath
-A JsPath represents a string syntax for identifying a specific value within a JSON. It's similar to the Json Pointer specification
-defined in [rfc6901](https://tools.ietf.org/html/rfc6901), but I'd argue that **json-values** implementation it's more readable. 
+A JsPath represents a string syntax for identifying a specific value within a JSON. It's an implementation of the Json Pointer specification
+defined in [rfc6901](https://tools.ietf.org/html/rfc6901), but there are two slightly differences:
+ 
+  - According to the RFC, the following path **/0** could represent both a key named _0_ or the first element of an array. It's perfectly fine
+to get data out of a Json; after all, the schema of the Json is supposed to be known by the user. However, when inserting data in, a way must 
+distinguish what element to insert, either a Json object or a Json array. The approach of json-values to make that distinction is to single-quote keys which names are
+numbers,i.e., _/0_ points to the first element of an array whereas _/'0'_ points the key _0_ of a Json object.
+  - The index -1 represents the last element of an array.
+
 There are two ways of creating paths:
-* From a path-like string using the method _JsPath.of(...)_. A path is made up of keys and indexes 
-separated by dots. Keys are URL-encoded to escape special characters; therefore, 
-they could be part of an URL. When keys are numbers, they have to be single-quoted, 
-to distinguish them from indexes.
-* Using the  _fromKey_, _fromIndex_, _key_ and _index_ methods from the _JsPath_ class API. In this case, keys don't need
-to be URL-encoded and no string is parsed.
+* From a path-like string using the method _JsPath.path(...)_. See [rfc6901](https://tools.ietf.org/html/rfc6901) for further details
+
+* Using the  _fromKey_, _fromIndex_, _key_ and _index_ methods from the _JsPath_  API:
 
 ```
+import static jsonvalues.JsPath.fromKey;
+import static jsonvalues.JsPath.fromIndex;
+import static jsonvalues.JsPath.path;
 { 
 "a": [ {"b": [1,2,3]} ],
 " ": "z",
@@ -49,37 +58,48 @@ to be URL-encoded and no string is parsed.
 "'": null,
 "": 1.2
 }
-JsPath.of("a.0.b.0") or JsPath.fromKey("a").index(0).key("b").index(0) -> 1
-                             
-JsPath.of("a.0.b.1") or JsPath.fromKey("a").index(0).key("b").index(1) -> 2
+// represents the root
+path("") or JsPath.empty() 
 
-JsPath.of("a.0.b.2") or JsPath.fromKey("a").index(0).key("b").index(2) -> 3 
-                               
-// the index -1 points to the last element of the array 
-JsPath.of("a.0.b.-1") or JsPath.fromKey("a").index(0).key("b").index(-1) -> 3
+// 1
+path("/a/0/b/0") 
+fromKey("a").index(0).key("b").index(0) 
+          
+// 2                   
+path("/a/0/b/1") 
+fromKey("a").index(0).key("b").index(1) -> 2
 
-// whitespace is urlencoded to + or %20 (both are valid)
-JsPath.of("+") or JsPath.of("%20") or JsPath.fromKey(" ") -> z  
+// 3
+path("/a/0/b/2") 
+fromKey("a").index(0).key("b").index(2) 
+path("/a/0/b/-1") 
+fromKey("a").index(0).key("b").index(-1) 
 
-// dot has to be escaped using of method
-JsPath.of("c%2Ed") or JsPath.fromKey("c.d") -> z                           
-    
-// notice how the key is single-qouted in of method
-JsPath.of("'1'.0") or JsPath.fromKey("1").index(0) -> false
-JsPath.of("'1'.1") or JsPath.fromKey("1").index(1) -> true
+// z
+path("#/+") or fromKey(" ")
 
-// single quote is urlencoded to %27
-JsPath.of("%27") or JsPath.fromKey("'") -> null                              
-        
-// empty string is a valid key!
-JsPath.of("") or JsPath.fromKey("") -> 1.2
+// 4
+path("#/c%2Ed")
+fromKey("c.d")                        
+
+// false    
+path("/'1'/0") or fromKey("1").index(0)
+// true
+path("/'1'/1") or fromKey("1").index(1)
+
+// null
+path("#/%27")
+fromKey("'")                           
+       
+// 1.2 
+path("/")
+fromKey("")
 ```
-All the methods that accept a JsPath are overloaded so that a path-like string can be passed in instead.e
 ## <a name="jselem"></a> JsElem
 Every element in a Json is a _JsElem_. There is one for each json value described in [json.org](https://www.json.org):
 * _JsStr_ represents immutable strings.
 * The singletons _JsBool.TRUE_ and _JsBool.FALSE_ represent true and false.
-* The singleton _NULL_ of type _JsNull_ represents null.
+* The singleton _JsNull.NULL_ represents null.
 * _JsObj_ is a _Json_ that represents an object, which is an unordered set of name/value pairs.
 * _JsArray_ is a _Json_ that represents an array, which is an ordered collection of values.
 * _JsNumber_ represents immutable numbers. There are five different specializations: 
@@ -87,28 +107,23 @@ Every element in a Json is a _JsElem_. There is one for each json value describe
     * _JsLong_
     * _JsDouble_
     * _JsBigInt_
-    * _JsBigDec_
-* The singleton _NOTHING_ of type _JsNothing_ represents nothing. It's not part of any specification. It's a convenient type
-that makes certain functions that return a JsElem total on their arguments. For example, the function
- _JsElem get(JsPath)_ is total because returns a JsElem for every JsPath. If there is no element located at the specified
+
+* The singleton _JsNothing.NOTHING_ represents nothing. It's not part of any specification. It's a convenient type
+that makes certain functions that return a JsElem **total** on their arguments. For example, the function
+ _JsElem get(JsPath)_ is total because it returns a JsElem for every JsPath. If there is no element located at the specified
   path, it returns _NOTHING_. In other functions like _Json putIfPresent(Function<JsElem, JsElem>)_, this type comes in handy 
  as well because it's possible, just returning _NOTHING_, not to insert anything even if an element is present. 
 ## <a name="jspair"></a> JsPair
 There are different overloaded static factory methods to create pairs:
 ```
-JsPair of(String path, int elem)
-JsPair of(String path, double elem)
-JsPair of(String path, long elem)
-...
 JsPair of(JsPath path, int elem)
 JsPair of(JsPath path, double elem)
 JsPair of(JsPath path, long elem)
-...
 JsPair of(JsPath path, JsElem elem)
 ```
 Pairs are immutable. You can get the path or element of a pair by direct field access:
 ```
-JsPair pair = JsPair.of("a.b.0", "a");
+JsPair pair = JsPair.of(path("/a/b/0"), "a");
 JsPath path = pair.path;
 JsElem elem = pair.elem;
 ```
@@ -127,7 +142,7 @@ You may be asking what's the point of using underscores to name methods. The rea
 great to convey information quickly and concisely, and distinguish methods that return mutable objects from 
 the ones that return immutable ones, is something that has to be highlighted somehow. Not like in other 
 languages like Scala, symbols are not allowed in Java to name variables and methods, that's why I use an underscore. 
-I prefer to use an exclamation as Ruby does, but I can't
+I prefer to use an exclamation as Ruby does, but it's not possible in Java.
 ### <a name="json-immutable-obj-creation"></a> Creation of immutable Json objects
 ```
 // from keys and associated elements
@@ -138,8 +153,8 @@ JsObj.of("a", JsInt.of(1),
          );
 
 // from varargs of json pairs
-JsObj w = JsObj.of( JsPair.of("a.b.0", 1),
-                    JsPair.of("a.b.1", 2)
+JsObj w = JsObj.of( JsPair.of(path("/a/b/0"), 1),
+                    JsPair.of(path("/a/b/1"), 2)
                   );    
                            
 //parsing a string, which returns a TryObj computation that may fail                       
@@ -157,8 +172,8 @@ JsObj x = JsObj._of_("a", JsInt.of(1),
                     );  
 
 // from vargs of json pairs
-JsObj w = JsObj._of_( JsPair.of("a.b.0", 1),
-                      JsPair.of("a.b.1", 2)
+JsObj w = JsObj._of_( JsPair.of(path("/a/b/0"), 1),
+                      JsPair.of(path("/a/b/1"), 2)
                     );    
                             
 // parsing a string, which returns a TryObj computation that may fail                  
@@ -182,8 +197,8 @@ JsArray c = JsArray.of(JsBool.TRUE,
                        );
                        
 //from varargs of json pairs
-JsArray d = JsArray.of(JsPair.of("0.a.b.0", 1),
-                       JsPair.of("0.a.b.1", 2)
+JsArray d = JsArray.of(JsPair.of(path("/0/a/b/0"), 1),
+                       JsPair.of(path("/0/a/b/1"), 2)
                        );
 //parsing a string, which returns a TryArr computation that may fail                      
 JsArray e =  JsArray.parse("[{\"a\":{\"b\":[1,2]}}]").orElseThrow();       
@@ -206,8 +221,8 @@ JsArray c = JsArray._of_(JsBool.TRUE,
                          );
 
 // from varargs of json pairs
-JsArray d = JsArray._of_(JsPair.of("0.a.b.0", 1),
-                         JsPair.of("0.a.b.1", 2)
+JsArray d = JsArray._of_(JsPair.of(path("/0/a/b/0"), 1),
+                         JsPair.of(path("/0/a/b/1"), 2)
                          );
 // parsing a string, which returns a TryArr computation that may fail                        
 JsArray e =  JsArray._parse_("[{\"a\":{\"b\":[1,2]}}]").orElseThrow();       
@@ -216,7 +231,7 @@ Assert.assertEquals(d, e);
 ```
 ## <a name="data-in-out"></a> Putting data in and getting data out
 To be able to insert data in and pull data out in a simple way is a must for any Json API. That's why **json-values**
-has several overloaded methods that allow the client to work directly with the primitive types, avoiding any conversion. 
+has several overloaded methods that allow the client to work directly with primitive types, avoiding any conversion. 
 ```
 {
 "a": { "b": [ { "c": 1,
@@ -232,59 +247,60 @@ has several overloaded methods that allow the client to work directly with the p
 All the _getXXX_ by path methods, return an Optional or one of its specializations for the particular primitive type. 
 ```
 Assertions.assertEquals(OptionalInt.of(1), 
-                        json.getInt("a.b.0.c")
+                        json.getInt(path("/a/b/0/c"))
                         );
 Assertions.assertEquals(OptionalInt.of(2), 
-                        json.getLong("a.b.0.d.-1")
+                        json.getLong(path("/a/b/0/d/-1"))
                         );
 Assertions.assertEquals(Optional.of("a"), 
-                        json.getStr("a.b.0.e.0")
+                        json.getStr(path("/a/b/0/e/0"))
                         );
 Assertions.assertEquals(OptionalDouble.of(1.2), 
-                        json.getDouble("e.-1")
+                        json.getDouble(path("/e/-1"))
                         );
 Assertions.assertEquals(OptionalInt.empty(), 
-                        json.getInt("e.-1")
+                        json.getInt(path("/e/-1"))
                         );
 Assertions.assertEquals(OptionalInt.empty(), 
-                        json.getInt("h")
+                        json.getInt(fromKey("h"))
                         );        
 ```
 ### <a name="obtaining-jselements"></a> Obtaining Json elements
 To obtains JsObj or JsArray wrapped into an optional:
 ```
 Assertions.assertEquals(Optional.of(JsArray.of(1,2)), 
-                        json.getArr("e.0")
+                        json.getArr(path("/e/0"))
                         );
 Assertions.assertEquals(Optional.of(JsObj.of("c",JsInt.of(1),
                                              "d",JsArray.of(1,2),
                                              "e",JsArray.of("a","b"))
                                              )), 
-                        json.getObj("a.b.0")
+                        json.getObj(path("/a/b/0"))
                         );
 ```
 Working with JsElem may be necessary sometimes, for example, if it's unknown the type of the element located at a path.
-The _get_ by path method returns a _JsElem_ and has the attractive property that is total, as it was mentioned above. Just as a reminder, it means that it returns a JsElem
-for every possible path. Functional programmers strive for total functions. It's possible thanks to the _JsNothing_ type.
+The _get_ by path method returns a _JsElem_ and has the attractive property that is total, as it was mentioned above. 
+Just as a reminder, it means that it returns a JsElem for every possible path. Functional programmers strive for total functions. 
+It's possible thanks to the _JsNothing_ type.
 ```
 Assertions.assertEquals(JsNull.NULL, 
-                        json.get("e.3")
+                        json.get(path("/e/3"))
                         );
 
 Assertions.assertEquals(JsNothing.NOTHING, 
-                        json.get("f")
+                        json.get(fromKey("f"))
                         ); 
 ```
 ### <a name="putting-data-by-path"></a> Putting data at any location
-The _put_ method always inserts the specified element at the specified path:
+   - The _put_ method always inserts the specified element at the specified path:
 ```
-Jsobj a = JsObj.empty().put("a.b.c", 1);
-Assertions.assertEquals(JsInt.of(1), a.get("a.b.c"));
-Assertions.assertEquals(1, a.getInt("a.b.c").getAsInt());
+Jsobj a = JsObj.empty().put(path("/a/b/c"), 1);
+Assertions.assertEquals(JsInt.of(1), a.get(path("/a/b/c")));
+Assertions.assertEquals(1, a.getInt(path("/a/b/c")).getAsInt());
 
-Jsobj b = a.put("a.b", true);
-Assertions.assertEquals(JsBool.TRUE, a.get("a.b") );
-Assertions.assertEquals(true, a.getBool("a.b").get() );
+Jsobj b = a.put(path("a.b"), true);
+Assertions.assertEquals(JsBool.TRUE, a.get(path("/a/b")));
+Assertions.assertEquals(true, a.getBool(path("/a/b")).get());
 
 //a and b are immutable
 Assertions.assertNotEquals(a,b);
@@ -292,43 +308,62 @@ Assertions.assertNotEquals(a,b);
 JsArray c = JsArray.of(JsObj.of("a",JsArray.of(1,2)),
                        JsObj.of("b",JsArray.of("a","b"))
                        );
-Assertions.assertEquals(JsInt.of(1), c.get("0.a.0") );
-Assertions.assertEquals(1l, c.getLong("0.a.0").getAsLong() );
+Assertions.assertEquals(JsInt.of(1), c.get(path("/0/a/0")) );
+Assertions.assertEquals(1l, c.getLong(path("/0/a/0")).getAsLong() );
                        
 JsArray d = c.put("0.a.0",true); 
-Assertions.assertEquals(JsBool.TRUE, d.get("0.a.0") );
-Assertions.assertEquals(true, d.getBool("0.a.0").get() );
+Assertions.assertEquals(JsBool.TRUE, d.get(path("/0/a/0")) );
+Assertions.assertEquals(true, d.getBool(path("/0/a/0")).get() );
 
 
 ```
-The more natural way of adding data to arrays is with the methods _append_ and _prepend_, however, when inserting data in arrays at certain positions, filling with null may be necessary:
+When inserting data in arrays at specific positions, filling with null may be necessary:
 ```
-JsArray e = c.put("0.b.3","c");
+JsArray e = c.put(path("/0/b/3"),"c");
 Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                                    JsStr.of("b"),
                                    JsNull.NULL,   
                                    JsStr.of("c")
                                    ), 
-                        d.get("0.b") 
+                        d.get(path("/0/b")) 
                         );
 ```
-The point here is being honest. The string "c" has been inserted at the forth position of the array, and for that to happen, filling with null
-the third position is necessary.  
-### <a name="tell-dont-ask"></a> Being idiomatic: tell don't ask principle
-An attractive principle in OOP is known as ["tell, don't ask."](https://pragprog.com/articles/tell-dont-ask) It leads to more declarative
-APIs. The _putIfAbsent_, _putIfPresent_, and _merge_ methods follow that principle. The point is, instead of checking if an element is present 
-or not and, in consequence, to call or not the put method, you can do the same thing in just one call:
+The point here is being honest. The string _c_ has been inserted at the forth position of the array, and for 
+that to happen, filling with null the third position is necessary.  
+
+  - The _add_ method, unlike the _put_, never creates a new container, but it adds an element to an existing one.
+  If the parent container doesn't exist, an UserError is thrown. If the parent is an array, the elements at or above 
+  the specified index are shifted one position to the right.
 ```
-JsObj a = JsObj.empty().putIfPresent("a",1);
+JsObj obj = JsObj.of("a",JsArray.of(1,2,3),
+                     "b",JsObj.of("c",JsStr.of("hi"))
+                    );
+
+Assertions.assertEquals(JsArray.of(1,5,2,3),
+                        obj.add(path("/a/1"), 5).get(path("a"))
+                       );
+
+Assertions.assertEquals(JsStr.of("bye"),
+                        obj.add(path("/a/b/d"), "bye").get(path("/a/b/d"))
+                       );
+```
+  
+### <a name="tell-dont-ask"></a> Being idiomatic: tell don't ask principle
+An attractive principle in OOP is known as ["tell, don't ask."](https://pragprog.com/articles/tell-dont-ask) It 
+leads to more declarative APIs. The _putIfAbsent_, _putIfPresent_, and _merge_ methods follow that principle. The 
+point is, instead of checking if an element is present or not and, in consequence, to call or not the put method, 
+you can do the same thing in just one call:
+```
+JsObj a = JsObj.empty().putIfPresent(fromKey("a"),1);
 Assertions.assertEquals(JsObj.empty(), a);
 
 
-JsObj b = JsObj.empty().putIfAbsent("a",1);
+JsObj b = JsObj.empty().putIfAbsent(fromKey("a"),1);
 Assertions.assertEquals(JsInt.of(1), 
-                        b.get("a")
+                        b.get(fromKey("a"))
                         );
 
-JsObj c = b.putIfAbsent("a",2);
+JsObj c = b.putIfAbsent(fromKey("a"),2);
 Assertions.assertEquals(b,c)
 
 
@@ -337,26 +372,26 @@ JsInt defaultElem = JsInt.of(1);
 BiFunction<? super JsElem, ? super JsElem, ? extends JsElem> fn = (d, e)-> e.isInt() ?  e.asJsInt().plus(d.asJsInt()) : d;
 
 // no element exists at "a" -> defaultElement is inserted
-JsObj f = JsObj.empty().merge("a",
+JsObj f = JsObj.empty().merge(fromKey("a"),
                               defaultElem,                                   
                               fn
                               ); 
-Assertions.assertEquals(JsInt.of(1), f.get("a"));
+Assertions.assertEquals(JsInt.of(1), f.get(fromKey("a")));
 // an element exists at "a" -> the function is invoked 
-JsObj g = f.merge("a",
+JsObj g = f.merge(fromKey("a"),
                   defaultElem,                                   
                   fn
                   ); 
 Assertions.assertEquals(JsInt.of(2), 
-                        f.get("a")
+                        f.get(fromKey("a"))
                         );                     
 ```
 ### <a name="lazy"></a> Being lazy
 It's possible to be lazy and not produce any element if it's not going to be inserted, just passing a supplier:
 
-JsObj d = b.putIfAbsent("a", ()-> computed value);
+JsObj d = b.putIfAbsent(fromKey("a"), ()-> computed value);
 
-JsObj e = b.putIfPresent("a", ()-> computed value);
+JsObj e = b.putIfPresent(fromKey("a"), ()-> computed value);
 ### <a name="manipulating-arrays"></a> Manipulating arrays
 To insert elements at the front of an array, it exists the methods _prepend_, _prependAll_, _prependIfPresent_, and _prependAllIfPresent_.
 To insert elements at the back of an array, it exists the methods _append_, _appendAll_, _appendIfPresent_, and _appendAllIfPresent_.
@@ -535,13 +570,27 @@ Reduce methods are a classic map-reduce over the elements **which are not contai
                         Predicate<? super JsPair> predicate
                        );        
 ```
-#### 5- Union and intersection.
+## <a name="json-patch"></a> [RFC 6902](https://tools.ietf.org/html/rfc6902): Json Patch specification
+```
+TryPatch<JsObj> try = json.patch(Patch.ops()
+                                      .add("/a/b",JsStr.of("a"))
+                                      .move("/a/c","/b/c")
+                                      .copy("/a/E","/b/h/0")
+                                      .remove("/a/c","/b/c")
+                                      .test("/d/0",JsBool.TRUE)
+                                      .toJsArray()
+                                   );
+
+if(try.isSuccess()) return try.orElseThrow();
+```
+
+## <a name="union-and-intersection"></a> Union and intersection
 Considering jsons Set of pairs, it seems reasonable to implement Set-Theory operations like union and intersection.
 For certain operations, arrays can be considered Sets, MultiSets or Lists. In Sets, the order of data items does not 
 matter (or is undefined) but duplicate data items are not permitted. In Lists, the order of data matters and duplicate data items are permitted. 
 In MultiSets, the order of data items does not matter, but in this case, duplicate data items are permitted. 
 
-## <a name="union"></a> Union
+### <a name="union"></a> Union
 Given two json objects _a_ and _b_:
  
 *  _a.union(b)_ returns _a_ plus those pairs from _b_  which keys don't exist in _a_.
@@ -617,7 +666,7 @@ c= a.union(b,SET)
 c= c.union(d,SET)
 e= c.union(d,MULTISET)
 ```
-## <a name="intersection"></a> Intersection
+### <a name="intersection"></a> Intersection
 Given two json objects _a_ and _b_:
 
 * _a.intersection(b, SET)_ returns an object with the keys that exist in both _a_ and _b_ which associated elements are equal,
@@ -673,7 +722,7 @@ to be documented
 
 ## <a name="equality"></a> Equality
 The correctness of equals and hashcode methods are crucial for every Java application. As was mentioned before, **json-values**
-is data-centric, which means basically that the number one is the number one, and forgive the repetition. No matter if it's placed in a int, 
+is data-centric, which means basically that a number is just a number. No matter if it's wrapped in a int, 
 a long or even a BigDecimal. According to that, the following objects:
 ```
 JsObj x = JsObj.of("a", JsInt.of(1),
@@ -720,11 +769,14 @@ or an error of the library itself. On the other hand, exceptions are expected in
  only thing you can do is to handle that possibility. 
  
 **json-values** uses the custom unchecked exception _UserError_ when the client of the library makes an error,
-for example, getting the head of an empty array, which means that the programmer needs to change something to fix the bug. 
-Another error could be to pass in null to a method, in which case it throws a NullPointerException. No method in the library 
-but _equals_ accepts null as a parameter. _InternalError_ is another custom unchecked exception that is thrown when an
+for example, getting the head of an empty array, which means that the programmer needs to change something to fix the 
+bug. Another error could be to pass in null to a method, in which case it throws a NullPointerException. No method 
+in the library but _equals_ accepts null as a parameter. _InternalError_ is another custom unchecked exception that is thrown when an
 error made by the developers is detected.
-The only exception in the API is the custom checked MalformedJson, which occurs when parsing a not well-formed string into a Json.
+The only exceptions in the API are the custom checked:
+   - MalformedJson, which occurs when parsing a not well-formed string into a Json.
+   - PatchMalformed, which occurs when a patch can not be applied because it has an invalid schema.
+   - PatchOpError, which occurs when a patch is applied and returns an error
 
 ## <a name="trampolines"></a> Trampolines
 **Json-values**, naturally, uses recursion all the time. To not blow up the stack, tail-recursive method 
@@ -777,35 +829,35 @@ A possible recursive implementation is:
         JsElem headElem = head.getValue();
         JsObj tail = obj.tail(headName); 
         if (headElem.isStr()) return schema(tail,
-                                             acc.put(headName,
+                                             acc.put(JsPath.fromKey(headName),
                                                      JsObj.of("type",
                                                               JsStr.of("string")
                                                              )
                                                      )
                                              );
         if (headElem.isIntegral()) return schema(tail,
-                                                 acc.put(headName,
+                                                 acc.put(JsPath.fromKey(headName),
                                                          JsObj.of("type",
                                                                   JsStr.of("integral")
                                                                  )
                                                         )
                                                 );
         if (headElem.isDecimal()) return schema(tail,
-                                                acc.put(headName,
+                                                acc.put(JsPath.fromKey(headName),
                                                         JsObj.of("type",
                                                                   JsStr.of("decimal")
                                                                 )
                                                         )
                                                 );
         if (headElem.isBool()) return schema(tail,
-                                             acc.put(headName,
+                                             acc.put(JsPath.fromKey(headName),
                                                      JsObj.of("type",
                                                               JsStr.of("boolean")
                                                              )
                                                     )
                                             );
         if (headElem.isNull()) return schema(tail,
-                                             acc.put(headName,
+                                             acc.put(JsPath.fromKey(headName),
                                                      JsObj.of("type",
                                                               JsStr.of("null")
                                                              )
@@ -840,42 +892,48 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
         String headName = head.getKey();
         JsElem headElem = head.getValue();
         JsObj tail = obj.tail(headName);
-        if (headElem.isStr()) return Trampoline.more(() -> schema(tail,
-                                                                  acc.put(headName,
-                                                                          JsObj.of("type",
-                                                                                   JsStr.of("string")
-                                                                                  )
-                                                                         )
-                                                                 ));
-        if (headElem.isIntegral()) return Trampoline.more(() -> schema(tail,
-                                                                       acc.put(headName,
-                                                                               JsObj.of("type",
-                                                                                        JsStr.of("integral")
-                                                                                       )
-                                                                              )
-                                                                      ));
-        if (headElem.isDecimal()) return Trampoline.more(() -> schema(tail,
-                                                                      acc.put(headName,
-                                                                              JsObj.of("type",
-                                                                                       JsStr.of("decimal")
-                                                                                      )
-                                                                             )
-                                                                     ));
-        if (headElem.isBool()) return Trampoline.more(() -> schema(tail,
-                                                                   acc.put(headName,
-                                                                           JsObj.of("type",
-                                                                                    JsStr.of("boolean")
-                                                                                   )
-                                                                          )
-                                                                  ));
-        if (headElem.isNull()) return Trampoline.more(() -> schema(tail,
-                                                                   JsObj.of("type",
-                                                                            JsStr.of("null")
-                                                                           )
-                                                                   ));
+        if (headElem.isStr()) 
+               return Trampoline.more(() -> schema(tail,
+                                                   acc.put(JsPath.fromKey(headName),
+                                                           JsObj.of("type",
+                                                                    JsStr.of("string")
+                                                                   )
+                                                           )
+                                                   ));
+        if (headElem.isIntegral()) 
+               return Trampoline.more(() -> schema(tail,
+                                                   acc.put(JsPath.fromKey(headName),
+                                                           JsObj.of("type",
+                                                                    JsStr.of("integral")
+                                                                   )
+                                                          )
+                                                   ));
+        if (headElem.isDecimal())
+               return Trampoline.more(() -> schema(tail,
+                                                   acc.put(JsPath.fromKey(headName),
+                                                           JsObj.of("type",
+                                                                    JsStr.of("decimal")
+                                                                   )
+                                                           )
+                                                   ));
+        if (headElem.isBool()) 
+               return Trampoline.more(() -> schema(tail,
+                                                   acc.put(JsPath.fromKey(headName),
+                                                           JsObj.of("type",
+                                                                    JsStr.of("boolean")
+                                                                   )
+                                                           )
+                                                  ));
+        if (headElem.isNull()) 
+               return Trampoline.more(() -> schema(tail,
+                                                   acc.put(JsPath.fromKey(headName),
+                                                           JsObj.of("type",
+                                                                    JsStr.of("null")
+                                                                   )
+                                                           )
+                                                  ));
 
-
-        if (headElem.isJson()) throw new UnsupportedOperationException("Not implemented yet");
+        if (headElem.isJson()) throw new UnsupportedOperationException("Not implemented yet...");
 
         throw new RuntimeException("Unexpected type of JsElem: " + headElem.getClass());
     }
@@ -912,7 +970,7 @@ I've used different compiler plug-ins to find bugs at _compile time_:
 Part of the testing has been carried out using [Scala Check](https://www.scalacheck.org/) and Property-Based Testing. 
 I developed a json generator for this purpose.
 
-Any doubt, feedback or suggestion, please, drop out an email to imrafael.merino@gmail.com.
+Any question, feedback, or suggestion, please, drop out an email to imrafael.merino@gmail.com.
 
 
 

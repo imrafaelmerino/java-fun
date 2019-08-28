@@ -35,16 +35,55 @@
 A JsPath represents a string syntax for identifying a specific value within a JSON. It's an implementation of the Json Pointer specification
 defined in [rfc6901](https://tools.ietf.org/html/rfc6901), but there are two slightly differences:
  
-  - According to the RFC, the following path **/0** could represent both a key named _0_ or the first element of an array. It's perfectly fine
-to get data out of a Json; after all, the schema of the Json is supposed to be known by the user. However, when inserting data in, a way must 
-distinguish what element to insert, either a Json object or a Json array. The approach of json-values to make that distinction is to single-quote keys which names are
-numbers,i.e., _/0_ points to the first element of an array whereas _/'0'_ points the key _0_ of a Json object.
+  - According to the RFC, the following path _/0_ could represent both a key named _0_ or the first element of an array. It's perfectly fine
+to get data out of a Json; after all, the schema of the Json is supposed to be known by the user. However, imagine that the user wants to insert
+the name _"Rafa"_ at _/names/0/0_ in an empty Json object:
+
+```
+JsObj obj = JsObj.empty().put(path("/a/0/0"),"a")
+```
+
+What is the expected result? According to the rfc6901: both
+
+```
+{"names":["Rafa"]}
+```
+
+and
+
+```
+{"names":{"0":"Rafa"}}
+```
+
+are valid result. Of course, the API have to provide the user a way of distinguish arrays from objects. The rfc6901 is to get data out of Json, but
+according to its definition, it can not be used to insert data in a Json.
+The approach of json-values to make that distinction is to single-quote keys which names are numbers, i.e.:
+```
+// {"names":{"0":"Rafa"}}
+JsObj obj = JsObj.empty().put(path("/a/'0'/0"),"a")
+```
+and
+
+```
+// {"names":["Rafa"]}
+JsObj obj = JsObj.empty().put(path("/a/0/0"),"a")
+```
+
   - The index -1 represents the last element of an array.
 
 There are two ways of creating paths:
+
 * From a path-like string using the method _JsPath.path(...)_. See [rfc6901](https://tools.ietf.org/html/rfc6901) for further details
 
-* Using the  _fromKey_, _fromIndex_, _key_ and _index_ methods from the _JsPath_  API:
+* Using the JsPath API:
+ 
+   - _fromKey(name)_ to create a JsPath from a key name. 
+   
+   - _fromIndex(n)_, to create a JsPath from an index
+   
+   - _key(name)_ , to append a key to a JsPath 
+   
+   - _index(n)_, to append an index to a JsPath 
 
 ```
 import static jsonvalues.JsPath.fromKey;
@@ -95,6 +134,7 @@ fromKey("'")
 path("/")
 fromKey("")
 ```
+
 ## <a name="jselem"></a> JsElem
 Every element in a Json is a _JsElem_. There is one for each json value described in [json.org](https://www.json.org):
 * _JsStr_ represents immutable strings.
@@ -113,6 +153,7 @@ that makes certain functions that return a JsElem **total** on their arguments. 
  _JsElem get(JsPath)_ is total because it returns a JsElem for every JsPath. If there is no element located at the specified
   path, it returns _NOTHING_. In other functions like _Json putIfPresent(Function<JsElem, JsElem>)_, this type comes in handy 
  as well because it's possible, just returning _NOTHING_, not to insert anything even if an element is present. 
+ 
 ## <a name="jspair"></a> JsPair
 There are different overloaded static factory methods to create pairs:
 ```
@@ -132,10 +173,14 @@ Pairs can be mapped using:
 JsPair mapPath(UnaryOperator<JsPath> fn)
 JsPair mapElem(UnaryOperator<JsElem> fn)
 ```
+
 ## <a name="json-creation"></a> Creating Jsons
+
 **json-values** uses _static factory methods_ to create objects, just like the ones introduced by _Java 9_ to 
 create small unmodifiable collections. There is a naming convention to emphasize what kind of object is created:
+
 * **of** and **parse** methods return **immutable** jsons or values.
+    
 * **\_of\_** and **\_parse\_** methods return **mutable** jsons. 
 
 You may be asking what's the point of using underscores to name methods. The reason is that symbols are 
@@ -143,6 +188,7 @@ great to convey information quickly and concisely, and distinguish methods that 
 the ones that return immutable ones, is something that has to be highlighted somehow. Not like in other 
 languages like Scala, symbols are not allowed in Java to name variables and methods, that's why I use an underscore. 
 I prefer to use an exclamation as Ruby does, but it's not possible in Java.
+
 ### <a name="json-immutable-obj-creation"></a> Creation of immutable Json objects
 ```
 // from keys and associated elements
@@ -162,6 +208,7 @@ JsObj z = JsObj.parse("{\"a\": {\"b\": [1,2]}}").orElseThrow();
 
 Assert.assertEquals(w, z);   
  ```
+
 ### <a name="json-mutable-obj-creation"></a> Creation of mutable Json objects
 ```
 // from keys and associated elements
@@ -181,6 +228,7 @@ JsObj z = JsObj._parse_("{\"a\": {\"b\": [1,2]}}").orElseThrow();
 
 Assert.assertEquals(w, z);   
 ```
+
 ### <a name="json-immutable-arr-creation"></a> Creation of immutable Json arrays
 ```
 // from varargs of ints
@@ -204,7 +252,8 @@ JsArray d = JsArray.of(JsPair.of(path("/0/a/b/0"), 1),
 JsArray e =  JsArray.parse("[{\"a\":{\"b\":[1,2]}}]").orElseThrow();       
 
 Assert.assertEquals(d, e);  
-```               
+```        
+       
 ### <a name="json-mutable-arr-creation"></a> Creation of mutable Json arrays
 ```
 // from varargs of ints
@@ -229,6 +278,7 @@ JsArray e =  JsArray._parse_("[{\"a\":{\"b\":[1,2]}}]").orElseThrow();
 
 Assert.assertEquals(d, e);  
 ```
+
 ## <a name="data-in-out"></a> Putting data in and getting data out
 To be able to insert data in and pull data out in a simple way is a must for any Json API. That's why **json-values**
 has several overloaded methods that allow the client to work directly with primitive types, avoiding any conversion. 
@@ -243,6 +293,7 @@ has several overloaded methods that allow the client to work directly with primi
  "e": [[1,2], {}, [], null, 1.2]     
 }
 ```
+
 ### <a name="obtaining-primitive-types"></a> Obtaining primitive types
 All the _getXXX_ by path methods, return an Optional or one of its specializations for the particular primitive type. 
 ```
@@ -265,6 +316,7 @@ Assertions.assertEquals(OptionalInt.empty(),
                         json.getInt(fromKey("h"))
                         );        
 ```
+
 ### <a name="obtaining-jselements"></a> Obtaining Json elements
 To obtains JsObj or JsArray wrapped into an optional:
 ```
@@ -291,8 +343,10 @@ Assertions.assertEquals(JsNothing.NOTHING,
                         json.get(fromKey("f"))
                         ); 
 ```
+
 ### <a name="putting-data-by-path"></a> Putting data at any location
    - The _put_ method always inserts the specified element at the specified path:
+   
 ```
 Jsobj a = JsObj.empty().put(path("/a/b/c"), 1);
 Assertions.assertEquals(JsInt.of(1), a.get(path("/a/b/c")));
@@ -314,10 +368,10 @@ Assertions.assertEquals(1l, c.getLong(path("/0/a/0")).getAsLong() );
 JsArray d = c.put("0.a.0",true); 
 Assertions.assertEquals(JsBool.TRUE, d.get(path("/0/a/0")) );
 Assertions.assertEquals(true, d.getBool(path("/0/a/0")).get() );
-
-
 ```
+
 When inserting data in arrays at specific positions, filling with null may be necessary:
+
 ```
 JsArray e = c.put(path("/0/b/3"),"c");
 Assertions.assertEquals(JsArray.of(JsStr.of("a"),
@@ -328,12 +382,14 @@ Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                         d.get(path("/0/b")) 
                         );
 ```
+
 The point here is being honest. The string _c_ has been inserted at the forth position of the array, and for 
 that to happen, filling with null the third position is necessary.  
 
   - The _add_ method, unlike the _put_, never creates a new container, but it adds an element to an existing one.
   If the parent container doesn't exist, an UserError is thrown. If the parent is an array, the elements at or above 
   the specified index are shifted one position to the right.
+  
 ```
 JsObj obj = JsObj.of("a",JsArray.of(1,2,3),
                      "b",JsObj.of("c",JsStr.of("hi"))
@@ -353,6 +409,7 @@ An attractive principle in OOP is known as ["tell, don't ask."](https://pragprog
 leads to more declarative APIs. The _putIfAbsent_, _putIfPresent_, and _merge_ methods follow that principle. The 
 point is, instead of checking if an element is present or not and, in consequence, to call or not the put method, 
 you can do the same thing in just one call:
+
 ```
 JsObj a = JsObj.empty().putIfPresent(fromKey("a"),1);
 Assertions.assertEquals(JsObj.empty(), a);
@@ -386,16 +443,19 @@ Assertions.assertEquals(JsInt.of(2),
                         f.get(fromKey("a"))
                         );                     
 ```
+
 ### <a name="lazy"></a> Being lazy
 It's possible to be lazy and not produce any element if it's not going to be inserted, just passing a supplier:
 
 JsObj d = b.putIfAbsent(fromKey("a"), ()-> computed value);
 
 JsObj e = b.putIfPresent(fromKey("a"), ()-> computed value);
+
 ### <a name="manipulating-arrays"></a> Manipulating arrays
 To insert elements at the front of an array, it exists the methods _prepend_, _prependAll_, _prependIfPresent_, and _prependAllIfPresent_.
 To insert elements at the back of an array, it exists the methods _append_, _appendAll_, _appendIfPresent_, and _appendAllIfPresent_.
 The same considerations above apply for all of them.  
+
 ## <a name="stream-collectors"></a> Stream and collectors
 After Java 8 was released, I can't imagine a data structure in Java without providing the stream and collector operations. They open the door
 to manipulate data in a very functional way.
@@ -418,6 +478,7 @@ represents the json
 On the other hand, to implement a collector in Java, a mutable data structure to accumulate the pairs in, is required. It's the real reason that
 there is a mutable implementation of a Json in **json-values**. At first, I had no intention of providing one, but sometimes you have to give in and be coherent with the
 language you are programming in. 
+
 ### <a name="streams"></a> Streams
 Stream methods return sequences of JsPairs on-demand:
 ```
@@ -474,6 +535,7 @@ prints out the following sequence of five pairs:
 ("2.c", "blue")
 ("2.d", "pink")
 ```
+
 ### <a name="object-collectors"></a> Object collectors
 You can get the stream back into an immutable json object by the collector _JsObj.collector()_:
 ```
@@ -487,6 +549,7 @@ Assert.assertEquals(x,
                     x.stream_().collector(JsObj._collector_())
                     );
 ```
+
 ### <a name="array-collectors"></a> Array collectors
 You can get the stream back into an immutable json array by the collector _JsArray.collector()_:
 ```
@@ -502,12 +565,14 @@ Assert.assertEquals(y,
                     );
 
 ```
+
 ## <a name="filter-map-reduce"></a> Filter, map and reduce
 What would an API be nowadays without filter, map, and reduce?. They are the crown jewel in functional programming and have been implemented
 carefully in different ways taking into account the structure of a Json.
 
 Functions which name ends with an underscore, are applied recursively to every element and not only to the first level of the json. It's
 a naming convention in the API. As was mentioned before, names with symbols (except _ and $) are not valid in Java.
+
 ### <a name="filter"></a> Filter
 _filterKeys_ methods remove the keys from a JsObj which pairs satisfy a predicate: 
 ```
@@ -524,6 +589,7 @@ _filterObjs_ methods remove the json objects from a Json which pairs satisfy a p
 Json filterObjs(BiPredicate<? super JsPath, ? super JsObj> predicate); 
 Json filterObjs_(BiPredicate<? super JsPath, ? super JsObj> predicate); 
 ```
+
 ### <a name="map"></a> 
 _mapKeys_ methods map the keys from a JsObj which pairs satisfy a predicate. The map function takes as a parameter a pair and returns 
 the new key.
@@ -555,7 +621,9 @@ Json mapObjs_(BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
               BiPredicate<? super JsPath, ? super JsObj> predicate
              );            
 ``` 
-The map functions have been designed in such a way that they don't change the structure of the json, which reminds of _functors_, a concept that it may be familiar if you know _Haskell_.
+The map functions have been designed in such a way that they don't change the structure of the json, which reminds of _functors_, 
+a concept that it may be familiar if you know _Haskell_.
+
 ### <a name="reduce"></a> Reduce
 Reduce methods are a classic map-reduce over the elements **which are not containers** and which pairs satisfy a predicate.
  The map function takes as a parameter a pair and returns an element that is reduced by an operator.
@@ -570,6 +638,7 @@ Reduce methods are a classic map-reduce over the elements **which are not contai
                         Predicate<? super JsPair> predicate
                        );        
 ```
+
 ## <a name="json-patch"></a> [RFC 6902](https://tools.ietf.org/html/rfc6902): Json Patch specification
 ```
 TryPatch<JsObj> try = json.patch(Patch.ops()
@@ -666,6 +735,7 @@ c= a.union(b,SET)
 c= c.union(d,SET)
 e= c.union(d,MULTISET)
 ```
+
 ### <a name="intersection"></a> Intersection
 Given two json objects _a_ and _b_:
 
@@ -681,6 +751,7 @@ which associated elements are json objects, the result is their intersection.
 which associated elements are json of the same type (object or arrays), the result is their intersection.
 * _a.intersection\_(b, MULTISET)_ behaves as _a.intersection(b, MULTISET)_, but for those keys that exist in both _a_ and _b_
 which associated elements are json objects, the result is their intersection.
+
 ``` 
 a = { "b": {"a":1, "b":2, "c": [{"a":1, "b":[1,2]}, {"b":2}, {"c":3}] } }
 b = { "b": {"a":1, "b":2, "c": [{"a":1, "b":[1]  }, {"b":2}] } }
@@ -710,9 +781,13 @@ i = d.intersection_(e,LIST)
 ``` 
 
 Given two json arrays _c_ and _d_:
+
 * _c.intersection(d, SET)_ returns an array with the elements that exist in both _c_ and _d_
+
 * _c.intersection(d, MULTISET)_ returns an array with the elements that exist in both _c_ and _d_, being duplicates allowed.
+
 * _c.intersection(d, LIST)_ returns an array with the elements that exist in both _c_ and _d_ and are located at the same position.
+
 * _c.intersection\_(d)_ behaves as _a.intersection(b, LIST)_, but for those elements that are containers of the same type and are
 located at the same position, the result is their intersection.
 
@@ -724,6 +799,7 @@ to be documented
 The correctness of equals and hashcode methods are crucial for every Java application. As was mentioned before, **json-values**
 is data-centric, which means basically that a number is just a number. No matter if it's wrapped in a int, 
 a long or even a BigDecimal. According to that, the following objects:
+
 ```
 JsObj x = JsObj.of("a", JsInt.of(1),
                    "b", JsLong.of(100)
@@ -737,6 +813,7 @@ JsObj y = JsObj.of("a", JsBigInt.of(BigInteger.ONE),
                    "d", JsInt.of(10)
                   );
 ```
+
 satisfy the property _x.equals(y) => x.hashCode == y.hashCode()_
 
 Both objects represent the same piece of information, so they are equals, and therefore, they have the same hashcode.
@@ -744,6 +821,7 @@ It doesn't matter that different primitive types and wrappers have been used to 
 of the Java language.
 
 There is a method to test if two objects are equals considering arrays Sets or MultiSets:
+
 ```
 boolean equals(final JsElem elem,
                final TYPE ARRAY_AS
@@ -751,6 +829,7 @@ boolean equals(final JsElem elem,
 ```               
 
 For example:
+
 ```
 JsArray a = JsArray.of(1,2,3)
 JsArray b = JsArray.of(1,2,3,2,3)
@@ -761,6 +840,7 @@ Assertions.assertFalse(a.equals(b, TYPE.MULTISET));
 Assertions.assertTrue(b.equals(c, TYPE.SET));
 Assertions.assertFalse(b.equals(c, TYPE.MULTISET));
 ```
+
 ## <a name="exceptions-errors"></a> Exceptions and errors
 Exceptions and errors are both treated as Exceptions in Java and most of the mainstream languages, but, conceptually, 
 they are quite different. Errors mean that someone has to fix something; it could be an error of the user of the library 
@@ -774,8 +854,11 @@ bug. Another error could be to pass in null to a method, in which case it throws
 in the library but _equals_ accepts null as a parameter. _InternalError_ is another custom unchecked exception that is thrown when an
 error made by the developers is detected.
 The only exceptions in the API are the custom checked:
+
    - MalformedJson, which occurs when parsing a not well-formed string into a Json.
+   
    - PatchMalformed, which occurs when a patch can not be applied because it has an invalid schema.
+   
    - PatchOpError, which occurs when a patch is applied and returns an error
 
 ## <a name="trampolines"></a> Trampolines
@@ -809,8 +892,8 @@ System.out.println( a.schema() );
 ```
 
 A possible recursive implementation is:
+
 ```
- 
     public JsObj schema()
     {
 
@@ -874,7 +957,6 @@ Java compiler doesn't optimize tail-recursive calls as Scala or Clojure
 compilers do. Nevertheless, we can still make use of Trampolines to turn recursion into an iteration. The following implementation does the trick:
 
 ```
-
     public JsObj schema()
     {
 
@@ -938,9 +1020,11 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
         throw new RuntimeException("Unexpected type of JsElem: " + headElem.getClass());
     }
 ```
+
 A Trampoline is a type that has two concrete implementations: _more_ and _done_. _more_ accepts as a parameter 
 a supplier, which is lazy, so no operation is performed when it's returned and therefore, no call is piled-up on the stack. 
 It's when _done_ is returned when the iteration is fired up, and then all the suppliers are computed in order.
+
 ## <a name="performance"></a> Performance
 A benchmark using [jmh](https://openjdk.java.net/projects/code-tools/jmh/) has been carried out on my computer.
 Find below the results parsing a string into a json of size 100,1000 and 10000,

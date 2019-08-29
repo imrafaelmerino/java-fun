@@ -32,15 +32,16 @@
  - [Tools](#tools)
  
 ## <a name="jspath"></a> JsPath
-A JsPath represents a string syntax for identifying a specific value within a JSON. It's an implementation of the Json Pointer specification
-defined in [rfc6901](https://tools.ietf.org/html/rfc6901), but there are two slightly differences:
+A JsPath represents a location of a specific value within a JSON. It provides an implementation of the Json 
+Pointer specification defined in [rfc6901](https://tools.ietf.org/html/rfc6901) through the static factory
+method _path(string)_, but there are two slightly differences:
  
-  - According to the RFC, the path /0 could represent both a key named 0 or the first element of an array. That's perfectly fine
-to get data out of a Json; after all, the schema of the Json is supposed to be known by the user. However, imagine that the user wants to insert
-the name "Rafa" at /names/0 in an empty Json object:
+  - According to the RFC, the path /0 could represent both a key named 0 or the first element of an array. 
+  That's perfectly fine to get data out of a Json; after all, the schema of the Json is supposed to be known 
+  by the user. However, imagine that the user wants to insert the name "Rafa" at /names/0 in an empty Json object:
 
 ```
-JsObj obj = JsObj.empty().put(path("/names/0"),"a")
+JsObj obj = JsObj.empty().put(path("/names/0"),"Rafa")
 ```
 
 What is the expected result? According to the rfc6901, both:
@@ -55,9 +56,10 @@ and
 {"names":{"0":"Rafa"}}
 ```
 
-are valid results. The API has to provide the user with a way of distinguishing arrays from objects. The rfc6901 is to read data from a Json, and
-given the pointed out above, it can not be used to insert data in a Json.
-The approach of json-values to make that distinction is to single-quote only the keys which names are numbers, i.e.:
+are valid results. The API has to provide the user with a way of distinguishing arrays from objects. 
+The rfc6901 is to read data from a Json, and given the pointed out above, it can not be used to insert 
+data in a Json. The approach of json-values to make that distinction is to single-quote only the keys 
+which names are numbers, i.e.:
 ```
 // {"names":{"0":"Rafa"}}
 JsObj obj = JsObj.empty().put(path("/names/'0'"),"Rafa")
@@ -103,7 +105,7 @@ fromKey("a").index(0).key("b").index(0)
           
 // 2                   
 path("/a/0/b/1") 
-fromKey("a").index(0).key("b").index(1) -> 2
+fromKey("a").index(0).key("b").index(1) 
 
 // 3
 path("/a/0/b/2") 
@@ -112,16 +114,20 @@ path("/a/0/b/-1")
 fromKey("a").index(0).key("b").index(-1) 
 
 // z
-path("#/+") or fromKey(" ")
+path("#/+") 
+fromKey(" ")
 
 // 4
 path("#/c%2Ed")
-fromKey("c.d")                        
+fromKey("c.d")                     
 
 // false    
-path("/'1'/0") or fromKey("1").index(0)
+path("/'1'/0") 
+fromKey("1").index(0)
+
 // true
-path("/'1'/1") or fromKey("1").index(1)
+path("/'1'/1") 
+fromKey("1").index(1)
 
 // null
 path("#/%27")
@@ -153,6 +159,8 @@ Every element in a Json is a _JsElem_. There is one for each json value describe
     * _JsDouble_
     
     * _JsBigInt_
+    
+    * _JsBigDec_
 
 * The singleton _JsNothing.NOTHING_ represents nothing. It's not part of any specification. It's a convenient type
 that makes certain functions that return a JsElem **total** on their arguments. For example, the function
@@ -164,9 +172,11 @@ There are different overloaded static factory methods to create pairs:
 JsPair of(JsPath path, int elem)
 JsPair of(JsPath path, double elem)
 JsPair of(JsPath path, long elem)
+JsPair of(JsPath path, boolean elem)
+JsPair of(JsPath path, String elem)
 JsPair of(JsPath path, JsElem elem)
 ```
-Pairs are immutable. You can get the path or element of a pair by direct field access:
+Pairs are immutable. You can get the path and element of a pair by direct field access:
 ```
 JsPair pair = JsPair.of(path("/a/b/0"), "a");
 JsPath path = pair.path;
@@ -206,7 +216,7 @@ JsObj w = JsObj.of( JsPair.of(path("/a/b/0"), 1),
 //parsing a string, which returns a TryObj computation that may fail                       
 JsObj z = JsObj.parse("{\"a\": {\"b\": [1,2]}}").orElseThrow(); 
 
-Assert.assertEquals(w, z);   
+Assertions.assertEquals(w, z);   
  ```
 
 ### <a name="json-mutable-obj-creation"></a> Creation of mutable Json objects
@@ -226,7 +236,7 @@ JsObj w = JsObj._of_( JsPair.of(path("/a/b/0"), 1),
 // parsing a string, which returns a TryObj computation that may fail                  
 JsObj z = JsObj._parse_("{\"a\": {\"b\": [1,2]}}").orElseThrow(); 
 
-Assert.assertEquals(w, z);   
+Assertions.assertEquals(w, z);   
 ```
 
 ### <a name="json-immutable-arr-creation"></a> Creation of immutable Json arrays
@@ -251,7 +261,7 @@ JsArray d = JsArray.of(JsPair.of(path("/0/a/b/0"), 1),
 //parsing a string, which returns a TryArr computation that may fail                      
 JsArray e =  JsArray.parse("[{\"a\":{\"b\":[1,2]}}]").orElseThrow();       
 
-Assert.assertEquals(d, e);  
+Assertions.assertEquals(d, e);  
 ```        
        
 ### <a name="json-mutable-arr-creation"></a> Creation of mutable Json arrays
@@ -276,7 +286,7 @@ JsArray d = JsArray._of_(JsPair.of(path("/0/a/b/0"), 1),
 // parsing a string, which returns a TryArr computation that may fail                        
 JsArray e =  JsArray._parse_("[{\"a\":{\"b\":[1,2]}}]").orElseThrow();       
 
-Assert.assertEquals(d, e);  
+Assertions.assertEquals(d, e);  
 ```
 
 ## <a name="data-in-out"></a> Putting data in and getting data out
@@ -365,7 +375,7 @@ JsArray c = JsArray.of(JsObj.of("a",JsArray.of(1,2)),
 Assertions.assertEquals(JsInt.of(1), c.get(path("/0/a/0")) );
 Assertions.assertEquals(1l, c.getLong(path("/0/a/0")).getAsLong() );
                        
-JsArray d = c.put("0.a.0",true); 
+JsArray d = c.put(path("0.a.0"),true); 
 Assertions.assertEquals(JsBool.TRUE, d.get(path("/0/a/0")) );
 Assertions.assertEquals(true, d.getBool(path("/0/a/0")).get() );
 ```
@@ -644,9 +654,9 @@ TryPatch<JsObj> try = json.patch(Patch.ops()
                                       .add("/a/b",JsStr.of("a"))
                                       .move("/a/c","/b/c")
                                       .copy("/a/E","/b/h/0")
-                                      .remove("/a/c","/b/c")
+                                      .remove("/f/e")
                                       .test("/d/0",JsBool.TRUE)
-                                      .toJsArray()
+                                      .toArray()
                                    );
 
 if(try.isSuccess()) return try.orElseThrow();
@@ -703,8 +713,11 @@ j = f.union(g)
 
 Given two arrays _c_ and _d_:
 * _c.union(d, SET)_ returns _c_ plus those elements from _d_ that don't exist in a.
+
 * _c.union(d, MULTISET)_ returns _c_ plus all the elements from _d_ appended to the back.
+
 * _c.union(d, LIST)_ returns _c_ plus those elements from d which position >= c.size().
+
 * _c.union\_(d)_ returns _c_ plus those elements from _d_ which position >= c.size(), and, at the positions
 where a container of the same type exists in _c_ and _d_, the result is their union. This operation doesn't make
 any sense if arrays are not considered Lists.
@@ -739,17 +752,21 @@ Given two json objects, _a_ and _b_:
 
 * _a.intersection(b, SET)_ returns an object with the keys that exist in both _a_ and _b_ which associated elements are equal,
 considering arrays Set of elements. 
+
 * _a.intersection(b, MULTISET)_ returns an object with the keys that exist in both _a_ and _b_ which associated elements are equal,
 considering arrays MultiSet of elements.
+
 * _a.intersection(b, LIST)_ returns an object with the keys that exist in both _a_ and _b_ which associated elements are equal,
 considering arrays List of elements.
+
 * _a.intersection\_(b, SET)_ behaves as _a.intersection(b, SET)_, but for those keys that exist in both _a_ and _b_ 
 which associated elements are json objects, the result is their intersection.
+
 * _a.intersection\_(b, LIST)_ behaves as _a.intersection(b, LIST)_, but for those keys that exist in both _a_ and _b_
 which associated elements are json of the same type (object or arrays), the result is their intersection.
+
 * _a.intersection\_(b, MULTISET)_ behaves as _a.intersection(b, MULTISET)_, but for those keys that exist in both _a_ and _b_
 which associated elements are json objects, the result is their intersection.
-
 ``` 
 a = { "b": {"a":1, "b":2, "c": [{"a":1, "b":[1,2]}, {"b":2}, {"c":3}] } }
 b = { "b": {"a":1, "b":2, "c": [{"a":1, "b":[1]  }, {"b":2}] } }
@@ -848,10 +865,13 @@ error made by the developers is detected.
 The only exceptions in the API are the custom checked:
 
    - MalformedJson, which occurs when parsing a not well-formed string into a Json.
+```
+
+```
    
    - PatchMalformed, which occurs when a patch can not be applied because it has an invalid schema.
    
-   - PatchOpError, which occurs when a patch is applied and returns an error
+   - PatchOpError, which occurs when a patch is applied and returns an error.
 
 ## <a name="trampolines"></a> Trampolines
 **Json-values**, naturally, uses recursion all the time. To not blow up the stack, tail-recursive method calls are turned into iterative loops by Trampolines. The API exposes a well-known implementation of a 
@@ -901,35 +921,35 @@ A possible recursive implementation is:
         JsElem headElem = head.getValue();
         JsObj tail = obj.tail(headName); 
         if (headElem.isStr()) return schema(tail,
-                                             acc.put(JsPath.fromKey(headName),
-                                                     JsObj.of("type",
-                                                              JsStr.of("string")
-                                                             )
-                                                     )
+                                            acc.put(fromKey(headName),
+                                                    JsObj.of("type",
+                                                             JsStr.of("string")
+                                                            )
+                                                    )
                                              );
         if (headElem.isIntegral()) return schema(tail,
-                                                 acc.put(JsPath.fromKey(headName),
+                                                 acc.put(fromKey(headName),
                                                          JsObj.of("type",
                                                                   JsStr.of("integral")
                                                                  )
                                                         )
                                                 );
         if (headElem.isDecimal()) return schema(tail,
-                                                acc.put(JsPath.fromKey(headName),
+                                                acc.put(fromKey(headName),
                                                         JsObj.of("type",
                                                                   JsStr.of("decimal")
                                                                 )
                                                         )
                                                 );
         if (headElem.isBool()) return schema(tail,
-                                             acc.put(JsPath.fromKey(headName),
+                                             acc.put(fromKey(headName),
                                                      JsObj.of("type",
                                                               JsStr.of("boolean")
                                                              )
                                                     )
                                             );
         if (headElem.isNull()) return schema(tail,
-                                             acc.put(JsPath.fromKey(headName),
+                                             acc.put(fromKey(headName),
                                                      JsObj.of("type",
                                                               JsStr.of("null")
                                                              )
@@ -965,7 +985,7 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
         JsObj tail = obj.tail(headName);
         if (headElem.isStr()) 
                return Trampoline.more(() -> schema(tail,
-                                                   acc.put(JsPath.fromKey(headName),
+                                                   acc.put(fromKey(headName),
                                                            JsObj.of("type",
                                                                     JsStr.of("string")
                                                                    )
@@ -973,7 +993,7 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
                                                    ));
         if (headElem.isIntegral()) 
                return Trampoline.more(() -> schema(tail,
-                                                   acc.put(JsPath.fromKey(headName),
+                                                   acc.put(fromKey(headName),
                                                            JsObj.of("type",
                                                                     JsStr.of("integral")
                                                                    )
@@ -981,7 +1001,7 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
                                                    ));
         if (headElem.isDecimal())
                return Trampoline.more(() -> schema(tail,
-                                                   acc.put(JsPath.fromKey(headName),
+                                                   acc.put(fromKey(headName),
                                                            JsObj.of("type",
                                                                     JsStr.of("decimal")
                                                                    )
@@ -989,7 +1009,7 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
                                                    ));
         if (headElem.isBool()) 
                return Trampoline.more(() -> schema(tail,
-                                                   acc.put(JsPath.fromKey(headName),
+                                                   acc.put(fromKey(headName),
                                                            JsObj.of("type",
                                                                     JsStr.of("boolean")
                                                                    )
@@ -997,7 +1017,7 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
                                                   ));
         if (headElem.isNull()) 
                return Trampoline.more(() -> schema(tail,
-                                                   acc.put(JsPath.fromKey(headName),
+                                                   acc.put(fromKey(headName),
                                                            JsObj.of("type",
                                                                     JsStr.of("null")
                                                                    )

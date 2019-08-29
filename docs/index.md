@@ -35,15 +35,15 @@
 A JsPath represents a string syntax for identifying a specific value within a JSON. It's an implementation of the Json Pointer specification
 defined in [rfc6901](https://tools.ietf.org/html/rfc6901), but there are two slightly differences:
  
-  - According to the RFC, the following path _/0_ could represent both a key named _0_ or the first element of an array. It's perfectly fine
+  - According to the RFC, the path /0 could represent both a key named 0 or the first element of an array. That's perfectly fine
 to get data out of a Json; after all, the schema of the Json is supposed to be known by the user. However, imagine that the user wants to insert
-the name _"Rafa"_ at _/names/0/0_ in an empty Json object:
+the name "Rafa" at /names/0 in an empty Json object:
 
 ```
-JsObj obj = JsObj.empty().put(path("/a/0/0"),"a")
+JsObj obj = JsObj.empty().put(path("/names/0"),"a")
 ```
 
-What is the expected result? According to the rfc6901: both
+What is the expected result? According to the rfc6901, both:
 
 ```
 {"names":["Rafa"]}
@@ -55,18 +55,18 @@ and
 {"names":{"0":"Rafa"}}
 ```
 
-are valid result. Of course, the API have to provide the user a way of distinguish arrays from objects. The rfc6901 is to get data out of Json, but
-according to its definition, it can not be used to insert data in a Json.
-The approach of json-values to make that distinction is to single-quote keys which names are numbers, i.e.:
+are valid results. The API have to provide the user a way of distinguish arrays from objects. The rfc6901 is to read data from a Json, and
+given the pointed out above, it can not be used to insert data in a Json.
+The approach of json-values to make that distinction is to single-quote only the keys which names are numbers, i.e.:
 ```
 // {"names":{"0":"Rafa"}}
-JsObj obj = JsObj.empty().put(path("/a/'0'/0"),"a")
+JsObj obj = JsObj.empty().put(path("/names/'0'"),"a")
 ```
 and
 
 ```
 // {"names":["Rafa"]}
-JsObj obj = JsObj.empty().put(path("/a/0/0"),"a")
+JsObj obj = JsObj.empty().put(path("/names/0"),"a")
 ```
 
   - The index -1 represents the last element of an array.
@@ -79,16 +79,13 @@ There are two ways of creating paths:
  
    - _fromKey(name)_ to create a JsPath from a key name. 
    
-   - _fromIndex(n)_, to create a JsPath from an index
+   - _fromIndex(i)_, to create a JsPath from an index
    
    - _key(name)_ , to append a key to a JsPath 
    
-   - _index(n)_, to append an index to a JsPath 
+   - _index(i)_, to append an index to a JsPath 
 
 ```
-import static jsonvalues.JsPath.fromKey;
-import static jsonvalues.JsPath.fromIndex;
-import static jsonvalues.JsPath.path;
 { 
 "a": [ {"b": [1,2,3]} ],
 " ": "z",
@@ -138,14 +135,23 @@ fromKey("")
 ## <a name="jselem"></a> JsElem
 Every element in a Json is a _JsElem_. There is one for each json value described in [json.org](https://www.json.org):
 * _JsStr_ represents immutable strings.
+
 * The singletons _JsBool.TRUE_ and _JsBool.FALSE_ represent true and false.
+
 * The singleton _JsNull.NULL_ represents null.
+
 * _JsObj_ is a _Json_ that represents an object, which is an unordered set of name/value pairs.
+
 * _JsArray_ is a _Json_ that represents an array, which is an ordered collection of values.
+
 * _JsNumber_ represents immutable numbers. There are five different specializations: 
+    
     * _JsInt_
+    
     * _JsLong_
+    
     * _JsDouble_
+    
     * _JsBigInt_
 
 * The singleton _JsNothing.NOTHING_ represents nothing. It's not part of any specification. It's a convenient type
@@ -868,7 +874,6 @@ Trampoline in case you want to do some _head and tail_ programming, and you shou
 fun and second and more important, it makes the code more declarative, concise, and easy to reason about.
  My experience says that the more difficult the task is, the more benefit you'll get using this approach; 
  however, sometimes a simple loop is more straightforward and more transparent.
- Example: 
  
  Let's create a function named _schema_ that, given a Json, it returns a new Json describing the types of its elements. Let's 
  only consider strings, numbers, booleans, and null. Find below an example:

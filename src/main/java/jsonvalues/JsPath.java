@@ -352,12 +352,12 @@ public final class JsPath implements Comparable<JsPath>
     }
 
 
-    private static UnaryOperator<String> escape = token -> token.replaceAll("~1",
-                                                                            "/"
-                                                                           )
-                                                                .replaceAll("~0",
-                                                                            "~"
-                                                                           );
+    private static UnaryOperator<String> escape = token -> token.replace("~1",
+                                                                         "/"
+                                                                        )
+                                                                .replace("~0",
+                                                                         "~"
+                                                                        );
 
     private static UnaryOperator<String> decode = token ->
     {
@@ -413,7 +413,7 @@ public final class JsPath implements Comparable<JsPath>
             boolean isNumeric = isNumeric(token);
             if (isNumeric)
             {
-                if(token.length()>1 && token.startsWith("0"))throw UserError.indexWithLeadingZeros(token);
+                if (token.length() > 1 && token.startsWith("0")) throw UserError.indexWithLeadingZeros(token);
                 return Index.of(Integer.parseInt(token));
             }
             //token="'" case is covered before
@@ -494,7 +494,8 @@ public final class JsPath implements Comparable<JsPath>
                                                      {
                                                          return isNumeric(key) ? String.format("'%s'",
                                                                                                key
-                                                                                              ) : URLEncoder.encode(key,UTF8);
+                                                                                              ) : URLEncoder.encode(key,
+                                                                                                                    UTF8);
                                                      }
                                                      catch (UnsupportedEncodingException e)
                                                      {
@@ -554,7 +555,6 @@ public final class JsPath implements Comparable<JsPath>
 
     }
 
-
     /**
      Creates a new JsPath appending the given path to this path.
      @param path the given JsPath to be appended
@@ -565,7 +565,8 @@ public final class JsPath implements Comparable<JsPath>
     {
         return new JsPath(this.positions.$plus$plus(requireNonNull(path).positions,
                                                     bf
-                                                   ));
+                                                   )
+        );
     }
 
     /**

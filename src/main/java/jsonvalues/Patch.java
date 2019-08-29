@@ -12,6 +12,12 @@ import static java.util.Objects.requireNonNull;
  */
 public final class Patch
 {
+
+    private static final String FROM_FIELD = "from";
+    private static final String OP_FIELD = "op";
+    private static final String PATH_FIELD = "path";
+    private static final String VALUE_FIELD = "value";
+
     /**
      List of supported patch-operations
      */
@@ -53,11 +59,11 @@ public final class Patch
                            final JsElem value
                           )
         {
-            ops.append(JsObj.of("path",
+            ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(path)),
-                                "op",
+                                OP_FIELD,
                                 JsStr.of(OP.ADD.name()),
-                                "value",
+                                VALUE_FIELD,
                                 requireNonNull(value)
                                ));
             return this;
@@ -73,11 +79,11 @@ public final class Patch
                                final JsElem value
                               )
         {
-            ops.append(JsObj.of("path",
+            ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(path)),
-                                "value",
+                                VALUE_FIELD,
                                 requireNonNull(value),
-                                "op",
+                                OP_FIELD,
                                 JsStr.of(OP.REPLACE.name())
                                ));
             return this;
@@ -91,9 +97,9 @@ public final class Patch
          */
         public Builder remove(final String path)
         {
-            ops.append(JsObj.of("path",
+            ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(path)),
-                                "op",
+                                OP_FIELD,
                                 JsStr.of(OP.REMOVE.name())
                                ));
             return this;
@@ -109,11 +115,11 @@ public final class Patch
                             final JsElem value
                            )
         {
-            ops.append(JsObj.of("path",
+            ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(path)),
-                                "value",
+                                VALUE_FIELD,
                                 requireNonNull(value),
-                                "op",
+                                OP_FIELD,
                                 JsStr.of(OP.TEST.name())
                                ));
             return this;
@@ -130,11 +136,11 @@ public final class Patch
                             final String to
                            )
         {
-            ops.append(JsObj.of("path",
+            ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(to)),
-                                "from",
+                                FROM_FIELD,
                                 JsStr.of(requireNonNull(from)),
-                                "op",
+                                OP_FIELD,
                                 JsStr.of(OP.MOVE.name())
                                ));
             return this;
@@ -150,11 +156,11 @@ public final class Patch
                             final String to
                            )
         {
-            ops.append(JsObj.of("path",
+            ops.append(JsObj.of(PATH_FIELD,
                                 JsStr.of(requireNonNull(to)),
-                                "from",
+                                FROM_FIELD,
                                 JsStr.of(requireNonNull(from)),
-                                "op",
+                                OP_FIELD,
                                 JsStr.of(OP.COPY.name())
                                )
                       );
@@ -223,7 +229,7 @@ public final class Patch
         {
             if (!elem.isObj()) throw PatchMalformed.operationIsNotAnObj(elem);
             final JsObj opObj = elem.asJsObj();
-            final Optional<String> op = opObj.getStr(JsPath.fromKey("op"));
+            final Optional<String> op = opObj.getStr(JsPath.fromKey(OP_FIELD));
             if (!op.isPresent()) throw PatchMalformed.operationRequired(opObj);
             try
             {

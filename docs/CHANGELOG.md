@@ -1,5 +1,13 @@
 # JSON-VALUES
-## v2.0.1  ( Thu Aug 29 2019 18:28:11 GMT+0200 (CEST) )
+## v2.0.2  ( Fri Aug 30 2019 00:42:40 GMT+0200 (CEST) )
 
-Refactor in JsPath solving issues spotted by Sonar: squid:S1192 and squid:S5361 (String.replace instead of String.replaceAll, which is more efficient)
+
+## Bug Fixes
+
+  - **error-message**
+    - wrong error message when parsing the empty string
+  ([bcd58b12](https://github.com/imrafaelmerino/json-values.git/commit/bcd58b126a54ab9601440d39f0d4b8008d6e2bda))
+
+
+
 

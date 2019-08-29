@@ -17,6 +17,9 @@ import static jsonvalues.JsTokenizer.Token.*;
 final class JsParser implements Closeable
 {
     private static final JsBufferPool pool = new JsBufferPool();
+    private final String EXPECTED_START_JSON_OR_VALUE_TOKENS = "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]";
+    private final String EXPECTED_COMMA_TOKEN = "[COMMA]";
+    private final String EXPECTED_COMMA_CLOSE_OBJECT_TOKENS = "[COMMA, CURLYCLOSE]";
 
     /**
      * An event from {@code MyJsParser}.
@@ -147,11 +150,6 @@ final class JsParser implements Closeable
         return JsBigDec.of(getBigDecimal());
     }
 
-    JsCharLocation getLocation()
-    {
-        return tokenizer.getLocation();
-    }
-
     private JsCharLocation getLastCharLocation()
     {
         return tokenizer.getLastCharLocation();
@@ -190,7 +188,9 @@ final class JsParser implements Closeable
         @Override
         public Event getNextEvent() throws MalformedJson
         {
-            return nextValueOrJsonBeginning(tokenizer.nextToken());
+            return nextValueOrJsonBeginning(tokenizer.nextToken(),
+                                            "[CURLYOPEN, SQUAREOPEN]"
+                                           );
         }
     }
 
@@ -216,7 +216,8 @@ final class JsParser implements Closeable
             else if (currentEvent == START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
             else token = tokenizer.nextToken();
             if (token == EOF) return throwUnexpectedEOFException(token);
-            if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken());
+            if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken() ,
+                                                                          EXPECTED_START_JSON_OR_VALUE_TOKENS);
             if (token == CURLYCLOSE)
             {
                 currentContext = stack.pop();
@@ -224,7 +225,7 @@ final class JsParser implements Closeable
             }
             if (firstValue) firstValue = false;
             else if (token != COMMA) throw expectedValueOrJsonBeginning(token,
-                                                                        "[COMMA]"
+                                                                        EXPECTED_COMMA_TOKEN
                                                                        );
             else token = tokenizer.nextToken();
             if (token == STRING) return KEY_NAME;
@@ -248,7 +249,7 @@ final class JsParser implements Closeable
                                                       );
                 default:
                     throw expectedValueOrJsonBeginning(token,
-                                                       "[COMMA, CURLYCLOSE]"
+                                                       EXPECTED_COMMA_CLOSE_OBJECT_TOKENS
                                                       );
             }
         }
@@ -266,11 +267,11 @@ final class JsParser implements Closeable
             {
                 if (currentEvent == START_ARRAY)
                     throw expectedValueOrJsonBeginning(token,
-                                                       "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
+                                                       EXPECTED_START_JSON_OR_VALUE_TOKENS
                                                       );
 
                 throw expectedValueOrJsonBeginning(token,
-                                                   "[COMMA, CURLYCLOSE]"
+                                                   EXPECTED_COMMA_CLOSE_OBJECT_TOKENS
                                                   );
             }
             if (token == Token.SQUARECLOSE)
@@ -280,17 +281,19 @@ final class JsParser implements Closeable
             }
             if (firstValue) firstValue = false;
             else if (token != COMMA) throw expectedValueOrJsonBeginning(token,
-                                                                        "[COMMA]"
+                                                                        EXPECTED_COMMA_TOKEN
                                                                        );
             else token = tokenizer.nextToken();
 
-            return nextValueOrJsonBeginning(token);
+            return nextValueOrJsonBeginning(token,
+                                            EXPECTED_START_JSON_OR_VALUE_TOKENS
+                                           );
         }
 
 
     }
 
-    private Event nextValueOrJsonBeginning(final Token token) throws MalformedJson
+    private Event nextValueOrJsonBeginning(final Token token,String expectedTokens) throws MalformedJson
     {
         if (token.isValue()) return token.getEvent();
         if (token == CURLYOPEN)
@@ -306,7 +309,7 @@ final class JsParser implements Closeable
             return Event.START_ARRAY;
         }
         throw expectedValueOrJsonBeginning(token,
-                                           "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]"
+                                          expectedTokens
                                           );
     }
 

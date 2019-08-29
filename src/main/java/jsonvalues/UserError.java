@@ -199,7 +199,7 @@ public final class UserError extends RuntimeException
                                            String.format("malformed path: %s",
                                                          path
                                                         ),
-                                           "Go to https://imrafaelmerino.github.io/json-values/#jspath."
+                                           "Go to https://imrafaelmerino.github.io/json-values/#jspath"
                                           ));
     }
 

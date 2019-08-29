@@ -55,25 +55,25 @@ and
 {"names":{"0":"Rafa"}}
 ```
 
-are valid results. The API have to provide the user a way of distinguish arrays from objects. The rfc6901 is to read data from a Json, and
+are valid results. The API has to provide the user with a way of distinguishing arrays from objects. The rfc6901 is to read data from a Json, and
 given the pointed out above, it can not be used to insert data in a Json.
 The approach of json-values to make that distinction is to single-quote only the keys which names are numbers, i.e.:
 ```
 // {"names":{"0":"Rafa"}}
-JsObj obj = JsObj.empty().put(path("/names/'0'"),"a")
+JsObj obj = JsObj.empty().put(path("/names/'0'"),"Rafa")
 ```
 and
 
 ```
 // {"names":["Rafa"]}
-JsObj obj = JsObj.empty().put(path("/names/0"),"a")
+JsObj obj = JsObj.empty().put(path("/names/0"),"Rafa")
 ```
 
   - The index -1 represents the last element of an array.
 
 There are two ways of creating paths:
 
-* From a path-like string using the method _JsPath.path(...)_. See [rfc6901](https://tools.ietf.org/html/rfc6901) for further details
+* From a path-like string using the method _JsPath.path(string)_. See [rfc6901](https://tools.ietf.org/html/rfc6901) for further details
 
 * Using the JsPath API:
  
@@ -81,7 +81,7 @@ There are two ways of creating paths:
    
    - _fromIndex(i)_, to create a JsPath from an index
    
-   - _key(name)_ , to append a key to a JsPath 
+   - _key(name)_, to append a key to a JsPath 
    
    - _index(i)_, to append an index to a JsPath 
 
@@ -156,9 +156,7 @@ Every element in a Json is a _JsElem_. There is one for each json value describe
 
 * The singleton _JsNothing.NOTHING_ represents nothing. It's not part of any specification. It's a convenient type
 that makes certain functions that return a JsElem **total** on their arguments. For example, the function
- _JsElem get(JsPath)_ is total because it returns a JsElem for every JsPath. If there is no element located at the specified
-  path, it returns _NOTHING_. In other functions like _Json putIfPresent(Function<JsElem, JsElem>)_, this type comes in handy 
- as well because it's possible, just returning _NOTHING_, not to insert anything even if an element is present. 
+ _JsElem get(JsPath)_ is total because it returns a JsElem for every JsPath. If there is no element located at the specified path, it returns _NOTHING_. In other functions like _Json putIfPresent(Function<JsElem, JsElem>)_, this type comes in handy as well because it's possible, just returning _NOTHING_, not to insert anything even if an element is present. 
  
 ## <a name="jspair"></a> JsPair
 There are different overloaded static factory methods to create pairs:
@@ -182,17 +180,13 @@ JsPair mapElem(UnaryOperator<JsElem> fn)
 
 ## <a name="json-creation"></a> Creating Jsons
 
-**json-values** uses _static factory methods_ to create objects, just like the ones introduced by _Java 9_ to 
-create small unmodifiable collections. There is a naming convention to emphasize what kind of object is created:
+**json-values** uses _static factory methods_ to create objects, just like the ones introduced by _Java 9_ to create small unmodifiable collections. There is a naming convention to emphasize what kind of object is created:
 
 * **of** and **parse** methods return **immutable** jsons or values.
     
 * **\_of\_** and **\_parse\_** methods return **mutable** jsons. 
 
-You may be asking what's the point of using underscores to name methods. The reason is that symbols are 
-great to convey information quickly and concisely, and distinguish methods that return mutable objects from 
-the ones that return immutable ones, is something that has to be highlighted somehow. Not like in other 
-languages like Scala, symbols are not allowed in Java to name variables and methods, that's why I use an underscore. 
+You may be asking what's the point of using underscores to name methods. The reason is that symbols are great to convey information quickly and concisely, and distinguish methods that return mutable objects from the ones that return immutable ones, is something that has to be highlighted somehow. Not like in other languages like Scala, symbols are not allowed in Java to name variables and methods, that's why I use an underscore. 
 I prefer to use an exclamation as Ruby does, but it's not possible in Java.
 
 ### <a name="json-immutable-obj-creation"></a> Creation of immutable Json objects
@@ -389,12 +383,11 @@ Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                         );
 ```
 
-The point here is being honest. The string _c_ has been inserted at the forth position of the array, and for 
-that to happen, filling with null the third position is necessary.  
+The point here is being honest. The string _c_ has been inserted at the forth position of the array, and for that to happen, filling with null the third position is necessary.  
 
   - The _add_ method, unlike the _put_, never creates a new container, but it adds an element to an existing one.
   If the parent container doesn't exist, an UserError is thrown. If the parent is an array, the elements at or above 
-  the specified index are shifted one position to the right.
+  the specified index is shifted one position to the right.
   
 ```
 JsObj obj = JsObj.of("a",JsArray.of(1,2,3),
@@ -661,8 +654,7 @@ if(try.isSuccess()) return try.orElseThrow();
 
 ## <a name="union-and-intersection"></a> Union and intersection
 Considering jsons Set of pairs, it seems reasonable to implement Set-Theory operations like union and intersection.
-For certain operations, arrays can be considered Sets, MultiSets or Lists. In Sets, the order of data items does not 
-matter (or is undefined) but duplicate data items are not permitted. In Lists, the order of data matters and duplicate data items are permitted. 
+For certain operations, arrays can be considered Sets, MultiSets or Lists. In Sets, the order of data items does not matter (or is undefined) but duplicate data items are not permitted. In Lists, the order of data matters and duplicate data items are permitted. 
 In MultiSets, the order of data items does not matter, but in this case, duplicate data items are permitted. 
 
 ### <a name="union"></a> Union
@@ -714,7 +706,7 @@ Given two arrays _c_ and _d_:
 * _c.union(d, MULTISET)_ returns _c_ plus all the elements from _d_ appended to the back.
 * _c.union(d, LIST)_ returns _c_ plus those elements from d which position >= c.size().
 * _c.union\_(d)_ returns _c_ plus those elements from _d_ which position >= c.size(), and, at the positions
-where a container of the same type exists in _c_ and _d_, the result is their union. This operations doesn't make
+where a container of the same type exists in _c_ and _d_, the result is their union. This operation doesn't make
 any sense if arrays are not considered Lists.
 
 Notice that _c.union(d, SET)_ and _c.union(d, MULTISET)_ are commutative.
@@ -743,7 +735,7 @@ e= c.union(d,MULTISET)
 ```
 
 ### <a name="intersection"></a> Intersection
-Given two json objects _a_ and _b_:
+Given two json objects, _a_ and _b_:
 
 * _a.intersection(b, SET)_ returns an object with the keys that exist in both _a_ and _b_ which associated elements are equal,
 considering arrays Set of elements. 
@@ -786,7 +778,7 @@ h = d.intersection(e,LIST)
 i = d.intersection_(e,LIST)
 ``` 
 
-Given two json arrays _c_ and _d_:
+Given two json arrays, _c_ and _d_:
 
 * _c.intersection(d, SET)_ returns an array with the elements that exist in both _c_ and _d_
 
@@ -794,8 +786,7 @@ Given two json arrays _c_ and _d_:
 
 * _c.intersection(d, LIST)_ returns an array with the elements that exist in both _c_ and _d_ and are located at the same position.
 
-* _c.intersection\_(d)_ behaves as _a.intersection(b, LIST)_, but for those elements that are containers of the same type and are
-located at the same position, the result is their intersection.
+* _c.intersection\_(d)_ behaves as _a.intersection(b, LIST)_, but, the result for those elements that are containers of the same type and are also located at the same position, is their intersection.
 
 Examples:
 
@@ -849,15 +840,10 @@ Assertions.assertFalse(b.equals(c, TYPE.MULTISET));
 
 ## <a name="exceptions-errors"></a> Exceptions and errors
 Exceptions and errors are both treated as Exceptions in Java and most of the mainstream languages, but, conceptually, 
-they are quite different. Errors mean that someone has to fix something; it could be an error of the user of the library 
-or an error of the library itself. On the other hand, exceptions are expected in irregular situations at runtime, like
- accessing a non-existing file. No matter what you do, the file could be deleted anytime by any other process, and the 
- only thing you can do is to handle that possibility. 
+they are quite different. Errors mean that someone has to fix something; it could be an error of the user of the library or an error of the library itself. On the other hand, exceptions are expected in irregular situations at runtime, like accessing a non-existing file. No matter what you do, the file could be deleted anytime by any other process, and the only thing you can do is to handle that possibility. 
  
 **json-values** uses the custom unchecked exception _UserError_ when the client of the library makes an error,
-for example, getting the head of an empty array, which means that the programmer needs to change something to fix the 
-bug. Another error could be to pass in null to a method, in which case it throws a NullPointerException. No method 
-in the library but _equals_ accepts null as a parameter. _InternalError_ is another custom unchecked exception that is thrown when an
+for example, getting the head of an empty array, which means that the programmer needs to change something to fix the bug. Another error could be to pass in null to a method, in which case it throws a NullPointerException. No method in the library but _equals_ accepts null as a parameter. _InternalError_ is another custom unchecked exception that is thrown when an
 error made by the developers is detected.
 The only exceptions in the API are the custom checked:
 
@@ -868,10 +854,8 @@ The only exceptions in the API are the custom checked:
    - PatchOpError, which occurs when a patch is applied and returns an error
 
 ## <a name="trampolines"></a> Trampolines
-**Json-values**, naturally, uses recursion all the time. To not blow up the stack, tail-recursive method 
-calls are turned into iterative loops by Trampolines. The API exposes a well-known implementation of a 
-Trampoline in case you want to do some _head and tail_ programming, and you should! Because, first, it's 
-fun and second and more important, it makes the code more declarative, concise, and easy to reason about.
+**Json-values**, naturally, uses recursion all the time. To not blow up the stack, tail-recursive method calls are turned into iterative loops by Trampolines. The API exposes a well-known implementation of a 
+Trampoline in case you want to do some _head and tail_ programming, and you should! Because, first, it's fun and second and more important, it makes the code more declarative, concise, and easy to reason about.
  My experience says that the more difficult the task is, the more benefit you'll get using this approach; 
  however, sometimes a simple loop is more straightforward and more transparent.
  
@@ -957,7 +941,7 @@ A possible recursive implementation is:
     }
 ```
 
-However, it blows up the stack when the size of the json is 2033 or greater ( test executed in Java 8). 
+However, it blows up the stack when the size of the json is 2033 or higher ( test executed in Java 8). 
 Java compiler doesn't optimize tail-recursive calls as Scala or Clojure
 compilers do. Nevertheless, we can still make use of Trampolines to turn recursion into an iteration. The following implementation does the trick:
 
@@ -1026,8 +1010,7 @@ compilers do. Nevertheless, we can still make use of Trampolines to turn recursi
     }
 ```
 
-A Trampoline is a type that has two concrete implementations: _more_ and _done_. _more_ accepts as a parameter 
-a supplier, which is lazy, so no operation is performed when it's returned and therefore, no call is piled-up on the stack. 
+A Trampoline is a type that has two concrete implementations: _more_ and _done_. _more_ accepts as a parameter a supplier, which is lazy, so no operation is performed when it's returned and therefore, no call is piled-up on the stack. 
 It's when _done_ is returned when the iteration is fired up, and then all the suppliers are computed in order.
 
 ## <a name="performance"></a> Performance
@@ -1060,6 +1043,3 @@ Part of the testing has been carried out using [Scala Check](https://www.scalach
 I developed a json generator for this purpose.
 
 Any question, feedback, or suggestion, please, drop out an email to imrafael.merino@gmail.com.
-
-
-

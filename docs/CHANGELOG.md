@@ -1,18 +1,4 @@
 # JSON-VALUES
-## v2.0.0  ( Tue Aug 27 2019 23:47:03 GMT+0200 (CEST) )
+## v2.0.1  ( Thu Aug 29 2019 18:28:11 GMT+0200 (CEST) )
 
-
-## Breaking changes
-
-  - **jspath/of**
-    - due to [cc3aef2b](https://github.com/imrafaelmerino/json-values.git/commit/cc3aef2bcdcfff43a8b610dc5dca86c7aee73828),
-  replace JsPath.of with
-Jspath.path and use a static import
-
-close #33
-
-  ([cc3aef2b](https://github.com/imrafaelmerino/json-values.git/commit/cc3aef2bcdcfff43a8b610dc5dca86c7aee73828))
-
-
-
-
+Refactor in JsPath solving issues spotted by Sonar: squid:S1192 and squid:S5361 (String.replace instead of String.replaceAll, which is more efficient)

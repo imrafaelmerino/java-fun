@@ -72,9 +72,8 @@ class StreamCollectorSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val obj = js.stream_().collect(JsObj.collector())
-            obj.equals(js) && obj.hashCode() == js.hashCode()
-
+            val obj = js.stream_().collect(Jsons.mutable.`object`.collector())
+            obj.same(js)
           }
          )
   }

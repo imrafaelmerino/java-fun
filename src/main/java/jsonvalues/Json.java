@@ -2,8 +2,6 @@ package jsonvalues;
 
 import jsonvalues.JsArray.TYPE;
 
-import java.io.Serializable;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -12,7 +10,6 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsNothing.NOTHING;
-import static jsonvalues.JsParser.Event.START_ARRAY;
 
 /**
  <pre>
@@ -45,15 +42,9 @@ json.putIfAbsent(path,supplier)
 }
  Another way to see a json is like a stream of pairs, which opens the door to doing all the operations
  that were introduced in Java 8 (map, filter, reduce, etc). For this purpose the methods {@link #stream_()}
- or {@link #stream()} are provided. To put the stream back into an <b>immutable</b> json the collectors {@link JsObj#collector()}
- and {@link JsArray#collector()} can be used, whereas the collectors {@link JsObj#_collector_()} and {@link JsArray#_collector_()}
- would put the stream back into a <b>mutable</b> json.
+ or {@link #stream()} are provided.
 
- All the methods that accept a {@link JsPath} are overloaded and accept also a path-like string instead.
-
- There are two types of conventions on method names:
-
- -Static factory methods that are prefixed and suffixed with underscore return mutable instances.
+ There are one convention on method names:
  -Methods that are suffixed with underscore traverse the whole json recursively.
 
  All the methods throw a NullPointerException when any of the params passed in is null. The exception
@@ -67,86 +58,9 @@ json.putIfAbsent(path,supplier)
  @see JsArray to work with jsons that are arrays
 
  @author Rafael Merino Garcia */
-@SuppressWarnings("squid:S1214") //serializable class, explicit declaration of serialVersionUID is fine
-public interface Json<T extends Json<T>> extends JsElem, Serializable
+public interface Json<T extends Json<T>> extends JsElem
 
 {
-    long serialVersionUID = 1L;
-
-    /**
-     Tries to parse the string into a mutable json.
-     @param str the string to be parsed
-     @return a {@link Try} computation
-     */
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
-    static Try _parse_(final String str)
-    {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
-        {
-
-            final JsParser.Event event = parser.next();
-
-            if (event == START_ARRAY)
-            {
-                final JavaVector array = new JavaVector();
-                array.parse(parser);
-                return new Try(new MutableJsArray(array));
-            }
-
-            final JavaMap obj = new JavaMap();
-            obj.parse(parser);
-            return new Try(new MutableJsObj(obj));
-        }
-        catch (MalformedJson e)
-        {
-            return new Try(e);
-        }
-
-    }
-
-
-    /**
-     Tries to parse the string into a mutable json, performing the specified transformations while the parsing.
-     It's faster to do certain operations right while the parsing instead of doing the parsing and
-     applying them later.
-     @param str     the string that will be parsed.
-     @param builder a builder with the transformations that, if specified, will be applied during the parsing
-     @return a {@link Try} computation
-     */
-    @SuppressWarnings("squid:S00100") //  naming convention: _xx_ returns immutable object
-    static Try _parse_(final String str,
-                       final ParseBuilder builder
-                      )
-    {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
-        {
-            final JsParser.Event event = parser.next();
-            if (event == START_ARRAY)
-            {
-                final JavaVector array = new JavaVector();
-                array.parse(parser,
-                            builder.create(),
-                            JsPath.empty()
-                                  .index(-1)
-                           );
-                return new Try(new MutableJsArray(array));
-            }
-            final JavaMap obj = new JavaMap();
-            obj.parse(parser,
-                      builder.create(),
-                      JsPath.empty()
-                     );
-            return new Try(new MutableJsObj(obj));
-        }
-
-        catch (MalformedJson e)
-        {
-            return new Try(e);
-        }
-
-    }
-
-
     /**
      Appends all the elements of the array, starting from the head, to the array located at the given
      path in this json. If the array doesn't exist, a new one is created, replacing any existing element
@@ -528,7 +442,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     /**
      Filters the pairs of elements in the first level of this json, removing those that don't ifPredicateElse
      the predicate.
-     @param filter the predicate which takes as the input every JsPair in the first level parse this json
+     @param filter the predicate which takes as the input every JsPair in the first level of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
      @see #filterElems_(Predicate) how to filter the pair of elements of the whole json and not only the first level
      */
@@ -538,16 +452,16 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      Filters all the pairs of elements of this json, removing those that don't ifPredicateElse the predicate.
      @param filter the predicate which takes as the input every JsPair of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-     @see #filterElems(Predicate) how to filter the pairs of values parse only the first level
+     @see #filterElems(Predicate) how to filter the pairs of values of only the first level
      */
     @SuppressWarnings("squid:S00100")
     //  naming convention: xx_ traverses the whole json
     T filterElems_(final Predicate<? super JsPair> filter);
 
     /**
-     Filters the pair of jsons in the first level parse this json, removing those that don't ifPredicateElse
+     Filters the pair of jsons in the first level of this json, removing those that don't ifPredicateElse
      the predicate.
-     @param filter the predicate which takes as the input every JsPair in the first level parse this json
+     @param filter the predicate which takes as the input every JsPair in the first level of this json
 
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
 
@@ -557,10 +471,10 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                 );
 
     /**
-     Filters all the pair of jsons parse this json, removing those that don't ifPredicateElse the predicate.
+     Filters all the pair of jsons of this json, removing those that don't ifPredicateElse the predicate.
      @param filter the predicate which takes as the input every JsPair of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-     @see #filterObjs(BiPredicate) how to filter the pair of jsons parse only the first level
+     @see #filterObjs(BiPredicate) how to filter the pair of jsons of only the first level
      */
     @SuppressWarnings("squid:S00100")
     //  naming convention: xx_ traverses the whole json
@@ -568,15 +482,15 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                  );
 
     /**
-     Filters the keys in the first level parse this json, removing those that don't ifPredicateElse the predicate.
-     @param filter the predicate which takes as the input every JsPair in the first level parse this json
+     Filters the keys in the first level of this json, removing those that don't ifPredicateElse the predicate.
+     @param filter the predicate which takes as the input every JsPair in the first level of this json
      @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
      @see #filterKeys_(Predicate) how to filter the keys of the whole json and not only the first level
      */
     T filterKeys(final Predicate<? super JsPair> filter);
 
     /**
-     Filters all the keys parse this json, removing those that don't ifPredicateElse the predicate.
+     Filters all the keys of this json, removing those that don't ifPredicateElse the predicate.
      @param filter the predicate which takes as the input every JsPair of this json
      @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
      @see #filterKeys(Predicate) how to filter the keys of only the first level
@@ -756,12 +670,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     }
 
     /**
-     Declarative way parse implementing if(this.isEmpty()) return emptySupplier.get() else return
+     Declarative way of implementing if(this.isEmpty()) return emptySupplier.get() else return
      nonEmptySupplier.get()
      @param emptySupplier    Supplier that will produce the result if this json is empty
      @param nonemptySupplier Supplier that will produce the result if this json is not empty
      @param <A> the type of the result
-     @return an object parse type A
+     @return an object of type A
 
      */
     default <A> A ifEmptyElse(Supplier<A> emptySupplier,
@@ -821,26 +735,26 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
 
     /**
-     Maps the values in the first level parse this json.
+     Maps the values in the first level of this json.
      @param fn the mapping function
 
      @return a new mapped json of the same type T
      @see #mapObjs(BiFunction) to map jsons
-     @see #mapKeys(Function) to map keys parse json objects
+     @see #mapKeys(Function) to map keys of json objects
      @see #mapElems_(Function) to map all the values and not only the first level
      */
     T mapElems(final Function<? super JsPair, ? extends JsElem> fn);
 
 
     /**
-     Maps the values in the first level parse this json that satisfies a given predicate.
+     Maps the values in the first level of this json that satisfies a given predicate.
      @param fn the mapping function
      @param predicate the given predicate that determines what JsValues will be mapped
      @return same this instance or a new mapped json of the same type T
 
 
      @see #mapObjs(BiFunction, BiPredicate) to map jsons
-     @see #mapKeys(Function, Predicate) to map keys parse json objects
+     @see #mapKeys(Function, Predicate) to map keys of json objects
      @see #mapElems_(Function, Predicate) to map all the values and not only the first level
      */
     T mapElems(final Function<? super JsPair, ? extends JsElem> fn,
@@ -848,11 +762,11 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
               );
 
     /**
-     Maps all the values parse this json.
+     Maps all the values of this json.
      @param fn the mapping function
      @return a new mapped json of the same type T
      @see #mapObjs_(BiFunction) to map jsons
-     @see #mapKeys_(Function) to map keys parse json objects
+     @see #mapKeys_(Function) to map keys of json objects
      @see #mapElems(Function) to map only the first level
      */
     @SuppressWarnings("squid:S00100")
@@ -861,12 +775,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
 
 
     /**
-     Maps all the values parse this json that satisfies a given predicate.
+     Maps all the values of this json that satisfies a given predicate.
      @param fn the  mapping function
      @param predicate the given predicate that determines what JsValues will be mapped
      @return same this instance or a new mapped json of the same type TT
      @see #mapObjs_(BiFunction, BiPredicate) to map jsons
-     @see #mapKeys_(Function, Predicate) to map keys parse json objects
+     @see #mapKeys_(Function, Predicate) to map keys of json objects
      @see #mapElems(Function, Predicate) to map only the first level
      */
     @SuppressWarnings("squid:S00100")
@@ -876,12 +790,12 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                );
 
     /**
-     Maps the jsons in the first level parse this json that satisfies a given predicate.
+     Maps the jsons in the first level of this json that satisfies a given predicate.
      @param fn the mapping function
      @param predicate the given predicate that determines what Jsons will be mapped
      @return same this instance or a new mapped json of the same type T
      @see #mapElems(Function, Predicate) to map values
-     @see #mapKeys(Function, Predicate) to map keys parse json objects
+     @see #mapKeys(Function, Predicate) to map keys of json objects
      @see #mapObjs_(BiFunction, BiPredicate) to map all the jsons and not only the first level
      */
     T mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
@@ -889,23 +803,23 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
              );
 
     /**
-     Maps the jsons in the first level parse this json.
+     Maps the jsons in the first level of this json.
      @param fn the  mapping function
      @return a new mapped json of the same type T
      @see #mapElems(Function) to map values
-     @see #mapKeys(Function) to map keys parse json objects
+     @see #mapKeys(Function) to map keys of json objects
      @see #mapObjs_(BiFunction) to map all the jsons and not only the first level
      */
     T mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn
              );
 
     /**
-     Maps all the jsons parse this json that satisfies a given predicate.
+     Maps all the jsons of this json that satisfies a given predicate.
      @param fn the  mapping function
      @param predicate the given predicate that determines what Jsons will be mapped
      @return same this instance or a new mapped json of the same type T
      @see #mapElems_(Function, Predicate) to map values
-     @see #mapKeys_(Function, Predicate) to map keys parse json objects
+     @see #mapKeys_(Function, Predicate) to map keys of json objects
      @see #mapObjs(BiFunction, BiPredicate) to map only the first level
      */
     @SuppressWarnings("squid:S00100")
@@ -915,11 +829,11 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
               );
 
     /**
-     Maps all the jsons parse this json.
+     Maps all the jsons of this json.
      @param fn the mapping function
      @return a new mapped json of the same type T
      @see #mapElems_(Function) to map values
-     @see #mapKeys_(Function) to map keys parse json objects
+     @see #mapKeys_(Function) to map keys of json objects
      @see #mapObjs(BiFunction) to map only the first level
      */
     @SuppressWarnings("squid:S00100")
@@ -928,7 +842,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
               );
 
     /**
-     Maps the keys in the first level parse this json.
+     Maps the keys in the first level of this json.
      @param fn the mapping function
      @return a new mapped json of the same type T
      @see #mapElems(Function) to map values
@@ -938,7 +852,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     T mapKeys(final Function<? super JsPair, String> fn);
 
     /**
-     Maps the keys in the first level parse this json that satisfies a given predicate.
+     Maps the keys in the first level of this json that satisfies a given predicate.
      @param fn the mapping function
      @param predicate the given predicate that determines what keys will be mapped
      @return same this instance or a new mapped json of the same type T
@@ -952,7 +866,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
              );
 
     /**
-     Maps all the keys parse this json.
+     Maps all the keys of this json.
      @param fn the mapping function
      @return a new mapped json of the same type T
      @see #mapElems_(Function) to map values
@@ -964,7 +878,7 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
     T mapKeys_(final Function<? super JsPair, String> fn);
 
     /**
-     Maps all the keys parse this json that satisfies a given predicate.
+     Maps all the keys of this json that satisfies a given predicate.
      @param fn the mapping function
      @param predicate the given predicate that determines what keys will be mapped
      @return same this instance or a new mapped json of the same type T
@@ -1009,71 +923,6 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
                   );
     }
 
-    /**
-     Tries to parse the string into an immutable json.
-     @param str the string that will be parsed
-     @return a {@link Try} computation
-     */
-    static Try parse(String str)
-    {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
-        {
-
-            final JsParser.Event event = parser.next();
-            if (event == START_ARRAY)
-            {
-                return new Try(new ImmutableJsArray(ScalaVector.EMPTY.parse(parser)
-                ));
-            }
-            return new Try(new ImmutableJsObj(ScalaMap.EMPTY.parse(parser)));
-        }
-
-        catch (MalformedJson e)
-        {
-
-            return new Try(e);
-
-        }
-
-
-    }
-
-    /**
-     Tries to parse the string into an immutable json, performing the specified transformations while the parsing.
-     @param str     the string that will be parsed
-     @param builder a builder with the transformations that will be applied during the parsing
-     @return a {@link Try} computation
-     */
-    static Try parse(String str,
-                     ParseBuilder builder
-                    )
-    {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
-        {
-
-            final JsParser.Event event = parser.next();
-            if (event == START_ARRAY) return new Try(new ImmutableJsArray(ScalaVector.EMPTY.parse(parser,
-                                                                                                  builder.create(),
-                                                                                                  JsPath.empty()
-                                                                                                            .index(-1)
-
-                                                                                                 )));
-            return new Try(new ImmutableJsObj(ScalaMap.EMPTY.parse(parser,
-                                                                   builder.create(),
-                                                                   JsPath.empty()
-
-                                                                  )));
-        }
-
-        catch (MalformedJson e)
-        {
-
-            return new Try(e);
-
-        }
-
-
-    }
 
     /**
      Inserts the element returned by the function at the given path in this json, replacing any existing element
@@ -2068,18 +1917,6 @@ public interface Json<T extends Json<T>> extends JsElem, Serializable
      */
     Stream<JsPair> stream();
 
-
-    /**
-     Converts this json into immutable if it's mutable, returning this same instance otherwise.
-     @return an immutable Json
-     */
-    T toImmutable();
-
-    /**
-     Converts this json into mutable if it's immutable, returning this same instance otherwise.
-     @return an mutable Json
-     */
-    T toMutable();
 
     /**
      Returns true if an element exists in this json at the given path.

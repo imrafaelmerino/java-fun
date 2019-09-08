@@ -17,9 +17,9 @@ import static jsonvalues.JsTokenizer.Token.*;
 final class JsParser implements Closeable
 {
     private static final JsBufferPool pool = new JsBufferPool();
-    private final String EXPECTED_START_JSON_OR_VALUE_TOKENS = "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]";
-    private final String EXPECTED_COMMA_TOKEN = "[COMMA]";
-    private final String EXPECTED_COMMA_CLOSE_OBJECT_TOKENS = "[COMMA, CURLYCLOSE]";
+    private static final String EXPECTED_START_JSON_OR_VALUE_TOKENS = "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]";
+    private static final String EXPECTED_COMMA_TOKEN = "[COMMA]";
+    private static final String EXPECTED_COMMA_CLOSE_OBJECT_TOKENS = "[COMMA, CURLYCLOSE]";
 
     /**
      * An event from {@code MyJsParser}.
@@ -216,7 +216,7 @@ final class JsParser implements Closeable
             else if (currentEvent == START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
             else token = tokenizer.nextToken();
             if (token == EOF) return throwUnexpectedEOFException(token);
-            if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken() ,
+            if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken(),
                                                                           EXPECTED_START_JSON_OR_VALUE_TOKENS);
             if (token == CURLYCLOSE)
             {
@@ -293,7 +293,9 @@ final class JsParser implements Closeable
 
     }
 
-    private Event nextValueOrJsonBeginning(final Token token,String expectedTokens) throws MalformedJson
+    private Event nextValueOrJsonBeginning(final Token token,
+                                           String expectedTokens
+                                          ) throws MalformedJson
     {
         if (token.isValue()) return token.getEvent();
         if (token == CURLYOPEN)
@@ -309,7 +311,7 @@ final class JsParser implements Closeable
             return Event.START_ARRAY;
         }
         throw expectedValueOrJsonBeginning(token,
-                                          expectedTokens
+                                           expectedTokens
                                           );
     }
 

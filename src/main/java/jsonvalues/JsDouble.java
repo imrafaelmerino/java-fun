@@ -42,15 +42,8 @@ public final class JsDouble implements JsNumber, Comparable<JsDouble>
     }
 
     /**
-     Indicates whether some other object is "equal to" this json double. Numbers parse different of
-     are equals if the have the same value:
-     {@code
-     JsDouble.of(1.0).equals(JsDouble.of(1))
-     JsDouble.of(1).equals(JsInt.of(1))
-     JsDouble.of(1).equals(JsBigInt.of(BigInteger.ONE))
-     JsDouble.of(1).equals(JsBigDec.of(BigDecimal.valueOf(1.0)))
-     JsDouble.of(1).equals(JsLong.of(1))
-     }
+     Indicates whether some other object is "equal to" this json double. Numbers of different types
+     are equals if the have the same value.
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this JsDouble
      */

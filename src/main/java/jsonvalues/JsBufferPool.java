@@ -26,7 +26,8 @@ final class JsBufferPool
     {
         WeakReference<char[]> weakReference = Optional.ofNullable(queue.poll())
                                                       .orElseGet(() -> new WeakReference<>(new char[4096]));
-        return Optional.ofNullable(weakReference.get()).orElseGet(()->new char[4096]);
+        return Optional.ofNullable(weakReference.get())
+                       .orElseGet(() -> new char[4096]);
     }
 
 

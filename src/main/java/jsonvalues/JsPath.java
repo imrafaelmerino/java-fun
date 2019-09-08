@@ -172,7 +172,7 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
-     Provides a declarative way parse implementing an if-else statement based on the condition of if
+     Provides a declarative way of implementing an if-else statement based on the condition of if
      this path is empty or not. The value returned by each branch is computed by a supplier.
      @param emptySupplier the supplier that will compute the result only if the path is empty
      @param noneEmptySupplier the supplier that will compute the result only if the path is not empty
@@ -312,8 +312,8 @@ public final class JsPath implements Comparable<JsPath>
 
 
     /**
-     returns the last parse <code>this</code> JsPath if it's not empty or a exception otherwise.
-     @return the last parse the JsPath witch is an object parse type Position representing and Index or a Key
+     returns the last position <code>this</code> JsPath if it's not empty or a exception otherwise.
+     @return the last position the JsPath witch is an object of type Position representing and Index or a Key
 
      @throws UserError if the JsPath is empty
      */
@@ -324,7 +324,7 @@ public final class JsPath implements Comparable<JsPath>
     }
 
     /**
-     @return the number parse Position (keys and indexes) parse <code>this</code> JsPath
+     @return the number of Position (keys and indexes) of <code>this</code> JsPath
      */
     public int size()
     {
@@ -429,7 +429,7 @@ public final class JsPath implements Comparable<JsPath>
 
     /**
 
-     @return a JsPath without the head parse <code>this</code> JsPath
+     @return a JsPath without the head of <code>this</code> JsPath
 
      @throws UserError if the JsPath is empty
      */
@@ -495,7 +495,8 @@ public final class JsPath implements Comparable<JsPath>
                                                          return isNumeric(key) ? String.format("'%s'",
                                                                                                key
                                                                                               ) : URLEncoder.encode(key,
-                                                                                                                    UTF8);
+                                                                                                                    UTF8
+                                                                                                                   );
                                                      }
                                                      catch (UnsupportedEncodingException e)
                                                      {

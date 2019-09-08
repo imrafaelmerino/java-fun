@@ -453,19 +453,17 @@ public class TestJsPatch
     @Test
     public void test_json_patch() throws MalformedJson, PatchMalformed, PatchOpError
     {
-        final JsArray patches = JsArray.parse(tests)
-                                       .orElseThrow();
+        final JsArray patches = Jsons.immutable.array.parse(tests)
+                                                     .orElseThrow();
 
         for (JsElem test : patches)
         {
 
             final JsObj obj = test.asJsObj();
 
-
             final JsElem expected = obj.get(JsPath.fromKey("expected"));
 
             final JsElem error = obj.get(JsPath.fromKey("expected"));
-
 
             if (!error.isNothing())
             {

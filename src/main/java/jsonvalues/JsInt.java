@@ -39,13 +39,7 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
 
     /**
      Indicates whether some other object is "equal to" this json integer. Numbers of different types
-     are equals if the have the same value:
-     {@code
-     JsInt.of(1).equals(JsDouble.of(1.00))
-     JsInt.of(1).equals(JsLong.of(1))
-     JsInt.of(1).equals(JsBigInt.of(BigInteger.ONE))
-     JsInt.of(1).equals(JsBigDec.of(BigDecimal.valueOf(1.0)))
-     }
+     are equals if the have the same value.
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this JsInt.
      */
@@ -157,6 +151,7 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
     {
         return requireNonNull(jsBigInt).equals(this);
     }
+
     /**
      returns true if this integer and the specified bigdecimal represent the same number
      @param jsBigDec the specified JsBigDec
@@ -166,6 +161,7 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
     {
         return requireNonNull(jsBigDec).equals(this);
     }
+
     /**
      returns true if this integer and the specified long represent the same number
      @param jsLong the specified JsLong
@@ -175,6 +171,7 @@ public final class JsInt implements JsNumber, Comparable<JsInt>
     {
         return requireNonNull(jsLong).equals(this);
     }
+
     /**
      returns true if this integer and the specified double represent the same number
      @param jsDouble the specified JsDouble

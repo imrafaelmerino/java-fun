@@ -9,7 +9,7 @@ import java.text.MessageFormat;
 public final class MalformedJson extends Exception
 {
 
-    MalformedJson(final String message)
+    private MalformedJson(final String message)
     {
         super(message);
     }
@@ -53,9 +53,9 @@ public final class MalformedJson extends Exception
 
 
         return new MalformedJson(MessageFormat.format("Unexpected char {0} at {1}",
-                                                       unexpected,
-                                                       location
-                                                      )
+                                                      unexpected,
+                                                      location
+                                                     )
         );
     }
 

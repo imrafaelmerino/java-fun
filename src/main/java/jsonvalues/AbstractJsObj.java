@@ -14,20 +14,24 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.AbstractJsArray.streamOfArr;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.MatchExp.ifNothingElse;
-import static jsonvalues.AbstractJsArray.streamOfArr;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
+/**
+ Explicit instantiation of JsObj interface to reduce class file size in subclasses.
 
-abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements JsObj
+ @param <V> type of the seq implementation to hold json arrays
+ @param <M> type of the map implementation to hold json objects
+ */
+abstract class AbstractJsObj<M extends MyMap<M, V>, V extends MySeq<V, M>> implements JsObj
 {
-    public static final long serialVersionUID = 1L;
 
-    protected transient T map;
+    protected M map;
 
-    AbstractJsObj(final T myMap)
+    AbstractJsObj(final M myMap)
     {
         assert myMap != null;
         this.map = myMap;
@@ -35,9 +39,9 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
 
     @SuppressWarnings("Duplicates")
     @Override
-    public JsObj appendAll(final JsPath path,
-                           final JsArray elems
-                          )
+    public final JsObj appendAll(final JsPath path,
+                                 final JsArray elems
+                                )
     {
         requireNonNull(elems);
         if (requireNonNull(path).isEmpty()) return this;
@@ -50,7 +54,8 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                     arr.appendAll(elems)
                                                                                                    )),
                                                                                el -> of(map.update(head,
-                                                                                                   emptyArray().appendAll(elems)
+                                                                                                   of(map.emptyArray())
+                                                                                                   .appendAll(elems)
                                                                                                   ))
                                                                               )
                                                                     .apply(get(Key.of(head))),
@@ -59,12 +64,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                                       ),
                                                                                  () -> of(map.update(head,
                                                                                                      tail.head()
-                                                                                                         .match(key -> emptyObject().appendAll(tail,
-                                                                                                                                               elems
-                                                                                                                                              ),
-                                                                                                                index -> emptyArray().appendAll(tail,
-                                                                                                                                                elems
-                                                                                                                                               )
+                                                                                                         .match(key -> of(map.empty()).appendAll(tail,
+                                                                                                                                                 elems
+                                                                                                                                                ),
+                                                                                                                index -> of(map.emptyArray()).appendAll(tail,
+                                                                                                                                                        elems
+                                                                                                                                                       )
                                                                                                                )
                                                                                                     )),
                                                                                  () -> of(map.update(head,
@@ -83,9 +88,9 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
     }
 
     @Override
-    public JsObj append(final JsPath path,
-                        final JsElem elem
-                       )
+    public final JsObj append(final JsPath path,
+                              final JsElem elem
+                             )
     {
         requireNonNull(elem);
         if (requireNonNull(path).isEmpty()) return this;
@@ -97,7 +102,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                     arr.append(elem)
                                                                                                    )),
                                                                                el -> of(map.update(head,
-                                                                                                   emptyArray().append(elem)
+                                                                                                   of(map.emptyArray()).append(elem)
                                                                                                   ))
                                                                               )
                                                                     .apply(get(Key.of(head))),
@@ -106,12 +111,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                                       ),
                                                                                  () -> of(map.update(head,
                                                                                                      tail.head()
-                                                                                                         .match(key -> emptyObject().append(tail,
-                                                                                                                                            elem
-                                                                                                                                           ),
-                                                                                                                index -> emptyArray().append(tail,
-                                                                                                                                             elem
-                                                                                                                                            )
+                                                                                                         .match(key -> of(map.empty()).append(tail,
+                                                                                                                                              elem
+                                                                                                                                             ),
+                                                                                                                index -> of(map.emptyArray()).append(tail,
+                                                                                                                                                     elem
+                                                                                                                                                    )
                                                                                                                )
                                                                                                     )),
                                                                                  () -> of(map.update(head,
@@ -134,9 +139,9 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
 
     @SuppressWarnings("Duplicates")
     @Override
-    public JsObj prependAll(final JsPath path,
-                            final JsArray elems
-                           )
+    public final JsObj prependAll(final JsPath path,
+                                  final JsArray elems
+                                 )
     {
         requireNonNull(elems);
         if (requireNonNull(path).isEmpty()) return this;
@@ -148,7 +153,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                     arr.prependAll(elems)
                                                                                                    )),
                                                                                el -> of(map.update(head,
-                                                                                                   emptyArray().prependAll(elems)
+                                                                                                   of(map.emptyArray()).prependAll(elems)
                                                                                                   ))
                                                                               )
                                                                     .apply(get(Key.of(head))),
@@ -157,12 +162,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                                       ),
                                                                                  () -> of(map.update(head,
                                                                                                      tail.head()
-                                                                                                         .match(key -> emptyObject().prependAll(tail,
-                                                                                                                                                elems
-                                                                                                                                               ),
-                                                                                                                index -> emptyArray().prependAll(tail,
-                                                                                                                                                 elems
-                                                                                                                                                )
+                                                                                                         .match(key -> of(map.empty()).prependAll(tail,
+                                                                                                                                                  elems
+                                                                                                                                                 ),
+                                                                                                                index -> of(map.emptyArray()).prependAll(tail,
+                                                                                                                                                         elems
+                                                                                                                                                        )
                                                                                                                )
                                                                                                     )),
                                                                                  () -> of(map.update(head,
@@ -184,9 +189,9 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
 
     @SuppressWarnings("Duplicates")
     @Override
-    public JsObj prepend(final JsPath path,
-                         final JsElem elem
-                        )
+    public final JsObj prepend(final JsPath path,
+                               final JsElem elem
+                              )
     {
         requireNonNull(elem);
         if (requireNonNull(path).isEmpty()) return this;
@@ -198,7 +203,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                     arr.prepend(elem)
                                                                                                    )),
                                                                                el -> of(map.update(head,
-                                                                                                   emptyArray().prepend(elem)
+                                                                                                   of(map.emptyArray()).prepend(elem)
                                                                                                   ))
                                                                               )
                                                                     .apply(get(Key.of(head))),
@@ -207,12 +212,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                                       ),
                                                                                  () -> of(map.update(head,
                                                                                                      tail.head()
-                                                                                                         .match(key -> emptyObject().prepend(tail,
-                                                                                                                                             elem
-                                                                                                                                            ),
-                                                                                                                index -> emptyArray().prepend(tail,
-                                                                                                                                              elem
-                                                                                                                                             )
+                                                                                                         .match(key -> of(map.empty()).prepend(tail,
+                                                                                                                                               elem
+                                                                                                                                              ),
+                                                                                                                index -> of(map.emptyArray()).prepend(tail,
+                                                                                                                                                      elem
+                                                                                                                                                     )
                                                                                                                )
                                                                                                     )),
                                                                                  () -> of(map.update(head,
@@ -232,17 +237,26 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
 
     }
 
-    abstract A emptyArray();
-
-    abstract JsObj emptyObject();
 
     @Override
     public final boolean equals(final @Nullable Object that)
     {
+        if (!(that instanceof AbstractJsObj<?, ?>)) return false;
         if (this == that) return true;
-        if (!(that instanceof AbstractJsObj)) return false;
+        if (getClass() != that.getClass()) return false;
         final AbstractJsObj<?, ?> thatObj = (AbstractJsObj) that;
-        return this.map.equals(thatObj.map);
+        final boolean thisEmpty = isEmpty();
+        final boolean thatEmpty = thatObj.isEmpty();
+        if (thisEmpty && thatEmpty) return true;
+        if (thisEmpty != thatEmpty) return false;
+
+        return fields().stream()
+                       .allMatch(f ->
+                                 thatObj.map.getOptional(f)
+                                            .map(it -> it.equals(map.get(f)))
+                                            .orElse(false) && thatObj.fields()
+                                                                     .stream()
+                                                                     .allMatch(it -> map.contains(it)));
     }
 
     @Override
@@ -313,7 +327,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
     }
 
     @Override
-    @SuppressWarnings({"squid:S00117", "squid:S00100"}) //  ARRAY_AS should be a valid name, naming convention: _xx_ returns immutable object
+    @SuppressWarnings({"squid:S00117", "squid:S00100"}) //  ARRAY_AS should be a valid name, naming convention: _ traverses recursively
     public final JsObj intersection_(final JsObj that,
                                      final TYPE ARRAY_AS
                                     )
@@ -389,7 +403,9 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
     }
 
 
-    abstract JsObj of(T map);
+    abstract JsObj of(M map);
+
+    abstract JsArray of(V vector);
 
     @Override
     public final JsObj add(final JsPath path,
@@ -478,12 +494,12 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
                                                                                                                       ),
                                                                                  () -> of(map.update(head,
                                                                                                      tail.head()
-                                                                                                         .match(key -> emptyObject().put(tail,
-                                                                                                                                         fn
-                                                                                                                                        ),
-                                                                                                                index -> emptyArray().put(tail,
-                                                                                                                                          fn
-                                                                                                                                         )
+                                                                                                         .match(key -> of(map.empty()).put(tail,
+                                                                                                                                           fn
+                                                                                                                                          ),
+                                                                                                                index -> of(map.emptyArray()).put(tail,
+                                                                                                                                                  fn
+                                                                                                                                                 )
                                                                                                                )
                                                                                                     )),
                                                                                  () -> of(map.update(head,
@@ -563,7 +579,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention: xx_ traverses the whole json
-    public Stream<JsPair> stream_()
+    public final Stream<JsPair> stream_()
     {
         return streamOfObj(this,
                            JsPath.empty()
@@ -571,7 +587,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
     }
 
     @Override
-    public Stream<JsPair> stream()
+    public final Stream<JsPair> stream()
     {
         return this.fields()
                    .stream()
@@ -653,7 +669,7 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
     }
 
     @Override
-    public boolean containsElem(final JsElem el)
+    public final boolean containsElem(final JsElem el)
     {
         return stream().anyMatch(p -> p.elem.equals(Objects.requireNonNull(el)));
     }
@@ -727,9 +743,35 @@ abstract class AbstractJsObj<T extends MyMap<T>, A extends JsArray> implements J
 
     }
 
+    @Override
+    public final boolean same(final JsObj obj)
+    {
+        final MyMap<?, ?> other = ((AbstractJsObj) obj).map;
+        final boolean thisEmpty = isEmpty();
+        final boolean thatEmpty = other.isEmpty();
+        if (thisEmpty && thatEmpty) return true;
+        if (thisEmpty != thatEmpty) return false;
+
+        return fields().stream()
+                       .allMatch(f ->
+                                 other.getOptional(f)
+                                      .map(it ->
+                                           {
+                                               final JsElem a = map.get(f);
+                                               if (a.isObj() && it.isObj()) return a.asJsObj()
+                                                                                    .same(it.asJsObj());
+                                               else if (a.isArray() && it.isArray()) return a.asJsArray()
+                                                                                             .same(it.asJsArray());
+                                               else return it.equals(a);
+                                           })
+                                      .orElse(false) && other.fields()
+                                                             .stream()
+                                                             .allMatch(it -> map.contains(it)));
+    }
+
 
     @SuppressWarnings("squid:S1602") // curly braces makes IntelliJ to format the code in a more legible way
-    private BiPredicate<String, JsPath> isReplaceWithEmptyJson(final MyMap<?> pmap)
+    private BiPredicate<String, JsPath> isReplaceWithEmptyJson(final M pmap)
     {
         return (head, tail) ->
         {

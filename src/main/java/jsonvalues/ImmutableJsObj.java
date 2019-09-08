@@ -1,13 +1,10 @@
 package jsonvalues;
 
-import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -15,36 +12,24 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class ImmutableJsObj extends AbstractJsObj<ScalaMap, JsArray>
+final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
 {
-    public static final long serialVersionUID = 1L;
+
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
-    static ImmutableJsObj EMPTY = new ImmutableJsObj(ScalaMap.EMPTY);
     private static final JsPath EMPTY_PATH = JsPath.empty();
-    private transient volatile int hascode;
+    private volatile int hascode;
     //squid:S3077: doesn't make any sese, volatile is perfectly valid here an as a matter of fact
     //is a recomendation from Efective Java to apply the idiom single check for lazy initialization
     @SuppressWarnings("squid:S3077")
     @Nullable
-    private transient volatile String str;
+    private volatile String str;
 
 
-    ImmutableJsObj(final ScalaMap myMap)
+    ImmutableJsObj(final ImmutableMap myMap)
     {
         super(myMap);
     }
 
-    @Override
-    JsArray emptyArray()
-    {
-        return ImmutableJsArray.EMPTY;
-    }
-
-    @Override
-    AbstractJsObj<ScalaMap, JsArray> emptyObject()
-    {
-        return EMPTY;
-    }
 
     /**
      equals method is inherited, so it's implemented. The purpose of this method is to cache
@@ -68,37 +53,15 @@ final class ImmutableJsObj extends AbstractJsObj<ScalaMap, JsArray>
     }
 
     @Override
-    AbstractJsObj<ScalaMap, JsArray> of(final ScalaMap map)
+    JsObj of(final ImmutableMap map)
     {
         return new ImmutableJsObj(map);
     }
 
     @Override
-    public JsObj toImmutable()
+    JsArray of(final ImmutableSeq vector)
     {
-        return this;
-    }
-
-    @Override
-    public JsObj toMutable()
-    {
-        Map<String, JsElem> acc = new HashMap<>();
-        @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
-        final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) map.fields();
-        keys.forEach(key -> MatchExp.accept(val -> acc.put(key,
-                                                           val
-                                                          ),
-                                            obj -> acc.put(key,
-                                                           obj.toMutable()
-                                                          ),
-                                            arr -> acc.put(key,
-                                                           arr.toMutable()
-                                                          )
-                                           )
-                                    .accept(map.get(key))
-                    );
-        return new MutableJsObj(new JavaMap(acc));
-
+        return new ImmutableJsArray(vector);
     }
 
 
@@ -208,7 +171,6 @@ final class ImmutableJsObj extends AbstractJsObj<ScalaMap, JsArray>
                                                    )
                                               .get();
     }
-
 
 
     @Override
@@ -322,40 +284,6 @@ final class ImmutableJsObj extends AbstractJsObj<ScalaMap, JsArray>
                                                  .get();
     }
 
-
-    /**
-     * Serialize this {@code ScalaJsObj} instance.
-     *
-     * @serialData The {@code String}) representation of this json object.
-     */
-    private void writeObject(ObjectOutputStream s) throws IOException
-    {
-        s.defaultWriteObject();
-        s.writeObject(toString());
-
-    }
-
-    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
-    @SuppressWarnings("squid:S4508")
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
-    {
-        s.defaultReadObject();
-        final String json = (String) s.readObject();
-        try
-        {
-            map = ((ImmutableJsObj) JsObj.parse(json)
-                                         .orElseThrow()).map;
-        }
-        catch (MalformedJson malformedJson)
-        {
-            throw new NotSerializableException(String.format("Error deserializing a string into the class %s: %s",
-                                                             JsObj.class.getName(),
-                                                             malformedJson.getMessage()
-                                                            ));
-        }
-
-    }
-
     @Override
     public boolean isMutable()
     {
@@ -366,6 +294,29 @@ final class ImmutableJsObj extends AbstractJsObj<ScalaMap, JsArray>
     public boolean isImmutable()
     {
         return true;
+    }
+
+    @Override
+    public TryPatch<JsObj> patch(final JsArray arrayOps)
+    {
+        try
+        {
+            final List<OpPatch<JsObj>> ops = new Patch<JsObj>(arrayOps).ops;
+            if (ops.isEmpty()) return new TryPatch<>(this);
+            OpPatch<JsObj> head = ops.get(0);
+            List<OpPatch<JsObj>> tail = ops.subList(1,
+                                                    ops.size()
+                                                   );
+            TryPatch<JsObj> accPatch = head.apply(this);
+            for (OpPatch<JsObj> op : tail) accPatch = accPatch.flatMap(op::apply);
+            return accPatch;
+        }
+
+        catch (PatchMalformed patchMalformed)
+        {
+            return new TryPatch<>(patchMalformed);
+
+        }
     }
 
 }

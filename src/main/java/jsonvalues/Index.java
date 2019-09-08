@@ -45,7 +45,8 @@ public final class Index implements Position
     public int compareTo(final Position o)
     {
         if (Objects.requireNonNull(o)
-                   .isIndex()) return Integer.compare(n,o.asIndex().n);
+                   .isIndex()) return Integer.compare(n,
+                                                      o.asIndex().n);
         return toString().compareTo(o.asKey().name);
     }
 

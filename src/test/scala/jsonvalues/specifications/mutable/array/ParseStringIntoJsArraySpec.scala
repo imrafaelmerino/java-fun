@@ -13,9 +13,9 @@ class ParseStringIntoJsArraySpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { arr =>
-            val parsed = Json._parse_(arr.toString,
-                                      ParseBuilder.builder().withKeyMap(it => it.toUpperCase)
-                                      ).arrOrElseThrow()
+            val parsed = Jsons.mutable.parse(arr.toString,
+                                             ParseBuilder.builder().withKeyMap(it => it.toUpperCase)
+                                             ).arrOrElseThrow()
             val s: stream.Stream[Position] = parsed.stream_().flatMap(it => it.path.stream())
 
 

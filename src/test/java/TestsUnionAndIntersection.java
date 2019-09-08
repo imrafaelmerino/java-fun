@@ -18,20 +18,20 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsObj a = JsObj.parse("{\"a\": 1, \"c\": [{\"d\": 1}]}")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"a\": 1, \"c\": [{\"d\": 1}]}")
+                                        .orElseThrow();
 
-        JsObj b = JsObj.parse("{\"b\": 2, \"c\": [{\"e\": 2}]}")
-                       .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"b\": 2, \"c\": [{\"e\": 2}]}")
+                                        .orElseThrow();
 
-        JsObj c = JsObj.parse("{\"a\": 1, \"b\": 2, \"c\": [{\"d\": 1}, {\"e\": 2}]}")
-                       .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"a\": 1, \"b\": 2, \"c\": [{\"d\": 1}, {\"e\": 2}]}")
+                                        .orElseThrow();
 
-        JsObj d = JsObj.parse("{\"a\": 1, \"b\": 2, \"c\": [{\"d\": 1,\"e\": 2}]}")
-                       .orElseThrow();
+        JsObj d = Jsons.immutable.object.parse("{\"a\": 1, \"b\": 2, \"c\": [{\"d\": 1,\"e\": 2}]}")
+                                        .orElseThrow();
 
-        JsObj e = JsObj.parse("{\"a\": 1, \"b\": 2, \"c\": [{\"d\": 1}]}")
-                       .orElseThrow();
+        JsObj e = Jsons.immutable.object.parse("{\"a\": 1, \"b\": 2, \"c\": [{\"d\": 1}]}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(c,
@@ -63,17 +63,17 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsObj a = JsObj.parse("{\"a\": [1, 2]}")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"a\": [1, 2]}")
+                                        .orElseThrow();
 
-        JsObj b = JsObj.parse("{\"a\": [3, [4, 5], 6]}")
-                       .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"a\": [3, [4, 5], 6]}")
+                                        .orElseThrow();
 
-        JsObj c = JsObj.parse("{\"a\":[1,2,3,[4,5],6]}")
-                       .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"a\":[1,2,3,[4,5],6]}")
+                                        .orElseThrow();
 
-        JsObj d = JsObj.parse("{\"a\":[1,2,6]}")
-                       .orElseThrow();
+        JsObj d = Jsons.immutable.object.parse("{\"a\":[1,2,6]}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(c,
@@ -105,23 +105,23 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsArray a = JsArray.parse("[\"1\", \"2\"]")
-                           .orElseThrow();
+        JsArray a = Jsons.immutable.array.parse("[\"1\", \"2\"]")
+                                         .orElseThrow();
 
-        JsArray b = JsArray.parse("[\"3\", [\"4\", \"5\"], \"6\"]")
-                           .orElseThrow();
+        JsArray b = Jsons.immutable.array.parse("[\"3\", [\"4\", \"5\"], \"6\"]")
+                                         .orElseThrow();
 
-        JsArray c = JsArray.parse("[\"1\",\"2\",\"3\",[\"4\",\"5\"],\"6\"]")
-                           .orElseThrow();
+        JsArray c = Jsons.immutable.array.parse("[\"1\",\"2\",\"3\",[\"4\",\"5\"],\"6\"]")
+                                         .orElseThrow();
 
-        JsArray d = JsArray.parse("[\"1\",\"2\",\"6\"]")
-                           .orElseThrow();
+        JsArray d = Jsons.immutable.array.parse("[\"1\",\"2\",\"6\"]")
+                                         .orElseThrow();
 
-        JsArray e = JsArray.parse("[\"1\",\"2\",\"3\", [\"4\", \"5\"], \"6\"]")
-                           .orElseThrow();
+        JsArray e = Jsons.immutable.array.parse("[\"1\",\"2\",\"3\", [\"4\", \"5\"], \"6\"]")
+                                         .orElseThrow();
 
-        JsArray f = JsArray.parse("[\"1\",\"2\",\"3\", [\"4\", \"5\"], \"6\",\"1\",\"2\",\"6\"]")
-                           .orElseThrow();
+        JsArray f = Jsons.immutable.array.parse("[\"1\",\"2\",\"3\", [\"4\", \"5\"], \"6\",\"1\",\"2\",\"6\"]")
+                                         .orElseThrow();
 
 
         Assertions.assertEquals(d,
@@ -154,20 +154,20 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsObj a = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}]}")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}]}")
+                                        .orElseThrow();
 
-        JsObj b = JsObj.parse("{\"a\": [3, [4, 5], 6, 7], \"b\": [1, 2]}")
-                       .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"a\": [3, [4, 5], 6, 7], \"b\": [1, 2]}")
+                                        .orElseThrow();
 
-        JsObj c = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}, 3, [4, 5], 6, 7], \"b\": [1, 2]}")
-                       .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}, 3, [4, 5], 6, 7], \"b\": [1, 2]}")
+                                        .orElseThrow();
 
-        JsObj d = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}, 7],\"b\": [1, 2]}")
-                       .orElseThrow();
+        JsObj d = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}, 7],\"b\": [1, 2]}")
+                                        .orElseThrow();
 
-        JsObj e = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}], \"b\": [1, 2]}")
-                       .orElseThrow();
+        JsObj e = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}], \"b\": [1, 2]}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(c,
@@ -199,18 +199,18 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsObj a = JsObj.parse("{\"a\":1, \"b\":[1,2,3], \"c\":[ {\"d\":1,\"e\":[1,2]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\"]} ]}")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"a\":1, \"b\":[1,2,3], \"c\":[ {\"d\":1,\"e\":[1,2]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\"]} ]}")
+                                        .orElseThrow();
 
-        JsObj b = JsObj.parse("{\"a\":\"b\", \"b\":[4,5,6], \"c\":[ {\"d\":\"a\",\"e\":[3,4,5]}, {\"f\":2,\"g\":[\"d\",\"e\",\"f\",\"g\"]}]}")
-                       .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"a\":\"b\", \"b\":[4,5,6], \"c\":[ {\"d\":\"a\",\"e\":[3,4,5]}, {\"f\":2,\"g\":[\"d\",\"e\",\"f\",\"g\"]}]}")
+                                        .orElseThrow();
 
-        JsObj c = JsObj.parse("{\"a\":1, \"b\":[1,2,3,4,5,6], \"c\":[ {\"d\":1,\"e\":[1,2]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\"]}, "
-                              + "{\"d\":\"a\",\"e\":[3,4,5]}, {\"f\":2,\"g\":[\"d\",\"e\",\"f\",\"g\"]}]}")
-                       .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"a\":1, \"b\":[1,2,3,4,5,6], \"c\":[ {\"d\":1,\"e\":[1,2]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\"]}, "
+                                               + "{\"d\":\"a\",\"e\":[3,4,5]}, {\"f\":2,\"g\":[\"d\",\"e\",\"f\",\"g\"]}]}")
+                                        .orElseThrow();
 
-        JsObj d = JsObj.parse("{\"a\":1, \"b\":[1,2,3], \"c\":[ {\"d\":1,\"e\":[1,2,5]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\",\"g\"]}]}")
-                       .orElseThrow();
+        JsObj d = Jsons.immutable.object.parse("{\"a\":1, \"b\":[1,2,3], \"c\":[ {\"d\":1,\"e\":[1,2,5]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\",\"g\"]}]}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(c,
@@ -243,14 +243,14 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsObj a = JsObj.parse("{\"a\":1,\"b\":2}")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"a\":1,\"b\":2}")
+                                        .orElseThrow();
 
-        JsObj b = JsObj.parse("{\"a\":1}")
-                       .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"a\":1}")
+                                        .orElseThrow();
 
-        JsObj c = JsObj.parse("{\"a\":1}")
-                       .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"a\":1}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(c,
@@ -267,14 +267,14 @@ public class TestsUnionAndIntersection
     {
 
 
-        JsObj a = JsObj.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1,2]},{\"b\":2},{\"c\":3}]}}")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1,2]},{\"b\":2},{\"c\":3}]}}")
+                                        .orElseThrow();
 
-        JsObj b = JsObj.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1]}]}}")
-                       .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1]}]}}")
+                                        .orElseThrow();
 
-        JsObj c = JsObj.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1]}]}}")
-                       .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1]}]}}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(c,
@@ -291,22 +291,22 @@ public class TestsUnionAndIntersection
     {
 
         final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
-        JsArray array = JsArray._of_(JsStr.of("A"),
-                                     JsStr.of("B")
-                                    );
+        JsArray array = Jsons.mutable.array.of(JsStr.of("A"),
+                                               JsStr.of("B")
+                                              );
 
         Assertions.assertEquals(array,
                                 array.mapElems(toLowerCaseFn)
                                );
 
-        JsArray array1 = JsArray._of_(JsStr.of("A"),
-                                      JsStr.of("B"),
-                                      JsObj._of_("a",
-                                                 JsStr.of("A"),
-                                                 "b",
-                                                 JsStr.of("B")
-                                                )
-                                     );
+        JsArray array1 = Jsons.mutable.array.of(JsStr.of("A"),
+                                                JsStr.of("B"),
+                                                Jsons.mutable.object.of("a",
+                                                                        JsStr.of("A"),
+                                                                        "b",
+                                                                        JsStr.of("B")
+                                                                       )
+                                               );
 
         Assertions.assertEquals(array1,
                                 array1.mapElems_(toLowerCaseFn)
@@ -321,10 +321,10 @@ public class TestsUnionAndIntersection
         final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
 
 
-        JsArray array = JsArray.of(JsStr.of("A"),
-                                   TRUE,
-                                   JsStr.of("B")
-                                  );
+        JsArray array = Jsons.immutable.array.of(JsStr.of("A"),
+                                                 TRUE,
+                                                 JsStr.of("B")
+                                                );
 
         final JsArray newArray = array.mapElems(toLowerCaseFn,
                                                 p -> p.elem.isStr()
@@ -334,34 +334,34 @@ public class TestsUnionAndIntersection
                                    newArray
                                   );
 
-        Assertions.assertEquals(JsArray.of(JsStr.of("a"),
-                                           TRUE,
-                                           JsStr.of("b")
-                                          ),
+        Assertions.assertEquals(Jsons.immutable.array.of(JsStr.of("a"),
+                                                         TRUE,
+                                                         JsStr.of("b")
+                                                        ),
                                 newArray
                                );
 
-        JsArray array1 = JsArray.of(JsStr.of("A"),
-                                    TRUE,
-                                    JsStr.of("B"),
-                                    NULL,
-                                    JsObj.of("a",
-                                             JsStr.of("A"),
-                                             "b",
-                                             JsStr.of("B"),
-                                             "c",
-                                             JsArray.of(JsStr.of("A"),
-                                                        JsStr.of("B"),
-                                                        NULL
-                                                       )
-                                            )
-                                   );
+        JsArray array1 = Jsons.immutable.array.of(JsStr.of("A"),
+                                                  TRUE,
+                                                  JsStr.of("B"),
+                                                  NULL,
+                                                  Jsons.immutable.object.of("a",
+                                                                            JsStr.of("A"),
+                                                                            "b",
+                                                                            JsStr.of("B"),
+                                                                            "c",
+                                                                            Jsons.immutable.array.of(JsStr.of("A"),
+                                                                                                     JsStr.of("B"),
+                                                                                                     NULL
+                                                                                                    )
+                                                                           )
+                                                 );
 
         final JsArray newArray1 = array1.mapElems_(toLowerCaseFn,
                                                    p -> p.elem.isStr()
                                                   );
-        Assertions.assertEquals(JsArray.parse("[\"a\",true,\"b\",null,{\"a\":\"a\",\"b\":\"b\",\"c\":[\"a\",\"b\",null]}]\n")
-                                       .orElseThrow(),
+        Assertions.assertEquals(Jsons.immutable.array.parse("[\"a\",true,\"b\",null,{\"a\":\"a\",\"b\":\"b\",\"c\":[\"a\",\"b\",null]}]\n")
+                                                     .orElseThrow(),
                                 newArray1
                                );
 
@@ -372,11 +372,11 @@ public class TestsUnionAndIntersection
     {
         final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
 
-        JsObj obj = JsObj._of_("a",
-                               JsStr.of("A"),
-                               "b",
-                               JsStr.of("B")
-                              );
+        JsObj obj = Jsons.mutable.object.of("a",
+                                            JsStr.of("A"),
+                                            "b",
+                                            JsStr.of("B")
+                                           );
 
         final JsObj newObj = obj.mapElems(toLowerCaseFn);
 
@@ -384,15 +384,15 @@ public class TestsUnionAndIntersection
                                 newObj
                                );
 
-        JsObj obj1 = JsObj._of_("a",
-                                JsStr.of("A"),
-                                "b",
-                                JsStr.of("B"),
-                                "c",
-                                JsArray._of_(JsStr.of("A"),
-                                             JsStr.of("B")
-                                            )
-                               );
+        JsObj obj1 = Jsons.mutable.object.of("a",
+                                             JsStr.of("A"),
+                                             "b",
+                                             JsStr.of("B"),
+                                             "c",
+                                             Jsons.mutable.array.of(JsStr.of("A"),
+                                                                    JsStr.of("B")
+                                                                   )
+                                            );
 
         final JsObj newObj1 = obj1.mapElems_(toLowerCaseFn);
 
@@ -406,11 +406,11 @@ public class TestsUnionAndIntersection
     {
         final Function<JsPair, JsElem> toLowerCaseFn = p -> p.mapIfStr(String::toLowerCase).elem;
 
-        JsObj obj = JsObj.of("a",
-                             JsStr.of("A"),
-                             "b",
-                             JsStr.of("B")
-                            );
+        JsObj obj = Jsons.immutable.object.of("a",
+                                              JsStr.of("A"),
+                                              "b",
+                                              JsStr.of("B")
+                                             );
 
         final JsObj newObj = obj.mapElems(toLowerCaseFn);
 
@@ -418,15 +418,15 @@ public class TestsUnionAndIntersection
                                    newObj
                                   );
 
-        JsObj obj1 = JsObj.of("a",
-                              JsStr.of("A"),
-                              "b",
-                              JsStr.of("B"),
-                              "c",
-                              JsArray.of(JsStr.of("A"),
-                                         JsStr.of("B")
-                                        )
-                             );
+        JsObj obj1 = Jsons.immutable.object.of("a",
+                                               JsStr.of("A"),
+                                               "b",
+                                               JsStr.of("B"),
+                                               "c",
+                                               Jsons.immutable.array.of(JsStr.of("A"),
+                                                                        JsStr.of("B")
+                                                                       )
+                                              );
 
         final JsObj newObj1 = obj1.mapElems_(toLowerCaseFn);
 
@@ -439,11 +439,11 @@ public class TestsUnionAndIntersection
     public void test_map_keys_immutable_obj()
     {
 
-        JsObj obj = JsObj.of("a",
-                             JsStr.of("A"),
-                             "b",
-                             JsStr.of("B")
-                            );
+        JsObj obj = Jsons.immutable.object.of("a",
+                                              JsStr.of("A"),
+                                              "b",
+                                              JsStr.of("B")
+                                             );
 
         final JsObj newObj = obj.mapKeys(p -> p.path.last()
                                                     .asKey().name.toUpperCase());
@@ -453,23 +453,23 @@ public class TestsUnionAndIntersection
                                   );
 
 
-        JsObj obj1 = JsObj.of("a",
-                              JsStr.of("A"),
-                              "b",
-                              JsStr.of("B"),
-                              "h",
-                              JsArray.of(JsObj.of("c",
-                                                  JsStr.of("C"),
-                                                  "d",
-                                                  JsStr.of("D")
-                                                 ),
-                                         JsObj.of("d",
-                                                  JsStr.of("D"),
-                                                  "e",
-                                                  JsStr.of("E")
-                                                 )
-                                        )
-                             );
+        JsObj obj1 = Jsons.immutable.object.of("a",
+                                               JsStr.of("A"),
+                                               "b",
+                                               JsStr.of("B"),
+                                               "h",
+                                               Jsons.immutable.array.of(Jsons.immutable.object.of("c",
+                                                                                                  JsStr.of("C"),
+                                                                                                  "d",
+                                                                                                  JsStr.of("D")
+                                                                                                 ),
+                                                                        Jsons.immutable.object.of("d",
+                                                                                                  JsStr.of("D"),
+                                                                                                  "e",
+                                                                                                  JsStr.of("E")
+                                                                                                 )
+                                                                       )
+                                              );
 
         final JsObj newObj1 = obj1.mapKeys_(p -> p.path.last()
                                                        .asKey().name.toUpperCase());
@@ -485,11 +485,11 @@ public class TestsUnionAndIntersection
     public void test_map_keys_mutable_obj()
     {
 
-        JsObj obj = JsObj._of_("a",
-                               JsStr.of("A"),
-                               "b",
-                               JsStr.of("B")
-                              );
+        JsObj obj = Jsons.mutable.object.of("a",
+                                            JsStr.of("A"),
+                                            "b",
+                                            JsStr.of("B")
+                                           );
 
         final JsObj newObj = obj.mapKeys(p -> p.path.last()
                                                     .asKey().name.toUpperCase());
@@ -499,23 +499,23 @@ public class TestsUnionAndIntersection
                                );
 
 
-        JsObj obj1 = JsObj._of_("a",
-                                JsStr.of("A"),
-                                "b",
-                                JsStr.of("B"),
-                                "h",
-                                JsArray._of_(JsObj._of_("c",
-                                                        JsStr.of("C"),
-                                                        "d",
-                                                        JsStr.of("D")
-                                                       ),
-                                             JsObj._of_("d",
-                                                        JsStr.of("D"),
-                                                        "e",
-                                                        JsStr.of("E")
-                                                       )
-                                            )
-                               );
+        JsObj obj1 = Jsons.mutable.object.of("a",
+                                             JsStr.of("A"),
+                                             "b",
+                                             JsStr.of("B"),
+                                             "h",
+                                             Jsons.mutable.array.of(Jsons.mutable.object.of("c",
+                                                                                            JsStr.of("C"),
+                                                                                            "d",
+                                                                                            JsStr.of("D")
+                                                                                           ),
+                                                                    Jsons.mutable.object.of("d",
+                                                                                            JsStr.of("D"),
+                                                                                            "e",
+                                                                                            JsStr.of("E")
+                                                                                           )
+                                                                   )
+                                            );
 
         final JsObj newObj1 = obj1.mapKeys_(p -> p.path.last()
                                                        .asKey().name.toUpperCase());
@@ -531,26 +531,26 @@ public class TestsUnionAndIntersection
     public void test_map_keys_immutable_array() throws MalformedJson
     {
 
-        JsArray arr = JsArray.of(JsObj.of("a",
-                                          JsInt.of(1),
-                                          "b",
-                                          JsStr.of("B"),
-                                          "c",
-                                          JsObj.empty()
-                                         ),
-                                 NULL,
-                                 JsObj.of("c",
-                                          JsInt.of(1),
-                                          "d",
-                                          JsStr.of("D")
-                                         ),
-                                 TRUE,
-                                 JsArray.of(JsObj.of("e",
-                                                     JsInt.of(1),
-                                                     "f",
-                                                     JsStr.of("F")
-                                                    ))
-                                );
+        JsArray arr = Jsons.immutable.array.of(Jsons.immutable.object.of("a",
+                                                                         JsInt.of(1),
+                                                                         "b",
+                                                                         JsStr.of("B"),
+                                                                         "c",
+                                                                         Jsons.immutable.object.empty()
+                                                                        ),
+                                               NULL,
+                                               Jsons.immutable.object.of("c",
+                                                                         JsInt.of(1),
+                                                                         "d",
+                                                                         JsStr.of("D")
+                                                                        ),
+                                               TRUE,
+                                               Jsons.immutable.array.of(Jsons.immutable.object.of("e",
+                                                                                                  JsInt.of(1),
+                                                                                                  "f",
+                                                                                                  JsStr.of("F")
+                                                                                                 ))
+                                              );
 
         Assertions.assertSame(arr,
                               arr.mapKeys(p -> p.path.last()
@@ -568,8 +568,8 @@ public class TestsUnionAndIntersection
                                    arr
                                   );
 
-        Assertions.assertEquals(JsArray.parse("[{\"a\":1,\"B\":\"B\",\"c\":{}},null,{\"c\":1,\"D\":\"D\"},true,[{\"e\":1,\"F\":\"F\"}]]\n")
-                                       .orElseThrow(),
+        Assertions.assertEquals(Jsons.immutable.array.parse("[{\"a\":1,\"B\":\"B\",\"c\":{}},null,{\"c\":1,\"D\":\"D\"},true,[{\"e\":1,\"F\":\"F\"}]]\n")
+                                                     .orElseThrow(),
                                 arr1
                                );
 
@@ -577,8 +577,8 @@ public class TestsUnionAndIntersection
                                                      .asKey().name.toUpperCase()
                                          );
 
-        Assertions.assertEquals(JsArray.parse("[{\"A\":1,\"B\":\"B\",\"C\":{}},null,{\"C\":1,\"D\":\"D\"},true,[{\"E\":1,\"F\":\"F\"}]]\n")
-                                       .orElseThrow(),
+        Assertions.assertEquals(Jsons.immutable.array.parse("[{\"A\":1,\"B\":\"B\",\"C\":{}},null,{\"C\":1,\"D\":\"D\"},true,[{\"E\":1,\"F\":\"F\"}]]\n")
+                                                     .orElseThrow(),
                                 arr2
                                );
 
@@ -588,22 +588,22 @@ public class TestsUnionAndIntersection
     @Test
     public void test_map_keys_mutable_array() throws MalformedJson
     {
-        Supplier<JsArray> supplier = () -> JsArray._of_(JsObj._of_("a",
-                                                                   JsStr.of("A"),
-                                                                   "b",
-                                                                   JsStr.of("B")
-                                                                  ),
-                                                        JsObj._of_("c",
-                                                                   JsStr.of("C"),
-                                                                   "d",
-                                                                   JsStr.of("D")
-                                                                  ),
-                                                        JsArray._of_(JsObj._of_("e",
-                                                                                JsStr.of("E"),
-                                                                                "f",
-                                                                                JsStr.of("F")
-                                                                               ))
-                                                       );
+        Supplier<JsArray> supplier = () -> Jsons.mutable.array.of(Jsons.mutable.object.of("a",
+                                                                                          JsStr.of("A"),
+                                                                                          "b",
+                                                                                          JsStr.of("B")
+                                                                                         ),
+                                                                  Jsons.mutable.object.of("c",
+                                                                                          JsStr.of("C"),
+                                                                                          "d",
+                                                                                          JsStr.of("D")
+                                                                                         ),
+                                                                  Jsons.mutable.array.of(Jsons.mutable.object.of("e",
+                                                                                                                 JsStr.of("E"),
+                                                                                                                 "f",
+                                                                                                                 JsStr.of("F")
+                                                                                                                ))
+                                                                 );
 
         final JsArray arr = supplier.get();
         final Function<JsPair, String> toUpperCase = p -> p.path.last()
@@ -624,15 +624,15 @@ public class TestsUnionAndIntersection
                                   .asKey().name.equals("e")
                      );
 
-        Assertions.assertEquals(JsArray._parse_("[{\"A\":\"A\",\"B\":\"B\"},{\"C\":\"C\",\"D\":\"D\"},[{\"e\":\"E\",\"F\":\"F\"}]]\n")
-                                       .orElseThrow(),
+        Assertions.assertEquals(Jsons.mutable.array.parse("[{\"A\":\"A\",\"B\":\"B\"},{\"C\":\"C\",\"D\":\"D\"},[{\"e\":\"E\",\"F\":\"F\"}]]\n")
+                                                   .orElseThrow(),
                                 arr1
                                );
         final JsArray arr2 = supplier.get();
         arr2.mapKeys_(toUpperCase
                      );
-        Assertions.assertEquals(JsArray._parse_("[{\"A\":\"A\",\"B\":\"B\"},{\"C\":\"C\",\"D\":\"D\"},[{\"E\":\"E\",\"F\":\"F\"}]]\n")
-                                       .orElseThrow(),
+        Assertions.assertEquals(Jsons.mutable.array.parse("[{\"A\":\"A\",\"B\":\"B\"},{\"C\":\"C\",\"D\":\"D\"},[{\"E\":\"E\",\"F\":\"F\"}]]\n")
+                                                   .orElseThrow(),
                                 arr2
                                );
     }
@@ -641,30 +641,30 @@ public class TestsUnionAndIntersection
     public void test_filter_empty_mutable_jsons()
     {
 
-        Supplier<JsObj> supplier = () -> JsObj._of_("a",
-                                                    JsStr.of("A"),
-                                                    "b",
-                                                    JsObj._empty_(),
-                                                    "c",
-                                                    JsStr.of("C"),
-                                                    "d",
-                                                    JsObj._of_("e",
-                                                               JsArray._of_("A",
-                                                                            "g",
-                                                                            "h"
-                                                                           )
-                                                                      .prepend(JsObj._empty_())
-                                                                      .prepend(JsObj._empty_()),
-                                                               "b",
-                                                               JsObj._empty_(),
-                                                               "h",
-                                                               JsObj._empty_(),
-                                                               "i",
-                                                               TRUE,
-                                                               "j",
-                                                               JsStr.of("A")
-                                                              )
-                                                   );
+        Supplier<JsObj> supplier = () -> Jsons.mutable.object.of("a",
+                                                                 JsStr.of("A"),
+                                                                 "b",
+                                                                 Jsons.mutable.object.empty(),
+                                                                 "c",
+                                                                 JsStr.of("C"),
+                                                                 "d",
+                                                                 Jsons.mutable.object.of("e",
+                                                                                         Jsons.mutable.array.of("A",
+                                                                                                                "g",
+                                                                                                                "h"
+                                                                                                               )
+                                                                                                            .prepend(Jsons.mutable.object.empty())
+                                                                                                            .prepend(Jsons.mutable.object.empty()),
+                                                                                         "b",
+                                                                                         Jsons.mutable.object.empty(),
+                                                                                         "h",
+                                                                                         Jsons.mutable.object.empty(),
+                                                                                         "i",
+                                                                                         TRUE,
+                                                                                         "j",
+                                                                                         JsStr.of("A")
+                                                                                        )
+                                                                );
 
 
         final JsObj obj = supplier.get();
@@ -693,30 +693,30 @@ public class TestsUnionAndIntersection
     @Test
     public void test_filter_values_mutable()
     {
-        Supplier<JsObj> supplier = () -> JsObj._of_("a",
-                                                    JsStr.of("A"),
-                                                    "b",
-                                                    JsObj._empty_(),
-                                                    "c",
-                                                    JsStr.of("C"),
-                                                    "d",
-                                                    JsObj._of_("e",
-                                                               JsArray._of_("A",
-                                                                            "g",
-                                                                            "h"
-                                                                           )
-                                                                      .prepend(JsObj._empty_())
-                                                                      .prepend(JsObj._empty_()),
-                                                               "b",
-                                                               JsObj._empty_(),
-                                                               "h",
-                                                               JsObj._empty_(),
-                                                               "i",
-                                                               TRUE,
-                                                               "j",
-                                                               JsStr.of("A")
-                                                              )
-                                                   );
+        Supplier<JsObj> supplier = () -> Jsons.mutable.object.of("a",
+                                                                 JsStr.of("A"),
+                                                                 "b",
+                                                                 Jsons.mutable.object.empty(),
+                                                                 "c",
+                                                                 JsStr.of("C"),
+                                                                 "d",
+                                                                 Jsons.mutable.object.of("e",
+                                                                                         Jsons.mutable.array.of("A",
+                                                                                                                "g",
+                                                                                                                "h"
+                                                                                                               )
+                                                                                                            .prepend(Jsons.mutable.object.empty())
+                                                                                                            .prepend(Jsons.mutable.object.empty()),
+                                                                                         "b",
+                                                                                         Jsons.mutable.object.empty(),
+                                                                                         "h",
+                                                                                         Jsons.mutable.object.empty(),
+                                                                                         "i",
+                                                                                         TRUE,
+                                                                                         "j",
+                                                                                         JsStr.of("A")
+                                                                                        )
+                                                                );
 
         supplier.get()
                 .filterElems_(p ->
@@ -751,16 +751,16 @@ public class TestsUnionAndIntersection
     @Test
     public void test_readme_union() throws MalformedJson
     {
-        JsObj a = JsObj.parse("{\"a\":1, \"c\": [{ \"d\":1 }] }")
-                       .orElseThrow();
-        JsObj b = JsObj.parse("{\"b\":2, \"c\": [{ \"e\":2 }] }")
-                       .orElseThrow();
-        JsObj c = JsObj.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1 }, { \"e\":2 }] }")
-                       .orElseThrow();
-        JsObj d = JsObj.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1 , \"e\":2 }] }")
-                       .orElseThrow();
-        JsObj e = JsObj.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1  }] }")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{\"a\":1, \"c\": [{ \"d\":1 }] }")
+                                        .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{\"b\":2, \"c\": [{ \"e\":2 }] }")
+                                        .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1 }, { \"e\":2 }] }")
+                                        .orElseThrow();
+        JsObj d = Jsons.immutable.object.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1 , \"e\":2 }] }")
+                                        .orElseThrow();
+        JsObj e = Jsons.immutable.object.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1  }] }")
+                                        .orElseThrow();
 
         Assertions.assertEquals(c,
                                 a.union_(b,
@@ -776,16 +776,16 @@ public class TestsUnionAndIntersection
                                 a.union(b)
                                );
 
-        JsObj f = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} } ] }")
-                       .orElseThrow();
-        JsObj g = JsObj.parse("{\"a\": [3, [4,5], 6, 7], \"b\": [1, 2] }")
-                       .orElseThrow();
-        JsObj h = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} }, 3, [4,5], 6, 7], \"b\":[1,2]}")
-                       .orElseThrow();
-        JsObj i = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} }, 7], \"b\":[1,2]}")
-                       .orElseThrow();
-        JsObj j = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} }], \"b\":[1,2]}")
-                       .orElseThrow();
+        JsObj f = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} } ] }")
+                                        .orElseThrow();
+        JsObj g = Jsons.immutable.object.parse("{\"a\": [3, [4,5], 6, 7], \"b\": [1, 2] }")
+                                        .orElseThrow();
+        JsObj h = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} }, 3, [4,5], 6, 7], \"b\":[1,2]}")
+                                        .orElseThrow();
+        JsObj i = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} }, 7], \"b\":[1,2]}")
+                                        .orElseThrow();
+        JsObj j = Jsons.immutable.object.parse("{\"a\": [1, 2, {\"b\": {\"b\":1} }], \"b\":[1,2]}")
+                                        .orElseThrow();
 
 
         Assertions.assertEquals(h,
@@ -813,14 +813,14 @@ public class TestsUnionAndIntersection
     public void test_readme_intersection() throws MalformedJson
     {
 
-        JsObj a = JsObj.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"a\":1, \"b\":[1,2]}, {\"b\":2}, {\"c\":3}] } }")
-                       .orElseThrow();
-        JsObj b = JsObj.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"a\":1, \"b\":[1]  }, {\"b\":2}] } }")
-                       .orElseThrow();
-        JsObj c = JsObj.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"b\":2}] } }")
-                       .orElseThrow();
+        JsObj a = Jsons.immutable.object.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"a\":1, \"b\":[1,2]}, {\"b\":2}, {\"c\":3}] } }")
+                                        .orElseThrow();
+        JsObj b = Jsons.immutable.object.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"a\":1, \"b\":[1]  }, {\"b\":2}] } }")
+                                        .orElseThrow();
+        JsObj c = Jsons.immutable.object.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"b\":2}] } }")
+                                        .orElseThrow();
 
-        Assertions.assertEquals(JsObj.empty(),
+        Assertions.assertEquals(Jsons.immutable.object.empty(),
                                 a.intersection(b,
                                                LIST
                                               )
@@ -830,7 +830,7 @@ public class TestsUnionAndIntersection
                                                 LIST
                                                )
                                );
-        Assertions.assertEquals(JsObj.empty(),
+        Assertions.assertEquals(Jsons.immutable.object.empty(),
                                 a.intersection(b,
                                                SET
                                               )
@@ -840,7 +840,7 @@ public class TestsUnionAndIntersection
                                                 SET
                                                )
                                );
-        Assertions.assertEquals(JsObj.empty(),
+        Assertions.assertEquals(Jsons.immutable.object.empty(),
                                 a.intersection(b,
                                                MULTISET
                                               )
@@ -850,16 +850,16 @@ public class TestsUnionAndIntersection
                                                 MULTISET
                                                )
                                );
-        JsObj d = JsObj.parse("{ \"a\":true, \"b\": [1, 2, {\"a\":1         }, true,  null, false    ] }")
-                       .orElseThrow();
+        JsObj d = Jsons.immutable.object.parse("{ \"a\":true, \"b\": [1, 2, {\"a\":1         }, true,  null, false    ] }")
+                                        .orElseThrow();
 
-        JsObj e = JsObj.parse("{ \"a\":true, \"b\": [1, 2, {\"a\":1         }, false, true, null, 1 ] }")
-                       .orElseThrow();
-        JsObj f = JsObj.parse("{ \"a\": true }")
-                       .orElseThrow();
+        JsObj e = Jsons.immutable.object.parse("{ \"a\":true, \"b\": [1, 2, {\"a\":1         }, false, true, null, 1 ] }")
+                                        .orElseThrow();
+        JsObj f = Jsons.immutable.object.parse("{ \"a\": true }")
+                                        .orElseThrow();
 
-        JsObj i = JsObj.parse("{ \"a\":true, \"b\": [1, 2, {\"a\":1}] }")
-                       .orElseThrow();
+        JsObj i = Jsons.immutable.object.parse("{ \"a\":true, \"b\": [1, 2, {\"a\":1}] }")
+                                        .orElseThrow();
 
         Assertions.assertEquals(d,
                                 d.intersection(e,

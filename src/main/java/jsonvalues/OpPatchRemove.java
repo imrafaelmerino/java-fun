@@ -13,9 +13,9 @@ final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
 
     OpPatchRemove(final JsObj op) throws PatchMalformed
     {
-        Optional<String> path = requireNonNull(op).getStr(JsPath.fromKey("path"));
-        if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.path(path.get());
+        Optional<String> opPath = requireNonNull(op).getStr(JsPath.fromKey("path"));
+        if (!opPath.isPresent()) throw PatchMalformed.pathRequired(op);
+        this.path =  JsPath.path(opPath.get());
     }
 
     OpPatchRemove(final JsPath path)

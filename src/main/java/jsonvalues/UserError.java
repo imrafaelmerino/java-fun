@@ -7,6 +7,8 @@ package jsonvalues;
 public final class UserError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
+    private static final String ERROR_DEFAULT_CONSTRUCTOR = "Define a default constructor in your implementation that creates an empty seq data structure";
+    private static final String ERROR_IMMUTABLE_IMPL = "Define a default constructor in your implementation that creates an empty map data structure";
     private static final String GUARD_ARR_CONDITION_SUGGESTION = "use the guard condition arr.isEmpty() before";
     private static final String GUARD_OBJ_CONDITION_SUGGESTION = "use the guard condition obj.isEmpty() before";
     private static final String GENERAL_MESSAGE = "%s. Suggestion: %s.";
@@ -248,7 +250,7 @@ public final class UserError extends RuntimeException
     static UserError headOfEmptyArr()
     {
         return new UserError(String.format(GENERAL_MESSAGE,
-                                           "head of empty vector",
+                                           "head of empty seq",
                                            GUARD_ARR_CONDITION_SUGGESTION
                                           ));
     }
@@ -257,7 +259,7 @@ public final class UserError extends RuntimeException
     static UserError tailOfEmptyArr()
     {
         return new UserError(String.format(GENERAL_MESSAGE,
-                                           "tail of empty vector",
+                                           "tail of empty seq",
                                            GUARD_ARR_CONDITION_SUGGESTION
                                           ));
     }
@@ -265,7 +267,7 @@ public final class UserError extends RuntimeException
     static UserError lastOfEmptyArr()
     {
         return new UserError(String.format(GENERAL_MESSAGE,
-                                           "last of empty vector",
+                                           "last of empty seq",
                                            GUARD_ARR_CONDITION_SUGGESTION
                                           ));
     }
@@ -281,7 +283,7 @@ public final class UserError extends RuntimeException
     static UserError initOfEmptyArr()
     {
         return new UserError(String.format(GENERAL_MESSAGE,
-                                           "init of empty vector",
+                                           "init of empty seq",
                                            GUARD_ARR_CONDITION_SUGGESTION
                                           ));
     }
@@ -391,5 +393,41 @@ public final class UserError extends RuntimeException
                                            "call get(path).isArray() before"
                                           )
         );
+    }
+
+    static UserError wrongVectorImplementation(final Exception e)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Wrong seq implementation: %s",
+                                                         e.getMessage()
+                                                        ),
+                                           ERROR_DEFAULT_CONSTRUCTOR
+                                          ));
+    }
+
+    static UserError wrongMapImplementation(final Exception e)
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("Wrong map implementation: %s",
+                                                         e.getMessage()
+                                                        ),
+                                           ERROR_IMMUTABLE_IMPL
+                                          ));
+    }
+
+    static UserError defaultConstructorShouldCreateEmptyVector()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "Default constructor has to create an empty instance of MySeq",
+                                           ERROR_DEFAULT_CONSTRUCTOR
+                                          ));
+    }
+
+    static UserError defaultConstructorShouldCreateEmptyMap()
+    {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           "Default constructor has to create an empty instance of MyMap",
+                                           ERROR_IMMUTABLE_IMPL
+                                          ));
     }
 }

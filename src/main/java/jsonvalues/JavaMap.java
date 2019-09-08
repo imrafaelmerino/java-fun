@@ -1,19 +1,12 @@
 package jsonvalues;
 
 import org.checkerframework.checker.nullness.qual.KeyFor;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static jsonvalues.JsBool.FALSE;
-import static jsonvalues.JsBool.TRUE;
-import static jsonvalues.JsNull.NULL;
-import static jsonvalues.JsParser.Event.END_OBJECT;
-
-final class JavaMap implements MyMap<JavaMap>
+final class JavaMap implements MutableMap
 {
 
     private java.util.Map<String, JsElem> elements;
@@ -130,6 +123,12 @@ final class JavaMap implements MyMap<JavaMap>
     }
 
     @Override
+    public JavaMap empty()
+    {
+        return new JavaMap();
+    }
+
+    @Override
     public JavaMap update(final String key,
                           final JsElem je
                          )
@@ -148,180 +147,22 @@ final class JavaMap implements MyMap<JavaMap>
     }
 
     @Override
+    public JavaList emptyArray()
+    {
+        return new JavaList();
+    }
+
+    @Override
+    public JavaMap copy()
+    {
+        return new JavaMap(new HashMap<>(elements));
+    }
+
+    @Override
     public int hashCode()
     {
         return elements.hashCode();
 
     }
 
-    @Override
-    public boolean equals(final @Nullable Object obj)
-    {
-        return this.eq(obj);
-    }
-
-    void parse(final JsParser parser) throws MalformedJson
-    {
-        while (parser.next() != END_OBJECT)
-        {
-            final String key = parser.getString();
-            JsParser.Event elem = parser.next();
-            assert elem != null;
-            switch (elem)
-            {
-                case VALUE_STRING:
-                    this.update(key,
-                                parser.getJsString()
-                               );
-                    break;
-                case VALUE_NUMBER:
-                    this.update(key,
-                                parser.getJsNumber()
-                               );
-                    break;
-                case VALUE_FALSE:
-                    this.update(key,
-                                FALSE
-                               );
-                    break;
-                case VALUE_TRUE:
-                    this.update(key,
-                                TRUE
-                               );
-                    break;
-                case VALUE_NULL:
-                    this.update(key,
-                                NULL
-                               );
-                    break;
-                case START_OBJECT:
-                    final JavaMap obj = new JavaMap();
-                    obj.parse(parser);
-                    this.update(key,
-                                new MutableJsObj(obj)
-                               );
-                    break;
-                case START_ARRAY:
-                    final JavaVector arr = new JavaVector();
-                    arr.parse(parser);
-                    this.update(key,
-                                new MutableJsArray(arr)
-                               );
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-
-            }
-
-
-        }
-    }
-
-    void parse(final JsParser parser,
-               final ParseBuilder.Options options,
-               final JsPath path
-              ) throws MalformedJson
-    {
-        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while (parser.next() != END_OBJECT)
-        {
-            final String key = options.keyMap.apply(parser.getString());
-            final JsPath currentPath = path.key(key);
-            JsParser.Event elem = parser.next();
-            assert elem != null;
-            switch (elem)
-            {
-                case VALUE_STRING:
-                    JsPair.of(currentPath,
-                              parser.getJsString()
-                             )
-                          .consumeIf(condition,
-                                     p -> this.update(key,
-                                                      options.elemMap.apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case VALUE_NUMBER:
-                    JsPair.of(currentPath,
-                              parser.getJsNumber()
-                             )
-                          .consumeIf(condition,
-                                     p -> this.update(key,
-                                                      options.elemMap.apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case VALUE_FALSE:
-                    JsPair.of(currentPath,
-                              FALSE
-                             )
-                          .consumeIf(condition,
-                                     p -> this.update(key,
-                                                      options.elemMap
-                                                      .apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case VALUE_TRUE:
-                    JsPair.of(currentPath,
-                              TRUE
-                             )
-                          .consumeIf(condition,
-                                     p -> this.update(key,
-                                                      options.elemMap
-                                                      .apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case VALUE_NULL:
-                    JsPair.of(currentPath,
-                              NULL
-                             )
-                          .consumeIf(condition,
-                                     p -> this.update(key,
-                                                      options.elemMap
-                                                      .apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case START_OBJECT:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        final JavaMap obj = new JavaMap();
-                        obj.parse(parser,
-                                  options,
-                                  currentPath
-                                 );
-                        this.update(key,
-                                    new MutableJsObj(obj)
-                                   );
-                    }
-                    break;
-                case START_ARRAY:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        final JavaVector arr = new JavaVector();
-                        arr.parse(parser,
-                                  options,
-                                  currentPath.index(-1)
-                                 );
-                        this.update(key,
-                                    new MutableJsArray(arr)
-                                   );
-                    }
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-            }
-
-
-        }
-    }
 }

@@ -262,7 +262,7 @@ abstract class AbstractJsObj<M extends MyMap<M, V>, V extends MySeq<V, M>> imple
     @Override
     public final Set<String> fields()
     {
-        return map.fields();
+        return map.keys();
     }
 
 
@@ -287,7 +287,7 @@ abstract class AbstractJsObj<M extends MyMap<M, V>, V extends MySeq<V, M>> imple
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     public final JsObj intersection(final JsObj that,
                                     final TYPE ARRAY_AS
                                    )
@@ -300,7 +300,7 @@ abstract class AbstractJsObj<M extends MyMap<M, V>, V extends MySeq<V, M>> imple
         .get();
     }
 
-    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name for an enum constant
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     private Trampoline<JsObj> intersection(final JsObj a,
                                            final JsObj b,
                                            final JsArray.TYPE ARRAY_AS
@@ -764,7 +764,7 @@ abstract class AbstractJsObj<M extends MyMap<M, V>, V extends MySeq<V, M>> imple
                                                                                              .same(it.asJsArray());
                                                else return it.equals(a);
                                            })
-                                      .orElse(false) && other.fields()
+                                      .orElse(false) && other.keys()
                                                              .stream()
                                                              .allMatch(it -> map.contains(it)));
     }

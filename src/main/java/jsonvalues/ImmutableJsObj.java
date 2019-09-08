@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
+
 final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
 {
 

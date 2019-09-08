@@ -1,12 +1,10 @@
 package jsonvalues;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 final class JavaList implements MutableSeq
 {
@@ -22,15 +20,6 @@ final class JavaList implements MutableSeq
     {
         this.elements = new ArrayList<>();
     }
-
-
-    @Override
-    public JavaList add(final Collection<? extends JsElem> list)
-    {
-        elements.addAll(list);
-        return this;
-    }
-
 
     @Override
     public JavaList appendBack(final JsElem elem)
@@ -151,12 +140,6 @@ final class JavaList implements MutableSeq
     public int size()
     {
         return elements.size();
-    }
-
-    @Override
-    public Stream<JsElem> stream()
-    {
-        return elements.stream();
     }
 
     @Override

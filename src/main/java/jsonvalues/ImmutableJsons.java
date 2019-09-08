@@ -16,7 +16,7 @@ import static jsonvalues.JsParser.Event.*;
 
 /**
  Factory to create immutable jsons. New factories can be created with different map and seq implementations using
- the methods {@link ImmutableJsons#withMap(Class)} and {@link ImmutableJsons#withSeq(Class)} (Class)}.
+ the methods {@link ImmutableJsons#withMap(Class)} and {@link ImmutableJsons#withSeq(Class)}.
  */
 public final class ImmutableJsons
 {
@@ -387,6 +387,9 @@ public final class ImmutableJsons
 
     }
 
+    /**
+     represents a factory of immutable Json arrays
+     */
     public class ImmutableJsArrays
     {
 
@@ -754,7 +757,9 @@ public final class ImmutableJsons
         }
 
     }
-
+    /**
+     represents a factory of immutable Json objects
+     */
     public class ImmutableJsObjs
     {
 
@@ -780,7 +785,7 @@ public final class ImmutableJsons
         {
             JsObj acc = empty();
             @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
-            final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) requireNonNull(mutable).fields();
+            final Set<@KeyFor("mutable") String> keys = (Set<@KeyFor("mutable") String>) requireNonNull(mutable).fields();
             for (String key : keys)
             {
                 final JsPath path = JsPath.fromKey(key);
@@ -1115,7 +1120,13 @@ public final class ImmutableJsons
 
     }
 
+    /**
+     represents a factory of immutable Json arrays
+     */
     public final ImmutableJsArrays array;
+    /**
+     represents a factory of immutable Json objects
+     */
     public final ImmutableJsObjs object;
 
 
@@ -1135,6 +1146,12 @@ public final class ImmutableJsons
         this.object = requireNonNull(obj);
     }
 
+    /**
+     returns a new factory of immutable Jsons using as underlying data structure to store elements of Json objects
+     the given as a parameter
+     @param map the underlying data structure to store elements of Json objects in the factory
+     @return a new factory of immutable Jsons
+     */
     public ImmutableJsons withMap(final Class<ImmutableMap> map)
     {
 
@@ -1142,7 +1159,12 @@ public final class ImmutableJsons
                                   this.array
         );
     }
-
+    /**
+     returns a new factory of immutable Jsons using as underlying data structure to store elements of Json arrays
+     the given as a parameter
+     @param seq the underlying data structure to store elements of Json arrays in the factory
+     @return a new factory of immutable Jsons
+     */
     public ImmutableJsons withSeq(final Class<? extends ImmutableSeq> seq)
     {
 

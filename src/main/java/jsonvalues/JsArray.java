@@ -21,7 +21,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return true if both arrays are equals according to ARRAY_AS parameter
      */
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     default boolean equals(final JsArray array,
                            final TYPE ARRAY_AS
                           )
@@ -145,8 +145,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new JsArray of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117")
-    //  perfectly fine _
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     JsArray intersection(final JsArray that,
                          final TYPE ARRAY_AS
                         );
@@ -173,8 +172,7 @@ public interface JsArray extends Json<JsArray>, Iterable<JsElem>
      @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
      @return a new json array of the same type as the inputs (mutable or immutable)
      */
-    @SuppressWarnings("squid:S00117")
-    //  ARRAY_AS  should be a valid name
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     JsArray union(final JsArray that,
                   final TYPE ARRAY_AS
                  );

@@ -6,9 +6,6 @@ import scala.collection.generic.CanBuildFrom;
 import scala.collection.immutable.Vector;
 import scala.collection.mutable.Builder;
 
-import java.util.Collection;
-import java.util.stream.Stream;
-
 final class ScalaImmutableVector implements ImmutableSeq
 {
 
@@ -43,15 +40,6 @@ final class ScalaImmutableVector implements ImmutableSeq
     {
         this.vector = vector;
     }
-
-    @Override
-    public ScalaImmutableVector add(final Collection<? extends JsElem> list)
-    {
-        Vector<JsElem> r = this.vector;
-        for (final JsElem jsElem : list) r = r.appendBack(jsElem);
-        return new ScalaImmutableVector(r);
-    }
-
 
     @Override
     public ScalaImmutableVector appendBack(final JsElem elem)
@@ -173,13 +161,6 @@ final class ScalaImmutableVector implements ImmutableSeq
     public int size()
     {
         return vector.size();
-    }
-
-    @Override
-    public Stream<JsElem> stream()
-    {
-        return JavaConverters.seqAsJavaList(vector)
-                             .stream();
     }
 
     @Override

@@ -700,7 +700,7 @@ public interface Json<T extends Json<T>> extends JsElem
                         .count();
     }
 
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     default boolean equals(final JsElem elem,
                            final TYPE ARRAY_AS
                           )

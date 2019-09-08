@@ -60,7 +60,7 @@ final class ScalaImmutableMap implements ImmutableMap
 
 
     @Override
-    public final Set<String> fields()
+    public final Set<String> keys()
     {
         return JavaConverters.setAsJavaSet(persistentMap.keys()
                                                         .toSet());
@@ -168,17 +168,4 @@ final class ScalaImmutableMap implements ImmutableMap
                                                            je
                                                           ));
     }
-
-    @Override
-    public ScalaImmutableMap updateAll(final java.util.Map<String, JsElem> map)
-    {
-        scala.collection.immutable.Map<String, JsElem> newMap = this.persistentMap;
-        for (java.util.Map.Entry<String, JsElem> entry : map.entrySet())
-            newMap = newMap.updated(entry.getKey(),
-                                    entry.getValue()
-                                   );
-        return new ScalaImmutableMap(newMap);
-    }
-
-
 }

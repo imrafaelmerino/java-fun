@@ -368,7 +368,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
     public final boolean same(final JsArray that)
     {
         if (this == that) return true;
-        final MySeq other = ((AbstractJsArray<?, ?>) that).seq;
+        final MySeq<?,?> other = ((AbstractJsArray<?, ?>) that).seq;
         final boolean thatEmpty = that.isEmpty();
         final boolean thisEmpty = isEmpty();
         if (thatEmpty && thisEmpty) return true;
@@ -416,7 +416,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") //  perfectly fine _
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     public final JsArray intersection(final JsArray that,
                                       final TYPE ARRAY_AS
                                      )
@@ -427,7 +427,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
                            ).get();
     }
 
-    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name for an enum constant
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     private static Trampoline<JsArray> intersection(JsArray a,
                                                     JsArray b,
                                                     JsArray.TYPE ARRAY_AS
@@ -838,7 +838,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS  should be a valid name
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     public final JsArray union(final JsArray that,
                                final JsArray.TYPE ARRAY_AS
                               )
@@ -849,7 +849,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
                     ).get();
     }
 
-    @SuppressWarnings("squid:S00117") // ARRAY_AS should be a valid name
+    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
     private Trampoline<JsArray> union(JsArray a,
                                       JsArray b,
                                       JsArray.TYPE ARRAY_AS

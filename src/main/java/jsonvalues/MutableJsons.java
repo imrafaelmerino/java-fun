@@ -16,7 +16,7 @@ import static jsonvalues.JsParser.Event.*;
 
 /**
  Factory to create mutable jsons. New factories can be created with different map and seq implementations using
- the methods {@link MutableJsons#withMap(Class)} and {@link MutableJsons#withSeq(Class)} (Class)}.
+ the methods {@link MutableJsons#withMap(Class)} and {@link MutableJsons#withSeq(Class)}.
  */
 public class MutableJsons
 {
@@ -420,6 +420,9 @@ public class MutableJsons
         }
     }
 
+    /**
+     represents a factory of mutable Json arrays
+     */
     public class MutableJsArrays
     {
 
@@ -830,7 +833,9 @@ public class MutableJsons
         }
 
     }
-
+    /**
+     represents a factory of mutable Json objects
+     */
     public class MutableJsObjs
     {
 
@@ -1213,7 +1218,13 @@ public class MutableJsons
 
     }
 
+    /**
+     represents a factory of mutable Json arrays
+     */
     public final MutableJsArrays array;
+    /**
+     represents a factory of mutable Json objects
+     */
     public final MutableJsObjs object;
 
 
@@ -1233,6 +1244,12 @@ public class MutableJsons
         this.object = obj;
     }
 
+    /**
+     returns a new factory of mutable Json using as underlying data structure to store elements of Json objects
+     the given as a parameter
+     @param map the underlying data structure to store elements of Json objects in the factory
+     @return a new factory of mutable Jsons
+     */
     public MutableJsons withMap(final Class<? extends MutableMap> map)
     {
 
@@ -1241,6 +1258,12 @@ public class MutableJsons
         );
     }
 
+    /**
+     returns a new factory of mutable Json using as underlying data structure to store elements of Json arrays
+     the given as a parameter
+     @param seq the underlying data structure to store elements of Json arrays in the factory
+     @return a new factory of mutable Jsons
+     */
     public MutableJsons withSeq(final Class<? extends MutableSeq> seq)
     {
 

@@ -36,7 +36,7 @@ final class JavaMap implements MutableMap
 
     @Override
     @SuppressWarnings({"cast", "squid:S1905"}) //// in return checkerframework doesn't complain and does its job!
-    public Set<String> fields()
+    public Set<String> keys()
     {
         return (Set<String>) elements.keySet();
     }
@@ -136,13 +136,6 @@ final class JavaMap implements MutableMap
         elements.put(key,
                      je
                     );
-        return this;
-    }
-
-    @Override
-    public JavaMap updateAll(final java.util.Map<String, JsElem> map)
-    {
-        elements.putAll(map);
         return this;
     }
 

@@ -90,6 +90,7 @@ json.patch(Patch.ops().add("/a/b",
           )
 
 // creation of Jsons from primitive types
+
 Jsons.immutable.object.of("a",JsInt.of(13),
                           "b",JsStr.of("hi!")
                          )
@@ -103,6 +104,8 @@ Jsons.immutable.object.parse("{...}")
 Jsons.mutable.array.parse("[...]")
 
 // creation of a custom Json factory using Eclipse Collections
+import jsonvalues.MutableMap;
+import jsonvalues.MutableSeq;
 
 //implement MutableMap using org.eclipse.collections.api.list.MutableMap
 class MyMap implement MutableMap {...}
@@ -116,8 +119,9 @@ MutableJsons myFactory = Jsons.mutable
 
 //enjoy!
 
-JsObj obj = myFactory.mutable.object.of(...)
-JsArray array = myFactory.mutable.array.parse("...")
+JsObj obj = myFactory.object.of(...)
+
+JsArray array = myFactory.array.parse("...")
 
 ```
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent

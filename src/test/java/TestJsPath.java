@@ -220,7 +220,8 @@ public class TestJsPath
                                                            );
 
         Assertions.assertEquals("index 01 with leading zeros. Suggestion: removes the leading zeros.",
-                                userError.getMessage());
+                                userError.getMessage()
+                               );
     }
 
 }

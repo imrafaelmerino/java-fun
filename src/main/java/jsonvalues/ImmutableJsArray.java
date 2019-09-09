@@ -2,11 +2,6 @@ package jsonvalues;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -15,43 +10,31 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class ImmutableJsArray extends AbstractJsArray<ScalaVector, JsObj>
-{
-    public static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
-    static ImmutableJsArray EMPTY = new ImmutableJsArray(ScalaVector.EMPTY);
-    private transient volatile int hascode;
-    //squid:S3077: doesn't make any sese, volatile is perfectly valid here an as a matter of fact
-    //is a recomendation from Efective Java to apply the idiom single check for lazy initialization
+final class ImmutableJsArray extends AbstractJsArray<ImmutableSeq, ImmutableMap>
+{
+
+    private volatile int hascode;
+    //squid:S3077: doesn't make any sense, volatile is perfectly valid here an as a matter of fact
+    //is a recommendation from Effective Java to apply the idiom single check for lazy initialization
     @SuppressWarnings("squid:S3077")
     @Nullable
-    private transient volatile String str;
+    private volatile String str;
 
-    ImmutableJsArray(final ScalaVector array)
+    ImmutableJsArray(final ImmutableSeq array)
     {
         super(array);
     }
+
 
     @Override
     public JsArray add(final int index,
                        final JsElem elem
                       )
     {
-        return new ImmutableJsArray(array.add(index,
-                                              elem));
-    }
-
-    @Override
-    AbstractJsArray<ScalaVector, JsObj> emptyArray()
-    {
-        return EMPTY;
-    }
-
-    @Override
-    JsObj emptyObject()
-    {
-        return ImmutableJsObj.EMPTY;
+        return new ImmutableJsArray(seq.add(index,
+                                            elem
+                                           ));
     }
 
 
@@ -71,27 +54,17 @@ final class ImmutableJsArray extends AbstractJsArray<ScalaVector, JsObj>
     }
 
     @Override
-    JsArray of(final ScalaVector vector)
+    JsArray of(final ImmutableSeq vector)
     {
         return new ImmutableJsArray(vector);
     }
 
     @Override
-    public JsArray toImmutable()
+    JsObj of(final ImmutableMap map)
     {
-        return this;
+        return new ImmutableJsObj(map);
     }
 
-    public JsArray toMutable()
-    {
-        List<JsElem> acc = new ArrayList<>();
-        array.forEach(MatchExp.accept(acc::add,
-                                      obj -> acc.add(obj.toMutable()),
-                                      arr -> acc.add(arr.toMutable())
-                                     ));
-        return new MutableJsArray(new JavaVector(acc));
-
-    }
 
     @Override
     public boolean isMutable()
@@ -104,6 +77,31 @@ final class ImmutableJsArray extends AbstractJsArray<ScalaVector, JsObj>
     {
         return true;
     }
+
+
+    @Override
+    public TryPatch<JsArray> patch(final JsArray arrayOps)
+    {
+        try
+        {
+            final List<OpPatch<JsArray>> ops = new Patch<JsArray>(arrayOps).ops;
+            if (ops.isEmpty()) return new TryPatch<>(this);
+            OpPatch<JsArray> head = ops.get(0);
+            List<OpPatch<JsArray>> tail = ops.subList(1,
+                                                      ops.size()
+                                                     );
+            TryPatch<JsArray> accPatch = head.apply(this);
+            for (OpPatch<JsArray> op : tail) accPatch = accPatch.flatMap(op::apply);
+            return accPatch;
+        }
+
+        catch (PatchMalformed patchMalformed)
+        {
+            return new TryPatch<>(patchMalformed);
+
+        }
+    }
+
 
     @Override
     /**
@@ -323,39 +321,6 @@ final class ImmutableJsArray extends AbstractJsArray<ScalaVector, JsObj>
                                                           filter
                                                          )
                                                  .get();
-    }
-
-
-    /**
-     * Serialize this {@code ScalaJsObj} instance.
-     *
-     * @serialData The {@code String}) representation of this json object.
-     */
-    private void writeObject(ObjectOutputStream s) throws IOException
-    {
-        s.defaultWriteObject();
-        s.writeObject(toString());
-    }
-
-    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
-    @SuppressWarnings("squid:S4508")
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
-    {
-        s.defaultReadObject();
-        final String json = (String) s.readObject();
-        try
-        {
-            array = ((ImmutableJsArray) JsArray.parse(json)
-                                               .orElseThrow()).array;
-        }
-        catch (MalformedJson malformedJson)
-        {
-            throw new NotSerializableException(String.format("Error deserializing a string into the class %s: %s",
-                                                             JsArray.class.getName(),
-                                                             malformedJson.getMessage()
-                                                            ));
-        }
-
     }
 
 

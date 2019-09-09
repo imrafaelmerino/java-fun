@@ -3,7 +3,7 @@ package jsonvalues;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static jsonvalues.Patch.ops;
+import static jsonvalues.Patch.create;
 
 
 public class TestJsPatchAdd
@@ -14,18 +14,18 @@ public class TestJsPatchAdd
     public void test_add_operation_path_is_missing()
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
-                                                                      () -> JsObj.empty()
-                                                                                 .patch(ops().add("/a/b",
-                                                                                                  JsInt.of(1)
-                                                                                                 )
-                                                                                             .toArray()
-                                                                                             .remove(JsPath.path("/0/path"))
-                                                                                       )
-                                                                                 .orElseThrow()
+                                                                      () -> Jsons.immutable.object.empty()
+                                                                                                  .patch(create().add("/a/b",
+                                                                                                                      JsInt.of(1)
+                                                                                                                     )
+                                                                                                                 .toArray()
+                                                                                                                 .remove(JsPath.path("/0/path"))
+                                                                                                        )
+                                                                                                  .orElseThrow()
 
                                                                      );
 
-        Assertions.assertEquals("path is missing in {\"value\":1,\"op\":\"ADD\"}",
+        Assertions.assertEquals("path is missing in {\"op\":\"ADD\",\"value\":1}",
                                 patchMalformed.getMessage()
                                );
 
@@ -35,14 +35,14 @@ public class TestJsPatchAdd
     public void test_add_operation_value_is_missing()
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
-                                                                      () -> JsObj.empty()
-                                                                                 .patch(ops().add("/a/b",
-                                                                                                  JsInt.of(1)
-                                                                                                 )
-                                                                                             .toArray()
-                                                                                             .remove(JsPath.path("/0/value"))
-                                                                                       )
-                                                                                 .orElseThrow()
+                                                                      () -> Jsons.immutable.object.empty()
+                                                                                                  .patch(create().add("/a/b",
+                                                                                                                      JsInt.of(1)
+                                                                                                                     )
+                                                                                                                 .toArray()
+                                                                                                                 .remove(JsPath.path("/0/value"))
+                                                                                                        )
+                                                                                                  .orElseThrow()
 
                                                                      );
 
@@ -55,10 +55,10 @@ public class TestJsPatchAdd
     public void test_operation_is_not_a_json_object()
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
-                                                                      () -> JsObj.empty()
-                                                                                 .patch(JsArray.of("should be a json object")
-                                                                                       )
-                                                                                 .orElseThrow()
+                                                                      () -> Jsons.immutable.object.empty()
+                                                                                                  .patch(Jsons.immutable.array.of("should be a json object")
+                                                                                                        )
+                                                                                                  .orElseThrow()
 
                                                                      );
 
@@ -71,13 +71,13 @@ public class TestJsPatchAdd
     public void test_operation_not_supported()
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
-                                                                      () -> JsObj.empty()
-                                                                                 .patch(JsArray.of(JsObj.of("op",
-                                                                                                            JsStr.of("'not supported'")
-                                                                                                           )
-                                                                                                  )
-                                                                                       )
-                                                                                 .orElseThrow()
+                                                                      () -> Jsons.immutable.object.empty()
+                                                                                                  .patch(Jsons.immutable.array.of(Jsons.immutable.object.of("op",
+                                                                                                                                                            JsStr.of("'not supported'")
+                                                                                                                                                           )
+                                                                                                                                 )
+                                                                                                        )
+                                                                                                  .orElseThrow()
 
                                                                      );
 
@@ -90,10 +90,10 @@ public class TestJsPatchAdd
     public void test_missing_operation()
     {
         final PatchMalformed patchMalformed = Assertions.assertThrows(PatchMalformed.class,
-                                                                      () -> JsObj.empty()
-                                                                                 .patch(JsArray.of(JsObj.empty())
-                                                                                       )
-                                                                                 .orElseThrow()
+                                                                      () -> Jsons.immutable.object.empty()
+                                                                                                  .patch(Jsons.immutable.array.of(Jsons.immutable.object.empty())
+                                                                                                        )
+                                                                                                  .orElseThrow()
 
                                                                      );
 
@@ -106,13 +106,13 @@ public class TestJsPatchAdd
     public void test_add_key_to_array_error()
     {
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
-                                                                  () -> JsArray.empty()
-                                                                               .patch(ops().add("/a",
-                                                                                                JsInt.of(1)
-                                                                                               )
-                                                                                           .toArray()
-                                                                                     )
-                                                                               .orElseThrow()
+                                                                  () -> Jsons.immutable.array.empty()
+                                                                                             .patch(create().add("/a",
+                                                                                                                 JsInt.of(1)
+                                                                                                                )
+                                                                                                            .toArray()
+                                                                                                   )
+                                                                                             .orElseThrow()
                                                                  );
 
         Assertions.assertEquals("Trying to add the key 'a' in an array. add operation can not be applied in [] at /a. Suggestion: call get(path).isObj() before.",
@@ -120,15 +120,15 @@ public class TestJsPatchAdd
                                );
 
         final PatchOpError patchOpError1 = Assertions.assertThrows(PatchOpError.class,
-                                                                   () -> JsObj.of("a",
-                                                                                  JsArray.of(1)
-                                                                                 )
-                                                                              .patch(ops().add("/a/b",
-                                                                                               JsInt.of(1)
-                                                                                              )
-                                                                                          .toArray()
-                                                                                    )
-                                                                              .orElseThrow()
+                                                                   () -> Jsons.immutable.object.of("a",
+                                                                                                   Jsons.immutable.array.of(1)
+                                                                                                  )
+                                                                                               .patch(create().add("/a/b",
+                                                                                                                   JsInt.of(1)
+                                                                                                                  )
+                                                                                                              .toArray()
+                                                                                                     )
+                                                                                               .orElseThrow()
 
                                                                   );
 
@@ -141,13 +141,13 @@ public class TestJsPatchAdd
     public void test_add_index_to_object_error()
     {
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
-                                                                  () -> JsObj.empty()
-                                                                             .patch(ops().add("/0",
-                                                                                              JsInt.of(1)
-                                                                                             )
-                                                                                         .toArray()
-                                                                                   )
-                                                                             .orElseThrow()
+                                                                  () -> Jsons.immutable.object.empty()
+                                                                                              .patch(create().add("/0",
+                                                                                                                  JsInt.of(1)
+                                                                                                                 )
+                                                                                                             .toArray()
+                                                                                                    )
+                                                                                              .orElseThrow()
 
                                                                  );
 
@@ -156,15 +156,15 @@ public class TestJsPatchAdd
                                );
 
         final PatchOpError patchOpError1 = Assertions.assertThrows(PatchOpError.class,
-                                                                   () -> JsObj.of("a",
-                                                                                  JsObj.empty()
-                                                                                 )
-                                                                              .patch(ops().add("/a/0",
-                                                                                               JsInt.of(1)
-                                                                                              )
-                                                                                          .toArray()
-                                                                                    )
-                                                                              .orElseThrow()
+                                                                   () -> Jsons.immutable.object.of("a",
+                                                                                                   Jsons.immutable.object.empty()
+                                                                                                  )
+                                                                                               .patch(create().add("/a/0",
+                                                                                                                   JsInt.of(1)
+                                                                                                                  )
+                                                                                                              .toArray()
+                                                                                                     )
+                                                                                               .orElseThrow()
 
                                                                   );
 
@@ -177,13 +177,13 @@ public class TestJsPatchAdd
     public void test_add_parent_doesnt_exist_error()
     {
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
-                                                                  () -> JsObj.empty()
-                                                                             .patch(ops().add("/a/b",
-                                                                                              JsInt.of(1)
-                                                                                             )
-                                                                                         .toArray()
-                                                                                   )
-                                                                             .orElseThrow()
+                                                                  () -> Jsons.immutable.object.empty()
+                                                                                              .patch(create().add("/a/b",
+                                                                                                                  JsInt.of(1)
+                                                                                                                 )
+                                                                                                             .toArray()
+                                                                                                    )
+                                                                                              .orElseThrow()
 
                                                                  );
         Assertions.assertEquals("Parent not found at /a while applying add in {}. Suggestion: either check if the parent exists or call the put method, which always does the insertion.",
@@ -195,22 +195,22 @@ public class TestJsPatchAdd
     @Test
     public void test_add_several_keys_to_object_successfully() throws PatchMalformed, PatchOpError
     {
-        final JsObj o = JsObj.empty()
-                             .patch(ops().add("/a",
-                                              JsInt.of(1)
-                                             )
-                                         .add("/b",
-                                              JsBool.TRUE
-                                             )
-                                         .toArray()
-                                   )
-                             .orElseThrow();
+        final JsObj o = Jsons.immutable.object.empty()
+                                              .patch(create().add("/a",
+                                                                  JsInt.of(1)
+                                                                 )
+                                                             .add("/b",
+                                                               JsBool.TRUE
+                                                              )
+                                                             .toArray()
+                                                    )
+                                              .orElseThrow();
 
-        Assertions.assertEquals(JsObj.of("a",
-                                         JsInt.of(1),
-                                         "b",
-                                         JsBool.TRUE
-                                        ),
+        Assertions.assertEquals(Jsons.immutable.object.of("a",
+                                                          JsInt.of(1),
+                                                          "b",
+                                                          JsBool.TRUE
+                                                         ),
                                 o
                                );
 

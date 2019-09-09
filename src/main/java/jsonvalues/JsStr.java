@@ -94,7 +94,7 @@ public final class JsStr implements JsElem, Comparable<JsStr>
     }
 
     /**
-     Returns the string representation parse this json string which is its value quoted.
+     Returns the string representation of this json string which is its value quoted.
      @return the value quoted.
      */
     @Override
@@ -108,6 +108,7 @@ public final class JsStr implements JsElem, Comparable<JsStr>
     {
         return false;
     }
+
     @Override
     public boolean isArray()
     {

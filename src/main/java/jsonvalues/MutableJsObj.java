@@ -1,15 +1,8 @@
 package jsonvalues;
 
-import org.checkerframework.checker.nullness.qual.KeyFor;
-
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -17,31 +10,15 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
+final class MutableJsObj extends AbstractJsObj<MutableMap, MutableSeq>
 {
     public static final long serialVersionUID = 1L;
 
-    MutableJsObj(final JavaMap map)
+    MutableJsObj(final MutableMap map)
     {
         super(map);
     }
 
-    MutableJsObj()
-    {
-        super(new JavaMap());
-    }
-
-    @Override
-    MutableJsArray emptyArray()
-    {
-        return new MutableJsArray(new JavaVector());
-    }
-
-    @Override
-    JsObj emptyObject()
-    {
-        return new MutableJsObj(new JavaMap());
-    }
 
     @Override
     public Iterator<Map.Entry<String, JsElem>> iterator()
@@ -50,38 +27,17 @@ final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
     }
 
     @Override
-    JsObj of(final JavaMap map)
+    JsObj of(final MutableMap map)
     {
         return new MutableJsObj(map);
     }
 
     @Override
-    public JsObj toImmutable()
+    JsArray of(final MutableSeq vector)
     {
-        Map<String, JsElem> acc = new HashMap<>();
-        @SuppressWarnings("squid:S1905")// in return checkerframework does its job!
-        final Set<@KeyFor("map") String> keys = (Set<@KeyFor("map") String>) map.fields();
-        keys.forEach(key -> MatchExp.accept(val -> acc.put(key,
-                                                           val
-                                                          ),
-                                            obj -> acc.put(key,
-                                                           obj.toImmutable()
-                                                          ),
-                                            arr -> acc.put(key,
-                                                           arr.toImmutable()
-                                                          )
-                                           )
-                                    .accept(map.get(key))
-                    );
-        return new ImmutableJsObj(ScalaMap.EMPTY.updateAll(acc));
-
+        return new MutableJsArray(vector);
     }
 
-    @Override
-    public JsObj toMutable()
-    {
-        return this;
-    }
 
     @Override
     public String toString()
@@ -110,6 +66,7 @@ final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
                                                  )
                                              .get();
     }
+
 
     @Override
     @SuppressWarnings("squid:S00100") //  naming convention:  xx_ traverses the whole json
@@ -234,6 +191,11 @@ final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
     }
 
 
+    public JsObj copy()
+    {
+        return new MutableJsObj(map.copy());
+    }
+
     @Override
     public JsObj filterElems(final Predicate<? super JsPair> predicate)
     {
@@ -292,34 +254,6 @@ final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
 
     }
 
-
-    private void writeObject(ObjectOutputStream s) throws IOException
-    {
-        s.defaultWriteObject();
-        s.writeObject(toString());
-
-    }
-    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
-    @SuppressWarnings("squid:S4508")
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
-    {
-        s.defaultReadObject();
-        final String json = (String) s.readObject();
-        try
-        {
-            map = ((MutableJsObj) JsObj._parse_(json)
-                                       .orElseThrow()).map;
-        }
-        catch (MalformedJson malformedJson)
-        {
-            throw new NotSerializableException(String.format("Error deserializing a string into the class %s: %s",
-                                                             JsObj.class.getName(),
-                                                             malformedJson.getMessage()
-                                                            ));
-        }
-
-    }
-
     @Override
     public boolean isMutable()
     {
@@ -330,6 +264,30 @@ final class MutableJsObj extends AbstractJsObj<JavaMap, MutableJsArray>
     public boolean isImmutable()
     {
         return false;
+    }
+
+    @Override
+    public TryPatch<JsObj> patch(final JsArray arrayOps)
+    {
+        try
+        {
+            final List<OpPatch<JsObj>> ops = new Patch<JsObj>(arrayOps).ops;
+            if (ops.isEmpty()) return new TryPatch<>(this);
+            OpPatch<JsObj> head = ops.get(0);
+            List<OpPatch<JsObj>> tail = ops.subList(1,
+                                                    ops.size()
+                                                   );
+            JsObj copy = this.copy();
+            TryPatch<JsObj> accPatch = head.apply(copy);
+            for (OpPatch<JsObj> op : tail) accPatch = accPatch.flatMap(op::apply);
+            return accPatch;
+        }
+
+        catch (PatchMalformed patchMalformed)
+        {
+            return new TryPatch<>(patchMalformed);
+
+        }
     }
 
 }

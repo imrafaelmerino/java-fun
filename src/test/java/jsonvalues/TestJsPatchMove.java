@@ -11,16 +11,16 @@ public class TestJsPatchMove
     @Test
     public void test_move_from_obj_array() throws PatchMalformed, PatchOpError
     {
-        JsObj obj = JsObj.of("a",
-                             JsObj.of("b",
-                                      JsInt.of(2)
-                                     ),
-                             "b",
-                             JsArray.of(1,
-                                        3
-                                       )
-                            );
-        final TryPatch<JsObj> result = obj.patch(Patch.ops()
+        JsObj obj = Jsons.immutable.object.of("a",
+                                              Jsons.immutable.object.of("b",
+                                                                        JsInt.of(2)
+                                                                       ),
+                                              "b",
+                                              Jsons.immutable.array.of(1,
+                                                                       3
+                                                                      )
+                                             );
+        final TryPatch<JsObj> result = obj.patch(Patch.create()
                                                       .move("/a/b",
                                                             "/b/1"
                                                            )
@@ -29,14 +29,14 @@ public class TestJsPatchMove
                                 result.orElseThrow()
                                       .get(JsPath.path("/a/b"))
                                );
-        Assertions.assertEquals(JsArray.of(1,
-                                           2,
-                                           3
-                                          ),
+        Assertions.assertEquals(Jsons.immutable.array.of(1,
+                                                         2,
+                                                         3
+                                                        ),
                                 result.orElseThrow()
                                       .get(JsPath.path("/b"))
                                );
-        final TryPatch<JsObj> result2 = obj.patch(Patch.ops()
+        final TryPatch<JsObj> result2 = obj.patch(Patch.create()
                                                        .test("/a/b",
                                                              JsInt.of(2)
                                                             )
@@ -54,7 +54,7 @@ public class TestJsPatchMove
                                 result2.orElseThrow()
                                        .get(JsPath.path("/b/0"))
                                );
-        final TryPatch<JsObj> result3 = obj.patch(Patch.ops()
+        final TryPatch<JsObj> result3 = obj.patch(Patch.create()
                                                        .test("/a/b",
                                                              JsNull.NULL
                                                             )

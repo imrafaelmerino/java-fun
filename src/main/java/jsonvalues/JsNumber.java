@@ -10,6 +10,7 @@ public interface JsNumber extends JsElem
     {
         return false;
     }
+
     @Override
     default boolean isArray()
     {

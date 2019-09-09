@@ -42,7 +42,7 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen._jsObjGen_)
           { js =>
-            js.union(JsObj.empty()).equals(js) && js.union(JsObj.empty()).equals(js)
+            js.union(Jsons.immutable.`object`.empty()).equals(js) && js.union(Jsons.immutable.`object`.empty()).equals(js)
           }
          )
   }
@@ -56,7 +56,7 @@ class SetTheoryOpsSpec extends BasePropSpec
              b
             ) =>
 
-            val aCopy = JsObj._parse_(a.toString).orElseThrow()
+            val aCopy = Jsons.mutable.`object`.parse(a.toString).orElseThrow()
             val c = a.union(b)
             val d = b.union(aCopy)
 
@@ -75,7 +75,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           { (a,
              b
             ) =>
-            val aCopy = JsObj._parse_(a.toString).orElseThrow()
+            val aCopy = Jsons.mutable.`object`.parse(a.toString).orElseThrow()
             val c = a.union_(b, SET)
             val d = b.union_(aCopy, SET)
             c.fields().containsAll(d.fields()) && d.fields().containsAll(c.fields())
@@ -92,7 +92,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           { (a,
              b
             ) =>
-            val aCopy = JsObj._parse_(a.toString).orElseThrow()
+            val aCopy = Jsons.mutable.`object`.parse(a.toString).orElseThrow()
             val c = a.intersection(b, TYPE.LIST)
             val d = b.intersection(aCopy, TYPE.LIST)
             c.equals(d)
@@ -118,7 +118,7 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen._jsObjGen_)
           { js =>
-            js.intersection(JsObj.empty(), TYPE.LIST).equals(JsObj.empty())
+            js.intersection(Jsons.immutable.`object`.empty(), TYPE.LIST).equals(Jsons.immutable.`object`.empty())
           }
          )
   }
@@ -127,7 +127,7 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen._jsObjGen_)
           { js =>
-            js.intersection_(JsObj.empty(), SET).equals(JsObj.empty())
+            js.intersection_(Jsons.immutable.`object`.empty(), SET).equals(Jsons.immutable.`object`.empty())
           }
          )
   }

@@ -6,7 +6,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/2.0.2)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/2.0.2/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/3.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/3.0.0/jar)
 
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -23,6 +23,7 @@
 Welcome to **json-values**, the first-ever Json library in _Java_ that uses _persistent data structures_ 
 from _Scala_. _Java_ doesn't implement _persistent data structures_ natively; nevertheless, _Scala_ does and 
 runs on the _JVM_; therefore, you can go from Java to Scala smoothly and without any impact on the performance. 
+
 
 I'm a big fan of [Clojure](https://clojure.org) among other functional languages, and with due respect to the
 apparent differences, **json-values** follows its philosophy: 
@@ -48,6 +49,9 @@ in Java 8, like functions, suppliers, streams, and collectors, making json manip
 With **json-values**, you can go from a mutable Json to an immutable one, back and forth, and the API to manipulate 
 them is the same, being both implementations hidden to the user. 
 * Simplicity matters, and I 'd argue that **json-values** is simple.
+* Although the default immutable implementation uses immutable collections from Scala and the default mutable implementation uses collections from Java, it's possible to use as the underlying data structures any imaginable collection:
+from [Eclipse Collections](https://www.eclipse.org/collections/) to [PCollections](https://github.com/hrldcpr/pcollections). It brings you the possibility to create a super-fast and
+low footprint Json, and at the cost of just implementing a couple of interfaces. 
 * As a developer, I'm convinced that code should win arguments, so let me enumerate some examples, where I
 leave the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
@@ -85,6 +89,36 @@ json.patch(Patch.ops().add("/a/b",
                       .toArray()
           )
 
+// creation of Jsons from primitive types
+Jsons.immutable.object.of("a",JsInt.of(13),
+                          "b",JsStr.of("hi!")
+                         )
+
+Jsons.mutable.array.of(1,2,3)
+
+// creation of Jsons parsing strings
+
+Jsons.immutable.object.parse("{...}")
+
+Jsons.mutable.array.parse("[...]")
+
+// creation of a custom Json factory using Eclipse Collections
+
+//implement MutableMap using org.eclipse.collections.api.list.MutableMap
+class MyMap implement MutableMap {...}
+
+//implement MutableSeq using org.eclipse.collections.api.list.MutableList
+class MySeq implement MutableSeq {...}
+
+MutableJsons myFactory = Jsons.mutable
+                              .withMap(MyMap.class)
+                              .withSeq(MySeq.class);
+
+//enjoy!
+
+JsObj obj = myFactory.mutable.object.of(...)
+JsArray array = myFactory.mutable.array.parse("...")
+
 ```
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
 data structure shows very well the essence of **json-values**.
@@ -101,7 +135,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>2.0.2</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 and that's all. It's a **zero-dependency** library, so you won't have to go through a kind of dependency hell to get it working. 

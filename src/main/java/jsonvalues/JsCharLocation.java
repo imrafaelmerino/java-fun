@@ -1,14 +1,17 @@
 package jsonvalues;
 
+/**
+ Represent the position in a Json of a not expected character.
+ */
 final class JsCharLocation
 {
     private final long columnNo;
     private final long lineNo;
     private final long offset;
 
-    JsCharLocation(long lineNo,
-                   long columnNo,
-                   long streamOffset
+    JsCharLocation(final long lineNo,
+                   final long columnNo,
+                   final long streamOffset
                   )
     {
         this.lineNo = lineNo;

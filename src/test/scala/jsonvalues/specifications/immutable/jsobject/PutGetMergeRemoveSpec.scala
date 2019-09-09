@@ -15,9 +15,6 @@ class PutGetMergeRemoveSpec extends BasePropSpec
 {
 
 
-
-
-
   val doubleInt: BiFunction[JsElem, JsElem, JsInt] = ScalaToJava.bifunction((a,
                                                                              b
                                                                             ) => JsInt.of(a.asJsInt().x + b.asJsInt().x)
@@ -27,134 +24,134 @@ class PutGetMergeRemoveSpec extends BasePropSpec
   {
 
     check(
-           forAll(jsPathGen.objectPathGen,
-                  Arbitrary.arbitrary[String]
-                  )
-           { (path,
-              str
-             ) =>
-             JsObj.empty().put(path,
-                               JsStr.of(str)
-                               ).getStr(path).get() == str
-           }
-           )
+      forAll(jsPathGen.objectPathGen,
+             Arbitrary.arbitrary[String]
+             )
+      { (path,
+         str
+        ) =>
+        Jsons.immutable.`object`.empty().put(path,
+                                             JsStr.of(str)
+                                             ).getStr(path).get() == str
+      }
+      )
   }
 
   property("inserted boolean in an empty object has to be returned only by getBool function")
   {
     check(
-           forAll(jsPathGen.objectPathGen,
-                  Arbitrary.arbitrary[Boolean]
-                  )
-           { (path,
-              bool
+      forAll(jsPathGen.objectPathGen,
+             Arbitrary.arbitrary[Boolean]
              )
-           =>
+      { (path,
+         bool
+        )
+      =>
 
-             val obj = JsObj.empty().put(path,
-                                         JsBool.of(bool)
-                                         )
-             obj.getBool(path).get() == bool
-             obj.getInt(path) == OptionalInt.empty()
-             obj.getLong(path) == OptionalLong.empty()
-             obj.getStr(path) == Optional.empty()
-             obj.getObj(path) == Optional.empty()
-             obj.getArray(path) == Optional.empty()
-             obj.getBigDecimal(path) == Optional.empty()
-             obj.getBigInt(path) == Optional.empty()
-             obj.getDouble(path) == OptionalDouble.empty()
-             obj.get(path) == JsBool.of(bool)
+        val obj = Jsons.immutable.`object`.empty().put(path,
+                                                       JsBool.of(bool)
+                                                       )
+        obj.getBool(path).get() == bool
+        obj.getInt(path) == OptionalInt.empty()
+        obj.getLong(path) == OptionalLong.empty()
+        obj.getStr(path) == Optional.empty()
+        obj.getObj(path) == Optional.empty()
+        obj.getArray(path) == Optional.empty()
+        obj.getBigDecimal(path) == Optional.empty()
+        obj.getBigInt(path) == Optional.empty()
+        obj.getDouble(path) == OptionalDouble.empty()
+        obj.get(path) == JsBool.of(bool)
 
-           }
-           )
+      }
+      )
   }
 
 
   property("inserted integer in an empty object has to be returned by getInt,getLong,getBigInt function")
   {
     check(
-           forAll(jsPathGen.objectPathGen,
-                  Arbitrary.arbitrary[Int]
-                  )
-           { (path,
-              n
+      forAll(jsPathGen.objectPathGen,
+             Arbitrary.arbitrary[Int]
              )
-           =>
-             val obj = JsObj.empty().put(path,
-                                         JsInt.of(n)
-                                         )
-             obj.getInt(path).getAsInt == n
-             obj.getBool(path) == Optional.empty()
-             obj.getLong(path).getAsLong == n
-             obj.getBigInt(path).get() == BigInteger.valueOf(n)
-             obj.getObj(path) == Optional.empty()
-             obj.getArray(path) == Optional.empty()
-             obj.getBigDecimal(path) == Optional.empty()
-             obj.getDouble(path) == OptionalDouble.empty()
-             obj.get(path) == JsInt.of(n)
+      { (path,
+         n
+        )
+      =>
+        val obj = Jsons.immutable.`object`.empty().put(path,
+                                                       JsInt.of(n)
+                                                       )
+        obj.getInt(path).getAsInt == n
+        obj.getBool(path) == Optional.empty()
+        obj.getLong(path).getAsLong == n
+        obj.getBigInt(path).get() == BigInteger.valueOf(n)
+        obj.getObj(path) == Optional.empty()
+        obj.getArray(path) == Optional.empty()
+        obj.getBigDecimal(path) == Optional.empty()
+        obj.getDouble(path) == OptionalDouble.empty()
+        obj.get(path) == JsInt.of(n)
 
-           }
-           )
+      }
+      )
   }
 
   property("inserted long in an empty object has to be returned by getInt(if fits),getLong,getBigInt and get function")
   {
     check(
-           forAll(jsPathGen.objectPathGen,
-                  Arbitrary.arbitrary[Long]
-                  )
-           { (path,
-              n
+      forAll(jsPathGen.objectPathGen,
+             Arbitrary.arbitrary[Long]
              )
-           =>
+      { (path,
+         n
+        )
+      =>
 
 
-             val obj = JsObj.empty().put(path,
-                                         JsLong.of(n)
-                                         )
+        val obj = Jsons.immutable.`object`.empty().put(path,
+                                                       JsLong.of(n)
+                                                       )
 
-             obj.getInt(path) == Try.apply(OptionalInt.of(Math.toIntExact(n))).getOrElse(OptionalInt.empty())
+        obj.getInt(path) == Try.apply(OptionalInt.of(Math.toIntExact(n))).getOrElse(OptionalInt.empty())
 
-             obj.getBool(path) == Optional.empty()
-             obj.getLong(path).getAsLong == n
-             obj.getBigInt(path).get() == BigInteger.valueOf(n)
-             obj.getObj(path) == Optional.empty()
-             obj.getArray(path) == Optional.empty()
-             obj.getBigDecimal(path) == Optional.empty()
-             obj.getDouble(path) == OptionalDouble.empty()
-             obj.get(path) == JsLong.of(n)
+        obj.getBool(path) == Optional.empty()
+        obj.getLong(path).getAsLong == n
+        obj.getBigInt(path).get() == BigInteger.valueOf(n)
+        obj.getObj(path) == Optional.empty()
+        obj.getArray(path) == Optional.empty()
+        obj.getBigDecimal(path) == Optional.empty()
+        obj.getDouble(path) == OptionalDouble.empty()
+        obj.get(path) == JsLong.of(n)
 
-           }
-           )
+      }
+      )
   }
 
   property("inserted bigint in an empty object has to be returned by getInt(if fits),getLong(if fits),getBigInt and get functions")
   {
     check(
-           forAll(jsPathGen.objectPathGen,
-                  Arbitrary.arbitrary[BigInt]
-                  )
-           { (path,
-              n
+      forAll(jsPathGen.objectPathGen,
+             Arbitrary.arbitrary[BigInt]
              )
-           =>
+      { (path,
+         n
+        )
+      =>
 
-             val obj = JsObj.empty().put(path,
-                                         JsBigInt.of(n.bigInteger)
-                                         )
+        val obj = Jsons.immutable.`object`.empty().put(path,
+                                                       JsBigInt.of(n.bigInteger)
+                                                       )
 
-             obj.getInt(path) == Try.apply(OptionalInt.of(n.bigInteger.intValueExact())).getOrElse(OptionalInt.empty()) &&
-             obj.getBool(path) == Optional.empty() &&
-             obj.getLong(path) == Try.apply(OptionalLong.of(n.bigInteger.longValueExact())).getOrElse(OptionalLong.empty()) &&
-             obj.getBigInt(path).get() == n.bigInteger &&
-             obj.getObj(path) == Optional.empty() &&
-             obj.getArray(path) == Optional.empty() &&
-             obj.getBigDecimal(path) == Optional.empty()  &&
-             obj.getDouble(path) == OptionalDouble.empty() &&
-             obj.get(path) == JsBigInt.of(n.bigInteger)
+        obj.getInt(path) == Try.apply(OptionalInt.of(n.bigInteger.intValueExact())).getOrElse(OptionalInt.empty()) &&
+        obj.getBool(path) == Optional.empty() &&
+        obj.getLong(path) == Try.apply(OptionalLong.of(n.bigInteger.longValueExact())).getOrElse(OptionalLong.empty()) &&
+        obj.getBigInt(path).get() == n.bigInteger &&
+        obj.getObj(path) == Optional.empty() &&
+        obj.getArray(path) == Optional.empty() &&
+        obj.getBigDecimal(path) == Optional.empty() &&
+        obj.getDouble(path) == OptionalDouble.empty() &&
+        obj.get(path) == JsBigInt.of(n.bigInteger)
 
-           }
-           )
+      }
+      )
   }
 
 
@@ -167,10 +164,10 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              number
             ) =>
 
-            JsObj.empty().merge(path,
-                                JsInt.of(number),
-                                doubleInt
-                                ).getInt(path).getAsInt == number
+            Jsons.immutable.`object`.empty().merge(path,
+                                                   JsInt.of(number),
+                                                   doubleInt
+                                                   ).getInt(path).getAsInt == number
           }
           )
   }
@@ -183,12 +180,12 @@ class PutGetMergeRemoveSpec extends BasePropSpec
           { (path,
              number
             ) =>
-            JsObj.empty().put(path,
-                              JsInt.of(number)
-                              ).merge(path,
-                                      JsInt.of(number),
-                                      doubleInt
-                                      ).getInt(path).getAsInt == 2 * number
+            Jsons.immutable.`object`.empty().put(path,
+                                                 JsInt.of(number)
+                                                 ).merge(path,
+                                                         JsInt.of(number),
+                                                         doubleInt
+                                                         ).getInt(path).getAsInt == 2 * number
           }
           )
   }
@@ -200,14 +197,14 @@ class PutGetMergeRemoveSpec extends BasePropSpec
           { js =>
 
             js.stream_().allMatch(
-                                   it =>
-                                   {
-                                     val elemToNull: function.Function[_ >: JsElem, _ <: JsElem] = _ => JsNull.NULL
-                                     js.putIfPresent(it.path,
-                                                     elemToNull
-                                                     ).get(it.path).equals(JsNull.NULL)
-                                   }
-                                   )
+              it =>
+              {
+                val elemToNull: function.Function[_ >: JsElem, _ <: JsElem] = _ => JsNull.NULL
+                js.putIfPresent(it.path,
+                                elemToNull
+                                ).get(it.path).equals(JsNull.NULL)
+              }
+              )
 
 
           }
@@ -220,10 +217,10 @@ class PutGetMergeRemoveSpec extends BasePropSpec
           { js =>
 
             js.stream_().allMatch(
-                                   it => js.putIfAbsent(it.path,
-                                                        ScalaToJava.supplier(() => JsNull.NULL)
-                                                        ).get(it.path) == it.elem
-                                   )
+              it => js.putIfAbsent(it.path,
+                                   ScalaToJava.supplier(() => JsNull.NULL)
+                                   ).get(it.path) == it.elem
+              )
 
 
           }
@@ -238,9 +235,9 @@ class PutGetMergeRemoveSpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            JsObj.empty().putIfAbsent(path,
-                                      ScalaToJava.supplier(() => elem)
-                                      ).get(path) == elem
+            Jsons.immutable.`object`.empty().putIfAbsent(path,
+                                                         ScalaToJava.supplier(() => elem)
+                                                         ).get(path) == elem
           }
           )
   }
@@ -255,9 +252,9 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              elem
             ) =>
 
-            JsObj.empty().put(path,
-                              elem
-                              ).remove(path).get(path) == JsNothing.NOTHING
+            Jsons.immutable.`object`.empty().put(path,
+                                                 elem
+                                                 ).remove(path).get(path) == JsNothing.NOTHING
 
           }
           )
@@ -266,22 +263,22 @@ class PutGetMergeRemoveSpec extends BasePropSpec
   property("inserts and removes boolean")
   {
     check(
-           forAll(jsPathGen.objectPathGen,
-                  Arbitrary.arbitrary[Boolean]
-                  )
-           { (path,
-              value
-             ) =>
+      forAll(jsPathGen.objectPathGen,
+             Arbitrary.arbitrary[Boolean]
+             )
+      { (path,
+         value
+        ) =>
 
-             val json = JsObj.empty().put(path,
-                                          JsBool.of(value)
-                                          )
-             (json.getBool(path).get() == value) &&
-             (json.remove(path).get(path) == JsNothing.NOTHING)
+        val json = Jsons.immutable.`object`.empty().put(path,
+                                                        JsBool.of(value)
+                                                        )
+        (json.getBool(path).get() == value) &&
+        (json.remove(path).get(path) == JsNothing.NOTHING)
 
 
-           }
-           )
+      }
+      )
   }
 
 

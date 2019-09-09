@@ -2,6 +2,7 @@ package jsonvalues.specifications.immutable.array
 
 import java.util.Optional
 import java.util.function.Predicate
+
 import jsonvalues._
 import jsonvalues.specifications.BasePropSpec
 import org.scalacheck.Prop.forAll
@@ -14,59 +15,59 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsPairGen.pairGen)
           { p =>
-            JsArray.of(p.elem).size() == 1 &&
-            JsArray.of(p.elem,
-                       p.elem
-                       ).size() == 2 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 3 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 4 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 5 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 6 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 7 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 8 &&
-            JsArray.of(p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem,
-                       p.elem
-                       ).size() == 9
+            Jsons.immutable.array.of(p.elem).size() == 1 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem
+                                     ).size() == 2 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 3 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 4 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 5 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 6 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 7 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 8 &&
+            Jsons.immutable.array.of(p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem,
+                                     p.elem
+                                     ).size() == 9
           }
           )
   }
@@ -75,7 +76,7 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            JsArray.parse(js.toString).orElseThrow().equals(js)
+            Jsons.immutable.array.parse(js.toString).orElseThrow().equals(js)
           }
           )
   }
@@ -84,9 +85,9 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            val parsed = JsArray.parse(js.toString,
-                                       ParseBuilder.builder().withKeyMap(it => it + "!")
-                                       )
+            val parsed = Jsons.immutable.array.parse(js.toString,
+                                                     ParseBuilder.builder().withKeyMap(it => it + "!")
+                                                     )
             val allKeysEndsWithExclamation: Predicate[_ >: JsPair] = p => p.path.stream().filter(pos => pos.isKey).allMatch(pos => pos.asKey().name.endsWith("!"))
             parsed.orElseThrow().stream_().allMatch(allKeysEndsWithExclamation)
           }
@@ -100,9 +101,9 @@ class FactoryMethodsSpec extends BasePropSpec
           { js =>
 
             val predicate: JsPair => Boolean = (pair: JsPair) => pair.path.last().isKey
-            val parsed = JsArray.parse(js.toString,
-                                       ParseBuilder.builder().withElemFilter(ScalaToJava.predicate(predicate))
-                                       )
+            val parsed = Jsons.immutable.array.parse(js.toString,
+                                                     ParseBuilder.builder().withElemFilter(ScalaToJava.predicate(predicate))
+                                                     )
             parsed.orElseThrow().stream_().filter(p => p.elem.isNotJson && p.path.last().isIndex).findFirst().equals(Optional.empty)
 
           }
@@ -113,9 +114,9 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            val parsed = JsArray.parse(js.toString,
-                                       ParseBuilder.builder().withElemFilter(p => p.elem.isNotNull)
-                                       )
+            val parsed = Jsons.immutable.array.parse(js.toString,
+                                                     ParseBuilder.builder().withElemFilter(p => p.elem.isNotNull)
+                                                     )
 
             val value = parsed.orElseThrow().stream_().filter(p => p.elem.isNull).findFirst()
 
@@ -129,10 +130,10 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            val parsed = JsArray.parse(js.toString,
-                                       ParseBuilder.builder().withElemFilter(p => !p.elem.isStr
-                                                                             )
-                                       )
+            val parsed = Jsons.immutable.array.parse(js.toString,
+                                                     ParseBuilder.builder().withElemFilter(p => !p.elem.isStr
+                                                                                           )
+                                                     )
 
             parsed.orElseThrow().stream_().filter(p => p.elem.isStr).findFirst().equals(Optional.empty)
           }
@@ -145,9 +146,9 @@ class FactoryMethodsSpec extends BasePropSpec
           { js =>
 
             val predicate: Predicate[JsPair] = (pair: JsPair) => pair.elem.isNotNumber
-            val parsed = JsArray.parse(js.toString,
-                                       ParseBuilder.builder().withElemFilter(predicate)
-                                       )
+            val parsed = Jsons.immutable.array.parse(js.toString,
+                                                     ParseBuilder.builder().withElemFilter(predicate)
+                                                     )
 
             parsed.orElseThrow().stream_().filter(p => p.elem.isNumber).findFirst().equals(Optional.empty)
           }
@@ -158,9 +159,9 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            val parsed = JsArray.parse(js.toString,
-                                       ParseBuilder.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi").apply(p.elem))
-                                       )
+            val parsed = Jsons.immutable.array.parse(js.toString,
+                                                     ParseBuilder.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi").apply(p.elem))
+                                                     )
 
             parsed.orElseThrow().stream_().filter(p => p.elem.isStr).allMatch(p => p.elem.isStr(a => a.equals("hi")))
           }

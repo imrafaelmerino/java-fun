@@ -1,10 +1,5 @@
 package jsonvalues;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -13,17 +8,10 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-final class MutableJsArray extends AbstractJsArray<JavaVector, JsObj>
+final class MutableJsArray extends AbstractJsArray<MutableSeq, MutableMap>
 {
-    public static final long serialVersionUID = 1L;
 
-    MutableJsArray()
-    {
-        super(new JavaVector());
-    }
-
-
-    MutableJsArray(final JavaVector array)
+    MutableJsArray(final MutableSeq array)
     {
         super(array);
     }
@@ -33,27 +21,23 @@ final class MutableJsArray extends AbstractJsArray<JavaVector, JsObj>
                        final JsElem elem
                       )
     {
-        return of(array.add(index,
-                            elem));
-    }
-
-    @Override
-    JsArray emptyArray()
-    {
-        return new MutableJsArray(new JavaVector());
-    }
-
-    @Override
-    JsObj emptyObject()
-    {
-        return new MutableJsObj(new JavaMap());
+        seq.add(index,
+                elem
+               );
+        return of(seq);
     }
 
 
     @Override
-    JsArray of(final JavaVector vector)
+    JsArray of(final MutableSeq vector)
     {
         return new MutableJsArray(vector);
+    }
+
+    @Override
+    JsObj of(final MutableMap map)
+    {
+        return new MutableJsObj(map);
     }
 
     @Override
@@ -107,18 +91,6 @@ final class MutableJsArray extends AbstractJsArray<JavaVector, JsObj>
                                              .get();
     }
 
-
-    @Override
-    public JsArray toImmutable()
-    {
-        List<JsElem> acc = new ArrayList<>();
-        array.forEach(MatchExp.accept(acc::add,
-                                      obj -> acc.add(obj.toImmutable()),
-                                      arr -> acc.add(arr.toImmutable())
-                                     ));
-        return new ImmutableJsArray(ScalaVector.EMPTY.add(acc));
-
-    }
 
     public JsArray toMutable()
     {
@@ -286,38 +258,11 @@ final class MutableJsArray extends AbstractJsArray<JavaVector, JsObj>
     }
 
 
-    /**
-     * Serialize this {@code JsArray} instance.
-     *
-     * @serialData The {@code String}) representation of this json array.
-     */
-    private void writeObject(ObjectOutputStream s) throws IOException
+    public MutableJsArray copy()
     {
-        s.defaultWriteObject();
-        s.writeObject(toString());
-
+        return new MutableJsArray(seq.copy());
     }
 
-    //squid:S4508: implemented after reviewing chapter 12 from Effectiva Java!
-    @SuppressWarnings("squid:S4508")
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException
-    {
-        s.defaultReadObject();
-        final String json = (String) s.readObject();
-        try
-        {
-            array = ((MutableJsArray) JsArray._parse_(json)
-                                             .orElseThrow()).array;
-        }
-        catch (MalformedJson malformedJson)
-        {
-            throw new NotSerializableException(String.format("Error deserializing a string into the class %s: %s",
-                                                             MutableJsArray.class.getName(),
-                                                             malformedJson.getMessage()
-                                                            ));
-        }
-
-    }
 
     @Override
     public boolean isMutable()
@@ -329,6 +274,31 @@ final class MutableJsArray extends AbstractJsArray<JavaVector, JsObj>
     public boolean isImmutable()
     {
         return false;
+    }
+
+
+    @Override
+    public TryPatch<JsArray> patch(final JsArray arrayOps)
+    {
+        try
+        {
+            final List<OpPatch<JsArray>> ops = new Patch<JsArray>(arrayOps).ops;
+            if (ops.isEmpty()) return new TryPatch<>(this);
+            OpPatch<JsArray> head = ops.get(0);
+            List<OpPatch<JsArray>> tail = ops.subList(1,
+                                                      ops.size()
+                                                     );
+            JsArray copy = this.copy();
+            TryPatch<JsArray> accPatch = head.apply(copy);
+            for (OpPatch<JsArray> op : tail) accPatch = accPatch.flatMap(op::apply);
+            return accPatch;
+        }
+
+        catch (PatchMalformed patchMalformed)
+        {
+            return new TryPatch<>(patchMalformed);
+
+        }
     }
 
 

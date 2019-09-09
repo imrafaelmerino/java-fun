@@ -11,17 +11,17 @@ public class TestJsPatchReplace
     {
 
         final PatchOpError patchOpError = Assertions.assertThrows(PatchOpError.class,
-                                                                  () -> JsObj.of("a",
-                                                                                 JsArray.of(1)
-                                                                                )
-                                                                             .patch(Patch.ops()
-                                                                                         .replace("/a/b",
-                                                                                                    JsInt.of(1)
-                                                                                                   )
-                                                                                         .toArray()
+                                                                  () -> Jsons.immutable.object.of("a",
+                                                                                                  Jsons.immutable.array.of(1)
+                                                                                                 )
+                                                                                              .patch(Patch.create()
+                                                                                                          .replace("/a/b",
+                                                                                                                   JsInt.of(1)
+                                                                                                                  )
+                                                                                                          .toArray()
 
-                                                                                   )
-                                                                             .orElseThrow()
+                                                                                                    )
+                                                                                              .orElseThrow()
 
                                                                  );
 
@@ -35,25 +35,25 @@ public class TestJsPatchReplace
     public void test_replace_existing_element() throws PatchMalformed, PatchOpError
     {
 
-        final JsObj o = JsObj.of("a",
-                                 JsObj.of("b",
-                                          JsBool.TRUE
-                                         )
-                                )
-                             .patch(Patch.ops()
-                                         .replace("/a/b",
-                                                    JsBool.FALSE
-                                                   )
-                                         .toArray()
-                                   )
-                             .orElseThrow();
-
-
-        Assertions.assertEquals(JsObj.of("a",
-                                         JsObj.of("b",
-                                                  JsBool.FALSE
+        final JsObj o = Jsons.immutable.object.of("a",
+                                                  Jsons.immutable.object.of("b",
+                                                                            JsBool.TRUE
+                                                                           )
                                                  )
-                                        ),
+                                              .patch(Patch.create()
+                                                          .replace("/a/b",
+                                                                   JsBool.FALSE
+                                                                  )
+                                                          .toArray()
+                                                    )
+                                              .orElseThrow();
+
+
+        Assertions.assertEquals(Jsons.immutable.object.of("a",
+                                                          Jsons.immutable.object.of("b",
+                                                                                    JsBool.FALSE
+                                                                                   )
+                                                         ),
                                 o
                                );
     }

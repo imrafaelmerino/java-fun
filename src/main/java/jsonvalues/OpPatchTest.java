@@ -14,9 +14,9 @@ final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
     OpPatchTest(final JsObj op) throws PatchMalformed
     {
         this.value = requireNonNull(op).get(JsPath.fromKey("value"));
-        Optional<String> path = op.getStr(JsPath.fromKey("path"));
-        if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.path(path.get());
+        Optional<String> opPath = op.getStr(JsPath.fromKey("path"));
+        if (!opPath.isPresent()) throw PatchMalformed.pathRequired(op);
+        this.path =  JsPath.path(opPath.get());
     }
 
     @Override

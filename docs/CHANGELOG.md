@@ -1,13 +1,23 @@
 # JSON-VALUES
-## v2.0.2  ( Fri Aug 30 2019 00:42:40 GMT+0200 (CEST) )
+## v3.0.0  ( Sun Sep 08 2019 23:32:22 GMT+0200 (CEST) )
 
 
-## Bug Fixes
+## Breaking changes
 
-  - **error-message**
-    - wrong error message when parsing the empty string
-  ([bcd58b12](https://github.com/imrafaelmerino/json-values.git/commit/bcd58b126a54ab9601440d39f0d4b8008d6e2bda))
+  - **new Json factories**
+    - Migrate static factory methods: 
+      - Json.parse to Jsons.immutable.parse
+      - JsObj.of to  Jsons.immutable.object.of
+      - JsArray.of to  Jsons.immutable.array.of
+      - JsObj.\_of\_ to Jsons.mutable.object.of
+      - JsArray.\_of\_ to Jsons.mutable.array.of
+      - ...
+  - **JsObj and JsArray are not Serializable in this release.**    
+  - **collector from immutable Jsons is removed**
+  - **equals method returns false if the implementations are different, even if the json is the same:**
 
+## Features
 
-
-
+  - **JsArray and JsObj implemented using any custom data structure**
+    - Using the methods _withMap_ and _withSeq_ in factories _MutableJsons_ and _ImmutableJsons_
+  - **json.same(json) method to check if two Jsons are the same, no matter the implementation**

@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 
 abstract class OpMapKeys<T>
 {
-
     T json;
 
     OpMapKeys(final T json)

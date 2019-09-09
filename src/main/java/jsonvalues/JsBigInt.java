@@ -38,14 +38,7 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
 
     /**
      Indicates whether some other object is "equal to" this json big integer. Numbers of different
-     types are equals if the have the same value:
-     {@code
-     JsBigInt.parse(BigInteger.ONE).equals(JsBigInt.parse(BigInteger.ONE))
-     JsBigInt.parse(BigInteger.ONE).equals(JsInt.parse(1))
-     JsBigInt.parse(BigInteger.ONE).equals(JsDouble.parse(1.0))
-     JsBigInt.parse(BigInteger.ONE).equals(JsBigDec.parse(BigDecimal.valueOf(1.0)))
-     JsBigInt.parse(BigInteger.ONE).equals(JsLong.parse(1))
-     }
+     types are equals if the have the same value.
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this
      */
@@ -139,6 +132,7 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
         }
 
     }
+
     /**
      * Returns the value of this biginteger; or an empty optional if the value overflows an {@code long}.
      @return this biginteger as an long wrapped in an OptionalLong
@@ -155,6 +149,7 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
         }
 
     }
+
     /**
      returns true if this bigint and the specified bigdecimal represent the same number
      @param jsBigDec the specified JsBigDec
@@ -175,6 +170,7 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
         final OptionalInt optional = intValueExact();
         return optional.isPresent() && optional.getAsInt() == requireNonNull(jsInt).x;
     }
+
     /**
      returns true if this bigint and the specified long represent the same number
      @param jsLong the specified JsLong
@@ -185,6 +181,7 @@ public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
         final OptionalLong optional = longValueExact();
         return optional.isPresent() && optional.getAsLong() == requireNonNull(jsLong).x;
     }
+
     /**
      returns true if this bigint and the specified double represent the same number
      @param jsDouble the specified JsDouble

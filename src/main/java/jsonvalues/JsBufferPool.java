@@ -10,9 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 final class JsBufferPool
 {
-    // volatile since multiple threads may access queue reference
-    private
-    final ConcurrentLinkedQueue<WeakReference<char[]>> queue = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<WeakReference<char[]>> queue = new ConcurrentLinkedQueue<>();
 
 
     /**
@@ -26,7 +24,8 @@ final class JsBufferPool
     {
         WeakReference<char[]> weakReference = Optional.ofNullable(queue.poll())
                                                       .orElseGet(() -> new WeakReference<>(new char[4096]));
-        return Optional.ofNullable(weakReference.get()).orElseGet(()->new char[4096]);
+        return Optional.ofNullable(weakReference.get())
+                       .orElseGet(() -> new char[4096]);
     }
 
 

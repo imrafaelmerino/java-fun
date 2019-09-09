@@ -16,9 +16,9 @@ class AppendToArraySpec extends BasePropSpec
              elem
             ) =>
 
-            JsArray._empty_().append(path,
-                                     elem
-                                     ).getArray(path).get().size() == 1
+            Jsons.mutable.array.empty().append(path,
+                                               elem
+                                               ).getArray(path).get().size() == 1
           }
           )
   }
@@ -36,11 +36,11 @@ class AppendToArraySpec extends BasePropSpec
              c
             ) =>
 
-            val array = JsArray._empty_().append(path,
-                                                 a,
-                                                 b,
-                                                 c
-                                                 )
+            val array = Jsons.mutable.array.empty().append(path,
+                                                           a,
+                                                           b,
+                                                           c
+                                                           )
             array.getArray(path).get().size() == 3 &&
             array.get(path.index(0)).equals(a) &&
             array.get(path.index(1)).equals(b) &&
@@ -62,11 +62,11 @@ class AppendToArraySpec extends BasePropSpec
              c
             ) =>
 
-            val array = JsArray._empty_().prepend(path,
-                                                  a,
-                                                  b,
-                                                  c
-                                                  )
+            val array = Jsons.mutable.array.empty().prepend(path,
+                                                            a,
+                                                            b,
+                                                            c
+                                                            )
             array.getArray(path).get().size() == 3 &&
             array.get(path.index(0)).equals(a) &&
             array.get(path.index(1)).equals(b) &&
@@ -84,9 +84,9 @@ class AppendToArraySpec extends BasePropSpec
              a
             ) =>
 
-            val array = JsArray._empty_().appendAll(path,
-                                                    a
-                                                    )
+            val array = Jsons.mutable.array.empty().appendAll(path,
+                                                              a
+                                                              )
             array.getArray(path).get().size() == a.size() &&
             a.get(JsPath.fromIndex(0)).equals(array.get(path.index(0))) &&
             a.get(JsPath.fromIndex(-1)).equals(array.get(path.index(-1)))
@@ -103,15 +103,15 @@ class AppendToArraySpec extends BasePropSpec
              a
             ) =>
 
-            val empty = JsArray._empty_().appendAllIfPresent(path,
-                                                             () => a
-                                                             )
+            val empty = Jsons.mutable.array.empty().appendAllIfPresent(path,
+                                                                       () => a
+                                                                       )
 
-            val notEmpty = JsArray._empty_().put(path,
-                                                 JsArray._empty_()
-                                                 ).appendAllIfPresent(path,
-                                                                      () => a
-                                                                      )
+            val notEmpty = Jsons.mutable.array.empty().put(path,
+                                                           Jsons.mutable.array.empty()
+                                                           ).appendAllIfPresent(path,
+                                                                                () => a
+                                                                                )
             !empty.getArray(path).isPresent && notEmpty.getArray(path).get().equals(a)
           }
           )
@@ -126,16 +126,16 @@ class AppendToArraySpec extends BasePropSpec
              a
             ) =>
 
-            val empty = JsArray._empty_().prependAllIfPresent(path,
-                                                              () => a
-                                                              )
+            val empty = Jsons.mutable.array.empty().prependAllIfPresent(path,
+                                                                        () => a
+                                                                        )
 
-            val notEmpty = JsArray._empty_().put(path,
-                                                 JsArray._of_(1)
-                                                 ).prependAllIfPresent(path,
-                                                                       () => a
-                                                                       )
-            !empty.getArray(path).isPresent && notEmpty.getArray(path).get().equals(JsArray._of_(1).prependAll(a))
+            val notEmpty = Jsons.mutable.array.empty().put(path,
+                                                           Jsons.mutable.array.of(1)
+                                                           ).prependAllIfPresent(path,
+                                                                                 () => a
+                                                                                 )
+            !empty.getArray(path).isPresent && notEmpty.getArray(path).get().equals(Jsons.mutable.array.of(1).prependAll(a))
           }
           )
   }
@@ -148,9 +148,9 @@ class AppendToArraySpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            !JsArray._empty_().appendIfPresent(path,
-                                               ScalaToJava.supplier(() => elem)
-                                               ).getArray(path).isPresent
+            !Jsons.mutable.array.empty().appendIfPresent(path,
+                                                         ScalaToJava.supplier(() => elem)
+                                                         ).getArray(path).isPresent
           }
           )
   }
@@ -163,10 +163,10 @@ class AppendToArraySpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            JsArray._empty_().prepend(path,
-                                      elem,
-                                      elem
-                                      ).getArray(path).get().size() == 2
+            Jsons.mutable.array.empty().prepend(path,
+                                                elem,
+                                                elem
+                                                ).getArray(path).get().size() == 2
           }
           )
   }
@@ -179,9 +179,9 @@ class AppendToArraySpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            !JsArray._empty_().appendIfPresent(path,
-                                               ScalaToJava.supplier(() => elem)
-                                               ).getArray(path).isPresent
+            !Jsons.mutable.array.empty().appendIfPresent(path,
+                                                         ScalaToJava.supplier(() => elem)
+                                                         ).getArray(path).isPresent
           }
           )
   }
@@ -194,11 +194,11 @@ class AppendToArraySpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            JsArray._empty_().prepend(path,
-                                      elem
-                                      ).prependIfPresent(path,
-                                                         ScalaToJava.supplier(() => elem)
-                                                         ).getArray(path).get().size() == 2
+            Jsons.mutable.array.empty().prepend(path,
+                                                elem
+                                                ).prependIfPresent(path,
+                                                                   ScalaToJava.supplier(() => elem)
+                                                                   ).getArray(path).get().size() == 2
 
 
           }
@@ -213,11 +213,11 @@ class AppendToArraySpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            JsArray._empty_().append(path,
-                                     elem
-                                     ).appendIfPresent(path,
-                                                       ScalaToJava.supplier(() => elem)
-                                                       ).getArray(path).get().size() == 2
+            Jsons.mutable.array.empty().append(path,
+                                               elem
+                                               ).appendIfPresent(path,
+                                                                 ScalaToJava.supplier(() => elem)
+                                                                 ).getArray(path).get().size() == 2
 
 
           }

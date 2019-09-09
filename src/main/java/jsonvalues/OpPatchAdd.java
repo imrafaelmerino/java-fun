@@ -24,12 +24,12 @@ final class OpPatchAdd<T extends Json<T>> implements OpPatch<T>
 
     OpPatchAdd(final JsObj op) throws PatchMalformed
     {
-        JsElem value = requireNonNull(op).get(JsPath.fromKey("value"));
-        if (value.isNothing()) throw PatchMalformed.valueRequired(op);
-        this.value = value;
-        Optional<String> path = op.getStr(JsPath.fromKey("path"));
-        if (!path.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.path(path.get());
+        JsElem valueOp = requireNonNull(op).get(JsPath.fromKey("value"));
+        if (valueOp.isNothing()) throw PatchMalformed.valueRequired(op);
+        this.value = valueOp;
+        Optional<String> opPath = op.getStr(JsPath.fromKey("path"));
+        if (!opPath.isPresent()) throw PatchMalformed.pathRequired(op);
+        this.path =  JsPath.path(opPath.get());
     }
 
     @Override

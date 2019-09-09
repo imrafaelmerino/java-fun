@@ -42,14 +42,7 @@ public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
 
     /**
      Indicates whether some other object is "equal to" this json big decimal. Numbers of different
-     types are equals if the have the same value:
-     {@code
-     JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsDouble.of(1.00))
-     JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsInt.of(1))
-     JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsBigInt.of(BigInteger.ONE))
-     JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsBigDec.of(BigDecimal.valueOf(1.00)))
-     JsBigDec.of(BigDecimal.valueOf(1.0)).equals(JsLong.of(1))
-     }
+     types are equals if the have the same value.
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this
      */

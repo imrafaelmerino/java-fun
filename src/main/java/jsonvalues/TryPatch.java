@@ -104,8 +104,8 @@ public final class TryPatch<T extends Json<T>>
     }
 
     /**
-      if this TryPatch failed, it returns this instance, whereas if it didn't fail, it returns the TryPatch
-      result of applying the given function to the result of this TryPatch.
+     if this TryPatch failed, it returns this instance, whereas if it didn't fail, it returns the TryPatch
+     result of applying the given function to the result of this TryPatch.
      @param fn the given function that will be applied only if this patch didn't fail. The result of the
      flatMap operation will be the result of this function, if this TryPatch didn't fail
      @return a TryPatch
@@ -117,8 +117,8 @@ public final class TryPatch<T extends Json<T>>
     }
 
     /**
-      if this TryPatch failed, it returns this instance, whereas if it didn't fail, it returns the result
-      of this TryPatch mapped with the given function and wrapped in a TryPatch.
+     if this TryPatch failed, it returns this instance, whereas if it didn't fail, it returns the result
+     of this TryPatch mapped with the given function and wrapped in a TryPatch.
      @param fn the given function that will be applied only if this patch didn't fail. The result
      of the map operation will be the result of this function wrapped in a TryPatch
      @return a TryPatch

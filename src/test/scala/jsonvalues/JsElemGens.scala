@@ -106,7 +106,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsNumberGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
   }
 
   val jsArrStrGen: Gen[JsArray] =
@@ -117,7 +117,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsStrGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -129,7 +129,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsBoolGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -141,7 +141,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsIntGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -153,7 +153,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsDoubleGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -166,7 +166,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsObj](size,
                                                 jsObjGen
                                                 )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -178,7 +178,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsLongGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -190,7 +190,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsValueGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
 
   }
 
@@ -212,8 +212,8 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       value <- Gen.frequency((freqTypeOfPair.valueFreq, jsValueGen),
                              (freqTypeOfPair.arrFreq, jsArrGen),
                              (freqTypeOfPair.objFreq, jsObjGen),
-                             (freqTypeOfPair.emptyObjFreq, JsObj.empty()),
-                             (freqTypeOfPair.emptyArrFreq, JsArray.empty())
+                             (freqTypeOfPair.emptyObjFreq,Jsons.immutable.`object`.empty()),
+                             (freqTypeOfPair.emptyArrFreq, Jsons.immutable.array.empty())
                              )
     } yield (key, value)
   }
@@ -227,7 +227,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       pairs <- Gen.containerOfN[Array, (String, JsElem)](size,
                                                          pairNameValueGen
                                                          )
-    } yield JsObj.of(scala.collection.immutable.HashMap[String, JsElem](pairs: _*).asJava)
+    } yield Jsons.immutable.`object`.ofIterable(scala.collection.immutable.HashMap[String, JsElem](pairs: _*).asJava.entrySet())
 
   }
   val jsElemGen: Gen[JsElem] = Gen.oneOf(jsValueGen,
@@ -239,8 +239,8 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
                                                  jsArrGen
                                                  )
 
-  val _jsObjGen_ = jsObjGen.map(it => JsObj._parse_(it.toString).orElseThrow())
-  val _jsArrGen_ = jsArrGen.map(it => JsArray._parse_(it.toString).orElseThrow())
+  val _jsObjGen_ = jsObjGen.map(it => Jsons.mutable.`object`.parse(it.toString).orElseThrow())
+  val _jsArrGen_ = jsArrGen.map(it => Jsons.mutable.array.parse(it.toString).orElseThrow())
   val _jsonContainerGen_ = Gen.oneOf(_jsObjGen_,
                                      _jsArrGen_
                                      )

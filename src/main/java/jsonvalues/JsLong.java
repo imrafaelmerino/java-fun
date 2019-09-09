@@ -41,14 +41,7 @@ public final class JsLong implements JsNumber, Comparable<JsLong>
 
     /**
      Indicates whether some other object is "equal to" this json long. Numbers of different types are
-     equals if the have the same value:
-     {@code
-     JsLong.parse(1).equals(JsLong.parse(1))
-     JsLong.parse(1).equals(JsInt.parse(1))
-     JsLong.parse(1).equals(JsBigInt.parse(BigInteger.ONE))
-     JsLong.parse(1).equals(JsBigDec.parse(BigDecimal.valueOf(1.0)))
-     JsLong.parse(1).equals(JsDouble.parse(1.0))
-     }
+     equals if the have the same value.
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this JsLong
      */

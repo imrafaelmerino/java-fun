@@ -33,7 +33,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
            { (path,
               str
              ) =>
-             JsObj.empty().put(path,
+            Jsons.immutable.`object`.empty().put(path,
                                JsStr.of(str)
                                ).getStr(path).get() == str
            }
@@ -51,7 +51,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              )
            =>
 
-             val obj = JsObj.empty().put(path,
+             val obj =Jsons.immutable.`object`.empty().put(path,
                                          JsBool.of(bool)
                                          )
              obj.getBool(path).get() == bool
@@ -80,7 +80,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
               n
              )
            =>
-             val obj = JsObj.empty().put(path,
+             val obj =Jsons.immutable.`object`.empty().put(path,
                                          JsInt.of(n)
                                          )
              obj.getInt(path).getAsInt == n
@@ -109,7 +109,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
            =>
 
 
-             val obj = JsObj.empty().put(path,
+             val obj =Jsons.immutable.`object`.empty().put(path,
                                          JsLong.of(n)
                                          )
 
@@ -139,7 +139,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              )
            =>
 
-             val obj = JsObj.empty().put(path,
+             val obj =Jsons.immutable.`object`.empty().put(path,
                                          JsBigInt.of(n.bigInteger)
                                          )
              obj.getInt(path) == Try.apply(OptionalInt.of(n.bigInteger.intValueExact())).getOrElse(OptionalInt.empty())
@@ -166,7 +166,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              number
             ) =>
 
-            JsObj.empty().merge(path,
+           Jsons.immutable.`object`.empty().merge(path,
                                 JsInt.of(number),
                                 doubleInt
                                 ).getInt(path).getAsInt == number
@@ -182,7 +182,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
           { (path,
              number
             ) =>
-            JsObj.empty().put(path,
+           Jsons.immutable.`object`.empty().put(path,
                               JsInt.of(number)
                               ).merge(path,
                                       JsInt.of(number),
@@ -237,7 +237,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            JsObj.empty().putIfAbsent(path,
+           Jsons.immutable.`object`.empty().putIfAbsent(path,
                                       ScalaToJava.supplier(() => elem)
                                       ).get(path) == elem
           }
@@ -254,7 +254,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              elem
             ) =>
 
-            JsObj.empty().put(path,
+           Jsons.immutable.`object`.empty().put(path,
                               elem
                               ).remove(path).get(path) == JsNothing.NOTHING
 
@@ -272,7 +272,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
               value
              ) =>
 
-             val json = JsObj.empty().put(path,
+             val json =Jsons.immutable.`object`.empty().put(path,
                                           JsBool.of(value)
                                           )
              (json.getBool(path).get() == value) &&

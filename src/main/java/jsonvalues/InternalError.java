@@ -55,7 +55,8 @@ public final class InternalError extends RuntimeException
     static InternalError patchOperationNotSupported(final String op)
     {
         return new InternalError(String.format("Patch operation '%s' not supported.",
-                                               op));
+                                               op
+                                              ));
     }
 
     static InternalError tokenNotExpected(String token)

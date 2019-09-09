@@ -5,7 +5,7 @@ import java.util.function.Function
 import java.util.stream
 
 import jsonvalues.specifications.BasePropSpec
-import jsonvalues.{JsObj, JsPair, ScalaToJava}
+import jsonvalues.{JsObj, JsPair, Jsons, ScalaToJava}
 import org.scalacheck.Prop.forAll
 
 class StreamCollectorSpec extends BasePropSpec
@@ -15,7 +15,7 @@ class StreamCollectorSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            def testPredicateIf(filter   : jsonvalues.JsPair => Boolean,
+            def testPredicateIf(filter: jsonvalues.JsPair => Boolean,
                                 predicate: jsonvalues.JsPair => Boolean
                                ): JsObj => Boolean =
             {
@@ -26,44 +26,44 @@ class StreamCollectorSpec extends BasePropSpec
             }
 
             List(
-                  testPredicateIf(p => p.elem.isStr,
-                                  pair => js.getStr(pair.path).get == pair.elem.asJsStr.x
-                                  ),
-                  testPredicateIf(p => p.elem.isInt,
-                                  pair =>
-                                  {
-                                    val n = pair.elem.asJsInt.x
-                                    (js.getInt(pair.path).getAsInt == n) &&
-                                    (js.getLong(pair.path).getAsLong == n) &&
-                                    (js.getBigInt(pair.path).get() == BigInteger.valueOf(n))
-                                  }
-                                  ),
-                  testPredicateIf(p => p.elem.isLong,
-                                  pair =>
-                                  {
-                                    val n = pair.elem.asJsLong.x
-                                    (js.getLong(pair.path).getAsLong == n) &&
-                                    (js.getBigInt(pair.path).get() == BigInteger.valueOf(n))
-                                  }
-                                  ),
-                  testPredicateIf(p => p.elem.isDouble,
-                                  pair =>
-                                  {
-                                    val n = pair.elem.asJsDouble.x
-                                    (js.getDouble(pair.path).getAsDouble == n) &&
-                                    (js.getBigDecimal(pair.path).get() == java.math.BigDecimal.valueOf(n))
-                                  }
-                                  ),
-                  testPredicateIf(p => p.elem.isBigInt,
-                                  pair => js.getBigInt(pair.path).get == pair.elem.asJsBigInt.x
-                                  ),
-                  testPredicateIf(pair => pair.elem.isBigDec,
-                                  pair => js.getBigDecimal(pair.path).get == pair.elem.asJsBigDec.x
-                                  ),
-                  testPredicateIf(pair => pair.elem.isBool,
-                                  pair => js.getBool(pair.path).get == pair.elem.asJsBool.x
-                                  )
-                  ).map(f => f(js))
+              testPredicateIf(p => p.elem.isStr,
+                              pair => js.getStr(pair.path).get == pair.elem.asJsStr.x
+                              ),
+              testPredicateIf(p => p.elem.isInt,
+                              pair =>
+                              {
+                                val n = pair.elem.asJsInt.x
+                                (js.getInt(pair.path).getAsInt == n) &&
+                                (js.getLong(pair.path).getAsLong == n) &&
+                                (js.getBigInt(pair.path).get() == BigInteger.valueOf(n))
+                              }
+                              ),
+              testPredicateIf(p => p.elem.isLong,
+                              pair =>
+                              {
+                                val n = pair.elem.asJsLong.x
+                                (js.getLong(pair.path).getAsLong == n) &&
+                                (js.getBigInt(pair.path).get() == BigInteger.valueOf(n))
+                              }
+                              ),
+              testPredicateIf(p => p.elem.isDouble,
+                              pair =>
+                              {
+                                val n = pair.elem.asJsDouble.x
+                                (js.getDouble(pair.path).getAsDouble == n) &&
+                                (js.getBigDecimal(pair.path).get() == java.math.BigDecimal.valueOf(n))
+                              }
+                              ),
+              testPredicateIf(p => p.elem.isBigInt,
+                              pair => js.getBigInt(pair.path).get == pair.elem.asJsBigInt.x
+                              ),
+              testPredicateIf(pair => pair.elem.isBigDec,
+                              pair => js.getBigDecimal(pair.path).get == pair.elem.asJsBigDec.x
+                              ),
+              testPredicateIf(pair => pair.elem.isBool,
+                              pair => js.getBool(pair.path).get == pair.elem.asJsBool.x
+                              )
+              ).map(f => f(js))
               .reduce(_ && _)
           }
           )
@@ -74,8 +74,8 @@ class StreamCollectorSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val obj = js.stream_().collect(JsObj.collector())
-            obj.equals(js) && obj.hashCode() == js.hashCode()
+            val obj = js.stream_().collect(Jsons.mutable.`object`.collector())
+            obj.same(js)
 
           }
           )
@@ -87,13 +87,13 @@ class StreamCollectorSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
 
-            val function: (JsPair =>  JsPair) = (pair:JsPair) => pair.mapIfStr(_.toUpperCase)
+            val function: (JsPair => JsPair) = (pair: JsPair) => pair.mapIfStr(_.toUpperCase)
 
             val a: stream.Stream[JsPair] = js.stream_().map(ScalaToJava.function(function))
 
             val b: stream.Stream[JsPair] = js.stream_().parallel().map(ScalaToJava.function(function))
 
-            a.collect(JsObj.collector()).equals(b.collect(JsObj.collector()))
+            a.collect(Jsons.mutable.`object`.collector()).equals(b.collect(Jsons.mutable.`object`.collector()))
           }
           )
   }
@@ -107,7 +107,7 @@ class StreamCollectorSpec extends BasePropSpec
 
             val b: stream.Stream[JsPair] = js.stream_().parallel().filter(p => p.elem.isNotNull && !p.elem.isBool())
 
-            a.collect(JsObj.collector()).equals(b.collect(JsObj.collector()))
+            a.collect(Jsons.mutable.`object`.collector()).equals(b.collect(Jsons.mutable.`object`.collector()))
 
           }
           )

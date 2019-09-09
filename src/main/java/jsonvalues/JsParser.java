@@ -1,3 +1,43 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2012-2018 Oracle and/or its affiliates. All rights reserved.
+ *
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common Development
+ * and Distribution License("CDDL") (collectively, the "License").  You
+ * may not use this file except in compliance with the License.  You can
+ * obtain a copy of the License at
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
+ * language governing permissions and limitations under the License.
+ *
+ * When distributing the software, include this License Header Notice in each
+ * file and include the License file at LICENSE.txt.
+ *
+ * GPL Classpath Exception:
+ * Oracle designates this particular file as subject to the "Classpath"
+ * exception as provided by Oracle in the GPL Version 2 section of the License
+ * file that accompanied this code.
+ *
+ * Modifications:
+ * If applicable, add the following below the License Header, with the fields
+ * enclosed by brackets [] replaced by your own identifying information:
+ * "Portions Copyright [year] [name of copyright owner]"
+ *
+ * Contributor(s):
+ * If you wish your version of this file to be governed by only the CDDL or
+ * only the GPL Version 2, indicate your decision by adding "[Contributor]
+ * elects to include this software in this distribution under the [CDDL or GPL
+ * Version 2] license."  If you don't indicate a single choice of license, a
+ * recipient has the option to distribute your version of this file under
+ * either the CDDL, the GPL Version 2 or to extend the choice of license to
+ * its licensees as provided above.  However, if you add GPL Version 2 code
+ * and therefore, elected the GPL Version 2 license, then the option applies
+ * only if the new code is made subject to such option by the copyright
+ * holder.
+ */
+
 package jsonvalues;
 
 import jsonvalues.JsTokenizer.Token;
@@ -14,12 +54,18 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import static jsonvalues.JsParser.Event.*;
 import static jsonvalues.JsTokenizer.Token.*;
 
+/**
+ Code from org.glassfish/javax.json to parse a string into Json tokens. It's been modified following some recommendations
+ that I found in the Javadocs to improve the performance. I did some refactor, but I prefer not to do further
+ modifications in this class, at least for the moment.
+ open issue in GitHub (#52), to migrate all the modified code from the library to other repo and jar.
+ */
 final class JsParser implements Closeable
 {
     private static final JsBufferPool pool = new JsBufferPool();
-    private final String EXPECTED_START_JSON_OR_VALUE_TOKENS = "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]";
-    private final String EXPECTED_COMMA_TOKEN = "[COMMA]";
-    private final String EXPECTED_COMMA_CLOSE_OBJECT_TOKENS = "[COMMA, CURLYCLOSE]";
+    private static final String EXPECTED_START_JSON_OR_VALUE_TOKENS = "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL]";
+    private static final String EXPECTED_COMMA_TOKEN = "[COMMA]";
+    private static final String EXPECTED_COMMA_CLOSE_OBJECT_TOKENS = "[COMMA, CURLYCLOSE]";
 
     /**
      * An event from {@code MyJsParser}.
@@ -216,7 +262,7 @@ final class JsParser implements Closeable
             else if (currentEvent == START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
             else token = tokenizer.nextToken();
             if (token == EOF) return throwUnexpectedEOFException(token);
-            if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken() ,
+            if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken(),
                                                                           EXPECTED_START_JSON_OR_VALUE_TOKENS);
             if (token == CURLYCLOSE)
             {
@@ -293,7 +339,9 @@ final class JsParser implements Closeable
 
     }
 
-    private Event nextValueOrJsonBeginning(final Token token,String expectedTokens) throws MalformedJson
+    private Event nextValueOrJsonBeginning(final Token token,
+                                           String expectedTokens
+                                          ) throws MalformedJson
     {
         if (token.isValue()) return token.getEvent();
         if (token == CURLYOPEN)
@@ -309,7 +357,7 @@ final class JsParser implements Closeable
             return Event.START_ARRAY;
         }
         throw expectedValueOrJsonBeginning(token,
-                                          expectedTokens
+                                           expectedTokens
                                           );
     }
 

@@ -58,7 +58,7 @@ details)
 ```
 json.mapKeys(toSneakeCase)
 
-obj.stream().parallel().map(toSneakCase).collect(JsObj.collector())
+obj.stream().parallel().map(toSneakCase).collect(Jsons.mutable.object.collector())
 
 json.mapElems(trim, ifStr)
 

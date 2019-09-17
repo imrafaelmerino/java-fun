@@ -49,13 +49,17 @@ public class MutableJsons
                 parse(vector,
                       parser
                      );
-                return new Try(new MutableJsArray(vector));
+                return new Try(new MutableJsArray(vector,
+                                                  this
+                ));
             }
             final MutableMap map = this.object.emptyMap();
             parse(map,
                   parser
                  );
-            return new Try(new MutableJsObj(map));
+            return new Try(new MutableJsObj(map,
+                                            this
+            ));
         }
 
         catch (MalformedJson e)
@@ -89,7 +93,9 @@ public class MutableJsons
                       builder.create(),
                       JsPath.fromIndex(-1)
                      );
-                return new Try(new MutableJsArray(vector));
+                return new Try(new MutableJsArray(vector,
+                                                  this
+                ));
             }
             final MutableMap map = this.object.emptyMap();
             parse(map,
@@ -97,7 +103,9 @@ public class MutableJsons
                   builder.create(),
                   JsPath.empty()
                  );
-            return new Try(new MutableJsObj(map));
+            return new Try(new MutableJsObj(map,
+                                            this
+            ));
         }
 
         catch (MalformedJson e)
@@ -146,21 +154,25 @@ public class MutableJsons
                                );
                     break;
                 case START_OBJECT:
-                    final MutableMap obj = root.empty();
+                    final MutableMap obj = this.object.emptyMap();
                     parse(obj,
                           parser
                          );
                     root.update(key,
-                                new MutableJsObj(obj)
+                                new MutableJsObj(obj,
+                                                 this
+                                )
                                );
                     break;
                 case START_ARRAY:
-                    final MutableSeq arr = root.emptyArray();
+                    final MutableSeq arr = this.array.emptySeq();
                     parse(arr,
                           parser
                          );
                     root.update(key,
-                                new MutableJsArray(arr)
+                                new MutableJsArray(arr,
+                                                   this
+                                )
                                );
                     break;
                 default:
@@ -249,28 +261,32 @@ public class MutableJsons
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MutableMap obj = root.empty();
+                        final MutableMap obj = this.object.emptyMap();
                         parse(obj,
                               parser,
                               options,
                               currentPath
                              );
                         root.update(key,
-                                    new MutableJsObj(obj)
+                                    new MutableJsObj(obj,
+                                                     this
+                                    )
                                    );
                     }
                     break;
                 case START_ARRAY:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MutableSeq arr = root.emptyArray();
+                        final MutableSeq arr = this.array.emptySeq();
                         parse(arr,
                               parser,
                               options,
                               currentPath.index(-1)
                              );
                         root.update(key,
-                                    new MutableJsArray(arr)
+                                    new MutableJsArray(arr,
+                                                       this
+                                    )
                                    );
                     }
                     break;
@@ -311,18 +327,22 @@ public class MutableJsons
                     root.appendBack(NULL);
                     break;
                 case START_OBJECT:
-                    final MutableMap obj = root.emptyObject();
+                    final MutableMap obj = this.object.emptyMap();
                     parse(obj,
                           parser
                          );
-                    root.appendBack(new MutableJsObj(obj));
+                    root.appendBack(new MutableJsObj(obj,
+                                                     this
+                    ));
                     break;
                 case START_ARRAY:
-                    final MutableSeq arr = root.empty();
+                    final MutableSeq arr = this.array.emptySeq();
                     parse(arr,
                           parser
                          );
-                    root.appendBack(new MutableJsArray(arr));
+                    root.appendBack(new MutableJsArray(arr,
+                                                       this
+                    ));
                     break;
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
@@ -390,27 +410,31 @@ public class MutableJsons
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MutableMap obj = root.emptyObject();
+                        final MutableMap obj = this.object.emptyMap();
                         parse(obj,
                               parser,
                               options,
                               currentPath
                              );
-                        root.appendBack(new MutableJsObj(obj));
+                        root.appendBack(new MutableJsObj(obj,
+                                                         this
+                        ));
                     }
                     break;
 
                 case START_ARRAY:
                     if (options.keyFilter.test(currentPath))
                     {
-                        final MutableSeq arr = root.empty();
+                        final MutableSeq arr = this.array.emptySeq();
                         parse(arr,
                               parser,
                               options,
                               currentPath.index(-1)
                              );
 
-                        root.appendBack(new MutableJsArray(arr));
+                        root.appendBack(new MutableJsArray(arr,
+                                                           this
+                        ));
                     }
                     break;
                 default:
@@ -475,7 +499,7 @@ public class MutableJsons
         }
 
 
-        MutableSeq emptySeq()
+        private MutableSeq emptySeq()
         {
             try
             {
@@ -496,7 +520,9 @@ public class MutableJsons
          */
         public JsArray empty()
         {
-            return new MutableJsArray(emptySeq());
+            return new MutableJsArray(emptySeq(),
+                                      MutableJsons.this
+            );
         }
 
         /**
@@ -514,7 +540,9 @@ public class MutableJsons
                 MutableJsons.this.parse(seq,
                                         parser
                                        );
-                return new TryArr(new MutableJsArray(seq));
+                return new TryArr(new MutableJsArray(seq,
+                                                     MutableJsons.this
+                ));
             }
 
             catch (MalformedJson e)
@@ -546,7 +574,9 @@ public class MutableJsons
                                         builder.create(),
                                         JsPath.fromIndex(-1)
                                        );
-                return new TryArr(new MutableJsArray(seq));
+                return new TryArr(new MutableJsArray(seq,
+                                                     MutableJsons.this
+                ));
             }
 
             catch (MalformedJson e)
@@ -575,7 +605,9 @@ public class MutableJsons
             {
                 v.appendBack(JsStr.of(a));
             }
-            return new MutableJsArray(v);
+            return new MutableJsArray(v,
+                                      MutableJsons.this
+            );
         }
 
         /**
@@ -731,7 +763,9 @@ public class MutableJsons
             {
                 seq.appendBack(JsInt.of(a));
             }
-            return new MutableJsArray(seq);
+            return new MutableJsArray(seq,
+                                      MutableJsons.this
+            );
         }
 
         /**
@@ -751,7 +785,9 @@ public class MutableJsons
             {
                 seq.appendBack(JsLong.of(a));
             }
-            return new MutableJsArray(seq);
+            return new MutableJsArray(seq,
+                                      MutableJsons.this
+            );
         }
 
         /**
@@ -770,7 +806,9 @@ public class MutableJsons
             {
                 seq.appendBack(JsBool.of(a));
             }
-            return new MutableJsArray(seq);
+            return new MutableJsArray(seq,
+                                      MutableJsons.this
+            );
         }
 
         /**
@@ -789,7 +827,9 @@ public class MutableJsons
             {
                 seq.appendBack(JsDouble.of(a));
             }
-            return new MutableJsArray(seq);
+            return new MutableJsArray(seq,
+                                      MutableJsons.this
+            );
         }
 
         public JsArray ofIterable(Iterable<JsElem> iterable)
@@ -801,7 +841,9 @@ public class MutableJsons
 
                 seq.appendBack(e);
             }
-            return new MutableJsArray(seq);
+            return new MutableJsArray(seq,
+                                      MutableJsons.this
+            );
         }
 
         /**
@@ -833,6 +875,7 @@ public class MutableJsons
         }
 
     }
+
     /**
      represents a factory of mutable Json objects
      */
@@ -919,7 +962,9 @@ public class MutableJsons
          */
         public JsObj empty()
         {
-            return new MutableJsObj(emptyMap());
+            return new MutableJsObj(emptyMap(),
+                                    MutableJsons.this
+            );
         }
 
 
@@ -938,7 +983,9 @@ public class MutableJsons
                 MutableJsons.this.parse(obj,
                                         parser
                                        );
-                return new TryObj(new MutableJsObj(obj));
+                return new TryObj(new MutableJsObj(obj,
+                                                   MutableJsons.this
+                ));
             }
             catch (MalformedJson e)
             {
@@ -968,7 +1015,9 @@ public class MutableJsons
                                         builder.create(),
                                         JsPath.empty()
                                        );
-                return new TryObj(new MutableJsObj(obj));
+                return new TryObj(new MutableJsObj(obj,
+                                                   MutableJsons.this
+                ));
             }
             catch (MalformedJson e)
             {

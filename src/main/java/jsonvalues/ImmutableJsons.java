@@ -49,12 +49,16 @@ public final class ImmutableJsons
             {
                 return new Try(new ImmutableJsArray(parse(array.emptySeq,
                                                           parser
-                                                         )
+                                                         ),
+                                                    this
                 ));
             }
             return new Try(new ImmutableJsObj(parse(object.emptyMap,
                                                     parser
-                                                   )));
+                                                   ),
+                                              this
+            )
+            );
         }
 
         catch (MalformedJson e)
@@ -87,13 +91,19 @@ public final class ImmutableJsons
                                                                                 JsPath.empty()
                                                                                       .index(-1)
 
-                                                                               )));
+                                                                               ),
+                                                                          this
+            )
+            );
             return new Try(new ImmutableJsObj(parse(object.emptyMap,
                                                     parser,
                                                     builder.create(),
                                                     JsPath.empty()
 
-                                                   )));
+                                                   ),
+                                              this
+            )
+            );
         }
 
         catch (MalformedJson e)
@@ -132,16 +142,20 @@ public final class ImmutableJsons
                     newRoot = newRoot.appendBack(NULL);
                     break;
                 case START_OBJECT:
-                    final ImmutableMap newObj = parse(root.emptyObject(),
+                    final ImmutableMap newObj = parse(this.object.emptyMap,
                                                       parser
                                                      );
-                    newRoot = newRoot.appendBack(new ImmutableJsObj(newObj));
+                    newRoot = newRoot.appendBack(new ImmutableJsObj(newObj,
+                                                                    this
+                    ));
                     break;
                 case START_ARRAY:
-                    final ImmutableSeq newSeq = parse(root.empty(),
+                    final ImmutableSeq newSeq = parse(this.array.emptySeq,
                                                       parser
                                                      );
-                    newRoot = newRoot.appendBack(new ImmutableJsArray(newSeq));
+                    newRoot = newRoot.appendBack(new ImmutableJsArray(newSeq,
+                                                                      this
+                    ));
                     break;
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
@@ -214,11 +228,12 @@ public final class ImmutableJsons
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
-                                                 new ImmutableJsObj(parse(root.empty(),
+                                                 new ImmutableJsObj(parse(this.object.emptyMap,
                                                                           parser,
                                                                           options,
                                                                           currentPath
-                                                                         )
+                                                                         ),
+                                                                    this
                                                  )
                                                 );
                     }
@@ -227,11 +242,13 @@ public final class ImmutableJsons
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
-                                                 new ImmutableJsArray(parse(root.emptyArray(),
+                                                 new ImmutableJsArray(parse(this.array.emptySeq,
                                                                             parser,
                                                                             options,
                                                                             currentPath.index(-1)
-                                                                           ))
+                                                                           ),
+                                                                      this
+                                                 )
                                                 );
                     }
                     break;
@@ -297,21 +314,27 @@ public final class ImmutableJsons
                 case START_OBJECT:
                     if (options.keyFilter.test(currentPath))
                     {
-                        newRoot = newRoot.appendBack(new ImmutableJsObj(parse(root.emptyObject(),
+                        newRoot = newRoot.appendBack(new ImmutableJsObj(parse(this.object.emptyMap,
                                                                               parser,
                                                                               options,
                                                                               currentPath
-                                                                             )));
+                                                                             ),
+                                                                        this
+                                                     )
+                                                    );
                     }
                     break;
                 case START_ARRAY:
                     if (options.keyFilter.test(currentPath))
                     {
-                        newRoot = newRoot.appendBack(new ImmutableJsArray(parse(root.empty(),
+                        newRoot = newRoot.appendBack(new ImmutableJsArray(parse(this.array.emptySeq,
                                                                                 parser,
                                                                                 options,
                                                                                 currentPath.index(-1)
-                                                                               )));
+                                                                               ),
+                                                                          this
+                                                     )
+                                                    );
                     }
                     break;
                 default:
@@ -361,19 +384,23 @@ public final class ImmutableJsons
                                             );
                     break;
                 case START_OBJECT:
-                    final ImmutableMap newObj = parse(root.empty(),
+                    final ImmutableMap newObj = parse(this.object.emptyMap,
                                                       parser
                                                      );
                     newRoot = newRoot.update(key,
-                                             new ImmutableJsObj(newObj)
+                                             new ImmutableJsObj(newObj,
+                                                                this
+                                             )
                                             );
                     break;
                 case START_ARRAY:
-                    final ImmutableSeq newArr = parse(root.emptyArray(),
+                    final ImmutableSeq newArr = parse(this.array.emptySeq,
                                                       parser
                                                      );
                     newRoot = newRoot.update(key,
-                                             new ImmutableJsArray(newArr)
+                                             new ImmutableJsArray(newArr,
+                                                                  this
+                                             )
                                             );
                     break;
                 default:
@@ -403,7 +430,9 @@ public final class ImmutableJsons
                 emptySeq = requireNonNull(vector).getDeclaredConstructor()
                                                  .newInstance();
                 if (!emptySeq.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyVector();
-                empty = new ImmutableJsArray(emptySeq);
+                empty = new ImmutableJsArray(emptySeq,
+                                             ImmutableJsons.this
+                );
             }
             catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
             {
@@ -542,7 +571,7 @@ public final class ImmutableJsons
          */
         //squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
-        public JsArray  of(final JsElem e,
+        public JsArray of(final JsElem e,
                           final JsElem e1,
                           final JsElem e2,
                           final JsElem e3,
@@ -609,7 +638,9 @@ public final class ImmutableJsons
 
                 vector = vector.appendBack(e);
             }
-            return new ImmutableJsArray(vector);
+            return new ImmutableJsArray(vector,
+                                        ImmutableJsons.this
+            );
         }
 
         /**
@@ -628,7 +659,9 @@ public final class ImmutableJsons
             {
                 vector = vector.appendBack(JsStr.of(a));
             }
-            return new ImmutableJsArray(vector);
+            return new ImmutableJsArray(vector,
+                                        ImmutableJsons.this
+            );
         }
 
 
@@ -648,7 +681,9 @@ public final class ImmutableJsons
             {
                 vector = vector.appendBack(JsInt.of(a));
             }
-            return new ImmutableJsArray(vector);
+            return new ImmutableJsArray(vector,
+                                        ImmutableJsons.this
+            );
         }
 
         /**
@@ -666,7 +701,9 @@ public final class ImmutableJsons
             {
                 vector = vector.appendBack(JsBool.of(a));
             }
-            return new ImmutableJsArray(vector);
+            return new ImmutableJsArray(vector,
+                                        ImmutableJsons.this
+            );
         }
 
 
@@ -686,7 +723,9 @@ public final class ImmutableJsons
             {
                 vector = vector.appendBack(JsLong.of(a));
             }
-            return new ImmutableJsArray(vector);
+            return new ImmutableJsArray(vector,
+                                        ImmutableJsons.this
+            );
         }
 
         /**
@@ -705,7 +744,9 @@ public final class ImmutableJsons
             {
                 vector = vector.appendBack(JsDouble.of(a));
             }
-            return new ImmutableJsArray(vector);
+            return new ImmutableJsArray(vector,
+                                        ImmutableJsons.this
+            );
         }
 
 
@@ -722,7 +763,9 @@ public final class ImmutableJsons
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 return new TryArr(new ImmutableJsArray(ImmutableJsons.this.parse(emptySeq,
                                                                                  parser
-                                                                                )));
+                                                                                ),
+                                                       ImmutableJsons.this
+                ));
             }
 
             catch (MalformedJson e)
@@ -745,7 +788,9 @@ public final class ImmutableJsons
                                                                                  parser,
                                                                                  requireNonNull(builder).create(),
                                                                                  JsPath.fromIndex(-1)
-                                                                                )));
+                                                                                ),
+                                                       ImmutableJsons.this
+                ));
             }
 
             catch (MalformedJson e)
@@ -757,6 +802,7 @@ public final class ImmutableJsons
         }
 
     }
+
     /**
      represents a factory of immutable Json objects
      */
@@ -773,7 +819,9 @@ public final class ImmutableJsons
                 emptyMap = requireNonNull(map).getDeclaredConstructor()
                                               .newInstance();
                 if (!emptyMap.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyMap();
-                empty = new ImmutableJsObj(emptyMap);
+                empty = new ImmutableJsObj(emptyMap,
+                                           ImmutableJsons.this
+                );
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
             {
@@ -830,7 +878,9 @@ public final class ImmutableJsons
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
                 return new TryObj(new ImmutableJsObj(ImmutableJsons.this.parse(this.emptyMap,
                                                                                parser
-                                                                              )));
+                                                                              ),
+                                                     ImmutableJsons.this
+                ));
             }
             catch (MalformedJson e)
             {
@@ -858,7 +908,10 @@ public final class ImmutableJsons
                                                                                parser,
                                                                                requireNonNull(builder).create(),
                                                                                JsPath.empty()
-                                                                              )));
+                                                                              ),
+                                                     ImmutableJsons.this
+                )
+                );
             }
             catch (MalformedJson e)
             {
@@ -884,6 +937,7 @@ public final class ImmutableJsons
                                el
                               );
         }
+
         /**
          Returns a two-element immutable object.
          @param key1 name of a key
@@ -1159,6 +1213,7 @@ public final class ImmutableJsons
                                   this.array
         );
     }
+
     /**
      returns a new factory of immutable Jsons using as underlying data structure to store elements of Json arrays
      the given as a parameter

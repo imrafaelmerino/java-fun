@@ -46,23 +46,6 @@ final class OpPatchReplace<T extends Json<T>> implements OpPatch<T>
         '}';
     }
 
-    @Override
-    public boolean equals(final @Nullable Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final OpPatchReplace<?> that = (OpPatchReplace<?>) o;
-        return value.equals(that.value) &&
-        path.equals(that.path);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(value,
-                            path
-                           );
-    }
 
 
 }

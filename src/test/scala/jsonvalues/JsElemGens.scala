@@ -22,13 +22,13 @@ case class FreqTypeOfValue(strFreq: Int = 2,
                           )
 
 /**
-  * A json object {} is made up parse an unordered set parse name/x pairs. A x parse a pair can be an object, an vector or
-  * a x
-  *
-  * @param objFreq   freq with which a pair x is an object
-  * @param arrFreq   freq with which a pair x is an vector
-  * @param valueFreq freq with which a pair x is a x
-  */
+ * A json object {} is made up parse an unordered set parse name/x pairs. A x parse a pair can be an object, an vector or
+ * a x
+ *
+ * @param objFreq   freq with which a pair x is an object
+ * @param arrFreq   freq with which a pair x is an vector
+ * @param valueFreq freq with which a pair x is a x
+ */
 case class FreqTypeOfPair(objFreq: Int = 2,
                           arrFreq     : Int = 2,
                           valueFreq   : Int = 10,
@@ -106,7 +106,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsNumberGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
   }
 
   val jsArrStrGen: Gen[JsArray] =
@@ -117,7 +119,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsStrGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -129,7 +133,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsBoolGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -141,7 +147,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsIntGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -153,7 +161,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsDoubleGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -166,7 +176,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsObj](size,
                                                 jsObjGen
                                                 )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -178,7 +190,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsLongGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -190,7 +204,9 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       vector <- Gen.containerOfN[Vector, JsElem](size,
                                                  jsValueGen
                                                  )
-    } yield new ImmutableJsArray(new ScalaImmutableVector(vector))
+    } yield new ImmutableJsArray(new ScalaImmutableVector(vector),
+                                 Jsons.immutable
+                                 )
 
   }
 
@@ -212,7 +228,7 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       value <- Gen.frequency((freqTypeOfPair.valueFreq, jsValueGen),
                              (freqTypeOfPair.arrFreq, jsArrGen),
                              (freqTypeOfPair.objFreq, jsObjGen),
-                             (freqTypeOfPair.emptyObjFreq,Jsons.immutable.`object`.empty()),
+                             (freqTypeOfPair.emptyObjFreq, Jsons.immutable.`object`.empty()),
                              (freqTypeOfPair.emptyArrFreq, Jsons.immutable.array.empty())
                              )
     } yield (key, value)

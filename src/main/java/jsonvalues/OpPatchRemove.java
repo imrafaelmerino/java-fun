@@ -44,20 +44,5 @@ final class OpPatchRemove<T extends Json<T>> implements OpPatch<T>
         '}';
     }
 
-    @Override
-    public boolean equals(final @Nullable  Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final OpPatchRemove<?> that = (OpPatchRemove<?>) o;
-        return path.equals(that.path);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(path);
-    }
-
 
 }

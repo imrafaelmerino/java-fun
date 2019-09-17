@@ -75,10 +75,9 @@ final class JavaMap implements MutableMap
 
 
     @Override
-    public JavaMap remove(final String key)
+    public void remove(final String key)
     {
         elements.remove(key);
-        return this;
     }
 
     @Override
@@ -122,27 +121,15 @@ final class JavaMap implements MutableMap
 
     }
 
-    @Override
-    public JavaMap empty()
-    {
-        return new JavaMap();
-    }
 
     @Override
-    public JavaMap update(final String key,
-                          final JsElem je
-                         )
+    public void update(final String key,
+                       final JsElem je
+                      )
     {
         elements.put(key,
                      je
                     );
-        return this;
-    }
-
-    @Override
-    public JavaList emptyArray()
-    {
-        return new JavaList();
     }
 
     @Override

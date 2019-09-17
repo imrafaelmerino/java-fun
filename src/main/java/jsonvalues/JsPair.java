@@ -57,12 +57,12 @@ public final class JsPair
      @param fn the function to be applied to map the string of the JsStr
      @return the same this instance if the JsElem is not a JsStr or a new pair
      */
-    public JsPair mapIfStr(UnaryOperator<String> fn)
+    public JsPair mapIfStr(final UnaryOperator<String> fn)
     {
 
         if (this.elem.isStr()) return of(path,
                                          elem.asJsStr()
-                                             .map(fn)
+                                             .map(requireNonNull(fn))
                                         );
         return this;
     }
@@ -78,8 +78,8 @@ public final class JsPair
                             final JsElem elem
                            )
     {
-        return new JsPair(requireNonNull(path),
-                          requireNonNull(elem)
+        return new JsPair(requireNonNull(requireNonNull(path)),
+                          requireNonNull(requireNonNull(elem))
         );
     }
 
@@ -104,8 +104,8 @@ public final class JsPair
      @param d the double
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            double d
+    public static JsPair of(final JsPath path,
+                            final double d
                            )
     {
         return new JsPair(requireNonNull(path),
@@ -119,8 +119,8 @@ public final class JsPair
      @param l the long
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            long l
+    public static JsPair of(final JsPath path,
+                            final long l
                            )
     {
         return new JsPair(requireNonNull(path),
@@ -134,8 +134,8 @@ public final class JsPair
      @param b the boolean
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            boolean b
+    public static JsPair of(final JsPath path,
+                            final boolean b
                            )
     {
         return new JsPair(requireNonNull(path),
@@ -149,8 +149,8 @@ public final class JsPair
      @param s the string
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            String s
+    public static JsPair of(final JsPath path,
+                            final String s
                            )
     {
         return new JsPair(requireNonNull(path),
@@ -164,8 +164,8 @@ public final class JsPair
      @param bd the big decimal
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            BigDecimal bd
+    public static JsPair of(final JsPath path,
+                            final BigDecimal bd
                            )
     {
         return new JsPair(requireNonNull(path),
@@ -179,8 +179,8 @@ public final class JsPair
      @param bi the big integer
      @return an immutable JsPair
      */
-    public static JsPair of(JsPath path,
-                            BigInteger bi
+    public static JsPair of(final JsPath path,
+                            final BigInteger bi
                            )
     {
         return new JsPair(requireNonNull(path),

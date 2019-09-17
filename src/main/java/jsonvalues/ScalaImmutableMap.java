@@ -46,18 +46,6 @@ final class ScalaImmutableMap implements ImmutableMap
         return persistentMap.contains(key);
     }
 
-    @Override
-    public ScalaImmutableMap empty()
-    {
-        return EMPTY;
-    }
-
-    @Override
-    public ScalaImmutableVector emptyArray()
-    {
-        return ScalaImmutableVector.EMPTY;
-    }
-
 
     @Override
     public final Set<String> keys()

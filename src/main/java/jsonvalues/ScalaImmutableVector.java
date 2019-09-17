@@ -133,12 +133,6 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public ScalaImmutableMap emptyObject()
-    {
-        return ScalaImmutableMap.EMPTY;
-    }
-
-    @Override
     public ScalaImmutableVector add(final int index,
                                     final JsElem ele
                                    )
@@ -163,11 +157,6 @@ final class ScalaImmutableVector implements ImmutableSeq
         return vector.size();
     }
 
-    @Override
-    public ScalaImmutableVector empty()
-    {
-        return EMPTY;
-    }
 
     @Override
     public ScalaImmutableVector tail()

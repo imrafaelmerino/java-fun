@@ -14,5 +14,21 @@ public interface MutableMap extends MyMap<MutableMap, MutableSeq>
      @return a new instance
      */
     MutableMap copy();
+
+
+    /**
+     removes the key associated with this map. It will be called by the library only if the key exists
+     @param key the given key
+     */
+    void remove(final String key);
+
+    /**
+     updates the element associated with the key with a new element. It will be called by the library only if the key exists,
+     @param key the given key
+     @param je the new element
+     */
+    void update(final String key,
+                final JsElem je
+               );
 }
 

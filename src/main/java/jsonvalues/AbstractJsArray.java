@@ -16,8 +16,6 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
 import static jsonvalues.AbstractJsObj.streamOfObj;
-import static jsonvalues.MatchExp.ifJsonElse;
-import static jsonvalues.MatchExp.ifNothingElse;
 import static jsonvalues.Trampoline.done;
 import static jsonvalues.Trampoline.more;
 
@@ -31,118 +29,13 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
 
 {
 
-    protected  V seq;
+    protected V seq;
 
     AbstractJsArray(V seq)
     {
         this.seq = seq;
     }
 
-    @SuppressWarnings("Duplicates")
-    @Override
-    public final JsArray appendAll(final JsPath path,
-                                   final JsArray elems
-
-                                  )
-    {
-
-        Objects.requireNonNull(elems);
-        return requireNonNull(path).head()
-                                   .match(key -> this,
-                                          index ->
-                                          {
-                                              final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(seq.update(index,
-                                                                                                                    arr.appendAll(elems)
-                                                                                                                   )),
-                                                                                               e -> of(nullPadding(index,
-                                                                                                                   seq,
-                                                                                                                   of(seq.empty()).appendAll(elems)
-                                                                                                                  ))
-                                                                                              )
-                                                                                    .apply(get(Index.of(index))),
-                                                                      () -> tail.ifPredicateElse(t -> putEmptyJson(seq).test(index,
-                                                                                                                             t
-                                                                                                                            ),
-                                                                                                 () -> of(nullPadding(index,
-                                                                                                                      seq,
-                                                                                                                      tail.head()
-                                                                                                                          .match(o -> of(seq.emptyObject()).appendAll(tail,
-                                                                                                                                                                      elems
-                                                                                                                                                                     ),
-                                                                                                                                 a -> of(seq.empty()).appendAll(tail,
-                                                                                                                                                                elems
-                                                                                                                                                               )
-                                                                                                                                )
-                                                                                                                     )),
-                                                                                                 () -> of(seq.update(index,
-                                                                                                                     seq.get(index)
-                                                                                                                        .asJson()
-                                                                                                                        .appendAll(tail,
-                                                                                                                                   elems
-                                                                                                                                  )
-                                                                                                                    ))
-                                                                                                )
-
-
-                                                                     );
-                                          }
-
-                                         );
-
-    }
-
-    @Override
-    public final JsArray append(final JsPath path,
-                                final JsElem elem
-                               )
-    {
-        if (requireNonNull(path).isEmpty()) return this;
-        Objects.requireNonNull(elem);
-        return path.head()
-                   .match(key -> this,
-                          index ->
-                          {
-                              final JsPath tail = path.tail();
-                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(seq.update(index,
-                                                                                                    arr.append(elem)
-                                                                                                   )),
-                                                                               e -> of(nullPadding(index,
-                                                                                                   seq,
-                                                                                                   of(seq.empty()).append(elem)
-                                                                                                  ))
-                                                                              )
-                                                                    .apply(get(Index.of(index))),
-                                                      () -> tail.ifPredicateElse(t -> putEmptyJson(seq).test(index,
-                                                                                                             t
-                                                                                                            ),
-                                                                                 () -> of(nullPadding(index,
-                                                                                                      seq,
-                                                                                                      tail.head()
-                                                                                                          .match(o -> of(seq.emptyObject()).append(tail,
-                                                                                                                                                   elem
-                                                                                                                                                  ),
-                                                                                                                 a -> of(seq.empty()).append(tail,
-                                                                                                                                             elem
-                                                                                                                                            )
-                                                                                                                )
-                                                                                                     )),
-                                                                                 () -> of(seq.update(index,
-                                                                                                     seq.get(index)
-                                                                                                        .asJson()
-                                                                                                        .append(tail,
-                                                                                                                elem
-                                                                                                               )
-                                                                                                    ))
-                                                                                )
-
-
-                                                     );
-                          }
-
-                         );
-
-    }
 
     @Override
     public final JsArray appendAll(final JsArray array
@@ -164,136 +57,6 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
 
     }
 
-    @SuppressWarnings("Duplicates")
-    @Override
-    public final JsArray prependAll(final JsPath path,
-                                    final JsArray elems
-                                   )
-    {
-        Objects.requireNonNull(elems);
-        return requireNonNull(path).head()
-                                   .match(key -> this,
-                                          index ->
-                                          {
-                                              final JsPath tail = path.tail();
-                                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(seq.update(index,
-                                                                                                                    arr.prependAll(elems)
-                                                                                                                   )),
-                                                                                               e -> of(nullPadding(index,
-                                                                                                                   seq,
-                                                                                                                   of(seq.empty()).prependAll(elems)
-                                                                                                                  ))
-                                                                                              )
-                                                                                    .apply(get(Index.of(index))),
-                                                                      () -> tail.ifPredicateElse(t -> putEmptyJson(seq).test(index,
-                                                                                                                             t
-                                                                                                                            ),
-                                                                                                 () -> of(nullPadding(index,
-                                                                                                                      seq,
-                                                                                                                      tail.head()
-                                                                                                                          .match(o -> of(seq.emptyObject()).prependAll(tail,
-                                                                                                                                                                       elems
-                                                                                                                                                                      ),
-                                                                                                                                 a -> of(seq.empty()).prependAll(tail,
-                                                                                                                                                                 elems
-                                                                                                                                                                )
-                                                                                                                                )
-
-                                                                                                                     )),
-                                                                                                 () -> of(seq.update(index,
-                                                                                                                     seq.get(index)
-                                                                                                                        .asJson()
-                                                                                                                        .prependAll(tail,
-                                                                                                                                    elems
-                                                                                                                                   )
-                                                                                                                    ))
-                                                                                                )
-
-
-                                                                     );
-                                          }
-
-                                         );
-
-    }
-
-    @SuppressWarnings("Duplicates")
-    @Override
-    public final JsArray prepend(final JsPath path,
-                                 final JsElem elem
-                                )
-    {
-        Objects.requireNonNull(elem);
-        if (requireNonNull(path).isEmpty()) return this;
-        return path.head()
-                   .match(key -> this,
-                          index ->
-                          {
-                              final JsPath tail = path.tail();
-                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(seq.update(index,
-                                                                                                    arr.prepend(elem)
-                                                                                                   )),
-                                                                               e -> of(nullPadding(index,
-                                                                                                   seq,
-                                                                                                   of(seq.empty()).prepend(elem)
-                                                                                                  ))
-                                                                              )
-                                                                    .apply(get(Index.of(index))),
-                                                      () -> tail.ifPredicateElse(t -> putEmptyJson(seq).test(index,
-                                                                                                             t
-                                                                                                            ),
-                                                                                 () -> of(nullPadding(index,
-                                                                                                      seq,
-                                                                                                      tail.head()
-                                                                                                          .match(o -> of(seq.emptyObject()).prepend(tail,
-                                                                                                                                                    elem
-                                                                                                                                                   ),
-                                                                                                                 a -> of(seq.empty()).prepend(tail,
-                                                                                                                                              elem
-                                                                                                                                             )
-                                                                                                                )
-
-                                                                                                     )),
-                                                                                 () -> of(seq.update(index,
-                                                                                                     seq.get(index)
-                                                                                                        .asJson()
-                                                                                                        .prepend(tail,
-                                                                                                                 elem
-                                                                                                                )
-                                                                                                    ))
-                                                                                )
-
-
-                                                     );
-                          }
-
-                         );
-
-    }
-
-    @Override
-    public final JsArray append(final JsElem e,
-                                final JsElem... others
-                               )
-    {
-        V acc = this.seq.appendBack(requireNonNull(e));
-        for (JsElem other : requireNonNull(others)) acc = acc.appendBack(requireNonNull(other));
-        return of(acc);
-    }
-
-    @Override
-    public final JsArray prepend(final JsElem e,
-                                 final JsElem... others
-                                )
-    {
-        V acc = seq;
-        for (int i = 0, othersLength = requireNonNull(others).length; i < othersLength; i++)
-        {
-            final JsElem other = others[othersLength - 1 - i];
-            acc = acc.appendFront(requireNonNull(other));
-        }
-        return of(acc.appendFront(requireNonNull(e)));
-    }
 
     @Override
     public final boolean containsElem(final JsElem el)
@@ -368,7 +131,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
     public final boolean same(final JsArray that)
     {
         if (this == that) return true;
-        final MySeq<?,?> other = ((AbstractJsArray<?, ?>) that).seq;
+        final MySeq<?, ?> other = ((AbstractJsArray<?, ?>) that).seq;
         final boolean thatEmpty = that.isEmpty();
         final boolean thisEmpty = isEmpty();
         if (thatEmpty && thisEmpty) return true;
@@ -580,131 +343,7 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
         return seq.last();
     }
 
-
     abstract JsArray of(V vector);
-
-    abstract JsObj of(M map);
-
-    @Override
-    public final JsArray add(JsPath path,
-                             final Function<? super JsElem, ? extends JsElem> fn
-                            )
-    {
-        if (requireNonNull(path).isEmpty()) throw UserError.pathEmpty("add");
-        final JsPath tail = path.tail();
-        final Position head = path.head();
-        return head.match(key ->
-                          {
-                              throw UserError.addingKeyIntoArray(key,
-                                                                 this,
-                                                                 path,
-                                                                 "add"
-                                                                );
-                          },
-                          index -> tail.ifEmptyElse(() -> of(seq.add(index,
-                                                                     fn.apply(get(head))
-                                                                    )),
-                                                    () ->
-                                                    {
-                                                        final JsElem headElem = get(head);
-
-                                                        if (headElem.isNothing())
-                                                            throw UserError.parentNotFound(JsPath.fromIndex(index),
-                                                                                           this,
-                                                                                           "add"
-                                                                                          );
-                                                        if (!headElem.isJson())
-                                                            throw UserError.parentIsNotAJson(JsPath.fromIndex(index),
-                                                                                             this,
-                                                                                             path,
-                                                                                             "add"
-                                                                                            );
-                                                        if (headElem.isObj() && tail.head()
-                                                                                    .isIndex())
-                                                            throw UserError.addingIndexIntoObject(tail.head()
-                                                                                                      .asIndex().n,
-                                                                                                  this,
-                                                                                                  path,
-                                                                                                  "add"
-                                                                                                 );
-                                                        if (headElem.isArray() && tail.head()
-                                                                                      .isKey())
-                                                            throw UserError.addingKeyIntoArray(tail.head()
-                                                                                                   .asKey().name,
-                                                                                               this,
-                                                                                               path,
-                                                                                               "add"
-                                                                                              );
-
-
-                                                        return of(seq.update(index,
-                                                                             headElem.asJson()
-                                                                                     .add(tail,
-                                                                                          fn
-                                                                                         )
-                                                                            ));
-                                                    }
-                                                   )
-
-
-                         );
-    }
-
-    @Override
-    public final JsArray put(final JsPath path,
-                             final Function<? super JsElem, ? extends JsElem> fn
-                            )
-    {
-
-        requireNonNull(fn);
-        if (requireNonNull(path).isEmpty()) return this;
-        return path.head()
-                   .match(head -> this,
-                          index ->
-                          {
-                              final JsPath tail = path.tail();
-
-                              return tail.ifEmptyElse(() -> ifNothingElse(() -> this,
-                                                                          elem -> of(nullPadding(index,
-                                                                                                 seq,
-                                                                                                 elem
-                                                                                                ))
-                                                                         )
-                                                      .apply(fn.apply(get(path))),
-                                                      () -> tail.ifPredicateElse(t -> putEmptyJson(seq).test(index,
-                                                                                                             t
-                                                                                                            ),
-                                                                                 () ->
-                                                                                 {
-                                                                                     final JsElem newElem = tail.head()
-                                                                                                                .match(key -> of(seq.emptyObject()).put(tail,
-                                                                                                                                                        fn
-                                                                                                                                                       ),
-                                                                                                                       i -> of(seq.empty()).put(tail,
-                                                                                                                                                fn
-                                                                                                                                               )
-                                                                                                                      );
-                                                                                     return of(nullPadding(index,
-                                                                                                           seq,
-                                                                                                           newElem
-                                                                                                          ));
-                                                                                 },
-                                                                                 () -> of(seq.update(index,
-                                                                                                     seq.get(index)
-                                                                                                        .asJson()
-                                                                                                        .put(tail,
-                                                                                                             fn
-                                                                                                            )
-                                                                                                    ))
-
-                                                                                )
-                                                     );
-
-                          }
-
-                         );
-
-    }
 
 
     @Override
@@ -736,32 +375,6 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
 
     }
 
-    @Override
-    public final JsArray remove(final JsPath path)
-    {
-
-        if (requireNonNull(path).isEmpty()) return this;
-        return path.head()
-                   .match(head -> this,
-                          index ->
-                          {
-                              final int maxIndex = seq.size() - 1;
-                              if (index < -1 || index > maxIndex) return this;
-                              final JsPath tail = path.tail();
-                              return tail.ifEmptyElse(() -> of(index == -1 ? seq.remove(maxIndex) : seq.remove(index)),
-                                                      () -> ifJsonElse(json -> of(seq.update(index,
-                                                                                             json.remove(tail)
-                                                                                            )),
-                                                                       e -> this
-                                                                      )
-                                                      .apply(seq.get(index))
-                                                     );
-                          }
-
-                         );
-
-
-    }
 
     @Override
     public final int size()
@@ -972,57 +585,23 @@ abstract class AbstractJsArray<V extends MySeq<V, M>, M extends MyMap<M, V>> imp
                                                              ));
     }
 
-    private V nullPadding(final int index,
-                          final V arr,
-                          final JsElem e
-                         )
-    {
-        assert arr != null;
-        assert e != null;
 
-        return nullPaddingTrampoline(index,
-                                     arr,
-                                     e
-                                    ).get();
-    }
-
-    private Trampoline<V> nullPaddingTrampoline(final int i,
-                                                final V arr,
-                                                final JsElem e
-                                               )
-    {
-
-        if (i == arr.size()) return Trampoline.done(arr.appendBack(e));
-
-        if (i == -1) return Trampoline.done(arr.update(seq.size() - 1,
-                                                       e
-                                                      ));
-
-        if (i < arr.size()) return Trampoline.done(arr.update(i,
-                                                              e
-                                                             ));
-        return Trampoline.more(() -> nullPaddingTrampoline(i,
-                                                           arr.appendBack(JsNull.NULL),
-                                                           e
-                                                          ));
-    }
-
-
-    @SuppressWarnings("squid:S1602") // curly braces makes IntelliJ to format the code in a more legible way
-    private BiPredicate<Integer, JsPath> putEmptyJson(final V parray)
+    @SuppressWarnings("squid:S1602")
+        // curly braces makes IntelliJ to format the code in a more legible way
+    BiPredicate<Integer, JsPath> putEmptyJson(final V pseq)
     {
         return (index, tail) ->
         {
-            return index > parray.size() - 1 || parray.isEmpty() || parray.get(index)
+            return index > pseq.size() - 1 || pseq.isEmpty() || pseq.get(index)
                                                                           .isNotJson()
             ||
             (tail.head()
-                 .isKey() && parray.get(index)
+                 .isKey() && pseq.get(index)
                                    .isArray()
             )
             ||
             (tail.head()
-                 .isIndex() && parray.get(index)
+                 .isIndex() && pseq.get(index)
                                      .isObj()
             );
         };

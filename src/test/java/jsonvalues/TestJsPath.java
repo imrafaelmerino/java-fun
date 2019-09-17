@@ -1,3 +1,5 @@
+package jsonvalues;
+
 import jsonvalues.JsPath;
 import jsonvalues.UserError;
 import org.junit.jupiter.api.Assertions;

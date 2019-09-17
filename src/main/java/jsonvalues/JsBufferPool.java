@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 final class JsBufferPool
 {
     private final ConcurrentLinkedQueue<WeakReference<char[]>> queue = new ConcurrentLinkedQueue<>();
+    private static final int ARRAY_SIZE = 4096;
 
 
     /**
@@ -23,9 +24,9 @@ final class JsBufferPool
     final char[] take()
     {
         WeakReference<char[]> weakReference = Optional.ofNullable(queue.poll())
-                                                      .orElseGet(() -> new WeakReference<>(new char[4096]));
+                                                      .orElseGet(() -> new WeakReference<>(new char[ARRAY_SIZE]));
         return Optional.ofNullable(weakReference.get())
-                       .orElseGet(() -> new char[4096]);
+                       .orElseGet(() -> new char[ARRAY_SIZE]);
     }
 
 

@@ -16,7 +16,6 @@ class AppendToArraySpec extends BasePropSpec
           { (path,
              elem
             ) =>
-            println(elem)
             Jsons.immutable.`object`.empty().append(path,
                                                     elem
                                                     ).getArray(path).get().size() == 1

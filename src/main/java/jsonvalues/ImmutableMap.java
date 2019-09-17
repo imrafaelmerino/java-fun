@@ -7,4 +7,21 @@ package jsonvalues;
  */
 public interface ImmutableMap extends MyMap<ImmutableMap, ImmutableSeq>
 {
+
+    /**
+     removes the key associated with this map. It will be called by the library only if the key exists
+     @param key the given key
+     @return a map with the key removed
+     */
+    ImmutableMap remove(final String key);
+
+    /**
+     updates the element associated with the key with a new element. It will be called by the library only if the key exists,
+     @param key the given key
+     @param je the new element
+     @return a map with the key element updated
+     */
+    ImmutableMap update(final String key,
+                        final JsElem je
+                       );
 }

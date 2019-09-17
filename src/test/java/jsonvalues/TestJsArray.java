@@ -1,3 +1,5 @@
+package jsonvalues;
+
 import jsonvalues.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import static jsonvalues.JsArray.TYPE.*;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
+import static jsonvalues.JsPath.path;
 
 public class TestJsArray
 {
@@ -470,9 +473,10 @@ public class TestJsArray
         JsArray arr = Jsons.immutable.array.of("a",
                                                "b"
                                               );
+        // ["a","b","c","d"]
         JsArray arr1 = arr.append(JsStr.of("c"),
                                   JsStr.of("d")
-                                 ); // ["a","b","c","d"]
+                                 );
 
         Assertions.assertEquals(Jsons.immutable.array.of("a",
                                                          "b",
@@ -482,19 +486,19 @@ public class TestJsArray
                                 arr1
                                );
 
-        JsArray _arr_ = Jsons.mutable.array.of("a",
-                                               "b"
-                                              );
-        _arr_.append(JsStr.of("c"),
-                     JsStr.of("d")
-                    );
+        JsArray arr2 = Jsons.mutable.array.of("a",
+                                              "b"
+                                             );
+        arr2.append(JsStr.of("c"),
+                    JsStr.of("d")
+                   );
 
         Assertions.assertEquals(Jsons.mutable.array.of("a",
                                                        "b",
                                                        "c",
                                                        "d"
                                                       ),
-                                _arr_
+                                arr2
                                );
     }
 
@@ -516,25 +520,61 @@ public class TestJsArray
                                            )
                                );
 
-        Assertions.assertTrue(arr.size() == 2);
+        Assertions.assertEquals(2,
+                                arr.size()
+                               );
 
 
-        JsArray _arr_ = Jsons.mutable.array.of("a",
-                                               "b"
-                                              );
+        JsArray arr1 = Jsons.mutable.array.of("a",
+                                              "b"
+                                             );
 
-        _arr_.prepend(JsStr.of("c"),
-                      JsStr.of("d")
-                     );
+        arr1.prepend(JsStr.of("c"),
+                     JsStr.of("d")
+                    );
 
-        Assertions.assertTrue(arr.size() == 2);
+        Assertions.assertEquals(2,
+                                arr.size()
+                               );
         Assertions.assertEquals(Jsons.mutable.array.of("c",
                                                        "d",
                                                        "a",
                                                        "b"
                                                       ),
-                                _arr_
+                                arr1
 
+                               );
+
+        JsArray arr3 = Jsons.immutable.array.empty()
+                                            .prepend(path("/2/1"),
+                                                     Jsons.immutable.array.of("a",
+                                                                              "b",
+                                                                              "c"
+                                                                             )
+                                                    );
+
+        Assertions.assertEquals(NULL,
+                                arr3.get(path("/0"))
+                               );
+        Assertions.assertEquals(NULL,
+                                arr3.get(path("/1"))
+                               );
+        Assertions.assertEquals(NULL,
+                                arr3.get(path("/2/0"))
+                               );
+
+        JsArray arr4 = arr3.append(path("/2/1"),
+                                   TRUE
+                                  )
+                           .prepend(path("/2/1"),
+                                    TRUE
+                                   );
+
+        Assertions.assertEquals(TRUE,
+                                arr4.get(path("/2/1/-1"))
+                               );
+        Assertions.assertEquals(TRUE,
+                                arr4.get(path("/2/1/0"))
                                );
 
 
@@ -557,8 +597,6 @@ public class TestJsArray
         final JsArray a = arr.stream_()
                              .parallel()
                              .collect(Jsons.mutable.array.collector());
-        System.out.println(arr);
-        System.out.println(a);
         Assertions.assertTrue(arr.same(a)
                              );
 
@@ -695,24 +733,24 @@ public class TestJsArray
                                                            .init()
                                );
 
-        JsArray _arr_ = Jsons.mutable.array.of(JsInt.of(1),
-                                               TRUE,
-                                               JsStr.of("a"),
-                                               NULL
-                                              );
+        JsArray arr1 = Jsons.mutable.array.of(JsInt.of(1),
+                                              TRUE,
+                                              JsStr.of("a"),
+                                              NULL
+                                             );
 
         Assertions.assertEquals(Jsons.mutable.array.of(JsInt.of(1),
                                                        TRUE,
                                                        JsStr.of("a")
                                                       ),
-                                _arr_.init()
+                                arr1.init()
                                );
 
         Assertions.assertEquals(Jsons.mutable.array.of(TRUE,
                                                        JsStr.of("a")
                                                       ),
-                                _arr_.tail()
-                                     .init()
+                                arr1.tail()
+                                    .init()
                                );
 
         Assertions.assertThrows(UserError.class,
@@ -748,19 +786,19 @@ public class TestJsArray
                                                            .last()
                                );
 
-        JsArray _arr_ = Jsons.mutable.array.of(JsInt.of(1),
-                                               TRUE,
-                                               JsStr.of("a"),
-                                               NULL
-                                              );
+        JsArray arr1 = Jsons.mutable.array.of(JsInt.of(1),
+                                              TRUE,
+                                              JsStr.of("a"),
+                                              NULL
+                                             );
 
         Assertions.assertEquals(NULL,
-                                _arr_.last()
+                                arr1.last()
                                );
 
         Assertions.assertEquals(JsStr.of("a"),
-                                _arr_.init()
-                                     .last()
+                                arr1.init()
+                                    .last()
                                );
 
         Assertions.assertThrows(UserError.class,
@@ -994,14 +1032,14 @@ public class TestJsArray
                                );
 
 
-        JsArray _arr_ = Jsons.mutable.array.of("a",
-                                               "b",
-                                               "c"
-                                              );
+        JsArray arr1 = Jsons.mutable.array.of("a",
+                                              "b",
+                                              "c"
+                                             );
         Assertions.assertEquals(Jsons.mutable.array.of("b",
                                                        "c"
                                                       ),
-                                _arr_.tail()
+                                arr1.tail()
                                ); //  ["b","c"]
 
         Assertions.assertThrows(UserError.class,
@@ -1159,10 +1197,10 @@ public class TestJsArray
                                 arr
                                );
 
-        final JsArray arr1 = Jsons.immutable.array.of(JsPair.of(JsPath.path("/0/a"),
+        final JsArray arr1 = Jsons.immutable.array.of(JsPair.of(path("/0/a"),
                                                                 JsInt.of(1)
                                                                ),
-                                                      JsPair.of(JsPath.path("/2/b"),
+                                                      JsPair.of(path("/2/b"),
                                                                 JsInt.of(3)
                                                                )
                                                      );
@@ -1193,10 +1231,10 @@ public class TestJsArray
                                 arr
                                );
 
-        final JsArray arr1 = Jsons.mutable.array.of(JsPair.of(JsPath.path("/0/a"),
+        final JsArray arr1 = Jsons.mutable.array.of(JsPair.of(path("/0/a"),
                                                               JsInt.of(1)
                                                              ),
-                                                    JsPair.of(JsPath.path("/2/b"),
+                                                    JsPair.of(path("/2/b"),
                                                               JsInt.of(3)
                                                              )
                                                    );
@@ -1946,21 +1984,21 @@ public class TestJsArray
     public void test_operations_immutable()
     {
 
-        JsArray array = Jsons.immutable.array.of(JsPair.of(JsPath.path("/0/b/0"),
+        JsArray array = Jsons.immutable.array.of(JsPair.of(path("/0/b/0"),
                                                            JsInt.of(1)
                                                           )
                                                 );
 
         Assertions.assertEquals(array,
-                                array.remove(JsPath.path("/0/b/c"))
+                                array.remove(path("/0/b/c"))
                                );
 
         Assertions.assertEquals(array,
-                                array.remove(JsPath.path("/0/0/c"))
+                                array.remove(path("/0/0/c"))
                                );
 
         Assertions.assertEquals(array,
-                                array.remove(JsPath.path("/0/b/0/a"))
+                                array.remove(path("/0/b/0/a"))
                                );
     }
 
@@ -1969,21 +2007,21 @@ public class TestJsArray
     public void test_operations_mutable()
     {
 
-        JsArray array = Jsons.mutable.array.of(JsPair.of(JsPath.path("/0/b/0"),
+        JsArray array = Jsons.mutable.array.of(JsPair.of(path("/0/b/0"),
                                                          JsInt.of(1)
                                                         )
                                               );
 
         Assertions.assertEquals(array,
-                                array.remove(JsPath.path("/0/b/c"))
+                                array.remove(path("/0/b/c"))
                                );
 
         Assertions.assertEquals(array,
-                                array.remove(JsPath.path("/0/0/c"))
+                                array.remove(path("/0/0/c"))
                                );
 
         Assertions.assertEquals(array,
-                                array.remove(JsPath.path("/0/b/0/a"))
+                                array.remove(path("/0/b/0/a"))
                                );
     }
 
@@ -2024,25 +2062,25 @@ public class TestJsArray
     @Test
     public void test_parse_into_immutable() throws MalformedJson
     {
-        JsArray arr = Jsons.immutable.array.of(JsPair.of(JsPath.path("/0/b/0"),
+        JsArray arr = Jsons.immutable.array.of(JsPair.of(path("/0/b/0"),
                                                          NULL
                                                         ),
-                                               JsPair.of(JsPath.path("/0/b/1"),
+                                               JsPair.of(path("/0/b/1"),
                                                          TRUE
                                                         ),
-                                               JsPair.of(JsPath.path("/0/b/c"),
+                                               JsPair.of(path("/0/b/c"),
                                                          FALSE
                                                         ),
-                                               JsPair.of(JsPath.path("/1/b/c/d"),
+                                               JsPair.of(path("/1/b/c/d"),
                                                          JsInt.of(1)
                                                         ),
-                                               JsPair.of(JsPath.path("/1/a/a"),
+                                               JsPair.of(path("/1/a/a"),
                                                          JsStr.of("a")
                                                         ),
-                                               JsPair.of(JsPath.path("/1/b/0"),
+                                               JsPair.of(path("/1/b/0"),
                                                          JsBigDec.of(BigDecimal.ONE)
                                                         ),
-                                               JsPair.of(JsPath.path("/1/b/1"),
+                                               JsPair.of(path("/1/b/1"),
                                                          NULL
                                                         )
                                               );
@@ -2062,25 +2100,25 @@ public class TestJsArray
     @Test
     public void test_parse_into_mutable() throws MalformedJson
     {
-        JsArray arr = Jsons.mutable.array.of(JsPair.of(JsPath.path("/0/b/0"),
+        JsArray arr = Jsons.mutable.array.of(JsPair.of(path("/0/b/0"),
                                                        NULL
                                                       ),
-                                             JsPair.of(JsPath.path("/0/b/1"),
+                                             JsPair.of(path("/0/b/1"),
                                                        TRUE
                                                       ),
-                                             JsPair.of(JsPath.path("/0/b/c"),
+                                             JsPair.of(path("/0/b/c"),
                                                        FALSE
                                                       ),
-                                             JsPair.of(JsPath.path("/1/b/c/d"),
+                                             JsPair.of(path("/1/b/c/d"),
                                                        JsInt.of(1)
                                                       ),
-                                             JsPair.of(JsPath.path("/1/a/a"),
+                                             JsPair.of(path("/1/a/a"),
                                                        JsStr.of("a")
                                                       ),
-                                             JsPair.of(JsPath.path("/1/b/0"),
+                                             JsPair.of(path("/1/b/0"),
                                                        JsBigDec.of(BigDecimal.ONE)
                                                       ),
-                                             JsPair.of(JsPath.path("/1/b/1"),
+                                             JsPair.of(path("/1/b/1"),
                                                        NULL
                                                       )
                                             );
@@ -2281,16 +2319,16 @@ public class TestJsArray
         Assertions.assertTrue(_arr_.containsElem_(JsInt.of(2)));
         Assertions.assertTrue(arr.containsElem_(NULL));
         Assertions.assertTrue(_arr_.containsElem_(NULL));
-        Assertions.assertTrue(arr.containsPath(JsPath.path("/1/1/a")));
-        Assertions.assertTrue(_arr_.containsPath(JsPath.path("/1/1/a")));
+        Assertions.assertTrue(arr.containsPath(path("/1/1/a")));
+        Assertions.assertTrue(_arr_.containsPath(path("/1/1/a")));
         Assertions.assertTrue(arr.containsPath(JsPath.fromIndex(1)));
         Assertions.assertTrue(_arr_.containsPath(JsPath.fromIndex(1)));
         Assertions.assertTrue(arr.containsPath(JsPath.fromIndex(0)));
         Assertions.assertTrue(_arr_.containsPath(JsPath.fromIndex(0)));
         Assertions.assertFalse(arr.containsPath(JsPath.fromIndex(3)));
         Assertions.assertFalse(_arr_.containsPath(JsPath.fromIndex(3)));
-        Assertions.assertFalse(arr.containsPath(JsPath.path("/1/b")));
-        Assertions.assertFalse(_arr_.containsPath(JsPath.path("/1/b")));
+        Assertions.assertFalse(arr.containsPath(path("/1/b")));
+        Assertions.assertFalse(_arr_.containsPath(path("/1/b")));
     }
 
     @Test
@@ -2324,10 +2362,10 @@ public class TestJsArray
                                                          "c",
                                                          "d"
                                                         ),
-                                arr2.add(JsPath.path("/0/0/1"),
+                                arr2.add(path("/0/0/1"),
                                          JsStr.of("b")
                                         )
-                                    .getArray(JsPath.path("/0/0"))
+                                    .getArray(path("/0/0"))
                                     .get()
                                );
     }
@@ -2357,10 +2395,10 @@ public class TestJsArray
                                                        "c",
                                                        "d"
                                                       ),
-                                arr2.add(JsPath.path("/0/0/1"),
+                                arr2.add(path("/0/0/1"),
                                          JsStr.of("b")
                                         )
-                                    .getArray(JsPath.path("/0/0"))
+                                    .getArray(path("/0/0"))
                                     .get()
                                );
     }
@@ -2436,7 +2474,7 @@ public class TestJsArray
 
         final UserError error1 = Assertions.assertThrows(UserError.class,
                                                          () -> Jsons.immutable.array.empty()
-                                                                                    .add(JsPath.path("/0/a"),
+                                                                                    .add(path("/0/a"),
                                                                                          JsStr.of("hi")
                                                                                         )
                                                         );
@@ -2448,7 +2486,7 @@ public class TestJsArray
 
         final UserError error2 = Assertions.assertThrows(UserError.class,
                                                          () -> Jsons.immutable.array.of(Jsons.immutable.array.of(Jsons.immutable.array.of(1)))
-                                                                                    .add(JsPath.path("/0/a"),
+                                                                                    .add(path("/0/a"),
                                                                                          JsStr.of("hi")
                                                                                         )
                                                         );
@@ -2461,7 +2499,7 @@ public class TestJsArray
                                                          () -> Jsons.immutable.array.of(Jsons.immutable.object.of("a",
                                                                                                                   JsInt.of(1)
                                                                                                                  ))
-                                                                                    .add(JsPath.path("/0/0"),
+                                                                                    .add(path("/0/0"),
                                                                                          JsStr.of("hi")
                                                                                         )
                                                         );
@@ -2473,7 +2511,7 @@ public class TestJsArray
 
         final UserError error4 = Assertions.assertThrows(UserError.class,
                                                          () -> Jsons.immutable.array.of(JsStr.of("a"))
-                                                                                    .add(JsPath.path("/0/0"),
+                                                                                    .add(path("/0/0"),
                                                                                          JsStr.of("hi")
                                                                                         )
                                                         );
@@ -2502,7 +2540,7 @@ public class TestJsArray
 
         final UserError error1 = Assertions.assertThrows(UserError.class,
                                                          () -> Jsons.mutable.array.empty()
-                                                                                  .add(JsPath.path("/0/a"),
+                                                                                  .add(path("/0/a"),
                                                                                        JsStr.of("hi")
                                                                                       )
                                                         );
@@ -2514,7 +2552,7 @@ public class TestJsArray
 
         final UserError error2 = Assertions.assertThrows(UserError.class,
                                                          () -> Jsons.mutable.array.of(Jsons.mutable.array.of(Jsons.mutable.array.of(1)))
-                                                                                  .add(JsPath.path("/0/a"),
+                                                                                  .add(path("/0/a"),
                                                                                        JsStr.of("hi")
                                                                                       )
                                                         );
@@ -2527,7 +2565,7 @@ public class TestJsArray
                                                          () -> Jsons.mutable.array.of(Jsons.mutable.object.of("a",
                                                                                                               JsInt.of(1)
                                                                                                              ))
-                                                                                  .add(JsPath.path("/0/0"),
+                                                                                  .add(path("/0/0"),
                                                                                        JsStr.of("hi")
                                                                                       )
                                                         );
@@ -2539,7 +2577,7 @@ public class TestJsArray
 
         final UserError error4 = Assertions.assertThrows(UserError.class,
                                                          () -> Jsons.mutable.array.of(JsStr.of("a"))
-                                                                                  .add(JsPath.path("/0/0"),
+                                                                                  .add(path("/0/0"),
                                                                                        JsStr.of("hi")
                                                                                       )
                                                         );
@@ -2570,10 +2608,210 @@ public class TestJsArray
                                 error.getMessage()
                                );
 
-        System.out.println(arr.prepend(JsPath.empty(),
-                                       JsInt.of(1)
-                                      ));
+    }
 
+    @Test
+    public void test_append()
+    {
+        JsArray empty = Jsons.immutable.array.empty();
+
+        final JsArray arr = empty.append(path("/0/b"),
+                                         JsStr.of("hi")
+                                        );
+
+        Assertions.assertTrue(empty.isEmpty());
+
+        Assertions.assertEquals(Jsons.immutable.array.of("hi"),
+                                arr.getArray(path("/0/b"))
+                                   .get()
+                               );
+
+        final JsArray arr1 = arr.append(path("/0/b"),
+                                        JsStr.of("bye")
+                                       );
+
+        Assertions.assertEquals(Optional.of("bye"),
+                                arr1.getStr(path("/0/b/-1"))
+                               );
+
+        Assertions.assertEquals(Optional.of("hi"),
+                                arr1.getStr(path("/0/b/0"))
+                               );
+    }
+
+    @Test
+    public void test_prepend_all()
+    {
+        JsArray empty = Jsons.immutable.array.empty();
+
+        final JsArray xs = Jsons.immutable.array.of(1,
+                                                    2,
+                                                    3
+                                                   );
+        final JsArray arr = empty.prependAll(path("/0/b"),
+                                             xs
+                                            );
+
+        Assertions.assertTrue(empty.isEmpty());
+
+        Assertions.assertEquals(xs,
+                                arr.get(path("/0/b"))
+                               );
+
+        final JsArray arr1 = arr.prependAll(path("/0/b"),
+                                            xs
+                                           );
+
+        Assertions.assertEquals(xs.prependAll(xs),
+                                arr1.get(path("/0/b"))
+                               );
+
+
+        final JsArray arr2 = empty.prependAll(path("/1/1"),
+                                              xs
+                                             );
+
+
+        Assertions.assertEquals(JsNull.NULL,
+                                arr2.get(path("/0"))
+                               );
+
+        Assertions.assertEquals(JsNull.NULL,
+                                arr2.get(path("/1/0"))
+                               );
+
+        Assertions.assertEquals(xs,
+                                arr2.get(path("/1/1"))
+                               );
+
+        Assertions.assertEquals(xs,
+                                empty.prependAll(path("/1/1"),
+                                                 xs
+                                                )
+                                     .get(path("/1/1"))
+                               );
+
+        final JsArray arr3 = arr2.prepend(path("/1/1"),
+                                          JsInt.of(1)
+                                         );
+
+        Assertions.assertEquals(JsInt.of(1),
+                                arr3.get(path("/1/1/0"))
+                               );
+    }
+
+    @Test
+    public void test_append_all_immutable()
+    {
+        JsArray empty = Jsons.immutable.array.empty();
+
+        final JsArray xs = Jsons.immutable.array.of(1,
+                                                    2,
+                                                    3
+                                                   );
+        final JsArray arr = empty.appendAll(path("/0/b"),
+                                            xs
+                                           );
+
+        Assertions.assertTrue(empty.isEmpty());
+
+        Assertions.assertEquals(xs,
+                                arr.getArray(path("/0/b"))
+                                   .get()
+                               );
+
+        final JsArray arr1 = arr.appendAll(path("/0/b"),
+                                           xs
+                                          );
+
+        Assertions.assertEquals(xs.appendAll(xs),
+                                arr1.get(path("/0/b"))
+                               );
+
+
+        final JsArray arr2 = empty.appendAll(path("/1/1"),
+                                             xs
+                                            );
+
+        Assertions.assertEquals(JsNull.NULL,
+                                arr2.get(path("/0"))
+                               );
+
+        Assertions.assertEquals(JsNull.NULL,
+                                arr2.get(path("/1/0"))
+                               );
+
+        Assertions.assertEquals(xs,
+                                arr2.get(path("/1/1"))
+                               );
+
+        Assertions.assertEquals(xs,
+                                empty.appendAll(path("/1/1"),
+                                                xs
+                                               )
+                                     .get(path("/1/1"))
+                               );
+    }
+
+
+    @Test
+    public void test_append_all_mutable()
+    {
+        Supplier<JsArray> emptySup = Jsons.mutable.array::empty;
+
+        final JsArray xs = Jsons.mutable.array.of(1,
+                                                  2,
+                                                  3
+                                                 );
+        final JsArray empty = emptySup.get();
+        final JsArray arr = empty.appendAll(path("/0/b"),
+                                            xs
+                                           );
+
+        Assertions.assertFalse(empty.isEmpty());
+
+        Assertions.assertEquals(xs,
+                                arr.getArray(path("/0/b"))
+                                   .get()
+                               );
+
+        final JsArray arr1 = arr.appendAll(path("/0/b"),
+                                           xs
+                                          );
+
+        Assertions.assertEquals(xs.appendAll(xs),
+                                arr1.get(path("/0/b"))
+                               );
+
+
+        final JsArray arr2 = emptySup.get()
+                                     .appendAll(path("/1/1"),
+                                                xs
+                                               );
+
+        Assertions.assertEquals(JsNull.NULL,
+                                arr2.get(path("/0"))
+                               );
+
+        Assertions.assertEquals(JsNull.NULL,
+                                arr2.get(path("/1/0"))
+                               );
+
+        Assertions.assertEquals(xs,
+                                arr2.get(path("/1/1"))
+                               );
+
+        Assertions.assertEquals(xs,
+                                empty.appendAll(path("/1/1"),
+                                                xs
+                                               )
+                                     .get(path("/1/1"))
+                               );
+    }
+
+    @Test
+    public void test_collector(){
+        Assertions.assertEquals(true, true);
     }
 
 }

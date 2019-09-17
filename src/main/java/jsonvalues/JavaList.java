@@ -11,9 +11,9 @@ final class JavaList implements MutableSeq
     private List<JsElem> elements;
 
 
-    JavaList(final List<JsElem> pvector)
+    JavaList(final List<JsElem> seq)
     {
-        elements = pvector;
+        elements = seq;
     }
 
     JavaList()
@@ -22,19 +22,17 @@ final class JavaList implements MutableSeq
     }
 
     @Override
-    public JavaList appendBack(final JsElem elem)
+    public void appendBack(final JsElem elem)
     {
         elements.add(elem);
-        return this;
     }
 
     @Override
-    public JavaList appendFront(final JsElem elem)
+    public void appendFront(final JsElem elem)
     {
         elements.add(0,
                      elem
                     );
-        return this;
     }
 
     @Override
@@ -108,12 +106,11 @@ final class JavaList implements MutableSeq
     }
 
     @Override
-    public JavaList remove(final int index)
+    public void remove(final int index)
     {
         try
         {
             elements.remove(index);
-            return this;
         }
         catch (UnsupportedOperationException e)
         {
@@ -122,12 +119,6 @@ final class JavaList implements MutableSeq
                                                       );
         }
 
-    }
-
-    @Override
-    public JavaMap emptyObject()
-    {
-        return new JavaMap();
     }
 
     @Override
@@ -143,12 +134,6 @@ final class JavaList implements MutableSeq
     }
 
     @Override
-    public JavaList empty()
-    {
-        return new JavaList();
-    }
-
-    @Override
     public JavaList tail()
     {
         if (isEmpty()) throw UserError.tailOfEmptyArr();
@@ -160,16 +145,15 @@ final class JavaList implements MutableSeq
     }
 
     @Override
-    public JavaList update(final int index,
-                           final JsElem ele
-                          )
+    public void update(final int index,
+                       final JsElem ele
+                      )
     {
         try
         {
             elements.set(index,
                          ele
                         );
-            return this;
         }
         catch (UnsupportedOperationException e)
         {
@@ -189,9 +173,9 @@ final class JavaList implements MutableSeq
     }
 
     @Override
-    public JavaList add(final int index,
-                        final JsElem ele
-                       )
+    public void add(final int index,
+                    final JsElem ele
+                   )
     {
         try
         {
@@ -200,7 +184,6 @@ final class JavaList implements MutableSeq
             else elements.add(index,
                               ele
                              );
-            return this;
         }
         catch (UnsupportedOperationException e)
         {

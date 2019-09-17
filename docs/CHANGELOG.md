@@ -1,5 +1,5 @@
 # JSON-VALUES
-## v3.0.0  ( Sun Sep 08 2019 23:32:22 GMT+0200 (CEST) )
+## v3.1.0  ( Sun Sep 08 2019 23:32:22 GMT+0200 (CEST) )
 
 
 ## Breaking changes

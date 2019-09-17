@@ -54,22 +54,6 @@ final class OpPatchAdd<T extends Json<T>> implements OpPatch<T>
         return "OpPatchAdd{" + "value=" + value + ", path=" + path + '}';
     }
 
-    @Override
-    public boolean equals(final @Nullable Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final OpPatchAdd<?> that = (OpPatchAdd<?>) o;
-        return value.equals(that.value) &&
-        path.equals(that.path);
-    }
 
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(value,
-                            path
-                           );
-    }
 
 }

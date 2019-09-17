@@ -11,10 +11,14 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.MatchExp.ifNothingElse;
 
 
 final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
 {
+
+    private ImmutableJsons factory;
+
 
     @SuppressWarnings("squid:S3008")//EMPTY should be a valid name
     private static final JsPath EMPTY_PATH = JsPath.empty();
@@ -26,9 +30,12 @@ final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
     private volatile String str;
 
 
-    ImmutableJsObj(final ImmutableMap myMap)
+    ImmutableJsObj(final ImmutableMap myMap,
+                   final ImmutableJsons factory
+                  )
     {
         super(myMap);
+        this.factory = factory;
     }
 
 
@@ -56,13 +63,9 @@ final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
     @Override
     JsObj of(final ImmutableMap map)
     {
-        return new ImmutableJsObj(map);
-    }
-
-    @Override
-    JsArray of(final ImmutableSeq vector)
-    {
-        return new ImmutableJsArray(vector);
+        return new ImmutableJsObj(map,
+                                  this.factory
+        );
     }
 
 
@@ -100,7 +103,6 @@ final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
                                                    )
                                                .get();
     }
-
 
     @Override
     public final JsObj mapElems_(final Function<? super JsPair, ? extends JsElem> fn)
@@ -319,5 +321,357 @@ final class ImmutableJsObj extends AbstractJsObj<ImmutableMap, ImmutableSeq>
 
         }
     }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public final JsObj appendAll(final JsPath path,
+                                 final JsArray elems
+                                )
+    {
+        requireNonNull(elems);
+        if (requireNonNull(path).isEmpty()) return this;
+
+        return path.head()
+                   .match(head ->
+                          {
+                              final JsPath tail = path.tail();
+                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
+                                                                                                    arr.appendAll(elems)
+                                                                                                   )),
+                                                                               el -> of(map.update(head,
+                                                                                                   factory.array.empty()
+                                                                                                                .appendAll(elems)
+                                                                                                  ))
+                                                                              )
+                                                                    .apply(get(Key.of(head))),
+                                                      () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
+                                                                                                                       t
+                                                                                                                      ),
+                                                                                 () -> of(map.update(head,
+                                                                                                     tail.head()
+                                                                                                         .match(key -> factory.object.empty()
+                                                                                                                                     .appendAll(tail,
+                                                                                                                                                elems
+                                                                                                                                               ),
+                                                                                                                index -> factory.array.empty()
+                                                                                                                                      .appendAll(tail,
+                                                                                                                                                 elems
+                                                                                                                                                )
+                                                                                                               )
+                                                                                                    )),
+                                                                                 () -> of(map.update(head,
+                                                                                                     map.get(head)
+                                                                                                        .asJson()
+                                                                                                        .appendAll(tail,
+                                                                                                                   elems
+                                                                                                                  )
+                                                                                                    )
+                                                                                         )
+                                                                                )
+                                                     );
+                          },
+                          index -> this
+                         );
+    }
+
+    @Override
+    public final JsObj append(final JsPath path,
+                              final JsElem elem
+                             )
+    {
+        requireNonNull(elem);
+        if (requireNonNull(path).isEmpty()) return this;
+        return path.head()
+                   .match(head ->
+                          {
+                              final JsPath tail = path.tail();
+                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
+                                                                                                    arr.append(elem)
+                                                                                                   )),
+                                                                               el -> of(map.update(head,
+                                                                                                   factory.array.empty()
+                                                                                                                .append(elem)
+                                                                                                  ))
+                                                                              )
+                                                                    .apply(get(Key.of(head))),
+                                                      () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
+                                                                                                                       t
+                                                                                                                      ),
+                                                                                 () -> of(map.update(head,
+                                                                                                     tail.head()
+                                                                                                         .match(key -> factory.object.empty()
+                                                                                                                                     .append(tail,
+                                                                                                                                             elem
+                                                                                                                                            ),
+                                                                                                                index -> factory.array.empty()
+                                                                                                                                      .append(tail,
+                                                                                                                                              elem
+                                                                                                                                             )
+                                                                                                               )
+                                                                                                    )),
+                                                                                 () -> of(map.update(head,
+                                                                                                     map.get(head)
+                                                                                                        .asJson()
+                                                                                                        .append(tail,
+                                                                                                                elem
+                                                                                                               )
+                                                                                                    )
+                                                                                         )
+
+                                                                                )
+
+                                                     );
+                          },
+                          index -> this
+                         );
+
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public final JsObj prependAll(final JsPath path,
+                                  final JsArray elems
+                                 )
+    {
+        requireNonNull(elems);
+        if (requireNonNull(path).isEmpty()) return this;
+        return path.head()
+                   .match(head ->
+                          {
+                              final JsPath tail = path.tail();
+                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
+                                                                                                    arr.prependAll(elems)
+                                                                                                   )),
+                                                                               el -> of(map.update(head,
+                                                                                                   factory.array.empty()
+                                                                                                                .prependAll(elems)
+                                                                                                  ))
+                                                                              )
+                                                                    .apply(get(Key.of(head))),
+                                                      () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
+                                                                                                                       t
+                                                                                                                      ),
+                                                                                 () -> of(map.update(head,
+                                                                                                     tail.head()
+                                                                                                         .match(key -> factory.object.empty()
+                                                                                                                                     .prependAll(tail,
+                                                                                                                                                 elems
+                                                                                                                                                ),
+                                                                                                                index -> factory.array.empty()
+                                                                                                                                      .prependAll(tail,
+                                                                                                                                                  elems
+                                                                                                                                                 )
+                                                                                                               )
+                                                                                                    )),
+                                                                                 () -> of(map.update(head,
+                                                                                                     map.get(head)
+                                                                                                        .asJson()
+                                                                                                        .prependAll(tail,
+                                                                                                                    elems
+                                                                                                                   )
+                                                                                                    ))
+
+                                                                                )
+
+                                                     );
+                          },
+                          index -> this
+                         );
+
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public final JsObj prepend(final JsPath path,
+                               final JsElem elem
+                              )
+    {
+        requireNonNull(elem);
+        if (requireNonNull(path).isEmpty()) return this;
+        return path.head()
+                   .match(head ->
+                          {
+                              final JsPath tail = path.tail();
+                              return tail.ifEmptyElse(() -> MatchExp.ifArrElse(arr -> of(map.update(head,
+                                                                                                    arr.prepend(elem)
+                                                                                                   )),
+                                                                               el -> of(map.update(head,
+                                                                                                   factory.array.empty()
+                                                                                                                .prepend(elem)
+                                                                                                  ))
+                                                                              )
+                                                                    .apply(get(Key.of(head))),
+                                                      () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
+                                                                                                                       t
+                                                                                                                      ),
+                                                                                 () -> of(map.update(head,
+                                                                                                     tail.head()
+                                                                                                         .match(key -> factory.object.empty()
+                                                                                                                                     .prepend(tail,
+                                                                                                                                              elem
+                                                                                                                                             ),
+                                                                                                                index -> factory.array.empty()
+                                                                                                                                      .prepend(tail,
+                                                                                                                                               elem
+                                                                                                                                              )
+                                                                                                               )
+                                                                                                    )),
+                                                                                 () -> of(map.update(head,
+                                                                                                     map.get(head)
+                                                                                                        .asJson()
+                                                                                                        .prepend(tail,
+                                                                                                                 elem
+                                                                                                                )
+                                                                                                    ))
+
+                                                                                )
+
+                                                     );
+                          },
+                          index -> this
+                         );
+
+    }
+
+    @Override
+    public final JsObj put(final JsPath path,
+                           final Function<? super JsElem, ? extends JsElem> fn
+                          )
+    {
+        requireNonNull(fn);
+        if (requireNonNull(path).isEmpty()) return this;
+        return path.head()
+                   .match(head ->
+                          {
+                              final JsPath tail = path.tail();
+
+                              return tail.ifEmptyElse(() -> ifNothingElse(() -> this,
+                                                                          elem -> of(map.update(head,
+                                                                                                elem
+                                                                                               ))
+                                                                         )
+                                                      .apply(fn.apply(get(path))),
+                                                      () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
+                                                                                                                       t
+                                                                                                                      ),
+                                                                                 () -> of(map.update(head,
+                                                                                                     tail.head()
+                                                                                                         .match(key -> factory.object.empty()
+                                                                                                                                     .put(tail,
+                                                                                                                                          fn
+                                                                                                                                         ),
+                                                                                                                index -> factory.array.empty()
+                                                                                                                                      .put(tail,
+                                                                                                                                           fn
+                                                                                                                                          )
+                                                                                                               )
+                                                                                                    )),
+                                                                                 () -> of(map.update(head,
+                                                                                                     map.get(head)
+                                                                                                        .asJson()
+                                                                                                        .put(tail,
+                                                                                                             fn
+                                                                                                            )
+                                                                                                    ))
+
+                                                                                )
+                                                     );
+                          },
+                          index -> this
+
+                         );
+
+    }
+
+    @Override
+    public final JsObj add(final JsPath path,
+                           final Function<? super JsElem, ? extends JsElem> fn
+                          )
+    {
+        if (requireNonNull(path).isEmpty()) throw UserError.pathEmpty("add");
+        final JsPath tail = path.tail();
+        final Position head = path.head();
+        return head.match(key -> tail.ifEmptyElse(() ->
+                                                  {
+                                                      return of(map.update(key,
+                                                                           fn.apply(get(head))
+                                                                          ));
+                                                  },
+                                                  () ->
+                                                  {
+                                                      final JsElem headElem = get(head);
+
+                                                      if (headElem.isNothing())
+                                                          throw UserError.parentNotFound(JsPath.fromKey(key),
+                                                                                         this,
+                                                                                         "add"
+                                                                                        );
+                                                      if (!headElem.isJson())
+                                                          throw UserError.parentIsNotAJson(JsPath.fromKey(key),
+                                                                                           this,
+                                                                                           path,
+                                                                                           "add"
+                                                                                          );
+                                                      if (headElem.isObj() && tail.head()
+                                                                                  .isIndex())
+                                                          throw UserError.addingIndexIntoObject(tail.head()
+                                                                                                    .asIndex().n,
+                                                                                                this,
+                                                                                                path,
+                                                                                                "add"
+                                                                                               );
+                                                      if (headElem.isArray() && tail.head()
+                                                                                    .isKey())
+                                                          throw UserError.addingKeyIntoArray(tail.head()
+                                                                                                 .asKey().name,
+                                                                                             this,
+                                                                                             path,
+                                                                                             "add"
+                                                                                            );
+
+
+                                                      return of(map.update(key,
+                                                                           headElem.asJson()
+                                                                                   .add(tail,
+                                                                                        fn
+                                                                                       )
+                                                                          ));
+                                                  }
+                                                 ),
+                          index ->
+                          {
+                              throw UserError.addingIndexIntoObject(index,
+                                                                    this,
+                                                                    path,
+                                                                    "add"
+                                                                   );
+                          }
+                         );
+    }
+
+    @Override
+    public final JsObj remove(final JsPath path)
+    {
+        if (requireNonNull(path).isEmpty()) return this;
+        return path.head()
+                   .match(key ->
+                          {
+                              if (!map.contains(key)) return this;
+                              final JsPath tail = path.tail();
+                              return tail.ifEmptyElse(() -> of(map.remove(key)),
+                                                      () -> MatchExp.ifJsonElse(json -> of(map.update(key,
+                                                                                                      json.remove(tail)
+                                                                                                     )),
+                                                                                e -> this
+                                                                               )
+                                                                    .apply(map.get(key))
+                                                     );
+                          },
+                          index -> this
+                         );
+
+
+    }
+
 
 }

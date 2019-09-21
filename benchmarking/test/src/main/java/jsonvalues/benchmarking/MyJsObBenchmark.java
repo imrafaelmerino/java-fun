@@ -25,7 +25,9 @@
 
 package jsonvalues.benchmarking;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsonvalues.JsObj;
 import jsonvalues.Jsons;
 import jsonvalues.MalformedJson;
 import jsonvalues.MutableJsons;
@@ -46,7 +48,7 @@ public class MyJsObBenchmark
     static String OBJ_10000;
     static String OBJ_100000;
     static String OBJ_1000000;
-    static MutableJsons factory= Jsons.mutable.withMap(EclipseCollectionMutableMap.class);
+    static MutableJsons factory = Jsons.mutable.withMap(EclipseCollectionMutableMap.class);
 
 
     static
@@ -66,108 +68,16 @@ public class MyJsObBenchmark
     }
 
 
-
-
     @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @Measurement(iterations = 10)
-    public void parse_string_jackson_obj_10000() throws IOException
+    public JsonNode parse_string_jackson_obj_10000() throws IOException
     {
 
-        mapper.readTree(OBJ_10000);
-    }
-
-
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_mutable_obj_10000() throws MalformedJson
-    {
-
-        Jsons.mutable.object.parse(OBJ_10000).orElseThrow();
-    }
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_mutable_eclipse_collections_obj_10000() throws MalformedJson
-    {
-
-        factory.object.parse(OBJ_10000).orElseThrow();
-    }
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_immutable_obj_10000() throws MalformedJson
-    {
-
-        Jsons.immutable.object.parse(OBJ_10000).orElseThrow();
-    }
-
-
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_jackson_obj_100000() throws IOException
-    {
-
-        mapper.readTree(OBJ_100000);
-    }
-
-
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_mutable_obj_100000() throws MalformedJson
-    {
-
-        Jsons.mutable.object.parse(OBJ_100000).orElseThrow();
-    }
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_mutable_eclipse_collections_obj_100000() throws MalformedJson
-    {
-
-        factory.object.parse(OBJ_100000).orElseThrow();
-    }
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_immutable_obj_100000() throws MalformedJson
-    {
-
-        Jsons.immutable.object.parse(OBJ_100000).orElseThrow();
+        return mapper.readTree(OBJ_10000);
     }
 
 
@@ -177,24 +87,11 @@ public class MyJsObBenchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @Measurement(iterations = 10)
-    public void parse_string_jackson_obj_1000000() throws IOException
+    public JsObj parse_string_json_values_mutable_obj_10000() throws MalformedJson
     {
 
-        mapper.readTree(OBJ_1000000);
-    }
-
-
-
-    @Benchmark
-    @Fork(value = 1, warmups = 10)
-    @Warmup(iterations = 10)
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Measurement(iterations = 10)
-    public void parse_string_json_values_mutable_obj_1000000() throws MalformedJson
-    {
-
-        Jsons.mutable.object.parse(OBJ_1000000).orElseThrow();
+        return Jsons.mutable.object.parse(OBJ_10000)
+                                   .orElseThrow();
     }
 
     @Benchmark
@@ -203,10 +100,11 @@ public class MyJsObBenchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @Measurement(iterations = 10)
-    public void parse_string_json_values_mutable_eclipse_collections_obj_1000000() throws MalformedJson
+    public JsObj parse_string_json_values_mutable_eclipse_collections_obj_10000() throws MalformedJson
     {
 
-        factory.object.parse(OBJ_1000000).orElseThrow();
+        return factory.object.parse(OBJ_10000)
+                             .orElseThrow();
     }
 
     @Benchmark
@@ -215,10 +113,110 @@ public class MyJsObBenchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @Measurement(iterations = 10)
-    public void parse_string_json_values_immutable_obj_1000000() throws MalformedJson
+    public JsObj parse_string_json_values_immutable_obj_10000() throws MalformedJson
     {
 
-        Jsons.immutable.object.parse(OBJ_1000000).orElseThrow();
+        return Jsons.immutable.object.parse(OBJ_10000)
+                                     .orElseThrow();
+    }
+
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsonNode parse_string_jackson_obj_100000() throws IOException
+    {
+
+        return mapper.readTree(OBJ_100000);
+    }
+
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsObj parse_string_json_values_mutable_obj_100000() throws MalformedJson
+    {
+
+        return Jsons.mutable.object.parse(OBJ_100000)
+                                   .orElseThrow();
+    }
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsObj parse_string_json_values_mutable_eclipse_collections_obj_100000() throws MalformedJson
+    {
+        return factory.object.parse(OBJ_100000)
+                             .orElseThrow();
+    }
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsObj parse_string_json_values_immutable_obj_100000() throws MalformedJson
+    {
+        return Jsons.immutable.object.parse(OBJ_100000).orElseThrow();
+    }
+
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsonNode parse_string_jackson_obj_1000000() throws IOException
+    {
+        return mapper.readTree(OBJ_1000000);
+    }
+
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsObj parse_string_json_values_mutable_obj_1000000() throws MalformedJson
+    {
+        return Jsons.mutable.object.parse(OBJ_1000000)
+                                   .orElseThrow();
+    }
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsObj parse_string_json_values_mutable_eclipse_collections_obj_1000000() throws MalformedJson
+    {
+        return factory.object.parse(OBJ_1000000)
+                             .orElseThrow();
+    }
+
+    @Benchmark
+    @Fork(value = 1, warmups = 10)
+    @Warmup(iterations = 10)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Measurement(iterations = 10)
+    public JsObj parse_string_json_values_immutable_obj_1000000() throws MalformedJson
+    {
+        return Jsons.immutable.object.parse(OBJ_1000000)
+                                     .orElseThrow();
     }
 
 

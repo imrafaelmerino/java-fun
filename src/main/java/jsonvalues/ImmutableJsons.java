@@ -1206,7 +1206,7 @@ public final class ImmutableJsons
      @param map the underlying data structure to store elements of Json objects in the factory
      @return a new factory of immutable Jsons
      */
-    public ImmutableJsons withMap(final Class<ImmutableMap> map)
+    public ImmutableJsons withMap(final Class<? extends ImmutableMap> map)
     {
 
         return new ImmutableJsons(new ImmutableJsObjs(requireNonNull(map)),

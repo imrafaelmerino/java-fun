@@ -68,7 +68,7 @@ public class MyJsObBenchmark
 
 
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -82,7 +82,7 @@ public class MyJsObBenchmark
 
 
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -94,7 +94,7 @@ public class MyJsObBenchmark
         Jsons.mutable.object.parse(OBJ_10000).orElseThrow();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -106,7 +106,7 @@ public class MyJsObBenchmark
         factory.object.parse(OBJ_10000).orElseThrow();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -120,7 +120,7 @@ public class MyJsObBenchmark
 
 
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -134,7 +134,7 @@ public class MyJsObBenchmark
 
 
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -146,7 +146,7 @@ public class MyJsObBenchmark
         Jsons.mutable.object.parse(OBJ_100000).orElseThrow();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -158,7 +158,7 @@ public class MyJsObBenchmark
         factory.object.parse(OBJ_100000).orElseThrow();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -171,7 +171,7 @@ public class MyJsObBenchmark
     }
 
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -185,7 +185,7 @@ public class MyJsObBenchmark
 
 
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -197,7 +197,7 @@ public class MyJsObBenchmark
         Jsons.mutable.object.parse(OBJ_1000000).orElseThrow();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)
@@ -209,7 +209,7 @@ public class MyJsObBenchmark
         factory.object.parse(OBJ_1000000).orElseThrow();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     @Fork(value = 1, warmups = 10)
     @Warmup(iterations = 10)
     @BenchmarkMode(Mode.AverageTime)

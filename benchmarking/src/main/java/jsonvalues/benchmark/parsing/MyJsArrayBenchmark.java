@@ -1,8 +1,9 @@
-package jsonvalues.benchmarking;
+package jsonvalues.benchmark.parsing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsonvalues.Jsons;
 import jsonvalues.MutableJsons;
+import jsonvalues.mymaps.mutable.EclipseCollectionMap;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +13,7 @@ public class MyJsArrayBenchmark
 {
 
     static ObjectMapper mapper = new ObjectMapper();
-    static MutableJsons factory= Jsons.mutable.withMap(EclipseCollectionMutableMap.class);
+    static MutableJsons factory= Jsons.mutable.withMap(EclipseCollectionMap.class);
     static String ARR_1000;
     static String ARR_10000;
     static String ARR_100000;

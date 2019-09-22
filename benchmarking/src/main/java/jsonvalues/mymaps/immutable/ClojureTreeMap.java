@@ -6,7 +6,6 @@ import clojure.lang.PersistentTreeMap;
 public class ClojureTreeMap extends ClojureMap
 {
 
-
     private ClojureTreeMap(final IPersistentMap map)
     {
         super(map);

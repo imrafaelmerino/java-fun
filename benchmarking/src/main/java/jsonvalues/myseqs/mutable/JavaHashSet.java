@@ -11,6 +11,11 @@ public class JavaHashSet implements MutableSeq
 
     private final HashSet<JsElem> set;
 
+    private JavaHashSet(final HashSet<JsElem> set)
+    {
+        this.set = set;
+    }
+
     public JavaHashSet()
     {
         this.set = new HashSet<>();
@@ -19,72 +24,76 @@ public class JavaHashSet implements MutableSeq
     @Override
     public MutableSeq copy()
     {
-        return null;
+        return new JavaHashSet(new HashSet<>(set));
     }
 
     @Override
     public JsElem head()
     {
-        return null;
+        throw new UnsupportedOperationException("head of hashset");
     }
 
     @Override
     public Iterator<JsElem> iterator()
     {
-        return null;
+        return set.iterator();
     }
 
     @Override
     public MutableSeq tail()
     {
-        return null;
+        throw new UnsupportedOperationException("tail of hashset");
     }
 
     @Override
     public MutableSeq init()
     {
-        return null;
+
+        throw new UnsupportedOperationException("init of hashset");
+
     }
 
     @Override
     public JsElem last()
     {
-        return null;
+        throw new UnsupportedOperationException("last of hashset");
+
     }
 
     @Override
     public JsElem get(final int i)
     {
-        return null;
+        throw new UnsupportedOperationException("get by index of hashset");
     }
 
     @Override
     public int size()
     {
-        return 0;
+        return set.size();
     }
 
     @Override
     public boolean isEmpty()
     {
-        return false;
+        return set.isEmpty();
     }
 
     @Override
-    public boolean contains(final JsElem jsElem)
+    public boolean contains(final JsElem e)
     {
-        return false;
+        return set.contains(e);
     }
 
     @Override
-    public void appendFront(final JsElem jsElem)
+    public void appendFront(final JsElem e)
     {
-
+        set.add(e);
     }
 
     @Override
-    public void appendBack(final JsElem jsElem)
+    public void appendBack(final JsElem e)
     {
+        set.add(e);
     }
 
     @Override
@@ -92,6 +101,8 @@ public class JavaHashSet implements MutableSeq
                        final JsElem jsElem
                       )
     {
+        throw new UnsupportedOperationException("update by index of hashset");
+
     }
 
     @Override
@@ -99,11 +110,14 @@ public class JavaHashSet implements MutableSeq
                     final JsElem jsElem
                    )
     {
+        throw new UnsupportedOperationException("add by index of hashset");
+
     }
 
     @Override
     public void remove(final int i)
     {
+        throw new UnsupportedOperationException("remove by index of hashset");
 
     }
 

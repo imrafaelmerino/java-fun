@@ -8,7 +8,6 @@ import java.util.Iterator;
 
 public class PVector implements ImmutableSeq
 {
-
     private final org.pcollections.PVector<JsElem> vector;
 
     private PVector(final org.pcollections.PVector<JsElem> vector)

@@ -1,30 +1,18 @@
 package jsonvalues.myseqs.immutable;
 
-import clojure.java.api.Clojure;
-import clojure.lang.IFn;
 import clojure.lang.IPersistentSet;
 import clojure.lang.PersistentHashSet;
 import jsonvalues.ImmutableSeq;
 import jsonvalues.JsElem;
 
+import static jsonvalues.ClojureFns.*;
+
 import java.util.Iterator;
-import java.util.function.Function;
 
 public class ClojureHashSet implements ImmutableSeq
 {
 
-    //todo esta repetido , cambiar paqueteria
-    private static final Function<String, IFn> cljFn = fn -> Clojure.var("clojure.core",
-                                                                         fn
-                                                                        );
 
-    private static final IFn toSet = cljFn.apply("set");
-    private static final IFn isEmpty = cljFn.apply("empty?");
-    private static final IFn butlast = cljFn.apply("butlast");
-    private static final IFn first = cljFn.apply("first");
-    private static final IFn rest = cljFn.apply("rest");
-    private static final IFn conj = cljFn.apply("conj");
-    private static final IFn last = cljFn.apply("last");
     private final IPersistentSet set;
 
     private ClojureHashSet(final IPersistentSet set)

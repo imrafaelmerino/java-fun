@@ -37,8 +37,7 @@ questions.
         <ECLIPSE-COLLECTIONS.VERSION>10.0.0</ECLIPSE-COLLECTIONS.VERSION>
         <PCOLLECTIONS.VERSION>3.1.0</PCOLLECTIONS.VERSION>
         <VAVR.VERSION>0.9.3</VAVR.VERSION>
-        <SCALA-LIBRARY.VERSION>2.13.0</SCALA-LIBRARY.VERSION>
-        <JSON-VALUES.VERSION>3.1.0</JSON-VALUES.VERSION>
+        <JSON-VALUES.VERSION>3.1.1</JSON-VALUES.VERSION>
         <CLOJURE.VERSION>1.10.1</CLOJURE.VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -67,13 +66,7 @@ questions.
         <dependency>
             <groupId>com.github.imrafaelmerino</groupId>
             <artifactId>json-values</artifactId>
-            <version>3.1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${JSON-VALUES.VERSION}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.collections</groupId>
@@ -91,11 +84,6 @@ questions.
             <version>${VAVR.VERSION}</version>
         </dependency>
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${SCALA-LIBRARY.VERSION}</version>
-        </dependency>
-        <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
             <version>${CLOJURE.VERSION}</version>
@@ -106,12 +94,6 @@ questions.
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.5.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.13.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

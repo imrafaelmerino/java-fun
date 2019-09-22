@@ -3,11 +3,11 @@ package jsonvalues.myseqs.immutable;
 
 import jsonvalues.ImmutableSeq;
 import jsonvalues.JsElem;
+import scala.collection.JavaConverters;
 import scala.collection.Seq;
 import scala.collection.generic.CanBuildFrom;
 import scala.collection.immutable.List;
 import scala.collection.mutable.Builder;
-import scala.jdk.CollectionConverters;
 
 import java.util.Iterator;
 
@@ -44,10 +44,12 @@ public class ScalaList implements ImmutableSeq
     };
 
     private final List<JsElem> list;
+    private static final List<JsElem> EMPTY = List.<JsElem>empty();
+
 
     public ScalaList()
     {
-        list = List.<JsElem>empty();
+        list = EMPTY;
     }
 
     private ScalaList(final List<JsElem> list)
@@ -64,9 +66,9 @@ public class ScalaList implements ImmutableSeq
     @Override
     public Iterator<JsElem> iterator()
     {
-        return CollectionConverters.IterableHasAsJava(list)
-                                   .asJava()
-                                   .iterator();
+        final scala.collection.Iterator<JsElem> it = list.iterator()
+                                                         .toIterator();
+        return JavaConverters.<JsElem>asJavaIterator(it);
     }
 
     @Override
@@ -79,7 +81,6 @@ public class ScalaList implements ImmutableSeq
     @Override
     public ImmutableSeq init()
     {
-
         final List<JsElem> init = (List<JsElem>) list.init();
         return new ScalaList(init);
     }

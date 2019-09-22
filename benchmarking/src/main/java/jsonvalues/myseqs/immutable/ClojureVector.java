@@ -1,7 +1,5 @@
 package jsonvalues.myseqs.immutable;
 
-import clojure.java.api.Clojure;
-import clojure.lang.IFn;
 import clojure.lang.IPersistentVector;
 import clojure.lang.PersistentVector;
 import jsonvalues.ImmutableSeq;
@@ -10,27 +8,11 @@ import jsonvalues.Trampoline;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.function.Function;
+import static jsonvalues.ClojureFns.*;
 
 public class ClojureVector implements ImmutableSeq
 {
 
-    //todo esta repetido , cambiar paqueteria
-    private static final Function<String, IFn> cljFn = fn -> Clojure.var("clojure.core",
-                                                                         fn
-                                                                        );
-
-    private static final IFn rest = cljFn.apply("rest");
-    private static final IFn vec = cljFn.apply("vec");
-    private static final IFn isEmpty = cljFn.apply("empty?");
-    private static final IFn butlast = cljFn.apply("butlast");
-    private static final IFn assoc = cljFn.apply("assoc");
-    private static final IFn concat = cljFn.apply("concat");
-    private static final IFn subvec = cljFn.apply("subvec");
-    private static final IFn conj = cljFn.apply("conj");
-    private static final IFn cons = cljFn.apply("cons");
-    private static final IFn last = cljFn.apply("last");
-    private static final IFn nth = cljFn.apply("nth");
     private final IPersistentVector list;
 
     private ClojureVector(final IPersistentVector list)

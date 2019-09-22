@@ -8,6 +8,7 @@ import jsonvalues.myseqs.immutable.VavrVector;
 
 public class VavrFactory
 {
+    private VavrFactory() { }
 
     public static final ImmutableJsons hmv = Jsons.immutable.withMap(VavrHashMap.class)
                                                             .withSeq(VavrVector.class);

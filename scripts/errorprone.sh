@@ -17,7 +17,7 @@ find ${PROJECT_HOME} -name "*.java" > ${WORK_DIR}/sources.txt
 ${JAVA_PATH} \
 -encoding utf8 \
 -XDcompilePolicy=simple \
--processorpath ${LIB_DIR}/failureaccess-1.0.jar:${LIB_DIR}/error_prone_core-2.3.3-with-dependencies.jar:${LIB_DIR}/dataflow-2.5.7.jar:${LIB_DIR}/javacutil-2.5.7.jar:jFormatString-3.1.0.jar \
+-processorpath ${LIB_DIR}/failureaccess-1.0.jar:${LIB_DIR}/error_prone_core-2.3.3-with-dependencies.jar:${LIB_DIR}/dataflow-2.5.7.jar:${LIB_DIR}/javacutil-2.5.7.jar:jFormatString-3.1.1.jar \
 '-Xplugin:ErrorProne -XepDisableAllChecks -Xep:CollectionIncompatibleType:ERROR' \
 -cp "${CLASSPATH}" \
 -d ${WORK_DIR}/classes/ \

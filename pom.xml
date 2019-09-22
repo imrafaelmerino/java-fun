@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <name>json-values</name>
     <description>json-values is a functional Java library to work with immutable jsons using persistent data structures.</description>
     <url>https://github.com/imrafaelmerino/json-values</url>
@@ -157,7 +157,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.1</version>
                 <configuration>
                     <source>8</source>
                 </configuration>

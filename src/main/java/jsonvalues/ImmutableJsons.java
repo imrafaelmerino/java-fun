@@ -124,24 +124,24 @@ public final class ImmutableJsons
         ImmutableSeq newRoot = root;
         while ((elem = parser.next()) != END_ARRAY)
         {
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     newRoot = newRoot.appendBack(parser.getJsString());
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     newRoot = newRoot.appendBack(parser.getJsNumber());
                     break;
-                case VALUE_FALSE:
+                case 2:
                     newRoot = newRoot.appendBack(FALSE);
                     break;
-                case VALUE_TRUE:
+                case 3:
                     newRoot = newRoot.appendBack(TRUE);
                     break;
-                case VALUE_NULL:
+                case 4:
                     newRoot = newRoot.appendBack(NULL);
                     break;
-                case START_OBJECT:
+                case 5:
                     final ImmutableMap newObj = parse(this.object.emptyMap,
                                                       parser
                                                      );
@@ -149,7 +149,7 @@ public final class ImmutableJsons
                                                                     this
                     ));
                     break;
-                case START_ARRAY:
+                case 6:
                     final ImmutableSeq newSeq = parse(this.array.emptySeq,
                                                       parser
                                                      );
@@ -181,9 +181,9 @@ public final class ImmutableJsons
             JsParser.Event elem = parser.next();
             final JsPair pair;
             assert elem != null;
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     pair = JsPair.of(currentPath,
                                      parser.getJsString()
                                     );
@@ -191,7 +191,7 @@ public final class ImmutableJsons
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     pair = JsPair.of(currentPath,
                                      parser.getJsNumber()
                                     );
@@ -199,15 +199,7 @@ public final class ImmutableJsons
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-                case VALUE_TRUE:
-                    pair = JsPair.of(currentPath,
-                                     TRUE
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-                case VALUE_FALSE:
+                case 2:
                     pair = JsPair.of(currentPath,
                                      FALSE
                                     );
@@ -215,7 +207,16 @@ public final class ImmutableJsons
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-                case VALUE_NULL:
+                case 3:
+                    pair = JsPair.of(currentPath,
+                                     TRUE
+                                    );
+                    newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                      options.elemMap.apply(pair)
+                                                                     ) : newRoot;
+                    break;
+
+                case 4:
                     pair = JsPair.of(currentPath,
                                      NULL
                                     );
@@ -224,7 +225,7 @@ public final class ImmutableJsons
                                                                      ) : newRoot;
                     break;
 
-                case START_OBJECT:
+                case 5:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
@@ -238,7 +239,7 @@ public final class ImmutableJsons
                                                 );
                     }
                     break;
-                case START_ARRAY:
+                case 6:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
@@ -273,9 +274,9 @@ public final class ImmutableJsons
         {
             assert elem != null;
             final JsPath currentPath = path.inc();
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
 
                     pair = JsPair.of(currentPath,
                                      parser.getJsString()
@@ -283,7 +284,7 @@ public final class ImmutableJsons
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
 
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     pair = JsPair.of(currentPath,
                                      parser.getJsNumber()
                                     );
@@ -291,27 +292,27 @@ public final class ImmutableJsons
 
 
                     break;
-
-                case VALUE_TRUE:
+                case 2:
+                    pair = JsPair.of(currentPath,
+                                     FALSE
+                                    );
+                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+                    break;
+                case 3:
                     pair = JsPair.of(currentPath,
                                      TRUE
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
 
                     break;
-                case VALUE_FALSE:
-                    pair = JsPair.of(currentPath,
-                                     FALSE
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-                    break;
-                case VALUE_NULL:
+
+                case 4:
                     pair = JsPair.of(currentPath,
                                      NULL
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
                     break;
-                case START_OBJECT:
+                case 5:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.appendBack(new ImmutableJsObj(parse(this.object.emptyMap,
@@ -324,7 +325,7 @@ public final class ImmutableJsons
                                                     );
                     }
                     break;
-                case START_ARRAY:
+                case 6:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.appendBack(new ImmutableJsArray(parse(this.array.emptySeq,
@@ -356,34 +357,34 @@ public final class ImmutableJsons
         {
             final String key = parser.getString();
             JsParser.Event elem = parser.next();
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     newRoot = newRoot.update(key,
                                              parser.getJsString()
                                             );
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     newRoot = newRoot.update(key,
                                              parser.getJsNumber()
                                             );
                     break;
-                case VALUE_FALSE:
+                case 2:
                     newRoot = newRoot.update(key,
                                              FALSE
                                             );
                     break;
-                case VALUE_TRUE:
+                case 3:
                     newRoot = newRoot.update(key,
                                              TRUE
                                             );
                     break;
-                case VALUE_NULL:
+                case 4:
                     newRoot = newRoot.update(key,
                                              NULL
                                             );
                     break;
-                case START_OBJECT:
+                case 5:
                     final ImmutableMap newObj = parse(this.object.emptyMap,
                                                       parser
                                                      );
@@ -393,7 +394,7 @@ public final class ImmutableJsons
                                              )
                                             );
                     break;
-                case START_ARRAY:
+                case 6:
                     final ImmutableSeq newArr = parse(this.array.emptySeq,
                                                       parser
                                                      );
@@ -569,7 +570,7 @@ public final class ImmutableJsons
          @return an immutable five-element JsArray
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 5 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -598,7 +599,7 @@ public final class ImmutableJsons
          @return an immutable JsArray
          @throws UserError if an elem is a mutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 6 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -974,7 +975,7 @@ public final class ImmutableJsons
          @return an immutable three-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 6 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1008,7 +1009,7 @@ public final class ImmutableJsons
          @return an immutable four-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 8 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1049,7 +1050,7 @@ public final class ImmutableJsons
          @return an immutable five-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 10 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1096,7 +1097,7 @@ public final class ImmutableJsons
          @return an immutable six-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 12 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,

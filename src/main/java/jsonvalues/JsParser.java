@@ -73,59 +73,73 @@ final class JsParser implements Closeable
     enum Event
     {
         /**
-         * Start of a JSON array. The position of the parser is after '['.
-         */
-        START_ARRAY,
-        /**
-         * Start of a JSON object. The position of the parser is after '{'.
-         */
-        START_OBJECT,
-        /**
-         * Name in a name/value pair of a JSON object. The position of the parser
-         * is after the key name. The method {@link #getString} returns the key
-         * name.
-         */
-        KEY_NAME,
-        /**
          * String value in a JSON array or object. The position of the parser is
          * after the string value. The method {@link #getString}
          * returns the string value.
          */
-        VALUE_STRING,
+        VALUE_STRING(0),
+
         /**
          * Number value in a JSON array or object. The position of the parser is
          * after the number value. {@code MyJsParser} provides the following
          * methods to access the number value: {@link #getInt},
          * {@link #getLong}, and {@link #getBigDecimal}.
          */
-        VALUE_NUMBER,
-        /**
-         * {@code true} value in a JSON array or object. The position of the
-         * parser is after the {@code true} value.
-         */
-        VALUE_TRUE,
+        VALUE_NUMBER(1),
+
         /**
          * {@code false} value in a JSON array or object. The position of the
          * parser is after the {@code false} value.
          */
-        VALUE_FALSE,
+        VALUE_FALSE(2),
+
+        /**
+         * {@code true} value in a JSON array or object. The position of the
+         * parser is after the {@code true} value.
+         */
+        VALUE_TRUE(3),
+
         /**
          * {@code null} value in a JSON array or object. The position of the
          * parser is after the {@code null} value.
          */
-        VALUE_NULL,
+        VALUE_NULL(4),
+
+        /**
+         * Start of a JSON object. The position of the parser is after '{'.
+         */
+        START_OBJECT(5),
+
+        /**
+         * Start of a JSON array. The position of the parser is after '['.
+         */
+        START_ARRAY(6),
+
         /**
          * End of a JSON object. The position of the parser is after '}'.
          */
-        END_OBJECT,
+        END_OBJECT(7),
         /**
          * End of a JSON array. The position of the parser is after ']'.
          */
-        END_ARRAY,
+        END_ARRAY(8),
+        /**
+         * Name in a name/value pair of a JSON object. The position of the parser
+         * is after the key name. The method {@link #getString} returns the key
+         * name.
+         */
+        KEY_NAME(9),
         /**
          event associated to the tokens: comma, colon or eof.
          */
-        NOTHING
+        NOTHING(10);
+
+        final int code;
+
+        Event(final int code)
+        {
+            this.code = code;
+        }
     }
 
     private Context currentContext = new NoneContext();
@@ -258,12 +272,23 @@ final class JsParser implements Closeable
         public Event getNextEvent() throws MalformedJson
         {
             Token token;
-            if (currentEvent == KEY_NAME) token = tokenizer.matchColonToken();
-            else if (currentEvent == START_OBJECT) token = tokenizer.matchQuoteOrCloseObject();
-            else token = tokenizer.nextToken();
+            switch (currentEvent.code){
+                case 9: {
+                    token = tokenizer.matchColonToken();
+                    break;
+                }
+                case 5:{
+                    token = tokenizer.matchQuoteOrCloseObject();
+                    break;
+                }
+                default: token = tokenizer.nextToken();
+            }
+
+
             if (token == EOF) return throwUnexpectedEOFException(token);
             if (currentEvent == KEY_NAME) return nextValueOrJsonBeginning(tokenizer.nextToken(),
-                                                                          EXPECTED_START_JSON_OR_VALUE_TOKENS);
+                                                                          EXPECTED_START_JSON_OR_VALUE_TOKENS
+                                                                         );
             if (token == CURLYCLOSE)
             {
                 currentContext = stack.pop();
@@ -309,21 +334,24 @@ final class JsParser implements Closeable
         public Event getNextEvent() throws MalformedJson
         {
             Token token = tokenizer.nextToken();
-            if (token == EOF)
+            switch (token.getCode())
             {
-                if (currentEvent == START_ARRAY)
-                    throw expectedValueOrJsonBeginning(token,
-                                                       EXPECTED_START_JSON_OR_VALUE_TOKENS
-                                                      );
+                case 11:
+                {
+                    if (currentEvent == START_ARRAY)
+                        throw expectedValueOrJsonBeginning(token,
+                                                           EXPECTED_START_JSON_OR_VALUE_TOKENS
+                                                          );
 
-                throw expectedValueOrJsonBeginning(token,
-                                                   EXPECTED_COMMA_CLOSE_OBJECT_TOKENS
-                                                  );
-            }
-            if (token == Token.SQUARECLOSE)
-            {
-                currentContext = stack.pop();
-                return END_ARRAY;
+                    throw expectedValueOrJsonBeginning(token,
+                                                       EXPECTED_COMMA_CLOSE_OBJECT_TOKENS
+                                                      );
+                }
+                case 10:
+                {
+                    currentContext = stack.pop();
+                    return END_ARRAY;
+                }
             }
             if (firstValue) firstValue = false;
             else if (token != COMMA) throw expectedValueOrJsonBeginning(token,
@@ -344,17 +372,20 @@ final class JsParser implements Closeable
                                           ) throws MalformedJson
     {
         if (token.isValue()) return token.getEvent();
-        if (token == CURLYOPEN)
+        switch (token.getCode())
         {
-            stack.push(currentContext);
-            currentContext = new ObjectContext();
-            return START_OBJECT;
-        }
-        if (token == SQUAREOPEN)
-        {
-            stack.push(currentContext);
-            currentContext = new ArrayContext();
-            return Event.START_ARRAY;
+            case 0:
+            {
+                stack.push(currentContext);
+                currentContext = new ObjectContext();
+                return START_OBJECT;
+            }
+            case 1:
+            {
+                stack.push(currentContext);
+                currentContext = new ArrayContext();
+                return Event.START_ARRAY;
+            }
         }
         throw expectedValueOrJsonBeginning(token,
                                            expectedTokens

@@ -6,7 +6,6 @@ dependency-reduced-pom.xml
 *.uml
 .idea/
 data
-benchmarking
 scripts/.tmp
 package.json
 scripts/libs

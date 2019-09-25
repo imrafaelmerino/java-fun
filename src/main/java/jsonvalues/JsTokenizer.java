@@ -137,55 +137,81 @@ final class JsTokenizer implements Closeable
     enum Token
     {
         CURLYOPEN(START_OBJECT,
-                  false
+                  false,
+                  0
         ),
         SQUAREOPEN(START_ARRAY,
-                   false
+                   false,
+                   1
         ),
-        COLON(false),
-        COMMA(false),
+        COLON(false,
+              2
+        ),
+        COMMA(false,
+              3
+        ),
         STRING(VALUE_STRING,
-               true
+               true,
+               4
         ),
         NUMBER(VALUE_NUMBER,
-               true
+               true,
+               5
         ),
         TRUE(VALUE_TRUE,
-             true
+             true,
+             6
         ),
         FALSE(VALUE_FALSE,
-              true
+              true,
+              7
         ),
         NULL(VALUE_NULL,
-             true
+             true,
+             8
         ),
         CURLYCLOSE(END_OBJECT,
-                   false
+                   false,
+                   9
         ),
         SQUARECLOSE(END_ARRAY,
-                    false
+                    false,
+                    10
         ),
-        EOF(false);
-        private JsParser.Event event;
+        EOF(false,
+            11
+        );
+        private final JsParser.Event event;
         private final boolean value;
+        private final int code;
 
-        Token(JsParser.Event event,
-              boolean value
+        Token(final JsParser.Event event,
+              final boolean value,
+              final int code
              )
         {
             this.event = event;
             this.value = value;
+            this.code = code;
         }
 
-        Token(boolean value)
+        Token(final boolean value,
+              final int code
+             )
         {
             this.value = value;
+            this.code = code;
             this.event = NOTHING;
         }
 
         JsParser.Event getEvent()
         {
             return event;
+        }
+
+        public int getCode()
+        {
+            return code;
         }
 
         boolean isValue()

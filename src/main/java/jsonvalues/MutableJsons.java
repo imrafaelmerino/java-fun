@@ -126,34 +126,34 @@ public class MutableJsons
             final String key = parser.getString();
             JsParser.Event elem = parser.next();
             assert elem != null;
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     root.update(key,
                                 parser.getJsString()
                                );
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     root.update(key,
                                 parser.getJsNumber()
                                );
                     break;
-                case VALUE_FALSE:
+                case 2:
                     root.update(key,
                                 FALSE
                                );
                     break;
-                case VALUE_TRUE:
+                case 3:
                     root.update(key,
                                 TRUE
                                );
                     break;
-                case VALUE_NULL:
+                case 4:
                     root.update(key,
                                 NULL
                                );
                     break;
-                case START_OBJECT:
+                case 5:
                     final MutableMap obj = this.object.emptyMap();
                     parse(obj,
                           parser
@@ -164,7 +164,7 @@ public class MutableJsons
                                 )
                                );
                     break;
-                case START_ARRAY:
+                case 6:
                     final MutableSeq arr = this.array.emptySeq();
                     parse(arr,
                           parser
@@ -198,9 +198,9 @@ public class MutableJsons
             final JsPath currentPath = path.key(key);
             JsParser.Event elem = parser.next();
             assert elem != null;
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     JsPair.of(currentPath,
                               parser.getJsString()
                              )
@@ -211,7 +211,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     JsPair.of(currentPath,
                               parser.getJsNumber()
                              )
@@ -222,7 +222,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case VALUE_FALSE:
+                case 2:
                     JsPair.of(currentPath,
                               FALSE
                              )
@@ -234,7 +234,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case VALUE_TRUE:
+                case 3:
                     JsPair.of(currentPath,
                               TRUE
                              )
@@ -246,7 +246,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case VALUE_NULL:
+                case 4:
                     JsPair.of(currentPath,
                               NULL
                              )
@@ -258,7 +258,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case START_OBJECT:
+                case 5:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableMap obj = this.object.emptyMap();
@@ -274,7 +274,7 @@ public class MutableJsons
                                    );
                     }
                     break;
-                case START_ARRAY:
+                case 6:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableSeq arr = this.array.emptySeq();
@@ -309,24 +309,24 @@ public class MutableJsons
         while ((elem = parser.next()) != END_ARRAY)
         {
             assert elem != null;
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     root.appendBack(parser.getJsString());
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     root.appendBack(parser.getJsNumber());
                     break;
-                case VALUE_FALSE:
+                case 2:
                     root.appendBack(FALSE);
                     break;
-                case VALUE_TRUE:
+                case 3:
                     root.appendBack(TRUE);
                     break;
-                case VALUE_NULL:
+                case 4:
                     root.appendBack(NULL);
                     break;
-                case START_OBJECT:
+                case 5:
                     final MutableMap obj = this.object.emptyMap();
                     parse(obj,
                           parser
@@ -335,7 +335,7 @@ public class MutableJsons
                                                      this
                     ));
                     break;
-                case START_ARRAY:
+                case 6:
                     final MutableSeq arr = this.array.emptySeq();
                     parse(arr,
                           parser
@@ -363,9 +363,9 @@ public class MutableJsons
         {
             assert elem != null;
             final JsPath currentPath = path.inc();
-            switch (elem)
+            switch (elem.code)
             {
-                case VALUE_STRING:
+                case 0:
                     JsPair.of(currentPath,
                               parser.getJsString()
                              )
@@ -374,7 +374,7 @@ public class MutableJsons
                                     )
                     ;
                     break;
-                case VALUE_NUMBER:
+                case 1:
                     JsPair.of(currentPath,
                               parser.getJsNumber()
                              )
@@ -382,7 +382,7 @@ public class MutableJsons
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     );
                     break;
-                case VALUE_FALSE:
+                case 2:
                     JsPair.of(currentPath,
                               FALSE
                              )
@@ -391,7 +391,7 @@ public class MutableJsons
                                     )
                     ;
                     break;
-                case VALUE_TRUE:
+                case 3:
                     JsPair.of(currentPath,
                               TRUE
                              )
@@ -399,7 +399,7 @@ public class MutableJsons
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     );
                     break;
-                case VALUE_NULL:
+                case 4:
                     JsPair.of(currentPath,
                               NULL
                              )
@@ -407,7 +407,7 @@ public class MutableJsons
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     );
                     break;
-                case START_OBJECT:
+                case 5:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableMap obj = this.object.emptyMap();
@@ -422,7 +422,7 @@ public class MutableJsons
                     }
                     break;
 
-                case START_ARRAY:
+                case 6:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableSeq arr = this.array.emptySeq();
@@ -691,7 +691,7 @@ public class MutableJsons
          @return an mutable five-element JsArray
          @throws UserError if an elem is a immutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 5 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -720,7 +720,7 @@ public class MutableJsons
          @return an mutable JsArray
          @throws UserError if an elem is an immutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 6 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -1080,7 +1080,7 @@ public class MutableJsons
          @return an mutable three-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 6 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1114,7 +1114,7 @@ public class MutableJsons
          @return an mutable four-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 8 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1155,7 +1155,7 @@ public class MutableJsons
          @return an mutable five-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 10 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1202,7 +1202,7 @@ public class MutableJsons
          @return an mutable six-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+        //squid:S00107: 12 args is ok in this case
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,

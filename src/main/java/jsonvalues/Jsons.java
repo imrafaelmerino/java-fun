@@ -1,5 +1,7 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonFactory;
+
 /**
 Singleton which contains the default Json factories.
  */
@@ -10,6 +12,7 @@ public final class Jsons
     {
     }
 
+    public static JsonFactory factory = new JsonFactory();
     /**
      Default factory of immutable jsons. It's a singleton and can not be modified. New factories can be created from this instance overwriting
      the default implementations using the methods {@link ImmutableJsons#withSeq(Class)} and {@link ImmutableJsons#withMap(Class)} (Class)}

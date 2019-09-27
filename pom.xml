@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <name>json-values</name>
     <description>json-values is a functional Java library to work with immutable jsons using persistent data structures.</description>
     <url>https://github.com/imrafaelmerino/json-values</url>
@@ -28,6 +28,7 @@
         <url>https://github.com/imrafaelmerino/json-values.git</url>
     </scm>
     <properties>
+        <JACKSON-VERSION>2.9.10</JACKSON-VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <DEPENDENCY_SCALA_CHECK_VERSION>1.14.0</DEPENDENCY_SCALA_CHECK_VERSION>
         <DEPENDENCY_SCALA_VERSION>2.12.8</DEPENDENCY_SCALA_VERSION>
@@ -46,6 +47,11 @@
             <artifactId>scalacheck_2.12</artifactId>
             <version>${DEPENDENCY_SCALA_CHECK_VERSION}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${JACKSON-VERSION}</version>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>

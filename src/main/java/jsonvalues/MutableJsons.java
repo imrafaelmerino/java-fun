@@ -1,18 +1,22 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 
+import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.JsParser.Event.*;
 
 /**
  Factory to create mutable jsons. New factories can be created with different map and seq implementations using
@@ -39,10 +43,11 @@ public class MutableJsons
      */
     public Try parse(String str)
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+
+        try (final JsonParser parser = Jsons.factory.createParser(str))
         {
 
-            final JsParser.Event event = parser.next();
+            final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
                 final MutableSeq vector = this.array.emptySeq();
@@ -62,10 +67,10 @@ public class MutableJsons
             ));
         }
 
-        catch (MalformedJson e)
+        catch (IOException e)
         {
 
-            return new Try(e);
+            return new Try(new MalformedJson(e.getMessage()));
 
         }
 
@@ -82,9 +87,9 @@ public class MutableJsons
                      ParseBuilder builder
                     )
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
         {
-            final JsParser.Event event = parser.next();
+            final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
                 final MutableSeq vector = this.array.emptySeq();
@@ -107,53 +112,56 @@ public class MutableJsons
                                             this
             ));
         }
-
-        catch (MalformedJson e)
+        catch (IOException e)
         {
-
-            return new Try(e);
+            return new Try(new MalformedJson(e.getMessage()));
 
         }
     }
 
 
-    private void parse(final MutableMap root,
-                       final JsParser parser
-                      ) throws MalformedJson
+    void parse(final MutableMap root,
+               final JsonParser parser
+              ) throws IOException
     {
-        while (parser.next() != END_OBJECT)
+        while (parser.nextToken() != JsonToken.END_OBJECT)
         {
-            final String key = parser.getString();
-            JsParser.Event elem = parser.next();
+            final String key = parser.currentName();
+            JsonToken elem = parser.nextToken();
             assert elem != null;
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
+                case 6:
                     root.update(key,
-                                parser.getJsString()
+                                JsStr.of(parser.getValueAsString())
                                );
                     break;
-                case 1:
+                case 7:
                     root.update(key,
-                                parser.getJsNumber()
+                                JsBigInt.of(parser.getBigIntegerValue())
                                );
                     break;
-                case 2:
+                case 8:
+                    root.update(key,
+                                JsBigDec.of(parser.getDecimalValue())
+                               );
+                    break;
+                case 10:
                     root.update(key,
                                 FALSE
                                );
                     break;
-                case 3:
+                case 9:
                     root.update(key,
                                 TRUE
                                );
                     break;
-                case 4:
+                case 11:
                     root.update(key,
                                 NULL
                                );
                     break;
-                case 5:
+                case 1:
                     final MutableMap obj = this.object.emptyMap();
                     parse(obj,
                           parser
@@ -164,7 +172,7 @@ public class MutableJsons
                                 )
                                );
                     break;
-                case 6:
+                case 3:
                     final MutableSeq arr = this.array.emptySeq();
                     parse(arr,
                           parser
@@ -185,24 +193,24 @@ public class MutableJsons
         }
     }
 
-    private void parse(final MutableMap root,
-                       final JsParser parser,
-                       final ParseBuilder.Options options,
-                       final JsPath path
-                      ) throws MalformedJson
+    void parse(final MutableMap root,
+               final JsonParser parser,
+               final ParseBuilder.Options options,
+               final JsPath path
+              ) throws IOException
     {
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while (parser.next() != END_OBJECT)
+        while (parser.nextToken() != JsonToken.END_OBJECT)
         {
-            final String key = options.keyMap.apply(parser.getString());
+            final String key = options.keyMap.apply(parser.currentName());
             final JsPath currentPath = path.key(key);
-            JsParser.Event elem = parser.next();
+            JsonToken elem = parser.nextToken();
             assert elem != null;
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
+                case 6:
                     JsPair.of(currentPath,
-                              parser.getJsString()
+                              JsStr.of(parser.getValueAsString())
                              )
                           .consumeIf(condition,
                                      p -> root.update(key,
@@ -211,9 +219,9 @@ public class MutableJsons
                                     );
 
                     break;
-                case 1:
+                case 7:
                     JsPair.of(currentPath,
-                              parser.getJsNumber()
+                              JsBigInt.of(parser.getBigIntegerValue())
                              )
                           .consumeIf(condition,
                                      p -> root.update(key,
@@ -222,7 +230,18 @@ public class MutableJsons
                                     );
 
                     break;
-                case 2:
+                case 8:
+                    JsPair.of(currentPath,
+                              JsBigDec.of(parser.getDecimalValue())
+                             )
+                          .consumeIf(condition,
+                                     p -> root.update(key,
+                                                      options.elemMap.apply(p)
+                                                     )
+                                    );
+
+                    break;
+                case 10:
                     JsPair.of(currentPath,
                               FALSE
                              )
@@ -234,7 +253,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case 3:
+                case 9:
                     JsPair.of(currentPath,
                               TRUE
                              )
@@ -246,7 +265,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case 4:
+                case 11:
                     JsPair.of(currentPath,
                               NULL
                              )
@@ -258,7 +277,7 @@ public class MutableJsons
                                     );
 
                     break;
-                case 5:
+                case 1:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableMap obj = this.object.emptyMap();
@@ -274,7 +293,7 @@ public class MutableJsons
                                    );
                     }
                     break;
-                case 6:
+                case 3:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableSeq arr = this.array.emptySeq();
@@ -301,32 +320,35 @@ public class MutableJsons
 
     }
 
-    private void parse(final MutableSeq root,
-                       final JsParser parser
-                      ) throws MalformedJson
+     void parse(final MutableSeq root,
+                       final JsonParser parser
+                      ) throws IOException
     {
-        JsParser.Event elem;
-        while ((elem = parser.next()) != END_ARRAY)
+        JsonToken elem;
+        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
         {
             assert elem != null;
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
-                    root.appendBack(parser.getJsString());
+                case 6:
+                    root.appendBack(JsStr.of(parser.getValueAsString()));
                     break;
-                case 1:
-                    root.appendBack(parser.getJsNumber());
+                case 7:
+                    root.appendBack(JsBigInt.of(parser.getBigIntegerValue()));
                     break;
-                case 2:
+                case 8:
+                    root.appendBack(JsBigDec.of(parser.getDecimalValue()));
+                    break;
+                case 10:
                     root.appendBack(FALSE);
                     break;
-                case 3:
+                case 9:
                     root.appendBack(TRUE);
                     break;
-                case 4:
+                case 11:
                     root.appendBack(NULL);
                     break;
-                case 5:
+                case 1:
                     final MutableMap obj = this.object.emptyMap();
                     parse(obj,
                           parser
@@ -335,7 +357,7 @@ public class MutableJsons
                                                      this
                     ));
                     break;
-                case 6:
+                case 3:
                     final MutableSeq arr = this.array.emptySeq();
                     parse(arr,
                           parser
@@ -351,38 +373,46 @@ public class MutableJsons
         }
     }
 
-    private void parse(final MutableSeq root,
-                       final JsParser parser,
+     void parse(final MutableSeq root,
+                       final JsonParser parser,
                        final ParseBuilder.Options options,
                        final JsPath path
-                      ) throws MalformedJson
+                      ) throws IOException
     {
-        JsParser.Event elem;
+        JsonToken elem;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while ((elem = parser.next()) != END_ARRAY)
+        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
         {
             assert elem != null;
             final JsPath currentPath = path.inc();
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
+                case 6:
                     JsPair.of(currentPath,
-                              parser.getJsString()
+                              JsStr.of(parser.getValueAsString())
                              )
                           .consumeIf(condition,
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     )
                     ;
                     break;
-                case 1:
+                case 7:
                     JsPair.of(currentPath,
-                              parser.getJsNumber()
+                              JsBigInt.of(parser.getBigIntegerValue())
                              )
                           .consumeIf(condition,
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     );
                     break;
-                case 2:
+                case 8:
+                    JsPair.of(currentPath,
+                              JsBigDec.of(parser.getDecimalValue())
+                             )
+                          .consumeIf(condition,
+                                     p -> root.appendBack(options.elemMap.apply(p))
+                                    );
+                    break;
+                case 10:
                     JsPair.of(currentPath,
                               FALSE
                              )
@@ -391,7 +421,7 @@ public class MutableJsons
                                     )
                     ;
                     break;
-                case 3:
+                case 9:
                     JsPair.of(currentPath,
                               TRUE
                              )
@@ -399,7 +429,7 @@ public class MutableJsons
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     );
                     break;
-                case 4:
+                case 11:
                     JsPair.of(currentPath,
                               NULL
                              )
@@ -407,7 +437,7 @@ public class MutableJsons
                                      p -> root.appendBack(options.elemMap.apply(p))
                                     );
                     break;
-                case 5:
+                case 1:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableMap obj = this.object.emptyMap();
@@ -422,7 +452,7 @@ public class MutableJsons
                     }
                     break;
 
-                case 6:
+                case 3:
                     if (options.keyFilter.test(currentPath))
                     {
                         final MutableSeq arr = this.array.emptySeq();
@@ -532,9 +562,9 @@ public class MutableJsons
          */
         public TryArr parse(final String str)
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 MutableSeq seq = emptySeq();
                 MutableJsons.this.parse(seq,
@@ -545,10 +575,10 @@ public class MutableJsons
                 ));
             }
 
-            catch (MalformedJson e)
+            catch (IOException e)
             {
 
-                return new TryArr(e);
+                return new TryArr(new MalformedJson(e.getMessage()));
             }
 
         }
@@ -564,9 +594,9 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 MutableSeq seq = emptySeq();
                 MutableJsons.this.parse(seq,
@@ -579,10 +609,10 @@ public class MutableJsons
                 ));
             }
 
-            catch (MalformedJson e)
+            catch (IOException e)
             {
 
-                return new TryArr(e);
+                return new TryArr(new MalformedJson(e.getMessage()));
             }
 
         }
@@ -691,7 +721,7 @@ public class MutableJsons
          @return an mutable five-element JsArray
          @throws UserError if an elem is a immutable Json
          */
-        //squid:S00107: 5 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -720,7 +750,7 @@ public class MutableJsons
          @return an mutable JsArray
          @throws UserError if an elem is an immutable Json
          */
-        //squid:S00107: 6 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -975,9 +1005,9 @@ public class MutableJsons
          */
         public TryObj parse(final String str)
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
                 final MutableMap obj = emptyMap();
                 MutableJsons.this.parse(obj,
@@ -987,9 +1017,9 @@ public class MutableJsons
                                                    MutableJsons.this
                 ));
             }
-            catch (MalformedJson e)
+            catch (IOException e)
             {
-                return new TryObj(e);
+                return new TryObj(new MalformedJson(e.getMessage()));
             }
         }
 
@@ -1005,9 +1035,9 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
                 final MutableMap obj = emptyMap();
                 MutableJsons.this.parse(obj,
@@ -1019,9 +1049,9 @@ public class MutableJsons
                                                    MutableJsons.this
                 ));
             }
-            catch (MalformedJson e)
+            catch (IOException e)
             {
-                return new TryObj(e);
+                return new TryObj(new MalformedJson(e.getMessage()));
             }
         }
 
@@ -1080,7 +1110,7 @@ public class MutableJsons
          @return an mutable three-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        //squid:S00107: 6 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1114,7 +1144,7 @@ public class MutableJsons
          @return an mutable four-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        //squid:S00107: 8 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1155,7 +1185,7 @@ public class MutableJsons
          @return an mutable five-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        //squid:S00107: 10 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1202,7 +1232,7 @@ public class MutableJsons
          @return an mutable six-element JsObj
          @throws UserError if an elem is an immutable Json
          */
-        //squid:S00107: 12 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,

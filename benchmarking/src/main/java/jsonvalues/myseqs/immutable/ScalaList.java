@@ -37,7 +37,7 @@ public class ScalaList implements ImmutableSeq
         }
 
         @Override
-        public Builder<JsElem, List<JsElem>> apply(final Seq<JsElem> jsElemSeq)
+        public Builder<JsElem, List<JsElem>> apply(final Seq<JsElem> e)
         {
             return List.<JsElem>canBuildFrom().apply();
         }
@@ -74,6 +74,7 @@ public class ScalaList implements ImmutableSeq
     @Override
     public ImmutableSeq tail()
     {
+        @SuppressWarnings("unchecked")// list is a (List<JsElem>) and so does tail
         final List<JsElem> tail = (List<JsElem>) list.tail();
         return new ScalaList(tail);
     }
@@ -81,6 +82,7 @@ public class ScalaList implements ImmutableSeq
     @Override
     public ImmutableSeq init()
     {
+        @SuppressWarnings("unchecked")// list is a (List<JsElem>) and so does tail
         final List<JsElem> init = (List<JsElem>) list.init();
         return new ScalaList(init);
     }
@@ -95,7 +97,12 @@ public class ScalaList implements ImmutableSeq
     public JsElem get(final int i)
     {
         List<JsElem> l = list;
-        for (int j = i; j > 0; j--) l = (List<JsElem>) l.tail();
+        for (int j = i; j > 0; j--)
+        {
+            @SuppressWarnings("unchecked")// list is a (List<JsElem>) and so does tail
+            final List<JsElem> tail = (List<JsElem>) l.tail();
+            l = tail;
+        }
         return l.head();
     }
 
@@ -139,6 +146,7 @@ public class ScalaList implements ImmutableSeq
     {
         if (i == 0)
         {
+            @SuppressWarnings("unchecked")// list is a (List<JsElem>) and so does tail
             final List<JsElem> xs = (List<JsElem>) list.tail();
             return new ScalaList(xs.<JsElem>$colon$colon(e));
         }
@@ -167,7 +175,12 @@ public class ScalaList implements ImmutableSeq
     @Override
     public ImmutableSeq remove(final int i)
     {
-        if (i == 0) return new ScalaList((List<JsElem>) list.tail());
+        if (i == 0)
+        {
+            @SuppressWarnings("unchecked")// list is a (List<JsElem>) and so does tail
+            final List<JsElem> tail = (List<JsElem>) list.tail();
+            return new ScalaList(tail);
+        }
         final List<JsElem> xs = list.take(i);
         final List<JsElem> ys = list.drop(i + 1);
         final List<JsElem> zs = xs.$plus$plus(ys,

@@ -1,4 +1,4 @@
-# JMH version: 1.21
+::q!# JMH version: 1.21
 # VM version: JDK 1.8.0_202, OpenJDK 64-Bit Server VM, 25.202-b05
 # VM invoker: /Users/rmerino/.sdkman/candidates/java/8.0.202-zulu/jre/bin/java
 # VM options: -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-mutable-java_hash_map-100.log

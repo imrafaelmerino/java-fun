@@ -1,0 +1,93 @@
+# JMH version: 1.21
+# VM version: JDK 1.8.0_202, OpenJDK 64-Bit Server VM, 25.202-b05
+# VM invoker: /Users/rmerino/.sdkman/candidates/java/8.0.202-zulu/jre/bin/java
+# VM options: -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-mutable-jackson-object-100.log
+# Warmup: 5 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: jsonvalues.benchmark.mutable.parsing.StringToJsObj_100.jackson
+
+# Run progress: 0,00% complete, ETA 00:08:20
+# Fork: 1 of 5
+# Warmup Iteration   1: 287981,603 ops/s
+# Warmup Iteration   2: 299657,970 ops/s
+# Warmup Iteration   3: 300061,017 ops/s
+# Warmup Iteration   4: 299543,818 ops/s
+# Warmup Iteration   5: 299861,619 ops/s
+Iteration   1: 299756,211 ops/s
+Iteration   2: 289537,368 ops/s
+Iteration   3: 293689,730 ops/s
+Iteration   4: 299404,894 ops/s
+Iteration   5: 297984,254 ops/s
+
+# Run progress: 20,00% complete, ETA 00:06:41
+# Fork: 2 of 5
+# Warmup Iteration   1: 290966,332 ops/s
+# Warmup Iteration   2: 312615,221 ops/s
+# Warmup Iteration   3: 311025,776 ops/s
+# Warmup Iteration   4: 300959,049 ops/s
+# Warmup Iteration   5: 301156,321 ops/s
+Iteration   1: 309340,292 ops/s
+Iteration   2: 309024,195 ops/s
+Iteration   3: 309978,601 ops/s
+Iteration   4: 310361,887 ops/s
+Iteration   5: 308195,948 ops/s
+
+# Run progress: 40,00% complete, ETA 00:05:01
+# Fork: 3 of 5
+# Warmup Iteration   1: 288540,986 ops/s
+# Warmup Iteration   2: 293017,353 ops/s
+# Warmup Iteration   3: 295326,349 ops/s
+# Warmup Iteration   4: 300198,986 ops/s
+# Warmup Iteration   5: 231626,911 ops/s
+Iteration   1: 294023,026 ops/s
+Iteration   2: 299149,953 ops/s
+Iteration   3: 299015,050 ops/s
+Iteration   4: 298053,933 ops/s
+Iteration   5: 286516,586 ops/s
+
+# Run progress: 60,00% complete, ETA 00:03:20
+# Fork: 4 of 5
+# Warmup Iteration   1: 287756,143 ops/s
+# Warmup Iteration   2: 297022,977 ops/s
+# Warmup Iteration   3: 300927,806 ops/s
+# Warmup Iteration   4: 302323,057 ops/s
+# Warmup Iteration   5: 257619,660 ops/s
+Iteration   1: 209010,738 ops/s
+Iteration   2: 257186,786 ops/s
+Iteration   3: 274046,957 ops/s
+Iteration   4: 269879,022 ops/s
+Iteration   5: 271670,066 ops/s
+
+# Run progress: 80,00% complete, ETA 00:01:40
+# Fork: 5 of 5
+# Warmup Iteration   1: 272463,693 ops/s
+# Warmup Iteration   2: 285006,397 ops/s
+# Warmup Iteration   3: 286034,027 ops/s
+# Warmup Iteration   4: 274057,162 ops/s
+# Warmup Iteration   5: 275844,953 ops/s
+Iteration   1: 296854,002 ops/s
+Iteration   2: 265993,248 ops/s
+Iteration   3: 286415,755 ops/s
+Iteration   4: 277308,384 ops/s
+Iteration   5: 302505,357 ops/s
+
+
+Result "jsonvalues.benchmark.mutable.parsing.StringToJsObj_100.jackson":
+  288596,090 ±(99.9%) 16705,096 ops/s [Average]
+  (min, avg, max) = (209010,738, 288596,090, 310361,887), stdev = 22300,825
+  CI (99.9%): [271890,994, 305301,185] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:08:21
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+Benchmark                   Mode  Cnt       Score       Error  Units
+StringToJsObj_100.jackson  thrpt   25  288596,090 ± 16705,096  ops/s

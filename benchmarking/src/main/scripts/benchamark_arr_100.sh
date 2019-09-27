@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 java -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-immutable-scala_vector-100.log \
--jar microbenchmarks.jar -o jmh-logimmutable-scala_vector-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.scala_vector
+-jar microbenchmarks.jar -o jmh-log-immutable-scala_vector-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.scala_vector
 
 java -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-immutable-scala_list-100.log \
--jar microbenchmarks.jar -o jmh-logimmutable-scala_list-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.scala_list
+-jar microbenchmarks.jar -o jmh-log-immutable-scala_list-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.scala_list
 
 java -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-immutable-clojure_vector-100.log \
 -jar microbenchmarks.jar -o jmh-log-immutable-clojure_vector-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.clojure_vector
 
 java -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-immutable-clojure_set-100.log \
--jar microbenchmarks.jar -o jmh-logimmutable-clojure_set-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.clojure_set
+-jar microbenchmarks.jar -o jmh-log-immutable-clojure_set-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.clojure_set
 
 java -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-immutable-vavr_vector-100.log \
 -jar microbenchmarks.jar -o jmh-log-immutable-clojure-vavr_vector-100.txt jsonvalues\.benchmark\.immutable\.parsing\.StringToJsArray_100\.vavr_vector

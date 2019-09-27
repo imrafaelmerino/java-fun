@@ -38,12 +38,9 @@ abstract class ClojureMap implements ImmutableMap
     @Override
     public Set<String> keys()
     {
-        Set<String> xs = new HashSet<>();
-        final Iterator iterator = ((APersistentMap.KeySeq) keys.invoke(map)).iterator();
-        while (iterator.hasNext())
-        {
-            xs.add((String) iterator.next());
-        }
+        final APersistentMap.KeySeq ks = (APersistentMap.KeySeq) keys.invoke(this.map);
+        @SuppressWarnings("unchecked")
+        Set<String> xs = new HashSet<>(ks);
         return xs;
 
     }
@@ -69,7 +66,9 @@ abstract class ClojureMap implements ImmutableMap
     @Override
     public Map.Entry<String, JsElem> head()
     {
-        return (Map.Entry<String, JsElem>) first.invoke(map);
+        @SuppressWarnings("unchecked")// list is a (List<JsElem>) and so does tail
+        final Map.Entry<String, JsElem> map = (Map.Entry<String, JsElem>) first.invoke(this.map);
+        return map;
     }
 
     @Override
@@ -81,7 +80,9 @@ abstract class ClojureMap implements ImmutableMap
     @Override
     public Iterator<Map.Entry<String, JsElem>> iterator()
     {
-        return map.iterator();
+        @SuppressWarnings("unchecked")
+        final Iterator<Map.Entry<String, JsElem>> iterator = map.iterator();
+        return iterator;
     }
 
     @Override

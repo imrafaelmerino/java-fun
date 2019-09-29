@@ -1,67 +1,48 @@
-<!--
-Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
-DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
-
-This code is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License version 2 only, as
-published by the Free Software Foundation.  Oracle designates this
-particular file as subject to the "Classpath" exception as provided
-by Oracle in the LICENSE file that accompanied this code.
-
-This code is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-version 2 for more details (a copy is included in the LICENSE file that
-accompanied this code).
-
-You should have received a copy of the GNU General Public License version
-2 along with this work; if not, write to the Free Software Foundation,
-Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
-
-Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
-or visit www.oracle.com if you need additional information or have any
-questions.
--->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values-benchmark</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-
     <name>json-values-benchmark</name>
     <properties>
         <ECLIPSE-COLLECTIONS.VERSION>10.0.0</ECLIPSE-COLLECTIONS.VERSION>
         <PCOLLECTIONS.VERSION>3.1.0</PCOLLECTIONS.VERSION>
         <VAVR.VERSION>0.9.3</VAVR.VERSION>
-        <JSON-VALUES.VERSION>3.1.1</JSON-VALUES.VERSION>
+        <JSON-VALUES.VERSION>3.2.0</JSON-VALUES.VERSION>
         <CLOJURE.VERSION>1.10.1</CLOJURE.VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+        <JMH-VERSION>1.21</JMH-VERSION>
+        <JUNIT-VERSION>5.5.2</JUNIT-VERSION>
+        <JAVAX-ANNOTATION-VERSION>1.3.2</JAVAX-ANNOTATION-VERSION>
+        <COMPILER_SOURCE_VERSION>1.8</COMPILER_SOURCE_VERSION>
+        <COMPILER_TARGET_VERSION>1.8</COMPILER_TARGET_VERSION>
+        <PLUGIN_COMPILER_VERSION>3.8.0</PLUGIN_COMPILER_VERSION>
+        <JACKSON-VERSION>2.9.10</JACKSON-VERSION>
+        <DEPENDENCY_SCALA_VERSION>2.12.8</DEPENDENCY_SCALA_VERSION>
 
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.21</version>
+            <version>${JMH-VERSION}</version>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.21</version>
+            <version>${JMH-VERSION}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.8</version>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${DEPENDENCY_SCALA_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
+            <version>${JAVAX-ANNOTATION-VERSION}</version>
         </dependency>
         <dependency>
             <groupId>com.github.imrafaelmerino</groupId>
@@ -92,8 +73,25 @@ questions.
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.5.2</version>
+            <version>${JUNIT-VERSION}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>2.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>jdk8</artifactId>
+            <version>2.8.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${JACKSON-VERSION}</version>
         </dependency>
     </dependencies>
 
@@ -111,16 +109,21 @@ questions.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>${PLUGIN_COMPILER_VERSION}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <source>${COMPILER_SOURCE_VERSION}</source>
+                    <target>${COMPILER_TARGET_VERSION}</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -128,7 +131,7 @@ questions.
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>microbenchmarks</finalName>
+                            <finalName>json-values-benchmark</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.openjdk.jmh.Main</mainClass>
@@ -145,6 +148,7 @@ questions.
                                     </excludes>
                                 </filter>
                             </filters>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                         </configuration>
                     </execution>
                 </executions>

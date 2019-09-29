@@ -2,6 +2,7 @@ package jsonvalues.mymaps.immutable;
 
 import jsonvalues.ImmutableMap;
 import jsonvalues.JsElem;
+
 import scala.Tuple2;
 import scala.collection.Iterator;
 import scala.collection.JavaConverters;
@@ -48,23 +49,23 @@ public class ScalaTreeMap implements ImmutableMap
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
     public ScalaTreeMap remove(final String key)
     {
-        return new ScalaTreeMap(((TreeMap<String, JsElem>) map).$minus(key));
+        return new ScalaTreeMap(map.$minus(key));
     }
 
     public ScalaTreeMap update(final String key,
                                final JsElem e
                               )
     {
-        return new ScalaTreeMap((TreeMap<String, JsElem>) (map).updated(key,
-                                                                        e
-                                                                       ));
+        return new ScalaTreeMap(map.updated(key,
+                                            e
+                                           ));
     }
 
     @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
     public ScalaTreeMap tail(String head)
     {
         if (this.isEmpty()) throw new UnsupportedOperationException("tail of empty");
-        return new ScalaTreeMap(((TreeMap<String, JsElem>) this.map).$minus(head));
+        return new ScalaTreeMap(this.map.$minus(head));
     }
 
     public boolean contains(final String key)

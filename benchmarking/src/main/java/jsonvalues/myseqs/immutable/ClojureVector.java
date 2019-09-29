@@ -13,30 +13,30 @@ import static jsonvalues.ClojureFns.*;
 public class ClojureVector implements ImmutableSeq
 {
 
-    private final IPersistentVector list;
+    private final IPersistentVector vector;
 
-    private ClojureVector(final IPersistentVector list)
+    private ClojureVector(final IPersistentVector vector)
     {
-        this.list = list;
+        this.vector = vector;
     }
 
     public ClojureVector()
     {
-        this.list = PersistentVector.EMPTY;
+        this.vector = PersistentVector.EMPTY;
     }
 
     @Override
     public ImmutableSeq appendFront(final JsElem e)
     {
         return new ClojureVector((IPersistentVector) vec.invoke(cons.invoke(e,
-                                                                            list
+                                                                            vector
                                                                            )));
     }
 
     @Override
     public ImmutableSeq appendBack(final JsElem e)
     {
-        return new ClojureVector((IPersistentVector) conj.invoke(list,
+        return new ClojureVector((IPersistentVector) conj.invoke(vector,
                                                                  e
                                                                 ));
     }
@@ -44,27 +44,27 @@ public class ClojureVector implements ImmutableSeq
     @Override
     public JsElem head()
     {
-        return (JsElem) list.seq()
-                            .first();
+        return (JsElem) vector.seq()
+                              .first();
     }
 
 
     @Override
     public ImmutableSeq init()
     {
-        return new ClojureVector((IPersistentVector) butlast.invoke(list));
+        return new ClojureVector((IPersistentVector) butlast.invoke(vector));
     }
 
     @Override
     public JsElem last()
     {
-        return (JsElem) last.invoke(list);
+        return (JsElem) last.invoke(vector);
     }
 
     @Override
     public JsElem get(final int i)
     {
-        return (JsElem) nth.invoke(list,
+        return (JsElem) nth.invoke(vector,
                                    i
                                   );
     }
@@ -72,14 +72,14 @@ public class ClojureVector implements ImmutableSeq
     @Override
     public int size()
     {
-        return list.seq()
-                   .count();
+        return vector.seq()
+                     .count();
     }
 
     @Override
     public boolean isEmpty()
     {
-        return (boolean) isEmpty.invoke(list);
+        return (boolean) isEmpty.invoke(vector);
 
     }
 
@@ -114,7 +114,7 @@ public class ClojureVector implements ImmutableSeq
     @Override
     public String toString()
     {
-        return list.toString();
+        return vector.toString();
     }
 
 
@@ -122,13 +122,15 @@ public class ClojureVector implements ImmutableSeq
     public Iterator<JsElem> iterator()
     {
         if (isEmpty()) return Collections.emptyIterator();
-        return ((PersistentVector) list).iterator();
+        @SuppressWarnings("unchecked")// list is a PersistentVector
+        final Iterator<JsElem> iterator = ((PersistentVector) vector).iterator();
+        return iterator;
     }
 
     @Override
     public ImmutableSeq tail()
     {
-        return new ClojureVector((PersistentVector) vec.invoke(rest.invoke(list)));
+        return new ClojureVector((PersistentVector) vec.invoke(rest.invoke(vector)));
     }
 
     @Override
@@ -137,19 +139,19 @@ public class ClojureVector implements ImmutableSeq
                            )
     {
         if (i == 0) return new ClojureVector((IPersistentVector) vec.invoke(cons.invoke(e,
-                                                                                        list
+                                                                                        vector
                                                                                        )));
 
-        if (i == list.count()) return new ClojureVector((IPersistentVector) (conj.invoke(list,
-                                                                                         e
-                                                                                        )));
+        if (i == vector.count()) return new ClojureVector((IPersistentVector) (conj.invoke(vector,
+                                                                                           e
+                                                                                          )));
 
-        final IPersistentVector xs = (IPersistentVector) subvec.invoke(list,
+        final IPersistentVector xs = (IPersistentVector) subvec.invoke(vector,
                                                                        0,
                                                                        i
                                                                       );
 
-        final IPersistentVector ys = (IPersistentVector) subvec.invoke(list,
+        final IPersistentVector ys = (IPersistentVector) subvec.invoke(vector,
                                                                        i
                                                                       );
 
@@ -163,11 +165,11 @@ public class ClojureVector implements ImmutableSeq
     {
         if (i == 0) return tail();
 
-        final IPersistentVector xs = (IPersistentVector) subvec.invoke(list,
+        final IPersistentVector xs = (IPersistentVector) subvec.invoke(vector,
                                                                        0,
                                                                        i
                                                                       );
-        final IPersistentVector ys = (IPersistentVector) subvec.invoke(list,
+        final IPersistentVector ys = (IPersistentVector) subvec.invoke(vector,
                                                                        i + 1
                                                                       );
         return new ClojureVector((IPersistentVector) vec.invoke(concat.invoke(xs,
@@ -180,7 +182,7 @@ public class ClojureVector implements ImmutableSeq
                                final JsElem e
                               )
     {
-        return new ClojureVector((IPersistentVector) assoc.invoke(list,
+        return new ClojureVector((IPersistentVector) assoc.invoke(vector,
                                                                   i,
                                                                   e
                                                                  ));

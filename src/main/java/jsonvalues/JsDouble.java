@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNull;
 /**
  Represents an immutable json number of type double.
  */
-public final class JsDouble implements JsNumber, Comparable<JsDouble>
+public final class JsDouble extends JsNumber implements Comparable<JsDouble>
 {
 
     /**

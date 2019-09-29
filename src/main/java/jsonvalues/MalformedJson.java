@@ -1,7 +1,5 @@
 package jsonvalues;
 
-import java.text.MessageFormat;
-
 /**
  Exception returned when a string can not be parsed into a Json or the json parsed has a different
  type than the expected.
@@ -9,7 +7,7 @@ import java.text.MessageFormat;
 public final class MalformedJson extends Exception
 {
 
-    private MalformedJson(final String message)
+     MalformedJson(final String message)
     {
         super(message);
     }
@@ -29,64 +27,6 @@ public final class MalformedJson extends Exception
         return new MalformedJson(String.format("Expected a json object {...}. Received: %s",
                                                str
                                               ));
-    }
-
-    static MalformedJson invalidToken(JsTokenizer.Token token,
-                                      JsCharLocation location,
-                                      String expectedTokens
-                                     )
-    {
-
-        return new MalformedJson(MessageFormat.format("Invalid token={0} at {1}. Expected tokens are: {2}",
-                                                      token,
-                                                      location,
-                                                      expectedTokens
-                                                     )
-        );
-    }
-
-
-    static MalformedJson unexpectedChar(int unexpected,
-                                        JsCharLocation location
-                                       )
-    {
-
-
-        return new MalformedJson(MessageFormat.format("Unexpected char {0} at {1}",
-                                                      unexpected,
-                                                      location
-                                                     )
-        );
-    }
-
-    static MalformedJson expectedChar(int unexpected,
-                                      JsCharLocation location,
-                                      char expected
-                                     )
-    {
-
-        return new MalformedJson(MessageFormat.format("Unexpected char {0} at {1}, expecting ''{2}''",
-                                                      String.valueOf(unexpected),
-                                                      location,
-                                                      expected
-                                                     )
-        );
-    }
-
-    static MalformedJson expectedChar(int unexpected,
-                                      JsCharLocation location,
-                                      char expected,
-                                      char expected1
-                                     )
-    {
-
-        return new MalformedJson(MessageFormat.format("Unexpected char {0} at {1}, expecting ''{2}'' or ''{3}''",
-                                                      String.valueOf(unexpected),
-                                                      location,
-                                                      expected,
-                                                      expected1
-                                                     )
-        );
     }
 
 }

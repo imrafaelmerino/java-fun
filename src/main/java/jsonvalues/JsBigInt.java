@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
 /**
  Represents an immutable json number of type BigInteger.
  */
-public final class JsBigInt implements JsNumber, Comparable<JsBigInt>
+public final class JsBigInt extends JsNumber implements Comparable<JsBigInt>
 {
     /**
      the big integer value.

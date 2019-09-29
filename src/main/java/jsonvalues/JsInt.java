@@ -10,7 +10,7 @@ import static java.util.Objects.requireNonNull;
 /**
  Represents an immutable json number of type integer.
  */
-public final class JsInt implements JsNumber, Comparable<JsInt>
+public final class JsInt extends JsNumber implements Comparable<JsInt>
 {
 
 

@@ -1,18 +1,21 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static jsonvalues.JsParser.Event.*;
 
 /**
  Factory to create immutable jsons. New factories can be created with different map and seq implementations using
@@ -20,8 +23,6 @@ import static jsonvalues.JsParser.Event.*;
  */
 public final class ImmutableJsons
 {
-
-
     /**
      converts the given json using this factory to an immutable one, if it's not immutable, returning the same instance otherwise.
      @param json the given json
@@ -41,10 +42,10 @@ public final class ImmutableJsons
      */
     public Try parse(String str)
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
         {
 
-            final JsParser.Event event = parser.next();
+            final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
                 return new Try(new ImmutableJsArray(parse(array.emptySeq,
@@ -61,10 +62,10 @@ public final class ImmutableJsons
             );
         }
 
-        catch (MalformedJson e)
+        catch (IOException e)
         {
 
-            return new Try(e);
+            return new Try(new MalformedJson(e.getMessage()));
 
         }
 
@@ -81,10 +82,10 @@ public final class ImmutableJsons
                      ParseBuilder builder
                     )
     {
-        try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+        try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
         {
 
-            final JsParser.Event event = parser.next();
+            final JsonToken event = parser.nextToken();
             if (event == START_ARRAY) return new Try(new ImmutableJsArray(parse(array.emptySeq,
                                                                                 parser,
                                                                                 builder.create(),
@@ -106,42 +107,27 @@ public final class ImmutableJsons
             );
         }
 
-        catch (MalformedJson e)
+        catch (IOException e)
         {
 
-            return new Try(e);
+            return new Try(new MalformedJson(e.getMessage()));
 
         }
 
 
     }
 
-    private ImmutableSeq parse(final ImmutableSeq root,
-                               final JsParser parser
-                              ) throws MalformedJson
+    ImmutableSeq parse(final ImmutableSeq root,
+                       final JsonParser parser
+                      ) throws IOException
     {
-        JsParser.Event elem;
+        JsonToken elem;
         ImmutableSeq newRoot = root;
-        while ((elem = parser.next()) != END_ARRAY)
+        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
         {
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
-                    newRoot = newRoot.appendBack(parser.getJsString());
-                    break;
                 case 1:
-                    newRoot = newRoot.appendBack(parser.getJsNumber());
-                    break;
-                case 2:
-                    newRoot = newRoot.appendBack(FALSE);
-                    break;
-                case 3:
-                    newRoot = newRoot.appendBack(TRUE);
-                    break;
-                case 4:
-                    newRoot = newRoot.appendBack(NULL);
-                    break;
-                case 5:
                     final ImmutableMap newObj = parse(this.object.emptyMap,
                                                       parser
                                                      );
@@ -149,7 +135,7 @@ public final class ImmutableJsons
                                                                     this
                     ));
                     break;
-                case 6:
+                case 3:
                     final ImmutableSeq newSeq = parse(this.array.emptySeq,
                                                       parser
                                                      );
@@ -157,57 +143,74 @@ public final class ImmutableJsons
                                                                       this
                     ));
                     break;
+                case 6:
+                    newRoot = newRoot.appendBack(JsStr.of(parser.getValueAsString()));
+                    break;
+                case 7:
+                    newRoot = newRoot.appendBack(JsNumber.of(parser));
+                    break;
+                case 8:
+                    newRoot = newRoot.appendBack(JsBigDec.of(parser.getDecimalValue()));
+                    break;
+                case 9:
+                    newRoot = newRoot.appendBack(TRUE);
+                    break;
+                case 10:
+                    newRoot = newRoot.appendBack(FALSE);
+                    break;
+                case 11:
+                    newRoot = newRoot.appendBack(NULL);
+                    break;
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
             }
         }
         return newRoot;
-
     }
 
-    private ImmutableMap parse(final ImmutableMap root,
-                               final JsParser parser,
-                               final ParseBuilder.Options options,
-                               final JsPath path
-                              ) throws MalformedJson
+    ImmutableMap parse(final ImmutableMap root,
+                       final JsonParser parser,
+                       final ParseBuilder.Options options,
+                       final JsPath path
+                      ) throws IOException
     {
 
         ImmutableMap newRoot = root;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while (parser.next() != END_OBJECT)
+        while (parser.nextToken() != JsonToken.END_OBJECT)
         {
-            final String key = options.keyMap.apply(parser.getString());
+            final String key = options.keyMap.apply(parser.getCurrentName());
             final JsPath currentPath = path.key(key);
-            JsParser.Event elem = parser.next();
+            final JsonToken elem = parser.nextToken();
             final JsPair pair;
             assert elem != null;
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
+                case 6:
                     pair = JsPair.of(currentPath,
-                                     parser.getJsString()
+                                     JsStr.of(parser.getValueAsString())
                                     );
                     newRoot = (condition.test(pair)) ? newRoot.update(key,
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-                case 1:
+                case 7:
                     pair = JsPair.of(currentPath,
-                                     parser.getJsNumber()
+                                     JsNumber.of(parser)
                                     );
                     newRoot = (condition.test(pair)) ? newRoot.update(key,
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-                case 2:
+                case 8:
                     pair = JsPair.of(currentPath,
-                                     FALSE
+                                     JsBigDec.of(parser.getDecimalValue())
                                     );
                     newRoot = (condition.test(pair)) ? newRoot.update(key,
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-                case 3:
+                case 9:
                     pair = JsPair.of(currentPath,
                                      TRUE
                                     );
@@ -215,8 +218,15 @@ public final class ImmutableJsons
                                                                       options.elemMap.apply(pair)
                                                                      ) : newRoot;
                     break;
-
-                case 4:
+                case 10:
+                    pair = JsPair.of(currentPath,
+                                     FALSE
+                                    );
+                    newRoot = (condition.test(pair)) ? newRoot.update(key,
+                                                                      options.elemMap.apply(pair)
+                                                                     ) : newRoot;
+                    break;
+                case 11:
                     pair = JsPair.of(currentPath,
                                      NULL
                                     );
@@ -225,7 +235,7 @@ public final class ImmutableJsons
                                                                      ) : newRoot;
                     break;
 
-                case 5:
+                case 1:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
@@ -239,7 +249,7 @@ public final class ImmutableJsons
                                                 );
                     }
                     break;
-                case 6:
+                case 3:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.update(key,
@@ -261,58 +271,65 @@ public final class ImmutableJsons
     }
 
     private ImmutableSeq parse(final ImmutableSeq root,
-                               final JsParser parser,
+                               final JsonParser parser,
                                final ParseBuilder.Options options,
                                final JsPath path
-                              ) throws MalformedJson
+                              ) throws IOException
     {
-        JsParser.Event elem;
+        JsonToken elem;
         ImmutableSeq newRoot = root;
         JsPair pair;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while ((elem = parser.next()) != END_ARRAY)
+        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
         {
             assert elem != null;
             final JsPath currentPath = path.inc();
-            switch (elem.code)
+            switch (elem.id())
             {
-                case 0:
+                case 6:
 
                     pair = JsPair.of(currentPath,
-                                     parser.getJsString()
+                                     JsStr.of(parser.getValueAsString())
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
 
                     break;
-                case 1:
+                case 7:
+
                     pair = JsPair.of(currentPath,
-                                     parser.getJsNumber()
+                                     JsNumber.of(parser)
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
 
-
                     break;
-                case 2:
+                case 8:
+
                     pair = JsPair.of(currentPath,
-                                     FALSE
+                                     JsBigDec.of(parser.getDecimalValue())
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+
                     break;
-                case 3:
+                case 9:
                     pair = JsPair.of(currentPath,
                                      TRUE
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
 
                     break;
-
-                case 4:
+                case 10:
+                    pair = JsPair.of(currentPath,
+                                     FALSE
+                                    );
+                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
+                    break;
+                case 11:
                     pair = JsPair.of(currentPath,
                                      NULL
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
                     break;
-                case 5:
+                case 1:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.appendBack(new ImmutableJsObj(parse(this.object.emptyMap,
@@ -325,7 +342,7 @@ public final class ImmutableJsons
                                                     );
                     }
                     break;
-                case 6:
+                case 3:
                     if (options.keyFilter.test(currentPath))
                     {
                         newRoot = newRoot.appendBack(new ImmutableJsArray(parse(this.array.emptySeq,
@@ -348,43 +365,48 @@ public final class ImmutableJsons
     }
 
 
-    private ImmutableMap parse(final ImmutableMap root,
-                               final JsParser parser
-                              ) throws MalformedJson
+    ImmutableMap parse(final ImmutableMap root,
+                       final JsonParser parser
+                      ) throws IOException
     {
         ImmutableMap newRoot = root;
-        while (parser.next() != END_OBJECT)
+        while (parser.nextToken() != JsonToken.END_OBJECT)
         {
-            final String key = parser.getString();
-            JsParser.Event elem = parser.next();
-            switch (elem.code)
+            final String key = parser.getCurrentName();
+            final JsonToken elem = parser.nextToken();
+            switch (elem.id())
             {
-                case 0:
+                case 6:
                     newRoot = newRoot.update(key,
-                                             parser.getJsString()
+                                             JsStr.of(parser.getValueAsString())
                                             );
                     break;
-                case 1:
+                case 7:
                     newRoot = newRoot.update(key,
-                                             parser.getJsNumber()
+                                             JsNumber.of(parser)
                                             );
                     break;
-                case 2:
+                case 8:
+                    newRoot = newRoot.update(key,
+                                             JsBigDec.of(parser.getDecimalValue())
+                                            );
+                    break;
+                case 10:
                     newRoot = newRoot.update(key,
                                              FALSE
                                             );
                     break;
-                case 3:
+                case 9:
                     newRoot = newRoot.update(key,
                                              TRUE
                                             );
                     break;
-                case 4:
+                case 11:
                     newRoot = newRoot.update(key,
                                              NULL
                                             );
                     break;
-                case 5:
+                case 1:
                     final ImmutableMap newObj = parse(this.object.emptyMap,
                                                       parser
                                                      );
@@ -394,7 +416,7 @@ public final class ImmutableJsons
                                              )
                                             );
                     break;
-                case 6:
+                case 3:
                     final ImmutableSeq newArr = parse(this.array.emptySeq,
                                                       parser
                                                      );
@@ -570,7 +592,7 @@ public final class ImmutableJsons
          @return an immutable five-element JsArray
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: 5 args is ok in this case
+        //squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -599,7 +621,7 @@ public final class ImmutableJsons
          @return an immutable JsArray
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: 6 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsArray of(final JsElem e,
                           final JsElem e1,
@@ -758,9 +780,9 @@ public final class ImmutableJsons
          */
         public TryArr parse(final String str)
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 return new TryArr(new ImmutableJsArray(ImmutableJsons.this.parse(emptySeq,
                                                                                  parser
@@ -769,10 +791,10 @@ public final class ImmutableJsons
                 ));
             }
 
-            catch (MalformedJson e)
+            catch (IOException e)
             {
 
-                return new TryArr(e);
+                return new TryArr(new MalformedJson(e.getMessage()));
             }
 
         }
@@ -781,9 +803,9 @@ public final class ImmutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 return new TryArr(new ImmutableJsArray(ImmutableJsons.this.parse(emptySeq,
                                                                                  parser,
@@ -794,10 +816,10 @@ public final class ImmutableJsons
                 ));
             }
 
-            catch (MalformedJson e)
+            catch (IOException e)
             {
 
-                return new TryArr(e);
+                return new TryArr(new MalformedJson(e.getMessage()));
             }
 
         }
@@ -873,9 +895,9 @@ public final class ImmutableJsons
          */
         public TryObj parse(final String str)
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
+                JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
                 return new TryObj(new ImmutableJsObj(ImmutableJsons.this.parse(this.emptyMap,
                                                                                parser
@@ -883,9 +905,9 @@ public final class ImmutableJsons
                                                      ImmutableJsons.this
                 ));
             }
-            catch (MalformedJson e)
+            catch (IOException e)
             {
-                return new TryObj(e);
+                return new TryObj(new MalformedJson(e.getMessage()));
             }
         }
 
@@ -901,22 +923,24 @@ public final class ImmutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsParser parser = new JsParser(new StringReader(requireNonNull(str))))
+            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
             {
-                JsParser.Event keyEvent = parser.next();
-                if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                return new TryObj(new ImmutableJsObj(ImmutableJsons.this.parse(this.emptyMap,
-                                                                               parser,
-                                                                               requireNonNull(builder).create(),
-                                                                               JsPath.empty()
-                                                                              ),
-                                                     ImmutableJsons.this
-                )
-                );
+                {
+                    final JsonToken keyEvent = parser.nextToken();
+                    if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
+                    return new TryObj(new ImmutableJsObj(ImmutableJsons.this.parse(this.emptyMap,
+                                                                                   parser,
+                                                                                   requireNonNull(builder).create(),
+                                                                                   JsPath.empty()
+                                                                                  ),
+                                                         ImmutableJsons.this
+                    )
+                    );
+                }
             }
-            catch (MalformedJson e)
+            catch (IOException e)
             {
-                return new TryObj(e);
+                return new TryObj(new MalformedJson(e.getMessage()));
             }
         }
 
@@ -975,7 +999,7 @@ public final class ImmutableJsons
          @return an immutable three-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: 6 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1009,7 +1033,7 @@ public final class ImmutableJsons
          @return an immutable four-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: 8 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1050,7 +1074,7 @@ public final class ImmutableJsons
          @return an immutable five-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: 10 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1097,7 +1121,7 @@ public final class ImmutableJsons
          @return an immutable six-element JsObj
          @throws UserError if an elem is a mutable Json
          */
-        //squid:S00107: 12 args is ok in this case
+        // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
         @SuppressWarnings("squid:S00107")
         public JsObj of(final String key1,
                         final JsElem el1,
@@ -1209,7 +1233,6 @@ public final class ImmutableJsons
      */
     public ImmutableJsons withMap(final Class<? extends ImmutableMap> map)
     {
-
         return new ImmutableJsons(new ImmutableJsObjs(requireNonNull(map)),
                                   this.array
         );
@@ -1223,7 +1246,6 @@ public final class ImmutableJsons
      */
     public ImmutableJsons withSeq(final Class<? extends ImmutableSeq> seq)
     {
-
         return new ImmutableJsons(this.object,
                                   new ImmutableJsArrays(requireNonNull(seq))
         );

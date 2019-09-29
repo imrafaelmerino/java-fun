@@ -147,7 +147,7 @@ public final class ImmutableJsons
                     newRoot = newRoot.appendBack(JsStr.of(parser.getValueAsString()));
                     break;
                 case 7:
-                    newRoot = newRoot.appendBack(JsBigInt.of(parser.getBigIntegerValue()));
+                    newRoot = newRoot.appendBack(JsNumber.of(parser));
                     break;
                 case 8:
                     newRoot = newRoot.appendBack(JsBigDec.of(parser.getDecimalValue()));
@@ -164,11 +164,8 @@ public final class ImmutableJsons
                 default:
                     throw InternalError.tokenNotExpected(elem.name());
             }
-
-
         }
         return newRoot;
-
     }
 
     ImmutableMap parse(final ImmutableMap root,
@@ -199,7 +196,7 @@ public final class ImmutableJsons
                     break;
                 case 7:
                     pair = JsPair.of(currentPath,
-                                     JsBigInt.of(parser.getBigIntegerValue())
+                                     JsNumber.of(parser)
                                     );
                     newRoot = (condition.test(pair)) ? newRoot.update(key,
                                                                       options.elemMap.apply(pair)
@@ -300,7 +297,7 @@ public final class ImmutableJsons
                 case 7:
 
                     pair = JsPair.of(currentPath,
-                                     JsBigInt.of(parser.getBigIntegerValue())
+                                     JsNumber.of(parser)
                                     );
                     newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
 
@@ -386,7 +383,7 @@ public final class ImmutableJsons
                     break;
                 case 7:
                     newRoot = newRoot.update(key,
-                                             JsBigInt.of(parser.getBigIntegerValue())
+                                             JsNumber.of(parser)
                                             );
                     break;
                 case 8:

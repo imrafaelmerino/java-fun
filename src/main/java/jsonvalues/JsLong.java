@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 /**
  Represents an immutable json number of type long.
  */
-public final class JsLong implements JsNumber, Comparable<JsLong>
+public final class JsLong extends JsNumber implements Comparable<JsLong>
 {
 
 

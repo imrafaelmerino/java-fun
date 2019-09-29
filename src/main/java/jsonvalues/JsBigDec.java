@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 /**
  Represents an immutable json number of type BigDecimal.
  */
-public final class JsBigDec implements JsNumber, Comparable<JsBigDec>
+public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
 {
     /**
      The big decimal value

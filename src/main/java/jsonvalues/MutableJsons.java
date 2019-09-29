@@ -138,7 +138,7 @@ public class MutableJsons
                     break;
                 case 7:
                     root.update(key,
-                                JsBigInt.of(parser.getBigIntegerValue())
+                                JsNumber.of(parser)
                                );
                     break;
                 case 8:
@@ -221,7 +221,7 @@ public class MutableJsons
                     break;
                 case 7:
                     JsPair.of(currentPath,
-                              JsBigInt.of(parser.getBigIntegerValue())
+                              JsNumber.of(parser)
                              )
                           .consumeIf(condition,
                                      p -> root.update(key,
@@ -320,9 +320,9 @@ public class MutableJsons
 
     }
 
-     void parse(final MutableSeq root,
-                       final JsonParser parser
-                      ) throws IOException
+    void parse(final MutableSeq root,
+               final JsonParser parser
+              ) throws IOException
     {
         JsonToken elem;
         while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
@@ -334,7 +334,7 @@ public class MutableJsons
                     root.appendBack(JsStr.of(parser.getValueAsString()));
                     break;
                 case 7:
-                    root.appendBack(JsBigInt.of(parser.getBigIntegerValue()));
+                    root.appendBack(JsNumber.of(parser));
                     break;
                 case 8:
                     root.appendBack(JsBigDec.of(parser.getDecimalValue()));
@@ -373,11 +373,11 @@ public class MutableJsons
         }
     }
 
-     void parse(final MutableSeq root,
-                       final JsonParser parser,
-                       final ParseBuilder.Options options,
-                       final JsPath path
-                      ) throws IOException
+    void parse(final MutableSeq root,
+               final JsonParser parser,
+               final ParseBuilder.Options options,
+               final JsPath path
+              ) throws IOException
     {
         JsonToken elem;
         final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
@@ -398,7 +398,7 @@ public class MutableJsons
                     break;
                 case 7:
                     JsPair.of(currentPath,
-                              JsBigInt.of(parser.getBigIntegerValue())
+                              JsNumber.of(parser)
                              )
                           .consumeIf(condition,
                                      p -> root.appendBack(options.elemMap.apply(p))

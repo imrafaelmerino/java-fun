@@ -10,7 +10,7 @@
         <ECLIPSE-COLLECTIONS.VERSION>10.0.0</ECLIPSE-COLLECTIONS.VERSION>
         <PCOLLECTIONS.VERSION>3.1.0</PCOLLECTIONS.VERSION>
         <VAVR.VERSION>0.9.3</VAVR.VERSION>
-        <JSON-VALUES.VERSION>3.1.2</JSON-VALUES.VERSION>
+        <JSON-VALUES.VERSION>3.2.0</JSON-VALUES.VERSION>
         <CLOJURE.VERSION>1.10.1</CLOJURE.VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <JMH-VERSION>1.21</JMH-VERSION>
@@ -19,6 +19,9 @@
         <COMPILER_SOURCE_VERSION>1.8</COMPILER_SOURCE_VERSION>
         <COMPILER_TARGET_VERSION>1.8</COMPILER_TARGET_VERSION>
         <PLUGIN_COMPILER_VERSION>3.8.0</PLUGIN_COMPILER_VERSION>
+        <JACKSON-VERSION>2.9.10</JACKSON-VERSION>
+        <DEPENDENCY_SCALA_VERSION>2.12.8</DEPENDENCY_SCALA_VERSION>
+
     </properties>
     <dependencies>
         <dependency>
@@ -31,7 +34,11 @@
             <artifactId>jmh-generator-annprocess</artifactId>
             <version>${JMH-VERSION}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${DEPENDENCY_SCALA_VERSION}</version>
+        </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -81,6 +88,11 @@
             <version>2.8.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${JACKSON-VERSION}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -111,7 +123,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -119,7 +131,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>microbenchmarks</finalName>
+                            <finalName>json-values-benchmark</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.openjdk.jmh.Main</mainClass>
@@ -136,6 +148,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                         </configuration>
                     </execution>
                 </executions>

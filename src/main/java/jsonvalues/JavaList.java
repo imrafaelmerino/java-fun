@@ -11,7 +11,7 @@ final class JavaList implements MutableSeq
     private List<JsElem> elements;
 
 
-    JavaList(final List<JsElem> seq)
+    private JavaList(final List<JsElem> seq)
     {
         elements = seq;
     }

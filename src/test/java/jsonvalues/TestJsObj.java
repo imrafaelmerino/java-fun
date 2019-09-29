@@ -2183,18 +2183,14 @@ public class TestJsObj
                                                                                           .orElseThrow()
                                                                    );
 
-        Assertions.assertEquals("Invalid token=EOF at (line no=1, column no=0, offset=-1). Expected tokens are: [CURLYOPEN, SQUAREOPEN]",
+        Assertions.assertEquals("Expected a json object {...}. Received: ",
                                 malformedJson.getMessage()
                                );
 
 
-        final MalformedJson malformedJson1 = Assertions.assertThrows(MalformedJson.class,
-                                                                     () -> immutable.object.parse("{]")
-                                                                                           .orElseThrow()
-                                                                    );
-
-        Assertions.assertEquals("Unexpected char 93 at (line no=1, column no=2, offset=1), expecting '\"' or '}'",
-                                malformedJson1.getMessage()
+        Assertions.assertThrows(MalformedJson.class,
+                                () -> immutable.object.parse("{]")
+                                                      .orElseThrow()
                                );
 
 

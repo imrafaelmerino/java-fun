@@ -1,6 +1,5 @@
 package jsonvalues.benchmark;
 
-import jsonvalues.benchmark.ExecutorState;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Setup;
 

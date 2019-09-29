@@ -1,5 +1,5 @@
 # JSON-VALUES
-## v3.1.2  ( Wed Sep 25 2019 19:04:27 GMT+0200 (Central European Summer Time) )
+## v3.2.0  ( Wed Sep 25 2019 19:04:27 GMT+0200 (Central European Summer Time) )
 
 ## Perf improvement
   - ⚡️ improvement in switch expressions

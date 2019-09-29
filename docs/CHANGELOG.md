@@ -1,10 +1,12 @@
 # JSON-VALUES
-## v3.2.0  ( Wed Sep 25 2019 19:04:27 GMT+0200 (Central European Summer Time) )
+## v3.2.0  ( Sun Sep 29 2019 03:58:51 GMT+0200 (Central European Summer Time) )
 
-## Perf improvement
-  - ⚡️ improvement in switch expressions
-  ([8c973ce6](https://github.com/imrafaelmerino/json-values/commit/8c973ce6f8d03d42ffdf2c868dde451b834428a0))
+## Refactor
+  - 💡 use of Jackson api to parse a string
+  ([182c3122](https://github.com/imrafaelmerino/json-values/commit/182c3122646ea8d331b1ae5c07773bae80a41daa))
 
-
+## Chore
+  - 🤖 cut down size of jar
+  ([45effee4](https://github.com/imrafaelmerino/json-values/commit/45effee4c7cd94d016b3030bdb883bc51eb8c4e7))
 
 

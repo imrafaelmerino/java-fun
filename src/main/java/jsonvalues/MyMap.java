@@ -1,5 +1,8 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -67,6 +70,4 @@ interface MyMap<M extends MyMap<M>>
      @return the tail of the map given a head
      */
     M tail(final String head);
-
-
 }

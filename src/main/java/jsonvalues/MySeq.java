@@ -53,6 +53,4 @@ interface MySeq<V extends MySeq<V>> extends Iterable<JsElem>
      @return true if the seq contains the element, false otherwise
      */
     boolean contains(final JsElem e);
-
-
 }

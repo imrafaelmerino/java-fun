@@ -5,22 +5,15 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.JsBool.FALSE;
-import static jsonvalues.JsBool.TRUE;
-import static jsonvalues.JsNull.NULL;
 
 /**
- Factory to create mutable jsons. New factories can be created with different map and seq implementations using
- the methods {@link MutableJsons#withMap(Class)} and {@link MutableJsons#withSeq(Class)}.
+ Factory to create mutable jsons.
  */
 public class MutableJsons
 {
@@ -43,26 +36,22 @@ public class MutableJsons
      */
     public Try parse(String str)
     {
-
-        try (final JsonParser parser = Jsons.factory.createParser(str))
+        try
         {
-
+            final JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
-                final MutableSeq vector = this.array.emptySeq();
-                parse(vector,
-                      parser
-                     );
-                return new Try(new MutableJsArray(vector,
+                return new Try(new MutableJsArray(new JavaList().parse(this,
+                                                                       parser
+                                                                      ),
                                                   this
                 ));
             }
-            final MutableMap map = this.object.emptyMap();
-            parse(map,
-                  parser
-                 );
-            return new Try(new MutableJsObj(map,
+
+            return new Try(new MutableJsObj(new JavaMap().parse(this,
+                                                                parser
+                                                               ),
                                             this
             ));
         }
@@ -87,28 +76,27 @@ public class MutableJsons
                      ParseBuilder builder
                     )
     {
-        try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
+        try
         {
+            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
-                final MutableSeq vector = this.array.emptySeq();
-                parse(vector,
-                      parser,
-                      builder.create(),
-                      JsPath.fromIndex(-1)
-                     );
-                return new Try(new MutableJsArray(vector,
+
+                return new Try(new MutableJsArray(new JavaList().parse(this,
+                                                                       parser,
+                                                                       builder.create(),
+                                                                       JsPath.fromIndex(-1)
+                                                                      ),
                                                   this
                 ));
             }
-            final MutableMap map = this.object.emptyMap();
-            parse(map,
-                  parser,
-                  builder.create(),
-                  JsPath.empty()
-                 );
-            return new Try(new MutableJsObj(map,
+
+            return new Try(new MutableJsObj(new JavaMap().parse(this,
+                                                                parser,
+                                                                builder.create(),
+                                                                JsPath.empty()
+                                                               ),
                                             this
             ));
         }
@@ -120,371 +108,16 @@ public class MutableJsons
     }
 
 
-    void parse(final MutableMap root,
-               final JsonParser parser
-              ) throws IOException
-    {
-        while (parser.nextToken() != JsonToken.END_OBJECT)
-        {
-            final String key = parser.currentName();
-            JsonToken elem = parser.nextToken();
-            assert elem != null;
-            switch (elem.id())
-            {
-                case 6:
-                    root.update(key,
-                                JsStr.of(parser.getValueAsString())
-                               );
-                    break;
-                case 7:
-                    root.update(key,
-                                JsNumber.of(parser)
-                               );
-                    break;
-                case 8:
-                    root.update(key,
-                                JsBigDec.of(parser.getDecimalValue())
-                               );
-                    break;
-                case 10:
-                    root.update(key,
-                                FALSE
-                               );
-                    break;
-                case 9:
-                    root.update(key,
-                                TRUE
-                               );
-                    break;
-                case 11:
-                    root.update(key,
-                                NULL
-                               );
-                    break;
-                case 1:
-                    final MutableMap obj = this.object.emptyMap();
-                    parse(obj,
-                          parser
-                         );
-                    root.update(key,
-                                new MutableJsObj(obj,
-                                                 this
-                                )
-                               );
-                    break;
-                case 3:
-                    final MutableSeq arr = this.array.emptySeq();
-                    parse(arr,
-                          parser
-                         );
-                    root.update(key,
-                                new MutableJsArray(arr,
-                                                   this
-                                )
-                               );
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-
-            }
-
-
-        }
-    }
-
-    void parse(final MutableMap root,
-               final JsonParser parser,
-               final ParseBuilder.Options options,
-               final JsPath path
-              ) throws IOException
-    {
-        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while (parser.nextToken() != JsonToken.END_OBJECT)
-        {
-            final String key = options.keyMap.apply(parser.currentName());
-            final JsPath currentPath = path.key(key);
-            JsonToken elem = parser.nextToken();
-            assert elem != null;
-            switch (elem.id())
-            {
-                case 6:
-                    JsPair.of(currentPath,
-                              JsStr.of(parser.getValueAsString())
-                             )
-                          .consumeIf(condition,
-                                     p -> root.update(key,
-                                                      options.elemMap.apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case 7:
-                    JsPair.of(currentPath,
-                              JsNumber.of(parser)
-                             )
-                          .consumeIf(condition,
-                                     p -> root.update(key,
-                                                      options.elemMap.apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case 8:
-                    JsPair.of(currentPath,
-                              JsBigDec.of(parser.getDecimalValue())
-                             )
-                          .consumeIf(condition,
-                                     p -> root.update(key,
-                                                      options.elemMap.apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case 10:
-                    JsPair.of(currentPath,
-                              FALSE
-                             )
-                          .consumeIf(condition,
-                                     p -> root.update(key,
-                                                      options.elemMap
-                                                      .apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case 9:
-                    JsPair.of(currentPath,
-                              TRUE
-                             )
-                          .consumeIf(condition,
-                                     p -> root.update(key,
-                                                      options.elemMap
-                                                      .apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case 11:
-                    JsPair.of(currentPath,
-                              NULL
-                             )
-                          .consumeIf(condition,
-                                     p -> root.update(key,
-                                                      options.elemMap
-                                                      .apply(p)
-                                                     )
-                                    );
-
-                    break;
-                case 1:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        final MutableMap obj = this.object.emptyMap();
-                        parse(obj,
-                              parser,
-                              options,
-                              currentPath
-                             );
-                        root.update(key,
-                                    new MutableJsObj(obj,
-                                                     this
-                                    )
-                                   );
-                    }
-                    break;
-                case 3:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        final MutableSeq arr = this.array.emptySeq();
-                        parse(arr,
-                              parser,
-                              options,
-                              currentPath.index(-1)
-                             );
-                        root.update(key,
-                                    new MutableJsArray(arr,
-                                                       this
-                                    )
-                                   );
-                    }
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-            }
-
-
-        }
-
-
-    }
-
-    void parse(final MutableSeq root,
-               final JsonParser parser
-              ) throws IOException
-    {
-        JsonToken elem;
-        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
-        {
-            assert elem != null;
-            switch (elem.id())
-            {
-                case 6:
-                    root.appendBack(JsStr.of(parser.getValueAsString()));
-                    break;
-                case 7:
-                    root.appendBack(JsNumber.of(parser));
-                    break;
-                case 8:
-                    root.appendBack(JsBigDec.of(parser.getDecimalValue()));
-                    break;
-                case 10:
-                    root.appendBack(FALSE);
-                    break;
-                case 9:
-                    root.appendBack(TRUE);
-                    break;
-                case 11:
-                    root.appendBack(NULL);
-                    break;
-                case 1:
-                    final MutableMap obj = this.object.emptyMap();
-                    parse(obj,
-                          parser
-                         );
-                    root.appendBack(new MutableJsObj(obj,
-                                                     this
-                    ));
-                    break;
-                case 3:
-                    final MutableSeq arr = this.array.emptySeq();
-                    parse(arr,
-                          parser
-                         );
-                    root.appendBack(new MutableJsArray(arr,
-                                                       this
-                    ));
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-            }
-        }
-    }
-
-    void parse(final MutableSeq root,
-               final JsonParser parser,
-               final ParseBuilder.Options options,
-               final JsPath path
-              ) throws IOException
-    {
-        JsonToken elem;
-        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
-        {
-            assert elem != null;
-            final JsPath currentPath = path.inc();
-            switch (elem.id())
-            {
-                case 6:
-                    JsPair.of(currentPath,
-                              JsStr.of(parser.getValueAsString())
-                             )
-                          .consumeIf(condition,
-                                     p -> root.appendBack(options.elemMap.apply(p))
-                                    )
-                    ;
-                    break;
-                case 7:
-                    JsPair.of(currentPath,
-                              JsNumber.of(parser)
-                             )
-                          .consumeIf(condition,
-                                     p -> root.appendBack(options.elemMap.apply(p))
-                                    );
-                    break;
-                case 8:
-                    JsPair.of(currentPath,
-                              JsBigDec.of(parser.getDecimalValue())
-                             )
-                          .consumeIf(condition,
-                                     p -> root.appendBack(options.elemMap.apply(p))
-                                    );
-                    break;
-                case 10:
-                    JsPair.of(currentPath,
-                              FALSE
-                             )
-                          .consumeIf(condition,
-                                     p -> root.appendBack(options.elemMap.apply(p))
-                                    )
-                    ;
-                    break;
-                case 9:
-                    JsPair.of(currentPath,
-                              TRUE
-                             )
-                          .consumeIf(condition,
-                                     p -> root.appendBack(options.elemMap.apply(p))
-                                    );
-                    break;
-                case 11:
-                    JsPair.of(currentPath,
-                              NULL
-                             )
-                          .consumeIf(condition,
-                                     p -> root.appendBack(options.elemMap.apply(p))
-                                    );
-                    break;
-                case 1:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        final MutableMap obj = this.object.emptyMap();
-                        parse(obj,
-                              parser,
-                              options,
-                              currentPath
-                             );
-                        root.appendBack(new MutableJsObj(obj,
-                                                         this
-                        ));
-                    }
-                    break;
-
-                case 3:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        final MutableSeq arr = this.array.emptySeq();
-                        parse(arr,
-                              parser,
-                              options,
-                              currentPath.index(-1)
-                             );
-
-                        root.appendBack(new MutableJsArray(arr,
-                                                           this
-                        ));
-                    }
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-            }
-        }
-    }
-
     /**
      represents a factory of mutable Json arrays
      */
     public class MutableJsArrays
     {
 
-        private final Class<? extends MutableSeq> vector;
 
-        MutableJsArrays(final Class<? extends MutableSeq> seq)
+        MutableJsArrays()
         {
-            this.vector = seq;
+
 
         }
 
@@ -529,28 +162,13 @@ public class MutableJsons
         }
 
 
-        private MutableSeq emptySeq()
-        {
-            try
-            {
-                final MutableSeq seq = vector.getDeclaredConstructor()
-                                             .newInstance();
-                if (!seq.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyVector();
-                return seq;
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-            {
-                throw UserError.wrongVectorImplementation(e);
-            }
-        }
-
         /**
          Returns a mutable empty array.
          @return mutable empty JsArray
          */
         public JsArray empty()
         {
-            return new MutableJsArray(emptySeq(),
+            return new MutableJsArray(new JavaList(),
                                       MutableJsons.this
             );
         }
@@ -562,15 +180,15 @@ public class MutableJsons
          */
         public TryArr parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-                MutableSeq seq = emptySeq();
-                MutableJsons.this.parse(seq,
-                                        parser
-                                       );
-                return new TryArr(new MutableJsArray(seq,
+
+                return new TryArr(new MutableJsArray(new JavaList().parse(MutableJsons.this,
+                                                                          parser
+                                                                         ),
                                                      MutableJsons.this
                 ));
             }
@@ -594,17 +212,16 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-                MutableSeq seq = emptySeq();
-                MutableJsons.this.parse(seq,
-                                        parser,
-                                        builder.create(),
-                                        JsPath.fromIndex(-1)
-                                       );
-                return new TryArr(new MutableJsArray(seq,
+                return new TryArr(new MutableJsArray(new JavaList().parse(MutableJsons.this,
+                                                                          parser,
+                                                                          builder.create(),
+                                                                          JsPath.fromIndex(-1)
+                                                                         ),
                                                      MutableJsons.this
                 ));
             }
@@ -629,7 +246,7 @@ public class MutableJsons
                          )
         {
 
-            final MutableSeq v = emptySeq();
+            final MutableSeq v = new JavaList();
             v.appendBack(JsStr.of(str));
             for (String a : others)
             {
@@ -787,7 +404,7 @@ public class MutableJsons
                          )
         {
 
-            final MutableSeq seq = emptySeq();
+            final MutableSeq seq = new JavaList();
             seq.appendBack(JsInt.of(number));
             for (int a : others)
             {
@@ -809,7 +426,7 @@ public class MutableJsons
                          )
         {
 
-            final MutableSeq seq = emptySeq();
+            final MutableSeq seq = new JavaList();
             seq.appendBack(JsLong.of(number));
             for (long a : others)
             {
@@ -830,7 +447,7 @@ public class MutableJsons
                           final boolean... others
                          )
         {
-            final MutableSeq seq = emptySeq();
+            final MutableSeq seq = new JavaList();
             seq.appendBack(JsBool.of(bool));
             for (boolean a : others)
             {
@@ -851,8 +468,8 @@ public class MutableJsons
                           final double... others
                          )
         {
-            final MutableSeq seq = emptySeq();
-            emptySeq().appendBack(JsDouble.of(number));
+            final MutableSeq seq = new JavaList();
+            seq.appendBack(JsDouble.of(number));
             for (double a : others)
             {
                 seq.appendBack(JsDouble.of(a));
@@ -864,7 +481,7 @@ public class MutableJsons
 
         public JsArray ofIterable(Iterable<JsElem> iterable)
         {
-            MutableSeq seq = emptySeq();
+            MutableSeq seq = new JavaList();
             for (JsElem e : iterable)
             {
                 if (requireNonNull(e).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(e);
@@ -912,26 +529,13 @@ public class MutableJsons
     public class MutableJsObjs
     {
 
-        final Class<? extends MutableMap> map;
-
-        MutableJsObjs(final Class<? extends MutableMap> map)
+        MutableJsObjs()
         {
-            this.map = map;
         }
 
         MutableMap emptyMap()
         {
-            try
-            {
-                final MutableMap mymap = map.getDeclaredConstructor()
-                                            .newInstance();
-                if (!mymap.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyMap();
-                return mymap;
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-            {
-                throw UserError.wrongMapImplementation(e);
-            }
+            return new JavaMap();
         }
 
 
@@ -1005,15 +609,15 @@ public class MutableJsons
          */
         public TryObj parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                final MutableMap obj = emptyMap();
-                MutableJsons.this.parse(obj,
-                                        parser
-                                       );
-                return new TryObj(new MutableJsObj(obj,
+
+                return new TryObj(new MutableJsObj(new JavaMap().parse(MutableJsons.this,
+                                                                       parser
+                                                                      ),
                                                    MutableJsons.this
                 ));
             }
@@ -1035,17 +639,17 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                final MutableMap obj = emptyMap();
-                MutableJsons.this.parse(obj,
-                                        parser,
-                                        builder.create(),
-                                        JsPath.empty()
-                                       );
-                return new TryObj(new MutableJsObj(obj,
+
+                return new TryObj(new MutableJsObj(new JavaMap().parse(MutableJsons.this,
+                                                                       parser,
+                                                                       builder.create(),
+                                                                       JsPath.empty()
+                                                                      ),
                                                    MutableJsons.this
                 ));
             }
@@ -1307,47 +911,11 @@ public class MutableJsons
     public final MutableJsObjs object;
 
 
-    MutableJsons(final Class<? extends MutableMap> map,
-                 final Class<? extends MutableSeq> seq
-                )
+    MutableJsons()
     {
-        this.array = new MutableJsArrays(seq);
-        this.object = new MutableJsObjs(map);
+        this.array = new MutableJsArrays();
+        this.object = new MutableJsObjs();
     }
 
-    private MutableJsons(final MutableJsObjs obj,
-                         final MutableJsArrays array
-                        )
-    {
-        this.array = array;
-        this.object = obj;
-    }
 
-    /**
-     returns a new factory of mutable Json using as underlying data structure to store elements of Json objects
-     the given as a parameter
-     @param map the underlying data structure to store elements of Json objects in the factory
-     @return a new factory of mutable Jsons
-     */
-    public MutableJsons withMap(final Class<? extends MutableMap> map)
-    {
-
-        return new MutableJsons(new MutableJsObjs(map),
-                                this.array
-        );
-    }
-
-    /**
-     returns a new factory of mutable Json using as underlying data structure to store elements of Json arrays
-     the given as a parameter
-     @param seq the underlying data structure to store elements of Json arrays in the factory
-     @return a new factory of mutable Jsons
-     */
-    public MutableJsons withSeq(final Class<? extends MutableSeq> seq)
-    {
-
-        return new MutableJsons(this.object,
-                                new MutableJsArrays(seq)
-        );
-    }
 }

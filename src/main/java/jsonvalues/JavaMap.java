@@ -1,12 +1,21 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-final class JavaMap implements MutableMap
+import static jsonvalues.JsBool.FALSE;
+import static jsonvalues.JsBool.TRUE;
+import static jsonvalues.JsNull.NULL;
+
+final class JavaMap extends MutableMap
 {
 
     private java.util.Map<String, JsElem> elements;
@@ -142,6 +151,186 @@ final class JavaMap implements MutableMap
     public int hashCode()
     {
         return elements.hashCode();
+
+    }
+
+    public MutableMap parse(final MutableJsons fac,
+                            final JsonParser parser
+                           ) throws IOException
+    {
+        String key = parser.nextFieldName();
+        for (; key != null; key = parser.nextFieldName())
+        {
+            JsElem value;
+            JsonToken token = parser.nextToken();
+            switch (token.id())
+            {
+                case JsonTokenId.ID_STRING:
+                    value = JsStr.of(parser.getValueAsString());
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    value = JsNumber.of(parser);
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    value = JsBigDec.of(parser.getDecimalValue());
+                case JsonTokenId.ID_FALSE:
+                    value = FALSE;
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    value = TRUE;
+                    break;
+                case JsonTokenId.ID_NULL:
+                    value = NULL;
+                    break;
+                case JsonTokenId.ID_START_OBJECT:
+                    value = new MutableJsObj(new JavaMap().parse(fac,
+                                                                 parser
+                                                                ),
+                                             fac
+                    );
+
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    value = new MutableJsArray(new JavaList().parse(fac,
+                                                                    parser
+                                                                   ),
+                                               fac
+
+                    );
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(token.name());
+
+            }
+            this.elements.put(key,
+                              value
+                             );
+        }
+        return this;
+    }
+
+    public MutableMap parse(final MutableJsons fac,
+                            final JsonParser parser,
+                            final ParseBuilder.Options options,
+                            final JsPath path
+                           ) throws IOException
+    {
+        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+        Map<String, JsElem> root = new HashMap<>();
+        while (parser.nextToken() != JsonToken.END_OBJECT)
+        {
+            final String key = options.keyMap.apply(parser.currentName());
+            final JsPath currentPath = path.key(key);
+            JsonToken elem = parser.nextToken();
+            switch (elem.id())
+            {
+                case JsonTokenId.ID_STRING:
+                    JsPair.of(currentPath,
+                              JsStr.of(parser.getValueAsString())
+                             )
+                          .consumeIf(condition,
+                                     p -> root.put(key,
+                                                   options.elemMap.apply(p)
+                                                  )
+                                    );
+
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    JsPair.of(currentPath,
+                              JsNumber.of(parser)
+                             )
+                          .consumeIf(condition,
+                                     p -> root.put(key,
+                                                   options.elemMap.apply(p)
+                                                  )
+                                    );
+
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    JsPair.of(currentPath,
+                              JsBigDec.of(parser.getDecimalValue())
+                             )
+                          .consumeIf(condition,
+                                     p -> root.put(key,
+                                                   options.elemMap.apply(p)
+                                                  )
+                                    );
+
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    JsPair.of(currentPath,
+                              FALSE
+                             )
+                          .consumeIf(condition,
+                                     p -> root.put(key,
+                                                   options.elemMap
+                                                   .apply(p)
+                                                  )
+                                    );
+
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    JsPair.of(currentPath,
+                              TRUE
+                             )
+                          .consumeIf(condition,
+                                     p -> root.put(key,
+                                                   options.elemMap
+                                                   .apply(p)
+                                                  )
+                                    );
+
+                    break;
+                case JsonTokenId.ID_NULL:
+                    JsPair.of(currentPath,
+                              NULL
+                             )
+                          .consumeIf(condition,
+                                     p -> root.put(key,
+                                                   options.elemMap
+                                                   .apply(p)
+                                                  )
+                                    );
+
+                    break;
+                case JsonTokenId.ID_START_OBJECT:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        root.put(key,
+                                 new MutableJsObj(new JavaMap()
+                                                  .parse(fac,
+                                                         parser,
+                                                         options,
+                                                         currentPath
+                                                        ),
+                                                  fac
+                                 )
+                                );
+                    }
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        root.put(key,
+                                 new MutableJsArray(new JavaList()
+                                                    .parse(fac,
+                                                           parser,
+                                                           options,
+                                                           currentPath.index(-1)
+                                                          ),
+                                                    fac
+                                 )
+                                );
+                    }
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
+            }
+
+
+        }
+        return new JavaMap(root);
 
     }
 

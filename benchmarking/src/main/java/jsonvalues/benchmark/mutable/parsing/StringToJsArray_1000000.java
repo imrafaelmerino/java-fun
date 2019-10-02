@@ -55,22 +55,7 @@ public class StringToJsArray_1000000
                                   .orElseThrow();
     }
 
-    @Benchmark
-    public JsArray java_hash_set() throws MalformedJson
-    {
 
-        return JavaFactory.hmhs.array.parse(array)
-                                     .orElseThrow();
-    }
-
-    @Benchmark
-    public JsArray ecollections_list() throws MalformedJson
-    {
-
-        return ECollectionsFactory.hml.array.parse(array
-                                                  )
-                                            .orElseThrow();
-    }
 
 
 }

@@ -5,21 +5,15 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
-import static com.fasterxml.jackson.core.JsonToken.*;
+import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.JsBool.FALSE;
-import static jsonvalues.JsBool.TRUE;
-import static jsonvalues.JsNull.NULL;
 
 /**
- Factory to create immutable jsons. New factories can be created with different map and seq implementations using
- the methods {@link ImmutableJsons#withMap(Class)} and {@link ImmutableJsons#withSeq(Class)}.
+ Factory to create immutable jsons.
  */
 public final class ImmutableJsons
 {
@@ -42,21 +36,21 @@ public final class ImmutableJsons
      */
     public Try parse(String str)
     {
-        try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+        try
         {
-
+            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
-                return new Try(new ImmutableJsArray(parse(array.emptySeq,
-                                                          parser
-                                                         ),
+                return new Try(new ImmutableJsArray(Jsons.immutable.array.emptySeq.parse(this,
+                                                                                         parser
+                                                                                        ),
                                                     this
                 ));
             }
-            return new Try(new ImmutableJsObj(parse(object.emptyMap,
-                                                    parser
-                                                   ),
+            return new Try(new ImmutableJsObj(Jsons.immutable.object.emptyMap.parse(this,
+                                                                                    parser
+                                                                                   ),
                                               this
             )
             );
@@ -82,26 +76,26 @@ public final class ImmutableJsons
                      ParseBuilder builder
                     )
     {
-        try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+        try
         {
-
+            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
-            if (event == START_ARRAY) return new Try(new ImmutableJsArray(parse(array.emptySeq,
-                                                                                parser,
-                                                                                builder.create(),
-                                                                                JsPath.empty()
-                                                                                      .index(-1)
+            if (event == START_ARRAY) return new Try(new ImmutableJsArray(Jsons.immutable.array.emptySeq.parse(this,
+                                                                                                               parser,
+                                                                                                               builder.create(),
+                                                                                                               JsPath.empty()
+                                                                                                                     .index(-1)
 
-                                                                               ),
+                                                                                                              ),
                                                                           this
             )
             );
-            return new Try(new ImmutableJsObj(parse(object.emptyMap,
-                                                    parser,
-                                                    builder.create(),
-                                                    JsPath.empty()
+            return new Try(new ImmutableJsObj(Jsons.immutable.object.emptyMap.parse(this,
+                                                                                    parser,
+                                                                                    builder.create(),
+                                                                                    JsPath.empty()
 
-                                                   ),
+                                                                                   ),
                                               this
             )
             );
@@ -117,350 +111,22 @@ public final class ImmutableJsons
 
     }
 
-    ImmutableSeq parse(final ImmutableSeq root,
-                       final JsonParser parser
-                      ) throws IOException
-    {
-        JsonToken elem;
-        ImmutableSeq newRoot = root;
-        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
-        {
-            switch (elem.id())
-            {
-                case 1:
-                    final ImmutableMap newObj = parse(this.object.emptyMap,
-                                                      parser
-                                                     );
-                    newRoot = newRoot.appendBack(new ImmutableJsObj(newObj,
-                                                                    this
-                    ));
-                    break;
-                case 3:
-                    final ImmutableSeq newSeq = parse(this.array.emptySeq,
-                                                      parser
-                                                     );
-                    newRoot = newRoot.appendBack(new ImmutableJsArray(newSeq,
-                                                                      this
-                    ));
-                    break;
-                case 6:
-                    newRoot = newRoot.appendBack(JsStr.of(parser.getValueAsString()));
-                    break;
-                case 7:
-                    newRoot = newRoot.appendBack(JsNumber.of(parser));
-                    break;
-                case 8:
-                    newRoot = newRoot.appendBack(JsBigDec.of(parser.getDecimalValue()));
-                    break;
-                case 9:
-                    newRoot = newRoot.appendBack(TRUE);
-                    break;
-                case 10:
-                    newRoot = newRoot.appendBack(FALSE);
-                    break;
-                case 11:
-                    newRoot = newRoot.appendBack(NULL);
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-            }
-        }
-        return newRoot;
-    }
-
-    ImmutableMap parse(final ImmutableMap root,
-                       final JsonParser parser,
-                       final ParseBuilder.Options options,
-                       final JsPath path
-                      ) throws IOException
-    {
-
-        ImmutableMap newRoot = root;
-        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while (parser.nextToken() != JsonToken.END_OBJECT)
-        {
-            final String key = options.keyMap.apply(parser.getCurrentName());
-            final JsPath currentPath = path.key(key);
-            final JsonToken elem = parser.nextToken();
-            final JsPair pair;
-            assert elem != null;
-            switch (elem.id())
-            {
-                case 6:
-                    pair = JsPair.of(currentPath,
-                                     JsStr.of(parser.getValueAsString())
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-                case 7:
-                    pair = JsPair.of(currentPath,
-                                     JsNumber.of(parser)
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-                case 8:
-                    pair = JsPair.of(currentPath,
-                                     JsBigDec.of(parser.getDecimalValue())
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-                case 9:
-                    pair = JsPair.of(currentPath,
-                                     TRUE
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-                case 10:
-                    pair = JsPair.of(currentPath,
-                                     FALSE
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-                case 11:
-                    pair = JsPair.of(currentPath,
-                                     NULL
-                                    );
-                    newRoot = (condition.test(pair)) ? newRoot.update(key,
-                                                                      options.elemMap.apply(pair)
-                                                                     ) : newRoot;
-                    break;
-
-                case 1:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        newRoot = newRoot.update(key,
-                                                 new ImmutableJsObj(parse(this.object.emptyMap,
-                                                                          parser,
-                                                                          options,
-                                                                          currentPath
-                                                                         ),
-                                                                    this
-                                                 )
-                                                );
-                    }
-                    break;
-                case 3:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        newRoot = newRoot.update(key,
-                                                 new ImmutableJsArray(parse(this.array.emptySeq,
-                                                                            parser,
-                                                                            options,
-                                                                            currentPath.index(-1)
-                                                                           ),
-                                                                      this
-                                                 )
-                                                );
-                    }
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-            }
-        }
-        return newRoot;
-    }
-
-    private ImmutableSeq parse(final ImmutableSeq root,
-                               final JsonParser parser,
-                               final ParseBuilder.Options options,
-                               final JsPath path
-                              ) throws IOException
-    {
-        JsonToken elem;
-        ImmutableSeq newRoot = root;
-        JsPair pair;
-        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
-        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
-        {
-            assert elem != null;
-            final JsPath currentPath = path.inc();
-            switch (elem.id())
-            {
-                case 6:
-
-                    pair = JsPair.of(currentPath,
-                                     JsStr.of(parser.getValueAsString())
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-
-                    break;
-                case 7:
-
-                    pair = JsPair.of(currentPath,
-                                     JsNumber.of(parser)
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-
-                    break;
-                case 8:
-
-                    pair = JsPair.of(currentPath,
-                                     JsBigDec.of(parser.getDecimalValue())
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-
-                    break;
-                case 9:
-                    pair = JsPair.of(currentPath,
-                                     TRUE
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-
-                    break;
-                case 10:
-                    pair = JsPair.of(currentPath,
-                                     FALSE
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-                    break;
-                case 11:
-                    pair = JsPair.of(currentPath,
-                                     NULL
-                                    );
-                    newRoot = condition.test(pair) ? newRoot.appendBack(options.elemMap.apply(pair)) : newRoot;
-                    break;
-                case 1:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        newRoot = newRoot.appendBack(new ImmutableJsObj(parse(this.object.emptyMap,
-                                                                              parser,
-                                                                              options,
-                                                                              currentPath
-                                                                             ),
-                                                                        this
-                                                     )
-                                                    );
-                    }
-                    break;
-                case 3:
-                    if (options.keyFilter.test(currentPath))
-                    {
-                        newRoot = newRoot.appendBack(new ImmutableJsArray(parse(this.array.emptySeq,
-                                                                                parser,
-                                                                                options,
-                                                                                currentPath.index(-1)
-                                                                               ),
-                                                                          this
-                                                     )
-                                                    );
-                    }
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-
-            }
-        }
-        return newRoot;
-    }
-
-
-    ImmutableMap parse(final ImmutableMap root,
-                       final JsonParser parser
-                      ) throws IOException
-    {
-        ImmutableMap newRoot = root;
-        while (parser.nextToken() != JsonToken.END_OBJECT)
-        {
-            final String key = parser.getCurrentName();
-            final JsonToken elem = parser.nextToken();
-            switch (elem.id())
-            {
-                case 6:
-                    newRoot = newRoot.update(key,
-                                             JsStr.of(parser.getValueAsString())
-                                            );
-                    break;
-                case 7:
-                    newRoot = newRoot.update(key,
-                                             JsNumber.of(parser)
-                                            );
-                    break;
-                case 8:
-                    newRoot = newRoot.update(key,
-                                             JsBigDec.of(parser.getDecimalValue())
-                                            );
-                    break;
-                case 10:
-                    newRoot = newRoot.update(key,
-                                             FALSE
-                                            );
-                    break;
-                case 9:
-                    newRoot = newRoot.update(key,
-                                             TRUE
-                                            );
-                    break;
-                case 11:
-                    newRoot = newRoot.update(key,
-                                             NULL
-                                            );
-                    break;
-                case 1:
-                    final ImmutableMap newObj = parse(this.object.emptyMap,
-                                                      parser
-                                                     );
-                    newRoot = newRoot.update(key,
-                                             new ImmutableJsObj(newObj,
-                                                                this
-                                             )
-                                            );
-                    break;
-                case 3:
-                    final ImmutableSeq newArr = parse(this.array.emptySeq,
-                                                      parser
-                                                     );
-                    newRoot = newRoot.update(key,
-                                             new ImmutableJsArray(newArr,
-                                                                  this
-                                             )
-                                            );
-                    break;
-                default:
-                    throw InternalError.tokenNotExpected(elem.name());
-
-
-            }
-        }
-        return newRoot;
-
-
-    }
-
     /**
      represents a factory of immutable Json arrays
      */
     public class ImmutableJsArrays
     {
 
-        private final ImmutableJsArray empty;
-        private final ImmutableSeq emptySeq;
+        final ImmutableJsArray empty;
+        final ScalaImmutableVector emptySeq;
 
-        ImmutableJsArrays(final Class<? extends ImmutableSeq> vector)
+        ImmutableJsArrays()
         {
-            try
-            {
-                emptySeq = requireNonNull(vector).getDeclaredConstructor()
-                                                 .newInstance();
-                if (!emptySeq.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyVector();
-                empty = new ImmutableJsArray(emptySeq,
-                                             ImmutableJsons.this
-                );
-            }
-            catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
-            {
-                throw UserError.wrongVectorImplementation(e);
-            }
+
+            emptySeq = new ScalaImmutableVector();
+            empty = new ImmutableJsArray(emptySeq,
+                                         ImmutableJsons.this
+            );
 
 
         }
@@ -780,13 +446,14 @@ public final class ImmutableJsons
          */
         public TryArr parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-                return new TryArr(new ImmutableJsArray(ImmutableJsons.this.parse(emptySeq,
-                                                                                 parser
-                                                                                ),
+                return new TryArr(new ImmutableJsArray(emptySeq.parse(ImmutableJsons.this,
+                                                                      parser
+                                                                     ),
                                                        ImmutableJsons.this
                 ));
             }
@@ -803,15 +470,16 @@ public final class ImmutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-                return new TryArr(new ImmutableJsArray(ImmutableJsons.this.parse(emptySeq,
-                                                                                 parser,
-                                                                                 requireNonNull(builder).create(),
-                                                                                 JsPath.fromIndex(-1)
-                                                                                ),
+                return new TryArr(new ImmutableJsArray(emptySeq.parse(ImmutableJsons.this,
+                                                                      parser,
+                                                                      requireNonNull(builder).create(),
+                                                                      JsPath.fromIndex(-1)
+                                                                     ),
                                                        ImmutableJsons.this
                 ));
             }
@@ -832,24 +500,15 @@ public final class ImmutableJsons
     public class ImmutableJsObjs
     {
 
-        private final ImmutableJsObj empty;
-        private final ImmutableMap emptyMap;
+        final ImmutableJsObj empty;
+        final ScalaImmutableMap emptyMap;
 
-        ImmutableJsObjs(final Class<? extends ImmutableMap> map)
+        ImmutableJsObjs()
         {
-            try
-            {
-                emptyMap = requireNonNull(map).getDeclaredConstructor()
-                                              .newInstance();
-                if (!emptyMap.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyMap();
-                empty = new ImmutableJsObj(emptyMap,
-                                           ImmutableJsons.this
-                );
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-            {
-                throw UserError.wrongMapImplementation(e);
-            }
+            emptyMap = new ScalaImmutableMap();
+            empty = new ImmutableJsObj(emptyMap,
+                                       ImmutableJsons.this
+            );
         }
 
         public JsObj toImmutable(JsObj mutable)
@@ -895,16 +554,18 @@ public final class ImmutableJsons
          */
         public TryObj parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
             {
                 JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                return new TryObj(new ImmutableJsObj(ImmutableJsons.this.parse(this.emptyMap,
-                                                                               parser
-                                                                              ),
+                return new TryObj(new ImmutableJsObj(emptyMap.parse(ImmutableJsons.this,
+                                                                    parser
+                                                                   ),
                                                      ImmutableJsons.this
                 ));
             }
+
             catch (IOException e)
             {
                 return new TryObj(new MalformedJson(e.getMessage()));
@@ -923,20 +584,21 @@ public final class ImmutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str.getBytes())))
             {
-                {
-                    final JsonToken keyEvent = parser.nextToken();
-                    if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                    return new TryObj(new ImmutableJsObj(ImmutableJsons.this.parse(this.emptyMap,
-                                                                                   parser,
-                                                                                   requireNonNull(builder).create(),
-                                                                                   JsPath.empty()
-                                                                                  ),
-                                                         ImmutableJsons.this
-                    )
-                    );
-                }
+                final JsonToken keyEvent = parser.nextToken();
+                if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
+                return new TryObj(new ImmutableJsObj(emptyMap.parse(ImmutableJsons.this,
+                                                                    parser,
+                                                                    requireNonNull(builder).create(),
+                                                                    JsPath.empty()
+                                                                   ),
+                                                     ImmutableJsons.this
+                )
+                );
+
+
             }
             catch (IOException e)
             {
@@ -1209,45 +871,12 @@ public final class ImmutableJsons
     public final ImmutableJsObjs object;
 
 
-    ImmutableJsons(final Class<? extends ImmutableMap> map,
-                   final Class<? extends ImmutableSeq> seq
-                  )
+    ImmutableJsons()
     {
-        this.array = new ImmutableJsArrays(requireNonNull(seq));
-        this.object = new ImmutableJsObjs(requireNonNull(map));
+
+        this.array = new ImmutableJsArrays();
+        this.object = new ImmutableJsObjs();
     }
 
-    private ImmutableJsons(final ImmutableJsObjs obj,
-                           final ImmutableJsArrays array
-                          )
-    {
-        this.array = requireNonNull(array);
-        this.object = requireNonNull(obj);
-    }
 
-    /**
-     returns a new factory of immutable Jsons using as underlying data structure to store elements of Json objects
-     the given as a parameter
-     @param map the underlying data structure to store elements of Json objects in the factory
-     @return a new factory of immutable Jsons
-     */
-    public ImmutableJsons withMap(final Class<? extends ImmutableMap> map)
-    {
-        return new ImmutableJsons(new ImmutableJsObjs(requireNonNull(map)),
-                                  this.array
-        );
-    }
-
-    /**
-     returns a new factory of immutable Jsons using as underlying data structure to store elements of Json arrays
-     the given as a parameter
-     @param seq the underlying data structure to store elements of Json arrays in the factory
-     @return a new factory of immutable Jsons
-     */
-    public ImmutableJsons withSeq(final Class<? extends ImmutableSeq> seq)
-    {
-        return new ImmutableJsons(this.object,
-                                  new ImmutableJsArrays(requireNonNull(seq))
-        );
-    }
 }

@@ -196,38 +196,16 @@ JsPair mapElem(UnaryOperator<JsElem> fn)
 
 ## <a name="json-creation"></a> Creating Jsons
 
-**json-values** uses factories to create objects. There are two default factories:
+**json-values** uses factories to create objects. There are two factories:
 
 _Jsons.immutable_, that uses persistent data structures from Scala: [Scala HashMap](https://scala-lang.org/files/archive/api/2.12.0/scala/collection/seq/HashMap.html) 
 and [Scala Vector](https://www.scala-lang.org/api/2.12.0/scala/collection/immutable/Vector.html)
 
 _Jsons.mutable_, that uses the conventional Java collections HashMap and ArrayList.
 
-They are singletons; therefore, they can not be modified. New factories can be created from the described above,
-just using the methods withMap and withSeq:`
-
-```
-CustomMutableMap implement MutableMap{...}
-CustomMutableSeq implement MutableSeq{...}
-
-//new factory of mutable Jsons
-MutableJsons myFactory = Jsons.mutable.withMap(CustomMutableMap.class)
-                                      .withSeq(CustomMutableSeq.class);
-
-
-CustomImmutableMap implement ImmutableMap{...}
-CustomImmutableSeq implement ImmutableSeq{...}
-
-//new factory of immutable Jsons
-ImmutableJsons myOtherFactory =  Jsons.immutable.withMap(CustomImmutableMap.class)
-                                                .withSeq(CustomImmutableSeq.class);
-
+They are singletons; therefore, they can not be modified. 
 ```
                                       
-One caveat, both  CustomMutableMap  and CustomMutableSeq must declare a default constructor that creates an empty instance of the underlying
-data structure. Moreover, CustomMutableMap  has to implement the method emptyArray() and returns an empty instance of CustomMutableSeq and
-vice-versa, i.e CustomMutableSeq has to implement the method emptyObject() and returns an empty instance of CustomMutableMap                      
-
 ### <a name="json-immutable-obj-creation"></a> Creation of immutable Json objects
 
 ```

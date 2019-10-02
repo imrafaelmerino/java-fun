@@ -1,11 +1,9 @@
 package jsonvalues;
 
 /**
- Represents an immutable data structure where pairs of a JsObj are stored. Each immutable Json factory {@link ImmutableJsons} has an
- implementation of this interface, that can be defined using the method {@link jsonvalues.ImmutableJsons#withMap(Class)}.
- The default immutable implementation that {@link Jsons#immutable} uses is the <a href="https://scala-lang.org/files/archive/api/2.12.0/scala/collection/seq/HashMap.html">immutable Scala HashMap</a>.
+ Represents an immutable data structure where pairs of a JsObj are stored.
  */
-public interface ImmutableMap extends MyMap<ImmutableMap>
+abstract class ImmutableMap extends MyMap<ImmutableMap>
 {
 
     /**
@@ -13,7 +11,7 @@ public interface ImmutableMap extends MyMap<ImmutableMap>
      @param key the given key
      @return a map with the key removed
      */
-    ImmutableMap remove(final String key);
+    abstract ImmutableMap remove(final String key);
 
     /**
      updates the element associated with the key with a new element. It will be called by the library only if the key exists,
@@ -21,7 +19,9 @@ public interface ImmutableMap extends MyMap<ImmutableMap>
      @param je the new element
      @return a map with the key element updated
      */
-    ImmutableMap update(final String key,
-                        final JsElem je
-                       );
+    abstract ImmutableMap update(final String key,
+                                 final JsElem je
+                                );
+
+
 }

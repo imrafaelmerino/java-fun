@@ -1,12 +1,10 @@
 # JSON-VALUES
-## v3.2.0  ( Sun Sep 29 2019 03:58:51 GMT+0200 (Central European Summer Time) )
+## v4.0.0  ( Wed Oct 02 2019 21:19:38 GMT+0200 (Central European Summer Time) )
 
-## Refactor
-  - 💡 use of Jackson api to parse a string
-  ([182c3122](https://github.com/imrafaelmerino/json-values/commit/182c3122646ea8d331b1ae5c07773bae80a41daa))
+## Breaking changes
+  - due to [fe5ecc5a](https://github.com/imrafaelmerino/json-values/commit/fe5ecc5aaedeb6456e0ee6ca5161fefbb13b4423),
+  no possible to use any data structure different than Scala HashMap and Vector for the
+immutable Json and Java ArrayList and HashMap for the mutable one. 
 
-## Chore
-  - 🤖 cut down size of jar
-  ([45effee4](https://github.com/imrafaelmerino/json-values/commit/45effee4c7cd94d016b3030bdb883bc51eb8c4e7))
 
 

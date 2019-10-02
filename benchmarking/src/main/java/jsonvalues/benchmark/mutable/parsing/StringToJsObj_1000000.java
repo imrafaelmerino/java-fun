@@ -26,7 +26,6 @@
 package jsonvalues.benchmark.mutable.parsing;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import jsonvalues.ECollectionsFactory;
 import jsonvalues.JsObj;
 import jsonvalues.Jsons;
 import jsonvalues.MalformedJson;
@@ -46,7 +45,8 @@ public class StringToJsObj_1000000
     public JsonNode jackson() throws IOException
     {
 
-        return JacksonObjectMapper.get().readTree(object);
+        return JacksonObjectMapper.get()
+                                  .readTree(object);
     }
 
 
@@ -56,14 +56,6 @@ public class StringToJsObj_1000000
 
         return Jsons.mutable.object.parse(object)
                                    .orElseThrow();
-    }
-
-    @Benchmark
-    public JsObj ecollections_hash_map() throws MalformedJson
-    {
-
-        return ECollectionsFactory.hml.object.parse(object)
-                                             .orElseThrow();
     }
 
 

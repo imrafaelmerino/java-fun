@@ -1,0 +1,93 @@
+# JMH version: 1.21
+# VM version: JDK 1.8.0_202, OpenJDK 64-Bit Server VM, 25.202-b05
+# VM invoker: /Users/rmerino/.sdkman/candidates/java/8.0.202-zulu/jre/bin/java
+# VM options: -Xms256m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc-log-mutable-java_hash_map-100.log
+# Warmup: 5 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: jsonvalues.benchmark.mutable.parsing.StringToJsObj_100.java_hash_map
+
+# Run progress: 0,00% complete, ETA 00:08:20
+# Fork: 1 of 5
+# Warmup Iteration   1: 133329,488 ops/s
+# Warmup Iteration   2: 177876,829 ops/s
+# Warmup Iteration   3: 177185,881 ops/s
+# Warmup Iteration   4: 183684,544 ops/s
+# Warmup Iteration   5: 178234,045 ops/s
+Iteration   1: 186386,075 ops/s
+Iteration   2: 130676,207 ops/s
+Iteration   3: 118686,958 ops/s
+Iteration   4: 184360,673 ops/s
+Iteration   5: 170131,698 ops/s
+
+# Run progress: 20,00% complete, ETA 00:06:42
+# Fork: 2 of 5
+# Warmup Iteration   1: 162903,818 ops/s
+# Warmup Iteration   2: 194520,828 ops/s
+# Warmup Iteration   3: 185540,333 ops/s
+# Warmup Iteration   4: 196304,081 ops/s
+# Warmup Iteration   5: 193572,132 ops/s
+Iteration   1: 197249,221 ops/s
+Iteration   2: 201469,262 ops/s
+Iteration   3: 199956,029 ops/s
+Iteration   4: 195163,754 ops/s
+Iteration   5: 196647,975 ops/s
+
+# Run progress: 40,00% complete, ETA 00:05:01
+# Fork: 3 of 5
+# Warmup Iteration   1: 175651,487 ops/s
+# Warmup Iteration   2: 187360,396 ops/s
+# Warmup Iteration   3: 188993,437 ops/s
+# Warmup Iteration   4: 191688,161 ops/s
+# Warmup Iteration   5: 184631,726 ops/s
+Iteration   1: 188656,605 ops/s
+Iteration   2: 189563,783 ops/s
+Iteration   3: 184065,604 ops/s
+Iteration   4: 182297,191 ops/s
+Iteration   5: 190328,632 ops/s
+
+# Run progress: 60,00% complete, ETA 00:03:20
+# Fork: 4 of 5
+# Warmup Iteration   1: 166660,023 ops/s
+# Warmup Iteration   2: 183785,814 ops/s
+# Warmup Iteration   3: 182291,573 ops/s
+# Warmup Iteration   4: 181466,848 ops/s
+# Warmup Iteration   5: 178876,260 ops/s
+Iteration   1: 175504,485 ops/s
+Iteration   2: 178344,189 ops/s
+Iteration   3: 182129,940 ops/s
+Iteration   4: 182066,131 ops/s
+Iteration   5: 181486,321 ops/s
+
+# Run progress: 80,00% complete, ETA 00:01:40
+# Fork: 5 of 5
+# Warmup Iteration   1: 168876,654 ops/s
+# Warmup Iteration   2: 188086,672 ops/s
+# Warmup Iteration   3: 166208,887 ops/s
+# Warmup Iteration   4: 178531,119 ops/s
+# Warmup Iteration   5: 178717,783 ops/s
+Iteration   1: 187373,639 ops/s
+Iteration   2: 186556,226 ops/s
+Iteration   3: 185253,532 ops/s
+Iteration   4: 183307,120 ops/s
+Iteration   5: 183707,865 ops/s
+
+
+Result "jsonvalues.benchmark.mutable.parsing.StringToJsObj_100.java_hash_map":
+  181654,765 ±(99.9%) 14033,294 ops/s [Average]
+  (min, avg, max) = (118686,958, 181654,765, 201469,262), stdev = 18734,046
+  CI (99.9%): [167621,470, 195688,059] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:08:21
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+Benchmark                         Mode  Cnt       Score       Error  Units
+StringToJsObj_100.java_hash_map  thrpt   25  181654,765 ± 14033,294  ops/s

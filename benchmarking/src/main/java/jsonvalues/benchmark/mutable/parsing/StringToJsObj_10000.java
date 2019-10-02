@@ -26,17 +26,15 @@
 package jsonvalues.benchmark.mutable.parsing;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import jsonvalues.ECollectionsFactory;
 import jsonvalues.JsObj;
 import jsonvalues.Jsons;
 import jsonvalues.MalformedJson;
-import jsonvalues.benchmark.Data;
 import jsonvalues.benchmark.JacksonObjectMapper;
 import org.openjdk.jmh.annotations.Benchmark;
 
 import java.io.IOException;
 
-import static jsonvalues.benchmark.Data.*;
+import static jsonvalues.benchmark.Data.OBJ_10000;
 
 
 public class StringToJsObj_10000
@@ -60,13 +58,6 @@ public class StringToJsObj_10000
                                    .orElseThrow();
     }
 
-    @Benchmark
-    public JsObj ecollections_hash_map() throws MalformedJson
-    {
-
-        return ECollectionsFactory.hml.object.parse(object)
-                                             .orElseThrow();
-    }
 
 
 }

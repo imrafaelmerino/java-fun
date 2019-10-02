@@ -1,12 +1,22 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-final class JavaList implements MutableSeq
+import static jsonvalues.JsBool.FALSE;
+import static jsonvalues.JsBool.TRUE;
+import static jsonvalues.JsNull.NULL;
+
+final class JavaList extends MutableSeq
 {
     private List<JsElem> elements;
 
@@ -200,6 +210,156 @@ final class JavaList implements MutableSeq
                                             );
         }
 
+    }
+
+    public MutableSeq parse(final MutableJsons fac,
+                            final JsonParser parser
+                           ) throws IOException
+    {
+        while (true)
+        {
+            JsonToken elem = parser.nextToken();
+            switch (elem.id())
+            {
+                case JsonTokenId.ID_END_ARRAY:
+                    return this;
+                case JsonTokenId.ID_STRING:
+                    this.elements.add(JsStr.of(parser.getValueAsString()));
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    this.elements.add(JsNumber.of(parser));
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    this.elements.add(JsBigDec.of(parser.getDecimalValue()));
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    this.elements.add(FALSE);
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    this.elements.add(TRUE);
+                    break;
+                case JsonTokenId.ID_NULL:
+                    this.elements.add(NULL);
+                    break;
+                case JsonTokenId.ID_START_OBJECT:
+                    this.elements.add(new MutableJsObj(new JavaMap().parse(fac,
+                                                                           parser
+                                                                          ),
+                                                       fac
+                    ));
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    this.elements.add(new MutableJsArray(new JavaList().parse(fac,
+                                                                              parser
+                                                                             ),
+                                                         fac
+                    ));
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
+            }
+        }
+
+    }
+
+    public JavaList parse(MutableJsons fac,
+                          final JsonParser parser,
+                          final ParseBuilder.Options options,
+                          final JsPath path
+                         ) throws IOException
+    {
+        JsonToken elem;
+        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
+        {
+            final JsPath currentPath = path.inc();
+            switch (elem.id())
+            {
+                case JsonTokenId.ID_STRING:
+                    JsPair.of(currentPath,
+                              JsStr.of(parser.getValueAsString())
+                             )
+                          .consumeIf(condition,
+                                     p -> this.appendBack(options.elemMap.apply(p))
+                                    )
+                    ;
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    JsPair.of(currentPath,
+                              JsNumber.of(parser)
+                             )
+                          .consumeIf(condition,
+                                     p -> this.appendBack(options.elemMap.apply(p))
+                                    );
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    JsPair.of(currentPath,
+                              JsBigDec.of(parser.getDecimalValue())
+                             )
+                          .consumeIf(condition,
+                                     p -> this.appendBack(options.elemMap.apply(p))
+                                    );
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    JsPair.of(currentPath,
+                              FALSE
+                             )
+                          .consumeIf(condition,
+                                     p -> this.appendBack(options.elemMap.apply(p))
+                                    )
+                    ;
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    JsPair.of(currentPath,
+                              TRUE
+                             )
+                          .consumeIf(condition,
+                                     p -> this.appendBack(options.elemMap.apply(p))
+                                    );
+                    break;
+                case JsonTokenId.ID_NULL:
+                    JsPair.of(currentPath,
+                              NULL
+                             )
+                          .consumeIf(condition,
+                                     p -> this.appendBack(options.elemMap.apply(p))
+                                    );
+                    break;
+                case JsonTokenId.ID_START_OBJECT:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        this.appendBack(new MutableJsObj(new JavaMap()
+                                                         .parse(fac,
+                                                                parser,
+                                                                options,
+                                                                currentPath
+                                                               ),
+                                                         fac
+                        ));
+                    }
+                    break;
+
+                case JsonTokenId.ID_START_ARRAY:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        this.appendBack(new MutableJsArray(new JavaList()
+                                                           .parse(fac,
+                                                                  parser,
+                                                                  options,
+                                                                  currentPath.index(-1)
+                                                                 ),
+                                                           fac
+                        ));
+                    }
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
+            }
+        }
+
+        return this;
     }
 
 

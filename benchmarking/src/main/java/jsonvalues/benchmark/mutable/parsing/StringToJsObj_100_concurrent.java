@@ -26,15 +26,15 @@
 package jsonvalues.benchmark.mutable.parsing;
 
 
-import jsonvalues.ECollectionsFactory;
 import jsonvalues.Jsons;
 import jsonvalues.MalformedJson;
 import jsonvalues.benchmark.ExecutorState;
 import jsonvalues.benchmark.JacksonObjectMapper;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
 
 import java.io.IOException;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static jsonvalues.benchmark.Data.OBJ_100;
 
@@ -111,38 +111,7 @@ public class StringToJsObj_100_concurrent
 
     }
 
-    @Benchmark
-    public boolean ecollections_hash_map(final ExecutorState e
-                                        ) throws InterruptedException
-    {
-        CountDownLatch count = new CountDownLatch(NUMBER_TASKS);
-        for (int i = 0; i < NUMBER_TASKS; i++)
-        {
 
-
-            e.service.submit(() ->
-                             {
-                                 try
-                                 {
-                                     return ECollectionsFactory.hml.object.parse(object)
-                                                                          .orElseThrow();
-                                 }
-                                 catch (MalformedJson ex)
-                                 {
-                                     throw new RuntimeException(ex);
-                                 }
-                                 finally
-                                 {
-                                     count.countDown();
-                                 }
-                             });
-        }
-
-        return count.await(10,
-                           TimeUnit.SECONDS
-                          );
-
-    }
 
 
 }

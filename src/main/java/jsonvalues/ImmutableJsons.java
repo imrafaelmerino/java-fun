@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,8 +13,7 @@ import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
 
 /**
- Factory to create immutable jsons. New factories can be created with different map and seq implementations using
- the methods {@link ImmutableJsons#withMap(Class)} and {@link ImmutableJsons#withSeq(Class)}.
+ Factory to create immutable jsons.
  */
 public final class ImmutableJsons
 {
@@ -39,21 +36,21 @@ public final class ImmutableJsons
      */
     public Try parse(String str)
     {
-        try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+        try
         {
-
+            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
-                return new Try(new ImmutableJsArray(array.emptySeq.parse(this,
-                                                                         parser
-                                                                        ),
+                return new Try(new ImmutableJsArray(Jsons.immutable.array.emptySeq.parse(this,
+                                                                                         parser
+                                                                                        ),
                                                     this
                 ));
             }
-            return new Try(new ImmutableJsObj(object.emptyMap.parse(this,
-                                                                    parser
-                                                                   ),
+            return new Try(new ImmutableJsObj(Jsons.immutable.object.emptyMap.parse(this,
+                                                                                    parser
+                                                                                   ),
                                               this
             )
             );
@@ -79,26 +76,26 @@ public final class ImmutableJsons
                      ParseBuilder builder
                     )
     {
-        try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+        try
         {
-
+            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
-            if (event == START_ARRAY) return new Try(new ImmutableJsArray(array.emptySeq.parse(this,
-                                                                                               parser,
-                                                                                               builder.create(),
-                                                                                               JsPath.empty()
-                                                                                                     .index(-1)
+            if (event == START_ARRAY) return new Try(new ImmutableJsArray(Jsons.immutable.array.emptySeq.parse(this,
+                                                                                                               parser,
+                                                                                                               builder.create(),
+                                                                                                               JsPath.empty()
+                                                                                                                     .index(-1)
 
-                                                                                              ),
+                                                                                                              ),
                                                                           this
             )
             );
-            return new Try(new ImmutableJsObj(object.emptyMap.parse(this,
-                                                                    parser,
-                                                                    builder.create(),
-                                                                    JsPath.empty()
+            return new Try(new ImmutableJsObj(Jsons.immutable.object.emptyMap.parse(this,
+                                                                                    parser,
+                                                                                    builder.create(),
+                                                                                    JsPath.empty()
 
-                                                                   ),
+                                                                                   ),
                                               this
             )
             );
@@ -121,23 +118,15 @@ public final class ImmutableJsons
     {
 
         final ImmutableJsArray empty;
-        final ImmutableSeq emptySeq;
+        final ScalaImmutableVector emptySeq;
 
-        ImmutableJsArrays(final Class<? extends ImmutableSeq> vector)
+        ImmutableJsArrays()
         {
-            try
-            {
-                emptySeq = requireNonNull(vector).getDeclaredConstructor()
-                                                 .newInstance();
-                if (!emptySeq.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyVector();
-                empty = new ImmutableJsArray(emptySeq,
-                                             ImmutableJsons.this
-                );
-            }
-            catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
-            {
-                throw UserError.wrongVectorImplementation(e);
-            }
+
+            emptySeq = new ScalaImmutableVector();
+            empty = new ImmutableJsArray(emptySeq,
+                                         ImmutableJsons.this
+            );
 
 
         }
@@ -457,8 +446,9 @@ public final class ImmutableJsons
          */
         public TryArr parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 return new TryArr(new ImmutableJsArray(emptySeq.parse(ImmutableJsons.this,
@@ -480,8 +470,9 @@ public final class ImmutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 return new TryArr(new ImmutableJsArray(emptySeq.parse(ImmutableJsons.this,
@@ -510,23 +501,14 @@ public final class ImmutableJsons
     {
 
         final ImmutableJsObj empty;
-        final ImmutableMap emptyMap;
+        final ScalaImmutableMap emptyMap;
 
-        ImmutableJsObjs(final Class<? extends ImmutableMap> map)
+        ImmutableJsObjs()
         {
-            try
-            {
-                emptyMap = requireNonNull(map).getDeclaredConstructor()
-                                              .newInstance();
-                if (!emptyMap.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyMap();
-                empty = new ImmutableJsObj(emptyMap,
-                                           ImmutableJsons.this
-                );
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-            {
-                throw UserError.wrongMapImplementation(e);
-            }
+            emptyMap = new ScalaImmutableMap();
+            empty = new ImmutableJsObj(emptyMap,
+                                       ImmutableJsons.this
+            );
         }
 
         public JsObj toImmutable(JsObj mutable)
@@ -572,16 +554,18 @@ public final class ImmutableJsons
          */
         public TryObj parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
             {
                 JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                return new TryObj(new ImmutableJsObj(this.emptyMap.parse(ImmutableJsons.this,
-                                                                         parser
-                                                                        ),
+                return new TryObj(new ImmutableJsObj(emptyMap.parse(ImmutableJsons.this,
+                                                                    parser
+                                                                   ),
                                                      ImmutableJsons.this
                 ));
             }
+
             catch (IOException e)
             {
                 return new TryObj(new MalformedJson(e.getMessage()));
@@ -600,20 +584,21 @@ public final class ImmutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str.getBytes())))
             {
-                {
-                    final JsonToken keyEvent = parser.nextToken();
-                    if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
-                    return new TryObj(new ImmutableJsObj(this.emptyMap.parse(ImmutableJsons.this,
-                                                                             parser,
-                                                                             requireNonNull(builder).create(),
-                                                                             JsPath.empty()
-                                                                            ),
-                                                         ImmutableJsons.this
-                    )
-                    );
-                }
+                final JsonToken keyEvent = parser.nextToken();
+                if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
+                return new TryObj(new ImmutableJsObj(emptyMap.parse(ImmutableJsons.this,
+                                                                    parser,
+                                                                    requireNonNull(builder).create(),
+                                                                    JsPath.empty()
+                                                                   ),
+                                                     ImmutableJsons.this
+                )
+                );
+
+
             }
             catch (IOException e)
             {
@@ -886,45 +871,12 @@ public final class ImmutableJsons
     public final ImmutableJsObjs object;
 
 
-    ImmutableJsons(final Class<? extends ImmutableMap> map,
-                   final Class<? extends ImmutableSeq> seq
-                  )
+    ImmutableJsons()
     {
-        this.array = new ImmutableJsArrays(requireNonNull(seq));
-        this.object = new ImmutableJsObjs(requireNonNull(map));
+
+        this.array = new ImmutableJsArrays();
+        this.object = new ImmutableJsObjs();
     }
 
-    private ImmutableJsons(final ImmutableJsObjs obj,
-                           final ImmutableJsArrays array
-                          )
-    {
-        this.array = requireNonNull(array);
-        this.object = requireNonNull(obj);
-    }
 
-    /**
-     returns a new factory of immutable Jsons using as underlying data structure to store elements of Json objects
-     the given as a parameter
-     @param map the underlying data structure to store elements of Json objects in the factory
-     @return a new factory of immutable Jsons
-     */
-    public ImmutableJsons withMap(final Class<? extends ImmutableMap> map)
-    {
-        return new ImmutableJsons(new ImmutableJsObjs(requireNonNull(map)),
-                                  this.array
-        );
-    }
-
-    /**
-     returns a new factory of immutable Jsons using as underlying data structure to store elements of Json arrays
-     the given as a parameter
-     @param seq the underlying data structure to store elements of Json arrays in the factory
-     @return a new factory of immutable Jsons
-     */
-    public ImmutableJsons withSeq(final Class<? extends ImmutableSeq> seq)
-    {
-        return new ImmutableJsons(this.object,
-                                  new ImmutableJsArrays(requireNonNull(seq))
-        );
-    }
 }

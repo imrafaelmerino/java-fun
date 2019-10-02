@@ -1,22 +1,30 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
 import scala.Tuple2;
 import scala.collection.Iterator;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.HashMap;
 import scala.runtime.AbstractFunction1;
 
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-final class ScalaImmutableMap implements ImmutableMap
+import static jsonvalues.JsBool.FALSE;
+import static jsonvalues.JsBool.TRUE;
+import static jsonvalues.JsNull.NULL;
+
+final class ScalaImmutableMap extends ImmutableMap
 {
     private static final HashMap<String, JsElem> EMPTY_HASH_MAP = new HashMap<>();
     private final scala.collection.immutable.Map<String, JsElem> persistentMap;
-
 
     ScalaImmutableMap()
     {
@@ -55,6 +63,7 @@ final class ScalaImmutableMap implements ImmutableMap
 
 
     }
+
     @Override
     public JsElem get(final String key)
     {
@@ -155,5 +164,168 @@ final class ScalaImmutableMap implements ImmutableMap
         return new ScalaImmutableMap(persistentMap.updated(key,
                                                            e
                                                           ));
+    }
+
+    public ImmutableMap parse(final ImmutableJsons fac,
+                              final JsonParser parser
+                             ) throws IOException
+    {
+        HashMap<String, JsElem> map = EMPTY_HASH_MAP;
+        String key = parser.nextFieldName();
+        for (; key != null; key = parser.nextFieldName())
+        {
+            JsElem elem;
+            switch (parser.nextToken()
+                          .id())
+            {
+                case JsonTokenId.ID_STRING:
+                    elem = JsStr.of(parser.getValueAsString());
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    elem = JsNumber.of(parser);
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    elem = JsBigDec.of(parser.getDecimalValue());
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    elem = FALSE;
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    elem = TRUE;
+                    break;
+                case JsonTokenId.ID_NULL:
+                    elem = NULL;
+                    break;
+                case JsonTokenId.ID_START_OBJECT:
+                    elem = new ImmutableJsObj(Jsons.immutable.object.emptyMap.parse(fac,
+                                                                                    parser
+                                                                                   ),
+                                              fac
+
+                    );
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    elem = new ImmutableJsArray(Jsons.immutable.array.emptySeq.parse(fac,
+                                                                                     parser
+                                                                                    ),
+                                                fac
+
+                    );
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(parser.currentToken()
+                                                               .name());
+
+
+            }
+            map = map.updated(key,
+                              elem
+                             );
+        }
+
+        return new ScalaImmutableMap(map);
+
+    }
+
+    public ImmutableMap parse(final ImmutableJsons fac,
+                              final JsonParser parser,
+                              final ParseBuilder.Options options,
+                              final JsPath path
+                             ) throws IOException
+    {
+
+        HashMap<String, JsElem> map = EMPTY_HASH_MAP;
+        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+        while (parser.nextToken() != JsonToken.END_OBJECT)
+        {
+            final String key = options.keyMap.apply(parser.getCurrentName());
+            final JsPath currentPath = path.key(key);
+            final JsPair pair;
+            switch (parser.nextToken()
+                          .id())
+            {
+                case JsonTokenId.ID_STRING:
+                    pair = JsPair.of(currentPath,
+                                     JsStr.of(parser.getValueAsString())
+                                    );
+                    map = (condition.test(pair)) ? map.updated(key,
+                                                               options.elemMap.apply(pair)
+                                                              ) : map;
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    pair = JsPair.of(currentPath,
+                                     JsNumber.of(parser)
+                                    );
+                    map = (condition.test(pair)) ? map.updated(key,
+                                                               options.elemMap.apply(pair)
+                                                              ) : map;
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    pair = JsPair.of(currentPath,
+                                     JsBigDec.of(parser.getDecimalValue())
+                                    );
+                    map = (condition.test(pair)) ? map.updated(key,
+                                                               options.elemMap.apply(pair)
+                                                              ) : map;
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    pair = JsPair.of(currentPath,
+                                     TRUE
+                                    );
+                    map = (condition.test(pair)) ? map.updated(key,
+                                                               options.elemMap.apply(pair)
+                                                              ) : map;
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    pair = JsPair.of(currentPath,
+                                     FALSE
+                                    );
+                    map = (condition.test(pair)) ? map.updated(key,
+                                                               options.elemMap.apply(pair)
+                                                              ) : map;
+                    break;
+                case JsonTokenId.ID_NULL:
+                    pair = JsPair.of(currentPath,
+                                     NULL
+                                    );
+                    map = (condition.test(pair)) ? map.updated(key,
+                                                               options.elemMap.apply(pair)
+                                                              ) : map;
+                    break;
+
+                case JsonTokenId.ID_START_OBJECT:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        map = map.updated(key,
+                                          new ImmutableJsObj(fac.object.emptyMap.parse(fac,
+                                                                                       parser,
+                                                                                       options,
+                                                                                       currentPath
+                                                                                      ),
+                                                             fac
+                                          )
+                                         );
+                    }
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        map = map.updated(key,
+                                          new ImmutableJsArray(fac.array.emptySeq.parse(fac,
+                                                                                        parser,
+                                                                                        options,
+                                                                                        currentPath.index(-1)
+                                                                                       ),
+                                                               fac
+                                          )
+                                         );
+                    }
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(parser.currentToken()
+                                                               .name());
+            }
+        }
+        return new ScalaImmutableMap(map);
     }
 }

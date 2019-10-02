@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.stream.Collector;
 
@@ -15,8 +13,7 @@ import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
 
 /**
- Factory to create mutable jsons. New factories can be created with different map and seq implementations using
- the methods {@link MutableJsons#withMap(Class)} and {@link MutableJsons#withSeq(Class)}.
+ Factory to create mutable jsons.
  */
 public class MutableJsons
 {
@@ -39,25 +36,22 @@ public class MutableJsons
      */
     public Try parse(String str)
     {
-
-        try (final JsonParser parser = Jsons.factory.createParser(str))
+        try
         {
-
+            final JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
-                return new Try(new MutableJsArray(this.array.emptySeq()
-                                                            .parse(this,
-                                                                   parser
-                                                                  ),
+                return new Try(new MutableJsArray(new JavaList().parse(this,
+                                                                       parser
+                                                                      ),
                                                   this
                 ));
             }
 
-            return new Try(new MutableJsObj(this.object.emptyMap()
-                                                       .parse(this,
-                                                              parser
-                                                             ),
+            return new Try(new MutableJsObj(new JavaMap().parse(this,
+                                                                parser
+                                                               ),
                                             this
             ));
         }
@@ -82,28 +76,27 @@ public class MutableJsons
                      ParseBuilder builder
                     )
     {
-        try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
+        try
         {
+            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
 
-                return new Try(new MutableJsArray(this.array.emptySeq()
-                                                            .parse(this,
-                                                                   parser,
-                                                                   builder.create(),
-                                                                   JsPath.fromIndex(-1)
-                                                                  ),
+                return new Try(new MutableJsArray(new JavaList().parse(this,
+                                                                       parser,
+                                                                       builder.create(),
+                                                                       JsPath.fromIndex(-1)
+                                                                      ),
                                                   this
                 ));
             }
 
-            return new Try(new MutableJsObj(this.object.emptyMap()
-                                                       .parse(this,
-                                                              parser,
-                                                              builder.create(),
-                                                              JsPath.empty()
-                                                             ),
+            return new Try(new MutableJsObj(new JavaMap().parse(this,
+                                                                parser,
+                                                                builder.create(),
+                                                                JsPath.empty()
+                                                               ),
                                             this
             ));
         }
@@ -121,11 +114,10 @@ public class MutableJsons
     public class MutableJsArrays
     {
 
-        private final Class<? extends MutableSeq> vector;
 
-        MutableJsArrays(final Class<? extends MutableSeq> seq)
+        MutableJsArrays()
         {
-            this.vector = seq;
+
 
         }
 
@@ -170,28 +162,13 @@ public class MutableJsons
         }
 
 
-        MutableSeq emptySeq()
-        {
-            try
-            {
-                final MutableSeq seq = vector.getDeclaredConstructor()
-                                             .newInstance();
-                if (!seq.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyVector();
-                return seq;
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-            {
-                throw UserError.wrongVectorImplementation(e);
-            }
-        }
-
         /**
          Returns a mutable empty array.
          @return mutable empty JsArray
          */
         public JsArray empty()
         {
-            return new MutableJsArray(emptySeq(),
+            return new MutableJsArray(new JavaList(),
                                       MutableJsons.this
             );
         }
@@ -203,14 +180,15 @@ public class MutableJsons
          */
         public TryArr parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
-                return new TryArr(new MutableJsArray(emptySeq().parse(MutableJsons.this,
-                                                                      parser
-                                                                     ),
+                return new TryArr(new MutableJsArray(new JavaList().parse(MutableJsons.this,
+                                                                          parser
+                                                                         ),
                                                      MutableJsons.this
                 ));
             }
@@ -234,15 +212,16 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
-                return new TryArr(new MutableJsArray(emptySeq().parse(MutableJsons.this,
-                                                                      parser,
-                                                                      builder.create(),
-                                                                      JsPath.fromIndex(-1)
-                                                                     ),
+                return new TryArr(new MutableJsArray(new JavaList().parse(MutableJsons.this,
+                                                                          parser,
+                                                                          builder.create(),
+                                                                          JsPath.fromIndex(-1)
+                                                                         ),
                                                      MutableJsons.this
                 ));
             }
@@ -267,7 +246,7 @@ public class MutableJsons
                          )
         {
 
-            final MutableSeq v = emptySeq();
+            final MutableSeq v = new JavaList();
             v.appendBack(JsStr.of(str));
             for (String a : others)
             {
@@ -425,7 +404,7 @@ public class MutableJsons
                          )
         {
 
-            final MutableSeq seq = emptySeq();
+            final MutableSeq seq = new JavaList();
             seq.appendBack(JsInt.of(number));
             for (int a : others)
             {
@@ -447,7 +426,7 @@ public class MutableJsons
                          )
         {
 
-            final MutableSeq seq = emptySeq();
+            final MutableSeq seq = new JavaList();
             seq.appendBack(JsLong.of(number));
             for (long a : others)
             {
@@ -468,7 +447,7 @@ public class MutableJsons
                           final boolean... others
                          )
         {
-            final MutableSeq seq = emptySeq();
+            final MutableSeq seq = new JavaList();
             seq.appendBack(JsBool.of(bool));
             for (boolean a : others)
             {
@@ -489,8 +468,8 @@ public class MutableJsons
                           final double... others
                          )
         {
-            final MutableSeq seq = emptySeq();
-            emptySeq().appendBack(JsDouble.of(number));
+            final MutableSeq seq = new JavaList();
+            seq.appendBack(JsDouble.of(number));
             for (double a : others)
             {
                 seq.appendBack(JsDouble.of(a));
@@ -502,7 +481,7 @@ public class MutableJsons
 
         public JsArray ofIterable(Iterable<JsElem> iterable)
         {
-            MutableSeq seq = emptySeq();
+            MutableSeq seq = new JavaList();
             for (JsElem e : iterable)
             {
                 if (requireNonNull(e).isJson(Json::isImmutable)) throw UserError.mutableArgExpected(e);
@@ -550,26 +529,13 @@ public class MutableJsons
     public class MutableJsObjs
     {
 
-        final Class<? extends MutableMap> map;
-
-        MutableJsObjs(final Class<? extends MutableMap> map)
+        MutableJsObjs()
         {
-            this.map = map;
         }
 
         MutableMap emptyMap()
         {
-            try
-            {
-                final MutableMap mymap = map.getDeclaredConstructor()
-                                            .newInstance();
-                if (!mymap.isEmpty()) throw UserError.defaultConstructorShouldCreateEmptyMap();
-                return mymap;
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-            {
-                throw UserError.wrongMapImplementation(e);
-            }
+            return new JavaMap();
         }
 
 
@@ -643,14 +609,15 @@ public class MutableJsons
          */
         public TryObj parse(final String str)
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
 
-                return new TryObj(new MutableJsObj(emptyMap().parse(MutableJsons.this,
-                                                                    parser
-                                                                   ),
+                return new TryObj(new MutableJsObj(new JavaMap().parse(MutableJsons.this,
+                                                                       parser
+                                                                      ),
                                                    MutableJsons.this
                 ));
             }
@@ -672,16 +639,17 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try (JsonParser parser = Jsons.factory.createParser(new StringReader(requireNonNull(str))))
+            try
             {
+                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
 
-                return new TryObj(new MutableJsObj(emptyMap().parse(MutableJsons.this,
-                                                                    parser,
-                                                                    builder.create(),
-                                                                    JsPath.empty()
-                                                                   ),
+                return new TryObj(new MutableJsObj(new JavaMap().parse(MutableJsons.this,
+                                                                       parser,
+                                                                       builder.create(),
+                                                                       JsPath.empty()
+                                                                      ),
                                                    MutableJsons.this
                 ));
             }
@@ -943,47 +911,11 @@ public class MutableJsons
     public final MutableJsObjs object;
 
 
-    MutableJsons(final Class<? extends MutableMap> map,
-                 final Class<? extends MutableSeq> seq
-                )
+    MutableJsons()
     {
-        this.array = new MutableJsArrays(seq);
-        this.object = new MutableJsObjs(map);
+        this.array = new MutableJsArrays();
+        this.object = new MutableJsObjs();
     }
 
-    private MutableJsons(final MutableJsObjs obj,
-                         final MutableJsArrays array
-                        )
-    {
-        this.array = array;
-        this.object = obj;
-    }
 
-    /**
-     returns a new factory of mutable Json using as underlying data structure to store elements of Json objects
-     the given as a parameter
-     @param map the underlying data structure to store elements of Json objects in the factory
-     @return a new factory of mutable Jsons
-     */
-    public MutableJsons withMap(final Class<? extends MutableMap> map)
-    {
-
-        return new MutableJsons(new MutableJsObjs(map),
-                                this.array
-        );
-    }
-
-    /**
-     returns a new factory of mutable Json using as underlying data structure to store elements of Json arrays
-     the given as a parameter
-     @param seq the underlying data structure to store elements of Json arrays in the factory
-     @return a new factory of mutable Jsons
-     */
-    public MutableJsons withSeq(final Class<? extends MutableSeq> seq)
-    {
-
-        return new MutableJsons(this.object,
-                                new MutableJsArrays(seq)
-        );
-    }
 }

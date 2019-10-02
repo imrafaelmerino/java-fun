@@ -1,12 +1,22 @@
 package jsonvalues;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
 import scala.collection.generic.CanBuildFrom;
 import scala.collection.immutable.Vector;
 import scala.collection.mutable.Builder;
 
-final class ScalaImmutableVector implements ImmutableSeq
+import java.io.IOException;
+import java.util.function.Predicate;
+
+import static jsonvalues.JsBool.FALSE;
+import static jsonvalues.JsBool.TRUE;
+import static jsonvalues.JsNull.NULL;
+
+final class ScalaImmutableVector extends ImmutableSeq
 {
 
     private static final Vector<JsElem> EMPTY_VECTOR = new scala.collection.immutable.Vector<>(0,
@@ -41,25 +51,25 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public ScalaImmutableVector appendBack(final JsElem elem)
+    ScalaImmutableVector appendBack(final JsElem elem)
     {
         return new ScalaImmutableVector(vector.appendBack(elem));
     }
 
     @Override
-    public ScalaImmutableVector appendFront(final JsElem elem)
+    ScalaImmutableVector appendFront(final JsElem elem)
     {
         return new ScalaImmutableVector(vector.appendFront(elem));
     }
 
     @Override
-    public boolean contains(final JsElem e)
+    boolean contains(final JsElem e)
     {
         return vector.contains(e);
     }
 
     @Override
-    public JsElem get(final int index)
+    JsElem get(final int index)
     {
         return vector.apply(index);
     }
@@ -71,7 +81,7 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public JsElem head()
+    JsElem head()
     {
         if (this.isEmpty()) throw UserError.headOfEmptyArr();
 
@@ -79,7 +89,7 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public ScalaImmutableVector init()
+    ScalaImmutableVector init()
     {
         if (this.isEmpty()) throw UserError.initOfEmptyArr();
 
@@ -87,7 +97,7 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public boolean isEmpty()
+    boolean isEmpty()
     {
         return vector.isEmpty();
     }
@@ -100,7 +110,7 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public JsElem last()
+    JsElem last()
     {
         if (this.isEmpty()) throw UserError.lastOfEmptyArr();
 
@@ -119,8 +129,9 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
-    public ScalaImmutableVector remove(final int index)
+    @SuppressWarnings("squid:S00117")
+        // api de scala uses $ to name methods
+    ScalaImmutableVector remove(final int index)
     {
         if (index == 0) return new ScalaImmutableVector(vector.tail());
         if (index == vector.size() - 1) return new ScalaImmutableVector(vector.init());
@@ -132,9 +143,9 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public ScalaImmutableVector add(final int index,
-                                    final JsElem ele
-                                   )
+    ScalaImmutableVector add(final int index,
+                             final JsElem ele
+                            )
     {
 
         if (index == 0) return new ScalaImmutableVector(vector.appendFront(ele));
@@ -151,14 +162,14 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public int size()
+    int size()
     {
         return vector.size();
     }
 
 
     @Override
-    public ScalaImmutableVector tail()
+    ScalaImmutableVector tail()
     {
         if (this.isEmpty()) throw UserError.tailOfEmptyArr();
 
@@ -166,13 +177,158 @@ final class ScalaImmutableVector implements ImmutableSeq
     }
 
     @Override
-    public ScalaImmutableVector update(final int index,
-                                       final JsElem ele
-                                      )
+    ScalaImmutableVector update(final int index,
+                                final JsElem ele
+                               )
     {
         return new ScalaImmutableVector(vector.updateAt(index,
                                                         ele
                                                        ));
+    }
+
+    ImmutableSeq parse(final ImmutableJsons fac,
+                       final JsonParser parser
+                      ) throws IOException
+    {
+        Vector<JsElem> root = EMPTY_VECTOR;
+        while (true)
+        {
+            JsonToken token = parser.nextToken();
+            JsElem elem;
+            switch (token.id())
+            {
+                case JsonTokenId.ID_END_ARRAY:
+                    return new ScalaImmutableVector(root);
+                case JsonTokenId.ID_START_OBJECT:
+                    elem = new ImmutableJsObj(fac.object.emptyMap.parse(fac,
+                                                                        parser
+                                                                       ),
+                                              fac
+                    );
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    elem = new ImmutableJsArray(fac.array.emptySeq.parse(fac,
+                                                                         parser
+                                                                        ),
+                                                fac
+                    );
+                    break;
+                case JsonTokenId.ID_STRING:
+                    elem = JsStr.of(parser.getValueAsString());
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+                    elem = JsNumber.of(parser);
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+                    elem = JsBigDec.of(parser.getDecimalValue());
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    elem = TRUE;
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    elem = FALSE;
+                    break;
+                case JsonTokenId.ID_NULL:
+                    elem = NULL;
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(token.name());
+            }
+            root = root.appendBack(elem);
+        }
+    }
+
+    ImmutableSeq parse(final ImmutableJsons fac,
+                       final JsonParser parser,
+                       final ParseBuilder.Options options,
+                       final JsPath path
+                      ) throws IOException
+    {
+        JsonToken elem;
+        JsPair pair;
+        Vector<JsElem> root = EMPTY_VECTOR;
+        final Predicate<JsPair> condition = p -> options.elemFilter.test(p) && options.keyFilter.test(p.path);
+        while ((elem = parser.nextToken()) != JsonToken.END_ARRAY)
+        {
+            final JsPath currentPath = path.inc();
+            switch (elem.id())
+            {
+                case JsonTokenId.ID_STRING:
+
+                    pair = JsPair.of(currentPath,
+                                     JsStr.of(parser.getValueAsString())
+                                    );
+                    root = condition.test(pair) ? root.appendBack(options.elemMap.apply(pair)) : root;
+
+                    break;
+                case JsonTokenId.ID_NUMBER_INT:
+
+                    pair = JsPair.of(currentPath,
+                                     JsNumber.of(parser)
+                                    );
+                    root = condition.test(pair) ? root.appendBack(options.elemMap.apply(pair)) : root;
+
+                    break;
+                case JsonTokenId.ID_NUMBER_FLOAT:
+
+                    pair = JsPair.of(currentPath,
+                                     JsBigDec.of(parser.getDecimalValue())
+                                    );
+                    root = condition.test(pair) ? root.appendBack(options.elemMap.apply(pair)) : root;
+
+                    break;
+                case JsonTokenId.ID_TRUE:
+                    pair = JsPair.of(currentPath,
+                                     TRUE
+                                    );
+                    root = condition.test(pair) ? root.appendBack(options.elemMap.apply(pair)) : root;
+
+                    break;
+                case JsonTokenId.ID_FALSE:
+                    pair = JsPair.of(currentPath,
+                                     FALSE
+                                    );
+                    root = condition.test(pair) ? root.appendBack(options.elemMap.apply(pair)) : root;
+                    break;
+                case JsonTokenId.ID_NULL:
+                    pair = JsPair.of(currentPath,
+                                     NULL
+                                    );
+                    root = condition.test(pair) ? root.appendBack(options.elemMap.apply(pair)) : root;
+                    break;
+                case JsonTokenId.ID_START_OBJECT:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        root = root.appendBack(new ImmutableJsObj(fac.object.emptyMap.parse(fac,
+                                                                                            parser,
+                                                                                            options,
+                                                                                            currentPath
+                                                                                           ),
+                                                                  fac
+                                               )
+                                              );
+                    }
+                    break;
+                case JsonTokenId.ID_START_ARRAY:
+                    if (options.keyFilter.test(currentPath))
+                    {
+                        root = root.appendBack(new ImmutableJsArray(fac.array.emptySeq.parse(fac,
+                                                                                             parser,
+                                                                                             options,
+                                                                                             currentPath.index(-1)
+                                                                                            ),
+                                                                    fac
+                                               )
+                                              );
+                    }
+                    break;
+                default:
+                    throw InternalError.tokenNotExpected(elem.name());
+
+
+            }
+        }
+        return new ScalaImmutableVector(root);
     }
 
 

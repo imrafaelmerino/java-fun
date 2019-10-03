@@ -101,25 +101,30 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.checkerframework:checker-qual</exclude>
+                                    <exclude>org.checkerframework:jdk8</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <keepDependenciesWithProvidedScope>false</keepDependenciesWithProvidedScope>
                             <filters>
                                 <filter>
-                                    <artifact>org.scala-lang:scala-library</artifact>
+                                    <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>scala/concurrent/**</exclude>
-                                        <exclude>scala/io/**</exclude>
-                                        <exclude>scala/reflect/**</exclude>
-                                        <exclude>scala/sys/**</exclude>
-                                        <exclude>scala/compat/**</exclude>
-                                        <exclude>scala/collection/parallel/**</exclude>
-                                        <exclude>scala/collection/convert/**</exclude>
-                                        <exclude>scala/collection/concurrent/**</exclude>
+                                        <exclude>META-INF/services/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>com.fasterxml.jackson.core:jackson-core</artifact>
+                                    <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>com/fasterxml/jackson/core/format/**</exclude>
-                                        <exclude>com/fasterxml/jackson/core/type/**</exclude>
+                                        <exclude>META-INF/library.properties</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/maven/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -133,8 +138,30 @@
                                     <shadedPattern>jsonvalues.lib.scala</shadedPattern>
                                 </relocation>
                             </relocations>
-                            <minimizeJar>true</minimizeJar>
+                            <minimizeJar>false</minimizeJar>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                                    <resource>.txt</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <X-Compile-Source-JDK>${MAVEN-SOURCE-PLUGIN.VERSION}</X-Compile-Source-JDK>
+                                        <X-Compile-Target-JDK>${COMPILER_TARGET_VERSION}</X-Compile-Target-JDK>
+                                        <url>${project.url}</url>
+                                        <version>${project.version}</version>
+                                    </manifestEntries>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer">
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                                    <addHeader>false</addHeader>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>META-INF/LICENSE</resource>
+                                    <file>LICENSE</file>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>

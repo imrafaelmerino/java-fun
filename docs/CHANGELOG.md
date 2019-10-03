@@ -1,10 +1,12 @@
 # JSON-VALUES
-## v4.0.0  ( Wed Oct 02 2019 21:19:38 GMT+0200 (Central European Summer Time) )
+## v4.1.0  ( Thu Oct 03 2019 19:16:50 GMT+0200 (Central European Summer Time) )
 
-## Breaking changes
-  - due to [fe5ecc5a](https://github.com/imrafaelmerino/json-values/commit/fe5ecc5aaedeb6456e0ee6ca5161fefbb13b4423),
-  no possible to use any data structure different than Scala HashMap and Vector for the
-immutable Json and Java ArrayList and HashMap for the mutable one. 
+
+## Bug Fixes
+  - 🐛 fall through case in switch statement
+  ([8a5ef7dd](https://github.com/imrafaelmerino/json-values/commit/8a5ef7dda91ffcb7bf4a7a576faed1df0ea2a8b4))
+  - 🐛 Scala gives an error at runtime
+  ([955dc9a2](https://github.com/imrafaelmerino/json-values/commit/955dc9a2210a555a99b7796e754f5d0e01605558))
 
 
 

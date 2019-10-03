@@ -173,6 +173,7 @@ final class JavaMap extends MutableMap
                     break;
                 case JsonTokenId.ID_NUMBER_FLOAT:
                     value = JsBigDec.of(parser.getDecimalValue());
+                    break;
                 case JsonTokenId.ID_FALSE:
                     value = FALSE;
                     break;

@@ -591,12 +591,9 @@ final class ImmutableJsObj extends AbstractJsObj<ImmutableMap>
         if (requireNonNull(path).isEmpty()) throw UserError.pathEmpty("add");
         final JsPath tail = path.tail();
         final Position head = path.head();
-        return head.match(key -> tail.ifEmptyElse(() ->
-                                                  {
-                                                      return of(map.update(key,
-                                                                           fn.apply(get(head))
-                                                                          ));
-                                                  },
+        return head.match(key -> tail.ifEmptyElse(() -> of(map.update(key,
+                                                                      fn.apply(get(head))
+                                                                     )),
                                                   () ->
                                                   {
                                                       final JsElem headElem = get(head);

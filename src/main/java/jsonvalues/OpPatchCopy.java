@@ -1,7 +1,5 @@
 package jsonvalues;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,7 +18,7 @@ final class OpPatchCopy<T extends Json<T>> implements OpPatch<T>
         this.from = JsPath.path(from.get());
         Optional<String> opPath = op.getStr(JsPath.fromKey("path"));
         if (!opPath.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.path(opPath.get());
+        this.path = JsPath.path(opPath.get());
     }
 
 

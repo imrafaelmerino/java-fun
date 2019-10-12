@@ -147,8 +147,7 @@ final class JavaMap extends MutableMap
         return new JavaMap(new HashMap<>(elements));
     }
 
-    @Override
-    public int hashCode()
+    public int getHashCode()
     {
         return elements.hashCode();
 

@@ -74,8 +74,7 @@ final class ScalaImmutableVector extends ImmutableSeq
         return vector.apply(index);
     }
 
-    @Override
-    public int hashCode()
+    public int getHashCode()
     {
         return vector.hashCode();
     }

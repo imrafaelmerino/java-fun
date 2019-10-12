@@ -57,8 +57,7 @@ final class JavaList extends MutableSeq
         return elements.get(index);
     }
 
-    @Override
-    public int hashCode()
+    public int getHashCode()
     {
         return elements.hashCode();
 

@@ -1,8 +1,5 @@
 package jsonvalues;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -11,12 +8,13 @@ final class OpPatchTest<T extends Json<T>> implements OpPatch<T>
 {
     private final JsElem value;
     private final JsPath path;
+
     OpPatchTest(final JsObj op) throws PatchMalformed
     {
         this.value = requireNonNull(op).get(JsPath.fromKey("value"));
         Optional<String> opPath = op.getStr(JsPath.fromKey("path"));
         if (!opPath.isPresent()) throw PatchMalformed.pathRequired(op);
-        this.path =  JsPath.path(opPath.get());
+        this.path = JsPath.path(opPath.get());
     }
 
     @Override

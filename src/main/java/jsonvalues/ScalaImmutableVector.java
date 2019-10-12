@@ -75,6 +75,7 @@ final class ScalaImmutableVector extends ImmutableSeq
     }
 
     @Override
+    @SuppressWarnings("squid:S1206") //equals method never used. Implemented in AbstractJsArray
     public int hashCode()
     {
         return vector.hashCode();

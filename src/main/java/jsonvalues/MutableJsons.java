@@ -36,9 +36,8 @@ public class MutableJsons
      */
     public Try parse(String str)
     {
-        try
+        try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
         {
-            final JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
@@ -54,6 +53,7 @@ public class MutableJsons
                                                                ),
                                             this
             ));
+
         }
 
         catch (IOException e)
@@ -76,9 +76,9 @@ public class MutableJsons
                      ParseBuilder builder
                     )
     {
-        try
+
+        try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
         {
-            JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
             final JsonToken event = parser.nextToken();
             if (event == START_ARRAY)
             {
@@ -99,6 +99,7 @@ public class MutableJsons
                                                                ),
                                             this
             ));
+
         }
         catch (IOException e)
         {
@@ -180,9 +181,9 @@ public class MutableJsons
          */
         public TryArr parse(final String str)
         {
-            try
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
             {
-                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
 
@@ -192,7 +193,6 @@ public class MutableJsons
                                                      MutableJsons.this
                 ));
             }
-
             catch (IOException e)
             {
 
@@ -212,9 +212,9 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
             {
-                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_ARRAY != keyEvent) return new TryArr(MalformedJson.expectedArray(str));
                 return new TryArr(new MutableJsArray(new JavaList().parse(MutableJsons.this,
@@ -225,7 +225,6 @@ public class MutableJsons
                                                      MutableJsons.this
                 ));
             }
-
             catch (IOException e)
             {
 
@@ -609,9 +608,9 @@ public class MutableJsons
          */
         public TryObj parse(final String str)
         {
-            try
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
             {
-                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
 
@@ -621,6 +620,7 @@ public class MutableJsons
                                                    MutableJsons.this
                 ));
             }
+
             catch (IOException e)
             {
                 return new TryObj(new MalformedJson(e.getMessage()));
@@ -639,9 +639,9 @@ public class MutableJsons
                             final ParseBuilder builder
                            )
         {
-            try
+
+            try (JsonParser parser = Jsons.factory.createParser(requireNonNull(str)))
             {
-                JsonParser parser = Jsons.factory.createParser(requireNonNull(str));
                 final JsonToken keyEvent = parser.nextToken();
                 if (START_OBJECT != keyEvent) return new TryObj(MalformedJson.expectedObj(str));
 
@@ -652,6 +652,7 @@ public class MutableJsons
                                                                       ),
                                                    MutableJsons.this
                 ));
+
             }
             catch (IOException e)
             {

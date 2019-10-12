@@ -148,6 +148,7 @@ final class JavaMap extends MutableMap
     }
 
     @Override
+    @SuppressWarnings("squid:S1206") //equals method never used. Implemented in AbstractJsObject
     public int hashCode()
     {
         return elements.hashCode();

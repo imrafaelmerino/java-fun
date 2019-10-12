@@ -1,9 +1,5 @@
 package jsonvalues;
 
-
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -45,7 +41,6 @@ final class OpPatchReplace<T extends Json<T>> implements OpPatch<T>
         ", path=" + path +
         '}';
     }
-
 
 
 }

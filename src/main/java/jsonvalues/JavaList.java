@@ -58,6 +58,7 @@ final class JavaList extends MutableSeq
     }
 
     @Override
+    @SuppressWarnings("squid:S1206") //equals method never used. Implemented in AbstractJsArray
     public int hashCode()
     {
         return elements.hashCode();

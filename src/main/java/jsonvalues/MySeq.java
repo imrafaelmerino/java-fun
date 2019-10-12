@@ -1,5 +1,11 @@
 package jsonvalues;
 
+/**
+ It's an abstract class and not an interface for performance reason. The bytecode instruction invokeinterface
+ is slower than invokedinamic, and from the point of view of the design, it's not a public class that
+ will be extended by anyone
+ */
+@SuppressWarnings("squid:S1610")
 abstract class MySeq<V extends MySeq<V>> implements Iterable<JsElem>
 {
     /**

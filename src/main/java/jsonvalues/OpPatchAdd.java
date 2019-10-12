@@ -1,7 +1,5 @@
 package jsonvalues;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Objects;
 import java.util.Optional;
 

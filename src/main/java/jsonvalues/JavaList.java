@@ -57,7 +57,9 @@ final class JavaList extends MutableSeq
         return elements.get(index);
     }
 
-    public int getHashCode()
+    @Override
+    @SuppressWarnings("squid:S1206") //equals method never used. Implemented in AbstractJsArray
+    public int hashCode()
     {
         return elements.hashCode();
 

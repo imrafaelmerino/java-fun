@@ -147,7 +147,9 @@ final class JavaMap extends MutableMap
         return new JavaMap(new HashMap<>(elements));
     }
 
-    public int getHashCode()
+    @Override
+    @SuppressWarnings("squid:S1206") //equals method never used. Implemented in AbstractJsObject
+    public int hashCode()
     {
         return elements.hashCode();
 

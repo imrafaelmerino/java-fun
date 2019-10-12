@@ -21,7 +21,6 @@ import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
 
-
 final class ScalaImmutableMap extends ImmutableMap
 {
     private static final HashMap<String, JsElem> EMPTY_HASH_MAP = new HashMap<>();
@@ -85,10 +84,13 @@ final class ScalaImmutableMap extends ImmutableMap
                                                                       .get()) : Optional.empty();
     }
 
-    public int getHashCode()
+    @Override
+    @SuppressWarnings("squid:S1206") //equals method never used. Implemented in AbstractJsObj
+    public int hashCode()
     {
         return persistentMap.hashCode();
     }
+
 
     @Override
     public java.util.Map.Entry<String, JsElem> head()

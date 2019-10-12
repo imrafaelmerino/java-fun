@@ -121,7 +121,8 @@ final class ScalaImmutableMap extends ImmutableMap
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
+    // api de scala uses $ to name methods, downcasting necessary, otherwise scala gets an error
+    @SuppressWarnings({"squid:S00117", "squid:S1905"})
     public ScalaImmutableMap remove(final String key)
     {
         return new ScalaImmutableMap(((HashMap<String, JsElem>) persistentMap).$minus(key));
@@ -134,7 +135,8 @@ final class ScalaImmutableMap extends ImmutableMap
     }
 
     @Override
-    @SuppressWarnings("squid:S00117") // api de scala uses $ to name methods
+    // api de scala uses $ to name methods, downcasting necessary, otherwise scala gets an error
+    @SuppressWarnings({"squid:S00117", "squid:S1905"})
     public ScalaImmutableMap tail(String head)
     {
         if (this.isEmpty()) throw UserError.tailOfEmptyObj();

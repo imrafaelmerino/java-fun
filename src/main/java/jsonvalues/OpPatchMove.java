@@ -11,9 +11,9 @@ final class OpPatchMove<T extends Json<T>> implements OpPatch<T>
 
     OpPatchMove(final JsObj op) throws PatchMalformed
     {
-        Optional<String> from = requireNonNull(op).getStr(JsPath.fromKey("from"));
-        if (!from.isPresent()) throw PatchMalformed.fromRequired(op);
-        this.from = JsPath.path(from.get());
+        Optional<String> fromValue = requireNonNull(op).getStr(JsPath.fromKey("from"));
+        if (!fromValue.isPresent()) throw PatchMalformed.fromRequired(op);
+        this.from = JsPath.path(fromValue.get());
         Optional<String> opPath = op.getStr(JsPath.fromKey("path"));
         if (!opPath.isPresent()) throw PatchMalformed.pathRequired(op);
         this.path = JsPath.path(opPath.get());

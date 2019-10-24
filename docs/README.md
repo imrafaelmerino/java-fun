@@ -19,6 +19,7 @@
 - [Documentation](https://imrafaelmerino.github.io/json-values/)
 - [Want to help](#wth)
 - [Develop](#develop)
+- [Related projects](#rp)
 
 ## <a name="introduction"><a/> Introduction
 Welcome to **json-values**, the first-ever Json library in _Java_ that uses _persistent data structures_ 
@@ -132,3 +133,12 @@ I've set up a separate document for [contributors](./CONTRIBUTING.md).
 I've set up a separate document for [developers](./developers.md). Things like why json-values is a one-package library, if it was developed using TDD or anything related to the
 development of the library can be found there. I'll be adding little by little more and more
 information.    
+## <a name="rp"><a/> Related projects
+“Ideas are like rabbits. You get a couple and learn how to handle them, and pretty soon you have a dozen.” – John Steinbeck
+
+After the development of json-values, I published two more related projects:
+* The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
+* Json generators in Scala to do property-based testing: [json-scala-values-generator](https://github.com/imrafaelmerino/json-scala-values-generator) .
+
+
+

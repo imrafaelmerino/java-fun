@@ -138,7 +138,8 @@ information.
 
 After the development of json-values, I published two more related projects:
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
-* Json generators in Scala to do property-based testing: [json-scala-values-generator](https://github.com/imrafaelmerino/json-scala-values-generator) .
-
+* Json generators in Scala to do property-based testing: [json-scala-values-generator](https://github.com/imrafaelmerino/json-scala-values-generator) . This is a 
+project I'm especially proud of. I think there is no Json generator more declarative, concise, and why not, beautiful in the
+whole wide world! If I'm wrong, please let me know!
 
 

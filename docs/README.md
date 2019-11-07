@@ -8,7 +8,7 @@
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/4.1.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/4.1.0/jar)
-
+[![](https://jitpack.io/v/imrafaelmerino/json-values.svg)](https://jitpack.io/#imrafaelmerino/json-values)
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 - [Introduction](#introduction)

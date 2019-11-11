@@ -87,7 +87,7 @@ The reasons they gave me were the followings ([link to reviews](https://www.yego
 * A quote from the README: "json-values is functional", what does it have to do with OOP an EO? 
 
 Regarding the first point, it's obvious they made a great mistake. I don't know how they
-got that measure. Cloning the repo and executing the command clock would have returned :
+got that measure. Cloning the repo and executing the [command](https://www.npmjs.com/package/cloc)  _cloc src_ would have returned :
 
 ```
 
@@ -103,11 +103,12 @@ SUM:                           140           4035           3397          22622
 ```
 
 Regarding the second point, what kind of defect is to be functional? The library has been implemented in Java and 
-following both FP and OOP paradigms. It's functional because a persistent Json has been implemented, that' all. Immutability
-is a great virtue in any paradigm, but without persistent data structures sometimes is not feasible because of
-performance (copying big data structure every change is very inefficient.
+following both FP and OOP paradigms. It's functional because a persistent Json has been implemented, that's all. 
+Immutability is a great virtue in any paradigm, but without persistent data structures sometimes is not feasible because of
+performance (copying big data structure every change you make is very inefficient).
 
-I reported this immediately,  and I was answered that it was a mistake and that they would double-check my poor review. I'm still waiting.
+I reported this immediately, and I was answered that it was a mistake and that they would double-check my poor review. 
+I'm still waiting.
 
 These are the facts, and I don't pretend anything else that explaining them here, because this was quite disappointing.  
 I have to admit that I was looking forward to seeing the results...

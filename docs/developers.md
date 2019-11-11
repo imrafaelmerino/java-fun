@@ -114,7 +114,6 @@ I reported this immediately, and I was answered that it was a mistake and that t
 I'm still waiting.
 
 These are the facts, and I don't pretend anything else that explaining what happened, because this was quite disappointing.  
-I have to admit that I was looking forward to seeing the results...
 
 On the other hand, I must admit that my project improved a lot thanks to this award. 
 

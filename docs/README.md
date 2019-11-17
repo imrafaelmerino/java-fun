@@ -9,6 +9,7 @@
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/4.1.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/4.1.0/jar)
 [![](https://jitpack.io/v/imrafaelmerino/json-values.svg)](https://jitpack.io/#imrafaelmerino/json-values)
+
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 - [Introduction](#introduction)
@@ -54,6 +55,8 @@ them is the same, being both implementations hidden to the user.
 * As a developer, I'm convinced that code should win arguments, so let me enumerate some examples, where I
 leave the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
+  
+If you consider this library concise, declarative, and elegant, you can let me know by starring it. If not, much better, it means json-values can get better, your feedback we'll be more than welcoming. 
 ```
 json.mapKeys(toSneakeCase)
 

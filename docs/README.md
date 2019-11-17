@@ -39,8 +39,9 @@ to represent a Json.
 manipulate them.
 * _It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures_. —Alan Perlis. 
 
-**json-values** has taken much inspiration from Scala as well, as a matter of fact, it's been implemented following both the object-oriented
-and functional paradigms, as Scala promotes.
+**json-values** has taken much inspiration from Scala as well, as a matter of fact, it's been implemented following both the object-oriented and functional paradigms, as Scala promotes.
+
+If you consider this library concise, declarative, and elegant, you can let me know by starring it. If not, much better, it means json-values can get better, your feedback we'll be more than welcoming. 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 * You need to deal with Jsons, and you want to program following a functional style, **using functions and immutable types (or values)**,
 but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide Persistent Data Structures**.
@@ -56,7 +57,6 @@ them is the same, being both implementations hidden to the user.
 leave the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
   
-If you consider this library concise, declarative, and elegant, you can let me know by starring it. If not, much better, it means json-values can get better, your feedback we'll be more than welcoming. 
 ```
 json.mapKeys(toSneakeCase)
 

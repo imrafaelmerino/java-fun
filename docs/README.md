@@ -27,8 +27,9 @@
 Welcome to **json-values**, the first-ever Json library in _Java_ implemented with persistent data structures.  
 
 One of the most important aspects of functional programming is immutable data structures, better known as values. Updating these structures using the copy-on-write approach is very inefficient, and this is the reason why persistent 
-data structures were created. On the other hand, JSON is a lightweight, text-based, language-independent data interchange format. It's become so popular due to its simplicity. There are a lot of libraries out there to work with JSON 
-in the JVM ecosystem; however, none of them use persistent data structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that? JSON is a great structure. 
+data structures were created. On the other hand, JSON is a lightweight, text-based, language-independent data interchange format. It's become so popular due to its simplicity. 
+
+There are a lot of libraries out there to work with JSON in the JVM ecosystem; however, none of them use persistent data structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that? JSON is a great structure. 
 It's simple, easy to aggregate, ease to create, easy to reason about, so why create yet another abstraction over JSON? Moreover, there are many architectures that work with JSON end-to-end. Going from JSON to objects or strings back and forth is not very 
 efficient, especially when copy-on-write is the only option to avoid mutation. All these points are way better elaborated in the talk [the value of values](https://www.youtube.com/watch?v=-6BsiVyC1kM), a masterpiece from Rich Hickey. 
 

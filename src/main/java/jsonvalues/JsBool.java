@@ -5,9 +5,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  Represents an immutable json boolean. Only two instances are created: {@link #FALSE} and {@link #TRUE}
  */
-public final class JsBool implements JsElem
+public final class JsBool implements JsValue
 {
+    public static final int ID = 0;
 
+
+    @Override
+    public int id()
+    {
+        return ID;
+    }
     /**
      The singleton false value.
      */
@@ -21,11 +28,11 @@ public final class JsBool implements JsElem
     /**
      the boolean value.
      */
-    public final boolean x;
+    public final boolean value;
 
-    private JsBool(final boolean x)
+    private JsBool(final boolean value)
     {
-        this.x = x;
+        this.value = value;
     }
 
 
@@ -40,7 +47,7 @@ public final class JsBool implements JsElem
         if (this == that) return true;
         if (that == null || getClass() != that.getClass()) return false;
         final JsBool thatBool = (JsBool) that;
-        return x == thatBool.x;
+        return value == thatBool.value;
     }
 
     /**
@@ -50,7 +57,7 @@ public final class JsBool implements JsElem
     @Override
     public int hashCode()
     {
-        return x ? 1 : 0;
+        return value ? 1 : 0;
     }
 
     /**
@@ -59,7 +66,7 @@ public final class JsBool implements JsElem
      */
     public JsBool negate()
     {
-        return JsBool.of(!x);
+        return JsBool.of(!value);
     }
 
     /**
@@ -79,7 +86,7 @@ public final class JsBool implements JsElem
     @Override
     public String toString()
     {
-        return String.valueOf(x);
+        return String.valueOf(value);
     }
 
     @Override
@@ -91,13 +98,13 @@ public final class JsBool implements JsElem
     @Override
     public boolean isTrue()
     {
-        return x;
+        return value;
     }
 
     @Override
     public boolean isFalse()
     {
-        return !x;
+        return !value;
     }
 
 

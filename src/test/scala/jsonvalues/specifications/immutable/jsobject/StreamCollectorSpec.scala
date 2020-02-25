@@ -5,7 +5,7 @@ import java.util.function.Function
 import java.util.stream
 
 import jsonvalues.specifications.BasePropSpec
-import jsonvalues.{JsObj, JsPair, Jsons, ScalaToJava}
+import jsonvalues.{JsObj, JsPair}
 import org.scalacheck.Prop.forAll
 
 class StreamCollectorSpec extends BasePropSpec
@@ -20,48 +20,48 @@ class StreamCollectorSpec extends BasePropSpec
                                ): JsObj => Boolean =
             {
               json =>
-                json.stream_().
+                json.streamAll().
                   filter((t: jsonvalues.JsPair) => filter.apply(t)).
                   allMatch((t: jsonvalues.JsPair) => predicate.apply(t))
             }
 
             List(
-              testPredicateIf(p => p.elem.isStr,
-                              pair => js.getStr(pair.path).get == pair.elem.asJsStr.x
+              testPredicateIf(p => p.value.isStr,
+                              pair => js.getStr(pair.path).get == pair.value.toJsStr.value
                               ),
-              testPredicateIf(p => p.elem.isInt,
+              testPredicateIf(p => p.value.isInt,
                               pair =>
                               {
-                                val n = pair.elem.asJsInt.x
+                                val n = pair.value.toJsInt.value
                                 (js.getInt(pair.path).getAsInt == n) &&
                                 (js.getLong(pair.path).getAsLong == n) &&
                                 (js.getBigInt(pair.path).get() == BigInteger.valueOf(n))
                               }
                               ),
-              testPredicateIf(p => p.elem.isLong,
+              testPredicateIf(p => p.value.isLong,
                               pair =>
                               {
-                                val n = pair.elem.asJsLong.x
+                                val n = pair.value.toJsLong.value
                                 (js.getLong(pair.path).getAsLong == n) &&
                                 (js.getBigInt(pair.path).get() == BigInteger.valueOf(n))
                               }
                               ),
-              testPredicateIf(p => p.elem.isDouble,
+              testPredicateIf(p => p.value.isDouble,
                               pair =>
                               {
-                                val n = pair.elem.asJsDouble.x
+                                val n = pair.value.toJsDouble.value
                                 (js.getDouble(pair.path).getAsDouble == n) &&
                                 (js.getBigDecimal(pair.path).get() == java.math.BigDecimal.valueOf(n))
                               }
                               ),
-              testPredicateIf(p => p.elem.isBigInt,
-                              pair => js.getBigInt(pair.path).get == pair.elem.asJsBigInt.x
+              testPredicateIf(p => p.value.isBigInt,
+                              pair => js.getBigInt(pair.path).get == pair.value.toJsBigInt.value
                               ),
-              testPredicateIf(pair => pair.elem.isBigDec,
-                              pair => js.getBigDecimal(pair.path).get == pair.elem.asJsBigDec.x
+              testPredicateIf(pair => pair.value.isBigDec,
+                              pair => js.getBigDecimal(pair.path).get == pair.value.toJsBigDec.value
                               ),
-              testPredicateIf(pair => pair.elem.isBool,
-                              pair => js.getBool(pair.path).get == pair.elem.asJsBool.x
+              testPredicateIf(pair => pair.value.isBool,
+                              pair => js.getBool(pair.path).get == pair.value.toJsBool.value
                               )
               ).map(f => f(js))
               .reduce(_ && _)
@@ -70,63 +70,23 @@ class StreamCollectorSpec extends BasePropSpec
   }
 
 
-  property("object collector reduces an stream_ back to the same object")
-  {
-    check(forAll(jsGen.jsObjGen)
-          { js =>
-            val obj = js.stream_().collect(Jsons.mutable.`object`.collector())
-            obj.same(js)
-
-          }
-          )
-  }
 
 
-  property("maps a stream in parallel and not in parallel and returns the same json object")
-  {
-    check(forAll(jsGen.jsObjGen)
-          { js =>
-
-            val function: (JsPair => JsPair) = (pair: JsPair) => pair.mapIfStr(_.toUpperCase)
-
-            val a: stream.Stream[JsPair] = js.stream_().map(ScalaToJava.function(function))
-
-            val b: stream.Stream[JsPair] = js.stream_().parallel().map(ScalaToJava.function(function))
-
-            a.collect(Jsons.mutable.`object`.collector()).equals(b.collect(Jsons.mutable.`object`.collector()))
-          }
-          )
-  }
-
-  property("filters a stream in parallel and not in parallel and returns the same json object")
-  {
-    check(forAll(jsGen.jsObjGen)
-          { js =>
-
-            val a: stream.Stream[JsPair] = js.stream_().filter(p => p.elem.isNotNull && !p.elem.isBool())
-
-            val b: stream.Stream[JsPair] = js.stream_().parallel().filter(p => p.elem.isNotNull && !p.elem.isBool())
-
-            a.collect(Jsons.mutable.`object`.collector()).equals(b.collect(Jsons.mutable.`object`.collector()))
-
-          }
-          )
-  }
 
   property("reduces a stream in parallel and not in parallel and returns the same result")
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
 
-            val function: Function[JsPair, Long] = pair => pair.elem.asJsLong().x
+            val function: Function[JsPair, Long] = pair => pair.value.toJsLong().value
 
-            val value: stream.Stream[Long] = js.stream_().filter(p => p.elem.isLong || p.elem.isInt).map(function)
+            val value: stream.Stream[Long] = js.streamAll().filter(p => p.value.isLong || p.value.isInt).map(function)
             val a = value.reduce((a: Long,
                                   b: Long
                                  ) => a + b
                                  ).orElse(-1)
 
-            val value1: stream.Stream[Long] = js.stream_().parallel().filter(p => p.elem.isLong || p.elem.isInt).map(function)
+            val value1: stream.Stream[Long] = js.streamAll().parallel().filter(p => p.value.isLong || p.value.isInt).map(function)
             val b = value1.reduce((a: Long,
                                    b: Long
                                   ) => a + b

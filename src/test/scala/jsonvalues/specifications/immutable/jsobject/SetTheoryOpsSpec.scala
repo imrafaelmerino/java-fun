@@ -19,15 +19,15 @@ class SetTheoryOpsSpec extends BasePropSpec
           )
   }
 
-  property("union_ of an object with itself itself returns the same object")
+  property("unionAll of an object with itself itself returns the same object")
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            js.union_(js,
-                      SET
-                      ).equals(js) && js.union_(js,
-                                                SET
-                                                ).hashCode() == js.hashCode()
+            js.unionAll(js,
+                        SET
+                        ).equals(js) && js.unionAll(js,
+                                                    SET
+                                                    ).hashCode() == js.hashCode()
           }
           )
   }
@@ -49,8 +49,8 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            js.union(Jsons.immutable.`object`.empty()
-                     ).equals(js) && js.union(Jsons.immutable.`object`.empty()).equals(js)
+            js.union(JsObj.empty()
+                     ).equals(js) && js.union(JsObj.empty()).equals(js)
           }
           )
   }
@@ -70,7 +70,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           )
   }
   //
-  property("objects union_ is commutative (same fields but not necessarily same values)")
+  property("objects unionAll is commutative (same fields but not necessarily same values)")
   {
     check(forAll(jsGen.jsObjGen,
                  jsGen.jsObjGen
@@ -78,17 +78,17 @@ class SetTheoryOpsSpec extends BasePropSpec
           { (a,
              b
             ) =>
-            a.union_(b,
-                     SET
-                     ).fields().containsAll(b.union_(a,
-                                                     SET
-                                                     ).fields()
+            a.unionAll(b,
+                       SET
+                       ).fields().containsAll(b.unionAll(a,
+                                                         SET
+                                                         ).fields()
                                             ) &&
-            b.union_(a,
-                     SET
-                     ).fields().containsAll(a.union_(b,
-                                                     SET
-                                                     ).fields()
+            b.unionAll(a,
+                       SET
+                       ).fields().containsAll(a.unionAll(b,
+                                                         SET
+                                                         ).fields()
                                             )
 
           }
@@ -112,7 +112,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           )
   }
 
-  property("objects intersection_ is commutative (same fields and values)")
+  property("objects intersectionAll is commutative (same fields and values)")
   {
     check(forAll(jsGen.jsObjGen,
                  jsGen.jsObjGen
@@ -120,12 +120,12 @@ class SetTheoryOpsSpec extends BasePropSpec
           { (a,
              b
             ) =>
-            val obj = a.intersection_(b,
-                                      SET
-                                      )
-            val obj1 = b.intersection_(a,
-                                       SET
-                                       )
+            val obj = a.intersectionAll(b,
+                                        SET
+                                        )
+            val obj1 = b.intersectionAll(a,
+                                         SET
+                                         )
             obj.equals(obj1,
                        SET
                        )
@@ -139,21 +139,21 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            js.intersection(Jsons.immutable.`object`.empty(),
+            js.intersection(JsObj.empty(),
                             TYPE.LIST
-                            ).equals(Jsons.immutable.`object`.empty()
+                            ).equals(JsObj.empty()
                                      )
           }
           )
   }
 
-  property("intersection_ of an object with an empty object returns an empty object")
+  property("intersectionAll of an object with an empty object returns an empty object")
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            js.intersection_(Jsons.immutable.`object`.empty(),
-                             SET
-                             ).equals(Jsons.immutable.`object`.empty()
+            js.intersectionAll(JsObj.empty(),
+                               SET
+                               ).equals(JsObj.empty()
                                       )
           }
           )
@@ -164,23 +164,23 @@ class SetTheoryOpsSpec extends BasePropSpec
     val ONE = JsInt.of(1)
     val TWO = JsInt.of(2)
     val THREE = JsInt.of(3)
-    val obj3 = Jsons.immutable.`object`.of("d",
+    val obj3 = JsObj.of("d",
                                            ONE
                                            )
-    val obj4 = Jsons.immutable.`object`.of("e",
+    val obj4 = JsObj.of("e",
                                            TWO
                                            )
 
-    val gen: Gen[JsObj] = Gen.const(Jsons.immutable.`object`.of("a",
-                                                                Jsons.immutable.array.of(ONE,
+    val gen: Gen[JsObj] = Gen.const(JsObj.of("a",
+                                                                JsArray.of(ONE,
                                                                                          TWO,
                                                                                          obj3
                                                                                          )
                                                                 )
                                     )
 
-    val b: JsObj = Jsons.immutable.`object`.of("a",
-                                               Jsons.immutable.array.of(ONE,
+    val b: JsObj = JsObj.of("a",
+                                               JsArray.of(ONE,
                                                                         THREE,
                                                                         obj4
                                                                         )
@@ -189,21 +189,21 @@ class SetTheoryOpsSpec extends BasePropSpec
     check(forAll(gen)
           {
             obj =>
-              obj.union_(obj,
-                         SET
-                         ).equals(obj)
+              obj.unionAll(obj,
+                           SET
+                           ).equals(obj)
 
-              val result = obj.union_(b,
-                                      TYPE.MULTISET
-                                      )
+              val result = obj.unionAll(b,
+                                        TYPE.MULTISET
+                                        )
 
-              val result1 = obj.union_(b,
-                                       SET
-                                       )
+              val result1 = obj.unionAll(b,
+                                         SET
+                                         )
 
-              val result2 = obj.union_(b,
-                                       TYPE.LIST
-                                       )
+              val result2 = obj.unionAll(b,
+                                         TYPE.LIST
+                                         )
 
               val a = JsPath.fromKey("a")
               result.size(a).orElse(0) == 6 && result1.size(a).orElse(0) == 5 && result2.size(a).orElse(0) == 3

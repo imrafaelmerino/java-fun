@@ -12,8 +12,8 @@ public class StringToJsObj_1000
     public JsObj scala_hash_map() throws MalformedJson
     {
 
-        return Jsons.immutable.object.parse(object)
-                                     .orElseThrow();
+        return JsObj.parse(object)
+                                  ;
     }
 
 

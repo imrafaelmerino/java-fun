@@ -7,9 +7,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  unchanged. The functions that return a JsElem, like {@link Json#get(JsPath)},
  return nothing when no element is found, what makes them total on the input path.
  */
-public final class JsNothing implements JsElem
+public final class JsNothing implements JsValue
 {
+    public static final int ID = 4;
 
+
+    @Override
+    public int id()
+    {
+        return ID;
+    }
     private JsNothing()
     {
     }

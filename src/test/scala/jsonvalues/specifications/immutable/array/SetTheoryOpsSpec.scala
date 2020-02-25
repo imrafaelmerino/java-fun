@@ -48,11 +48,11 @@ class SetTheoryOpsSpec extends BasePropSpec
   }
 
 
-  property("union_ of an array with itself returns the same array ")
+  property("unionAll of an array with itself returns the same array ")
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            js.union_(js).equals(js) && js.union_(js).hashCode() == js.hashCode()
+            js.unionAll(js).equals(js) && js.unionAll(js).hashCode() == js.hashCode()
           }
           )
   }
@@ -76,9 +76,9 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            js.union(Jsons.immutable.array.empty(),
+            js.union(JsArray.empty(),
                      TYPE.LIST
-                     ).equals(js) && js.union_(Jsons.immutable.array.empty()).equals(js)
+                     ).equals(js) && js.unionAll(JsArray.empty()).equals(js)
           }
           )
   }
@@ -105,7 +105,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           )
   }
   //
-  property("array union_ is commutative (MULTISET AND LIST)")
+  property("array unionAll is commutative (MULTISET AND LIST)")
   {
     check(forAll(jsGen.jsArrGen,
                  jsGen.jsArrGen
@@ -113,7 +113,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           { (a,
              b
             ) =>
-            a.union_(b).size() == b.union_(a).size()
+            a.unionAll(b).size() == b.unionAll(a).size()
 
 
           }
@@ -137,7 +137,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           )
   }
 
-  property("arrays intersection_ is commutative (ORDERED LIST)")
+  property("arrays intersectionAll is commutative (ORDERED LIST)")
   {
     check(forAll(jsGen.jsArrGen,
                  jsGen.jsArrGen
@@ -145,7 +145,7 @@ class SetTheoryOpsSpec extends BasePropSpec
           { (a,
              b
             ) =>
-            a.intersection_(b).equals(b.intersection_(a))
+            a.intersectionAll(b).equals(b.intersectionAll(a))
           }
           )
   }
@@ -155,24 +155,24 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            js.intersection(Jsons.immutable.array.empty(),
+            js.intersection(JsArray.empty(),
                             TYPE.LIST
-                            ).equals(Jsons.immutable.array.empty()) &&
-            js.intersection(Jsons.immutable.array.empty(),
+                            ).equals(JsArray.empty()) &&
+            js.intersection(JsArray.empty(),
                             TYPE.SET
-                            ).equals(Jsons.immutable.array.empty()) &&
-            js.intersection(Jsons.immutable.array.empty(),
+                            ).equals(JsArray.empty()) &&
+            js.intersection(JsArray.empty(),
                             TYPE.LIST
-                            ).equals(Jsons.immutable.array.empty())
+                            ).equals(JsArray.empty())
           }
           )
   }
 
-  property("intersection_ of an array with an empty array returns an empty array")
+  property("intersectionAll of an array with an empty array returns an empty array")
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
-            js.intersection_(Jsons.immutable.array.empty()).equals(Jsons.immutable.array.empty())
+            js.intersectionAll(JsArray.empty()).equals(JsArray.empty())
           }
           )
   }

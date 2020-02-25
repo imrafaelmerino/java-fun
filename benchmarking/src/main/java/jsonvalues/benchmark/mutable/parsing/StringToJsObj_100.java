@@ -27,7 +27,6 @@ package jsonvalues.benchmark.mutable.parsing;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jsonvalues.JsObj;
-import jsonvalues.Jsons;
 import jsonvalues.MalformedJson;
 import jsonvalues.benchmark.JacksonObjectMapper;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -54,8 +53,8 @@ public class StringToJsObj_100
     public JsObj java_hash_map() throws MalformedJson
     {
 
-        return Jsons.mutable.object.parse(object)
-                                   .orElseThrow();
+        return JsObj.parse(object)
+        ;
     }
 
 

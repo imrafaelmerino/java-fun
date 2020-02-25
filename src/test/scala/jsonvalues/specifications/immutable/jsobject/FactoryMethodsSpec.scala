@@ -16,55 +16,55 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsPairGen.pairGen)
           { p =>
-            Jsons.immutable.`object`
+            JsObj
               .of("a",
-                  p.elem
+                  p.value
                   ).size() == 1 &&
-            Jsons.immutable.`object`.of("a",
-                                        p.elem,
-                                        "x",
-                                        p.elem
-                                        ).size() == 2 &&
-            Jsons.immutable.`object`.of("a",
-                                        p.elem,
-                                        "x",
-                                        p.elem,
-                                        "c",
-                                        p.elem
-                                        ).size() == 3 &&
-            Jsons.immutable.`object`.of("a",
-                                        p.elem,
-                                        "x",
-                                        p.elem,
-                                        "c",
-                                        p.elem,
-                                        "d",
-                                        p.elem
-                                        ).size() == 4 &&
-            Jsons.immutable.`object`.of("a",
-                                        p.elem,
-                                        "x",
-                                        p.elem,
-                                        "c",
-                                        p.elem,
-                                        "d",
-                                        p.elem,
-                                        "e",
-                                        p.elem
-                                        ).size() == 5 &&
-            Jsons.immutable.`object`.of("a",
-                                        p.elem,
-                                        "x",
-                                        p.elem,
-                                        "c",
-                                        p.elem,
-                                        "d",
-                                        p.elem,
-                                        "e",
-                                        p.elem,
-                                        "f",
-                                        p.elem
-                                        ).size() == 6
+            JsObj.of("a",
+                     p.value,
+                     "x",
+                     p.value
+                     ).size() == 2 &&
+            JsObj.of("a",
+                     p.value,
+                     "x",
+                     p.value,
+                     "c",
+                     p.value
+                     ).size() == 3 &&
+            JsObj.of("a",
+                     p.value,
+                     "x",
+                     p.value,
+                     "c",
+                     p.value,
+                     "d",
+                     p.value
+                     ).size() == 4 &&
+            JsObj.of("a",
+                     p.value,
+                     "x",
+                     p.value,
+                     "c",
+                     p.value,
+                     "d",
+                     p.value,
+                     "e",
+                     p.value
+                     ).size() == 5 &&
+            JsObj.of("a",
+                     p.value,
+                     "x",
+                     p.value,
+                     "c",
+                     p.value,
+                     "d",
+                     p.value,
+                     "e",
+                     p.value,
+                     "f",
+                     p.value
+                     ).size() == 6
 
 
           }
@@ -75,9 +75,8 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val obj = Jsons.immutable.
-              `object`
-              .parse(js.toString).orElseThrow()
+            val obj = JsObj.parse(js.toString)
+
             obj.equals(js) && obj.hashCode() == js.hashCode()
           }
           )
@@ -87,13 +86,11 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val parsed = Jsons.immutable.
-              `object`
-              .parse(js.toString,
-                     ParseBuilder.builder().withKeyMap(it => it + "!")
-                     )
+            val parsed = JsObj.parse(js.toString,
+                                     ParseBuilder.builder().withKeyMap(it => it + "!")
+                                     )
             val allKeysEndsWithExclamation: Predicate[_ >: JsPair] = p => p.path.stream().filter(pos => pos.isKey).allMatch(pos => pos.asKey().name.endsWith("!"))
-            parsed.orElseThrow().stream_().allMatch(allKeysEndsWithExclamation)
+            parsed.streamAll().allMatch(allKeysEndsWithExclamation)
           }
           )
   }
@@ -102,12 +99,10 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val parsed = Jsons.immutable.
-              `object`
-              .parse(js.toString,
-                     ParseBuilder.builder().withElemFilter(_ => false)
-                     )
-            parsed.orElseThrow().stream_().filter(p => p.elem.isNotJson).findFirst().equals(Optional.empty)
+            val parsed = JsObj.parse(js.toString,
+                                     ParseBuilder.builder().withElemFilter(_ => false)
+                                     )
+            parsed.streamAll().filter(p => p.value.isNotJson).findFirst().equals(Optional.empty)
           }
           )
   }
@@ -116,13 +111,12 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val parsed = Jsons.immutable.
-              `object`
+            val parsed = JsObj
               .parse(js.toString,
-                     ParseBuilder.builder().withElemFilter(p => p.elem.isNotNull)
+                     ParseBuilder.builder().withElemFilter(p => p.value.isNotNull)
                      )
 
-            parsed.orElseThrow().stream_().filter(p => p.elem.isNull).findFirst().equals(Optional.empty)
+            parsed.streamAll().filter(p => p.value.isNull).findFirst().equals(Optional.empty)
           }
           )
   }
@@ -132,13 +126,11 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
 
-            val parsed = Jsons.immutable.
-              `object`
-              .parse(js.toString,
-                     ParseBuilder.builder().withElemFilter(p => !p.elem.isStr)
-                     )
+            val parsed = JsObj.parse(js.toString,
+                                     ParseBuilder.builder().withElemFilter(p => !p.value.isStr)
+                                     )
 
-            parsed.orElseThrow().stream_().filter(p => p.elem.isStr).findFirst().equals(Optional.empty)
+            parsed.streamAll().filter(p => p.value.isStr).findFirst().equals(Optional.empty)
           }
           )
   }
@@ -147,31 +139,27 @@ class FactoryMethodsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
-            val predicate: Predicate[JsPair] = (p: JsPair) => p.elem.isNotNumber
+            val predicate: Predicate[JsPair] = (p: JsPair) => p.value.isNotNumber
 
-            val parsed = Jsons.immutable.
-              `object`
-              .parse(js.toString,
-                     ParseBuilder.builder().withElemFilter(predicate)
-                     )
+            val parsed = JsObj.parse(js.toString,
+                                     ParseBuilder.builder().withElemFilter(predicate)
+                                     )
 
-            parsed.orElseThrow().stream_().filter(p => p.elem.isNumber).findFirst().equals(Optional.empty)
+            parsed.streamAll().filter(p => p.value.isNumber).findFirst().equals(Optional.empty)
           }
           )
   }
 
-  property("json `object` parser: mapping x values")
+  property("json object parser: mapping x values")
   {
     check(forAll(jsGen.jsObjGen)
           { js =>
 
-            val parsed = Jsons.immutable.
-              `object`
-              .parse(js.toString,
-                     ParseBuilder.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi")(p.elem))
-                     )
+            val parsed = JsObj.parse(js.toString,
+                                     ParseBuilder.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi")(p.value))
+                                     )
 
-            parsed.orElseThrow().stream_().filter(p => p.elem.isStr).allMatch(p => p.elem.isStr(s => s.equals("hi")))
+            parsed.streamAll().filter(p => p.value.isStr).allMatch(p => p.value.isStr(s => s.equals("hi")))
           }
           )
   }

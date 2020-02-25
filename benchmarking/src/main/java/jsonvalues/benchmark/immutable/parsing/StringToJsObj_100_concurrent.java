@@ -1,6 +1,6 @@
 package jsonvalues.benchmark.immutable.parsing;
 
-import jsonvalues.Jsons;
+import jsonvalues.JsObj;
 import jsonvalues.MalformedJson;
 import jsonvalues.benchmark.ExecutorState;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -28,8 +28,8 @@ public class StringToJsObj_100_concurrent
                              {
                                  try
                                  {
-                                     return Jsons.immutable.object.parse(object)
-                                                                  .orElseThrow();
+                                     return JsObj.parse(object)
+                                                           ;
                                  }
                                  catch (MalformedJson ex)
                                  {

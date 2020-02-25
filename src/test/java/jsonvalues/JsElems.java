@@ -19,11 +19,11 @@ public class JsElems
      @param fn the function to be applied to map the value of this JsElem it it's a JsInt
      @return the same JsElem or a new JsInt with its value mapped
      */
-    public static Function<JsElem, JsElem> mapIfInt(final IntUnaryOperator fn)
+    public static Function<JsValue, JsValue> mapIfInt(final IntUnaryOperator fn)
     {
         return element ->
         {
-            if (element.isInt()) return element.asJsInt()
+            if (element.isInt()) return element.toJsInt()
                                                .map(requireNonNull(fn));
             return element;
         };
@@ -35,11 +35,11 @@ public class JsElems
      @param fn the function to be applied to map the value of this JsElem it it's a JsStr
      @return the same JsElem or a new JsStr with its value mapped
      */
-    public static Function<JsElem, JsElem> mapIfStr(final UnaryOperator<String> fn)
+    public static Function<JsValue, JsValue> mapIfStr(final UnaryOperator<String> fn)
     {
         return element ->
         {
-            if (element.isStr()) return element.asJsStr()
+            if (element.isStr()) return element.toJsStr()
                                                .map(requireNonNull(fn));
             return element;
         };

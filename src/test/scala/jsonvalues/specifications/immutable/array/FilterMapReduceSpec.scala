@@ -11,106 +11,81 @@ class FilterMapReduceSpec extends BasePropSpec
 {
 
 
-  property("filterElems_ (removes every element but strings)")
+  property("filterAllValues (removes every element but strings)")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
-          val arr = js.filterElems_(p => p.elem.isStr)
-          arr.stream_().filter(p => p.elem.isNotJson).allMatch(p => p.elem.isStr)
+          val arr = js.filterAllValues(p => p.value.isStr)
+          arr.streamAll().filter(p => p.value.isNotJson).allMatch(p => p.value.isStr)
       }
       )
   }
 
-  property("filterElems (removes every element but strings)")
+  property("filterValues (removes every element but strings)")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
-          val arr = js.filterElems(p => p.elem.isStr)
-          arr.stream_().filter(p => p.elem.isNotJson && p.path.tail().isEmpty).allMatch(p => p.elem.isStr)
+          val arr = js.filterValues(p => p.value.isStr)
+          arr.streamAll().filter(p => p.value.isNotJson && p.path.tail().isEmpty).allMatch(p => p.value.isStr)
       }
       )
   }
 
 
-  property("filterElems_ (removes every element but integral numbers)")
+  property("filterAllValues (removes every element but integral numbers)")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
-          val arr = js.filterElems_(p => p.elem.isIntegral)
-          arr.stream_().filter(p => p.elem.isNotJson).allMatch(p => p.elem.isIntegral)
+          val arr = js.filterAllValues(p => p.value.isIntegral)
+          arr.streamAll().filter(p => p.value.isNotJson).allMatch(p => p.value.isIntegral)
       }
       )
   }
 
 
-  property("filterElems (removes every element but integral numbers)")
+  property("filterValues (removes every element but integral numbers)")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
-          val arr = js.filterElems_(p => p.elem.isIntegral)
-          arr.stream_().filter(p => p.elem.isNotJson && p.path.tail().isEmpty).allMatch(p => p.elem.isIntegral)
+          val arr = js.filterAllValues(p => p.value.isIntegral)
+          arr.streamAll().filter(p => p.value.isNotJson && p.path.tail().isEmpty).allMatch(p => p.value.isIntegral)
       }
       )
   }
 
-  property("filterElems_ (removes null)")
+  property("filterAllValues (removes null)")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
-          val arr = js.filterElems_(p => p.elem.isNotNull)
-          arr.stream_().filter(p => p.elem.isNotJson).allMatch(p => p.elem.isNotNull)
+          val arr = js.filterAllValues(p => p.value.isNotNull)
+          arr.streamAll().filter(p => p.value.isNotJson).allMatch(p => p.value.isNotNull)
       }
       )
   }
 
-  property("filterElems (removes null)")
+  property("filterValues (removes null)")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
 
-          val arr = js.filterElems(p => p.elem.isNotNull)
-          arr.stream_().filter(p => p.elem.isNotJson && p.path.tail().isEmpty).allMatch(p => p.elem.isNotNull)
+          val arr = js.filterValues(p => p.value.isNotNull)
+          arr.streamAll().filter(p => p.value.isNotJson && p.path.tail().isEmpty).allMatch(p => p.value.isNotNull)
       }
       )
   }
 
-  //  property("filterObjs_  (removes empty Json)")
-  //  {
-  //    check(
-  //           forAll(jsGen.jsArrGen)
-  //           {
-  //             js =>
-  //               val predicate: Predicate[JsPair] = p => !p.elem.asJson().isEmpty
-  //               val arr = js.filterObjs_(predicate)
-  //               arr.stream_().filter(p => p.elem.isJson).allMatch(p => !p.elem.asJson().isEmpty)
-  //           }
-  //         )
-  //  }
-  //
-  //  property("filterObjs (removes empty Json)")
-  //  {
-  //    check(
-  //           forAll(jsGen.jsArrGen)
-  //           {
-  //             js =>
-  //               val predicate: Predicate[JsPair] = p => !p.elem.asJson().isEmpty
-  //               val arr = js.filterObjs(predicate)
-  //               arr.stream_().filter(p => p.elem.isJson && p.path.tail().isEmpty).allMatch(p => !p.elem.asJson().isEmpty)
-  //           }
-  //         )
-  //  }
 
   property("filterKeys returns the same array")
   {
@@ -126,15 +101,15 @@ class FilterMapReduceSpec extends BasePropSpec
   }
 
 
-  property("filterKeys_ (removes keys named 'a')")
+  property("filterAllKeys (removes keys named 'a')")
   {
     check(
       forAll(jsGen.jsArrGen)
       {
         js =>
           val predicate: Predicate[JsPair] = p => p.path.stream().filter(it => it.isKey).allMatch(it => it.asKey().name != "a")
-          val arr = js.filterKeys_(predicate)
-          arr.stream_().allMatch(predicate)
+          val arr = js.filterAllKeys(predicate)
+          arr.streamAll().allMatch(predicate)
       }
       )
   }

@@ -12,76 +12,76 @@ class FilterMapReduceSpec extends BasePropSpec
 {
 
 
-  property("filterElems_ (removes every element but strings)")
+  property("filterAllValues (removes every element but strings)")
   {
     check(
       forAll(jsGen.jsObjGen)
       {
         js =>
-          val obj = js.filterElems_(p => p.elem.isStr)
-          obj.stream_().filter(p => p.elem.isNotJson).allMatch(p => p.elem.isStr)
+          val obj = js.filterAllValues(p => p.value.isStr)
+          obj.streamAll().filter(p => p.value.isNotJson).allMatch(p => p.value.isStr)
       }
       )
   }
 
-  property("filterElems (removes every element but strings)")
+  property("filterValues (removes every element but strings)")
   {
     check(
       forAll(jsGen.jsObjGen)
       {
         js =>
-          val obj = js.filterElems(p => p.elem.isStr)
-          obj.stream_().filter(p => p.elem.isNotJson && p.path.tail().isEmpty).allMatch(p => p.elem.isStr)
-      }
-      )
-  }
-
-
-  property("filterElems_ (removes every element but integral numbers)")
-  {
-    check(
-      forAll(jsGen.jsObjGen)
-      {
-        js =>
-          val obj = js.filterElems_(p => p.elem.isIntegral)
-          obj.stream_().filter(p => p.elem.isNotJson).allMatch(p => p.elem.isIntegral)
+          val obj = js.filterValues(p => p.value.isStr)
+          obj.streamAll().filter(p => p.value.isNotJson && p.path.tail().isEmpty).allMatch(p => p.value.isStr)
       }
       )
   }
 
 
-  property("filterElems (removes every element but integral numbers)")
+  property("filterAllValues (removes every element but integral numbers)")
   {
     check(
       forAll(jsGen.jsObjGen)
       {
         js =>
-          val obj = js.filterElems_(p => p.elem.isIntegral)
-          obj.stream_().filter(p => p.elem.isNotJson && p.path.tail().isEmpty).allMatch(p => p.elem.isIntegral)
+          val obj = js.filterAllValues(p => p.value.isIntegral)
+          obj.streamAll().filter(p => p.value.isNotJson).allMatch(p => p.value.isIntegral)
       }
       )
   }
 
-  property("filterElems_ (removes null)")
+
+  property("filterValues (removes every element but integral numbers)")
   {
     check(
       forAll(jsGen.jsObjGen)
       {
         js =>
-          val obj = js.filterElems_(p => p.elem.isNotNull)
-          obj.stream_().filter(p => p.elem.isNotJson).allMatch(p => p.elem.isNotNull)
+          val obj = js.filterAllValues(p => p.value.isIntegral)
+          obj.streamAll().filter(p => p.value.isNotJson && p.path.tail().isEmpty).allMatch(p => p.value.isIntegral)
       }
       )
   }
 
-  property("filterElems (removes null)")
+  property("filterAllValues (removes null)")
   {
     check(
       forAll(jsGen.jsObjGen)
       {
         js =>
-          val obj = js.filterElems(p => p.elem.isNotNull)
-          obj.stream_().filter(p => p.elem.isNotJson && p.path.tail().isEmpty).allMatch(p => p.elem.isNotNull)
+          val obj = js.filterAllValues(p => p.value.isNotNull)
+          obj.streamAll().filter(p => p.value.isNotJson).allMatch(p => p.value.isNotNull)
+      }
+      )
+  }
+
+  property("filterVAlues (removes null)")
+  {
+    check(
+      forAll(jsGen.jsObjGen)
+      {
+        js =>
+          val obj = js.filterValues(p => p.value.isNotNull)
+          obj.streamAll().filter(p => p.value.isNotJson && p.path.tail().isEmpty).allMatch(p => p.value.isNotNull)
       }
       )
   }
@@ -94,7 +94,7 @@ class FilterMapReduceSpec extends BasePropSpec
         js =>
           val predicate: Predicate[JsPair] = _ => false
           val obj = js.filterKeys(predicate)
-          obj == Jsons.immutable.`object`.empty()
+          obj == JsObj.empty()
       }
       )
   }
@@ -107,20 +107,20 @@ class FilterMapReduceSpec extends BasePropSpec
         js =>
           val predicate: Predicate[JsPair] = p => p.path.head().asKey().name != "a"
           val obj = js.filterKeys(predicate)
-          obj.stream_().allMatch(p => p.path.head().asKey().name != "a")
+          obj.streamAll().allMatch(p => p.path.head().asKey().name != "a")
       }
       )
   }
 
-  property("filterKeys_ (removes keys named 'a')")
+  property("filterAllKeys_ (removes keys named 'a')")
   {
     check(
       forAll(jsGen.jsObjGen)
       {
         js =>
           val predicate: Predicate[JsPair] = p => p.path.stream().filter(it => it.isKey).allMatch(it => it.asKey().name != "a")
-          val obj = js.filterKeys_(predicate)
-          obj.stream_().allMatch(predicate)
+          val obj = js.filterAllKeys(predicate)
+          obj.streamAll().allMatch(predicate)
       }
       )
   }

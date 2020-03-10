@@ -66,7 +66,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                        .append(elem)
                                                                                                       ))
                                                                               )
-                                                                    .apply(get(Key.of(head))),
+                                                                    .apply(get(this,Key.of(head))),
                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                        t
                                                                                                                       ),
@@ -122,7 +122,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                        .appendAll(elems)
                                                                                                       ))
                                                                               )
-                                                                    .apply(get(Key.of(head))),
+                                                                    .apply(get(this,Key.of(head))),
                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                        t
                                                                                                                       ),
@@ -279,14 +279,24 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                          .get();
     }
 
-    public final JsValue get(final Position position)
+    static JsValue get(final JsObj obj,final Position position)
     {
-        return requireNonNull(position).match(key -> map.getOrElse(key,
+        return requireNonNull(position).match(key -> obj.map.getOrElse(key,
                                                                    NOTHING
                                                                   ),
                                               index -> NOTHING
                                              );
     }
+    @Override
+  public JsValue get(final JsPath path)
+  {
+    if (path.isEmpty()) return this;
+    final JsValue e = get(this,path.head());
+    final JsPath tail = path.tail();
+    if (tail.isEmpty()) return e;
+    if (e.isNotJson()) return NOTHING;
+    return e.toJson().get(tail);
+  }
 
     /**
      equals method is inherited, so it's implemented. The purpose of this method is to cache
@@ -1024,29 +1034,21 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                        .prepend(elem)
                                                                                                       ))
                                                                               )
-                                                                    .apply(get(Key.of(head))),
+                                                                    .apply(get(this,Key.of(head))),
                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                        t
                                                                                                                       ),
                                                                                  () -> new JsObj(map.put(head,
                                                                                                          tail.head()
-                                                                                                             .match(key -> JsObj.EMPTY
-                                                                                                                    .prepend(tail,
-                                                                                                                             elem
-                                                                                                                            ),
-                                                                                                                    index -> JsArray.EMPTY
-                                                                                                                    .prepend(tail,
-                                                                                                                             elem
-                                                                                                                            )
+                                                                                                             .match(key -> JsObj.EMPTY .prepend(tail, elem),
+                                                                                                                    index -> JsArray.EMPTY .prepend(tail, elem)
                                                                                                                    )
                                                                                                         )),
                                                                                  () -> new JsObj(map.put(head,
                                                                                                          map.get(head)
                                                                                                             .get()
                                                                                                             .toJson()
-                                                                                                            .prepend(tail,
-                                                                                                                     elem
-                                                                                                                    )
+                                                                                                            .prepend(tail, elem)
                                                                                                         ))
 
                                                                                 )
@@ -1078,7 +1080,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                        .prependAll(elems)
                                                                                                       ))
                                                                               )
-                                                                    .apply(get(Key.of(head))),
+                                                                    .apply(get(this,Key.of(head))),
                                                       () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                        t
                                                                                                                       ),
@@ -1275,7 +1277,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                () -> obj.fields()
                                                         .stream()
                                                         .map(key -> JsPair.of(path.key(key),
-                                                                              obj.get(Key.of(key))
+                                                                              get(obj,Key.of(key))
                                                                              ))
                                                         .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                               pair.path

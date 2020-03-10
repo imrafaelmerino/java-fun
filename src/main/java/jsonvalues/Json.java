@@ -115,10 +115,10 @@ public interface Json<T extends Json<T>> extends JsValue
         T result = append(path,
                           elem
                          );
-        for (final JsValue other : Objects.requireNonNull(others))
+        for (final JsValue other : requireNonNull(others))
         {
             result = result.append(path,
-                                   Objects.requireNonNull(other)
+                                   requireNonNull(other)
                                   );
         }
         return result;
@@ -334,7 +334,7 @@ public interface Json<T extends Json<T>> extends JsValue
                              )
     {
         return MatchExp.ifArrElse(it -> append(path,
-                                               Objects.requireNonNull(supplier)
+                                               requireNonNull(supplier)
                                                       .get()
                                               ),
                                   it ->
@@ -370,7 +370,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                       return t;
                                   }
                                  )
-                       .apply(get(Objects.requireNonNull(path)));
+                       .apply(get(requireNonNull(path)));
     }
 
     /**
@@ -397,7 +397,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                       return t;
                                   }
                                  )
-                       .apply(get(Objects.requireNonNull(path)));
+                       .apply(get(requireNonNull(path)));
 
     }
 
@@ -425,7 +425,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                       return t;
                                   }
                                  )
-                       .apply(get(Objects.requireNonNull(path)));
+                       .apply(get(requireNonNull(path)));
 
     }
 
@@ -453,7 +453,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                       return t;
                                   }
                                  )
-                       .apply(get(Objects.requireNonNull(path)));
+                       .apply(get(requireNonNull(path)));
 
     }
 
@@ -481,7 +481,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                       return t;
                                   }
                                  )
-                       .apply(get(Objects.requireNonNull(path)));
+                       .apply(get(requireNonNull(path)));
 
     }
 
@@ -571,32 +571,16 @@ public interface Json<T extends Json<T>> extends JsValue
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
      @see #filterObjs(BiPredicate) how to filter the pair of jsons of only the first level
      */
-    T filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter
-                   );
+    T filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter);
 
-    /**
-     Returns the element located at the key or index specified by the given position or {@link JsNothing} if it
-     doesn't exist.
-     @param position key or index of the element
-     @return the JsElem located at the given Position or JsNothing if it doesn't exist
-     */
-    JsValue get(final Position position);
+
 
     /**
      Returns the element located at the given path or {@link JsNothing} if it doesn't exist.
      @param path the JsPath object of the element that will be returned
      @return the JsElem located at the given JsPath or JsNothing if it doesn't exist
      */
-    default JsValue get(final JsPath path)
-    {
-        if (path.isEmpty()) return this;
-        final JsValue e = get(path.head());
-        final JsPath tail = path.tail();
-        if (tail.isEmpty()) return e;
-        if (e.isNotJson()) return NOTHING;
-        return e.toJson()
-                .get(tail);
-    }
+    JsValue get(final JsPath path);
 
     /**
      Returns the array located at the given path or {@link Optional#empty()} if it doesn't exist or
@@ -623,7 +607,7 @@ public interface Json<T extends Json<T>> extends JsValue
     {
         final Function<JsValue, Optional<BigDecimal>> ifElse = MatchExp.ifDecimalElse(it -> Optional.of(BigDecimal.valueOf(it)),
                                                                                       Optional::of,
-                                                                                     it -> Optional.empty()
+                                                                                      it -> Optional.empty()
                                                                                      );
         return ifElse.apply(this.get(requireNonNull(path)));
     }
@@ -637,9 +621,9 @@ public interface Json<T extends Json<T>> extends JsValue
     default Optional<BigInteger> getBigInt(final JsPath path)
     {
         final Function<JsValue, Optional<BigInteger>> ifElse = MatchExp.ifIntegralElse(it -> Optional.of(BigInteger.valueOf(it)),
-                                                                                      it -> Optional.of(BigInteger.valueOf(it)),
+                                                                                       it -> Optional.of(BigInteger.valueOf(it)),
                                                                                        Optional::of,
-                                                                                      e -> Optional.empty()
+                                                                                       e -> Optional.empty()
                                                                                       );
         return ifElse.apply(this.get(requireNonNull(path)));
     }
@@ -652,7 +636,7 @@ public interface Json<T extends Json<T>> extends JsValue
     default Optional<Boolean> getBool(final JsPath path)
     {
         final Function<JsValue, Optional<Boolean>> fn = MatchExp.ifBoolElse(Optional::of,
-                                                                           it -> Optional.empty()
+                                                                            it -> Optional.empty()
                                                                            );
         return fn.apply(this.get(requireNonNull(path)));
     }
@@ -703,8 +687,7 @@ public interface Json<T extends Json<T>> extends JsValue
     {
         return MatchExp.ifIntegralElse(OptionalLong::of,
                                        OptionalLong::of,
-                                       bi -> JsBigInt.of(bi)
-                                                     .longValueExact(),
+                                       bi -> JsBigInt.of(bi).longValueExact(),
                                        elem -> OptionalLong.empty()
                                       )
                        .apply(this.get(requireNonNull(path)));
@@ -935,27 +918,15 @@ public interface Json<T extends Json<T>> extends JsValue
         try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str)))
         {
             final JsonToken event = parser.nextToken();
-            if (event == START_ARRAY)
-            {
-                return new JsArray(JsArray.parse(parser
-                                                                 )
-                );
-            }
-            return new JsObj(JsObj.parse(parser
-                                                         )
-
-            );
+            if (event == START_ARRAY) return new JsArray(JsArray.parse(parser));
+            return new JsObj(JsObj.parse(parser));
         }
 
 
         catch (IOException e)
         {
-
             throw new MalformedJson(e.getMessage());
-
         }
-
-
     }
 
     /**
@@ -969,31 +940,17 @@ public interface Json<T extends Json<T>> extends JsValue
                           ParseBuilder builder
                          ) throws MalformedJson
     {
-
         try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str)))
         {
             final JsonToken event = parser.nextToken();
-            if (event == START_ARRAY) return new JsArray(JsArray.parse(parser,
-                                                                                        builder.create(),
-                                                                                        JsPath.empty()
-                                                                                              .index(-1)
-
-                                                                                       )
-
-            );
-            return new JsObj(JsObj.parse(parser,
-                                                          builder.create(),
-                                                          JsPath.empty()
-                                                         )
-
-            );
+            if (event == START_ARRAY)
+              return new JsArray(JsArray.parse(parser,builder.create(),JsPath.empty().index(-1)));
+            return new JsObj(JsObj.parse(parser, builder.create(), JsPath.empty()));
 
         }
         catch (IOException e)
         {
-
             throw new MalformedJson(e.getMessage());
-
         }
 
 
@@ -1018,15 +975,12 @@ public interface Json<T extends Json<T>> extends JsValue
         // T recursive type, this is an instance of T
         @SuppressWarnings("unchecked")
         T result = (T) this;
-        for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+        for (int i = requireNonNull(others).length; i > 0; i--)
         {
             result = result.prepend(path,
-                                    Objects.requireNonNull(others[i - 1])
-                                   );
+                                    requireNonNull(others[i - 1]));
         }
-        return result.prepend(path,
-                              elem
-                             );
+        return result.prepend(path,elem);
     }
 
     /**
@@ -1061,15 +1015,13 @@ public interface Json<T extends Json<T>> extends JsValue
         // T recursive type, this is an instance of T
         @SuppressWarnings("unchecked")
         T result = (T) this;
-        for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+        for (int i = requireNonNull(others).length; i > 0; i--)
         {
             result = result.prepend(path,
-                                    JsStr.of(Objects.requireNonNull(others[i - 1]))
+                                    JsStr.of(requireNonNull(others[i - 1]))
                                    );
         }
-        return result.prepend(path,
-                              JsStr.of(elem)
-                             );
+        return result.prepend(path,JsStr.of(elem));
     }
 
     /**
@@ -1091,7 +1043,7 @@ public interface Json<T extends Json<T>> extends JsValue
 // T recursive type, this is an instance of T
         @SuppressWarnings("unchecked")
         T result = (T) this;
-        for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+        for (int i = requireNonNull(others).length; i > 0; i--)
         {
             result = result.prepend(path,
                                     JsInt.of(others[i - 1])
@@ -1121,7 +1073,7 @@ public interface Json<T extends Json<T>> extends JsValue
 // T recursive type, this is an instance of T
         @SuppressWarnings("unchecked")
         T result = (T) this;
-        for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+        for (int i = requireNonNull(others).length; i > 0; i--)
         {
             result = result.prepend(path,
                                     JsLong.of(others[i - 1])
@@ -1151,7 +1103,7 @@ public interface Json<T extends Json<T>> extends JsValue
         // T recursive type, this is an instance of T
         @SuppressWarnings("unchecked")
         T result = (T) this;
-        for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+        for (int i = requireNonNull(others).length; i > 0; i--)
         {
             result = result.prepend(path,
                                     JsBool.of(others[i - 1])
@@ -1181,7 +1133,7 @@ public interface Json<T extends Json<T>> extends JsValue
         // T recursive type, this is an instance of T
         @SuppressWarnings("unchecked")
         T result = (T) this;
-        for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+        for (int i = requireNonNull(others).length; i > 0; i--)
         {
             result = result.prepend(path,
                                     JsDouble.of(others[i - 1])
@@ -1824,13 +1776,13 @@ public interface Json<T extends Json<T>> extends JsValue
 
     default long times(JsValue e)
     {
-        return stream().filter(p -> p.value.equals(Objects.requireNonNull(e)))
+        return stream().filter(p -> p.value.equals(requireNonNull(e)))
                        .count();
     }
 
     default long timesAll(JsValue e)
     {
-        return streamAll().filter(p -> p.value.equals(Objects.requireNonNull(e)))
+        return streamAll().filter(p -> p.value.equals(requireNonNull(e)))
                           .count();
     }
 

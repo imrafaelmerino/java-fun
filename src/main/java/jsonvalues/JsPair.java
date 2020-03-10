@@ -27,9 +27,7 @@ public final class JsPair
     public final JsPath path;
 
 
-    private JsPair(final JsPath path,
-                   final JsValue value
-                  )
+    private JsPair(final JsPath path,final JsValue value)
     {
         this.path = path;
         this.value = value;
@@ -47,8 +45,6 @@ public final class JsPair
                                           value.toJsInt()
                                                .map(operator)
                                          );
-
-
         return this;
     }
 
@@ -93,9 +89,7 @@ public final class JsPair
                             final int i
                            )
     {
-        return new JsPair(requireNonNull(path),
-                          JsInt.of(i)
-        );
+        return new JsPair(requireNonNull(path),JsInt.of(i));
     }
 
     /**

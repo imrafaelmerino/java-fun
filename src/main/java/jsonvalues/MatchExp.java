@@ -13,9 +13,7 @@ import static java.util.Objects.requireNonNull;
 public final class MatchExp
 {
 
-    private MatchExp()
-    {
-    }
+    private MatchExp(){}
 
     /**
      Declarative way of consuming an element based on its type
@@ -50,7 +48,6 @@ public final class MatchExp
      */
     public static <T> Function<JsValue, T> ifArrElse(final Function<? super JsArray, T> ifArr,
                                                      final Function<? super JsValue, T> ifNotArr
-
                                                     )
     {
 
@@ -134,8 +131,6 @@ public final class MatchExp
 
         return elem ->
         {
-
-
             if (elem.isObj()) return requireNonNull(ifObj).apply(elem.toJsObj());
             if (elem.isArray()) return requireNonNull(ifArr).apply(elem.toJsArray());
             return ifValue.apply(elem);
@@ -153,7 +148,6 @@ public final class MatchExp
                                                       final Function<JsValue, T> ifNotJson
                                                      )
     {
-
         return elem -> requireNonNull(elem).isJson() ? requireNonNull(ifJson).apply(elem.toJson()) : requireNonNull(ifNotJson).apply(elem);
     }
 
@@ -168,7 +162,6 @@ public final class MatchExp
                                                          final Function<JsValue, T> elseFn
                                                         )
     {
-
         return elem -> elem.isNothing() ? requireNonNull(nothingSupplier).get() : requireNonNull(elseFn).apply(elem);
     }
 
@@ -203,7 +196,6 @@ public final class MatchExp
                                                            final Function<JsValue, T> ifFalse
                                                           )
     {
-
         return elem ->
         {
             if (requireNonNull(predicate).test(elem)) return requireNonNull(ifTrue).apply(elem);

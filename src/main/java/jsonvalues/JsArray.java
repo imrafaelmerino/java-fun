@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
+import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsObj.streamOfObj;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
@@ -255,7 +256,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                   }) && IntStream.range(0,
                                                         array.size()
                                                        )
-                                                 .mapToObj(i -> array.get(Index.of(i)))
+                                                 .mapToObj(i -> get(Index.of(i)))
                                                  .allMatch(this::containsValue);
     }
 
@@ -329,21 +330,28 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                         .get();
     }
 
-    public final JsValue get(final Position pos)
+    private JsValue get(final Position pos)
     {
-
-
         return requireNonNull(pos).match(key -> JsNothing.NOTHING,
                                          index ->
                                          {
-                                             if (index == -1 && !seq.isEmpty()) return seq.last();
-                                             return (seq.isEmpty() || index < 0 || index > seq.size() - 1) ?
-                                             JsNothing.NOTHING : seq.get(index);
+                                             if (index == -1 && !this.seq.isEmpty()) return this.seq.last();
+                                             return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+                                             JsNothing.NOTHING : this.seq.get(index);
                                          }
                                         );
-
-
     }
+
+  @Override
+  public JsValue get(final JsPath path)
+  {
+    if (path.isEmpty()) return this;
+    final JsValue e = get(path.head());
+    final JsPath tail = path.tail();
+    if (tail.isEmpty()) return e;
+    if (e.isNotJson()) return NOTHING;
+    return e.toJson().get(tail);
+  }
 
     public JsValue get(final int i)
     {
@@ -1354,7 +1362,6 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                                              array.size()
                                                             ).mapToObj(pair -> JsPair.of(path.index(pair),
                                                                                          array.get(Index.of(pair))
-
                                                                                         ))
                                                              .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                                    pair.path

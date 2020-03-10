@@ -17,16 +17,12 @@ public final class MalformedJson extends Exception
 
     static MalformedJson expectedArray(String str)
     {
-        return new MalformedJson(String.format("Expected a json array [...]. Received: %s",
-                                               str
-                                              ));
+        return new MalformedJson(String.format("Expected a json array [...]. Received: %s", str));
     }
 
     static MalformedJson expectedObj(String str)
     {
-        return new MalformedJson(String.format("Expected a json object {...}. Received: %s",
-                                               str
-                                              ));
+        return new MalformedJson(String.format("Expected a json object {...}. Received: %s",str));
     }
 
 }

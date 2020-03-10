@@ -64,7 +64,7 @@ public final class JsStr implements JsValue, Comparable<JsStr>
      */
     public boolean test(Predicate<String> predicate)
     {
-        return predicate.test(value);
+        return requireNonNull(predicate).test(value);
     }
 
 
@@ -95,7 +95,7 @@ public final class JsStr implements JsValue, Comparable<JsStr>
      */
     public static JsStr of(String str)
     {
-        return new JsStr(str);
+        return new JsStr(requireNonNull(str));
     }
 
     /**

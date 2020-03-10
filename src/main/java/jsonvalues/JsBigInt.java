@@ -100,7 +100,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt>
      */
     public boolean test(Predicate<BigInteger> predicate)
     {
-        return predicate.test(value);
+        return requireNonNull(predicate).test(value);
     }
 
     /**

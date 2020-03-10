@@ -4,6 +4,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  Represents the Key of a JsElem in a JsObj.
  */
@@ -29,7 +31,7 @@ public final class Key implements Position
      */
     public static Key of(String key)
     {
-        return new Key(Objects.requireNonNull(key));
+        return new Key(requireNonNull(key));
     }
 
 
@@ -42,7 +44,7 @@ public final class Key implements Position
     @Override
     public int compareTo(final Position o)
     {
-        if (Objects.requireNonNull(o)
+        if (requireNonNull(o)
                    .isKey()) return name.compareTo(o.asKey().name);
         return name.compareTo(o.asIndex().toString());
 

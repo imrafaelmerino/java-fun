@@ -124,6 +124,16 @@ public final class UserError extends RuntimeException
                                           ));
     }
 
+  public static UserError isNotAJsNumber(final JsValue elem)
+  {
+    return new UserError(String.format(GENERAL_MESSAGE,
+                                       String.format("JsNumber expected, but %s was found",
+                                                     elem.getClass()
+                                                    ),
+                                       "call the guard condition isNumber() before invoking asJsArray()"
+                                      ));
+  }
+
     static UserError isNotAJsObj(final JsValue elem)
     {
         return new UserError(String.format(GENERAL_MESSAGE,

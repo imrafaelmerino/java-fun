@@ -296,35 +296,12 @@ public class TestJsObj
                                          "c"
                                         )
                              );
-        Assertions.assertTrue(obj.equals(obj,
-                                         LIST
-                                        )
-                             );
 
-        Assertions.assertFalse(obj.equals(obj2,
-                                          LIST
-                                         )
-                              );
-        Assertions.assertTrue(obj2.equals(obj3,
-                                          SET
-                                         )
-                             );
-        Assertions.assertTrue(obj2.equals(obj3,
-                                          MULTISET
-                                         )
-                             );
         Assertions.assertTrue(obj.equals(obj2,
                                          SET
                                         )
                              );
-        Assertions.assertTrue(obj2.equals(obj2,
-                                          LIST
-                                         )
-                             );
-        Assertions.assertTrue(obj3.equals(obj3,
-                                          LIST
-                                         )
-                             );
+
     }
 
     @Test

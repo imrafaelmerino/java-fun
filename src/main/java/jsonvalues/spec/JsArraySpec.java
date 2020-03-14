@@ -1,10 +1,10 @@
 package jsonvalues.spec;
 
 import jsonvalues.JsArray;
+import jsonvalues.JsPath;
+import jsonvalues.JsValue;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JsArraySpec implements  Schema<JsArray>
 {
@@ -13,19 +13,39 @@ public class JsArraySpec implements  Schema<JsArray>
   public static JsArraySpec of(JsSpec spec, JsSpec... others){
     final JsArraySpec arraySpec = new JsArraySpec();
     arraySpec.specs.add(spec);
-    for(JsSpec x:others) arraySpec.specs.add(x);
+    arraySpec.specs.addAll(Arrays.asList(others));
     return arraySpec;
   }
 
   @Override
-  public Set<JsErrorPair> validate(final JsArray json)
+  public Set<JsErrorPair> test(final JsArray json)
   {
-
-    return null;
+    return test(JsPath.empty().append(JsPath.fromIndex(-1)),this,new HashSet<>(),json);
   }
 
-  static Set<JsErrorPair> validate(Set<JsErrorPair> errors,final JsArray json)
+
+
+  static Set<JsErrorPair> test(final JsPath parent,
+                               final JsArraySpec parentSpec,
+                               final Set<JsErrorPair> errors,
+                               final JsArray array
+                              )
   {
-    return null;
+
+    JsPath currentPath = parent;
+    final List<JsSpec> specs = parentSpec.specs;
+    for (int i = 0; i < specs.size(); i++)
+    {
+
+      currentPath = currentPath.inc();
+      final JsSpec spec = specs.get(i);
+      Functions.addErrors(errors,
+                          array.get(currentPath),
+                          currentPath,
+                          spec
+                         );
+    }
+
+    return errors;
   }
 }

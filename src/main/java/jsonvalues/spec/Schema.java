@@ -4,8 +4,7 @@ import jsonvalues.Json;
 
 import java.util.Set;
 
-@FunctionalInterface
 public interface Schema<T extends Json<T>> extends JsSpec
 {
-  Set<JsErrorPair> validate(T json);
+  Set<JsErrorPair> test(T json);
 }

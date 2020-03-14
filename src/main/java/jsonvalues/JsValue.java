@@ -333,6 +333,21 @@ public interface JsValue
         }
     }
 
+  /**
+   @return this JsElem as a JsStr
+   @throws UserError if this JsElem is not a JsStr
+   */
+  default JsNumber toJsNumber()
+  {
+    try
+    {
+      return ((JsNumber) this);
+    }
+    catch (ClassCastException e)
+    {
+      throw UserError.isNotAJsNumber(this);
+    }
+  }
     /**
      @return true if this JsElem is a JsStr
      */

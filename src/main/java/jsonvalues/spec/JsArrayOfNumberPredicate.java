@@ -1,5 +1,3 @@
 package jsonvalues.spec;
 
-public interface JsArrayOfNumberPredicate extends JsArrayPredicate
-{
-}
+public interface JsArrayOfNumberPredicate extends JsArrayPredicate { }

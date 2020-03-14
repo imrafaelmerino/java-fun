@@ -185,10 +185,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                      if (!exists) return false;
                                      final JsValue elem = get(JsPath.fromKey(field));
                                      final JsValue thatElem = that.get(JsPath.fromKey(field));
-                                     if (elem.isJson() && thatElem.isJson()) return elem.toJson()
-                                                                                        .equals(thatElem,
-                                                                                                ARRAY_AS
-                                                                                               );
+                                     if (elem.isJson() && thatElem.isJson())
+                                       return elem.toJson()
+                                                  .equals(thatElem,
+                                                          ARRAY_AS
+                                                         );
                                      return elem.equals(thatElem);
                                  }) && that.fields()
                                            .stream()
@@ -210,7 +211,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                        .allMatch(f ->
                                  thatMap.map.get(f)
                                             .map(it -> it.equals(map.get(f)
-                                                                    .get()))
+                                                                    .get())
+                                                )
                                             .getOrElse(false) && thatMap.fields()
                                                                         .stream()
                                                                         .allMatch(map::containsKey));

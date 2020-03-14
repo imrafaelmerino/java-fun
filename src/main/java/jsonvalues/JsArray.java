@@ -256,7 +256,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                   }) && IntStream.range(0,
                                                         array.size()
                                                        )
-                                                 .mapToObj(i -> get(Index.of(i)))
+                                                 .mapToObj(i -> array.get(Index.of(i)))
                                                  .allMatch(this::containsValue);
     }
 

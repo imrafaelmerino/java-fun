@@ -1,25 +1,49 @@
 package jsonvalues.spec;
 
+import io.vavr.Tuple2;
+import jsonvalues.JsArray;
 import jsonvalues.JsObj;
+import jsonvalues.JsPath;
+import jsonvalues.JsValue;
 
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
+import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 
 public class JsObjSpec implements Schema<JsObj>
 {
   private final Map<String,JsSpec> bindings = new HashMap<>();
 
-  @Override
-  public Set<JsErrorPair> validate(final JsObj json)
+  static Set<JsErrorPair> test(final JsPath parent,
+                               final JsObjSpec parentObjSpec,
+                               final Set<JsErrorPair> errors,
+                               final JsObj json)
   {
-    return validate(new HashSet<>(),json);
+    for (final Tuple2<String, JsValue> next : json)
+    {
+      final String key = next._1;
+      final JsValue value = next._2;
+      final JsPath keyPath = JsPath.fromKey(key);
+      final JsPath currentPath = parent.append(keyPath);
+      final JsSpec spec = parentObjSpec.bindings.get(key);
+      Functions.addErrors(errors,
+                          value,
+                          currentPath,
+                          spec
+                         );
+
+    }
+    return errors;
   }
 
 
-  static Set<JsErrorPair> validate(Set<JsErrorPair> errors,final JsObj json)
+
+  @Override
+  public Set<JsErrorPair> test(final JsObj json)
   {
-    return null;
+    return test(JsPath.empty(),this,new HashSet<>(),json);
   }
 
   public final static class Pair {

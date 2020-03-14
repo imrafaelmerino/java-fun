@@ -20,7 +20,9 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
         return ID;
     }
 
-    /**
+
+
+  /**
      The integer value.
      */
     public final int value;

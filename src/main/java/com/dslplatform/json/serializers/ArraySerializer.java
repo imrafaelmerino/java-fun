@@ -5,11 +5,11 @@ import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
 
-public final class JsArraySerializer<T extends JsArray> implements JsonWriter.WriteObject<T>
+public final class ArraySerializer<T extends JsArray> implements JsonWriter.WriteObject<T>
 {
-    private JsValueSerializer valueSerializer;
+    private ValueSerializer valueSerializer;
 
-    public JsArraySerializer(final JsValueSerializer valueSerializer)
+    public ArraySerializer(final ValueSerializer valueSerializer)
     {
         this.valueSerializer = valueSerializer;
     }

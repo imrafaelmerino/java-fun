@@ -7,12 +7,12 @@ import jsonvalues.JsValue;
 
 import java.util.Iterator;
 
-public final class JsObjSerializer<T extends JsObj> implements JsonWriter.WriteObject<T>
+public final class ObjSerializer<T extends JsObj> implements JsonWriter.WriteObject<T>
 {
 
-    private JsValueSerializer valueSerializer;
+    private ValueSerializer valueSerializer;
 
-    public JsObjSerializer(final JsValueSerializer valueSerializer)
+    public ObjSerializer(final ValueSerializer valueSerializer)
     {
         this.valueSerializer = valueSerializer;
     }

@@ -2,9 +2,9 @@ package jsonvalues;
 
 import com.dslplatform.json.DslJson;
 import com.dslplatform.json.JsonWriter;
-import com.dslplatform.json.serializers.JsArraySerializer;
-import com.dslplatform.json.serializers.JsObjSerializer;
-import com.dslplatform.json.serializers.JsValueSerializer;
+import com.dslplatform.json.serializers.ArraySerializer;
+import com.dslplatform.json.serializers.ObjSerializer;
+import com.dslplatform.json.serializers.ValueSerializer;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -21,9 +21,9 @@ class JsonLibsFactory
 
 
   static {
-    final JsValueSerializer valueSerializer = new JsValueSerializer();
-    final JsonWriter.WriteObject<JsObj> objSerializer = new JsObjSerializer<>(valueSerializer);
-    final JsonWriter.WriteObject<JsArray> arraySerializer = new JsArraySerializer<>(valueSerializer);
+    final ValueSerializer valueSerializer = new ValueSerializer();
+    final JsonWriter.WriteObject<JsObj> objSerializer = new ObjSerializer<>(valueSerializer);
+    final JsonWriter.WriteObject<JsArray> arraySerializer = new ArraySerializer<>(valueSerializer);
      valueSerializer.setArraySerializer(arraySerializer);
      valueSerializer.setObjectSerializer(objSerializer);
      dslJson.registerWriter(JsObj.class,

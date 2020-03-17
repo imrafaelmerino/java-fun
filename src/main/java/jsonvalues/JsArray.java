@@ -345,7 +345,8 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
 
     }
 
-    public JsValue get(final int i)
+
+  public JsValue get(final int i)
     {
         return seq.get(i);
     }
@@ -845,7 +846,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
      @param iterable the iterable of json elements
      @return an immutable json array
      */
-    public static JsArray ofIterable(Iterable<JsValue> iterable)
+    public static JsArray ofIterable(Iterable<? extends JsValue> iterable)
     {
         Vector<JsValue> vector = Vector.empty();
         for (JsValue e : requireNonNull(iterable))

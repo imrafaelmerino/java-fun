@@ -12,4 +12,13 @@ public class Error
     this.code = code;
     this.value = value;
   }
+
+  @Override
+  public String toString()
+  {
+    return "(" +
+      "code=" + code +
+      ", value=" + value +
+      ')';
+  }
 }

@@ -8,6 +8,7 @@ import io.vavr.collection.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -828,6 +829,25 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
         );
     }
 
+  /**
+   Returns an immutable array from one or more big integers.
+   @param number a big integer
+   @param others more optional big integers
+   @return an immutable JsArray
+   */
+  public static JsArray of(final BigInteger number,
+                           final BigInteger... others
+                          )
+  {
+
+    Vector<JsValue> vector = Vector.<JsValue>empty().append(JsBigInt.of(number));
+    for (BigInteger a : others)
+    {
+      vector = vector.append(JsBigInt.of(a));
+    }
+    return new JsArray(vector);
+  }
+
     /**
      Returns an immutable array from one or more doubles.
      @param number a double
@@ -858,7 +878,6 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
         Vector<JsValue> vector = Vector.empty();
         for (JsValue e : requireNonNull(iterable))
         {
-
             vector = vector.append(e);
         }
         return new JsArray(vector

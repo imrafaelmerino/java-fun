@@ -22,4 +22,13 @@ public class JsErrorPair
     this.path = path;
     this.error = error;
   }
+
+  @Override
+  public String toString()
+  {
+    return "(" +
+      "path=" + path +
+      ", error=" + error +
+      ')';
+  }
 }

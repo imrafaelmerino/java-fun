@@ -11,6 +11,7 @@ class IsArrayOfObjSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
 
   private Predicate<JsArray> predicate;
+  private IsArrayOfObj isArrayOfObj;
 
   public IsArrayOfObjSuchThat(Predicate<JsArray> predicate,
                               final boolean required,
@@ -20,14 +21,15 @@ class IsArrayOfObjSuchThat extends AbstractPredicate implements JsArrayPredicate
     super(required,
           nullable
          );
+    this.isArrayOfObj = new IsArrayOfObj(required,nullable);
     this.predicate = predicate;
   }
 
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArraySuchThat(predicate,
-                                       required,
-                                       nullable).apply(value);
+    final Optional<Error> result = isArrayOfObj.test(value);
+    if(result.isPresent())return result;
+    return Functions.testArraySuchThat(predicate).apply(value);
   }
 }

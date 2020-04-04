@@ -16,7 +16,7 @@ public class TestJsObjSpec
   public void testIsStrSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isStr
     );
 
@@ -49,7 +49,7 @@ public class TestJsObjSpec
   public void testIsStrPredicateSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isStr(s -> s.startsWith("h"))
     );
 
@@ -83,7 +83,7 @@ public class TestJsObjSpec
   public void testIsIntSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isInt
     );
 
@@ -117,7 +117,7 @@ public class TestJsObjSpec
   public void testIsIntPredicateSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isInt(n -> n % 2 == 0)
     );
 
@@ -151,7 +151,7 @@ public class TestJsObjSpec
   public void testIsLongSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isLong
     );
 
@@ -185,7 +185,7 @@ public class TestJsObjSpec
   public void testIsLongPredicateSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isLong(l -> l % 2 == 1)
     );
 
@@ -219,7 +219,7 @@ public class TestJsObjSpec
   public void testIsDecimalSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isDecimal
     );
 
@@ -253,7 +253,7 @@ public class TestJsObjSpec
   public void testIsDecimalSpecPredicate()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isDecimal(d -> d.longValueExact() == Long.MAX_VALUE)
     );
 
@@ -288,7 +288,7 @@ public class TestJsObjSpec
   public void testIsBooleanSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isBool
     );
 
@@ -322,7 +322,7 @@ public class TestJsObjSpec
   public void testIsTrueSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isTrue
     );
 
@@ -356,7 +356,7 @@ public class TestJsObjSpec
   public void testIsFalseSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isFalse
     );
 
@@ -390,7 +390,7 @@ public class TestJsObjSpec
   public void testIsNumberSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isIntegral,
                                          "b",
                                          isIntegral,
@@ -417,7 +417,7 @@ public class TestJsObjSpec
   public void testIsNumberSpecReturnError()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isIntegral
     );
 
@@ -451,7 +451,7 @@ public class TestJsObjSpec
   public void testIsObjectSpecReturnError()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isObj
     );
 
@@ -485,7 +485,7 @@ public class TestJsObjSpec
   public void testIsArraySpecReturnError()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isArray
     );
 
@@ -519,7 +519,7 @@ public class TestJsObjSpec
   public void testIsObjSpec()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isInt,
                                          "b",
                                          isStr,
@@ -530,7 +530,7 @@ public class TestJsObjSpec
                                          "e",
                                          isTrue,
                                          "f",
-                                         new JsObjSpec("a",
+                                         JsObjSpec.of("a",
                                                        isStr,
                                                        "b",
                                                        isInt,
@@ -572,7 +572,7 @@ public class TestJsObjSpec
   public void testIsArrayOfPrimitivesSpecs()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isArrayOfInt,
                                          "b",
                                          isArrayOfStr,
@@ -583,7 +583,7 @@ public class TestJsObjSpec
                                          "e",
                                          isArrayOfIntegral,
                                          "f",
-                                         new JsObjSpec("a",
+                                         JsObjSpec.of("a",
                                                        isArrayOfNumber,
                                                        "b",
                                                        isArrayOfObj,
@@ -627,7 +627,7 @@ public class TestJsObjSpec
   public void testIsArrayOfTestedPrimitivesSpecs()
   {
 
-    final JsObjSpec spec = new JsObjSpec("a",
+    final JsObjSpec spec = JsObjSpec.of("a",
                                          isArrayOfInt(i -> i > 0),
                                          "b",
                                          isArrayOfStr(s -> s.startsWith("a")),
@@ -638,10 +638,16 @@ public class TestJsObjSpec
                                          "e",
                                          isArrayOfIntegral(i -> i.longValue() < 100),
                                          "f",
-                                         new JsObjSpec("a",
+                                         JsObjSpec.of("a",
                                                        isArrayOfNumber(JsValue::isInt),
                                                        "b",
-                                                       isArrayOfObj(JsObj::isEmpty)
+                                                       isArrayOfObj(JsObj::isEmpty),
+                                                       "c",
+                                                       JsArraySpec.of(isArrayOfStrSuchThat(a->a.size() > 2),
+                                                                      isArrayOfIntSuchThat(a->a.size()>1),
+                                                                      isArrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
+                                                                      isArrayOfDecSuchThat(a -> a.size()==1)
+                                                                     )
                                          )
     );
 
@@ -661,7 +667,13 @@ public class TestJsObjSpec
                                                       JsObj.of("a",
                                                                JsArray.of(JsInt.of(1),JsInt.of(5)),
                                                                "b",
-                                                               JsArray.of(JsObj.empty(),JsObj.empty())
+                                                               JsArray.of(JsObj.empty(),JsObj.empty()),
+                                                               "c",
+                                                               JsArray.of(JsArray.of("a","b","c"),
+                                                                          JsArray.of(1,2),
+                                                                          JsArray.of(10L),
+                                                                          JsArray.of(1.2)
+                                                                         )
                                                               )
                                                      )
                                             );

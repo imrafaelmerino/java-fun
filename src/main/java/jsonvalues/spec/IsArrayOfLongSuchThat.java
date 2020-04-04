@@ -11,6 +11,7 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
 {
 
   private Predicate<JsArray> predicate;
+  private IsArrayOfLong isArrayOfLong;
 
   public IsArrayOfLongSuchThat(Predicate<JsArray> predicate,
                                final boolean required,
@@ -20,14 +21,15 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
     super(required,
           nullable
          );
+    this.isArrayOfLong = new IsArrayOfLong(required,nullable);
     this.predicate = predicate;
   }
 
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArraySuchThat(predicate,
-                                       required,
-                                       nullable).apply(value);
+    final Optional<Error> result = isArrayOfLong.test(value);
+    if(result.isPresent())return result;
+    return Functions.testArraySuchThat(predicate).apply(value);
   }
 }

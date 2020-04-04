@@ -55,13 +55,10 @@ import static jsonvalues.spec.ERROR_CODE.*;
                               });
   }
 
-  static Function<JsValue,Optional<Error>> testArraySuchThat(final Predicate<JsArray> predicate,
-                                                             final boolean required,
-                                                             final boolean nullable
-                                                            ){
+  static Function<JsValue,Optional<Error>> testArraySuchThat(final Predicate<JsArray> predicate){
 
-    return testArrayPredicate(required,
-                              nullable,
+    return testArrayPredicate(true,
+                              false,
                               array -> {
                                 boolean valid = predicate.test(array);
                                 return valid ?

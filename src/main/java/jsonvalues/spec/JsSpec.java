@@ -1,8 +1,3 @@
 package jsonvalues.spec;
 
-public interface JsSpec
-{
-
-
-
-}
+public interface JsSpec { }

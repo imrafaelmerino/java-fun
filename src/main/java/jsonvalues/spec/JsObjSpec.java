@@ -14,12 +14,13 @@ import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 
 public class JsObjSpec implements Schema<JsObj>
 {
-  private final Map<String,JsSpec> bindings = new HashMap<>();
+  private final Map<String, JsSpec> bindings = new HashMap<>();
 
   static Set<JsErrorPair> test(final JsPath parent,
                                final JsObjSpec parentObjSpec,
                                final Set<JsErrorPair> errors,
-                               final JsObj json)
+                               final JsObj json
+                              )
   {
     for (final Tuple2<String, JsValue> next : json)
     {
@@ -39,194 +40,690 @@ public class JsObjSpec implements Schema<JsObj>
   }
 
 
-
   @Override
   public Set<JsErrorPair> test(final JsObj json)
   {
-    return test(JsPath.empty(),this,new HashSet<>(),json);
+    return test(JsPath.empty(),
+                this,
+                new HashSet<>(),
+                json);
   }
 
-  public final static class Pair {
+  public final static class Pair
+  {
     public final String key;
     public final JsSpec spec;
 
     public static Pair pair(final String key,
-                            final JsSpec spec){
+                            final JsSpec spec
+                           )
+    {
       return new Pair(requireNonNull(key),
-                      requireNonNull(spec));
+                      requireNonNull(spec)
+      );
     }
 
     private Pair(final String key,
                  final JsSpec spec
-               )
+                )
     {
       this.key = key;
       this.spec = spec;
     }
   }
 
-  public JsObjSpec(Pair pair, Pair... others){
-     bindings.put(pair.key,pair.spec);
-     for(Pair p:others) bindings.put(p.key,p.spec);
+  public JsObjSpec of(Pair pair,
+                      Pair... others
+                     )
+  {
+    return new JsObjSpec(pair,
+                         others);
   }
 
-  public JsObjSpec(String key, JsSpec spec){
-    bindings.put(key,spec);
+  JsObjSpec(Pair pair,
+            Pair... others
+           )
+  {
+    bindings.put(pair.key,
+                 pair.spec);
+    for (Pair p : others)
+      bindings.put(p.key,
+                   p.spec);
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1){
-    this(key,spec);
-    bindings.put(key1,spec1);
+  public static JsObjSpec of(String key,
+                             JsSpec spec
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec);
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2
-                  ){
-    this(key,spec,key1,spec1);
-    bindings.put(key2,spec2);
-  }
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2);
-    bindings.put(key3,spec3);
+  JsObjSpec(String key,
+            JsSpec spec
+           )
+  {
+    bindings.put(key,
+                 spec);
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3);
-    bindings.put(key4,spec4);
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1
+    );
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4,
-                   String key5, JsSpec spec5
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3,
-         key4,spec4);
-    bindings.put(key5,spec5);
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1
+           )
+  {
+    this(key,
+         spec);
+    bindings.put(key1,
+                 spec1);
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4,
-                   String key5, JsSpec spec5,
-                   String key6, JsSpec spec6
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3,
-         key4,spec4,
-         key5,spec5);
-    bindings.put(key6,spec6);
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2
+    );
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4,
-                   String key5, JsSpec spec5,
-                   String key6, JsSpec spec6,
-                   String key7, JsSpec spec7
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3,
-         key4,spec4,
-         key5,spec5,
-         key6,spec6);
-    bindings.put(key7,spec7);
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1);
+    bindings.put(key2,
+                 spec2);
   }
 
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4,
-                   String key5, JsSpec spec5,
-                   String key6, JsSpec spec6,
-                   String key7, JsSpec spec7,
-                   String key8, JsSpec spec8
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3,
-         key4,spec4,
-         key5,spec5,
-         key6,spec6,
-         key7,spec7);
-    bindings.put(key8,spec8);
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3
+    );
   }
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4,
-                   String key5, JsSpec spec5,
-                   String key6, JsSpec spec6,
-                   String key7, JsSpec spec7,
-                   String key8, JsSpec spec8,
-                   String key9, JsSpec spec9
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3,
-         key4,spec4,
-         key5,spec5,
-         key6,spec6,
-         key7,spec7,
-         key8,spec8);
-    bindings.put(key9,spec9);
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2
+        );
+    bindings.put(key3,
+                 spec3);
   }
-  public JsObjSpec(String key, JsSpec spec,
-                   String key1, JsSpec spec1,
-                   String key2, JsSpec spec2,
-                   String key3, JsSpec spec3,
-                   String key4, JsSpec spec4,
-                   String key5, JsSpec spec5,
-                   String key6, JsSpec spec6,
-                   String key7, JsSpec spec7,
-                   String key8, JsSpec spec8,
-                   String key9, JsSpec spec9,
-                   String key10, JsSpec spec10
-                  ){
-    this(key,spec,
-         key1,spec1,
-         key2,spec2,
-         key3,spec3,
-         key4,spec4,
-         key5,spec5,
-         key6,spec6,
-         key7,spec7,
-         key8,spec8,
-         key9,spec9);
-    bindings.put(key10,spec10);
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3
+        );
+    bindings.put(key4,
+                 spec4);
+  }
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4
+        );
+    bindings.put(key5,
+                 spec5);
+  }
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5,
+                             String key6,
+                             JsSpec spec6
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5,
+                         key6,
+                         spec6
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5,
+            String key6,
+            JsSpec spec6
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4,
+         key5,
+         spec5
+        );
+    bindings.put(key6,
+                 spec6);
+  }
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5,
+                             String key6,
+                             JsSpec spec6,
+                             String key7,
+                             JsSpec spec7
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5,
+                         key6,
+                         spec6,
+                         key7,
+                         spec7
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5,
+            String key6,
+            JsSpec spec6,
+            String key7,
+            JsSpec spec7
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4,
+         key5,
+         spec5,
+         key6,
+         spec6
+        );
+    bindings.put(key7,
+                 spec7);
+  }
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5,
+                             String key6,
+                             JsSpec spec6,
+                             String key7,
+                             JsSpec spec7,
+                             String key8,
+                             JsSpec spec8
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5,
+                         key6,
+                         spec6,
+                         key7,
+                         spec7,
+                         key8,
+                         spec8
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5,
+            String key6,
+            JsSpec spec6,
+            String key7,
+            JsSpec spec7,
+            String key8,
+            JsSpec spec8
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4,
+         key5,
+         spec5,
+         key6,
+         spec6,
+         key7,
+         spec7
+        );
+    bindings.put(key8,
+                 spec8);
+  }
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5,
+                             String key6,
+                             JsSpec spec6,
+                             String key7,
+                             JsSpec spec7,
+                             String key8,
+                             JsSpec spec8,
+                             String key9,
+                             JsSpec spec9
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5,
+                         key6,
+                         spec6,
+                         key7,
+                         spec7,
+                         key8,
+                         spec8,
+                         key9,
+                         spec9
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5,
+            String key6,
+            JsSpec spec6,
+            String key7,
+            JsSpec spec7,
+            String key8,
+            JsSpec spec8,
+            String key9,
+            JsSpec spec9
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4,
+         key5,
+         spec5,
+         key6,
+         spec6,
+         key7,
+         spec7,
+         key8,
+         spec8
+        );
+    bindings.put(key9,
+                 spec9);
+
+  }
+
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5,
+                             String key6,
+                             JsSpec spec6,
+                             String key7,
+                             JsSpec spec7,
+                             String key8,
+                             JsSpec spec8,
+                             String key9,
+                             JsSpec spec9,
+                             String key10,
+                             JsSpec spec10
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5,
+                         key6,
+                         spec6,
+                         key7,
+                         spec7,
+                         key8,
+                         spec8,
+                         key9,
+                         spec9,
+                         key10,
+                         spec10
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5,
+            String key6,
+            JsSpec spec6,
+            String key7,
+            JsSpec spec7,
+            String key8,
+            JsSpec spec8,
+            String key9,
+            JsSpec spec9,
+            String key10,
+            JsSpec spec10
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4,
+         key5,
+         spec5,
+         key6,
+         spec6,
+         key7,
+         spec7,
+         key8,
+         spec8,
+         key9,
+         spec9
+        );
+    bindings.put(key10,
+                 spec10);
   }
 
 

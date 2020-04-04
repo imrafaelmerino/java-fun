@@ -781,8 +781,8 @@ public class TestJsArray
         final JsArray arr = JsArray.parse("[1,2,3,true,false,null,[null,true,4]]",
                                           ParseBuilder.builder()
                                                       .withElemFilter(p -> p.value.isInt())
-                                                      .withElemMap(p -> JsElems.mapIfInt(i -> i + 10)
-                                                                               .apply(p.value))
+                                                      .withElemMap(p -> Functions.mapIfInt(i -> i + 10)
+                                                                                 .apply(p.value))
                                          );
 
         Assertions.assertEquals(JsArray.of(JsInt.of(11),

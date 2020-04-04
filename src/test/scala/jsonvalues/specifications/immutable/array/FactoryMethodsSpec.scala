@@ -160,7 +160,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsArrGen)
           { js =>
             val parsed = JsArray.parse(js.toString,
-                                                     ParseBuilder.builder().withElemMap(p => JsElems.mapIfStr(_ => "hi").apply(p.value))
+                                                     ParseBuilder.builder().withElemMap(p => Functions.mapIfStr(_ => "hi").apply(p.value))
                                                      )
 
             parsed.streamAll().filter(p => p.value.isStr).allMatch(p => p.value.isStr(a => a.equals("hi")))

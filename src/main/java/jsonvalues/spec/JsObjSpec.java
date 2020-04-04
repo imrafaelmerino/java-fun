@@ -14,6 +14,8 @@ import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 
 public class JsObjSpec implements Schema<JsObj>
 {
+
+  private boolean strict = true;
   private final Map<String, JsSpec> bindings = new HashMap<>();
 
   static Set<JsErrorPair> test(final JsPath parent,
@@ -22,6 +24,7 @@ public class JsObjSpec implements Schema<JsObj>
                                final JsObj json
                               )
   {
+
     for (final Tuple2<String, JsValue> next : json)
     {
       final String key = next._1;
@@ -29,7 +32,10 @@ public class JsObjSpec implements Schema<JsObj>
       final JsPath keyPath = JsPath.fromKey(key);
       final JsPath currentPath = parent.append(keyPath);
       final JsSpec spec = parentObjSpec.bindings.get(key);
-      Functions.addErrors(errors,
+      if(spec == null && parentObjSpec.strict) {
+        errors.add(JsErrorPair.of(currentPath,new Error(value,ERROR_CODE.SPEC_MISSING)));
+      }
+      else Functions.addErrors(errors,
                           value,
                           currentPath,
                           spec

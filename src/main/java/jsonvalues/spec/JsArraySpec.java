@@ -9,6 +9,7 @@ import java.util.*;
 public class JsArraySpec implements  Schema<JsArray>
 {
   private final List<JsSpec> specs = new ArrayList<>();
+  private boolean strict = true;
 
   public static JsArraySpec of(JsSpec spec, JsSpec... others){
     final JsArraySpec arraySpec = new JsArraySpec();
@@ -20,6 +21,7 @@ public class JsArraySpec implements  Schema<JsArray>
   @Override
   public Set<JsErrorPair> test(final JsArray json)
   {
+
     return test(JsPath.empty().append(JsPath.fromIndex(-1)),this,new HashSet<>(),json);
   }
 
@@ -31,10 +33,19 @@ public class JsArraySpec implements  Schema<JsArray>
                                final JsArray array
                               )
   {
-
-    JsPath currentPath = parent;
     final List<JsSpec> specs = parentSpec.specs;
-    for (int i = 0; i < specs.size(); i++)
+    final int specsSize = parentSpec.specs.size();
+    if(specsSize > 0 && array.size() > specsSize && parentSpec.strict){
+      errors.add(JsErrorPair.of(parent.tail().index(specsSize),
+                                new Error(array.get(specsSize),
+                                          ERROR_CODE.SPEC_MISSING)
+                               )
+                );
+      return errors;
+    }
+    JsPath currentPath = parent;
+
+    for (int i = 0; i < specsSize; i++)
     {
 
       currentPath = currentPath.inc();
@@ -45,6 +56,8 @@ public class JsArraySpec implements  Schema<JsArray>
                           spec
                          );
     }
+
+
 
     return errors;
   }

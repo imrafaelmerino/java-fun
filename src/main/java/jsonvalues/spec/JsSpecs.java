@@ -1,12 +1,10 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsArray;
-import jsonvalues.JsBigDec;
-import jsonvalues.JsNumber;
-import jsonvalues.JsObj;
+import jsonvalues.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
@@ -49,6 +47,8 @@ public class JsSpecs
   public static JsSpec isArrayOfIntegral = new IsArrayOfIntegral(true,false);
 
   public static JsSpec isArrayOfObj = new IsArrayOfObj(true,false);
+
+  public static JsSpec any = (JsPredicate) value -> Optional.empty();
 
   public static JsSpec isArrayOfStr(final Predicate<String> predicate){
     return new IsArrayOfTestedStr(predicate,true,false);

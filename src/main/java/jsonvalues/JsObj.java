@@ -43,7 +43,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     @Nullable
     private volatile String str;
 
-    JsObj(final HashMap<String, JsValue> myMap)
+    public JsObj(final HashMap<String, JsValue> myMap)
     {
         this.map = myMap;
     }

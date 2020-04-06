@@ -3,18 +3,17 @@ package jsonvalues.spec;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
 import java.util.Optional;
-import java.util.function.Predicate;
-
+import java.util.function.Function;
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsObjSuchThat extends AbstractPredicate implements JsObjPredicate
 {
 
-  final Predicate<JsObj> predicate;
+  final Function<JsObj,Optional<Error>> predicate;
 
   public IsObjSuchThat(final boolean required,
                        final boolean nullable,
-                       final Predicate<JsObj> predicate
+                       final Function<JsObj,Optional<Error>> predicate
                       )
   {
     super(required,
@@ -35,11 +34,6 @@ class IsObjSuchThat extends AbstractPredicate implements JsObjPredicate
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsObj()),
-                              OBJ_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsObj());
   }
 }

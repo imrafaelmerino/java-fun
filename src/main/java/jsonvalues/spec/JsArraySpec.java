@@ -1,28 +1,34 @@
 package jsonvalues.spec;
 
+import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
 import jsonvalues.JsPath;
-import jsonvalues.JsValue;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.*;
 
 public class JsArraySpec implements  Schema<JsArray>
 {
-  private final List<JsSpec> specs = new ArrayList<>();
+  Vector<JsSpec> specs = Vector.empty();
   private boolean strict = true;
 
+  private JsArraySpec(final Vector<JsSpec> specs) {
+    this.specs = specs;
+  }
+
   public static JsArraySpec of(JsSpec spec, JsSpec... others){
-    final JsArraySpec arraySpec = new JsArraySpec();
-    arraySpec.specs.add(spec);
-    arraySpec.specs.addAll(Arrays.asList(others));
-    return arraySpec;
+    Vector<JsSpec> specs = Vector.empty();
+    specs = specs.append(spec);
+    for(JsSpec s:others) specs.append(s);
+    return new JsArraySpec(specs);
+
   }
 
   @Override
   public Set<JsErrorPair> test(final JsArray json)
   {
 
-    return test(JsPath.empty().append(JsPath.fromIndex(-1)),this,new HashSet<>(),json);
+    return test(JsPath.empty().append(JsPath.fromIndex(-1)), this, new HashSet<>(), json);
   }
 
 
@@ -33,7 +39,7 @@ public class JsArraySpec implements  Schema<JsArray>
                                final JsArray array
                               )
   {
-    final List<JsSpec> specs = parentSpec.specs;
+    final Vector<JsSpec> specs = parentSpec.specs;
     final int specsSize = parentSpec.specs.size();
     if(specsSize > 0 && array.size() > specsSize && parentSpec.strict){
       errors.add(JsErrorPair.of(parent.tail().index(specsSize),

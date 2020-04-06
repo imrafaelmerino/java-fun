@@ -1,20 +1,19 @@
 package jsonvalues.spec;
-
 import jsonvalues.JsNumber;
 import jsonvalues.JsValue;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsNumberSuchThat extends AbstractPredicate implements JsNumberPredicate
 {
 
-  final Predicate<JsNumber> predicate;
+  final Function<JsNumber,Optional<Error>> predicate;
 
   public IsNumberSuchThat(final boolean required,
                           final boolean nullable,
-                          final Predicate<JsNumber> predicate
+                          final Function<JsNumber,Optional<Error>> predicate
                          )
   {
     super(required,
@@ -35,11 +34,6 @@ class IsNumberSuchThat extends AbstractPredicate implements JsNumberPredicate
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsNumber()),
-                              NUMBER_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsNumber());
   }
 }

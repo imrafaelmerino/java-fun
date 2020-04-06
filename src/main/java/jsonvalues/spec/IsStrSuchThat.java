@@ -1,19 +1,18 @@
 package jsonvalues.spec;
-
 import jsonvalues.JsValue;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
  class IsStrSuchThat extends AbstractPredicate implements JsStrPredicate
 {
 
-  final Predicate<String> predicate;
+  final Function<String,Optional<Error>> predicate;
 
   public IsStrSuchThat(final boolean required,
                        final boolean nullable,
-                       final Predicate<String> predicate
+                       final Function<String,Optional<Error>> predicate
                       )
   {
     super(required,
@@ -34,11 +33,6 @@ import static jsonvalues.spec.ERROR_CODE.*;
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsStr().value),
-                              STRING_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsStr().value);
   }
 }

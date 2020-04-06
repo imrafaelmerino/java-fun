@@ -39,8 +39,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
     };
   }
 
-  static Function<JsValue,Optional<Error>> testArrayOfTestedElem(final Predicate<JsValue> elemCondition,
-                                                                 final ERROR_CODE errorCode,
+  static Function<JsValue,Optional<Error>> testArrayOfTestedElem(final Function<JsValue,Optional<Error>> elemCondition,
                                                                  final boolean required,
                                                                  final boolean nullable
                                                                 ){
@@ -49,8 +48,10 @@ import static jsonvalues.spec.ERROR_CODE.*;
                               nullable,
                               array -> {
                                 for (final JsValue next : array)
-                                  if (!elemCondition.test(next))
-                                    return Optional.of(new Error(next, errorCode));
+                                {
+                                  final Optional<Error> result = elemCondition.apply(next);
+                                  if(result.isPresent()) return result;
+                                }
                                 return Optional.empty();
                               });
   }

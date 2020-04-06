@@ -1,5 +1,6 @@
 package com.dslplatform.json.derializers.arrays;
-
+import com.dslplatform.json.ParsingException;
+import jsonvalues.spec.Error;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.derializers.types.JsIntDeserializer;
 import jsonvalues.JsArray;
@@ -84,7 +85,7 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
     private JsArray appendNullOrValue(final JsonReader<?> reader,
                                       final IntFunction<Optional<Error>> fn,
                                       JsArray buffer
-                                     ) throws IOException
+                                     ) throws ParsingException
     {
         return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(deserializer.valueSuchThat(reader,
                                                                                                                 fn

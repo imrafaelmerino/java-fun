@@ -10,7 +10,6 @@ import jsonvalues.spec.Error;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public abstract class JsArrayDeserializer
 {

@@ -1,12 +1,10 @@
 package com.dslplatform.json.derializers.arrays;
-
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.derializers.types.JsIntegralDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
-
-
+import jsonvalues.spec.Error;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Objects;

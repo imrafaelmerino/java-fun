@@ -1,22 +1,23 @@
 package jsonvalues.spec;
 
 import io.vavr.Tuple2;
-import jsonvalues.JsArray;
+import io.vavr.collection.HashMap;
+import io.vavr.collection.Map;
 import jsonvalues.JsObj;
 import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
-import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
+
 
 public class JsObjSpec implements Schema<JsObj>
 {
 
   private boolean strict = true;
-  private final Map<String, JsSpec> bindings = new HashMap<>();
+  final Map<String, JsSpec> bindings = HashMap.empty();
 
   static Set<JsErrorPair> test(final JsPath parent,
                                final JsObjSpec parentObjSpec,
@@ -31,7 +32,7 @@ public class JsObjSpec implements Schema<JsObj>
       final JsValue value = next._2;
       final JsPath keyPath = JsPath.fromKey(key);
       final JsPath currentPath = parent.append(keyPath);
-      final JsSpec spec = parentObjSpec.bindings.get(key);
+      final JsSpec spec = parentObjSpec.bindings.apply(key);
       if(spec == null && parentObjSpec.strict) {
         errors.add(JsErrorPair.of(currentPath,new Error(value,ERROR_CODE.SPEC_MISSING)));
       }

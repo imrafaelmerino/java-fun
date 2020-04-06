@@ -2,20 +2,31 @@ package jsonvalues.spec;
 
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
-
-
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 class IsArrayOfObjSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
 
-  private Predicate<JsArray> predicate;
+  final Function<JsArray,Optional<Error>> predicate;
+  final boolean elemNullable;
   private IsArrayOfObj isArrayOfObj;
 
-  public IsArrayOfObjSuchThat(Predicate<JsArray> predicate,
+  public IsArrayOfObjSuchThat(final Function<JsArray,Optional<Error>> predicate,
                               final boolean required,
                               final boolean nullable
+                             )
+  {
+    this(predicate,required,
+          nullable,false
+         );
+
+  }
+
+  public IsArrayOfObjSuchThat(final Function<JsArray,Optional<Error>> predicate,
+                              final boolean required,
+                              final boolean nullable,
+                              final boolean elemNullable
                              )
   {
     super(required,
@@ -23,6 +34,7 @@ class IsArrayOfObjSuchThat extends AbstractPredicate implements JsArrayPredicate
          );
     this.isArrayOfObj = new IsArrayOfObj(required,nullable);
     this.predicate = predicate;
+    this.elemNullable = elemNullable;
   }
 
   @Override
@@ -30,6 +42,6 @@ class IsArrayOfObjSuchThat extends AbstractPredicate implements JsArrayPredicate
   {
     final Optional<Error> result = isArrayOfObj.test(value);
     if(result.isPresent())return result;
-    return Functions.testArraySuchThat(predicate).apply(value);
+    return predicate.apply(value.toJsArray());
   }
 }

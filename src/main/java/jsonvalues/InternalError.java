@@ -1,6 +1,5 @@
 package jsonvalues;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 

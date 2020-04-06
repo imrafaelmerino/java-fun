@@ -1,21 +1,20 @@
 package jsonvalues.spec;
 
 import jsonvalues.JsValue;
-
-
 import java.util.Optional;
-import java.util.function.LongPredicate;
+import java.util.function.Function;
+import java.util.function.LongFunction;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsLongSuchThat extends AbstractPredicate implements JsLongPredicate
 {
 
-  final LongPredicate predicate;
+  final LongFunction<Optional<Error>> predicate;
 
   public IsLongSuchThat(final boolean required,
                         final boolean nullable,
-                        final LongPredicate predicate
+                        final LongFunction<Optional<Error>> predicate
                        )
   {
     super(required,
@@ -36,11 +35,6 @@ class IsLongSuchThat extends AbstractPredicate implements JsLongPredicate
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsLong().value),
-                              LONG_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsLong().value);
   }
 }

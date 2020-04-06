@@ -3,19 +3,18 @@ package jsonvalues.spec;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.*;
-import static jsonvalues.spec.ERROR_CODE.DECIMAL_CONDITION;
 
 class IsArraySuchThat extends AbstractPredicate implements JsArrayPredicate
 {
 
-  final Predicate<JsArray> predicate;
+  final Function<JsArray,Optional<Error>> predicate;
 
   public IsArraySuchThat(final boolean required,
                          final boolean nullable,
-                         final Predicate<JsArray> predicate
+                         final Function<JsArray,Optional<Error>> predicate
                         )
   {
     super(required,
@@ -36,11 +35,6 @@ class IsArraySuchThat extends AbstractPredicate implements JsArrayPredicate
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsArray()),
-                              DECIMAL_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsArray());
   }
 }

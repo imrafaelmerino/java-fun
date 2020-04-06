@@ -1,7 +1,6 @@
 package com.dslplatform.json.derializers.specs;
 
 import com.dslplatform.json.derializers.arrays.JsArrayDeserializer;
-
 import java.util.Objects;
 
 public final  class JsArrayOfObjSpecDeserializer extends JsArrayDeserializer

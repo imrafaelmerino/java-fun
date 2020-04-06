@@ -866,7 +866,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     }
 
     static HashMap<String, JsValue> parse(final JsonParser parser
-                                         ) throws IOException
+                                       ) throws IOException
     {
         HashMap<String, JsValue> map = HashMap.empty();
         String key = parser.nextFieldName();

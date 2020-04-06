@@ -1,5 +1,6 @@
 package com.dslplatform.json.derializers.specs;
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.derializers.ValueDeserializer;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
@@ -15,7 +16,7 @@ public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeser
 
 
     public JsObjSpecWithRequiredKeysDeserializer(final Vector<String> required,
-                                                 final Map<String, Function<JsonReader<?>, JsValue>> deserializers
+                                                 final Map<String, ValueDeserializer> deserializers
                                                 )
     {
         super(deserializers);

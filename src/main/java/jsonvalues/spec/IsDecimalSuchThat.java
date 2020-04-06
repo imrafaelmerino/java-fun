@@ -4,18 +4,18 @@ import jsonvalues.JsValue;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsDecimalSuchThat extends AbstractPredicate implements JsDecimalPredicate
 {
 
-  final Predicate<BigDecimal> predicate;
+  final Function<BigDecimal,Optional<Error>> predicate;
 
   public IsDecimalSuchThat(final boolean required,
                            final boolean nullable,
-                           final Predicate<BigDecimal> predicate
+                           final Function<BigDecimal,Optional<Error>> predicate
                           )
   {
     super(required,
@@ -36,11 +36,6 @@ class IsDecimalSuchThat extends AbstractPredicate implements JsDecimalPredicate
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsBigDec().value),
-                              DECIMAL_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsBigDec().value);
   }
 }

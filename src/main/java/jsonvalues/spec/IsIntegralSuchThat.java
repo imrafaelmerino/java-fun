@@ -3,18 +3,18 @@ package jsonvalues.spec;
 import jsonvalues.JsValue;
 import java.math.BigInteger;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicate
 {
 
-  final Predicate<BigInteger> predicate;
+  final Function<BigInteger,Optional<Error>> predicate;
 
   public IsIntegralSuchThat(final boolean required,
                             final boolean nullable,
-                            final Predicate<BigInteger> predicate
+                            final Function<BigInteger,Optional<Error>> predicate
                            )
   {
     super(required,
@@ -35,11 +35,6 @@ class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicat
                                                                 .apply(value);
 
     if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsBigInt().value),
-                              INTEGRAL_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    return predicate.apply(value.toJsBigInt().value);
   }
 }

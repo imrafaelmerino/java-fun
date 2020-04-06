@@ -3,6 +3,8 @@ package jsonvalues.spec;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 
 import static jsonvalues.spec.ERROR_CODE.*;
@@ -10,11 +12,11 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsIntSuchThat extends AbstractPredicate implements JsIntPredicate
 {
 
-  final IntPredicate predicate;
+  final IntFunction<Optional<Error>> predicate;
 
   public IsIntSuchThat(final boolean required,
                        final boolean nullable,
-                       final IntPredicate predicate
+                       final IntFunction<Optional<Error>> predicate
                       )
   {
     super(required,
@@ -28,18 +30,13 @@ class IsIntSuchThat extends AbstractPredicate implements JsIntPredicate
   public Optional<Error> test(final JsValue value)
   {
     final Optional<Error> error = jsonvalues.spec.Functions.testElem(JsValue::isInt,
-                                                                          INT_EXPECTED,
-                                                                          required,
-                                                                          nullable
-                                                                         )
-                                                                .apply(value);
+                                                                     INT_EXPECTED,
+                                                                     required,
+                                                                     nullable
+                                                                    )
+                                                           .apply(value);
 
-    if(error.isPresent())return error;
-    return Functions.testElem(v -> predicate.test(v.toJsInt().value),
-                              INT_CONDITION,
-                              required,
-                              nullable
-                             )
-                    .apply(value);
+    if (error.isPresent()) return error;
+    return predicate.apply(value.toJsInt().value);
   }
 }

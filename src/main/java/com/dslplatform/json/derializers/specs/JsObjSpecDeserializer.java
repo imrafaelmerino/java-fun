@@ -1,5 +1,6 @@
 package com.dslplatform.json.derializers.specs;
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.derializers.ValueDeserializer;
 import com.dslplatform.json.derializers.types.JsTypeDeserializer;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
@@ -10,9 +11,9 @@ import java.util.function.Function;
 
 public  class JsObjSpecDeserializer extends JsTypeDeserializer
 {
-    private final Map<String, Function<JsonReader<?>, JsValue>> deserializers;
+    private final Map<String, ValueDeserializer> deserializers;
 
-    public JsObjSpecDeserializer(final Map<String, Function<JsonReader<?>, JsValue>> deserializers)
+    public JsObjSpecDeserializer(final Map<String, ValueDeserializer> deserializers)
     {
         this.deserializers = deserializers;
     }
@@ -24,7 +25,7 @@ public  class JsObjSpecDeserializer extends JsTypeDeserializer
         String key = reader.readKey();
         HashMap<String, JsValue> map = EMPTY_MAP.put(key,
                                                          deserializers.apply(key)
-                                                                      .apply(reader
+                                                                      .read(reader
                                                                             )
                                                         );
         byte nextToken;
@@ -34,7 +35,7 @@ public  class JsObjSpecDeserializer extends JsTypeDeserializer
             key = reader.readKey();
             map = map.put(key,
                               deserializers.apply(key)
-                                           .apply(reader)
+                                           .read(reader)
                              );
 
         }

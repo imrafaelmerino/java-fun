@@ -1,20 +1,19 @@
 package com.dslplatform.json.derializers.specs;
 
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.derializers.ValueDeserializer;
 import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
-
-
 import java.io.IOException;
 import java.util.function.Function;
 
 public final  class JsArraySpecDeserializer
 {
-    private final Vector<Function<JsonReader<?>, JsValue>> deserializers;
+    private final Vector<ValueDeserializer> deserializers;
 
-    public JsArraySpecDeserializer(final Vector<Function<JsonReader<?>, JsValue>> deserializers)
+    public JsArraySpecDeserializer(final Vector<ValueDeserializer> deserializers)
     {
         this.deserializers = deserializers;
     }
@@ -32,12 +31,12 @@ public final  class JsArraySpecDeserializer
         if (reader.last() == ']') return JsArray.empty();
         JsArray buffer = JsArray.empty();
         Integer i = 0;
-        buffer = buffer.append(deserializers.apply(i).apply(reader));
+        buffer = buffer.append(deserializers.apply(i).read(reader));
         while (reader.getNextToken() == ',')
         {
             i = i+ 1;
             reader.getNextToken();
-            buffer = buffer.append(deserializers.apply(i).apply(reader));
+            buffer = buffer.append(deserializers.apply(i).read(reader));
 
         }
         reader.checkArrayEnd();

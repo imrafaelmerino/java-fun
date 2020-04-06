@@ -1,7 +1,9 @@
 package com.dslplatform.json;
+
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Function;
@@ -9,88 +11,88 @@ import java.util.function.Function;
 public final class MyDslJson<Object> extends DslJson<Object>
 {
 
-    private JsonReader<?> getReader(final byte[] bytes
-                                )
-    {
-        return localReader.get()
-                          .process(bytes,
-                                   bytes.length
-                                  );
-    }
+  private JsonReader<?> getReader(final byte[] bytes
+                                 )
+  {
+    return localReader.get()
+                      .process(bytes,
+                               bytes.length
+                              );
+  }
 
-    private JsonReader<?> getReader(final InputStream is) throws IOException
-    {
-        return localReader.get()
-                          .process(is);
-    }
+  private JsonReader<?> getReader(final InputStream is) throws IOException
+  {
+    return localReader.get()
+                      .process(is);
+  }
 
-    public JsObj deserializeToJsObj(final byte[] bytes,
-                                    final Function<JsonReader<?>, JsValue> deserializer
-                                   ) throws IOException
+  public JsObj deserializeToJsObj(final byte[] bytes,
+                                  final Function<JsonReader<?>, JsValue> deserializer
+                                 ) throws IOException
+  {
+    JsonReader<?> reader = getReader(bytes);
+    try
     {
-        JsonReader<?> reader = getReader(bytes);
-        try
-        {
-            reader.getNextToken();
-            return deserializer.apply(reader)
-                               .toJsObj();
-        }
-        finally
-        {
-            reader.reset();
-        }
+      reader.getNextToken();
+      return deserializer.apply(reader)
+                         .toJsObj();
     }
-
-    public JsArray deserializeToJsArray(final byte[] bytes,
-                                        final Function<JsonReader<?>, JsValue> deserializer
-                                       ) throws IOException
+    finally
     {
-        JsonReader<?> reader = getReader(bytes);
-        try
-        {
-            reader.getNextToken();
-            return deserializer.apply(reader)
-                               .toJsArray();
-        }
-        finally
-        {
-            reader.reset();
-        }
+      reader.reset();
     }
+  }
 
-    public JsObj deserializeToJsObj(final InputStream is,
-                                    final Function<JsonReader<?>, JsValue> deserializer
-
-                                   ) throws IOException
+  public JsArray deserializeToJsArray(final byte[] bytes,
+                                      final Function<JsonReader<?>, JsValue> deserializer
+                                     ) throws IOException
+  {
+    JsonReader<?> reader = getReader(bytes);
+    try
     {
-        JsonReader<?> reader = getReader(is);
-        try
-        {
-            reader.getNextToken();
-            return deserializer.apply(reader)
-                               .toJsObj();
-        }
-        finally
-        {
-            reader.reset();
-        }
+      reader.getNextToken();
+      return deserializer.apply(reader)
+                         .toJsArray();
     }
-
-    public JsArray deserializeToJsArray(final InputStream is,
-                                        final Function<JsonReader<?>, JsValue> deserializer
-                                       ) throws IOException
+    finally
     {
-        JsonReader<?> reader = getReader(is);
-        try
-        {
-            reader.getNextToken();
-            return deserializer.apply(reader)
-                               .toJsArray();
-        }
-        finally
-        {
-            reader.reset();
-        }
+      reader.reset();
     }
+  }
+
+  public JsObj deserializeToJsObj(final InputStream is,
+                                  final Function<JsonReader<?>, JsValue> deserializer
+
+                                 ) throws IOException
+  {
+    JsonReader<?> reader = getReader(is);
+    try
+    {
+      reader.getNextToken();
+      return deserializer.apply(reader)
+                         .toJsObj();
+    }
+    finally
+    {
+      reader.reset();
+    }
+  }
+
+  public JsArray deserializeToJsArray(final InputStream is,
+                                      final Function<JsonReader<?>, JsValue> deserializer
+                                     ) throws IOException
+  {
+    JsonReader<?> reader = getReader(is);
+    try
+    {
+      reader.getNextToken();
+      return deserializer.apply(reader)
+                         .toJsArray();
+    }
+    finally
+    {
+      reader.reset();
+    }
+  }
 
 }

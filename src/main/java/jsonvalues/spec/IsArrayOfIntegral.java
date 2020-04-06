@@ -36,7 +36,7 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     return Functions.testArrayOfTestedElem(v-> {
-      if(value.isIntegral())return Optional.empty();
+      if(v.isIntegral())return Optional.empty();
       else return Optional.of(new Error(v,INTEGRAL_EXPECTED));
     }, required, nullable).apply(value);
   }

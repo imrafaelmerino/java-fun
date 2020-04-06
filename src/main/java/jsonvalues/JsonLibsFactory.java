@@ -2,6 +2,7 @@ package jsonvalues;
 
 import com.dslplatform.json.DslJson;
 import com.dslplatform.json.JsonWriter;
+import com.dslplatform.json.MyDslJson;
 import com.dslplatform.json.serializers.JsArraySerializer;
 import com.dslplatform.json.serializers.JsObjSerializer;
 import com.dslplatform.json.serializers.JsValueSerializer;
@@ -14,10 +15,10 @@ import java.nio.charset.StandardCharsets;
 
 import static java.util.Objects.requireNonNull;
 
-class JsonLibsFactory
+public class JsonLibsFactory
 {
-    static JsonFactory jackson = new JsonFactory();
-    static DslJson<Object> dslJson = new DslJson<>();
+    public static final JsonFactory jackson = new JsonFactory();
+    public static final MyDslJson<Object> dslJson = new MyDslJson<>();
 
 
   static {

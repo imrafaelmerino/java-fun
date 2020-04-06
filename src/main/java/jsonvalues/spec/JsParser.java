@@ -28,8 +28,7 @@ public class JsParser
           );
 
         }
-      }
-      else if (spec instanceof JsIntPredicate)
+      } else if (spec instanceof JsIntPredicate)
       {
         if (spec instanceof IsInt)
         {
@@ -47,8 +46,7 @@ public class JsParser
                                                                 )
           );
         }
-      }
-      else if (spec instanceof JsLongPredicate)
+      } else if (spec instanceof JsLongPredicate)
       {
         if (spec instanceof IsLong)
         {
@@ -65,8 +63,7 @@ public class JsParser
                                                                  )
           );
         }
-      }
-      else if (spec instanceof JsDecimalPredicate)
+      } else if (spec instanceof JsDecimalPredicate)
       {
         if (spec instanceof IsDecimal)
         {
@@ -83,8 +80,7 @@ public class JsParser
                                                                     )
           );
         }
-      }
-      else if (spec instanceof JsNumberPredicate)
+      } else if (spec instanceof JsNumberPredicate)
       {
         if (spec instanceof IsNumber)
         {
@@ -101,8 +97,7 @@ public class JsParser
                                                                    )
           );
         }
-      }
-      else if (spec instanceof JsIntegralPredicate)
+      } else if (spec instanceof JsIntegralPredicate)
       {
         if (spec instanceof IsIntegral)
         {
@@ -119,8 +114,7 @@ public class JsParser
                                                                      )
           );
         }
-      }
-      else if (spec instanceof JsBoolPredicate)
+      } else if (spec instanceof JsBoolPredicate)
       {
         if (spec instanceof IsBoolean)
         {
@@ -142,15 +136,23 @@ public class JsParser
           );
         }
       }
-    }
-    else if (spec instanceof JsonPredicate)
+    } else if (spec instanceof JsonPredicate)
     {
       if (spec instanceof JsArrayPredicate)
       {
-        if (spec instanceof JsArrayOfIntPredicate)
+        if (spec instanceof IsArray)
+        {
+          IsArray isArray = ((IsArray) spec);
+          return new Tuple2<>(isArray.required,
+                              DeserializersFactory.ofArrayOfInt(isArray.nullable,
+                                                                isArray.elemNullable
+                                                               )
+          );
+        }
+        else if (spec instanceof JsArrayOfIntPredicate)
         {
 
-          if (spec instanceof IsArrayOfInt)
+           if (spec instanceof IsArrayOfInt)
           {
             IsArrayOfInt isArrayOfInt = ((IsArrayOfInt) spec);
             return new Tuple2<>(isArrayOfInt.required,
@@ -179,8 +181,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfObjPredicate)
+        } else if (spec instanceof JsArrayOfObjPredicate)
         {
 
           if (spec instanceof IsArrayOfObj)
@@ -211,8 +212,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfIntegralPredicate)
+        } else if (spec instanceof JsArrayOfIntegralPredicate)
         {
 
           if (spec instanceof IsArrayOfIntegral)
@@ -243,8 +243,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfLongPredicate)
+        } else if (spec instanceof JsArrayOfLongPredicate)
         {
 
           if (spec instanceof IsArrayOfLong)
@@ -275,8 +274,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfStrPredicate)
+        } else if (spec instanceof JsArrayOfStrPredicate)
         {
 
           if (spec instanceof IsArrayOfStr)
@@ -307,8 +305,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfDecimalPredicate)
+        } else if (spec instanceof JsArrayOfDecimalPredicate)
         {
 
           if (spec instanceof IsArrayOfDecimal)
@@ -339,8 +336,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfNumberPredicate)
+        } else if (spec instanceof JsArrayOfNumberPredicate)
         {
 
           if (spec instanceof IsArrayOfNumber)
@@ -371,8 +367,7 @@ public class JsParser
             );
 
           }
-        }
-        else if (spec instanceof JsArrayOfBoolPredicate)
+        } else if (spec instanceof JsArrayOfBoolPredicate)
         {
 
           if (spec instanceof IsArrayOfBool)
@@ -386,25 +381,27 @@ public class JsParser
           }
         }
 
-      }
-      else if (spec instanceof JsObjPredicate)
+      } else if (spec instanceof JsObjPredicate)
       {
         if (spec instanceof IsObj)
         {
           final IsObj isObj = (IsObj) spec;
-          return new Tuple2<>(isObj.required,DeserializersFactory.ofObj(isObj.nullable));
-        }
-        else if (spec instanceof IsObjSuchThat)
+          return new Tuple2<>(isObj.required,
+                              DeserializersFactory.ofObj(isObj.nullable));
+        } else if (spec instanceof IsObjSuchThat)
         {
           final IsObjSuchThat isObjSuchThat = (IsObjSuchThat) spec;
-          return new Tuple2<>(isObjSuchThat.required,DeserializersFactory.ofObjSuchThat(isObjSuchThat.predicate,
-                                                                                        isObjSuchThat.nullable)
+          return new Tuple2<>(isObjSuchThat.required,
+                              DeserializersFactory.ofObjSuchThat(isObjSuchThat.predicate,
+                                                                 isObjSuchThat.nullable
+                                                                )
           );
 
         }
       }
     }
-   throw new RuntimeException("Deserializer not found for the spec "+spec.getClass().getName());
+    throw new RuntimeException("Deserializer not found for the spec " + spec.getClass()
+                                                                            .getName());
   }
 
 }

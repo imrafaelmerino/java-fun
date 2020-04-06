@@ -6,6 +6,8 @@ import jsonvalues.JsPath;
 import java.util.HashSet;
 import java.util.Set;
 
+import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
+
 
 public class JsArraySpec implements  Schema<JsArray>
 {
@@ -19,7 +21,7 @@ public class JsArraySpec implements  Schema<JsArray>
   public static JsArraySpec of(JsSpec spec, JsSpec... others){
     Vector<JsSpec> specs = Vector.empty();
     specs = specs.append(spec);
-    for(JsSpec s:others) specs.append(s);
+    for(JsSpec s:others) specs=specs.append(s);
     return new JsArraySpec(specs);
 
   }
@@ -44,7 +46,7 @@ public class JsArraySpec implements  Schema<JsArray>
     if(specsSize > 0 && array.size() > specsSize && parentSpec.strict){
       errors.add(JsErrorPair.of(parent.tail().index(specsSize),
                                 new Error(array.get(specsSize),
-                                          ERROR_CODE.SPEC_MISSING)
+                                          SPEC_MISSING)
                                )
                 );
       return errors;

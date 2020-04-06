@@ -20,7 +20,7 @@ class IsArrayOfArray extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     return Functions.testArrayOfTestedElem(v-> {
-      if(value.isArray())return Optional.empty();
+      if(v.isArray())return Optional.empty();
       else return Optional.of(new Error(v,ARRAY_EXPECTED));
     }, required, nullable).apply(value);
   }

@@ -32,7 +32,7 @@ class IsArrayOfBool extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     return Functions.testArrayOfTestedElem(v-> {
-      if(value.isBool())return Optional.empty();
+      if(v.isBool())return Optional.empty();
       else return Optional.of(new Error(v,BOOLEAN_EXPECTED));
     }, required, nullable).apply(value);
   }

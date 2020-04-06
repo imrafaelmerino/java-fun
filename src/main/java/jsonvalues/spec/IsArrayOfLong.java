@@ -33,7 +33,7 @@ class IsArrayOfLong extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     return Functions.testArrayOfTestedElem(v-> {
-      if(value.isInt() || value.isLong())return Optional.empty();
+      if(v.isInt() || v.isLong())return Optional.empty();
       else return Optional.of(new Error(v,LONG_EXPECTED));
     }, required, nullable).apply(value);
   }

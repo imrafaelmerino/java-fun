@@ -8,13 +8,25 @@ import java.util.Optional;
 
 class IsArray extends AbstractPredicate implements JsArrayPredicate
 {
+  final boolean elemNullable;
+  public IsArray(final boolean required,
+                 final boolean nullable,
+                 final boolean elemNullable
+                )
+  {
+    super(required,
+          nullable
+         );
+    this.elemNullable = elemNullable;
+  }
 
   public IsArray(final boolean required,
                  final boolean nullable
                 )
   {
-    super(required,
-          nullable
+    this(required,
+          nullable,
+         false
          );
   }
 

@@ -17,7 +17,7 @@ public class JsObjSpec implements Schema<JsObj>
 {
 
   private boolean strict = true;
-  final Map<String, JsSpec> bindings = HashMap.empty();
+  Map<String, JsSpec> bindings = HashMap.empty();
 
   static Set<JsErrorPair> test(final JsPath parent,
                                final JsObjSpec parentObjSpec,
@@ -32,7 +32,7 @@ public class JsObjSpec implements Schema<JsObj>
       final JsValue value = next._2;
       final JsPath keyPath = JsPath.fromKey(key);
       final JsPath currentPath = parent.append(keyPath);
-      final JsSpec spec = parentObjSpec.bindings.apply(key);
+      final JsSpec spec = parentObjSpec.bindings.getOrElse(key,null);
       if(spec == null && parentObjSpec.strict) {
         errors.add(JsErrorPair.of(currentPath,new Error(value,ERROR_CODE.SPEC_MISSING)));
       }
@@ -91,10 +91,10 @@ public class JsObjSpec implements Schema<JsObj>
             Pair... others
            )
   {
-    bindings.put(pair.key,
+    bindings = bindings = bindings.put(pair.key,
                  pair.spec);
     for (Pair p : others)
-      bindings.put(p.key,
+      bindings = bindings.put(p.key,
                    p.spec);
   }
 
@@ -110,7 +110,7 @@ public class JsObjSpec implements Schema<JsObj>
             JsSpec spec
            )
   {
-    bindings.put(key,
+    bindings = bindings.put(key,
                  spec);
   }
 
@@ -135,7 +135,7 @@ public class JsObjSpec implements Schema<JsObj>
   {
     this(key,
          spec);
-    bindings.put(key1,
+    bindings = bindings.put(key1,
                  spec1);
   }
 
@@ -168,7 +168,7 @@ public class JsObjSpec implements Schema<JsObj>
          spec,
          key1,
          spec1);
-    bindings.put(key2,
+    bindings =bindings.put(key2,
                  spec2);
   }
 
@@ -210,7 +210,7 @@ public class JsObjSpec implements Schema<JsObj>
          key2,
          spec2
         );
-    bindings.put(key3,
+    bindings =bindings.put(key3,
                  spec3);
   }
 
@@ -260,7 +260,7 @@ public class JsObjSpec implements Schema<JsObj>
          key3,
          spec3
         );
-    bindings.put(key4,
+    bindings =bindings.put(key4,
                  spec4);
   }
 
@@ -318,7 +318,7 @@ public class JsObjSpec implements Schema<JsObj>
          key4,
          spec4
         );
-    bindings.put(key5,
+    bindings =bindings.put(key5,
                  spec5);
   }
 
@@ -384,7 +384,7 @@ public class JsObjSpec implements Schema<JsObj>
          key5,
          spec5
         );
-    bindings.put(key6,
+    bindings =bindings.put(key6,
                  spec6);
   }
 
@@ -458,7 +458,7 @@ public class JsObjSpec implements Schema<JsObj>
          key6,
          spec6
         );
-    bindings.put(key7,
+    bindings =bindings.put(key7,
                  spec7);
   }
 
@@ -540,7 +540,7 @@ public class JsObjSpec implements Schema<JsObj>
          key7,
          spec7
         );
-    bindings.put(key8,
+    bindings =bindings.put(key8,
                  spec8);
   }
 
@@ -630,7 +630,7 @@ public class JsObjSpec implements Schema<JsObj>
          key8,
          spec8
         );
-    bindings.put(key9,
+    bindings =bindings.put(key9,
                  spec9);
 
   }
@@ -729,7 +729,7 @@ public class JsObjSpec implements Schema<JsObj>
          key9,
          spec9
         );
-    bindings.put(key10,
+    bindings =bindings.put(key10,
                  spec10);
   }
 

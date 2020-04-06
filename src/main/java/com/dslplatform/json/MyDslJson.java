@@ -1,5 +1,6 @@
 package com.dslplatform.json;
 
+import com.dslplatform.json.derializers.ValueDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
@@ -27,14 +28,14 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsObj deserializeToJsObj(final byte[] bytes,
-                                  final Function<JsonReader<?>, JsValue> deserializer
+                                  final ValueDeserializer deserializer
                                  ) throws IOException
   {
     JsonReader<?> reader = getReader(bytes);
     try
     {
       reader.getNextToken();
-      return deserializer.apply(reader)
+      return deserializer.read(reader)
                          .toJsObj();
     }
     finally

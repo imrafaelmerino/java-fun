@@ -33,7 +33,7 @@ class IsArrayOfDecimal extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     return Functions.testArrayOfTestedElem(v-> {
-      if(value.isDecimal())return Optional.empty();
+      if(v.isDecimal())return Optional.empty();
       else return Optional.of(new Error(v,DECIMAL_EXPECTED));
     }, required, nullable).apply(value);
   }

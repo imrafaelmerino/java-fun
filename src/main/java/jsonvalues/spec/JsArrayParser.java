@@ -5,22 +5,32 @@ import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
+
 import static jsonvalues.spec.JsParser.getDeserializer;
 
 public class JsArrayParser
 {
 
+  private final ValueDeserializer deserializer;
+
   /**
 
    @param spec the Json spec what defines the schema that every element in the array has to conform
-   @param strict if true, no more elements different than the specified by the spec are allowed
    */
-  public JsArrayParser(final JsArraySpec spec,
-                       final boolean strict
+  public JsArrayParser(final JsArraySpec spec
                       )
   {
 
+    final Vector<ValueDeserializer> deserializers = JsArrayParser.createDeserializers(spec.specs,
+                                                                                      Vector.empty()
+                                                                                     );
+    deserializer = DeserializersFactory.ofArraySpec(deserializers,
+                                                    false
+                                                   );
+
   }
+
+
 
   static Vector<ValueDeserializer> createDeserializers(final Vector<JsSpec> spec,
                                                        final Vector<ValueDeserializer> result

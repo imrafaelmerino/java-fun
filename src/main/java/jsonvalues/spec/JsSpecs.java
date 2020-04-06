@@ -118,7 +118,7 @@ public class JsSpecs
     return new IsArrayOfTestedStr(s ->
                                   {
                                     if (predicate.test(s)) return Optional.empty();
-                                    return Optional.of(new Error(s,
+                                    return Optional.of(new Error(JsStr.of(s),
                                                                  ERROR_CODE.STRING_CONDITION
                                     ));
                                   },
@@ -135,7 +135,7 @@ public class JsSpecs
     return new IsArrayOfStrSuchThat(s ->
                                     {
                                       if (predicate.test(s)) return Optional.empty();
-                                      return Optional.of(new Error(String.valueOf(s),
+                                      return Optional.of(new Error(s,
                                                                    ERROR_CODE.STRING_CONDITION
                                       ));
                                     },
@@ -176,7 +176,7 @@ public class JsSpecs
     return new IsArrayOfLongSuchThat(s ->
                                      {
                                        if (predicate.test(s)) return Optional.empty();
-                                       return Optional.of(new Error(String.valueOf(s),
+                                       return Optional.of(new Error(s,
                                                                     ERROR_CODE.ARRAY_CONDITION
                                        ));
                                      },
@@ -193,7 +193,7 @@ public class JsSpecs
     return new IsArrayOfTestedLong(s ->
                                    {
                                      if (predicate.test(s)) return Optional.empty();
-                                     return Optional.of(new Error(String.valueOf(s),
+                                     return Optional.of(new Error(JsLong.of(s),
                                                                   ERROR_CODE.LONG_CONDITION
                                      ));
                                    },
@@ -219,7 +219,7 @@ public class JsSpecs
     return new IsArrayOfTestedInt(s ->
                                   {
                                     if (predicate.test(s)) return Optional.empty();
-                                    return Optional.of(new Error(String.valueOf(s),
+                                    return Optional.of(new Error(JsInt.of(s),
                                                                  ERROR_CODE.INT_CONDITION
                                     ));
                                   },
@@ -245,7 +245,7 @@ public class JsSpecs
     return new IsArrayOfIntSuchThat(s ->
                                     {
                                       if (predicate.test(s)) return Optional.empty();
-                                      return Optional.of(new Error(String.valueOf(s),
+                                      return Optional.of(new Error(s,
                                                                    ERROR_CODE.INT_CONDITION
                                       ));
                                     },
@@ -271,7 +271,7 @@ public class JsSpecs
     return new IsArrayOfTestedDecimal(s ->
                                       {
                                         if (predicate.test(s)) return Optional.empty();
-                                        return Optional.of(new Error(String.valueOf(s),
+                                        return Optional.of(new Error(JsBigDec.of(s),
                                                                      ERROR_CODE.INTEGRAL_CONDITION
                                         ));
                                       },
@@ -297,7 +297,7 @@ public class JsSpecs
     return new IsArrayOfDecimalSuchThat(s ->
                                         {
                                           if (predicate.test(s)) return Optional.empty();
-                                          return Optional.of(new Error(String.valueOf(s),
+                                          return Optional.of(new Error(s,
                                                                        ERROR_CODE.DECIMAL_CONDITION
                                           ));
                                         },
@@ -322,7 +322,7 @@ public class JsSpecs
     return new IsArrayOfTestedIntegral(s ->
                                        {
                                          if (predicate.test(s)) return Optional.empty();
-                                         return Optional.of(new Error(String.valueOf(s),
+                                         return Optional.of(new Error(JsBigInt.of(s),
                                                                       ERROR_CODE.INTEGRAL_CONDITION
                                          ));
                                        },
@@ -348,7 +348,7 @@ public class JsSpecs
     return new IsArrayOfIntegralSuchThat(s ->
                                          {
                                            if (predicate.test(s)) return Optional.empty();
-                                           return Optional.of(new Error(String.valueOf(s),
+                                           return Optional.of(new Error(s,
                                                                         ERROR_CODE.ARRAY_CONDITION
                                            ));
                                          },
@@ -374,7 +374,7 @@ public class JsSpecs
     return new IsArrayOfTestedNumber(s ->
                                      {
                                        if (predicate.test(s)) return Optional.empty();
-                                       return Optional.of(new Error(String.valueOf(s),
+                                       return Optional.of(new Error(s,
                                                                     ERROR_CODE.ARRAY_CONDITION
                                        ));
                                      },
@@ -400,7 +400,7 @@ public class JsSpecs
     return new IsArrayOfNumberSuchThat(s ->
                                        {
                                          if (predicate.test(s)) return Optional.empty();
-                                         return Optional.of(new Error(String.valueOf(s),
+                                         return Optional.of(new Error(s,
                                                                       ERROR_CODE.ARRAY_CONDITION
                                          ));
                                        },
@@ -425,7 +425,7 @@ public class JsSpecs
     return new IsArrayOfTestedObj(s ->
                                   {
                                     if (predicate.test(s)) return Optional.empty();
-                                    return Optional.of(new Error(String.valueOf(s),
+                                    return Optional.of(new Error(s,
                                                                  ERROR_CODE.ARRAY_CONDITION
                                     ));
                                   },
@@ -451,7 +451,7 @@ public class JsSpecs
     return new IsArrayOfObjSuchThat(s ->
                                     {
                                       if (predicate.test(s)) return Optional.empty();
-                                      return Optional.of(new Error(String.valueOf(s),
+                                      return Optional.of(new Error(s,
                                                                    ERROR_CODE.ARRAY_CONDITION
                                       ));
                                     },
@@ -487,7 +487,7 @@ public class JsSpecs
                              s ->
                              {
                                if (predicate.test(s)) return Optional.empty();
-                               return Optional.of(new Error(String.valueOf(s),
+                               return Optional.of(new Error(JsStr.of(s),
                                                             ERROR_CODE.STRING_CONDITION
                                ));
                              }
@@ -522,7 +522,7 @@ public class JsSpecs
                              s ->
                              {
                                if (predicate.test(s)) return Optional.empty();
-                               return Optional.of(new Error(String.valueOf(s),
+                               return Optional.of(new Error(JsInt.of(s),
                                                             ERROR_CODE.INT_CONDITION
                                ));
                              }
@@ -557,7 +557,7 @@ public class JsSpecs
                               s ->
                               {
                                 if (predicate.test(s)) return Optional.empty();
-                                return Optional.of(new Error(String.valueOf(s),
+                                return Optional.of(new Error(JsLong.of(s),
                                                              ERROR_CODE.LONG_CONDITION
                                 ));
                               }
@@ -574,7 +574,7 @@ public class JsSpecs
                                  s ->
                                  {
                                    if (predicate.test(s)) return Optional.empty();
-                                   return Optional.of(new Error(String.valueOf(s),
+                                   return Optional.of(new Error(JsBigDec.of(s),
                                                                 ERROR_CODE.DECIMAL_CONDITION
                                    ));
                                  }
@@ -616,7 +616,7 @@ public class JsSpecs
                                   s ->
                                   {
                                     if (predicate.test(s)) return Optional.empty();
-                                    return Optional.of(new Error(String.valueOf(s),
+                                    return Optional.of(new Error(JsBigInt.of(s),
                                                                  ERROR_CODE.INTEGRAL_CONDITION
                                     ));
                                   }
@@ -651,7 +651,7 @@ public class JsSpecs
                              s ->
                              {
                                if (predicate.test(s)) return Optional.empty();
-                               return Optional.of(new Error(String.valueOf(s),
+                               return Optional.of(new Error(s,
                                                             ERROR_CODE.OBJ_CONDITION
                                ));
                              }
@@ -686,7 +686,7 @@ public class JsSpecs
                                s ->
                                {
                                  if (predicate.test(s)) return Optional.empty();
-                                 return Optional.of(new Error(String.valueOf(s),
+                                 return Optional.of(new Error(s,
                                                               ERROR_CODE.ARRAY_CONDITION
                                  ));
                                }

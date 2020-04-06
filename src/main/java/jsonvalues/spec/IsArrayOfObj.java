@@ -36,7 +36,7 @@ class IsArrayOfObj extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     return Functions.testArrayOfTestedElem(v-> {
-      if(value.isObj())return Optional.empty();
+      if(v.isObj())return Optional.empty();
       else return Optional.of(new Error(v,OBJ_EXPECTED));
     }, required, nullable).apply(value);
   }

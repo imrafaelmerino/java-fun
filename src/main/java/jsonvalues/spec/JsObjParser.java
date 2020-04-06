@@ -5,7 +5,12 @@ import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
+import jsonvalues.JsObj;
+import jsonvalues.JsonLibsFactory;
 
+import java.io.IOException;
+
+import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.JsParser.getDeserializer;
 
 public class JsObjParser
@@ -15,10 +20,25 @@ public class JsObjParser
    @param spec the Json spec what defines the schema the json has to conform
    @param strict if true, no more keys different than the specified by the spec are allowed
    */
-  public JsObjParser(final JsObjSpec spec,
-                     final boolean strict
+  private final ValueDeserializer deserializer;
+
+  public JsObjParser(final JsObjSpec spec
                     )
-  {}
+  {
+
+
+    final Tuple2<Vector<String>, Map<String, ValueDeserializer>> pair = createDeserializers(spec.bindings,
+                                                                                            HashMap.empty(),
+                                                                                            Vector.empty()
+                                                                                           );
+
+
+    deserializer = DeserializersFactory.ofObjSpec(pair._1,
+                                                  pair._2,
+                                                  false
+                                                 );
+
+  }
 
   static Tuple2<Vector<String>, Map<String, ValueDeserializer>> createDeserializers(final Map<String, JsSpec> specs,
                                                                                     final Map<String, ValueDeserializer> result,
@@ -27,7 +47,8 @@ public class JsObjParser
   {
 
     if (specs.isEmpty()) return new Tuple2<>(requiredKeys,
-                                             result);
+                                             result
+    );
     else
     {
       final Tuple2<String, JsSpec> head = specs.head();
@@ -42,45 +63,52 @@ public class JsObjParser
                                                                                                   Vector.empty()
                                                                                                  );
           return createDeserializers(specs.tail(),
-                              result.put(head._1,
-                                         DeserializersFactory.ofObjSpec(
-                                           pair._1,
-                                           pair._2,
-                                           false
-                                                                       )
-                                        ),
-                              requiredKeys.append(head._1)
-                             );
-        }
-        else if (spec instanceof JsArraySpec)
+                                     result.put(head._1,
+                                                DeserializersFactory.ofObjSpec(
+                                                  pair._1,
+                                                  pair._2,
+                                                  false
+                                                                              )
+                                               ),
+                                     requiredKeys.append(head._1)
+                                    );
+        } else if (spec instanceof JsArraySpec)
         {
           final JsArraySpec jsArraySpec = (JsArraySpec) spec;
           return createDeserializers(specs.tail(),
-                              result.put(head._1,
-                                         DeserializersFactory.ofArraySpec(JsArrayParser.createDeserializers(jsArraySpec.specs,
-                                                                                                            Vector.empty()
-                                                                                                           ),
-                                                                          false
-                                                                         )
-                                        ),
-                              requiredKeys
-                             );
+                                     result.put(head._1,
+                                                DeserializersFactory.ofArraySpec(JsArrayParser.createDeserializers(jsArraySpec.specs,
+                                                                                                                   Vector.empty()
+                                                                                                                  ),
+                                                                                 false
+                                                                                )
+                                               ),
+                                     requiredKeys
+                                    );
         }
-      }
-      else if (spec instanceof JsPredicate)
+      } else if (spec instanceof JsPredicate)
       {
         final JsPredicate jsPredicate = (JsPredicate) spec;
         final Tuple2<Boolean, ValueDeserializer> pair = getDeserializer(jsPredicate);
         if (pair._1) requiredKeys.append(head._1);
         return createDeserializers(specs.tail(),
-                            result.put(head._1,
-                                       pair._2
-                                      ),
-                            requiredKeys
-                           );
+                                   result.put(head._1,
+                                              pair._2
+                                             ),
+                                   requiredKeys
+                                  );
       }
-      throw new RuntimeException("Spec without deserializers "+ spec.getClass().getName());
+      throw new RuntimeException("Spec without deserializers " + spec.getClass()
+                                                                     .getName());
     }
+  }
+
+
+  public JsObj parse(String str) throws IOException
+  {
+    return JsonLibsFactory.dslJson.deserializeToJsObj(requireNonNull(str).getBytes(),
+                                                      deserializer
+                                                     );
   }
 }
 

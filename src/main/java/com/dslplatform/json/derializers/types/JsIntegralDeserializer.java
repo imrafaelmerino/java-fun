@@ -1,5 +1,6 @@
 package com.dslplatform.json.derializers.types;
 
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.MyNumberConverter;
 import com.dslplatform.json.ParsingException;
@@ -17,37 +18,55 @@ public final class JsIntegralDeserializer extends JsTypeDeserializer
 
 {
   @Override
-  public JsBigInt value(final JsonReader<?> reader) throws ParsingException
+  public JsBigInt value(final JsonReader<?> reader) throws DeserializerException
   {
     try
     {
-      return JsBigInt.of(MyNumberConverter.deserializeDecimal(reader)
-                                          .toBigIntegerExact());
+
+        return JsBigInt.of(MyNumberConverter.deserializeDecimal(reader)
+                                            .toBigIntegerExact());
+
     }
     catch (ArithmeticException | IOException e)
     {
-      throw reader.newParseError("Integral number expected");
+      throw new DeserializerException(reader.newParseError("Integral number expected"));
     }
   }
 
   public JsBigInt valueSuchThat(final JsonReader<?> reader,
                                 final Function<BigInteger, Optional<Error>> fn
-                               ) throws IOException
+                               ) throws DeserializerException
   {
-    final BigInteger value = MyNumberConverter.deserializeDecimal(reader)
-                                              .toBigIntegerExact();
-    final Optional<Error> result = fn.apply(value);
-    if (!result.isPresent()) return JsBigInt.of(value);
-    throw reader.newParseError(result.toString());
+    try
+    {
+      final BigInteger value = MyNumberConverter.deserializeDecimal(reader)
+                                                .toBigIntegerExact();
+      final Optional<Error> result = fn.apply(value);
+      if (!result.isPresent()) return JsBigInt.of(value);
+      throw reader.newParseError(result.toString());
+    }
+    catch (IOException e)
+    {
+      throw new DeserializerException(e);
+
+    }
 
   }
 
   public JsValue nullOrValueSuchThat(final JsonReader<?> reader,
                                      final Function<BigInteger, Optional<Error>> fn
-                                    ) throws IOException
+                                    ) throws DeserializerException
   {
-    return reader.wasNull() ? JsNull.NULL : valueSuchThat(reader,
-                                                          fn
-                                                         );
+    try
+    {
+      return reader.wasNull() ? JsNull.NULL : valueSuchThat(reader,
+                                                            fn
+                                                           );
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+
+    }
   }
 }

@@ -1,7 +1,7 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
-import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.derializers.ValueDeserializer;
 import com.dslplatform.json.derializers.arrays.*;
 import com.dslplatform.json.derializers.specs.JsArrayOfObjSpecDeserializer;
@@ -51,8 +51,8 @@ public class DeserializersFactory
   private static final JsArrayOfStringDeserializer arrayOfStrParser = new JsArrayOfStringDeserializer(strParser);
   private static final JsArrayOfBoolDeserializer arrayOfBoolParser = new JsArrayOfBoolDeserializer(boolParser);
 
-  private static final BiFunction<JsonReader<?>, Error, ParsingException> newParseException =
-    (reader, error) -> reader.newParseError(error.toString());
+  private static final BiFunction<JsonReader<?>, Error, DeserializerException> newParseException =
+    (reader, error) -> new DeserializerException(reader.newParseError(error.toString()));
 
   /**
    *
@@ -94,7 +94,6 @@ public class DeserializersFactory
                                                    boolean elemNullable
                                                   )
   {
-
     if (nullable && elemNullable)
       return deserializer::nullOrArrayWithNull;
     else if (nullable)

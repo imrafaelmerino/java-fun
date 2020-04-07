@@ -1,4 +1,5 @@
 package com.dslplatform.json.derializers.arrays;
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.ParsingException;
 import jsonvalues.spec.Error;
 import com.dslplatform.json.JsonReader;
@@ -23,17 +24,27 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
 
     public JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
                                            final IntFunction<Optional<Error>> fn
-                                          ) throws IOException
+                                          ) throws DeserializerException
     {
+      try
+      {
         return reader.wasNull() ? JsNull.NULL : arrayEachSuchThat(reader,
                                                                   fn
                                                                  );
+      }
+      catch (ParsingException e)
+      {
+        throw new DeserializerException(e);
+
+      }
     }
 
     public JsValue arrayWithNullEachSuchThat(final JsonReader<?> reader,
                                              final IntFunction<Optional<Error>> fn
-                                            ) throws IOException
+                                            ) throws DeserializerException
     {
+      try
+      {
         if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
         reader.getNextToken();
         JsArray buffer = appendNullOrValue(reader,
@@ -51,21 +62,37 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
         }
         reader.checkArrayEnd();
         return buffer;
+      }
+      catch (IOException e)
+      {
+        throw new DeserializerException(e);
+
+      }
     }
 
     public JsValue nullOrArrayWithNullEachSuchThat(final JsonReader<?> reader,
                                                    final IntFunction<Optional<Error>> fn
-                                                  ) throws IOException
+                                                  ) throws DeserializerException
     {
+      try
+      {
         return reader.wasNull() ? JsNull.NULL : arrayWithNullEachSuchThat(reader,
                                                                               fn
                                                                              );
+      }
+      catch (ParsingException e)
+      {
+        throw new DeserializerException(e);
+
+      }
     }
 
     public JsArray arrayEachSuchThat(final JsonReader<?> reader,
                                      final IntFunction<Optional<Error>> fn
-                                    ) throws IOException
+                                    ) throws DeserializerException
     {
+      try
+      {
         if (ifIsEmptyArray(reader)) return EMPTY;
 
         JsArray buffer = EMPTY.append(deserializer.valueSuchThat(reader,
@@ -80,16 +107,30 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
         }
         reader.checkArrayEnd();
         return buffer;
+      }
+      catch (IOException e)
+      {
+        throw new DeserializerException(e);
+
+      }
     }
 
     private JsArray appendNullOrValue(final JsonReader<?> reader,
                                       final IntFunction<Optional<Error>> fn,
                                       JsArray buffer
-                                     ) throws ParsingException
+                                     )throws DeserializerException
     {
+      try
+      {
         return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(deserializer.valueSuchThat(reader,
                                                                                                                 fn
                                                                                                                ));
+      }
+      catch (ParsingException e)
+      {
+        throw new DeserializerException(e);
+
+      }
 
     }
 }

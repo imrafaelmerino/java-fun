@@ -1,6 +1,8 @@
 package com.dslplatform.json.derializers.specs;
 
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.derializers.ValueDeserializer;
 import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
@@ -18,14 +20,23 @@ public final  class JsArraySpecDeserializer
         this.deserializers = deserializers;
     }
 
-    public JsValue nullOrArray(final JsonReader<?> reader) throws IOException
+    public JsValue nullOrArray(final JsonReader<?> reader) throws DeserializerException
     {
+      try
+      {
         return reader.wasNull() ? JsNull.NULL : array(reader);
+      }
+      catch (ParsingException e)
+      {
+        throw new DeserializerException(e);
+      }
     }
 
 
-    public JsArray array(final JsonReader<?>reader) throws IOException
+    public JsArray array(final JsonReader<?>reader) throws DeserializerException
     {
+      try
+      {
         if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
         reader.getNextToken();
         if (reader.last() == ']') return JsArray.empty();
@@ -41,6 +52,11 @@ public final  class JsArraySpecDeserializer
         }
         reader.checkArrayEnd();
         return buffer;
+      }
+      catch (IOException e)
+      {
+        throw new DeserializerException(e);
+      }
     }
 
 

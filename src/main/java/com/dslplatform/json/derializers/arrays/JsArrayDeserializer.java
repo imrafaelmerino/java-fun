@@ -1,6 +1,8 @@
 package com.dslplatform.json.derializers.arrays;
 
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.derializers.types.JsTypeDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
@@ -22,101 +24,171 @@ public abstract class JsArrayDeserializer
     this.deserializer = deserializer;
   }
 
-  public JsValue nullOrArray(final JsonReader<?> reader) throws IOException
+  public JsValue nullOrArray(final JsonReader<?> reader) throws DeserializerException
   {
-    return reader.wasNull() ? JsNull.NULL : array(reader);
+    try
+    {
+      return reader.wasNull() ? JsNull.NULL : array(reader);
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
-  public JsArray arrayWithNull(final JsonReader<?> reader) throws IOException
+  public JsArray arrayWithNull(final JsonReader<?> reader) throws DeserializerException
   {
-    if (ifIsEmptyArray(reader)) return EMPTY;
-
-    JsArray buffer = appendNullOrValue(reader,
-                                       EMPTY
-                                      );
-    while (reader.getNextToken() == ',')
+    try
     {
-      reader.getNextToken();
-      buffer = appendNullOrValue(reader,
-                                 buffer
-                                );
+      if (ifIsEmptyArray(reader)) return EMPTY;
+
+      JsArray buffer = appendNullOrValue(reader,
+                                         EMPTY
+                                        );
+      while (reader.getNextToken() == ',')
+      {
+        reader.getNextToken();
+        buffer = appendNullOrValue(reader,
+                                   buffer
+                                  );
+      }
+      reader.checkArrayEnd();
+      return buffer;
     }
-    reader.checkArrayEnd();
-    return buffer;
+    catch (IOException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
   private JsArray appendNullOrValue(final JsonReader<?> reader,
                                     final JsArray buffer
-                                   ) throws IOException
+                                   )throws DeserializerException
   {
-    return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(deserializer.value(reader));
-
-  }
-
-  public JsValue nullOrArrayWithNull(final JsonReader<?> reader) throws IOException
-  {
-    return reader.wasNull() ? JsNull.NULL : arrayWithNull(reader);
-  }
-
-  public JsArray array(final JsonReader<?> reader) throws IOException
-  {
-    if (ifIsEmptyArray(reader)) return EMPTY;
-    JsArray buffer = EMPTY.append(deserializer.value(reader));
-    while (reader.getNextToken() == ',')
+    try
     {
-      reader.getNextToken();
-      buffer = buffer.append(deserializer.value(reader));
+      return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(deserializer.value(reader));
     }
-    reader.checkArrayEnd();
-    return buffer;
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+    }
+
+  }
+
+  public JsValue nullOrArrayWithNull(final JsonReader<?> reader) throws DeserializerException
+  {
+    try
+    {
+      return reader.wasNull() ? JsNull.NULL : arrayWithNull(reader);
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+    }
+  }
+
+  public JsArray array(final JsonReader<?> reader) throws DeserializerException
+  {
+    try
+    {
+      if (ifIsEmptyArray(reader)) return EMPTY;
+      JsArray buffer = EMPTY.append(deserializer.value(reader));
+      while (reader.getNextToken() == ',')
+      {
+        reader.getNextToken();
+        buffer = buffer.append(deserializer.value(reader));
+      }
+      reader.checkArrayEnd();
+      return buffer;
+    }
+    catch (IOException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
 
   public JsValue nullOrArraySuchThat(final JsonReader<?> reader,
                                      final Function<JsArray, Optional<Error>> fn
-                                    ) throws IOException
+                                    ) throws DeserializerException
   {
-    return reader.wasNull() ? JsNull.NULL : arraySuchThat(reader,
-                                                          fn
-                                                         );
+    try
+    {
+      return reader.wasNull() ? JsNull.NULL : arraySuchThat(reader,
+                                                            fn
+                                                           );
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
   public JsValue arrayWithNullSuchThat(final JsonReader<?> reader,
                                        final Function<JsArray, Optional<Error>> fn
-                                      ) throws IOException
+                                      ) throws DeserializerException
   {
-    final JsArray array = arrayWithNull(reader);
-    final Optional<Error> result = fn.apply(array);
-    if (!result.isPresent()) return array;
-    throw reader.newParseError(result.toString());
-
+    try
+    {
+      final JsArray array = arrayWithNull(reader);
+      final Optional<Error> result = fn.apply(array);
+      if (!result.isPresent()) return array;
+      throw reader.newParseError(result.toString());
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
   public JsValue nullOrArrayWithNullSuchThat(final JsonReader<?> reader,
                                              final Function<JsArray, Optional<Error>> fn
-                                            ) throws IOException
+                                            ) throws DeserializerException
   {
-    return reader.wasNull() ? JsNull.NULL : arrayWithNullSuchThat(reader,
-                                                                  fn
-                                                                 );
+    try
+    {
+      return reader.wasNull() ? JsNull.NULL : arrayWithNullSuchThat(reader,
+                                                                    fn
+                                                                   );
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
   public JsArray arraySuchThat(final JsonReader<?> reader,
                                final Function<JsArray, Optional<Error>> fn
-                              ) throws IOException
+                              ) throws DeserializerException
   {
-    final JsArray array = array(reader);
-    final Optional<Error> result = fn.apply(array);
-    if (!result.isPresent()) return array;
-    throw reader.newParseError(result.toString());
+    try
+    {
+      final JsArray array = array(reader);
+      final Optional<Error> result = fn.apply(array);
+      if (!result.isPresent()) return array;
+      throw reader.newParseError(result.toString());
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+
+    }
 
   }
 
-  boolean ifIsEmptyArray(final JsonReader<?> reader) throws IOException
+  boolean ifIsEmptyArray(final JsonReader<?> reader) throws DeserializerException
   {
-    if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
-    reader.getNextToken();
-    return reader.last() == ']';
+    try
+    {
+      if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
+      reader.getNextToken();
+      return reader.last() == ']';
+    }
+    catch (IOException e)
+    {
+      throw new DeserializerException(e);
+    }
   }
 
 }

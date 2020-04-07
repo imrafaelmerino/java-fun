@@ -5,17 +5,8 @@ import java.util.Objects;
 
 public final  class JsArrayOfObjSpecDeserializer extends JsArrayDeserializer
 {
-
     public JsArrayOfObjSpecDeserializer(final JsObjSpecDeserializer deserializer)
     {
-        super(Objects.requireNonNull(deserializer));
+      super(Objects.requireNonNull(deserializer));
     }
-
-
-
-
-
-
-
-
 }

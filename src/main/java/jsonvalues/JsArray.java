@@ -8,6 +8,7 @@ import io.vavr.collection.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Objects;
@@ -1294,7 +1295,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return new OpMapReduce<>(predicate,
+        return new OpMapReduce<>(requireNonNull(predicate),
                                  map,
                                  op
         ).reduce(this);
@@ -1307,7 +1308,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                            final Predicate<? super JsPair> predicate
                                           )
     {
-        return new OpMapReduce<>(predicate,
+        return new OpMapReduce<>(requireNonNull(predicate),
                                  map,
                                  op
         ).reduceAll(this);

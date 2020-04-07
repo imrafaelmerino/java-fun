@@ -1,5 +1,7 @@
 package com.dslplatform.json.derializers.specs;
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.derializers.ValueDeserializer;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
@@ -24,8 +26,10 @@ public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeser
     }
 
     @Override
-    public JsObj value(final JsonReader<?> reader) throws IOException
+    public JsObj value(final JsonReader<?> reader) throws DeserializerException
     {
+      try
+      {
         final JsObj obj = super.value(reader);
         final Iterator<String> iterator = required.iterator();
         while (iterator.hasNext())
@@ -34,6 +38,11 @@ public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeser
             if (!obj.containsPath(JsPath.fromKey(key))) throw reader.newParseError("Required key not found: " + key);
         }
         return obj;
+      }
+      catch (ParsingException e)
+      {
+        throw new DeserializerException(e);
+      }
     }
 
 

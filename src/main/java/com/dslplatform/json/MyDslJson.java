@@ -3,11 +3,9 @@ package com.dslplatform.json;
 import com.dslplatform.json.derializers.ValueDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
-import jsonvalues.JsValue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Function;
 
 public final class MyDslJson<Object> extends DslJson<Object>
 {
@@ -21,15 +19,23 @@ public final class MyDslJson<Object> extends DslJson<Object>
                               );
   }
 
-  private JsonReader<?> getReader(final InputStream is) throws IOException
+  private JsonReader<?> getReader(final InputStream is) throws DeserializerException
   {
-    return localReader.get()
-                      .process(is);
+    try
+    {
+      return localReader.get()
+                        .process(is);
+    }
+    catch (IOException e)
+    {
+      throw new DeserializerException(e);
+
+    }
   }
 
   public JsObj deserializeToJsObj(final byte[] bytes,
                                   final ValueDeserializer deserializer
-                                 ) throws IOException
+                                 ) throws DeserializerException
   {
     JsonReader<?> reader = getReader(bytes);
     try
@@ -38,6 +44,10 @@ public final class MyDslJson<Object> extends DslJson<Object>
       return deserializer.read(reader)
                          .toJsObj();
     }
+    catch (IOException e){
+      throw new DeserializerException(e);
+
+    }
     finally
     {
       reader.reset();
@@ -45,15 +55,18 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsArray deserializeToJsArray(final byte[] bytes,
-                                      final Function<JsonReader<?>, JsValue> deserializer
-                                     ) throws IOException
+                                      final ValueDeserializer deserializer
+                                     ) throws DeserializerException
   {
     JsonReader<?> reader = getReader(bytes);
     try
     {
       reader.getNextToken();
-      return deserializer.apply(reader)
+      return deserializer.read(reader)
                          .toJsArray();
+    }
+    catch (IOException e){
+      throw new DeserializerException(e);
     }
     finally
     {
@@ -62,16 +75,19 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsObj deserializeToJsObj(final InputStream is,
-                                  final Function<JsonReader<?>, JsValue> deserializer
+                                  final ValueDeserializer deserializer
 
-                                 ) throws IOException
+                                 ) throws DeserializerException
   {
     JsonReader<?> reader = getReader(is);
     try
     {
       reader.getNextToken();
-      return deserializer.apply(reader)
+      return deserializer.read(reader)
                          .toJsObj();
+    }
+    catch (IOException e){
+      throw new DeserializerException(e);
     }
     finally
     {
@@ -80,15 +96,18 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsArray deserializeToJsArray(final InputStream is,
-                                      final Function<JsonReader<?>, JsValue> deserializer
-                                     ) throws IOException
+                                      final ValueDeserializer deserializer
+                                     ) throws DeserializerException
   {
     JsonReader<?> reader = getReader(is);
     try
     {
       reader.getNextToken();
-      return deserializer.apply(reader)
+      return deserializer.read(reader)
                          .toJsArray();
+    }
+    catch (IOException e){
+      throw new DeserializerException(e);
     }
     finally
     {

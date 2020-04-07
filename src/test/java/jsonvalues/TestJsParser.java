@@ -40,7 +40,8 @@ public class TestJsParser
                                                             "h",
                                                             isObj,
                                                             "i",
-                                                            isArray
+                                                            isArray,
+                                                            "j",arrayOf(JsObjSpec.of("a",isStr))
                                                            ));
 
 
@@ -63,7 +64,9 @@ public class TestJsParser
                                    "h",
                                    JsObj.empty(),
                                    "i",
-                                   JsArray.empty()
+                                   JsArray.empty(),
+                                   "j",
+                                   JsArray.of(JsObj.of("a",JsStr.of("hi")))
                                   );
 
     final JsObj parsed = parser.parse(example

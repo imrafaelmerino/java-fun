@@ -8,7 +8,9 @@ import io.vavr.collection.HashMap;
 import jsonvalues.JsArray.TYPE;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -952,6 +954,80 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                    el9
                   );
   }
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @param key9 name of a key
+   @param el9 JsElem to be associated to the key9
+   @param key10 name of a key
+   @param el9 JsElem to be associated to the key10
+   @return an immutable six-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8,
+                         final String key9,
+                         final JsValue el9,
+                         final String key10,
+                         final JsValue el10
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7,
+              key8,
+              el8,
+              key9,
+              el9
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key10)),
+                   el10
+                  );
+  }
     /**
      Returns an immutable object from one or more pairs.
      @param pair a pair
@@ -1079,21 +1155,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                     elem = NULL;
                     break;
                 case JsonTokenId.ID_START_OBJECT:
-                    elem = new JsObj(parse(parser)
-
-                    );
+                    elem = new JsObj(parse(parser));
                     break;
                 case JsonTokenId.ID_START_ARRAY:
-                    elem = new JsArray(JsArray.parse(parser
-                                                    )
-
-                    );
+                    elem = new JsArray(JsArray.parse(parser));
                     break;
                 default:
                     throw InternalError.tokenNotExpected(parser.currentToken()
                                                                .name());
-
-
             }
             map = map.put(key,
                           elem
@@ -1358,7 +1427,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                         final Predicate<? super JsPair> predicate
                                        )
     {
-        return new OpMapReduce<>(predicate,
+        return new OpMapReduce<>(requireNonNull(predicate),
                                  map,
                                  op
         ).reduce(this);
@@ -1369,7 +1438,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                            final Predicate<? super JsPair> predicate
                                           )
     {
-        return new OpMapReduce<>(predicate,
+        return new OpMapReduce<>(requireNonNull(predicate),
                                  map,
                                  op
         ).reduceAll(this);
@@ -1500,6 +1569,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
             str = result = JsonLibsFactory.toString(this);
         return result;
     }
+
+
 
     /**
      returns {@code this} json object plus those pairs from the given json object {@code that} which

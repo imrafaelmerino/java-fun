@@ -1,6 +1,8 @@
 package com.dslplatform.json.derializers.types;
 
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.derializers.arrays.JsArrayOfValueDeserializer;
 import jsonvalues.JsBool;
 import jsonvalues.JsNull;
@@ -36,57 +38,80 @@ public final class JsValueDeserializer extends JsTypeDeserializer
   }
 
   @Override
-  public JsValue value(final JsonReader<?> reader) throws IOException
+  public JsValue value(final JsonReader<?> reader) throws DeserializerException
   {
 
-    switch (reader.last())
+    try
     {
-      case 't':
-        if (!reader.wasTrue())
-        {
-          throw reader.newParseErrorAt("Expecting 'true' for true constant",
-                                       0
-                                      );
-        }
-        return JsBool.TRUE;
-      case 'f':
-        if (!reader.wasFalse())
-        {
-          throw reader.newParseErrorAt("Expecting 'false' for false constant",
-                                       0
-                                      );
-        }
-        return JsBool.FALSE;
-      case '"':
-        return JsStr.of(reader.readString());
-      case '{':
-        return objDeserializer.value(reader);
-      case '[':
-        return arrayDeserializer.array(reader);
-      default:
-        return numberDeserializer.value(reader);
+      switch (reader.last())
+      {
+        case 't':
+          if (!reader.wasTrue())
+          {
+            throw new DeserializerException(reader.newParseErrorAt("Expecting 'true' for true constant",
+                                                                   0
+                                                                  ));
+          }
+          return JsBool.TRUE;
+        case 'f':
+          if (!reader.wasFalse())
+          {
+            throw new DeserializerException(reader.newParseErrorAt("Expecting 'false' for false constant",
+                                                                         0
+                                                                        ));
+          }
+          return JsBool.FALSE;
+        case '"':
+          return JsStr.of(reader.readString());
+        case '{':
+          return objDeserializer.value(reader);
+        case '[':
+          return arrayDeserializer.array(reader);
+        default:
+          return numberDeserializer.value(reader);
+      }
+    }
+    catch (IOException e)
+    {
+      throw new DeserializerException(e);
     }
   }
 
   public JsValue valueSuchThat(final JsonReader<?> reader,
                                final Function<JsValue, Optional<Error>> fn
 
-                              ) throws IOException
+                              ) throws DeserializerException
   {
-    final JsValue value = value(reader);
-    final Optional<Error> result = fn.apply(value);
-    if (!result.isPresent()) return value;
-    throw reader.newParseError(result.toString());
+    try
+    {
+      final JsValue value = value(reader);
+      final Optional<Error> result = fn.apply(value);
+      if (!result.isPresent()) return value;
+      throw reader.newParseError(result.toString());
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+
+    }
 
   }
 
   public JsValue nullOrValueSuchThat(final JsonReader<?> reader,
                                      final Function<JsValue, Optional<Error>> fn
-                                    ) throws IOException
+                                    ) throws DeserializerException
   {
-    return reader.wasNull() ? JsNull.NULL : valueSuchThat(reader,
-                                                          fn
-                                                         );
+    try
+    {
+      return reader.wasNull() ? JsNull.NULL : valueSuchThat(reader,
+                                                            fn
+                                                           );
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+
+    }
   }
 
 

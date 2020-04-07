@@ -93,6 +93,8 @@ public interface Json<T extends Json<T>> extends JsValue
     }
 
 
+
+
     /**
      Appends one or more elements, starting from the first, to the array located at the given path in
      this json. If the array doesn't exist, a new one is created, replacing any existing element
@@ -1786,12 +1788,41 @@ public interface Json<T extends Json<T>> extends JsValue
                           .count();
     }
 
-    default byte[] serialize(){
-        return JsonLibsFactory.serialize(this);
-    }
+  /**
+   * Returns a zero-argument function that when called, it serializes this Json into the given
+   * output stream, no returning anything
+   *
+   * @param ouputstream the output stream
+   * @return () => Unit function that serializes this Json into the given output stream
+   */
+  default void serialize(OutputStream ouputstream)throws IOException
+  {
+    dslJson.serialize(this,
+                      requireNonNull(ouputstream)
+                     );
 
-    default void serialize(final OutputStream os) throws IOException
+  }
+
+  /** Serialize this Json into an array of bytes. When possible,
+   * it's more efficient to work on byte level that with strings
+   *
+   * @return this Json serialized into an array of bytes
+   */
+  default  byte[] serialize()
+  {
+    try
     {
-        JsonLibsFactory.serialize(this,os);
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      dslJson.serialize(this,
+                        outputStream
+                       );
+      outputStream.flush();
+      return outputStream.toByteArray();
     }
+    catch (IOException e)
+    {
+      throw InternalError.unexpectedErrorSerializingAJsonIntoBytes(e);
+    }
+  }
+
 }

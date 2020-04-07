@@ -1,4 +1,5 @@
 package com.dslplatform.json.derializers.specs;
+import com.dslplatform.json.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.derializers.ValueDeserializer;
 import com.dslplatform.json.derializers.types.JsTypeDeserializer;
@@ -19,8 +20,10 @@ public  class JsObjSpecDeserializer extends JsTypeDeserializer
     }
 
     @Override
-    public JsObj value(final JsonReader<?> reader) throws IOException
+    public JsObj value(final JsonReader<?> reader) throws DeserializerException
     {
+      try
+      {
         if (isEmptyObj(reader)) return EMPTY_OBJ;
         String key = reader.readKey();
         HashMap<String, JsValue> map = EMPTY_MAP.put(key,
@@ -41,6 +44,11 @@ public  class JsObjSpecDeserializer extends JsTypeDeserializer
         }
         if (nextToken != '}') throw reader.newParseError("Expecting '}' for map end");
         return new JsObj(map);
+      }
+      catch (IOException e)
+      {
+        throw new DeserializerException(e);
+      }
     }
 
 

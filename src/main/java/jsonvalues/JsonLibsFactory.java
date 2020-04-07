@@ -1,13 +1,11 @@
 package jsonvalues;
 
-import com.dslplatform.json.DslJson;
 import com.dslplatform.json.JsonWriter;
 import com.dslplatform.json.MyDslJson;
 import com.dslplatform.json.serializers.JsArraySerializer;
 import com.dslplatform.json.serializers.JsObjSerializer;
 import com.dslplatform.json.serializers.JsValueSerializer;
 import com.fasterxml.jackson.core.JsonFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,42 +53,5 @@ public class JsonLibsFactory
             throw  InternalError.unexpectedErrorSerializingAJsonIntoString(e);
         }
     }
-
-    /**
-     * Returns a zero-argument function that when called, it serializes this Json into the given
-     * output stream, no returning anything
-     *
-     * @param outputStream the output stream
-     * @return () => Unit function that serializes this Json into the given output stream
-     */
-    static void serialize(Json<?> json,OutputStream outputStream) throws IOException
-    {
-        dslJson.serialize(json,
-                          requireNonNull(outputStream)
-                         );
-    }
-
-    /** Serialize this Json into an array of bytes. When possible,
-     * it's more efficient to work on byte level that with strings
-     *
-     * @return this Json serialized into an array of bytes
-     */
-    static byte[] serialize(Json<?> json)
-    {
-
-        try
-        {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            dslJson.serialize(json,
-                              outputStream
-                             );
-            outputStream.flush();
-           return outputStream.toByteArray();
-        }
-        catch (IOException e)
-        {
-            throw InternalError.unexpectedErrorSerializingAJsonIntoBytes(e);
-        }
-}
 
 }

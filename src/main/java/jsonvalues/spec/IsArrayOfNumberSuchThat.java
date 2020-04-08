@@ -11,7 +11,7 @@ class IsArrayOfNumberSuchThat extends AbstractPredicate implements JsArrayPredic
 final boolean elemNullable;
   private IsArrayOfNumber isArrayOfNumber;
 
-  public IsArrayOfNumberSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfNumberSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                  final boolean required,
                                  final boolean nullable
                                 )
@@ -21,7 +21,7 @@ final boolean elemNullable;
          );
   }
 
-  public IsArrayOfNumberSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfNumberSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                  final boolean required,
                                  final boolean nullable,
                                  final boolean elemNullable

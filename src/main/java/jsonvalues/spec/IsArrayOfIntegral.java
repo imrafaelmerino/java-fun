@@ -11,7 +11,7 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
 {
 
   final boolean elemNullable;
-  public IsArrayOfIntegral(final boolean required,
+   IsArrayOfIntegral(final boolean required,
                            final boolean nullable
                           )
   {
@@ -21,7 +21,7 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
          );
   }
 
-  public IsArrayOfIntegral(final boolean required,
+   IsArrayOfIntegral(final boolean required,
                            final boolean nullable,
                            final boolean elemNullable
                           )

@@ -9,7 +9,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsIntegral extends AbstractPredicate implements JsIntegralPredicate
 {
 
-  public IsIntegral(final boolean required,
+   IsIntegral(final boolean required,
                     final boolean nullable
                    )
   {

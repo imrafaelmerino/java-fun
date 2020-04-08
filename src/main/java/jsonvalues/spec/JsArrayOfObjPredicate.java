@@ -1,4 +1,4 @@
 package jsonvalues.spec;
 
-public interface JsArrayOfObjPredicate extends JsArrayPredicate { }
+ interface JsArrayOfObjPredicate extends JsArrayPredicate { }
 

@@ -1,3 +1,3 @@
 package jsonvalues.spec;
 
-public interface JsArrayPredicate extends JsonPredicate { }
+interface JsArrayPredicate extends JsonPredicate { }

@@ -9,7 +9,7 @@ import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
 
 class IsArrayOfArray extends AbstractPredicate implements JsArrayPredicate
 {
-  public IsArrayOfArray(final boolean required,
+   IsArrayOfArray(final boolean required,
                         final boolean nullable
                        )
   {

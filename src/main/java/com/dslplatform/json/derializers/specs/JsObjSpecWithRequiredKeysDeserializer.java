@@ -1,16 +1,12 @@
 package com.dslplatform.json.derializers.specs;
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
-import com.dslplatform.json.derializers.ValueDeserializer;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import jsonvalues.JsObj;
 import jsonvalues.JsPath;
-import jsonvalues.JsValue;
-import java.io.IOException;
-import java.util.function.Function;
 
 public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeserializer
 {
@@ -18,7 +14,7 @@ public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeser
 
 
     public JsObjSpecWithRequiredKeysDeserializer(final Vector<String> required,
-                                                 final Map<String, ValueDeserializer> deserializers
+                                                 final Map<String, SpecDeserializer> deserializers
                                                 )
     {
         super(deserializers);

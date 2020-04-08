@@ -1,16 +1,17 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.DeserializerException;
-import com.dslplatform.json.derializers.ValueDeserializer;
+import com.dslplatform.json.derializers.DeserializerException;
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import jsonvalues.JsObj;
-import java.io.IOException;
+
 import java.io.InputStream;
+
+import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.JsonLibsFactory.dslJson;
 import static jsonvalues.spec.JsParser.getDeserializer;
 
 public class JsObjParser
@@ -20,19 +21,19 @@ public class JsObjParser
    @param spec the Json spec what defines the schema the json has to conform
    @param strict if true, no more keys different than the specified by the spec are allowed
    */
-  private final ValueDeserializer deserializer;
+  private final SpecDeserializer deserializer;
 
   public JsObjParser(final JsObjSpec spec)
   {
 
 
-    final Tuple2<Vector<String>, Map<String, ValueDeserializer>> pair = createDeserializers(spec.bindings,
-                                                                                            HashMap.empty(),
-                                                                                            Vector.empty()
-                                                                                           );
+    final Tuple2<Vector<String>, Map<String, SpecDeserializer>> pair = createDeserializers(spec.bindings,
+                                                                                           HashMap.empty(),
+                                                                                           Vector.empty()
+                                                                                          );
 
 
-    deserializer = DeserializersFactory.ofObjSpec(pair._1,
+    deserializer =  DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
                                                   pair._2,
                                                   false
                                                  );
@@ -51,9 +52,9 @@ public class JsObjParser
    */
   public JsObj parse(byte[] bytes) throws DeserializerException
   {
-    return dslJson.deserializeToJsObj(requireNonNull(bytes),
-                                      deserializer
-                                     );
+    return INSTANCE.deserializeToJsObj(requireNonNull(bytes),
+                                       deserializer
+                                      );
 
   }
 
@@ -69,9 +70,9 @@ public class JsObjParser
   public JsObj parse(String str) throws DeserializerException
   {
 
-    return dslJson.deserializeToJsObj(requireNonNull(str).getBytes(),
-                                      deserializer
-                                     );
+    return INSTANCE.deserializeToJsObj(requireNonNull(str).getBytes(),
+                                       deserializer
+                                      );
   }
 
   /**
@@ -85,16 +86,16 @@ public class JsObjParser
    */
   public JsObj parse(InputStream inputstream) throws DeserializerException
   {
-    return dslJson.deserializeToJsObj(requireNonNull(inputstream),
-                                   deserializer
-                                  );
+    return INSTANCE.deserializeToJsObj(requireNonNull(inputstream),
+                                       deserializer
+                                      );
   }
 
 
-  static Tuple2<Vector<String>, Map<String, ValueDeserializer>> createDeserializers(final Map<String, JsSpec> specs,
-                                                                                    final Map<String, ValueDeserializer> result,
-                                                                                    final Vector<String> requiredKeys
-                                                                                   )
+  static Tuple2<Vector<String>, Map<String, SpecDeserializer>> createDeserializers(final Map<String, JsSpec> specs,
+                                                                                   final Map<String, SpecDeserializer> result,
+                                                                                   final Vector<String> requiredKeys
+                                                                                  )
   {
 
     if (specs.isEmpty()) return new Tuple2<>(requiredKeys,
@@ -109,15 +110,15 @@ public class JsObjParser
         if (spec instanceof IsObjSpec)
         {
           final IsObjSpec isObjSpec = (IsObjSpec) spec;
-          final Tuple2<Vector<String>, Map<String, ValueDeserializer>> pair = createDeserializers(isObjSpec.spec.bindings,
-                                                                                                  HashMap.empty(),
-                                                                                                  Vector.empty()
-                                                                                                 );
+          final Tuple2<Vector<String>, Map<String, SpecDeserializer>> pair = createDeserializers(isObjSpec.spec.bindings,
+                                                                                                 HashMap.empty(),
+                                                                                                 Vector.empty()
+                                                                                                );
           Vector<String> updatedRequiredKeys = requiredKeys;
-          if (isObjSpec.required) updatedRequiredKeys.append(head._1);
+          if (isObjSpec.required) updatedRequiredKeys = updatedRequiredKeys.append(head._1);
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                DeserializersFactory.ofObjSpec(pair._1,
+                                                 DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
                                                                                pair._2,
                                                                                isObjSpec.nullable
                                                                               )
@@ -127,14 +128,14 @@ public class JsObjParser
         } else if (spec instanceof IsArraySpec)
         {
           final IsArraySpec isArraySpec = (IsArraySpec) spec;
-          final Vector<ValueDeserializer> deserializers = JsArrayParser.createDeserializers(isArraySpec.arraySpec.specs,
-                                                                                            Vector.empty()
-                                                                                           );
+          final Vector<SpecDeserializer> deserializers = JsArrayParser.createDeserializers(isArraySpec.arraySpec.specs,
+                                                                                           Vector.empty()
+                                                                                          );
           Vector<String> requiredKeysUpdated = requiredKeys;
-          if (isArraySpec.required) requiredKeysUpdated.append(head._1);
+          if (isArraySpec.required) requiredKeysUpdated=requiredKeysUpdated.append(head._1);
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                DeserializersFactory.ofArraySpec(deserializers,
+                                                 DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
                                                                                  isArraySpec.nullable
                                                                                 )
                                                ),
@@ -143,15 +144,15 @@ public class JsObjParser
         } else if (spec instanceof IsArrayOfObjSpec)
         {
           final IsArrayOfObjSpec arrayOfObjSpec = (IsArrayOfObjSpec) spec;
-          final Tuple2<Vector<String>, Map<String, ValueDeserializer>> pair = createDeserializers(arrayOfObjSpec.spec.bindings,
-                                                                                                  HashMap.empty(),
-                                                                                                  Vector.empty()
-                                                                                                 );
+          final Tuple2<Vector<String>, Map<String, SpecDeserializer>> pair = createDeserializers(arrayOfObjSpec.spec.bindings,
+                                                                                                 HashMap.empty(),
+                                                                                                 Vector.empty()
+                                                                                                );
           Vector<String> requiredKeysUpdated = requiredKeys;
           if (arrayOfObjSpec.required) requiredKeysUpdated = requiredKeys.append(head._1);
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                DeserializersFactory.ofArrayOfObjSpec(pair._1,
+                                                 DeserializersFactory.INSTANCE.ofArrayOfObjSpec(pair._1,
                                                                                       pair._2,
                                                                                       arrayOfObjSpec.nullable,
                                                                                       arrayOfObjSpec.elemNullable
@@ -162,13 +163,13 @@ public class JsObjParser
         } else if (spec instanceof JsObjSpec)
         {
           final JsObjSpec jsObjSpec = (JsObjSpec) spec;
-          final Tuple2<Vector<String>, Map<String, ValueDeserializer>> pair = createDeserializers(jsObjSpec.bindings,
-                                                                                                  HashMap.empty(),
-                                                                                                  Vector.empty()
-                                                                                                 );
+          final Tuple2<Vector<String>, Map<String, SpecDeserializer>> pair = createDeserializers(jsObjSpec.bindings,
+                                                                                                 HashMap.empty(),
+                                                                                                 Vector.empty()
+                                                                                                );
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                DeserializersFactory.ofObjSpec(pair._1,
+                                                 DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
                                                                                pair._2,
                                                                                false
                                                                               )
@@ -180,7 +181,7 @@ public class JsObjParser
           final JsArraySpec jsArraySpec = (JsArraySpec) spec;
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                DeserializersFactory.ofArraySpec(JsArrayParser.createDeserializers(jsArraySpec.specs,
+                                                 DeserializersFactory.INSTANCE.ofArraySpec(JsArrayParser.createDeserializers(jsArraySpec.specs,
                                                                                                                    Vector.empty()
                                                                                                                   ),
                                                                                  false
@@ -192,7 +193,7 @@ public class JsObjParser
       } else if (spec instanceof JsPredicate)
       {
         final JsPredicate jsPredicate = (JsPredicate) spec;
-        final Tuple2<Boolean, ValueDeserializer> pair = getDeserializer(jsPredicate);
+        final Tuple2<Boolean, SpecDeserializer> pair = getDeserializer(jsPredicate);
         if (pair._1) requiredKeys.append(head._1);
         return createDeserializers(specs.tail(),
                                    result.put(head._1,

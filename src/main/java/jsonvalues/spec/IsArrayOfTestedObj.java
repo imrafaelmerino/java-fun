@@ -14,7 +14,7 @@ class IsArrayOfTestedObj extends AbstractPredicate implements JsArrayPredicate
 {
   final Function<JsObj,Optional<Error>> predicate;
   final boolean elemNullable;
-  public IsArrayOfTestedObj(final Function<JsObj,Optional<Error>> predicate,
+   IsArrayOfTestedObj(final Function<JsObj,Optional<Error>> predicate,
                             final boolean required,
                             final boolean nullable
                            )
@@ -25,7 +25,7 @@ class IsArrayOfTestedObj extends AbstractPredicate implements JsArrayPredicate
 
   }
 
-  public IsArrayOfTestedObj(final Function<JsObj,Optional<Error>> predicate,
+   IsArrayOfTestedObj(final Function<JsObj,Optional<Error>> predicate,
                             final boolean required,
                             final boolean nullable,
                             final boolean elemNullable

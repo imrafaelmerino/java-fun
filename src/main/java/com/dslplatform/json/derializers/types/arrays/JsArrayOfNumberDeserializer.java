@@ -1,31 +1,35 @@
-package com.dslplatform.json.derializers.arrays;
+package com.dslplatform.json.derializers.types.arrays;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
-import com.dslplatform.json.derializers.types.JsStrDeserializer;
+import com.dslplatform.json.derializers.types.JsNumberDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
+import jsonvalues.JsNumber;
 import jsonvalues.JsValue;
-import jsonvalues.spec.Error;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import jsonvalues.spec.Error;
+
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
+public final class JsArrayOfNumberDeserializer extends JsArrayDeserializer
 {
-  private JsStrDeserializer deserializer;
 
-  public JsArrayOfStringDeserializer(final JsStrDeserializer deserializer)
+  private JsNumberDeserializer deserializer;
+
+  public JsArrayOfNumberDeserializer(final JsNumberDeserializer deserializer)
   {
     super(Objects.requireNonNull(deserializer));
     this.deserializer = deserializer;
   }
 
   public JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
-                                         final Function<String, Optional<Error>> fn
+                                         final Function<JsNumber, Optional<Error>> fn
                                         ) throws DeserializerException
   {
     try
@@ -42,7 +46,7 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
   }
 
   public JsValue arrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                           final Function<String, Optional<Error>> fn
+                                           final Function<JsNumber, Optional<Error>> fn
                                           ) throws DeserializerException
   {
     try
@@ -53,7 +57,6 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
                                          fn,
                                          EMPTY
                                         );
-
       while (reader.getNextToken() == ',')
       {
         reader.getNextToken();
@@ -61,7 +64,6 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
                                    fn,
                                    buffer
                                   );
-
       }
       reader.checkArrayEnd();
       return buffer;
@@ -74,7 +76,7 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
   }
 
   public JsValue nullOrArrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                                 final Function<String, Optional<Error>> fn
+                                                 final Function<JsNumber, Optional<Error>> fn
                                                 ) throws DeserializerException
   {
     try
@@ -91,7 +93,7 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
   }
 
   public JsArray arrayEachSuchThat(final JsonReader<?> reader,
-                                   final Function<String, Optional<Error>> fn
+                                   final Function<JsNumber, Optional<Error>> fn
                                   ) throws DeserializerException
   {
     try
@@ -119,7 +121,7 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
   }
 
   private JsArray appendNullOrValue(final JsonReader<?> reader,
-                                    final Function<String, Optional<Error>> fn,
+                                    final Function<JsNumber, Optional<Error>> fn,
                                     JsArray buffer
                                    ) throws DeserializerException
   {
@@ -136,6 +138,5 @@ public final class JsArrayOfStringDeserializer extends JsArrayDeserializer
     }
 
   }
-
 
 }

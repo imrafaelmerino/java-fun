@@ -1,6 +1,6 @@
-package com.dslplatform.json.derializers.arrays;
+package com.dslplatform.json.derializers.types.arrays;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.derializers.types.JsValueDeserializer;

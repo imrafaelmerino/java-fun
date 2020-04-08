@@ -12,7 +12,7 @@ class IsArrayOfInt extends AbstractPredicate implements JsArrayPredicate
 {
 
   final boolean elemNullable;
-  public IsArrayOfInt(final boolean required,
+   IsArrayOfInt(final boolean required,
                       final boolean nullable
                      )
   {
@@ -22,7 +22,7 @@ class IsArrayOfInt extends AbstractPredicate implements JsArrayPredicate
          );
   }
 
-  public IsArrayOfInt(final boolean required,
+   IsArrayOfInt(final boolean required,
                       final boolean nullable,
                       final boolean elemNullable
                      )

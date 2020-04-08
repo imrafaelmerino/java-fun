@@ -12,7 +12,7 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
   final Function<JsArray,Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfLongSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfLongSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                final boolean required,
                                final boolean nullable
                               )
@@ -22,7 +22,7 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
          );
 
   }
-  public IsArrayOfLongSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfLongSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                final boolean required,
                                final boolean nullable,
                                final boolean elemNullable

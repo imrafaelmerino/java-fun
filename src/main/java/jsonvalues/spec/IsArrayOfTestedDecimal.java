@@ -16,7 +16,7 @@ class IsArrayOfTestedDecimal extends AbstractPredicate implements JsArrayPredica
   final Function<BigDecimal,Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
+   IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
                                 final boolean required,
                                 final boolean nullable
                                )
@@ -24,7 +24,7 @@ class IsArrayOfTestedDecimal extends AbstractPredicate implements JsArrayPredica
    this(predicate,required,nullable,false);
   }
 
-  public IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
+   IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
                                 final boolean required,
                                 final boolean nullable,
                                 final boolean elemNullable

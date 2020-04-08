@@ -11,7 +11,7 @@ class IsObjSuchThat extends AbstractPredicate implements JsObjPredicate
 
   final Function<JsObj,Optional<Error>> predicate;
 
-  public IsObjSuchThat(final boolean required,
+   IsObjSuchThat(final boolean required,
                        final boolean nullable,
                        final Function<JsObj,Optional<Error>> predicate
                       )

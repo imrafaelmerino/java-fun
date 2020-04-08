@@ -12,7 +12,7 @@ class IsArraySuchThat extends AbstractPredicate implements JsArrayPredicate
 
   final Function<JsArray,Optional<Error>> predicate;
 
-  public IsArraySuchThat(final boolean required,
+   IsArraySuchThat(final boolean required,
                          final boolean nullable,
                          final Function<JsArray,Optional<Error>> predicate
                         )

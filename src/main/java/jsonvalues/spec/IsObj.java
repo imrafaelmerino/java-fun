@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsObj extends AbstractPredicate implements JsObjPredicate
 {
 
-  public IsObj(final boolean required,
+   IsObj(final boolean required,
                final boolean nullable
               )
   {

@@ -9,7 +9,7 @@ import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
 class IsArrayOfBool extends AbstractPredicate implements JsArrayPredicate
 {
   final boolean elemNullable;
-  public IsArrayOfBool(final boolean required,
+   IsArrayOfBool(final boolean required,
                        final boolean nullable
                       )
   {
@@ -18,7 +18,7 @@ class IsArrayOfBool extends AbstractPredicate implements JsArrayPredicate
          false
          );
   }
-  public IsArrayOfBool(final boolean required,
+   IsArrayOfBool(final boolean required,
                        final boolean nullable,
                        final boolean elemNullable
                       )

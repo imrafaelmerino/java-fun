@@ -14,7 +14,7 @@ class IsArrayOfIntegralSuchThat extends AbstractPredicate implements JsArrayPred
   final boolean elemNullable;
 
 
-  public IsArrayOfIntegralSuchThat(final Function<JsArray, Optional<Error>> predicate,
+   IsArrayOfIntegralSuchThat(final Function<JsArray, Optional<Error>> predicate,
                                    final boolean required,
                                    final boolean nullable
                                   )
@@ -26,7 +26,7 @@ class IsArrayOfIntegralSuchThat extends AbstractPredicate implements JsArrayPred
         );
   }
 
-  public IsArrayOfIntegralSuchThat(final Function<JsArray, Optional<Error>> predicate,
+   IsArrayOfIntegralSuchThat(final Function<JsArray, Optional<Error>> predicate,
                                    final boolean required,
                                    final boolean nullable,
                                    final boolean elemNullable

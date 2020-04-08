@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
   final Function<String,Optional<Error>> predicate;
 
-  public IsStrSuchThat(final boolean required,
+   IsStrSuchThat(final boolean required,
                        final boolean nullable,
                        final Function<String,Optional<Error>> predicate
                       )

@@ -12,7 +12,7 @@ class IsArrayOfDecimalSuchThat extends AbstractPredicate implements JsArrayPredi
   final Function<JsArray,Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfDecimalSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfDecimalSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                   final boolean required,
                                   final boolean nullable
                                  )
@@ -22,7 +22,7 @@ class IsArrayOfDecimalSuchThat extends AbstractPredicate implements JsArrayPredi
          );
   }
 
-  public IsArrayOfDecimalSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfDecimalSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                   final boolean required,
                                   final boolean nullable,
                                   final boolean elemNullable

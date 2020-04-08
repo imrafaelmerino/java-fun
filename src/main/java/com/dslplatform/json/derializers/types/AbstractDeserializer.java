@@ -1,13 +1,12 @@
 package com.dslplatform.json.derializers.types;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
 import io.vavr.collection.HashMap;
 import jsonvalues.*;
-import java.io.IOException;
 
-public abstract class JsTypeDeserializer
+public abstract class AbstractDeserializer
 {
   protected final static HashMap<String, JsValue> EMPTY_MAP = HashMap.empty();
   protected final static JsObj EMPTY_OBJ = JsObj.empty();
@@ -26,18 +25,5 @@ public abstract class JsTypeDeserializer
     }
   }
 
-  protected boolean isEmptyObj(final JsonReader<?> reader) throws DeserializerException
-  {
-    try
-    {
-      if (reader.last() != '{') throw reader.newParseError("Expecting '{' for map start");
-      byte nextToken = reader.getNextToken();
-      return nextToken == '}';
-    }
-    catch (IOException e)
-    {
-      throw new DeserializerException(e);
-    }
-  }
 
 }

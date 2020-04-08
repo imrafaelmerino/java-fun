@@ -1,20 +1,18 @@
 package com.dslplatform.json.derializers.specs;
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
-import com.dslplatform.json.derializers.ValueDeserializer;
-import com.dslplatform.json.derializers.types.JsTypeDeserializer;
+import com.dslplatform.json.derializers.types.AbstractJsObjDeserializer;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
 import java.io.IOException;
-import java.util.function.Function;
 
-public  class JsObjSpecDeserializer extends JsTypeDeserializer
+public  class JsObjSpecDeserializer extends AbstractJsObjDeserializer
 {
-    private final Map<String, ValueDeserializer> deserializers;
+    private final Map<String, SpecDeserializer> deserializers;
 
-    public JsObjSpecDeserializer(final Map<String, ValueDeserializer> deserializers)
+    public JsObjSpecDeserializer(final Map<String, SpecDeserializer> deserializers)
     {
         this.deserializers = deserializers;
     }

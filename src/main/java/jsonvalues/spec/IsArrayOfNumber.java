@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsArrayOfNumber extends AbstractPredicate implements JsArrayPredicate
 {
   final boolean elemNullable;
-  public IsArrayOfNumber(final boolean required,
+   IsArrayOfNumber(final boolean required,
                          final boolean nullable
                         )
   {
@@ -20,7 +20,7 @@ class IsArrayOfNumber extends AbstractPredicate implements JsArrayPredicate
          );
   }
 
-  public IsArrayOfNumber(final boolean required,
+   IsArrayOfNumber(final boolean required,
                          final boolean nullable,
                          final boolean elemNullable
                         )

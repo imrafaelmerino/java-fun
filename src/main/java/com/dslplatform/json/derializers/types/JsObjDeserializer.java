@@ -1,6 +1,6 @@
 package com.dslplatform.json.derializers.types;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
 import io.vavr.collection.HashMap;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class JsObjDeserializer extends JsTypeDeserializer
+public final class JsObjDeserializer extends AbstractJsObjDeserializer
 {
 
   private final JsValueDeserializer valueDeserializer;

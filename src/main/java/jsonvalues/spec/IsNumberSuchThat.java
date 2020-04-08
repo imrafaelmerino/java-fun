@@ -11,7 +11,7 @@ class IsNumberSuchThat extends AbstractPredicate implements JsNumberPredicate
 
   final Function<JsNumber,Optional<Error>> predicate;
 
-  public IsNumberSuchThat(final boolean required,
+   IsNumberSuchThat(final boolean required,
                           final boolean nullable,
                           final Function<JsNumber,Optional<Error>> predicate
                          )

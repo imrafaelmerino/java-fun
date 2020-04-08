@@ -1,4 +1,4 @@
-package com.dslplatform.json.derializers.arrays;
+package com.dslplatform.json.derializers.types.arrays;
 
 import com.dslplatform.json.derializers.types.JsBoolDeserializer;
 

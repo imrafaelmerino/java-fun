@@ -12,7 +12,7 @@ class IsLongSuchThat extends AbstractPredicate implements JsLongPredicate
 
   final LongFunction<Optional<Error>> predicate;
 
-  public IsLongSuchThat(final boolean required,
+   IsLongSuchThat(final boolean required,
                         final boolean nullable,
                         final LongFunction<Optional<Error>> predicate
                        )

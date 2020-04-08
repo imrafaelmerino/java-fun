@@ -1,30 +1,29 @@
-package com.dslplatform.json.derializers.arrays;
-
-import com.dslplatform.json.DeserializerException;
-import com.dslplatform.json.JsonReader;
+package com.dslplatform.json.derializers.types.arrays;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.ParsingException;
-import com.dslplatform.json.derializers.types.JsLongDeserializer;
+import jsonvalues.spec.Error;
+import com.dslplatform.json.JsonReader;
+import com.dslplatform.json.derializers.types.JsIntDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
-import jsonvalues.spec.Error;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.LongFunction;
+import java.util.function.IntFunction;
 
-public final  class JsArrayOfLongDeserializer extends JsArrayDeserializer
+public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
 {
-    private JsLongDeserializer deserializer;
+    private JsIntDeserializer deserializer;
 
-    public JsArrayOfLongDeserializer(final JsLongDeserializer deserializer)
+    public JsArrayOfIntDeserializer(final JsIntDeserializer deserializer)
     {
         super(Objects.requireNonNull(deserializer));
         this.deserializer = deserializer;
     }
 
     public JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
-                                           final LongFunction<Optional<Error>> fn
+                                           final IntFunction<Optional<Error>> fn
                                           ) throws DeserializerException
     {
       try
@@ -41,23 +40,25 @@ public final  class JsArrayOfLongDeserializer extends JsArrayDeserializer
     }
 
     public JsValue arrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                             final LongFunction<Optional<Error>> fn
+                                             final IntFunction<Optional<Error>> fn
                                             ) throws DeserializerException
     {
       try
       {
-        if (ifIsEmptyArray(reader)) return EMPTY;
-
+        if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
+        reader.getNextToken();
         JsArray buffer = appendNullOrValue(reader,
                                            fn,
-                                           EMPTY);
+                                           EMPTY
+                                          );
 
         while (reader.getNextToken() == ',')
         {
             reader.getNextToken();
             buffer = appendNullOrValue(reader,
                                        fn,
-                                       buffer);
+                                       buffer
+                                      );
         }
         reader.checkArrayEnd();
         return buffer;
@@ -70,7 +71,7 @@ public final  class JsArrayOfLongDeserializer extends JsArrayDeserializer
     }
 
     public JsValue nullOrArrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                                   final LongFunction<Optional<Error>> fn
+                                                   final IntFunction<Optional<Error>> fn
                                                   ) throws DeserializerException
     {
       try
@@ -86,8 +87,8 @@ public final  class JsArrayOfLongDeserializer extends JsArrayDeserializer
       }
     }
 
-    public JsArray arrayEachSuchThat(final JsonReader<?>reader,
-                                     final LongFunction<Optional<Error>> fn
+    public JsArray arrayEachSuchThat(final JsonReader<?> reader,
+                                     final IntFunction<Optional<Error>> fn
                                     ) throws DeserializerException
     {
       try
@@ -95,8 +96,8 @@ public final  class JsArrayOfLongDeserializer extends JsArrayDeserializer
         if (ifIsEmptyArray(reader)) return EMPTY;
 
         JsArray buffer = EMPTY.append(deserializer.valueSuchThat(reader,
-                                                            fn
-                                                           ));
+                                                                   fn
+                                                                  ));
         while (reader.getNextToken() == ',')
         {
             reader.getNextToken();
@@ -115,9 +116,9 @@ public final  class JsArrayOfLongDeserializer extends JsArrayDeserializer
     }
 
     private JsArray appendNullOrValue(final JsonReader<?> reader,
-                                      final LongFunction<Optional<Error>> fn,
+                                      final IntFunction<Optional<Error>> fn,
                                       JsArray buffer
-                                     ) throws DeserializerException
+                                     )throws DeserializerException
     {
       try
       {

@@ -1,5 +1,6 @@
 package jsonvalues;
 
+import com.dslplatform.json.MyDslJson;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
@@ -8,13 +9,12 @@ import io.vavr.collection.HashMap;
 import jsonvalues.JsArray.TYPE;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsArray.streamOfArr;
@@ -1076,7 +1076,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     public static JsObj parse(final String str) throws MalformedJson
     {
 
-        try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str)))
+        try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str)))
         {
             JsonToken keyEvent = parser.nextToken();
             if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
@@ -1105,7 +1105,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                              ) throws MalformedJson
     {
 
-        try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str.getBytes())))
+        try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str.getBytes())))
         {
             final JsonToken keyEvent = parser.nextToken();
             if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
@@ -1566,7 +1566,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     {
         String result = str;
         if (result == null)
-            str = result = JsonLibsFactory.toString(this);
+            str = result = INSTANCE.serialize(this);
         return result;
     }
 

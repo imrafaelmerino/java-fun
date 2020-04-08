@@ -1,11 +1,11 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.ValueDeserializer;
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import io.vavr.Tuple2;
 
-public class JsParser
+class JsParser
 {
-  static Tuple2<Boolean, ValueDeserializer> getDeserializer(JsPredicate spec)
+  static Tuple2<Boolean, SpecDeserializer> getDeserializer(JsPredicate spec)
   {
     if (spec instanceof JsPrimitivePredicate)
     {
@@ -15,14 +15,14 @@ public class JsParser
         {
           final IsStr isStr = (IsStr) spec;
           return new Tuple2<>(isStr.required,
-                              DeserializersFactory.ofStr(isStr.nullable)
+                               DeserializersFactory.INSTANCE.ofStr(isStr.nullable)
           );
 
         } else if (spec instanceof IsStrSuchThat)
         {
           final IsStrSuchThat isStrSuchThat = (IsStrSuchThat) spec;
           return new Tuple2<>(isStrSuchThat.required,
-                              DeserializersFactory.ofStrSuchThat(isStrSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofStrSuchThat(isStrSuchThat.predicate,
                                                                  isStrSuchThat.nullable
                                                                 )
           );
@@ -34,14 +34,14 @@ public class JsParser
         {
           final IsInt isInt = (IsInt) spec;
           return new Tuple2<>(isInt.required,
-                              DeserializersFactory.ofInt(isInt.nullable)
+                               DeserializersFactory.INSTANCE.ofInt(isInt.nullable)
           );
 
         } else if (spec instanceof IsIntSuchThat)
         {
           final IsIntSuchThat isIntSuchThat = (IsIntSuchThat) spec;
           return new Tuple2<>(isIntSuchThat.required,
-                              DeserializersFactory.ofIntSuchThat(isIntSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofIntSuchThat(isIntSuchThat.predicate,
                                                                  isIntSuchThat.nullable
                                                                 )
           );
@@ -52,13 +52,13 @@ public class JsParser
         {
           final IsLong isLong = (IsLong) spec;
           return new Tuple2<>(isLong.required,
-                              DeserializersFactory.ofLong(isLong.nullable)
+                               DeserializersFactory.INSTANCE.ofLong(isLong.nullable)
           );
         } else if (spec instanceof IsLongSuchThat)
         {
           final IsLongSuchThat isLongSuchThat = (IsLongSuchThat) spec;
           return new Tuple2<>(isLongSuchThat.required,
-                              DeserializersFactory.ofLongSuchThat(isLongSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofLongSuchThat(isLongSuchThat.predicate,
                                                                   isLongSuchThat.nullable
                                                                  )
           );
@@ -69,13 +69,13 @@ public class JsParser
         {
           final IsDecimal isDecimal = (IsDecimal) spec;
           return new Tuple2<>(isDecimal.required,
-                              DeserializersFactory.ofDecimal(isDecimal.nullable)
+                               DeserializersFactory.INSTANCE.ofDecimal(isDecimal.nullable)
           );
         } else if (spec instanceof IsDecimalSuchThat)
         {
           final IsDecimalSuchThat isDecimalSuchThat = (IsDecimalSuchThat) spec;
           return new Tuple2<>(isDecimalSuchThat.required,
-                              DeserializersFactory.ofDecimalSuchThat(isDecimalSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofDecimalSuchThat(isDecimalSuchThat.predicate,
                                                                      isDecimalSuchThat.nullable
                                                                     )
           );
@@ -86,13 +86,13 @@ public class JsParser
         {
           final IsNumber isNumber = (IsNumber) spec;
           return new Tuple2<>(isNumber.required,
-                              DeserializersFactory.ofNumber(isNumber.nullable)
+                               DeserializersFactory.INSTANCE.ofNumber(isNumber.nullable)
           );
         } else if (spec instanceof IsNumberSuchThat)
         {
           final IsNumberSuchThat isNumberSuchThat = (IsNumberSuchThat) spec;
           return new Tuple2<>(isNumberSuchThat.required,
-                              DeserializersFactory.ofNumberSuchThat(isNumberSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofNumberSuchThat(isNumberSuchThat.predicate,
                                                                     isNumberSuchThat.nullable
                                                                    )
           );
@@ -103,13 +103,13 @@ public class JsParser
         {
           final IsIntegral isIntegral = (IsIntegral) spec;
           return new Tuple2<>(isIntegral.required,
-                              DeserializersFactory.ofIntegral(isIntegral.nullable)
+                               DeserializersFactory.INSTANCE.ofIntegral(isIntegral.nullable)
           );
         } else if (spec instanceof IsIntegralSuchThat)
         {
           final IsIntegralSuchThat isIntegralSuchThat = (IsIntegralSuchThat) spec;
           return new Tuple2<>(isIntegralSuchThat.required,
-                              DeserializersFactory.ofIntegralSuchThat(isIntegralSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofIntegralSuchThat(isIntegralSuchThat.predicate,
                                                                       isIntegralSuchThat.nullable
                                                                      )
           );
@@ -120,19 +120,19 @@ public class JsParser
         {
           final IsBoolean isBoolean = (IsBoolean) spec;
           return new Tuple2<>(isBoolean.required,
-                              DeserializersFactory.ofBool(isBoolean.nullable)
+                               DeserializersFactory.INSTANCE.ofBool(isBoolean.nullable)
           );
         } else if (spec instanceof IsTrue)
         {
           final IsTrue isTrue = (IsTrue) spec;
           return new Tuple2<>(isTrue.required,
-                              DeserializersFactory.ofTrue(isTrue.nullable)
+                               DeserializersFactory.INSTANCE.ofTrue(isTrue.nullable)
           );
         } else if (spec instanceof IsFalse)
         {
           final IsFalse isFalse = (IsFalse) spec;
           return new Tuple2<>(isFalse.required,
-                              DeserializersFactory.ofTrue(isFalse.nullable)
+                               DeserializersFactory.INSTANCE.ofTrue(isFalse.nullable)
           );
         }
       }
@@ -144,7 +144,7 @@ public class JsParser
         {
           IsArray isArray = ((IsArray) spec);
           return new Tuple2<>(isArray.required,
-                              DeserializersFactory.ofArrayOfInt(isArray.nullable,
+                               DeserializersFactory.INSTANCE.ofArrayOfInt(isArray.nullable,
                                                                 isArray.elemNullable
                                                                )
           );
@@ -156,7 +156,7 @@ public class JsParser
           {
             IsArrayOfInt isArrayOfInt = ((IsArrayOfInt) spec);
             return new Tuple2<>(isArrayOfInt.required,
-                                DeserializersFactory.ofArrayOfInt(isArrayOfInt.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfInt(isArrayOfInt.nullable,
                                                                   isArrayOfInt.elemNullable
                                                                  )
             );
@@ -165,7 +165,7 @@ public class JsParser
           {
             IsArrayOfTestedInt isArrayOfInt = ((IsArrayOfTestedInt) spec);
             return new Tuple2<>(isArrayOfInt.required,
-                                DeserializersFactory.ofArrayOfIntEachSuchThat(isArrayOfInt.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfIntEachSuchThat(isArrayOfInt.predicate,
                                                                               isArrayOfInt.nullable,
                                                                               isArrayOfInt.elemNullable
                                                                              )
@@ -174,7 +174,7 @@ public class JsParser
           {
             IsArrayOfIntSuchThat isArrayOfInt = ((IsArrayOfIntSuchThat) spec);
             return new Tuple2<>(isArrayOfInt.required,
-                                DeserializersFactory.ofArrayOfIntSuchThat(isArrayOfInt.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfIntSuchThat(isArrayOfInt.predicate,
                                                                           isArrayOfInt.nullable,
                                                                           isArrayOfInt.elemNullable
                                                                          )
@@ -188,7 +188,7 @@ public class JsParser
           {
             IsArrayOfObj isArrayOfObj = ((IsArrayOfObj) spec);
             return new Tuple2<>(isArrayOfObj.required,
-                                DeserializersFactory.ofArrayOfObj(isArrayOfObj.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfObj(isArrayOfObj.nullable,
                                                                   isArrayOfObj.elemNullable
                                                                  )
             );
@@ -196,7 +196,7 @@ public class JsParser
           {
             IsArrayOfTestedObj isArrayOfObj = ((IsArrayOfTestedObj) spec);
             return new Tuple2<>(isArrayOfObj.required,
-                                DeserializersFactory.ofArrayOfObjEachSuchThat(isArrayOfObj.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfObjEachSuchThat(isArrayOfObj.predicate,
                                                                               isArrayOfObj.nullable,
                                                                               isArrayOfObj.elemNullable
                                                                              )
@@ -205,7 +205,7 @@ public class JsParser
           {
             IsArrayOfObjSuchThat isArrayOfObj = ((IsArrayOfObjSuchThat) spec);
             return new Tuple2<>(isArrayOfObj.required,
-                                DeserializersFactory.ofArrayOfObjSuchThat(isArrayOfObj.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfObjSuchThat(isArrayOfObj.predicate,
                                                                           isArrayOfObj.nullable,
                                                                           isArrayOfObj.elemNullable
                                                                          )
@@ -219,7 +219,7 @@ public class JsParser
           {
             IsArrayOfIntegral isArrayOfIntegral = ((IsArrayOfIntegral) spec);
             return new Tuple2<>(isArrayOfIntegral.required,
-                                DeserializersFactory.ofArrayOfIntegral(isArrayOfIntegral.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfIntegral(isArrayOfIntegral.nullable,
                                                                        isArrayOfIntegral.elemNullable
                                                                       )
             );
@@ -227,7 +227,7 @@ public class JsParser
           {
             IsArrayOfTestedIntegral isArrayOfIntegral = ((IsArrayOfTestedIntegral) spec);
             return new Tuple2<>(isArrayOfIntegral.required,
-                                DeserializersFactory.ofArrayOfIntegralEachSuchThat(isArrayOfIntegral.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfIntegralEachSuchThat(isArrayOfIntegral.predicate,
                                                                                    isArrayOfIntegral.nullable,
                                                                                    isArrayOfIntegral.elemNullable
                                                                                   )
@@ -236,7 +236,7 @@ public class JsParser
           {
             IsArrayOfIntegralSuchThat isArrayOfIntegral = ((IsArrayOfIntegralSuchThat) spec);
             return new Tuple2<>(isArrayOfIntegral.required,
-                                DeserializersFactory.ofArrayOfIntegralSuchThat(isArrayOfIntegral.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfIntegralSuchThat(isArrayOfIntegral.predicate,
                                                                                isArrayOfIntegral.nullable,
                                                                                isArrayOfIntegral.elemNullable
                                                                               )
@@ -250,7 +250,7 @@ public class JsParser
           {
             IsArrayOfLong isArrayOfLong = ((IsArrayOfLong) spec);
             return new Tuple2<>(isArrayOfLong.required,
-                                DeserializersFactory.ofArrayOfLong(isArrayOfLong.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfLong(isArrayOfLong.nullable,
                                                                    isArrayOfLong.elemNullable
                                                                   )
             );
@@ -258,7 +258,7 @@ public class JsParser
           {
             IsArrayOfTestedLong isArrayOfLong = ((IsArrayOfTestedLong) spec);
             return new Tuple2<>(isArrayOfLong.required,
-                                DeserializersFactory.ofArrayOfLongEachSuchThat(isArrayOfLong.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfLongEachSuchThat(isArrayOfLong.predicate,
                                                                                isArrayOfLong.nullable,
                                                                                isArrayOfLong.elemNullable
                                                                               )
@@ -267,7 +267,7 @@ public class JsParser
           {
             IsArrayOfLongSuchThat isArrayOfLong = ((IsArrayOfLongSuchThat) spec);
             return new Tuple2<>(isArrayOfLong.required,
-                                DeserializersFactory.ofArrayOfLongSuchThat(isArrayOfLong.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfLongSuchThat(isArrayOfLong.predicate,
                                                                            isArrayOfLong.nullable,
                                                                            isArrayOfLong.elemNullable
                                                                           )
@@ -281,7 +281,7 @@ public class JsParser
           {
             IsArrayOfStr isArrayOfStr = ((IsArrayOfStr) spec);
             return new Tuple2<>(isArrayOfStr.required,
-                                DeserializersFactory.ofArrayOfStr(isArrayOfStr.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfStr(isArrayOfStr.nullable,
                                                                   isArrayOfStr.elemNullable
                                                                  )
             );
@@ -289,7 +289,7 @@ public class JsParser
           {
             IsArrayOfTestedStr isArrayOfStr = ((IsArrayOfTestedStr) spec);
             return new Tuple2<>(isArrayOfStr.required,
-                                DeserializersFactory.ofArrayOfStrEachSuchThat(isArrayOfStr.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfStrEachSuchThat(isArrayOfStr.predicate,
                                                                               isArrayOfStr.nullable,
                                                                               isArrayOfStr.elemNullable
                                                                              )
@@ -298,7 +298,7 @@ public class JsParser
           {
             IsArrayOfStrSuchThat isArrayOfStr = ((IsArrayOfStrSuchThat) spec);
             return new Tuple2<>(isArrayOfStr.required,
-                                DeserializersFactory.ofArrayOfStrSuchThat(isArrayOfStr.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfStrSuchThat(isArrayOfStr.predicate,
                                                                           isArrayOfStr.nullable,
                                                                           isArrayOfStr.elemNullable
                                                                          )
@@ -312,7 +312,7 @@ public class JsParser
           {
             IsArrayOfDecimal isArrayOfDecimal = ((IsArrayOfDecimal) spec);
             return new Tuple2<>(isArrayOfDecimal.required,
-                                DeserializersFactory.ofArrayOfDecimal(isArrayOfDecimal.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfDecimal(isArrayOfDecimal.nullable,
                                                                       isArrayOfDecimal.elemNullable
                                                                      )
             );
@@ -320,7 +320,7 @@ public class JsParser
           {
             IsArrayOfTestedDecimal isArrayOfDecimal = ((IsArrayOfTestedDecimal) spec);
             return new Tuple2<>(isArrayOfDecimal.required,
-                                DeserializersFactory.ofArrayOfDecimalEachSuchThat(isArrayOfDecimal.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfDecimalEachSuchThat(isArrayOfDecimal.predicate,
                                                                                   isArrayOfDecimal.nullable,
                                                                                   isArrayOfDecimal.elemNullable
                                                                                  )
@@ -329,7 +329,7 @@ public class JsParser
           {
             IsArrayOfDecimalSuchThat isArrayOfDecimal = ((IsArrayOfDecimalSuchThat) spec);
             return new Tuple2<>(isArrayOfDecimal.required,
-                                DeserializersFactory.ofArrayOfDecimalSuchThat(isArrayOfDecimal.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfDecimalSuchThat(isArrayOfDecimal.predicate,
                                                                               isArrayOfDecimal.nullable,
                                                                               isArrayOfDecimal.elemNullable
                                                                              )
@@ -343,7 +343,7 @@ public class JsParser
           {
             IsArrayOfNumber isArrayOfNumber = ((IsArrayOfNumber) spec);
             return new Tuple2<>(isArrayOfNumber.required,
-                                DeserializersFactory.ofArrayOfNumber(isArrayOfNumber.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfNumber(isArrayOfNumber.nullable,
                                                                      isArrayOfNumber.elemNullable
                                                                     )
             );
@@ -351,7 +351,7 @@ public class JsParser
           {
             IsArrayOfTestedNumber isArrayOfNumber = ((IsArrayOfTestedNumber) spec);
             return new Tuple2<>(isArrayOfNumber.required,
-                                DeserializersFactory.ofArrayOfNumberEachSuchThat(isArrayOfNumber.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfNumberEachSuchThat(isArrayOfNumber.predicate,
                                                                                  isArrayOfNumber.nullable,
                                                                                  isArrayOfNumber.elemNullable
                                                                                 )
@@ -360,7 +360,7 @@ public class JsParser
           {
             IsArrayOfNumberSuchThat isArrayOfNumber = ((IsArrayOfNumberSuchThat) spec);
             return new Tuple2<>(isArrayOfNumber.required,
-                                DeserializersFactory.ofArrayOfNumberSuchThat(isArrayOfNumber.predicate,
+                                 DeserializersFactory.INSTANCE.ofArrayOfNumberSuchThat(isArrayOfNumber.predicate,
                                                                              isArrayOfNumber.nullable,
                                                                              isArrayOfNumber.elemNullable
                                                                             )
@@ -374,7 +374,7 @@ public class JsParser
           {
             IsArrayOfBool isArrayOfBool = ((IsArrayOfBool) spec);
             return new Tuple2<>(isArrayOfBool.required,
-                                DeserializersFactory.ofArrayOfNumber(isArrayOfBool.nullable,
+                                 DeserializersFactory.INSTANCE.ofArrayOfNumber(isArrayOfBool.nullable,
                                                                      isArrayOfBool.elemNullable
                                                                     )
             );
@@ -387,12 +387,12 @@ public class JsParser
         {
           final IsObj isObj = (IsObj) spec;
           return new Tuple2<>(isObj.required,
-                              DeserializersFactory.ofObj(isObj.nullable));
+                               DeserializersFactory.INSTANCE.ofObj(isObj.nullable));
         } else if (spec instanceof IsObjSuchThat)
         {
           final IsObjSuchThat isObjSuchThat = (IsObjSuchThat) spec;
           return new Tuple2<>(isObjSuchThat.required,
-                              DeserializersFactory.ofObjSuchThat(isObjSuchThat.predicate,
+                               DeserializersFactory.INSTANCE.ofObjSuchThat(isObjSuchThat.predicate,
                                                                  isObjSuchThat.nullable
                                                                 )
           );

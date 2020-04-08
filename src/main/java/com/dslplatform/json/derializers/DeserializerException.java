@@ -1,4 +1,4 @@
-package com.dslplatform.json;
+package com.dslplatform.json.derializers;
 
 
 public class DeserializerException extends RuntimeException {

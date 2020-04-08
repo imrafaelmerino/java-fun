@@ -12,7 +12,7 @@ class IsArrayOfIntSuchThat extends AbstractPredicate implements JsArrayPredicate
   final boolean elemNullable;
   private IsArrayOfInt isArrayOfInt;
 
-  public IsArrayOfIntSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfIntSuchThat(final Function<JsArray,Optional<Error>> predicate,
                               final boolean required,
                               final boolean nullable
                              )
@@ -22,7 +22,7 @@ class IsArrayOfIntSuchThat extends AbstractPredicate implements JsArrayPredicate
          );
 
   }
-  public IsArrayOfIntSuchThat(final Function<JsArray,Optional<Error>> predicate,
+   IsArrayOfIntSuchThat(final Function<JsArray,Optional<Error>> predicate,
                               final boolean required,
                               final boolean nullable,
                               final boolean elemNullable

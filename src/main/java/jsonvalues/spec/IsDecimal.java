@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsDecimal extends AbstractPredicate implements JsDecimalPredicate
 {
 
-  public IsDecimal(final boolean required,
+   IsDecimal(final boolean required,
                    final boolean nullable
                   )
   {

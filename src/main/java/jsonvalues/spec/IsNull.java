@@ -9,7 +9,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsNull extends AbstractPredicate implements JsPrimitivePredicate
 {
 
-  public IsNull(final boolean required,
+   IsNull(final boolean required,
                 final boolean nullable
                )
   {

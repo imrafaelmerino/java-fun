@@ -9,10 +9,10 @@ import java.util.Optional;
 class IsArray extends AbstractPredicate implements JsArrayPredicate
 {
   final boolean elemNullable;
-  public IsArray(final boolean required,
-                 final boolean nullable,
-                 final boolean elemNullable
-                )
+  private IsArray(final boolean required,
+                  final boolean nullable,
+                  final boolean elemNullable
+                 )
   {
     super(required,
           nullable
@@ -20,9 +20,9 @@ class IsArray extends AbstractPredicate implements JsArrayPredicate
     this.elemNullable = elemNullable;
   }
 
-  public IsArray(final boolean required,
-                 final boolean nullable
-                )
+  IsArray(final boolean required,
+          final boolean nullable
+         )
   {
     this(required,
           nullable,

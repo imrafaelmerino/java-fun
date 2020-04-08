@@ -1,6 +1,6 @@
 package com.dslplatform.json.derializers.types;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
 import com.dslplatform.json.StringConverter;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class JsStrDeserializer extends JsTypeDeserializer
+public final class JsStrDeserializer extends AbstractDeserializer
 {
   @Override
   public JsStr value(final JsonReader<?> reader) throws DeserializerException

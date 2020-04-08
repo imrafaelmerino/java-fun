@@ -15,7 +15,7 @@ class IsArrayOfTestedIntegral extends AbstractPredicate implements JsArrayPredic
   final Function<BigInteger,Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,
+   IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,
                                  final boolean required,
                                  final boolean nullable
                                 )
@@ -26,7 +26,7 @@ class IsArrayOfTestedIntegral extends AbstractPredicate implements JsArrayPredic
   }
 
 
-  public IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,
+   IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,
                                  final boolean required,
                                  final boolean nullable,
                                  final boolean elemNullable

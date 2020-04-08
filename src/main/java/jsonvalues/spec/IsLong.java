@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
  class IsLong extends AbstractPredicate implements JsLongPredicate
 {
 
-  public IsLong(final boolean required,
+   IsLong(final boolean required,
                 final boolean nullable
                )
   {

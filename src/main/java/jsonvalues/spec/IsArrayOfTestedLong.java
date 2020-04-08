@@ -12,7 +12,7 @@ class IsArrayOfTestedLong extends AbstractPredicate implements JsArrayPredicate
   final LongFunction<Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfTestedLong(final LongFunction<Optional<Error>> predicate,
+   IsArrayOfTestedLong(final LongFunction<Optional<Error>> predicate,
                              final boolean required,
                              final boolean nullable
                             )
@@ -22,7 +22,7 @@ class IsArrayOfTestedLong extends AbstractPredicate implements JsArrayPredicate
          );
   }
 
-  public IsArrayOfTestedLong(final LongFunction<Optional<Error>> predicate,
+   IsArrayOfTestedLong(final LongFunction<Optional<Error>> predicate,
                              final boolean required,
                              final boolean nullable,
                              final boolean elemNullable

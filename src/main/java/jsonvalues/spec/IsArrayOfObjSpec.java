@@ -17,7 +17,7 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
   final boolean elemNullable;
   final JsObjSpec spec;
 
-  public IsArrayOfObjSpec(final boolean nullable,
+   IsArrayOfObjSpec(final boolean nullable,
                           final boolean required,
                           final boolean elemNullable,
                           final JsObjSpec jsObjSpec
@@ -29,7 +29,7 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
     this.spec = jsObjSpec;
 
   }
-
+  @Override
   public Set<JsErrorPair> test(final JsArray array)
   {
     if (array == null)

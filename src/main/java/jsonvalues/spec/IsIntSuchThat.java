@@ -14,7 +14,7 @@ class IsIntSuchThat extends AbstractPredicate implements JsIntPredicate
 
   final IntFunction<Optional<Error>> predicate;
 
-  public IsIntSuchThat(final boolean required,
+   IsIntSuchThat(final boolean required,
                        final boolean nullable,
                        final IntFunction<Optional<Error>> predicate
                       )

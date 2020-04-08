@@ -15,7 +15,7 @@ public class IsArraySpec implements Schema<JsArray>
   final boolean required;
 
 
-  public IsArraySpec(final JsArraySpec arraySpec,
+   IsArraySpec(final JsArraySpec arraySpec,
                      final boolean nullable,
                      final boolean required
                     )

@@ -13,14 +13,14 @@ class IsArrayOfBoolSuchThat extends AbstractPredicate implements JsArrayPredicat
   final Function<JsArray,Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfBoolSuchThat(final Function<JsArray,Optional<Error>>  predicate,
+   IsArrayOfBoolSuchThat(final Function<JsArray,Optional<Error>>  predicate,
                                final boolean required,
                                final boolean nullable
                               )
   {
    this(predicate,required,nullable,false);
   }
-  public IsArrayOfBoolSuchThat(final Function<JsArray,Optional<Error>>  predicate,
+   IsArrayOfBoolSuchThat(final Function<JsArray,Optional<Error>>  predicate,
                                final boolean required,
                                final boolean nullable,
                                final boolean elemNullable

@@ -8,34 +8,48 @@ package jsonvalues.spec;
  *
  */
 class InternalError  extends UnsupportedOperationException
+{
+
+  InternalError(final String message
+                       )
   {
+    super(message);
+  }
 
-    public InternalError(final String message
-                        )
-    {
-      super(message);
-    }
+  static InternalError longWasExpected(String message)
+  {
+    return new InternalError(message);
+  }
 
-    static InternalError typeNotExpectedInMatcher(Object obj, String function){
-      return  new InternalError("Element of type not expected in matcher in the function $function: "+obj);
-    }
+  static InternalError decimalWasExpected(String message)
+  {
+    return new InternalError(message);
+  }
 
-    static InternalError nothingFound(){
-      return new InternalError("JsNothing is an element that can not be persisted. If found during iteration, it'is because of a development error.");
-    }
+  static InternalError integerWasExpected(String message)
+  {
+    return new InternalError(message);
+  }
 
-    static InternalError longWasExpected(String message) {return new InternalError(message);}
-    static InternalError decimalWasExpected(String message){return new InternalError(message);}
-    static InternalError integerWasExpected(String message){return new InternalError(message);}
-    static InternalError integralWasExpected(String message){return new InternalError(message);}
-    static InternalError numberWasExpected(String message){return new InternalError(message);}
-    static InternalError stringWasExpected(String message){return new InternalError(message);}
-    static InternalError objWasExpected(String message){return new InternalError(message);}
-    static InternalError tokenNotFoundParsingStringntoJsObj(String token){return new InternalError("Token "+token +" not expected");}
-    static InternalError tokenNotFoundParsingStringIntoJsArray(String token){return new InternalError("Token "+token +" not expected");}
-    static InternalError endArrayTokenExpected(){return new InternalError("End array token } expected, but it never took place."); }
-    static InternalError jsonValueIdNotConsidered(){ return new InternalError("JsValue.id() not considered. Default branch of a switch statement was executed."); }
+  static InternalError integralWasExpected(String message)
+  {
+    return new InternalError(message);
+  }
+
+  static InternalError numberWasExpected(String message)
+  {
+    return new InternalError(message);
+  }
+
+  static InternalError stringWasExpected(String message)
+  {
+    return new InternalError(message);
+  }
+
+  static InternalError objWasExpected(String message)
+  {
+    return new InternalError(message);
   }
 
 
-
+}

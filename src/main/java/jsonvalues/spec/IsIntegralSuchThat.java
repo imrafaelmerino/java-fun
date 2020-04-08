@@ -12,7 +12,7 @@ class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicat
 
   final Function<BigInteger,Optional<Error>> predicate;
 
-  public IsIntegralSuchThat(final boolean required,
+   IsIntegralSuchThat(final boolean required,
                             final boolean nullable,
                             final Function<BigInteger,Optional<Error>> predicate
                            )

@@ -1,9 +1,9 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
-import com.dslplatform.json.derializers.ValueDeserializer;
-import com.dslplatform.json.derializers.arrays.*;
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.derializers.types.arrays.*;
 import com.dslplatform.json.derializers.specs.JsArrayOfObjSpecDeserializer;
 import com.dslplatform.json.derializers.specs.JsArraySpecDeserializer;
 import com.dslplatform.json.derializers.specs.JsObjSpecDeserializer;
@@ -18,41 +18,59 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.*;
 
-public class DeserializersFactory
+class DeserializersFactory
 {
 
+  final static DeserializersFactory INSTANCE = new DeserializersFactory();
 
-  private static final JsIntDeserializer intParser = new JsIntDeserializer();
-  private static final JsLongDeserializer longParser = new JsLongDeserializer();
-
-  private static final JsIntegralDeserializer integralParser = new JsIntegralDeserializer();
-  private static final JsBoolDeserializer boolParser = new JsBoolDeserializer();
-  private static final JsDecimalDeserializer decimalParser = new JsDecimalDeserializer();
-  private static final JsStrDeserializer strParser = new JsStrDeserializer();
-  private static final JsNumberDeserializer numberParser = new JsNumberDeserializer();
-
-  private static final JsValueDeserializer valueParser = new JsValueDeserializer();
-  private static final JsObjDeserializer objParser = new JsObjDeserializer(valueParser);
-  private static final JsArrayOfValueDeserializer arrayOfValueParser = new JsArrayOfValueDeserializer(valueParser);
-
-  static
+  private DeserializersFactory()
   {
+    intParser = new JsIntDeserializer();
+    longParser = new JsLongDeserializer();
+    integralParser = new JsIntegralDeserializer();
+    boolParser = new JsBoolDeserializer();
+    decimalParser = new JsDecimalDeserializer();
+    strParser = new JsStrDeserializer();
+    numberParser = new JsNumberDeserializer();
+    valueParser = new JsValueDeserializer();
+    objParser = new JsObjDeserializer(valueParser);
+    arrayOfValueParser = new JsArrayOfValueDeserializer(valueParser);
     valueParser.setArrayDeserializer(arrayOfValueParser);
     valueParser.setObjDeserializer(objParser);
     valueParser.setNumberDeserializer(numberParser);
+    arrayOfIntParser = new JsArrayOfIntDeserializer(intParser);
+    arrayOfLongParser = new JsArrayOfLongDeserializer(longParser);
+    arrayOfDecimalParser = new JsArrayOfDecimalDeserializer(decimalParser);
+    arrayOfIntegralParser = new JsArrayOfIntegralDeserializer(integralParser);
+    arrayOfNumberParser = new JsArrayOfNumberDeserializer(numberParser);
+    arrayOfObjParser = new JsArrayOfObjDeserializer(objParser);
+    arrayOfStrParser = new JsArrayOfStringDeserializer(strParser);
+    arrayOfBoolParser = new JsArrayOfBoolDeserializer(boolParser);
+    newParseException =
+      (reader, error) -> new DeserializerException(reader.newParseError(error.toString()));
+
   }
 
-  private static final JsArrayOfIntDeserializer arrayOfIntParser = new JsArrayOfIntDeserializer(intParser);
-  private static final JsArrayOfLongDeserializer arrayOfLongParser = new JsArrayOfLongDeserializer(longParser);
-  private static final JsArrayOfDecimalDeserializer arrayOfDecimalParser = new JsArrayOfDecimalDeserializer(decimalParser);
-  private static final JsArrayOfIntegralDeserializer arrayOfIntegralParser = new JsArrayOfIntegralDeserializer(integralParser);
-  private static final JsArrayOfNumberDeserializer arrayOfNumberParser = new JsArrayOfNumberDeserializer(numberParser);
-  private static final JsArrayOfObjDeserializer arrayOfObjParser = new JsArrayOfObjDeserializer(objParser);
-  private static final JsArrayOfStringDeserializer arrayOfStrParser = new JsArrayOfStringDeserializer(strParser);
-  private static final JsArrayOfBoolDeserializer arrayOfBoolParser = new JsArrayOfBoolDeserializer(boolParser);
+  private final JsIntDeserializer intParser;
+  private final JsLongDeserializer longParser;
+  private final JsIntegralDeserializer integralParser;
+  private final JsBoolDeserializer boolParser;
+  private final JsDecimalDeserializer decimalParser;
+  private final JsStrDeserializer strParser;
+  private final JsNumberDeserializer numberParser;
+  private final JsValueDeserializer valueParser;
+  private final JsObjDeserializer objParser;
+  private final JsArrayOfValueDeserializer arrayOfValueParser;
+  private final JsArrayOfIntDeserializer arrayOfIntParser;
+  private final JsArrayOfLongDeserializer arrayOfLongParser;
+  private final JsArrayOfDecimalDeserializer arrayOfDecimalParser;
+  private final JsArrayOfIntegralDeserializer arrayOfIntegralParser;
+  private final JsArrayOfNumberDeserializer arrayOfNumberParser;
+  private final JsArrayOfObjDeserializer arrayOfObjParser;
+  private final JsArrayOfStringDeserializer arrayOfStrParser;
+  private final JsArrayOfBoolDeserializer arrayOfBoolParser;
 
-  private static final BiFunction<JsonReader<?>, Error, DeserializerException> newParseException =
-    (reader, error) -> new DeserializerException(reader.newParseError(error.toString()));
+  private final BiFunction<JsonReader<?>, Error, DeserializerException> newParseException;
 
   /**
    *
@@ -62,14 +80,13 @@ public class DeserializersFactory
    * @param errorTypeSupplier if the value doesn't have the expected type,
    *                          the error produced by this supplier is thrown. It's considered an internal error
    *                          because if this happened, it would be because a development error
-   * @tparam R the type of the value (primitive type or JsObj or JsArray or Json)
    * @return a function to test that a value has the expected type and conforms a given spec
    */
-  static <R> Function<JsValue, Optional<Error>> testTypeAndSpec(Predicate<JsValue> typeCondition,
-                                                                Function<JsValue, R> converter,
-                                                                Function<R, Optional<Error>> spec,
-                                                                Supplier<InternalError> errorTypeSupplier
-                                                               )
+  <R> Function<JsValue, Optional<Error>> testTypeAndSpec(Predicate<JsValue> typeCondition,
+                                                         Function<JsValue, R> converter,
+                                                         Function<R, Optional<Error>> spec,
+                                                         Supplier<InternalError> errorTypeSupplier
+                                                        )
   {
     return value ->
     {
@@ -79,9 +96,9 @@ public class DeserializersFactory
   }
 
 
-  private static ValueDeserializer getDeserializer(JsTypeDeserializer deserializer,
-                                                   boolean nullable
-                                                  )
+  private SpecDeserializer getDeserializer(AbstractDeserializer deserializer,
+                                           boolean nullable
+                                          )
   {
     if (nullable)
       return deserializer::nullOrValue;
@@ -89,10 +106,10 @@ public class DeserializersFactory
       return deserializer::value;
   }
 
-  private static ValueDeserializer getDeserializer(JsArrayDeserializer deserializer,
-                                                   boolean nullable,
-                                                   boolean elemNullable
-                                                  )
+  private SpecDeserializer getDeserializer(JsArrayDeserializer deserializer,
+                                           boolean nullable,
+                                           boolean elemNullable
+                                          )
   {
     if (nullable && elemNullable)
       return deserializer::nullOrArrayWithNull;
@@ -104,11 +121,11 @@ public class DeserializersFactory
   }
 
 
-  private static ValueDeserializer getDeserializer(JsArrayDeserializer deserializer,
-                                                   Function<JsArray, Optional<Error>> p,
-                                                   boolean nullable,
-                                                   boolean elemNullable
-                                                  )
+  private SpecDeserializer getDeserializer(JsArrayDeserializer deserializer,
+                                           Function<JsArray, Optional<Error>> p,
+                                           boolean nullable,
+                                           boolean elemNullable
+                                          )
   {
     if (nullable && elemNullable)
       return reader -> deserializer.nullOrArrayWithNullSuchThat(reader,
@@ -128,10 +145,10 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArrayOfObjSuchThat(Function<JsArray, Optional<Error>> p,
-                                                boolean nullable,
-                                                boolean elemNullable
-                                               )
+  SpecDeserializer ofArrayOfObjSuchThat(Function<JsArray, Optional<Error>> p,
+                                        boolean nullable,
+                                        boolean elemNullable
+                                       )
   {
     return getDeserializer(arrayOfObjParser,
                            p,
@@ -140,10 +157,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfObjEachSuchThat(Function<JsObj, Optional<Error>> p,
-                                                    boolean nullable,
-                                                    boolean elemNullable
-                                                   )
+  SpecDeserializer ofArrayOfObjEachSuchThat(Function<JsObj, Optional<Error>> p,
+                                            boolean nullable,
+                                            boolean elemNullable
+                                           )
   {
     if (nullable && elemNullable) return reader -> arrayOfObjParser.nullOrArrayWithNullEachSuchThat(reader,
                                                                                                     p
@@ -159,11 +176,11 @@ public class DeserializersFactory
                                                             );
   }
 
-  static ValueDeserializer ofArrayOfObjSpec(Vector<String> required,
-                                            Map<String, ValueDeserializer> keyDeserializers,
-                                            boolean nullable,
-                                            boolean elemNullable
-                                           )
+  SpecDeserializer ofArrayOfObjSpec(Vector<String> required,
+                                    Map<String, SpecDeserializer> keyDeserializers,
+                                    boolean nullable,
+                                    boolean elemNullable
+                                   )
   {
     JsObjSpecDeserializer f = (required.isEmpty()) ? new JsObjSpecDeserializer(keyDeserializers) : new JsObjSpecWithRequiredKeysDeserializer(required,
                                                                                                                                              keyDeserializers
@@ -180,9 +197,9 @@ public class DeserializersFactory
 
   }
 
-  static ValueDeserializer ofArrayOfObj(boolean nullable,
-                                        boolean elemNullable
-                                       )
+  SpecDeserializer ofArrayOfObj(boolean nullable,
+                                boolean elemNullable
+                               )
   {
     return getDeserializer(arrayOfObjParser,
                            nullable,
@@ -191,9 +208,9 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofObjSuchThat(final Function<JsObj, Optional<Error>> predicate,
-                                         final boolean nullable
-                                        )
+  SpecDeserializer ofObjSuchThat(final Function<JsObj, Optional<Error>> predicate,
+                                 final boolean nullable
+                                )
   {
 
     if (nullable)
@@ -229,9 +246,9 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArraySpec(Vector<ValueDeserializer> keyDeserializers,
-                                       boolean nullable
-                                      )
+  SpecDeserializer ofArraySpec(Vector<SpecDeserializer> keyDeserializers,
+                               boolean nullable
+                              )
   {
     if (nullable)
       return reader -> new JsArraySpecDeserializer(keyDeserializers).nullOrArray(reader);
@@ -239,10 +256,10 @@ public class DeserializersFactory
       return reader -> new JsArraySpecDeserializer(keyDeserializers).array(reader);
   }
 
-  static ValueDeserializer ofObjSpec(Vector<String> required,
-                                     Map<String, ValueDeserializer> keyDeserializers,
-                                     boolean nullable
-                                    )
+  SpecDeserializer ofObjSpec(Vector<String> required,
+                             Map<String, SpecDeserializer> keyDeserializers,
+                             boolean nullable
+                            )
   {
     return reader ->
     {
@@ -264,10 +281,10 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArrayOfValueSuchThat(Function<JsArray, Optional<Error>> p,
-                                                  boolean nullable,
-                                                  boolean elemNullable
-                                                 )
+  SpecDeserializer ofArrayOfValueSuchThat(Function<JsArray, Optional<Error>> p,
+                                          boolean nullable,
+                                          boolean elemNullable
+                                         )
   {
     return getDeserializer(arrayOfValueParser,
                            p,
@@ -276,16 +293,16 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofObj(boolean nullable)
+  SpecDeserializer ofObj(boolean nullable)
   {
     return getDeserializer(objParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofArrayOfValue(boolean nullable,
-                                          boolean elemNullable
-                                         )
+  SpecDeserializer ofArrayOfValue(boolean nullable,
+                                  boolean elemNullable
+                                 )
   {
     return getDeserializer(arrayOfValueParser,
                            nullable,
@@ -293,10 +310,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfValueEachSuchThat(Function<JsValue, Optional<Error>> p,
-                                                      boolean nullable,
-                                                      boolean elemNullable
-                                                     )
+  SpecDeserializer ofArrayOfValueEachSuchThat(Function<JsValue, Optional<Error>> p,
+                                              boolean nullable,
+                                              boolean elemNullable
+                                             )
   {
     if (nullable && elemNullable) return reader -> arrayOfValueParser.nullOrArrayWithNullEachSuchThat(reader,
                                                                                                       p
@@ -312,14 +329,14 @@ public class DeserializersFactory
                                                               );
   }
 
-  static ValueDeserializer ofValue()
+  SpecDeserializer ofValue()
   {
     return getDeserializer(valueParser,
                            true
                           );
   }
 
-  static ValueDeserializer ofValueSuchThat(Function<JsValue, Optional<Error>> predicate)
+  SpecDeserializer ofValueSuchThat(Function<JsValue, Optional<Error>> predicate)
   {
     return reader ->
     {
@@ -337,28 +354,28 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofBool(boolean nullable)
+  SpecDeserializer ofBool(boolean nullable)
   {
     return getDeserializer(boolParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofTrue(boolean nullable)
+  SpecDeserializer ofTrue(boolean nullable)
   {
     if (nullable) return boolParser::nullOrTrue;
     else return boolParser::True;
   }
 
-  static ValueDeserializer ofFalse(boolean nullable)
+  SpecDeserializer ofFalse(boolean nullable)
   {
     if (nullable) return boolParser::nullOrFalse;
     else return boolParser::False;
   }
 
-  static ValueDeserializer ofArrayOfBool(boolean nullable,
-                                         boolean elemNullable
-                                        )
+  SpecDeserializer ofArrayOfBool(boolean nullable,
+                                 boolean elemNullable
+                                )
   {
     return getDeserializer(arrayOfBoolParser,
                            nullable,
@@ -366,10 +383,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfBoolSuchThat(Function<JsArray, Optional<Error>> p,
-                                                 boolean nullable,
-                                                 boolean elemNullable
-                                                )
+  SpecDeserializer ofArrayOfBoolSuchThat(Function<JsArray, Optional<Error>> p,
+                                         boolean nullable,
+                                         boolean elemNullable
+                                        )
   {
     return getDeserializer(arrayOfBoolParser,
                            p,
@@ -379,10 +396,10 @@ public class DeserializersFactory
 
   }
 
-  static ValueDeserializer ofArrayOfStrEachSuchThat(Function<String, Optional<Error>> p,
-                                                    boolean nullable,
-                                                    boolean elemNullable
-                                                   )
+  SpecDeserializer ofArrayOfStrEachSuchThat(Function<String, Optional<Error>> p,
+                                            boolean nullable,
+                                            boolean elemNullable
+                                           )
   {
     if (nullable && elemNullable) return reader ->
       arrayOfStrParser.nullOrArrayWithNullEachSuchThat(reader,
@@ -402,10 +419,10 @@ public class DeserializersFactory
                                           );
   }
 
-  static ValueDeserializer ofArrayOfStrSuchThat(Function<JsArray, Optional<Error>> p,
-                                                boolean nullable,
-                                                boolean elemNullable
-                                               )
+  SpecDeserializer ofArrayOfStrSuchThat(Function<JsArray, Optional<Error>> p,
+                                        boolean nullable,
+                                        boolean elemNullable
+                                       )
   {
     return getDeserializer(arrayOfStrParser,
                            p,
@@ -414,9 +431,9 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfStr(boolean nullable,
-                                        boolean elemNullable
-                                       )
+  SpecDeserializer ofArrayOfStr(boolean nullable,
+                                boolean elemNullable
+                               )
   {
     return getDeserializer(arrayOfStrParser,
                            nullable,
@@ -425,16 +442,16 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofStr(boolean nullable)
+  SpecDeserializer ofStr(boolean nullable)
   {
     return getDeserializer(strParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofStrSuchThat(Function<String, Optional<Error>> predicate,
-                                         boolean nullable
-                                        )
+  SpecDeserializer ofStrSuchThat(Function<String, Optional<Error>> predicate,
+                                 boolean nullable
+                                )
   {
 
     if (nullable) return reader ->
@@ -467,9 +484,9 @@ public class DeserializersFactory
     };
   }
 
-  static ValueDeserializer ofArrayOfNumber(boolean nullable,
-                                           boolean elemNullable
-                                          )
+  SpecDeserializer ofArrayOfNumber(boolean nullable,
+                                   boolean elemNullable
+                                  )
   {
     return getDeserializer(arrayOfNumberParser,
                            nullable,
@@ -477,10 +494,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfNumberEachSuchThat(Function<JsNumber, Optional<Error>> p,
-                                                       boolean nullable,
-                                                       boolean elemNullable
-                                                      )
+  SpecDeserializer ofArrayOfNumberEachSuchThat(Function<JsNumber, Optional<Error>> p,
+                                               boolean nullable,
+                                               boolean elemNullable
+                                              )
   {
     if (nullable && elemNullable) return reader -> arrayOfNumberParser.nullOrArrayWithNullEachSuchThat(reader,
                                                                                                        p
@@ -496,10 +513,10 @@ public class DeserializersFactory
                                                                );
   }
 
-  static ValueDeserializer ofArrayOfNumberSuchThat(Function<JsArray, Optional<Error>> p,
-                                                   boolean nullable,
-                                                   boolean elemNullable
-                                                  )
+  SpecDeserializer ofArrayOfNumberSuchThat(Function<JsArray, Optional<Error>> p,
+                                           boolean nullable,
+                                           boolean elemNullable
+                                          )
   {
     return getDeserializer(arrayOfNumberParser,
                            p,
@@ -508,10 +525,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfIntegralSuchThat(Function<JsArray, Optional<Error>> p,
-                                                     boolean nullable,
-                                                     boolean elemNullable
-                                                    )
+  SpecDeserializer ofArrayOfIntegralSuchThat(Function<JsArray, Optional<Error>> p,
+                                             boolean nullable,
+                                             boolean elemNullable
+                                            )
   {
     return getDeserializer(arrayOfIntegralParser,
                            p,
@@ -520,16 +537,16 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofNumber(boolean nullable)
+  SpecDeserializer ofNumber(boolean nullable)
   {
     return getDeserializer(numberParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofNumberSuchThat(Function<JsNumber, Optional<Error>> predicate,
-                                            boolean nullable
-                                           )
+  SpecDeserializer ofNumberSuchThat(Function<JsNumber, Optional<Error>> predicate,
+                                    boolean nullable
+                                   )
   {
 
     if (nullable) return reader ->
@@ -564,9 +581,9 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArrayOfIntegral(boolean nullable,
-                                             boolean elemNullable
-                                            )
+  SpecDeserializer ofArrayOfIntegral(boolean nullable,
+                                     boolean elemNullable
+                                    )
   {
     return getDeserializer(arrayOfIntegralParser,
                            nullable,
@@ -574,10 +591,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfIntegralEachSuchThat(Function<BigInteger, Optional<Error>> p,
-                                                         boolean nullable,
-                                                         boolean elemNullable
-                                                        )
+  SpecDeserializer ofArrayOfIntegralEachSuchThat(Function<BigInteger, Optional<Error>> p,
+                                                 boolean nullable,
+                                                 boolean elemNullable
+                                                )
 
   {
     if (nullable && elemNullable) return reader ->
@@ -598,16 +615,16 @@ public class DeserializersFactory
                                                );
   }
 
-  static ValueDeserializer ofIntegral(boolean nullable)
+  SpecDeserializer ofIntegral(boolean nullable)
   {
     return getDeserializer(integralParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofIntegralSuchThat(Function<BigInteger, Optional<Error>> predicate,
-                                              boolean nullable
-                                             )
+  SpecDeserializer ofIntegralSuchThat(Function<BigInteger, Optional<Error>> predicate,
+                                      boolean nullable
+                                     )
   {
 
     if (nullable) return reader ->
@@ -616,7 +633,7 @@ public class DeserializersFactory
       if (value == JsNull.NULL) return value;
       else
       {
-        testTypeAndSpec(v -> v.isBigInt(),
+        testTypeAndSpec(JsValue::isBigInt,
                         v -> v.toJsBigInt().value,
                         predicate,
                         () -> InternalError.integralWasExpected("JsIntegralDeserializer.nullOrValue didn't return neither null or a JsBigInt as expected.")
@@ -640,9 +657,9 @@ public class DeserializersFactory
     };
   }
 
-  static ValueDeserializer ofArrayOfDecimal(boolean nullable,
-                                            boolean elemNullable
-                                           )
+  SpecDeserializer ofArrayOfDecimal(boolean nullable,
+                                    boolean elemNullable
+                                   )
   {
     return getDeserializer(arrayOfDecimalParser,
                            nullable,
@@ -650,10 +667,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfDecimalEachSuchThat(Function<BigDecimal, Optional<Error>> p,
-                                                        boolean nullable,
-                                                        boolean elemNullable
-                                                       )
+  SpecDeserializer ofArrayOfDecimalEachSuchThat(Function<BigDecimal, Optional<Error>> p,
+                                                boolean nullable,
+                                                boolean elemNullable
+                                               )
   {
     if (nullable && elemNullable) return reader ->
       arrayOfDecimalParser.nullOrArrayWithNullEachSuchThat(reader,
@@ -673,10 +690,10 @@ public class DeserializersFactory
                                               );
   }
 
-  static ValueDeserializer ofArrayOfDecimalSuchThat(Function<JsArray, Optional<Error>> p,
-                                                    boolean nullable,
-                                                    boolean elemNullable
-                                                   )
+  SpecDeserializer ofArrayOfDecimalSuchThat(Function<JsArray, Optional<Error>> p,
+                                            boolean nullable,
+                                            boolean elemNullable
+                                           )
   {
     return getDeserializer(arrayOfDecimalParser,
                            p,
@@ -687,9 +704,9 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArrayOfLong(boolean nullable,
-                                         boolean elemNullable
-                                        )
+  SpecDeserializer ofArrayOfLong(boolean nullable,
+                                 boolean elemNullable
+                                )
   {
     return getDeserializer(arrayOfLongParser,
                            nullable,
@@ -697,10 +714,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfLongEachSuchThat(LongFunction<Optional<Error>> p,
-                                                     boolean nullable,
-                                                     boolean elemNullable
-                                                    )
+  SpecDeserializer ofArrayOfLongEachSuchThat(LongFunction<Optional<Error>> p,
+                                             boolean nullable,
+                                             boolean elemNullable
+                                            )
 
   {
     if (nullable && elemNullable) return reader ->
@@ -720,10 +737,10 @@ public class DeserializersFactory
                                                              );
   }
 
-  static ValueDeserializer ofArrayOfLongSuchThat(Function<JsArray, Optional<Error>> p,
-                                                 boolean nullable,
-                                                 boolean elemNullable
-                                                )
+  SpecDeserializer ofArrayOfLongSuchThat(Function<JsArray, Optional<Error>> p,
+                                         boolean nullable,
+                                         boolean elemNullable
+                                        )
   {
     return getDeserializer(arrayOfLongParser,
                            p,
@@ -733,16 +750,16 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofDecimal(boolean nullable)
+  SpecDeserializer ofDecimal(boolean nullable)
   {
     return getDeserializer(decimalParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofDecimalSuchThat(Function<BigDecimal, Optional<Error>> predicate,
-                                             boolean nullable
-                                            )
+  SpecDeserializer ofDecimalSuchThat(Function<BigDecimal, Optional<Error>> predicate,
+                                     boolean nullable
+                                    )
   {
 
     if (nullable) return reader ->
@@ -751,7 +768,7 @@ public class DeserializersFactory
       if (value == JsNull.NULL) return value;
       else
       {
-        testTypeAndSpec(v -> v.isDecimal(),
+        testTypeAndSpec(JsValue::isDecimal,
                         v -> v.toJsBigDec().value,
                         predicate,
                         () -> InternalError.decimalWasExpected("JsDecimalDeserializer.nullOrValue didn't return neither null or a JsBigDec as expected.")
@@ -778,16 +795,16 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofLong(boolean nullable)
+  SpecDeserializer ofLong(boolean nullable)
   {
     return getDeserializer(longParser,
                            nullable
                           );
   }
 
-  static ValueDeserializer ofLongSuchThat(LongFunction<Optional<Error>> predicate,
-                                          boolean nullable
-                                         )
+  SpecDeserializer ofLongSuchThat(LongFunction<Optional<Error>> predicate,
+                                  boolean nullable
+                                 )
   {
 
     if (nullable) return reader ->
@@ -821,9 +838,9 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArrayOfInt(boolean nullable,
-                                        boolean elemNullable
-                                       )
+  SpecDeserializer ofArrayOfInt(boolean nullable,
+                                boolean elemNullable
+                               )
   {
     return getDeserializer(arrayOfIntParser,
                            nullable,
@@ -832,10 +849,10 @@ public class DeserializersFactory
   }
 
 
-  static ValueDeserializer ofArrayOfIntSuchThat(Function<JsArray, Optional<Error>> p,
-                                                boolean nullable,
-                                                boolean elemNullable
-                                               )
+  SpecDeserializer ofArrayOfIntSuchThat(Function<JsArray, Optional<Error>> p,
+                                        boolean nullable,
+                                        boolean elemNullable
+                                       )
   {
     return getDeserializer(arrayOfIntParser,
                            p,
@@ -844,10 +861,10 @@ public class DeserializersFactory
                           );
   }
 
-  static ValueDeserializer ofArrayOfIntEachSuchThat(IntFunction<Optional<Error>> p,
-                                                    boolean nullable,
-                                                    boolean elemNullable
-                                                   )
+  SpecDeserializer ofArrayOfIntEachSuchThat(IntFunction<Optional<Error>> p,
+                                            boolean nullable,
+                                            boolean elemNullable
+                                           )
   {
     if (nullable && elemNullable)
       return reader -> arrayOfIntParser.nullOrArrayWithNullEachSuchThat(reader,
@@ -865,16 +882,16 @@ public class DeserializersFactory
   }
 
 
-  public static ValueDeserializer ofInt(boolean nullable)
+  public SpecDeserializer ofInt(boolean nullable)
   {
     return getDeserializer(intParser,
                            nullable
                           );
   }
 
-  public static ValueDeserializer ofIntSuchThat(IntFunction<Optional<Error>> predicate,
-                                                boolean nullable
-                                               )
+  public SpecDeserializer ofIntSuchThat(IntFunction<Optional<Error>> predicate,
+                                        boolean nullable
+                                       )
   {
 
     if (nullable) return reader ->

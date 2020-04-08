@@ -1,35 +1,33 @@
-package com.dslplatform.json.derializers.arrays;
+package com.dslplatform.json.derializers.types.arrays;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
-import com.dslplatform.json.derializers.types.JsDecimalDeserializer;
+import com.dslplatform.json.derializers.types.JsObjDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
+import jsonvalues.JsObj;
 import jsonvalues.JsValue;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-
 import jsonvalues.spec.Error;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class JsArrayOfDecimalDeserializer extends JsArrayDeserializer
+public final class JsArrayOfObjDeserializer extends JsArrayDeserializer
 {
 
-  private JsDecimalDeserializer deserializer;
+  private JsObjDeserializer deserializer;
 
-  public JsArrayOfDecimalDeserializer(final JsDecimalDeserializer deserializer)
+  public JsArrayOfObjDeserializer(final JsObjDeserializer deserializer)
   {
     super(Objects.requireNonNull(deserializer));
     this.deserializer = deserializer;
   }
 
   public JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
-                                         final Function<BigDecimal, Optional<Error>> fn
+                                         final Function<JsObj, Optional<Error>> fn
                                         ) throws DeserializerException
   {
     try
@@ -41,30 +39,12 @@ public final class JsArrayOfDecimalDeserializer extends JsArrayDeserializer
     catch (ParsingException e)
     {
       throw new DeserializerException(e);
-    }
-  }
-
-  private JsArray appendNullOrValue(final JsonReader<?> reader,
-                                    final Function<BigDecimal, Optional<Error>> fn,
-                                    JsArray buffer
-                                   ) throws DeserializerException
-  {
-    try
-    {
-      return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(deserializer.valueSuchThat(reader,
-                                                                                                      fn
-                                                                                                     ));
-    }
-    catch (ParsingException e)
-    {
-      throw new DeserializerException(e);
 
     }
-
   }
 
   public JsValue arrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                           final Function<BigDecimal, Optional<Error>> fn
+                                           final Function<JsObj, Optional<Error>> fn
                                           ) throws DeserializerException
   {
     try
@@ -95,7 +75,7 @@ public final class JsArrayOfDecimalDeserializer extends JsArrayDeserializer
   }
 
   public JsValue nullOrArrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                                 final Function<BigDecimal, Optional<Error>> fn
+                                                 final Function<JsObj, Optional<Error>> fn
                                                 ) throws DeserializerException
   {
     try
@@ -112,7 +92,7 @@ public final class JsArrayOfDecimalDeserializer extends JsArrayDeserializer
   }
 
   public JsArray arrayEachSuchThat(final JsonReader<?> reader,
-                                   final Function<BigDecimal, Optional<Error>> fn
+                                   final Function<JsObj, Optional<Error>> fn
                                   ) throws DeserializerException
   {
     try
@@ -138,4 +118,24 @@ public final class JsArrayOfDecimalDeserializer extends JsArrayDeserializer
 
     }
   }
+
+  private JsArray appendNullOrValue(final JsonReader<?> reader,
+                                    final Function<JsObj, Optional<Error>> fn,
+                                    JsArray buffer
+                                   ) throws DeserializerException
+  {
+    try
+    {
+      return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(deserializer.valueSuchThat(reader,
+                                                                                                      fn
+                                                                                                     ));
+    }
+    catch (ParsingException e)
+    {
+      throw new DeserializerException(e);
+
+    }
+
+  }
+
 }

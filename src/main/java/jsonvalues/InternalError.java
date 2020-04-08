@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
  Exception that models an internal error made by a developer. An issue in GitHub should be open reporting
  the exception message.
  */
-public final class InternalError extends RuntimeException
+final class InternalError extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
     private static final String GENERAL_MESSAGE = "Create an issue in https://github.com/imrafaelmerino/values: %s.";
@@ -22,11 +22,6 @@ public final class InternalError extends RuntimeException
     private InternalError(final Exception e)
     {
         super(e);
-    }
-
-    static InternalError unexpectedErrorSerializingAJsonIntoString(IOException e)
-    {
-        return new InternalError(e);
     }
 
     static InternalError unexpectedErrorSerializingAJsonIntoBytes(IOException e)
@@ -58,6 +53,5 @@ public final class InternalError extends RuntimeException
         return new InternalError(String.format("token %s not expected during parsing",
                                                token
                                               ));
-
     }
 }

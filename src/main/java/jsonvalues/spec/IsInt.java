@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsInt extends AbstractPredicate implements JsIntPredicate
 {
 
-  public IsInt(final boolean required,
+   IsInt(final boolean required,
                final boolean nullable
               )
   {

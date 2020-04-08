@@ -1,13 +1,13 @@
 package com.dslplatform.json.derializers.types;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
 import jsonvalues.JsBool;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
 
-public final class JsBoolDeserializer extends JsTypeDeserializer
+public final class JsBoolDeserializer extends AbstractDeserializer
 {
 
   public JsBool value(final JsonReader<?> reader) throws DeserializerException

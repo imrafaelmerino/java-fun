@@ -9,7 +9,7 @@ import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
 class IsStr extends AbstractPredicate implements JsStrPredicate
 {
 
-  public IsStr(final boolean required,
+   IsStr(final boolean required,
                final boolean nullable
               )
   {

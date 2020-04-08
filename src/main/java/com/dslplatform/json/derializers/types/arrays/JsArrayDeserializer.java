@@ -1,9 +1,9 @@
-package com.dslplatform.json.derializers.arrays;
+package com.dslplatform.json.derializers.types.arrays;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
-import com.dslplatform.json.derializers.types.JsTypeDeserializer;
+import com.dslplatform.json.derializers.types.AbstractDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
@@ -17,9 +17,9 @@ public abstract class JsArrayDeserializer
 {
 
   final static JsArray EMPTY = JsArray.empty();
-  private final JsTypeDeserializer deserializer;
+  private final AbstractDeserializer deserializer;
 
-  public JsArrayDeserializer(final JsTypeDeserializer deserializer)
+  public JsArrayDeserializer(final AbstractDeserializer deserializer)
   {
     this.deserializer = deserializer;
   }

@@ -12,7 +12,7 @@ class IsArrayOfTestedNumber extends AbstractPredicate implements JsArrayPredicat
   final Function<JsNumber, Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfTestedNumber(final Function<JsNumber,Optional<Error>> predicate,
+   IsArrayOfTestedNumber(final Function<JsNumber,Optional<Error>> predicate,
                                final boolean required,
                                final boolean nullable
                               )
@@ -22,7 +22,7 @@ class IsArrayOfTestedNumber extends AbstractPredicate implements JsArrayPredicat
          );
   }
 
-  public IsArrayOfTestedNumber(final Function<JsNumber,Optional<Error>> predicate,
+   IsArrayOfTestedNumber(final Function<JsNumber,Optional<Error>> predicate,
                                final boolean required,
                                final boolean nullable,
                                final boolean elemNullable

@@ -15,7 +15,7 @@ public class IsObjSpec implements Schema<JsObj>
   final boolean required;
   final JsObjSpec spec;
 
-  public IsObjSpec(final boolean nullable,
+   IsObjSpec(final boolean nullable,
                    final boolean required,
                    final JsObjSpec spec
                   )

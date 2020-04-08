@@ -11,7 +11,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsNumber extends AbstractPredicate implements JsNumberPredicate
 {
 
-  public IsNumber(final boolean required,
+   IsNumber(final boolean required,
                   final boolean nullable
                  )
   {

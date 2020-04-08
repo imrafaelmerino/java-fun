@@ -13,7 +13,7 @@ class IsDecimalSuchThat extends AbstractPredicate implements JsDecimalPredicate
 
   final Function<BigDecimal,Optional<Error>> predicate;
 
-  public IsDecimalSuchThat(final boolean required,
+   IsDecimalSuchThat(final boolean required,
                            final boolean nullable,
                            final Function<BigDecimal,Optional<Error>> predicate
                           )

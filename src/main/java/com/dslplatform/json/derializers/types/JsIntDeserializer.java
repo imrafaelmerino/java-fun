@@ -1,6 +1,6 @@
 package com.dslplatform.json.derializers.types;
 
-import com.dslplatform.json.DeserializerException;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.MyNumberConverter;
 import com.dslplatform.json.ParsingException;
@@ -11,7 +11,7 @@ import jsonvalues.spec.Error;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
-public final class JsIntDeserializer extends JsTypeDeserializer
+public final class JsIntDeserializer extends AbstractDeserializer
 {
   @Override
   public JsInt value(final JsonReader<?> reader) throws DeserializerException
@@ -23,7 +23,6 @@ public final class JsIntDeserializer extends JsTypeDeserializer
     catch (ParsingException e)
     {
       throw new DeserializerException(e);
-
     }
   }
 

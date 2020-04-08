@@ -10,7 +10,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsTrue extends AbstractPredicate implements JsBoolPredicate
 {
 
-  public IsTrue(final boolean required,
+   IsTrue(final boolean required,
                 final boolean nullable
                )
   {

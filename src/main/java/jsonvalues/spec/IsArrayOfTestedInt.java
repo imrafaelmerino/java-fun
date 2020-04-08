@@ -15,7 +15,7 @@ class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
   final IntFunction<Optional<Error>> predicate;
   final boolean elemNullable;
 
-  public IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
+   IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
                             final boolean required,
                             final boolean nullable
                            )
@@ -27,7 +27,7 @@ class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
         );
   }
 
-  public IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
+   IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
                             final boolean required,
                             final boolean nullable,
                             final boolean elemNullable

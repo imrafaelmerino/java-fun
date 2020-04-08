@@ -1,4 +1,4 @@
-package jsonvalues;
+package com.dslplatform.json;
 
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ final class MyPrettifyOutputStream extends OutputStream
         }
     }
 
-    public MyPrettifyOutputStream(OutputStream out)
+    MyPrettifyOutputStream(OutputStream out)
     {
         this(out,
              IndentType.SPACES,

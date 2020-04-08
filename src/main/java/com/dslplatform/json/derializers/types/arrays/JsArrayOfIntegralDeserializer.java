@@ -1,29 +1,31 @@
-package com.dslplatform.json.derializers.arrays;
-import com.dslplatform.json.DeserializerException;
-import com.dslplatform.json.ParsingException;
-import jsonvalues.spec.Error;
+package com.dslplatform.json.derializers.types.arrays;
+import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
-import com.dslplatform.json.derializers.types.JsIntDeserializer;
+import com.dslplatform.json.ParsingException;
+import com.dslplatform.json.derializers.types.JsIntegralDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
+import jsonvalues.spec.Error;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.IntFunction;
+import java.util.function.Function;
 
-public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
+public final  class JsArrayOfIntegralDeserializer extends JsArrayDeserializer
 {
-    private JsIntDeserializer deserializer;
 
-    public JsArrayOfIntDeserializer(final JsIntDeserializer deserializer)
+    private JsIntegralDeserializer deserializer;
+
+    public JsArrayOfIntegralDeserializer(final JsIntegralDeserializer deserializer)
     {
         super(Objects.requireNonNull(deserializer));
         this.deserializer = deserializer;
     }
 
     public JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
-                                           final IntFunction<Optional<Error>> fn
+                                           final Function<BigInteger, Optional<Error>> fn
                                           ) throws DeserializerException
     {
       try
@@ -35,18 +37,17 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
       catch (ParsingException e)
       {
         throw new DeserializerException(e);
-
       }
     }
 
     public JsValue arrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                             final IntFunction<Optional<Error>> fn
+                                             final Function<BigInteger, Optional<Error>> fn
                                             ) throws DeserializerException
     {
       try
       {
-        if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
-        reader.getNextToken();
+        if (ifIsEmptyArray(reader)) return EMPTY;
+
         JsArray buffer = appendNullOrValue(reader,
                                            fn,
                                            EMPTY
@@ -59,6 +60,7 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
                                        fn,
                                        buffer
                                       );
+
         }
         reader.checkArrayEnd();
         return buffer;
@@ -71,7 +73,7 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
     }
 
     public JsValue nullOrArrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                                   final IntFunction<Optional<Error>> fn
+                                                   final Function<BigInteger, Optional<Error>> fn
                                                   ) throws DeserializerException
     {
       try
@@ -87,8 +89,8 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
       }
     }
 
-    public JsArray arrayEachSuchThat(final JsonReader<?> reader,
-                                     final IntFunction<Optional<Error>> fn
+    public JsArray arrayEachSuchThat(final JsonReader<?>reader,
+                                     final Function<BigInteger, Optional<Error>> fn
                                     ) throws DeserializerException
     {
       try
@@ -116,9 +118,9 @@ public final  class JsArrayOfIntDeserializer extends JsArrayDeserializer
     }
 
     private JsArray appendNullOrValue(final JsonReader<?> reader,
-                                      final IntFunction<Optional<Error>> fn,
+                                      final Function<BigInteger, Optional<Error>> fn,
                                       JsArray buffer
-                                     )throws DeserializerException
+                                     ) throws DeserializerException
     {
       try
       {

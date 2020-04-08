@@ -1,5 +1,5 @@
 package jsonvalues.spec;
 
-public interface JsNumberPredicate extends JsPrimitivePredicate
+interface JsNumberPredicate extends JsPrimitivePredicate
 {
 }

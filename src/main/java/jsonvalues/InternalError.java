@@ -24,11 +24,6 @@ final class InternalError extends RuntimeException
         super(e);
     }
 
-    static InternalError unexpectedErrorSerializingAJsonIntoBytes(IOException e)
-    {
-        return new InternalError(e);
-    }
-
     static InternalError arrayOptionNotImplemented(final String option)
     {
         return new InternalError(String.format("New option %s in enum JsArray.TYPE not implemented.",

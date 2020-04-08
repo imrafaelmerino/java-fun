@@ -9,11 +9,13 @@ import com.dslplatform.json.serializers.SerializerException;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import jsonvalues.Json;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+
+import static java.util.Objects.requireNonNull;
 
 public final class MyDslJson<Object> extends DslJson<Object>
 {
@@ -148,9 +150,42 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
   }
 
+  public byte[] serialize() throws SerializerException
+  {
+    try
+    {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      INSTANCE.serialize(this,
+                         outputStream
+                        );
+      outputStream.flush();
+      return outputStream.toByteArray();
+    }
+    catch (IOException e)
+    {
+      throw new SerializerException(e);
+    }
+  }
+
+  public void serialize(Json<?> json,
+                        OutputStream ouputstream
+                       ) throws SerializerException
+  {
+    try
+    {
+      super.serialize(json,
+                requireNonNull(ouputstream)
+               );
+    }
+    catch (IOException e)
+    {
+      throw new SerializerException(e);
+    }
+
+  }
 
   /** Returns the string representation of this Json
-   *
+   * @param json json to be serialized
    * @return the string representation of this Json
    */
   public String serialize(Json<?> json)

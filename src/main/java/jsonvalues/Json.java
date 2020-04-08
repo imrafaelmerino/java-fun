@@ -1,9 +1,9 @@
 package jsonvalues;
 
+import com.dslplatform.json.serializers.SerializerException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import jsonvalues.JsArray.TYPE;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -68,6 +68,7 @@ public interface Json<T extends Json<T>> extends JsValue
   /** Converts the string representation of this Json to a pretty print version
    *
    * @return pretty print version of the string representation of this Json
+   *
    */
   default String toPrettyString()
   {
@@ -1775,18 +1776,15 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   * Returns a zero-argument function that when called, it serializes this Json into the given
-   * output stream, no returning anything
+   * Serializes this Json into the given output stream, no returning anything
    *
    * @param ouputstream the output stream
-   * @return () => Unit function that serializes this Json into the given output stream
    */
-  default void serialize(OutputStream ouputstream) throws IOException
+  default void serialize(OutputStream ouputstream) throws SerializerException
   {
     INSTANCE.serialize(this,
                        requireNonNull(ouputstream)
                       );
-
   }
 
   /** Serialize this Json into an array of bytes. When possible,
@@ -1794,21 +1792,9 @@ public interface Json<T extends Json<T>> extends JsValue
    *
    * @return this Json serialized into an array of bytes
    */
-  default byte[] serialize()
+  default byte[] serialize() throws SerializerException
   {
-    try
-    {
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      INSTANCE.serialize(this,
-                         outputStream
-                        );
-      outputStream.flush();
-      return outputStream.toByteArray();
-    }
-    catch (IOException e)
-    {
-      throw InternalError.unexpectedErrorSerializingAJsonIntoBytes(e);
-    }
+    return INSTANCE.serialize();
   }
 
 }

@@ -976,7 +976,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param key9 name of a key
    @param el9 JsElem to be associated to the key9
    @param key10 name of a key
-   @param el9 JsElem to be associated to the key10
+   @param el10 JsElem to be associated to the key10
    @return an immutable six-element JsObj
    @throws UserError if an elem is a mutable Json
    */

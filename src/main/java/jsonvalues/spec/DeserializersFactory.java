@@ -82,11 +82,11 @@ class DeserializersFactory
    *                          because if this happened, it would be because a development error
    * @return a function to test that a value has the expected type and conforms a given spec
    */
-  <R> Function<JsValue, Optional<Error>> testTypeAndSpec(Predicate<JsValue> typeCondition,
-                                                         Function<JsValue, R> converter,
-                                                         Function<R, Optional<Error>> spec,
-                                                         Supplier<InternalError> errorTypeSupplier
-                                                        )
+  private <R> Function<JsValue, Optional<Error>> testTypeAndSpec(Predicate<JsValue> typeCondition,
+                                                                 Function<JsValue, R> converter,
+                                                                 Function<R, Optional<Error>> spec,
+                                                                 Supplier<InternalError> errorTypeSupplier
+                                                                )
   {
     return value ->
     {

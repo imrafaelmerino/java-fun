@@ -10,15 +10,18 @@ import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
 
 public class JsSpecs
 {
+
   public static JsSpec conforms(final JsObjSpec spec
                                )
   {
     return conforms(spec,
                     false,
-                    true);
+                    true
+                   );
   }
 
   public static JsSpec conforms(final JsObjSpec spec,
@@ -37,7 +40,8 @@ public class JsSpecs
   {
     return conforms(spec,
                     false,
-                    true);
+                    true
+                   );
   }
 
   public static JsSpec conforms(final JsArraySpec spec,
@@ -71,6 +75,42 @@ public class JsSpecs
                                 elemNullable,
                                 requireNonNull(spec)
     );
+  }
+
+
+  /**returns a spec that conforms any value that is evaluated to true on the predicate.
+   * When the type is not specified by the spec, positive numbers are parsed as Long by default,
+   * which has to be taken into account in order to define any condition.
+   * @param predicate the predicate
+   * @param required if true, the value is mandatory
+   * @return a spec
+   */
+  public static JsSpec anySuchThat(final Predicate<JsValue> predicate,
+                                   final boolean required
+                                  )
+  {
+    return new IsValueSuchThat(required,
+                               v ->
+                               {
+                                 if (requireNonNull(predicate).test(v)) return Optional.empty();
+                                 return Optional.of(new Error(v,
+                                                              VALUE_CONDITION
+                                 ));
+                               }
+    );
+  }
+
+  public static JsSpec any = new IsValue(false);
+
+  /**
+   * returns a spec that any value conforms
+   *
+   * @param required if true, the value is mandatory
+   * @return a spec
+   */
+  public static JsSpec any(boolean required)
+  {
+    return any(required);
   }
 
   public static JsSpec isStr = new IsStr(true,
@@ -145,7 +185,6 @@ public class JsSpecs
                                                        false
   );
 
-  public static JsSpec any = (JsPredicate) value -> Optional.empty();
 
   public static JsSpec isArrayOfStr(final Predicate<String> predicate)
   {
@@ -565,7 +604,7 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec isInt(IntPredicate predicate)
+  public static JsSpec isInt(final IntPredicate predicate)
   {
     return isInt(true,
                  false,
@@ -575,7 +614,7 @@ public class JsSpecs
 
   public static JsSpec isInt(final boolean required,
                              final boolean nullable,
-                             IntPredicate predicate
+                             final IntPredicate predicate
                             )
   {
     return new IsIntSuchThat(required,
@@ -600,7 +639,7 @@ public class JsSpecs
   }
 
 
-  public static JsSpec isLong(LongPredicate predicate)
+  public static JsSpec isLong(final LongPredicate predicate)
   {
     return isLong(true,
                   false,
@@ -610,7 +649,7 @@ public class JsSpecs
 
   public static JsSpec isLong(final boolean required,
                               final boolean nullable,
-                              LongPredicate predicate
+                              final LongPredicate predicate
                              )
   {
     return new IsLongSuchThat(required,
@@ -627,7 +666,7 @@ public class JsSpecs
 
   public static JsSpec isDecimal(final boolean required,
                                  final boolean nullable,
-                                 Predicate<BigDecimal> predicate
+                                 final Predicate<BigDecimal> predicate
                                 )
   {
     return new IsDecimalSuchThat(required,
@@ -669,7 +708,7 @@ public class JsSpecs
 
   public static JsSpec isIntegral(final boolean required,
                                   final boolean nullable,
-                                  Predicate<BigInteger> predicate
+                                  final Predicate<BigInteger> predicate
                                  )
   {
     return new IsIntegralSuchThat(required,

@@ -220,8 +220,5 @@ public final class MyDslJson<Object> extends DslJson<Object>
     {
       throw new SerializerException(e);
     }
-
-
   }
-
 }

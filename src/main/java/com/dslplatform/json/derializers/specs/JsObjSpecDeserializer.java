@@ -14,7 +14,7 @@ public  class JsObjSpecDeserializer extends AbstractJsObjDeserializer
 
     public JsObjSpecDeserializer(final Map<String, SpecDeserializer> deserializers)
     {
-        this.deserializers = deserializers;
+      this.deserializers = deserializers;
     }
 
     @Override
@@ -25,7 +25,7 @@ public  class JsObjSpecDeserializer extends AbstractJsObjDeserializer
         if (isEmptyObj(reader)) return EMPTY_OBJ;
         String key = reader.readKey();
         HashMap<String, JsValue> map = EMPTY_MAP.put(key,
-                                                         deserializers.apply(key)
+                                                         deserializers.getOrElse(key,null)
                                                                       .read(reader
                                                                             )
                                                         );
@@ -35,7 +35,7 @@ public  class JsObjSpecDeserializer extends AbstractJsObjDeserializer
             reader.getNextToken();
             key = reader.readKey();
             map = map.put(key,
-                              deserializers.apply(key)
+                              deserializers.getOrElse(key,null)
                                            .read(reader)
                              );
 

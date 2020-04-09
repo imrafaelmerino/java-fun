@@ -9,6 +9,7 @@ package jsonvalues.spec;
  */
 class InternalError  extends UnsupportedOperationException
 {
+  private static final long serialVersionUID = 1L;
 
   InternalError(final String message
                        )

@@ -40,12 +40,12 @@ public final  class JsArraySpecDeserializer
         if (reader.last() == ']') return JsArray.empty();
         JsArray buffer = JsArray.empty();
         Integer i = 0;
-        buffer = buffer.append(deserializers.apply(i).read(reader));
+        buffer = buffer.append(deserializers.get(i).read(reader));
         while (reader.getNextToken() == ',')
         {
             i = i+ 1;
             reader.getNextToken();
-            buffer = buffer.append(deserializers.apply(i).read(reader));
+            buffer = buffer.append(deserializers.get(i).read(reader));
 
         }
         reader.checkArrayEnd();

@@ -1,18 +1,16 @@
 package jsonvalues;
 
-import jsonvalues.spec.JsArraySpec;
-import jsonvalues.spec.JsErrorPair;
-import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsSpecs;
+import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Set;
 
 import static jsonvalues.Functions.assertErrorIs;
 import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
-import static jsonvalues.spec.JsSpecs.any;
-import static jsonvalues.spec.JsSpecs.isInt;
+import static jsonvalues.spec.JsSpecs.*;
 
 public class TestJsArraySpec
 {
@@ -82,10 +80,138 @@ public class TestJsArraySpec
                           );
 
     Assertions.assertFalse(spec.test(JsObj.of("a",
-                                              JsArray.of(true).append(JsLong.of(1))
+                                              JsArray.of(true)
+                                                     .append(JsLong.of(1))
                                              ))
                                .isEmpty()
                           );
+
+  }
+
+  @Test
+  public void test_any_spec_array_of_two_elements()
+  {
+
+
+    JsArraySpec spec = JsArraySpec.of(any,
+                                      any
+                                     );
+
+    Assertions.assertTrue(spec.test(JsArray.of(JsBool.FALSE,
+                                               JsBool.TRUE
+                                              ))
+                              .isEmpty());
+    Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE))
+                               .isEmpty());
+    Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE,
+                                                JsBool.TRUE,
+                                                JsBool.FALSE
+                                               ))
+                               .isEmpty());
+  }
+
+  @Test
+  public void test_array_of_array_spec()
+  {
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  isArrayOfArray);
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                                 JsArray.of(JsArray.empty(),
+                                                            JsArray.empty()
+                                                           )
+                                                )
+                                   )
+                              .isEmpty());
+
+    Assertions.assertFalse(spec.test(JsObj.of("a",
+                                             JsArray.of(JsObj.empty(),
+                                                        JsArray.empty()
+                                                       )
+                                            )
+                                   )
+                              .isEmpty());
+
+
+
+  }
+
+  @Test
+  public void test_array_of_integral_spec()
+  {
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  isArrayOfIntegralSuchThat(a->a.size()==3));
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsArray.of(JsInt.of(1),
+                                                       JsLong.of(2),
+                                                        JsBigInt.of(BigInteger.TEN)
+                                                       )
+                                            )
+                                   )
+                              .isEmpty());
+
+
+    Assertions.assertFalse(spec.test(JsObj.of("a",
+                                             JsArray.of(JsInt.of(1),JsStr.of("a")
+                                                       )
+                                            )
+                                   )
+                              .isEmpty());
+
+
+  }
+
+  @Test
+  public void test_array_of_number_spec()
+  {
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  isArrayOfNumberSuchThat(a->a.size()==5));
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsArray.of(JsInt.of(1),
+                                                        JsLong.of(2),
+                                                        JsDouble.of(4.5),
+                                                        JsBigInt.of(BigInteger.TEN),
+                                                        JsBigDec.of(BigDecimal.TEN)
+                                                       )
+                                            )
+                                   )
+                              .isEmpty());
+
+
+    Assertions.assertFalse(spec.test(JsObj.of("a",
+                                              JsArray.of(JsInt.of(1),JsStr.of("a")
+                                                        )
+                                             )
+                                    )
+                               .isEmpty());
+
+
+  }
+
+  @Test
+  public void test_array_of_object_spec()
+  {
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  isArrayOfObjSuchThat(a-> a.size()==2));
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsArray.of(JsObj.of("a",JsNull.NULL),
+                                                        JsObj.empty()
+                                                       )
+                                            )
+                                   )
+                              .isEmpty());
+
+
+    Assertions.assertFalse(spec.test(JsObj.of("a",
+                                              JsArray.of(JsObj.empty()
+                                                        )
+                                             )
+                                    )
+                               .isEmpty());
+
 
   }
 }

@@ -10,6 +10,7 @@ import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.ARRAY_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
 
 public class JsSpecs
@@ -85,7 +86,7 @@ public class JsSpecs
    * @param required if true, the value is mandatory
    * @return a spec
    */
-  public static JsSpec anySuchThat(final Predicate<JsValue> predicate,
+  public static JsSpec any(final Predicate<JsValue> predicate,
                                    final boolean required
                                   )
   {
@@ -114,6 +115,10 @@ public class JsSpecs
   }
 
   public static JsSpec isStr = new IsStr(true,
+                                         false
+  );
+
+  public static JsSpec isNumber = new IsNumber(true,
                                          false
   );
 
@@ -227,7 +232,7 @@ public class JsSpecs
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
-                                                                   ERROR_CODE.ARRAY_CONDITION
+                                                                   ARRAY_CONDITION
                                       ));
                                     },
                                     required,
@@ -259,7 +264,7 @@ public class JsSpecs
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ERROR_CODE.ARRAY_CONDITION
+                                                                    ARRAY_CONDITION
                                        ));
                                      },
                                      required,
@@ -270,7 +275,7 @@ public class JsSpecs
   public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate)
   {
 
-    return isArrayOfStrSuchThat(predicate,true,false);
+    return isArrayOfLongSuchThat(predicate,true,false);
   }
 
   public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate,
@@ -282,7 +287,7 @@ public class JsSpecs
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ERROR_CODE.ARRAY_CONDITION
+                                                                    ARRAY_CONDITION
                                        ));
                                      },
                                      required,
@@ -333,6 +338,29 @@ public class JsSpecs
     );
   }
 
+  public static JsSpec isArrayOfArray = new IsArrayOfArray(true, false);
+
+  public static JsSpec isArrayOfArray(final Predicate<JsArray> predicate) {
+    return isArrayOfArray(predicate,true,false);
+  }
+
+  public static JsSpec isArrayOfArray(final Predicate<JsArray> predicate,
+                                    final boolean required,
+                                    final boolean nullable
+                                   )
+  {
+    return new IsArrayOfTestedArray(s ->
+                                  {
+                                    if (requireNonNull(predicate).test(s)) return Optional.empty();
+                                    return Optional.of(new Error(s,
+                                                                 ARRAY_CONDITION
+                                    ));
+                                  },
+                                  required,
+                                  nullable
+    );
+  }
+
   public static JsSpec isArrayOfIntSuchThat(final Predicate<JsArray> predicate)
   {
 
@@ -351,7 +379,7 @@ public class JsSpecs
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
-                                                                   ERROR_CODE.ARRAY_CONDITION
+                                                                   ARRAY_CONDITION
                                       ));
                                     },
                                     required,
@@ -403,7 +431,7 @@ public class JsSpecs
                                         {
                                           if (requireNonNull(predicate).test(s)) return Optional.empty();
                                           return Optional.of(new Error(s,
-                                                                       ERROR_CODE.ARRAY_CONDITION
+                                                                       ARRAY_CONDITION
                                           ));
                                         },
                                         required,
@@ -454,7 +482,7 @@ public class JsSpecs
                                          {
                                            if (requireNonNull(predicate).test(s)) return Optional.empty();
                                            return Optional.of(new Error(s,
-                                                                        ERROR_CODE.ARRAY_CONDITION
+                                                                        ARRAY_CONDITION
                                            ));
                                          },
                                          required,
@@ -506,7 +534,7 @@ public class JsSpecs
                                        {
                                          if (requireNonNull(predicate).test(s)) return Optional.empty();
                                          return Optional.of(new Error(s,
-                                                                      ERROR_CODE.ARRAY_CONDITION
+                                                                      ARRAY_CONDITION
                                          ));
                                        },
                                        required,
@@ -557,7 +585,7 @@ public class JsSpecs
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
-                                                                   ERROR_CODE.ARRAY_CONDITION
+                                                                   ARRAY_CONDITION
                                       ));
                                     },
                                     required,
@@ -792,7 +820,7 @@ public class JsSpecs
                                {
                                  if (requireNonNull(predicate).test(s)) return Optional.empty();
                                  return Optional.of(new Error(s,
-                                                              ERROR_CODE.ARRAY_CONDITION
+                                                              ARRAY_CONDITION
                                  ));
                                }
     );

@@ -107,7 +107,21 @@ import static jsonvalues.spec.ERROR_CODE.*;
       final JsObj obj = value.toJsObj();
       errors.addAll(JsObjSpec.test(currentPath, objSpec, errors, obj));
 
-    } else if (spec instanceof JsArraySpec)
+    }
+    else if (spec instanceof IsObjSpec){
+      if (!value.isObj())
+      {
+        errors.add(JsErrorPair.of(currentPath,
+                                  new Error(value,
+                                            OBJ_EXPECTED))
+                  );
+      }
+
+      final IsObjSpec isObjSpec = (IsObjSpec) spec;
+      final JsObj obj = value.toJsObj();
+      errors.addAll(JsObjSpec.test(currentPath, isObjSpec.spec, errors, obj));
+    }
+    else if (spec instanceof JsArraySpec)
     {
       if (!value.isArray()) errors.add(JsErrorPair.of(currentPath, new Error(value, ARRAY_EXPECTED)));
       final JsArraySpec arraySpec = (JsArraySpec) spec;
@@ -119,7 +133,22 @@ import static jsonvalues.spec.ERROR_CODE.*;
                                     )
                    );
 
-    } else
+    }
+
+    else if (spec instanceof IsArraySpec){
+
+      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath, new Error(value, ARRAY_EXPECTED)));
+      final IsArraySpec isArraySpec = (IsArraySpec) spec;
+      final JsArray array = value.toJsArray();
+      errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
+                                     isArraySpec.arraySpec,
+                                     errors,
+                                     array
+                                    )
+                   );
+    }
+
+    else
     {
       final JsPredicate predicate = (JsPredicate) spec;
       final Optional<Error> error = predicate.test(value);

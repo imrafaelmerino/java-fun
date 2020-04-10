@@ -349,7 +349,9 @@ public class TestJsObjSpec
                                         "b",
                                         isIntegral,
                                         "c",
-                                        isIntegral
+                                        isIntegral,
+                                        "d",
+                                        isNumber
                                        );
 
 
@@ -358,7 +360,9 @@ public class TestJsObjSpec
                                                       "b",
                                                       JsLong.of(2),
                                                       "c",
-                                                      JsBigInt.of(new BigInteger("100"))
+                                                      JsBigInt.of(new BigInteger("100")),
+                                                      "d",
+                                                      JsDouble.of(3.2)
                                                      )
                                             );
 
@@ -461,7 +465,9 @@ public class TestJsObjSpec
                                                      "c",
                                                      JsArraySpec.of(isStr,
                                                                     isInt
-                                                                   )
+                                                                   ),
+                                                     "d",
+                                                     JsSpecs.isArray(a -> a.head() == JsNull.NULL)
                                                     )
                                        );
 
@@ -483,6 +489,10 @@ public class TestJsObjSpec
                                                                JsInt.of(1),
                                                                "c",
                                                                JsArray.of(JsStr.of("a"),
+                                                                          JsInt.of(1)
+                                                                         ),
+                                                               "d",
+                                                               JsArray.of(JsNull.NULL,
                                                                           JsInt.of(1)
                                                                          )
                                                               )
@@ -681,7 +691,11 @@ public class TestJsObjSpec
     JsObjSpec spec = JsObjSpec.of("a",
                                   any,
                                   "b",
-                                  any(false)
+                                  any(false),
+                                  "d",
+                                  any(JsValue::isStr,
+                                      true
+                                     )
                                  );
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
@@ -691,32 +705,41 @@ public class TestJsObjSpec
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsNull.NULL,
                                              "b",
-                                             JsBool.TRUE
+                                             JsBool.TRUE,
+                                             "d",
+                                             JsStr.of("hi")
                                             ))
                               .isEmpty());
   }
 
-
   @Test
-  public void test_any_spec_array_of_two_elements()
+  public void test_is_object_spec()
   {
 
 
-    JsArraySpec spec = JsArraySpec.of(any,
-                                      any
-                                     );
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  JsSpecs.conforms(JsObjSpec.of("a",
+                                                                any,
+                                                                "b",
+                                                                any(false),
+                                                                "d",
+                                                                any(JsValue::isStr,
+                                                                    true
+                                                                   )
+                                                               ))
+                                 );
 
-    Assertions.assertTrue(spec.test(JsArray.of(JsBool.FALSE,
-                                               JsBool.TRUE
-                                              ))
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsObj.of("a",
+                                                      JsNull.NULL,
+                                                      "b",
+                                                      JsBool.TRUE,
+                                                      "d",
+                                                      JsStr.of("hi")
+                                                     )))
                               .isEmpty());
-    Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE))
-                               .isEmpty());
-    Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE,
-                                                JsBool.TRUE,
-                                                JsBool.FALSE
-                                               ))
-                               .isEmpty());
   }
+
 
 }

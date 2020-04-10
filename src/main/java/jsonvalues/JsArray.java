@@ -1,13 +1,11 @@
 package jsonvalues;
 
 
-import com.dslplatform.json.MyDslJson;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import io.vavr.collection.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -16,7 +14,6 @@ import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static java.util.Objects.requireNonNull;
@@ -196,9 +193,9 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
 
     }
 
-    protected Trampoline<JsArray> appendAllBackTrampoline(final JsArray arr1,
-                                                          final JsArray arr2
-                                                         )
+    private Trampoline<JsArray> appendAllBackTrampoline(final JsArray arr1,
+                                                        final JsArray arr2
+                                                       )
     {
         assert arr1 != null;
         assert arr2 != null;
@@ -209,9 +206,9 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
                                                             ));
     }
 
-    protected Trampoline<JsArray> appendAllFrontTrampoline(final JsArray arr1,
-                                                           final JsArray arr2
-                                                          )
+    private Trampoline<JsArray> appendAllFrontTrampoline(final JsArray arr1,
+                                                         final JsArray arr2
+                                                        )
     {
         assert arr1 != null;
         assert arr2 != null;
@@ -356,9 +353,22 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
     return e.toJson().get(tail);
   }
 
+  /**
+   returns the element located at the specified index or JsNothing if it doesn't exist. It never throws
+   an exception, it's a total function.
+   @param i the index
+   @return a JsValue
+   */
     public JsValue get(final int i)
     {
+      try
+      {
         return seq.get(i);
+      }
+      catch (IndexOutOfBoundsException e)
+      {
+       return NOTHING;
+      }
     }
 
     /**
@@ -1271,8 +1281,8 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
     }
 
     @SuppressWarnings("squid:S1602")
-        // curly braces makes IntelliJ to format the code in a more legible way
-    BiPredicate<Integer, JsPath> putEmptyJson(final Vector<JsValue> pseq)
+    // curly braces makes IntelliJ to format the code in a more legible way
+    private BiPredicate<Integer, JsPath> putEmptyJson(final Vector<JsValue> pseq)
     {
         return (index, tail) ->
         {

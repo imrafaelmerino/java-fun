@@ -258,7 +258,8 @@ public class TestJsObjSpec
 
     final Set<JsErrorPair> error = spec.test(JsObj.of("a",
                                                       JsStr.of("a")
-                                                     ));
+                                                     )
+                                            );
 
     Assertions.assertFalse(error.isEmpty());
 
@@ -459,7 +460,8 @@ public class TestJsObjSpec
                                                      isInt,
                                                      "c",
                                                      JsArraySpec.of(isStr,
-                                                                    isInt)
+                                                                    isInt
+                                                                   )
                                                     )
                                        );
 
@@ -481,7 +483,8 @@ public class TestJsObjSpec
                                                                JsInt.of(1),
                                                                "c",
                                                                JsArray.of(JsStr.of("a"),
-                                                                          JsInt.of(1))
+                                                                          JsInt.of(1)
+                                                                         )
                                                               )
                                                      )
                                             );
@@ -522,30 +525,38 @@ public class TestJsObjSpec
     final Set<JsErrorPair> error = spec.test(JsObj.of("a",
                                                       JsArray.of(1,
                                                                  2,
-                                                                 3),
+                                                                 3
+                                                                ),
                                                       "b",
                                                       JsArray.of("a",
-                                                                 "b"),
+                                                                 "b"
+                                                                ),
                                                       "c",
                                                       JsArray.of(100L,
-                                                                 200L),
+                                                                 200L
+                                                                ),
                                                       "d",
                                                       JsArray.of(1.2,
-                                                                 1.3),
+                                                                 1.3
+                                                                ),
                                                       "e",
                                                       JsArray.of(BigInteger.TEN,
-                                                                 BigInteger.TEN),
+                                                                 BigInteger.TEN
+                                                                ),
                                                       "f",
                                                       JsObj.of("a",
                                                                JsArray.of(JsInt.of(1),
-                                                                          JsDouble.of(1.5)),
+                                                                          JsDouble.of(1.5)
+                                                                         ),
                                                                "b",
                                                                JsArray.of(JsObj.empty(),
-                                                                          JsObj.empty()),
+                                                                          JsObj.empty()
+                                                                         ),
                                                                "c",
                                                                JsArray.of(true,
                                                                           false,
-                                                                          true)
+                                                                          true
+                                                                         )
                                                               )
                                                      )
                                             );
@@ -590,32 +601,41 @@ public class TestJsObjSpec
     final Set<JsErrorPair> error = spec.test(JsObj.of("a",
                                                       JsArray.of(1,
                                                                  2,
-                                                                 3),
+                                                                 3
+                                                                ),
                                                       "b",
                                                       JsArray.of("a",
-                                                                 "abc"),
+                                                                 "abc"
+                                                                ),
                                                       "c",
                                                       JsArray.of(-100L,
-                                                                 -200L),
+                                                                 -200L
+                                                                ),
                                                       "d",
                                                       JsArray.of(2.0,
-                                                                 3.0),
+                                                                 3.0
+                                                                ),
                                                       "e",
                                                       JsArray.of(BigInteger.TEN,
-                                                                 BigInteger.TEN),
+                                                                 BigInteger.TEN
+                                                                ),
                                                       "f",
                                                       JsObj.of("a",
                                                                JsArray.of(JsInt.of(1),
-                                                                          JsInt.of(5)),
+                                                                          JsInt.of(5)
+                                                                         ),
                                                                "b",
                                                                JsArray.of(JsObj.empty(),
-                                                                          JsObj.empty()),
+                                                                          JsObj.empty()
+                                                                         ),
                                                                "c",
                                                                JsArray.of(JsArray.of("a",
                                                                                      "b",
-                                                                                     "c"),
+                                                                                     "c"
+                                                                                    ),
                                                                           JsArray.of(1,
-                                                                                     2),
+                                                                                     2
+                                                                                    ),
                                                                           JsArray.of(10L),
                                                                           JsArray.of(1.2)
                                                                          )
@@ -652,5 +672,51 @@ public class TestJsObjSpec
 
   }
 
+
+  @Test
+  public void test_any_spec()
+  {
+
+
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  any,
+                                  "b",
+                                  any(false)
+                                 );
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsNull.NULL
+                                            ))
+                              .isEmpty());
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsNull.NULL,
+                                             "b",
+                                             JsBool.TRUE
+                                            ))
+                              .isEmpty());
+  }
+
+
+  @Test
+  public void test_any_spec_array_of_two_elements()
+  {
+
+
+    JsArraySpec spec = JsArraySpec.of(any,
+                                      any
+                                     );
+
+    Assertions.assertTrue(spec.test(JsArray.of(JsBool.FALSE,
+                                               JsBool.TRUE
+                                              ))
+                              .isEmpty());
+    Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE))
+                               .isEmpty());
+    Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE,
+                                                JsBool.TRUE,
+                                                JsBool.FALSE
+                                               ))
+                               .isEmpty());
+  }
 
 }

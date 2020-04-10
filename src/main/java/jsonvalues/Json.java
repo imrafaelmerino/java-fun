@@ -4,6 +4,8 @@ import com.dslplatform.json.serializers.SerializerException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import jsonvalues.JsArray.TYPE;
+import jsonvalues.spec.JsSpec;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -566,7 +568,6 @@ public interface Json<T extends Json<T>> extends JsValue
    it's not an array.
    @param path the JsPath object of the JsArray that will be returned
    @return the JsArray located at the given JsPath wrapped in an Optional
-
    */
   default Optional<JsArray> getArray(final JsPath path)
   {
@@ -1579,6 +1580,42 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Inserts at the given path in this json, if no element is present, the specified object, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param obj the specified object
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final JsObj obj
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> obj
+                );
+  }
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified array, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param array the specified array
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final JsArray array
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> array
+                );
+  }
+
+  /**
    Inserts at the given path in this json, if no element is present, the specified double, replacing
    any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
    arrays when necessary.
@@ -1597,6 +1634,81 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Inserts at the given path in this json, if no element is present, the specified string, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param str the specified String
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final String str
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsStr.of(str)
+                );
+  }
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified boolean, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param bool the specified boolean
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final boolean bool
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsBool.of(bool)
+                );
+  }
+
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified number, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param number the specified number
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final BigDecimal number
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsBigDec.of(number)
+                );
+  }
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified number, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param number the specified number
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final BigInteger number
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsBigInt.of(number)
+                );
+  }
+
+
+
+  /**
    Inserts at the given path in this json, if some element is present, the specified integer.
    @param path the given path
    @param number the specified integer
@@ -1608,6 +1720,36 @@ public interface Json<T extends Json<T>> extends JsValue
   {
     return putIfPresent(path,
                         e -> JsInt.of(number)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified integer.
+   @param path the given path
+   @param obj the specified object
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final JsObj obj
+                        )
+  {
+    return putIfPresent(path,
+                        e -> obj
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified integer.
+   @param path the given path
+   @param array the specified array
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final JsArray array
+                        )
+  {
+    return putIfPresent(path,
+                        e -> array
                        );
   }
 
@@ -1641,6 +1783,66 @@ public interface Json<T extends Json<T>> extends JsValue
                        );
   }
 
+  /**
+   Inserts at the given path in this json, if some element is present, the specified string.
+   @param path the given path
+   @param str the specified string
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final String str
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsStr.of(str)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified boolean.
+   @param path the given path
+   @param bool the specified boolean
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final boolean bool
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsBool.of(bool)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified big integer.
+   @param path the given path
+   @param number the specified big integer
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final BigInteger number
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsBigInt.of(number)
+                       );
+  }
+
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified big decimal.
+   @param path the given path
+   @param number the specified big decimal
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final BigDecimal number
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsBigDec.of(number)
+                       );
+  }
   /**
    Inserts at the given path in this json, if some element is present, the element returned by the
    function.

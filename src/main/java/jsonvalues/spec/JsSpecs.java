@@ -100,7 +100,7 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec any = new IsValue(false);
+  public static JsSpec any = any(true);
 
   /**
    * returns a spec that any value conforms
@@ -110,7 +110,7 @@ public class JsSpecs
    */
   public static JsSpec any(boolean required)
   {
-    return any(required);
+    return new IsValue(required);
   }
 
   public static JsSpec isStr = new IsStr(true,
@@ -197,16 +197,7 @@ public class JsSpecs
   public static JsSpec isArrayOfStrSuchThat(final Predicate<JsArray> predicate)
   {
 
-    return new IsArrayOfStrSuchThat(s ->
-                                    {
-                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
-                                      return Optional.of(new Error(s,
-                                                                   ERROR_CODE.STRING_CONDITION
-                                      ));
-                                    },
-                                    true,
-                                    false
-    );
+    return isArrayOfStrSuchThat(predicate,true,false);
   }
 
   public static JsSpec isArrayOfString(final Predicate<String> predicate,
@@ -236,7 +227,7 @@ public class JsSpecs
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
-                                                                   ERROR_CODE.STRING_CONDITION
+                                                                   ERROR_CODE.ARRAY_CONDITION
                                       ));
                                     },
                                     required,
@@ -253,19 +244,33 @@ public class JsSpecs
                         );
   }
 
-  public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate)
-  {
 
-    return new IsArrayOfLongSuchThat(s ->
+  public static JsSpec isArrayOfBoolSuchThat(final Predicate<JsArray> predicate)
+  {
+    return isArrayOfBoolSuchThat(predicate,true,false);
+  }
+
+  public static JsSpec isArrayOfBoolSuchThat(final Predicate<JsArray> predicate,
+                                             final boolean required,
+                                             final boolean nullable
+                                            )
+  {
+    return new IsArrayOfBoolSuchThat(s ->
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ERROR_CODE.LONG_CONDITION
+                                                                    ERROR_CODE.ARRAY_CONDITION
                                        ));
                                      },
-                                     true,
-                                     false
+                                     required,
+                                     nullable
     );
+  }
+
+  public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate)
+  {
+
+    return isArrayOfStrSuchThat(predicate,true,false);
   }
 
   public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate,
@@ -346,7 +351,7 @@ public class JsSpecs
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
-                                                                   ERROR_CODE.INT_CONDITION
+                                                                   ERROR_CODE.ARRAY_CONDITION
                                       ));
                                     },
                                     required,
@@ -372,7 +377,7 @@ public class JsSpecs
                                       {
                                         if (requireNonNull(predicate).test(s)) return Optional.empty();
                                         return Optional.of(new Error(JsBigDec.of(s),
-                                                                     ERROR_CODE.INTEGRAL_CONDITION
+                                                                     ERROR_CODE.DECIMAL_CONDITION
                                         ));
                                       },
                                       required,
@@ -398,7 +403,7 @@ public class JsSpecs
                                         {
                                           if (requireNonNull(predicate).test(s)) return Optional.empty();
                                           return Optional.of(new Error(s,
-                                                                       ERROR_CODE.DECIMAL_CONDITION
+                                                                       ERROR_CODE.ARRAY_CONDITION
                                           ));
                                         },
                                         required,
@@ -475,7 +480,7 @@ public class JsSpecs
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ERROR_CODE.ARRAY_CONDITION
+                                                                    ERROR_CODE.NUMBER_CONDITION
                                        ));
                                      },
                                      required,
@@ -526,7 +531,7 @@ public class JsSpecs
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(s,
-                                                                 ERROR_CODE.ARRAY_CONDITION
+                                                                 ERROR_CODE.OBJ_CONDITION
                                     ));
                                   },
                                   true,

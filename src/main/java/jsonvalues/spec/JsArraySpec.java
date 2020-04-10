@@ -58,14 +58,13 @@ public class JsArraySpec implements  Schema<JsArray>
 
       currentPath = currentPath.inc();
       final JsSpec spec = specs.get(i);
+
       Functions.addErrors(errors,
                           array.get(i),
                           currentPath,
                           spec
                          );
     }
-
-
 
     return errors;
   }

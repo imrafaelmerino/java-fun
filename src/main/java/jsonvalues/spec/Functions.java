@@ -99,7 +99,8 @@ import static jsonvalues.spec.ERROR_CODE.*;
       {
         errors.add(JsErrorPair.of(currentPath,
                                   new Error(value,
-                                            OBJ_EXPECTED)));
+                                            OBJ_EXPECTED))
+                  );
       }
 
       final JsObjSpec objSpec = (JsObjSpec) spec;

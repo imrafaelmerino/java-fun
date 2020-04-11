@@ -650,11 +650,11 @@ public class JsSpecs
   }
 
   public static JsSpec isBool(final boolean required,
-                             final boolean nullable
-                            )
+                              final boolean nullable
+                             )
   {
     return new IsBoolean(required,
-                     nullable
+                         nullable
     );
   }
 

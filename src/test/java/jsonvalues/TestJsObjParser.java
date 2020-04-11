@@ -342,8 +342,8 @@ public class TestJsObjParser
                                                                     true
                                                                    ),
                                                        isArrayOfLong(true,
-                                                                    true
-                                                                   )
+                                                                     true
+                                                                    )
                                                       )
 
                                        );

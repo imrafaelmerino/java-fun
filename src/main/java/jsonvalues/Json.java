@@ -74,7 +74,7 @@ public interface Json<T extends Json<T>> extends JsValue
    */
   default String toPrettyString()
   {
-    return INSTANCE.toPrettyString();
+    return INSTANCE.toPrettyString(this);
   }
 
   /**

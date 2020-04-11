@@ -7,7 +7,19 @@ class JsParser
 {
   static Tuple2<Boolean, SpecDeserializer> getDeserializer(JsPredicate spec)
   {
-    if (spec instanceof JsPrimitivePredicate)
+    if (spec instanceof IsValue)
+    {
+      final IsValue isValue = (IsValue) spec;
+      return new Tuple2<>(isValue.required,
+                          DeserializersFactory.INSTANCE.ofValue()
+      );
+    } else if (spec instanceof IsValueSuchThat)
+    {
+      final IsValueSuchThat isValue = (IsValueSuchThat) spec;
+      return new Tuple2<>(isValue.required,
+                          DeserializersFactory.INSTANCE.ofValueSuchThat(isValue.predicate)
+      );
+    } else if (spec instanceof JsPrimitivePredicate)
     {
       if (spec instanceof JsStrPredicate)
       {
@@ -132,33 +144,32 @@ class JsParser
         {
           final IsFalse isFalse = (IsFalse) spec;
           return new Tuple2<>(isFalse.required,
-                              DeserializersFactory.INSTANCE.ofTrue(isFalse.nullable)
+                              DeserializersFactory.INSTANCE.ofFalse(isFalse.nullable)
           );
         }
       }
     } else if (spec instanceof JsonPredicate)
     {
-      if (spec instanceof IsValue)
-      {
-        final IsValue isValue = (IsValue) spec;
-        return new Tuple2<>(isValue.required,
-                            DeserializersFactory.INSTANCE.ofValue());
-      } else if (spec instanceof IsValueSuchThat)
-      {
-        final IsValueSuchThat isValue = (IsValueSuchThat) spec;
-        return new Tuple2<>(isValue.required,
-                            DeserializersFactory.INSTANCE.ofValueSuchThat(isValue.predicate));
-      } else if (spec instanceof JsArrayPredicate)
+      if (spec instanceof JsArrayPredicate)
       {
         if (spec instanceof IsArray)
         {
           IsArray isArray = ((IsArray) spec);
           return new Tuple2<>(isArray.required,
-                              DeserializersFactory.INSTANCE.ofArrayOfInt(isArray.nullable,
-                                                                         isArray.elemNullable
-                                                                        )
+                              DeserializersFactory.INSTANCE.ofArrayOfValue(isArray.nullable,
+                                                                           isArray.elemNullable
+                                                                          )
           );
-        } else if (spec instanceof JsArrayOfIntPredicate)
+        } else if (spec instanceof IsArraySuchThat)
+        {
+          IsArraySuchThat isArray = ((IsArraySuchThat) spec);
+          return new Tuple2<>(isArray.required,
+                              DeserializersFactory.INSTANCE.ofArrayOfValueSuchThat(isArray.predicate,
+                                                                                   isArray.nullable,
+                                                                                   isArray.elemNullable
+                                                                                  )
+          );
+        } else if (spec instanceof IsArrayOfInt)
         {
 
           if (spec instanceof IsArrayOfInt)
@@ -190,7 +201,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfObjPredicate)
+        } else if (spec instanceof IsArrayOfObj)
         {
 
           if (spec instanceof IsArrayOfObj)
@@ -221,7 +232,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfIntegralPredicate)
+        } else if (spec instanceof IsArrayOfIntegral)
         {
 
           if (spec instanceof IsArrayOfIntegral)
@@ -252,7 +263,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfLongPredicate)
+        } else if (spec instanceof IsArrayOfLong)
         {
 
           if (spec instanceof IsArrayOfLong)
@@ -283,7 +294,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfStrPredicate)
+        } else if (spec instanceof IsArrayOfStr)
         {
 
           if (spec instanceof IsArrayOfStr)
@@ -314,7 +325,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfDecimalPredicate)
+        } else if (spec instanceof IsArrayOfDecimal)
         {
 
           if (spec instanceof IsArrayOfDecimal)
@@ -345,7 +356,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfNumberPredicate)
+        } else if (spec instanceof IsArrayOfNumber)
         {
 
           if (spec instanceof IsArrayOfNumber)
@@ -376,7 +387,7 @@ class JsParser
             );
 
           }
-        } else if (spec instanceof JsArrayOfBoolPredicate)
+        } else if (spec instanceof IsArrayOfBool)
         {
 
           if (spec instanceof IsArrayOfBool)

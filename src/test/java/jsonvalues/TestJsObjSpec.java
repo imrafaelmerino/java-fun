@@ -603,7 +603,12 @@ public class TestJsObjSpec
                                                                     isArrayOfIntSuchThat(a -> a.size() > 1),
                                                                     isArrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
                                                                     isArrayOfDecSuchThat(a -> a.size() == 1)
-                                                                   )
+                                                                   ),
+                                                     "d",
+                                                     isIntegral(i -> i.longValue() > 10),
+                                                     "e",
+                                                     isNumber(s -> s.isDouble()),
+                                                     "f",isObj(o->o.isEmpty())
                                                     )
                                        );
 
@@ -648,7 +653,13 @@ public class TestJsObjSpec
                                                                                     ),
                                                                           JsArray.of(10L),
                                                                           JsArray.of(1.2)
-                                                                         )
+                                                                         ),
+                                                               "d",
+                                                               JsInt.of(11),
+                                                               "e",
+                                                               JsDouble.of(2.5),
+                                                               "f",
+                                                               JsObj.empty()
                                                               )
                                                      )
                                             );
@@ -737,9 +748,39 @@ public class TestJsObjSpec
                                                       JsBool.TRUE,
                                                       "d",
                                                       JsStr.of("hi")
-                                                     )))
+                                                     )
+                                            ))
                               .isEmpty());
   }
 
+  @Test
+  public void test_is_array_spec()
+  {
+
+
+    JsObjSpec spec = JsObjSpec.of("a",
+                                  JsSpecs.conforms(JsArraySpec.of(
+                                                                any,isInt
+
+                                                               ))
+                                 );
+
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsArray.of(
+                                                      JsNull.NULL,
+                                                      JsInt.of(1)
+                                                     )
+                                            ))
+                              .isEmpty());
+
+    Assertions.assertTrue(spec.test(JsObj.of("a",
+                                             JsArray.of(
+                                               JsStr.of("hi"),
+                                               JsInt.of(1)
+                                                       )
+                                            ))
+                              .isEmpty());
+  }
 
 }

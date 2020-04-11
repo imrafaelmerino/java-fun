@@ -16,6 +16,7 @@ import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
 public class JsSpecs
 {
 
+
   public static JsSpec conforms(final JsObjSpec spec
                                )
   {
@@ -87,8 +88,8 @@ public class JsSpecs
    * @return a spec
    */
   public static JsSpec any(final Predicate<JsValue> predicate,
-                                   final boolean required
-                                  )
+                           final boolean required
+                          )
   {
     return new IsValueSuchThat(required,
                                v ->
@@ -119,7 +120,7 @@ public class JsSpecs
   );
 
   public static JsSpec isNumber = new IsNumber(true,
-                                         false
+                                               false
   );
 
   public static JsSpec isBool = new IsBoolean(true,
@@ -202,7 +203,9 @@ public class JsSpecs
   public static JsSpec isArrayOfStrSuchThat(final Predicate<JsArray> predicate)
   {
 
-    return isArrayOfStrSuchThat(predicate,true,false);
+    return isArrayOfStrSuchThat(predicate,
+                                true,
+                                false);
   }
 
   public static JsSpec isArrayOfString(final Predicate<String> predicate,
@@ -252,7 +255,9 @@ public class JsSpecs
 
   public static JsSpec isArrayOfBoolSuchThat(final Predicate<JsArray> predicate)
   {
-    return isArrayOfBoolSuchThat(predicate,true,false);
+    return isArrayOfBoolSuchThat(predicate,
+                                 true,
+                                 false);
   }
 
   public static JsSpec isArrayOfBoolSuchThat(final Predicate<JsArray> predicate,
@@ -275,7 +280,9 @@ public class JsSpecs
   public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate)
   {
 
-    return isArrayOfLongSuchThat(predicate,true,false);
+    return isArrayOfLongSuchThat(predicate,
+                                 true,
+                                 false);
   }
 
   public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate,
@@ -338,26 +345,31 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec isArrayOfArray = new IsArrayOfArray(true, false);
+  public static JsSpec isArrayOfArray = new IsArrayOfArray(true,
+                                                           false
+  );
 
-  public static JsSpec isArrayOfArray(final Predicate<JsArray> predicate) {
-    return isArrayOfArray(predicate,true,false);
+  public static JsSpec isArrayOfArray(final Predicate<JsArray> predicate)
+  {
+    return isArrayOfArray(predicate,
+                          true,
+                          false);
   }
 
   public static JsSpec isArrayOfArray(final Predicate<JsArray> predicate,
-                                    final boolean required,
-                                    final boolean nullable
-                                   )
+                                      final boolean required,
+                                      final boolean nullable
+                                     )
   {
     return new IsArrayOfTestedArray(s ->
-                                  {
-                                    if (requireNonNull(predicate).test(s)) return Optional.empty();
-                                    return Optional.of(new Error(s,
-                                                                 ARRAY_CONDITION
-                                    ));
-                                  },
-                                  required,
-                                  nullable
+                                    {
+                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
+                                      return Optional.of(new Error(s,
+                                                                   ARRAY_CONDITION
+                                      ));
+                                    },
+                                    required,
+                                    nullable
     );
   }
 
@@ -637,6 +649,49 @@ public class JsSpecs
     );
   }
 
+  public static JsSpec isBool(final boolean required,
+                             final boolean nullable
+                            )
+  {
+    return new IsBoolean(required,
+                     nullable
+    );
+  }
+
+  public static JsSpec isNumber(final Predicate<JsNumber> predicate)
+  {
+    return isNumber(true,
+                    false,
+                    predicate
+                   );
+  }
+
+  public static JsSpec isNumber(final boolean required,
+                                final boolean nullable,
+                                final Predicate<JsNumber> predicate
+                               )
+  {
+    return new IsNumberSuchThat(required,
+                                nullable,
+                                s ->
+                                {
+                                  if (requireNonNull(predicate).test(s)) return Optional.empty();
+                                  return Optional.of(new Error(s,
+                                                               ERROR_CODE.NUMBER_CONDITION
+                                  ));
+                                }
+    );
+  }
+
+  public static JsSpec isNumber(final boolean required,
+                                final boolean nullable
+                               )
+  {
+    return new IsNumber(required,
+                        nullable
+    );
+  }
+
   public static JsSpec isInt(final IntPredicate predicate)
   {
     return isInt(true,
@@ -814,16 +869,16 @@ public class JsSpecs
                                          final Predicate<JsArray> predicate
                                         )
   {
-    return new IsArraySuchThat(required,
-                               nullable,
-                               s ->
+    return new IsArraySuchThat(s ->
                                {
                                  if (requireNonNull(predicate).test(s)) return Optional.empty();
                                  return Optional.of(new Error(s,
-                                                              ARRAY_CONDITION
+                                                              ERROR_CODE.ARRAY_CONDITION
                                  ));
-                               }
-    );
+                               },
+                               required,
+                               nullable);
+
   }
 
   public static JsArrayPredicate isArray(final boolean required,

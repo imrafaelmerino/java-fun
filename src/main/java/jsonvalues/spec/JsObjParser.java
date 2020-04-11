@@ -167,6 +167,7 @@ public class JsObjParser
                                                                                                  HashMap.empty(),
                                                                                                  Vector.empty()
                                                                                                 );
+
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
                                                  DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
@@ -194,12 +195,13 @@ public class JsObjParser
       {
         final JsPredicate jsPredicate = (JsPredicate) spec;
         final Tuple2<Boolean, SpecDeserializer> pair = getDeserializer(jsPredicate);
-        if (pair._1) requiredKeys.append(head._1);
+        Vector<String> updateReqKeys=requiredKeys;
+        if (pair._1) updateReqKeys = updateReqKeys.append(head._1);
         return createDeserializers(specs.tail(),
                                    result.put(head._1,
                                               pair._2
                                              ),
-                                   requiredKeys
+                                  updateReqKeys
                                   );
       }
       throw new RuntimeException("Spec without deserializers " + spec.getClass()

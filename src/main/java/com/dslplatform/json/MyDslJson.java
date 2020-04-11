@@ -204,14 +204,14 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
   }
 
-  public String toPrettyString()
+  public String toPrettyString(Json<?> json)
   {
 
     try
     {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-      INSTANCE.serialize(this,
+      INSTANCE.serialize(json,
                          new MyPrettifyOutputStream(baos)
                         );
       return baos.toString(StandardCharsets.UTF_8.name());

@@ -182,9 +182,10 @@ class DeserializersFactory
                                     boolean elemNullable
                                    )
   {
-    JsObjSpecDeserializer f = (required.isEmpty()) ? new JsObjSpecDeserializer(keyDeserializers) : new JsObjSpecWithRequiredKeysDeserializer(required,
-                                                                                                                                             keyDeserializers
-    );
+    JsObjSpecDeserializer f = (required.isEmpty()) ?
+      new JsObjSpecDeserializer(keyDeserializers) :
+      new JsObjSpecWithRequiredKeysDeserializer(required,
+                                                keyDeserializers);
     JsArrayOfObjSpecDeserializer deserializer = new JsArrayOfObjSpecDeserializer(f);
     if (nullable && elemNullable)
       return deserializer::nullOrArrayWithNull;

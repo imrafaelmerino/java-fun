@@ -14,10 +14,11 @@ public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeser
 
 
     public JsObjSpecWithRequiredKeysDeserializer(final Vector<String> required,
-                                                 final Map<String, SpecDeserializer> deserializers
+                                                 final Map<String, SpecDeserializer> deserializers,
+                                                 final boolean strict
                                                 )
     {
-        super(deserializers);
+        super(strict,deserializers);
         this.required = required;
     }
 
@@ -31,7 +32,7 @@ public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeser
         while (iterator.hasNext())
         {
             final String key = iterator.next();
-            if (!obj.containsPath(JsPath.fromKey(key))) throw reader.newParseError("Required key not found: " + key);
+            if (!obj.containsKey(key)) throw reader.newParseError("Required key not found: " + key);
         }
         return obj;
       }

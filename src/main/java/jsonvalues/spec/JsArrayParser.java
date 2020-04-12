@@ -1,4 +1,5 @@
 package jsonvalues.spec;
+
 import com.dslplatform.json.MyDslJson;
 import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.derializers.specs.SpecDeserializer;
@@ -7,7 +8,9 @@ import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
+
 import java.io.InputStream;
+
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.JsParser.getDeserializer;
 
@@ -45,9 +48,9 @@ public class JsArrayParser
   public JsArray parse(final byte[] bytes)
   {
 
-  return MyDslJson.INSTANCE.deserializeToJsArray(requireNonNull(bytes),
-                                                 this.deserializer
-                                                );
+    return MyDslJson.INSTANCE.deserializeToJsArray(requireNonNull(bytes),
+                                                   this.deserializer
+                                                  );
   }
 
 
@@ -99,10 +102,11 @@ public class JsArrayParser
                                                                                                          Vector.empty()
                                                                                                         );
       return createDeserializers(spec.tail(),
-                                 result.append( DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
-                                                                              pair._2,
-                                                                              isObjSpec.nullable
-                                                                             )
+                                 result.append(DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
+                                                                                       pair._2,
+                                                                                       isObjSpec.nullable,
+                                                                                       isObjSpec.spec.strict
+                                                                                      )
                                               )
                                 );
     } else if (head instanceof IsArraySpec)
@@ -114,8 +118,8 @@ public class JsArrayParser
       return createDeserializers(spec.tail(),
                                  result.append(
                                    DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
-                                                                    arraySpec.nullable
-                                                                   )
+                                                                             arraySpec.nullable
+                                                                            )
                                               )
                                 );
     } else if (head instanceof JsObjSpec)
@@ -127,10 +131,11 @@ public class JsArrayParser
                                                                                                         );
       return createDeserializers(spec.tail(),
                                  result.append(
-                                    DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
-                                                                  pair._2,
-                                                                  false
-                                                                 )
+                                   DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
+                                                                           pair._2,
+                                                                           false,
+                                                                           jsObjSpec.strict
+                                                                          )
                                               )
                                 );
     } else if (head instanceof IsArrayOfObjSpec)
@@ -144,10 +149,11 @@ public class JsArrayParser
       return createDeserializers(spec.tail(),
                                  result.append(
                                    DeserializersFactory.INSTANCE.ofArrayOfObjSpec(pair._1,
-                                                                         pair._2,
-                                                                         arrayOfObjSpec.nullable,
-                                                                         arrayOfObjSpec.elemNullable
-                                                                        )
+                                                                                  pair._2,
+                                                                                  arrayOfObjSpec.nullable,
+                                                                                  arrayOfObjSpec.elemNullable,
+                                                                                  arrayOfObjSpec.spec.strict
+                                                                                 )
                                               )
                                 );
     } else if (head instanceof JsArraySpec)
@@ -155,19 +161,18 @@ public class JsArrayParser
       final JsArraySpec jsArraySpec = (JsArraySpec) head;
       return createDeserializers(spec.tail(),
                                  result.append(
-                                    DeserializersFactory.INSTANCE.ofArraySpec(createDeserializers(jsArraySpec.specs,
-                                                                                        Vector.empty()
-                                                                                       ),
-                                                                    false
-                                                                   )
+                                   DeserializersFactory.INSTANCE.ofArraySpec(createDeserializers(jsArraySpec.specs,
+                                                                                                 Vector.empty()
+                                                                                                ),
+                                                                             false
+                                                                            )
                                               )
                                 );
     } else if (head instanceof JsPredicate)
     {
       final JsPredicate jsPredicate = (JsPredicate) head;
       return createDeserializers(spec.tail(),
-                                 result.append(getDeserializer(jsPredicate)._2
-                                              )
+                                 result.append(getDeserializer(jsPredicate)._2)
                                 );
     }
     throw new RuntimeException("Spec without deserializers " + spec.getClass()

@@ -179,13 +179,14 @@ class DeserializersFactory
   SpecDeserializer ofArrayOfObjSpec(Vector<String> required,
                                     Map<String, SpecDeserializer> keyDeserializers,
                                     boolean nullable,
-                                    boolean elemNullable
+                                    boolean elemNullable,
+                                    boolean strict
                                    )
   {
     JsObjSpecDeserializer f = (required.isEmpty()) ?
-      new JsObjSpecDeserializer(keyDeserializers) :
+      new JsObjSpecDeserializer(strict,keyDeserializers) :
       new JsObjSpecWithRequiredKeysDeserializer(required,
-                                                keyDeserializers);
+                                                keyDeserializers,strict);
     JsArrayOfObjSpecDeserializer deserializer = new JsArrayOfObjSpecDeserializer(f);
     if (nullable && elemNullable)
       return deserializer::nullOrArrayWithNull;
@@ -259,20 +260,22 @@ class DeserializersFactory
 
   SpecDeserializer ofObjSpec(Vector<String> required,
                              Map<String, SpecDeserializer> keyDeserializers,
-                             boolean nullable
+                             boolean nullable,
+                             boolean strict
                             )
   {
     return reader ->
     {
       if (required.isEmpty())
       {
-        JsObjSpecDeserializer deserializer = new JsObjSpecDeserializer(keyDeserializers);
+        JsObjSpecDeserializer deserializer = new JsObjSpecDeserializer(strict,keyDeserializers);
         if (nullable) return deserializer.nullOrValue(reader);
         else return deserializer.value(reader);
       } else
       {
         JsObjSpecWithRequiredKeysDeserializer deserializer = new JsObjSpecWithRequiredKeysDeserializer(required,
-                                                                                                       keyDeserializers
+                                                                                                       keyDeserializers,
+                                                                                                       strict
         );
         if (nullable) return deserializer.nullOrValue(reader);
         else return deserializer.value(reader);

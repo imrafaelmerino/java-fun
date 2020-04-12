@@ -3,6 +3,7 @@ package com.dslplatform.json.derializers.specs;
 import com.dslplatform.json.derializers.DeserializerException;
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.derializers.types.AbstractJsObjDeserializer;
+import com.dslplatform.json.derializers.types.JsValueDeserializer;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import jsonvalues.JsObj;
@@ -13,9 +14,13 @@ import java.io.IOException;
 public class JsObjSpecDeserializer extends AbstractJsObjDeserializer
 {
   private final Map<String, SpecDeserializer> deserializers;
+  protected final boolean strict;
+  private final JsValueDeserializer valueDeserializer = new JsValueDeserializer();
+  private final SpecDeserializer defaultDeserializer = reader -> valueDeserializer.value(reader);
 
-  public JsObjSpecDeserializer(final Map<String, SpecDeserializer> deserializers)
+  public JsObjSpecDeserializer(boolean strict,final Map<String, SpecDeserializer> deserializers)
   {
+    this.strict=strict;
     this.deserializers = deserializers;
   }
 
@@ -26,9 +31,12 @@ public class JsObjSpecDeserializer extends AbstractJsObjDeserializer
     {
       if (isEmptyObj(reader)) return EMPTY_OBJ;
       String key = reader.readKey();
+      if(strict && deserializers.containsKey(key)){
+        throw reader.newParseError("There no spec defined for the key "+key);
+      }
       HashMap<String, JsValue> map = EMPTY_MAP.put(key,
                                                    deserializers.getOrElse(key,
-                                                                           null)
+                                                                           defaultDeserializer)
                                                                 .read(reader
                                                                      )
                                                   );

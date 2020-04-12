@@ -33,10 +33,11 @@ public class JsObjParser
                                                                                           );
 
 
-    deserializer =  DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
-                                                  pair._2,
-                                                  false
-                                                 );
+    deserializer = DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
+                                                           pair._2,
+                                                           false,
+                                                           spec.strict
+                                                          );
 
   }
 
@@ -118,10 +119,11 @@ public class JsObjParser
           if (isObjSpec.required) updatedRequiredKeys = updatedRequiredKeys.append(head._1);
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                 DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
-                                                                               pair._2,
-                                                                               isObjSpec.nullable
-                                                                              )
+                                                DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
+                                                                                        pair._2,
+                                                                                        isObjSpec.nullable,
+                                                                                        isObjSpec.spec.strict
+                                                                                       )
                                                ),
                                      updatedRequiredKeys
                                     );
@@ -132,12 +134,12 @@ public class JsObjParser
                                                                                            Vector.empty()
                                                                                           );
           Vector<String> requiredKeysUpdated = requiredKeys;
-          if (isArraySpec.required) requiredKeysUpdated=requiredKeysUpdated.append(head._1);
+          if (isArraySpec.required) requiredKeysUpdated = requiredKeysUpdated.append(head._1);
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                 DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
-                                                                                 isArraySpec.nullable
-                                                                                )
+                                                DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
+                                                                                          isArraySpec.nullable
+                                                                                         )
                                                ),
                                      requiredKeysUpdated
                                     );
@@ -152,11 +154,12 @@ public class JsObjParser
           if (arrayOfObjSpec.required) requiredKeysUpdated = requiredKeys.append(head._1);
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                 DeserializersFactory.INSTANCE.ofArrayOfObjSpec(pair._1,
-                                                                                      pair._2,
-                                                                                      arrayOfObjSpec.nullable,
-                                                                                      arrayOfObjSpec.elemNullable
-                                                                                     )
+                                                DeserializersFactory.INSTANCE.ofArrayOfObjSpec(pair._1,
+                                                                                               pair._2,
+                                                                                               arrayOfObjSpec.nullable,
+                                                                                               arrayOfObjSpec.elemNullable,
+                                                                                               arrayOfObjSpec.spec.strict
+                                                                                              )
                                                ),
                                      requiredKeysUpdated
                                     );
@@ -170,10 +173,11 @@ public class JsObjParser
 
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                 DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
-                                                                               pair._2,
-                                                                               false
-                                                                              )
+                                                DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
+                                                                                        pair._2,
+                                                                                        false,
+                                                                                        jsObjSpec.strict
+                                                                                       )
                                                ),
                                      requiredKeys.append(head._1)
                                     );
@@ -182,11 +186,11 @@ public class JsObjParser
           final JsArraySpec jsArraySpec = (JsArraySpec) spec;
           return createDeserializers(specs.tail(),
                                      result.put(head._1,
-                                                 DeserializersFactory.INSTANCE.ofArraySpec(JsArrayParser.createDeserializers(jsArraySpec.specs,
-                                                                                                                   Vector.empty()
-                                                                                                                  ),
-                                                                                 false
-                                                                                )
+                                                DeserializersFactory.INSTANCE.ofArraySpec(JsArrayParser.createDeserializers(jsArraySpec.specs,
+                                                                                                                            Vector.empty()
+                                                                                                                           ),
+                                                                                          false
+                                                                                         )
                                                ),
                                      requiredKeys
                                     );
@@ -195,20 +199,19 @@ public class JsObjParser
       {
         final JsPredicate jsPredicate = (JsPredicate) spec;
         final Tuple2<Boolean, SpecDeserializer> pair = getDeserializer(jsPredicate);
-        Vector<String> updateReqKeys=requiredKeys;
+        Vector<String> updateReqKeys = requiredKeys;
         if (pair._1) updateReqKeys = updateReqKeys.append(head._1);
         return createDeserializers(specs.tail(),
                                    result.put(head._1,
                                               pair._2
                                              ),
-                                  updateReqKeys
+                                   updateReqKeys
                                   );
       }
       throw new RuntimeException("Spec without deserializers " + spec.getClass()
                                                                      .getName());
     }
   }
-
 
 
 }

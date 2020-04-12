@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
-
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.ERROR_CODE.ARRAY_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
@@ -79,7 +78,11 @@ public class JsSpecs
     );
   }
 
-
+  public static JsSpec any(final Predicate<JsValue> predicate
+                          )
+  {
+    return any(predicate,true);
+  }
   /**returns a spec that conforms any value that is evaluated to true on the predicate.
    * When the type is not specified by the spec, positive numbers are parsed as Long by default,
    * which has to be taken into account in order to define any condition.
@@ -554,18 +557,10 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec isArrayOfObj(final Predicate<JsObj> predicate,
-                                    final boolean required,
-                                    final boolean nullable
+  public static JsSpec isArrayOfObj(final boolean required,
+                                    final boolean nullable,
+                                    final Predicate<JsObj> predicate
                                    )
-  {
-    return isArrayOfObj(requireNonNull(predicate),
-                        required,
-                        nullable
-                       );
-  }
-
-  public static JsSpec isArrayOfObj(final Predicate<JsObj> predicate)
   {
     return new IsArrayOfTestedObj(s ->
                                   {
@@ -574,9 +569,18 @@ public class JsSpecs
                                                                  ERROR_CODE.OBJ_CONDITION
                                     ));
                                   },
-                                  true,
-                                  false
+                                  required,
+                                  nullable
     );
+
+  }
+
+  public static JsSpec isArrayOfObj(final Predicate<JsObj> predicate)
+  {
+    return isArrayOfObj(true,
+                        false,
+                        requireNonNull(predicate)
+                       );
   }
 
   public static JsSpec isArrayOfObjSuchThat(final Predicate<JsArray> predicate)

@@ -11,12 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
 
 
 public class JsObjSpec implements Schema<JsObj>
 {
 
-  private boolean strict = true;
+  boolean strict = true;
   Map<String, JsSpec> bindings = HashMap.empty();
 
   static Set<JsErrorPair> test(final JsPath parent,
@@ -38,7 +39,7 @@ public class JsObjSpec implements Schema<JsObj>
       {
         errors.add(JsErrorPair.of(currentPath,
                                   new Error(value,
-                                            ERROR_CODE.SPEC_MISSING)));
+                                            SPEC_MISSING)));
       } else Functions.addErrors(errors,
                                  value,
                                  currentPath,
@@ -755,4 +756,110 @@ public class JsObjSpec implements Schema<JsObj>
   }
 
 
+  public static JsObjSpec of(String key,
+                             JsSpec spec,
+                             String key1,
+                             JsSpec spec1,
+                             String key2,
+                             JsSpec spec2,
+                             String key3,
+                             JsSpec spec3,
+                             String key4,
+                             JsSpec spec4,
+                             String key5,
+                             JsSpec spec5,
+                             String key6,
+                             JsSpec spec6,
+                             String key7,
+                             JsSpec spec7,
+                             String key8,
+                             JsSpec spec8,
+                             String key9,
+                             JsSpec spec9,
+                             String key10,
+                             JsSpec spec10,
+                             String key11,
+                             JsSpec spec11
+                            )
+  {
+    return new JsObjSpec(key,
+                         spec,
+                         key1,
+                         spec1,
+                         key2,
+                         spec2,
+                         key3,
+                         spec3,
+                         key4,
+                         spec4,
+                         key5,
+                         spec5,
+                         key6,
+                         spec6,
+                         key7,
+                         spec7,
+                         key8,
+                         spec8,
+                         key9,
+                         spec9,
+                         key10,
+                         spec10,
+                         key11,
+                         spec11
+    );
+  }
+
+  JsObjSpec(String key,
+            JsSpec spec,
+            String key1,
+            JsSpec spec1,
+            String key2,
+            JsSpec spec2,
+            String key3,
+            JsSpec spec3,
+            String key4,
+            JsSpec spec4,
+            String key5,
+            JsSpec spec5,
+            String key6,
+            JsSpec spec6,
+            String key7,
+            JsSpec spec7,
+            String key8,
+            JsSpec spec8,
+            String key9,
+            JsSpec spec9,
+            String key10,
+            JsSpec spec10,
+            String key11,
+            JsSpec spec11
+           )
+  {
+    this(key,
+         spec,
+         key1,
+         spec1,
+         key2,
+         spec2,
+         key3,
+         spec3,
+         key4,
+         spec4,
+         key5,
+         spec5,
+         key6,
+         spec6,
+         key7,
+         spec7,
+         key8,
+         spec8,
+         key9,
+         spec9,
+         key10,
+         spec10
+        );
+    bindings = bindings.put(key11,
+                            spec11
+                           );
+  }
 }

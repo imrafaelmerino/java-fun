@@ -3,7 +3,6 @@ package jsonvalues;
 import jsonvalues.spec.JsArraySpec;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,48 +19,48 @@ public class TestJsObjParser
   public void test_parse_obj_all_primitive_types()
   {
 
-    final JsObjSpec spec = JsObjSpec.of("a",
-                                        isInt,
-                                        "b",
-                                        isStr,
-                                        "c",
-                                        isLong,
-                                        "d",
-                                        isBool,
-                                        "e",
-                                        isTrue,
-                                        "f",
-                                        isFalse,
-                                        "g",
-                                        isDecimal,
-                                        "h",
-                                        isIntegral,
-                                        "i",
-                                        JsObjSpec.of("a",
-                                                     isNumber,
-                                                     "b",
-                                                     isArray,
-                                                     "c",
-                                                     isObj,
-                                                     "d",
-                                                     isInt(i -> i % 2 == 0),
-                                                     "e",
-                                                     isLong(i -> i % 2 == 1),
-                                                     "f",
-                                                     isStr(s -> s.startsWith("a")),
-                                                     "g",
-                                                     isDecimal(d -> d.doubleValue() > 1.0),
-                                                     "h",
-                                                     isObj(o -> o.containsKey("b")),
-                                                     "i",
-                                                     isArray(a -> a.head()
-                                                                   .equals(JsStr.of("first"))),
-                                                     "j",
-                                                     JsArraySpec.of(isNumber(JsValue::isDecimal),
-                                                                    any
-                                                                   )
-                                                    )
-                                       );
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                            isInt,
+                                            "b",
+                                            isStr,
+                                            "c",
+                                            isLong,
+                                            "d",
+                                            isBool,
+                                            "e",
+                                            isTrue,
+                                            "f",
+                                            isFalse,
+                                            "g",
+                                            isDecimal,
+                                            "h",
+                                            isIntegral,
+                                            "i",
+                                            JsObjSpec.strict("a",
+                                                             isNumber,
+                                                             "b",
+                                                             isArray,
+                                                             "c",
+                                                             isObj,
+                                                             "d",
+                                                             isInt(i -> i % 2 == 0),
+                                                             "e",
+                                                             isLong(i -> i % 2 == 1),
+                                                             "f",
+                                                             isStr(s -> s.startsWith("a")),
+                                                             "g",
+                                                             isDecimal(d -> d.doubleValue() > 1.0),
+                                                             "h",
+                                                             isObj(o -> o.containsKey("b")),
+                                                             "i",
+                                                             isArray(a -> a.head()
+                                                                           .equals(JsStr.of("first"))),
+                                                             "j",
+                                                             JsArraySpec.of(isNumber(JsValue::isDecimal),
+                                                                            any
+                                                                           )
+                                                            )
+                                           );
 
 
     final JsObj obj = JsObj.of("a",
@@ -122,29 +121,29 @@ public class TestJsObjParser
   public void test_parse_obj_all_array_of_primitive_types()
   {
 
-    final JsObjSpec spec = JsObjSpec.of("a",
-                                        isArrayOfInt,
-                                        "b",
-                                        isArrayOfStr,
-                                        "c",
-                                        isArrayOfBool,
-                                        "d",
-                                        isArrayOfDec,
-                                        "e",
-                                        isArrayOfNumber,
-                                        "f",
-                                        isArrayOfIntegral,
-                                        "g",
-                                        isArrayOfLong,
-                                        "h",
-                                        JsObjSpec.of("a",
-                                                     isArrayOfInt(v -> v > 5),
-                                                     "b",
-                                                     isArrayOfStr(s -> s.startsWith("a")),
-                                                     "c",
-                                                     isArrayOfLong(l -> l < 10)
-                                                    )
-                                       );
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                            isArrayOfInt,
+                                            "b",
+                                            isArrayOfStr,
+                                            "c",
+                                            isArrayOfBool,
+                                            "d",
+                                            isArrayOfDec,
+                                            "e",
+                                            isArrayOfNumber,
+                                            "f",
+                                            isArrayOfIntegral,
+                                            "g",
+                                            isArrayOfLong,
+                                            "h",
+                                            JsObjSpec.strict("a",
+                                                             isArrayOfInt(v -> v > 5),
+                                                             "b",
+                                                             isArrayOfStr(s -> s.startsWith("a")),
+                                                             "c",
+                                                             isArrayOfLong(l -> l < 10)
+                                                            )
+                                           );
 
 
     final JsObj obj = JsObj.of("a",
@@ -212,48 +211,48 @@ public class TestJsObjParser
   public void test_parse_obj_all_primitive_types_with_predicates()
   {
 
-    final JsObjSpec spec = JsObjSpec.of("a",
-                                        isInt(i -> i > 0),
-                                        "b",
-                                        isStr(a -> a.length() > 0),
-                                        "c",
-                                        isLong(c -> c > 0),
-                                        "d",
-                                        isBool,
-                                        "e",
-                                        isTrue,
-                                        "f",
-                                        isFalse,
-                                        "g",
-                                        isDecimal(d -> d.doubleValue() > 0.0),
-                                        "h",
-                                        isIntegral(i -> i.longValueExact() % 2 == 0),
-                                        "i",
-                                        JsObjSpec.of("a",
-                                                     isNumber,
-                                                     "b",
-                                                     isArray,
-                                                     "c",
-                                                     isObj(JsObj::isEmpty),
-                                                     "d",
-                                                     isInt(i -> i % 2 == 0),
-                                                     "e",
-                                                     isLong(i -> i % 2 == 1),
-                                                     "f",
-                                                     isStr(s -> s.startsWith("a")),
-                                                     "g",
-                                                     isDecimal(d -> d.doubleValue() > 1.0),
-                                                     "h",
-                                                     isObj(o -> o.containsKey("b")),
-                                                     "i",
-                                                     isArray(a -> a.head()
-                                                                   .equals(JsStr.of("first"))),
-                                                     "j",
-                                                     JsArraySpec.of(isNumber(JsValue::isDecimal),
-                                                                    any
-                                                                   )
-                                                    )
-                                       );
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                            isInt(i -> i > 0),
+                                            "b",
+                                            isStr(a -> a.length() > 0),
+                                            "c",
+                                            isLong(c -> c > 0),
+                                            "d",
+                                            isBool,
+                                            "e",
+                                            isTrue,
+                                            "f",
+                                            isFalse,
+                                            "g",
+                                            isDecimal(d -> d.doubleValue() > 0.0),
+                                            "h",
+                                            isIntegral(i -> i.longValueExact() % 2 == 0),
+                                            "i",
+                                            JsObjSpec.strict("a",
+                                                             isNumber,
+                                                             "b",
+                                                             isArray,
+                                                             "c",
+                                                             isObj(JsObj::isEmpty),
+                                                             "d",
+                                                             isInt(i -> i % 2 == 0),
+                                                             "e",
+                                                             isLong(i -> i % 2 == 1),
+                                                             "f",
+                                                             isStr(s -> s.startsWith("a")),
+                                                             "g",
+                                                             isDecimal(d -> d.doubleValue() > 1.0),
+                                                             "h",
+                                                             isObj(o -> o.containsKey("b")),
+                                                             "i",
+                                                             isArray(a -> a.head()
+                                                                           .equals(JsStr.of("first"))),
+                                                             "j",
+                                                             JsArraySpec.of(isNumber(JsValue::isDecimal),
+                                                                            any
+                                                                           )
+                                                            )
+                                           );
 
 
     final JsObj obj = JsObj.of("a",
@@ -313,60 +312,63 @@ public class TestJsObjParser
   @Test
   public void test_required_fields()
   {
-    final JsObjSpec spec = JsObjSpec.of("a",
-                                        isInt(false,
-                                              true
-                                             ),
-                                        "b",
-                                        isStr(false,
-                                              true
-                                             ),
-                                        "c",
-                                        isLong(false,
-                                               true
-                                              ),
-                                        "d",
-                                        isObj(false,
-                                              true
-                                             ),
-                                        "e",
-                                        isArray(false,
-                                                true
-                                               ),
-                                        "f",
-                                        isBool(false,
-                                               true
-                                              ),
-                                        "g",
-                                        isDecimal(false,
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                            isInt(false,
                                                   true
                                                  ),
-                                        "h",
-                                        isIntegral(false,
+                                            "b",
+                                            isStr(false,
+                                                  true
+                                                 ),
+                                            "c",
+                                            isLong(false,
                                                    true
                                                   ),
-                                        "i",
-                                        JsArraySpec.of(isArrayOfInt(true,
-                                                                    true
-                                                                   ),
-                                                       isArrayOfLong(true,
-                                                                     true
-                                                                    )
+                                            "d",
+                                            isObj(false,
+                                                  true
+                                                 ),
+                                            "e",
+                                            isArray(false,
+                                                    true
+                                                   ),
+                                            "f",
+                                            isBool(false,
+                                                   true
+                                                  ),
+                                            "g",
+                                            isDecimal(false,
+                                                      true
+                                                     ),
+                                            "h",
+                                            isIntegral(false,
+                                                       true
                                                       ),
-                                        "j",
-                                        isObj(false,
-                                              true),
-                                        "k",
-                                        isObj(false,
-                                              true,
-                                              a -> a.fields()
-                                                    .equals(2)),
-                                        "j",
-                                        isArrayOfObj(false,
-                                                     true,
-                                                     a -> a.fields()
-                                                           .size() == 2)
-                                       );
+                                            "i",
+                                            JsArraySpec.of(isArrayOfInt(true,
+                                                                        true
+                                                                       ),
+                                                           isArrayOfLong(true,
+                                                                         true
+                                                                        )
+                                                          ),
+                                            "j",
+                                            isObj(false,
+                                                  true
+                                                 ),
+                                            "k",
+                                            isObj(false,
+                                                  true,
+                                                  a -> a.fields()
+                                                        .equals(2)
+                                                 ),
+                                            "j",
+                                            isArrayOfObj(false,
+                                                         true,
+                                                         a -> a.fields()
+                                                               .size() == 2
+                                                        )
+                                           );
 
 
     Assertions.assertEquals(JsObj.empty(),
@@ -398,12 +400,14 @@ public class TestJsObjParser
                                JsObj.of("a",
                                         JsInt.of(1),
                                         "b",
-                                        JsStr.of("a")),
+                                        JsStr.of("a")
+                                       ),
                                "j",
                                JsArray.of(JsObj.of("a",
                                                    JsBool.TRUE,
                                                    "b",
-                                                   JsBool.FALSE))
+                                                   JsBool.FALSE
+                                                  ))
                               );
 
 
@@ -415,16 +419,20 @@ public class TestJsObjParser
   @Test
   public void test_strict_mode()
   {
-    final JsObjSpec spec = JsObjSpec.of("a",
-                                     isStr);
+    final JsObjSpec spec = JsObjSpec.lenient("a",
+                                             isStr(false,
+                                                   true)
+                                            );
 
 
     final JsObj obj = JsObj.of("b",
-                              JsStr.of("b"));
+                               JsStr.of("b")
+                              );
 
     final JsObj parsed = new JsObjParser(spec).parse(obj.toPrettyString());
 
-    Assertions.assertEquals(obj,parsed);
+    Assertions.assertEquals(obj,
+                            parsed);
   }
 
 

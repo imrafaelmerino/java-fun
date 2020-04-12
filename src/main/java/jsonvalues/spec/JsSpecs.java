@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
+
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.ERROR_CODE.ARRAY_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
@@ -16,8 +17,7 @@ public class JsSpecs
 {
 
 
-  public static JsSpec conforms(final JsObjSpec spec
-                               )
+  public static JsSpec conforms(final JsObjSpec spec)
   {
     return conforms(spec,
                     false,
@@ -81,8 +81,10 @@ public class JsSpecs
   public static JsSpec any(final Predicate<JsValue> predicate
                           )
   {
-    return any(predicate,true);
+    return any(predicate,
+               true);
   }
+
   /**returns a spec that conforms any value that is evaluated to true on the predicate.
    * When the type is not specified by the spec, positive numbers are parsed as Long by default,
    * which has to be taken into account in order to define any condition.
@@ -208,7 +210,8 @@ public class JsSpecs
 
     return isArrayOfStrSuchThat(predicate,
                                 true,
-                                false);
+                                false
+                               );
   }
 
   public static JsSpec isArrayOfString(final Predicate<String> predicate,
@@ -260,7 +263,8 @@ public class JsSpecs
   {
     return isArrayOfBoolSuchThat(predicate,
                                  true,
-                                 false);
+                                 false
+                                );
   }
 
   public static JsSpec isArrayOfBoolSuchThat(final Predicate<JsArray> predicate,
@@ -285,7 +289,8 @@ public class JsSpecs
 
     return isArrayOfLongSuchThat(predicate,
                                  true,
-                                 false);
+                                 false
+                                );
   }
 
   public static JsSpec isArrayOfLongSuchThat(final Predicate<JsArray> predicate,
@@ -356,7 +361,8 @@ public class JsSpecs
   {
     return isArrayOfArray(predicate,
                           true,
-                          false);
+                          false
+                         );
   }
 
   public static JsSpec isArrayOfArray(final Predicate<JsArray> predicate,
@@ -881,7 +887,8 @@ public class JsSpecs
                                  ));
                                },
                                required,
-                               nullable);
+                               nullable
+    );
 
   }
 

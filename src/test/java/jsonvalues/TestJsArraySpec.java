@@ -56,9 +56,9 @@ public class TestJsArraySpec
   @Test
   public void test_array_of_boolean_such_that()
   {
-    final JsObjSpec spec = JsObjSpec.of("a",
-                                        JsSpecs.isArrayOfBoolSuchThat(a -> a.head() == JsBool.TRUE)
-                                       );
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                            JsSpecs.isArrayOfBoolSuchThat(a -> a.head() == JsBool.TRUE)
+                                           );
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsArray.of(true,
@@ -113,8 +113,8 @@ public class TestJsArraySpec
   @Test
   public void test_array_of_array_spec()
   {
-    JsObjSpec spec = JsObjSpec.of("a",
-                                  isArrayOfArray);
+    JsObjSpec spec = JsObjSpec.strict("a",
+                                      isArrayOfArray);
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                                  JsArray.of(JsArray.empty(),
@@ -139,8 +139,8 @@ public class TestJsArraySpec
   @Test
   public void test_array_of_integral_spec()
   {
-    JsObjSpec spec = JsObjSpec.of("a",
-                                  isArrayOfIntegralSuchThat(a->a.size()==3));
+    JsObjSpec spec = JsObjSpec.strict("a",
+                                      isArrayOfIntegralSuchThat(a->a.size()==3));
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsArray.of(JsInt.of(1),
@@ -165,8 +165,8 @@ public class TestJsArraySpec
   @Test
   public void test_array_of_number_spec()
   {
-    JsObjSpec spec = JsObjSpec.of("a",
-                                  isArrayOfNumberSuchThat(a->a.size()==5));
+    JsObjSpec spec = JsObjSpec.strict("a",
+                                      isArrayOfNumberSuchThat(a->a.size()==5));
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsArray.of(JsInt.of(1),
@@ -193,8 +193,8 @@ public class TestJsArraySpec
   @Test
   public void test_array_of_object_spec()
   {
-    JsObjSpec spec = JsObjSpec.of("a",
-                                  isArrayOfObjSuchThat(a-> a.size()==2));
+    JsObjSpec spec = JsObjSpec.strict("a",
+                                      isArrayOfObjSuchThat(a-> a.size()==2));
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsArray.of(JsObj.of("a",JsNull.NULL),

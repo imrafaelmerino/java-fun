@@ -3,7 +3,6 @@ package jsonvalues;
 import jsonvalues.spec.JsArraySpec;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,28 +20,28 @@ public class TestJsParser
   public void test_parse_string_into_obj() throws IOException
   {
 
-    final JsObjParser parser = new JsObjParser(JsObjSpec.of("a",
-                                                            isStr,
-                                                            "b",
-                                                            isInt,
-                                                            "c",
-                                                            isBool,
-                                                            "d",
-                                                            isLong,
-                                                            "e",
-                                                            isDecimal,
-                                                            "f",
-                                                            JsArraySpec.of(isDecimal,
+    final JsObjParser parser = new JsObjParser(JsObjSpec.strict("a",
+                                                                isStr,
+                                                                "b",
+                                                                isInt,
+                                                                "c",
+                                                                isBool,
+                                                                "d",
+                                                                isLong,
+                                                                "e",
+                                                                isDecimal,
+                                                                "f",
+                                                                JsArraySpec.of(isDecimal,
                                                                            isDecimal
                                                                           ),
-                                                            "g",
-                                                            isIntegral,
-                                                            "h",
-                                                            isObj,
-                                                            "i",
-                                                            isArray,
-                                                            "j",arrayOf(JsObjSpec.of("a",isStr))
-                                                           ));
+                                                                "g",
+                                                                isIntegral,
+                                                                "h",
+                                                                isObj,
+                                                                "i",
+                                                                isArray,
+                                                                "j", arrayOf(JsObjSpec.lenient("a", isStr))
+                                                               ));
 
 
     final JsObj example = JsObj.of("a",

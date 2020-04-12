@@ -196,7 +196,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   {
     if (isEmpty()) return that.isEmpty();
     if (that.isEmpty()) return isEmpty();
-    return fields().stream()
+    return keySet().stream()
                    .allMatch(field ->
                              {
                                final boolean exists = that.containsPath(JsPath.fromKey(field));
@@ -209,7 +209,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                     ARRAY_AS
                                                    );
                                return elem.equals(thatElem);
-                             }) && that.fields()
+                             }) && that.keySet()
                                        .stream()
                                        .allMatch(f -> this.containsPath(JsPath.fromKey(f)));
   }
@@ -225,13 +225,13 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     if (thisEmpty && thatEmpty) return true;
     if (thisEmpty != thatEmpty) return false;
 
-    return fields().stream()
+    return keySet().stream()
                    .allMatch(f ->
                                thatMap.map.get(f)
                                           .map(it -> it.equals(map.get(f)
                                                                   .get())
                                               )
-                                          .getOrElse(false) && thatMap.fields()
+                                          .getOrElse(false) && thatMap.keySet()
                                                                       .stream()
                                                                       .allMatch(map::containsKey));
   }
@@ -240,7 +240,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    Returns a set containing each key fo this object.
    @return a Set containing each key of this JsObj
    */
-  public final Set<String> fields()
+  public final Set<String> keySet()
   {
     return map.keySet()
               .toJavaSet();
@@ -324,6 +324,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
             .get(tail);
   }
 
+  public JsValue get(final String key)
+  {
+    return get(JsPath.fromKey(Objects.requireNonNull(key)));
+  }
+
   /**
    Returns the array located at the given key or {@link Optional#empty()} if it doesn't exist or
    it's not an array.
@@ -331,19 +336,42 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @return the JsArray located at the given key wrapped in an Optional
 
    */
-  public Optional<JsArray> getArray(final String key)
+  public Optional<JsArray> getOptArray(final String key)
   {
-    return getArray(JsPath.fromKey(key));
+    return getOptArray(JsPath.fromKey(key));
   }
+
   /**
-   Returns the big decimal located at the given key as a big decimal or {@link Optional#empty()} if
-   it doesn't exist or it's not a decimal number.
+   Returns the array located at the given key or null if it doesn't exist or it's not an array.
+   @param key the key
+   @return the JsArray located at the given key or null
+   */
+  public JsArray getArray(final String key)
+  {
+    return getOptArray(key).orElse(null);
+  }
+
+  /**
+   Returns the number located at the given key as a big decimal or {@link Optional#empty()} if it doesn't
+   exist or it's not a decimal number.
    @param key the key
    @return the BigDecimal located at the given key wrapped in an Optional
    */
-  public Optional<BigDecimal> getBigDecimal(final String key)
+  public Optional<BigDecimal> getOptBigDec(final String key)
   {
-    return getBigDecimal(JsPath.fromKey(key));
+    return getOptBigDec(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the number located at the given key as a big decimal or null if it doesn't exist or it's
+   not a decimal number.
+   @param key the key
+   @return the BigDecimal located at the given key or null
+   */
+  public BigDecimal getBigDec(final String key)
+  {
+    return getOptBigDec(key).orElse(null);
+
   }
 
   /**
@@ -352,9 +380,20 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param key the key
    @return the BigInteger located at the given key wrapped in an Optional
    */
-  public Optional<BigInteger> getBigInt(final String key)
+  public Optional<BigInteger> getOptBigInt(final String key)
   {
-    return getBigInt(JsPath.fromKey(key));
+    return getOptBigInt(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the big integer located at the given key as a big integer or null if it doesn't
+   exist or it's not an integral number.
+   @param key the key
+   @return the BigInteger located at the given key or null
+   */
+  public BigInteger getBigInt(final String key)
+  {
+    return getOptBigInt(key).orElse(null);
   }
 
   /**
@@ -362,33 +401,69 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param key the key
    @return the Boolean located at the given key wrapped in an Optional
    */
-  public Optional<Boolean> getBool(final String key)
+  public Optional<Boolean> getOptBool(final String key)
   {
-    return getBool(JsPath.fromKey(key));
+    return getOptBool(JsPath.fromKey(key));
   }
 
+  /**
+   Returns the boolean located at the given key or null if it doesn't exist.
+   @param key the key
+   @return the Boolean located at the given key or null
+   */
+  public Boolean getBool(final String key)
+  {
+    return getOptBool(key).orElse(null);
+  }
 
   /**
-   Returns the decimal number located at the given key as a double or {@link OptionalDouble#empty()} if it
+   Returns the number located at the given key as a double or {@link OptionalDouble#empty()} if it
    doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
    to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
    the precision of the BigDecimal
    @param key the key
    @return the decimal number located at the given key wrapped in an OptionalDouble
    */
-  public OptionalDouble getDouble(final String key)
+  public OptionalDouble getOptDouble(final String key)
   {
-    return getDouble(JsPath.fromKey(key));
+    return getOptDouble(JsPath.fromKey(key));
   }
+
+  /**
+   Returns the number located at the given key as a double or null if it
+   doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
+   to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
+   the precision of the BigDecimal
+   @param key the key
+   @return the decimal number located at the given key or null
+   */
+  public Double getDouble(final String key)
+  {
+    final OptionalDouble optDouble = getOptDouble(key);
+    return optDouble.isPresent() ? optDouble.getAsDouble() : null;
+  }
+
   /**
    Returns the integral number located at the given key as an integer or {@link OptionalInt#empty()} if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
    @param key the key
    @return the integral number located at the given key wrapped in an OptionalInt
    */
-  public OptionalInt getInt(final String key)
+  public OptionalInt getOptInt(final String key)
   {
-    return getInt(JsPath.fromKey(key));
+    return getOptInt(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the integral number located at the given key as an integer or null if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
+   @param key the key
+   @return the integral number located at the given key or null
+   */
+  public Integer getInt(final String key)
+  {
+    final OptionalInt optInt = getOptInt(key);
+    return optInt.isPresent() ? optInt.getAsInt() : null;
   }
 
   /**
@@ -397,9 +472,21 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param key the key
    @return the integral number located at the given key wrapped in an OptionalLong
    */
-  public OptionalLong getLong(final String key)
+  public OptionalLong getOptLong(final String key)
   {
-    return getLong(JsPath.fromKey(key));
+    return getOptLong(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the integral number located at the given key as a long or null if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
+   @param key the key
+   @return the integral number located at the given key or null
+   */
+  public Long getLong(final String key)
+  {
+    final OptionalLong optLong = getOptLong(key);
+    return optLong.isPresent() ? optLong.getAsLong() : null;
   }
 
   /**
@@ -408,9 +495,19 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param key the key
    @return the json object located at the given key wrapped in an Optional
    */
-  public Optional<JsObj> getObj(final String key)
+  public Optional<JsObj> getOptObj(final String key)
   {
-    return getObj(JsPath.fromKey(key));
+    return getOptObj(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the json object located at the given key or null if it doesn't exist or it's not an object.
+   @param key the key
+   @return the json object located at the given key or null
+   */
+  public JsObj getObj(final String key)
+  {
+    return getOptObj(key).orElse(null);
   }
 
   /**
@@ -419,9 +516,19 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param key the key
    @return the string located at the given key wrapped in an Optional
    */
-  public Optional<String> getStr(final String key)
+  public Optional<String> getOptStr(final String key)
   {
-    return getStr(JsPath.fromKey(key));
+    return getOptStr(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the string located at the given key or null if it doesn't exist or it's not an string.
+   @param key the key
+   @return the string located at the given key or null
+   */
+  public String getStr(final String key)
+  {
+    return getOptStr(key).orElse(null);
   }
 
   /**
@@ -1612,6 +1719,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                value
               );
   }
+
   /**
    Inserts the integer number at the key in this json, replacing any existing element.
    @param key the key
@@ -1626,6 +1734,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                value
               );
   }
+
   /**
    Inserts the long number at the key in this json, replacing any existing element.
    @param key the key
@@ -1640,6 +1749,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                value
               );
   }
+
   /**
    Inserts the boolean at the key in this json, replacing any existing element.
    @param key the key
@@ -1654,6 +1764,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                value
               );
   }
+
   /**
    Inserts the object at the key in this json, replacing any existing element.
    @param key the key
@@ -1683,6 +1794,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                value
               );
   }
+
   /**
    Inserts the big decimal number at the key in this json, replacing any existing element.
    @param key the key
@@ -1697,6 +1809,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                value
               );
   }
+
   /**
    Inserts the big integer number at the key in this json, replacing any existing element.
    @param key the key
@@ -1723,8 +1836,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                          final Function<? super JsValue, ? extends JsValue> fn
                         )
   {
-    return put(JsPath.fromKey(key),fn);
+    return put(JsPath.fromKey(key),
+               fn);
   }
+
   public final JsObj put(final JsPath path,
                          final Function<? super JsValue, ? extends JsValue> fn
                         )
@@ -1788,7 +1903,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       supplier);
+                       supplier
+                      );
   }
 
   /**
@@ -1802,7 +1918,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       number);
+                       number
+                      );
 
   }
 
@@ -1817,9 +1934,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       str);
+                       str
+                      );
 
   }
+
   /**
    Inserts at the given key in this json, if no element is present, the specified boolean.
    @param key the key
@@ -1831,9 +1950,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       bool);
+                       bool
+                      );
 
   }
+
   /**
    Inserts at the given key in this json, if no element is present, the specified obj.
    @param key the key
@@ -1845,9 +1966,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       obj);
+                       obj
+                      );
 
   }
+
   /**
    Inserts at the given key in this json, if no element is present, the specified array.
    @param key the key
@@ -1859,9 +1982,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       array);
+                       array
+                      );
 
   }
+
   /**
    Inserts at the given key in this json, if no element is present, the specified long number.
    @param key the key
@@ -1873,9 +1998,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       number);
+                       number
+                      );
 
   }
+
   /**
    Inserts at the given key in this json, if no element is present, the specified double number.
    @param key the key
@@ -1887,9 +2014,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                           )
   {
     return putIfAbsent(JsPath.fromKey(key),
-                       number);
+                       number
+                      );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified integer number.
    @param key the key
@@ -1901,9 +2030,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                       number);
+                        number
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified string.
    @param key the key
@@ -1915,9 +2046,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                       str);
+                        str
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified obj.
    @param key the key
@@ -1929,9 +2062,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                        obj);
+                        obj
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified array.
    @param key the key
@@ -1943,9 +2078,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                        array);
+                        array
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified long number.
    @param key the key
@@ -1957,9 +2094,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                       number);
+                        number
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified double number.
    @param key the key
@@ -1971,9 +2110,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                       number);
+                        number
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified boolean.
    @param key the key
@@ -1985,9 +2126,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                        bool);
+                        bool
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified big integer number.
    @param key the key
@@ -1999,9 +2142,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                        number);
+                        number
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the specified big decimal number.
    @param key the key
@@ -2013,9 +2158,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                        number);
+                        number
+                       );
 
   }
+
   /**
    Inserts at the given key in this json, if some element is present, the element returned by the
    function.
@@ -2028,7 +2175,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            )
   {
     return putIfPresent(JsPath.fromKey(key),
-                        fn);
+                        fn
+                       );
 
   }
 
@@ -2094,7 +2242,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     if (thisEmpty && thatEmpty) return true;
     if (thisEmpty != thatEmpty) return false;
 
-    return fields().stream()
+    return keySet().stream()
                    .allMatch(f ->
                                other.get(f)
                                     .map(it ->
@@ -2119,7 +2267,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
 
   public final Stream<JsPair> stream()
   {
-    return this.fields()
+    return this.keySet()
                .stream()
                .map(f ->
                     {
@@ -2148,7 +2296,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     return requireNonNull(obj).ifEmptyElse(() -> Stream.of(JsPair.of(path,
                                                                      obj
                                                                     )),
-                                           () -> obj.fields()
+                                           () -> obj.keySet()
                                                     .stream()
                                                     .map(key -> JsPair.of(path.key(key),
                                                                           get(obj,

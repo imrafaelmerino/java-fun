@@ -13,6 +13,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
+
 import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static java.util.Objects.requireNonNull;
@@ -566,10 +567,10 @@ public interface Json<T extends Json<T>> extends JsValue
   /**
    Returns the array located at the given path or {@link Optional#empty()} if it doesn't exist or
    it's not an array.
-   @param path the JsPath object of the JsArray that will be returned
+   @param path the path
    @return the JsArray located at the given JsPath wrapped in an Optional
    */
-  default Optional<JsArray> getArray(final JsPath path)
+  default Optional<JsArray> getOptArray(final JsPath path)
   {
     final Function<JsValue, Optional<JsArray>> ifElse = MatchExp.ifArrElse(Optional::of,
                                                                            it -> Optional.empty()
@@ -578,12 +579,22 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the big decimal located at the given path as a big decimal or {@link Optional#empty()} if
-   it doesn't exist or it's not a decimal number.
-   @param path the JsPath object of the BigDecimal that will be returned
-   @return the BigDecimal located at the given JsPath wrapped in an Optional
+   Returns the array located at the given path or null if it doesn't exist or it's not an array.
+   @param path the path
+   @return the JsArray located at the given JsPath or null
    */
-  default Optional<BigDecimal> getBigDecimal(final JsPath path)
+  default JsArray getArray(final JsPath path)
+  {
+    return getOptArray(path).orElse(null);
+  }
+
+  /**
+   Returns the number located at the given path as a big decimal or {@link Optional#empty()} if
+   it doesn't exist or it's not a decimal number.
+   @param path the path
+   @return the number located at the given JsPath wrapped in an Optional
+   */
+  default Optional<BigDecimal> getOptBigDec(final JsPath path)
   {
     final Function<JsValue, Optional<BigDecimal>> ifElse = MatchExp.ifDecimalElse(it -> Optional.of(BigDecimal.valueOf(it)),
                                                                                   Optional::of,
@@ -593,12 +604,23 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the big integer located at the given path as a big integer or {@link Optional#empty()} if it doesn't
+   Returns the number located at the given path as a big decimal or null if
+   it doesn't exist or it's not a decimal number.
+   @param path the path
+   @return the number located at the given JsPath or null
+   */
+  default BigDecimal getBigDec(final JsPath path)
+  {
+    return getOptBigDec(path).orElse(null);
+  }
+
+  /**
+   Returns the number located at the given path as a big integer or {@link Optional#empty()} if it doesn't
    exist or it's not an integral number.
-   @param path the JsPath object of the BigInteger that will be returned
+   @param path the path
    @return the BigInteger located at the given JsPath wrapped in an Optional
    */
-  default Optional<BigInteger> getBigInt(final JsPath path)
+  default Optional<BigInteger> getOptBigInt(final JsPath path)
   {
     final Function<JsValue, Optional<BigInteger>> ifElse = MatchExp.ifIntegralElse(it -> Optional.of(BigInteger.valueOf(it)),
                                                                                    it -> Optional.of(BigInteger.valueOf(it)),
@@ -609,11 +631,22 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Returns the number located at the given path as a big integer or null if it doesn't
+   exist or it's not an integral number.
+   @param path the path
+   @return the BigInteger located at the given JsPath or null
+   */
+  default BigInteger getBigInt(final JsPath path)
+  {
+    return getOptBigInt(path).orElse(null);
+  }
+
+  /**
    Returns the boolean located at the given path or {@link Optional#empty()} if it doesn't exist.
-   @param path the JsPath object of the Boolean that will be returned
+   @param path the path
    @return the Boolean located at the given JsPath wrapped in an Optional
    */
-  default Optional<Boolean> getBool(final JsPath path)
+  default Optional<Boolean> getOptBool(final JsPath path)
   {
     final Function<JsValue, Optional<Boolean>> fn = MatchExp.ifBoolElse(Optional::of,
                                                                         it -> Optional.empty()
@@ -622,14 +655,24 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Returns the boolean located at the given path or null if it doesn't exist.
+   @param path the path
+   @return the Boolean located at the given JsPath or null
+   */
+  default Boolean getBool(final JsPath path)
+  {
+    return getOptBool(path).orElse(null);
+  }
+
+  /**
    Returns the decimal number located at the given path as a double or {@link OptionalDouble#empty()} if it
    doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
    to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
    the precision of the BigDecimal
-   @param path the JsPath object of the double that will be returned
+   @param path the path
    @return the decimal number located at the given JsPath wrapped in an OptionalDouble
    */
-  default OptionalDouble getDouble(final JsPath path)
+  default OptionalDouble getOptDouble(final JsPath path)
   {
     return MatchExp.ifDecimalElse(OptionalDouble::of,
                                   bd -> JsBigDec.of(bd)
@@ -640,12 +683,26 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Returns the decimal number located at the given path as a double or null if it
+   doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
+   to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
+   the precision of the BigDecimal
+   @param path the path
+   @return the decimal number located at the given JsPath or null
+   */
+  default Double getDouble(final JsPath path)
+  {
+    final OptionalDouble optDouble = getOptDouble(path);
+    return optDouble.isPresent() ? optDouble.getAsDouble() : null;
+  }
+
+  /**
    Returns the integral number located at the given path as an integer or {@link OptionalInt#empty()} if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
-   @param path the JsPath object of the integral number that will be returned
+   @param path the path
    @return the integral number located at the given JsPath wrapped in an OptionalInt
    */
-  default OptionalInt getInt(final JsPath path)
+  default OptionalInt getOptInt(final JsPath path)
   {
     return MatchExp.ifIntegralElse(OptionalInt::of,
                                    l -> JsLong.of(l)
@@ -658,12 +715,24 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Returns the integral number located at the given path as an integer or null if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
+   @param path the path
+   @return the integral number located at the given JsPath or null
+   */
+  default Integer getInt(final JsPath path)
+  {
+    final OptionalInt optInt = getOptInt(path);
+    return optInt.isPresent() ? optInt.getAsInt() : null;
+  }
+
+  /**
    Returns the integral number located at the given path as a long or {@link OptionalLong#empty()} if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
-   @param path the JsPath object of the integral number that will be returned
+   @param path the path
    @return the integral number located at the given JsPath wrapped in an OptionalLong
    */
-  default OptionalLong getLong(final JsPath path)
+  default OptionalLong getOptLong(final JsPath path)
   {
     return MatchExp.ifIntegralElse(OptionalLong::of,
                                    OptionalLong::of,
@@ -676,12 +745,24 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Returns the integral number located at the given path as a long or null if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
+   @param path the path
+   @return the integral number located at the given JsPath or null
+   */
+  default Long getLong(final JsPath path)
+  {
+    final OptionalLong optLong = getOptLong(path);
+    return optLong.isPresent() ? optLong.getAsLong() : null;
+  }
+
+  /**
    Returns the object located at the given path or {@link Optional#empty()} if it doesn't exist or it's
    not an object.
-   @param path the JsPath object of the JsObj that will be returned
+   @param path the path
    @return the JsObj located at the given JsPath wrapped in an Optional
    */
-  default Optional<JsObj> getObj(final JsPath path)
+  default Optional<JsObj> getOptObj(final JsPath path)
   {
     final Function<JsValue, Optional<JsObj>> ifElse = MatchExp.ifObjElse(Optional::of,
                                                                          it -> Optional.empty()
@@ -690,17 +771,40 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Returns the object located at the given path or null if it doesn't exist or it's
+   not an object.
+   @param path the path
+   @return the JsObj located at the given JsPath or null
+   */
+  default JsObj getObj(final JsPath path)
+  {
+    return getOptObj(path).orElse(null);
+  }
+
+  /**
    Returns the string located at the given path or {@link Optional#empty()} if it doesn't exist or it's
    not an string.
-   @param path the JsPath object of the JsStr that will be returned
+   @param path the path
    @return the JsStr located at the given path wrapped in an Optional
    */
-  default Optional<String> getStr(final JsPath path)
+  default Optional<String> getOptStr(final JsPath path)
   {
     final Function<JsValue, Optional<String>> ifStrElseFn = MatchExp.ifStrElse(Optional::of,
                                                                                it -> Optional.empty()
                                                                               );
     return ifStrElseFn.apply(this.get(requireNonNull(path)));
+
+  }
+
+  /**
+   Returns the string located at the given path or null if it doesn't exist or it's
+   not an string.
+   @param path the path
+   @return the JsStr located at the given path or null
+   */
+  default String getStr(final JsPath path)
+  {
+    return getOptStr(path).orElse(null);
 
   }
 
@@ -928,7 +1032,8 @@ public interface Json<T extends Json<T>> extends JsValue
         return new JsArray(JsArray.parse(parser,
                                          builder.create(),
                                          JsPath.empty()
-                                               .index(-1)));
+                                               .index(-1)
+                                        ));
       return new JsObj(JsObj.parse(parser,
                                    builder.create(),
                                    JsPath.empty()
@@ -969,7 +1074,8 @@ public interface Json<T extends Json<T>> extends JsValue
                              );
     }
     return result.prepend(path,
-                          elem);
+                          elem
+                         );
   }
 
   /**
@@ -1011,7 +1117,8 @@ public interface Json<T extends Json<T>> extends JsValue
                              );
     }
     return result.prepend(path,
-                          JsStr.of(elem));
+                          JsStr.of(elem)
+                         );
   }
 
   /**
@@ -1707,7 +1814,6 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
 
-
   /**
    Inserts at the given path in this json, if some element is present, the specified integer.
    @param path the given path
@@ -1843,6 +1949,7 @@ public interface Json<T extends Json<T>> extends JsValue
                         e -> JsBigDec.of(number)
                        );
   }
+
   /**
    Inserts at the given path in this json, if some element is present, the element returned by the
    function.

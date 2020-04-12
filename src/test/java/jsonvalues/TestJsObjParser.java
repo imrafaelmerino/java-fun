@@ -359,13 +359,13 @@ public class TestJsObjParser
                                             "k",
                                             isObj(false,
                                                   true,
-                                                  a -> a.fields()
+                                                  a -> a.keySet()
                                                         .equals(2)
                                                  ),
                                             "j",
                                             isArrayOfObj(false,
                                                          true,
-                                                         a -> a.fields()
+                                                         a -> a.keySet()
                                                                .size() == 2
                                                         )
                                            );

@@ -21,26 +21,28 @@ public class TestJsParser
   {
 
     final JsObjParser parser = new JsObjParser(JsObjSpec.strict("a",
-                                                                isStr,
+                                                                str,
                                                                 "b",
-                                                                isInt,
+                                                                intNumber,
                                                                 "c",
-                                                                isBool,
+                                                                bool,
                                                                 "d",
-                                                                isLong,
+                                                                longNumber,
                                                                 "e",
-                                                                isDecimal,
+                                                                decimal,
                                                                 "f",
-                                                                JsArraySpec.of(isDecimal,
-                                                                           isDecimal
+                                                                JsArraySpec.of(decimal,
+                                                                               decimal
                                                                           ),
                                                                 "g",
-                                                                isIntegral,
+                                                                integral,
                                                                 "h",
-                                                                isObj,
+                                                                obj,
                                                                 "i",
-                                                                isArray,
-                                                                "j", arrayOf(JsObjSpec.lenient("a", isStr))
+                                                                array,
+                                                                "j", arrayOf(JsObjSpec.lenient("a",
+                                                                                               str
+                                                                                              ))
                                                                ));
 
 

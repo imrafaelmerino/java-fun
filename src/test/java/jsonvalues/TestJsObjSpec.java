@@ -20,7 +20,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isStr
+                                            str
                                            );
 
 
@@ -53,7 +53,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isStr(s -> s.startsWith("h"))
+                                            str(s -> s.startsWith("h"))
                                            );
 
 
@@ -77,7 +77,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isInt
+                                            intNumber
                                            );
 
 
@@ -101,7 +101,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isInt(n -> n % 2 == 0)
+                                            intNumber(n -> n % 2 == 0)
                                            );
 
 
@@ -135,7 +135,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isLong
+                                            longNumber
                                            );
 
 
@@ -159,7 +159,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isLong(l -> l % 2 == 1)
+                                            longNumber(l -> l % 2 == 1)
                                            );
 
 
@@ -193,7 +193,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isDecimal
+                                            decimal
                                            );
 
 
@@ -217,7 +217,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isDecimal(d -> d.longValueExact() == Long.MAX_VALUE)
+                                            decimal(d -> d.longValueExact() == Long.MAX_VALUE)
                                            );
 
 
@@ -252,7 +252,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isBool
+                                            bool
                                            );
 
 
@@ -277,7 +277,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isTrue
+                                            TRUE
                                            );
 
 
@@ -311,7 +311,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isFalse
+                                            FALSE
                                            );
 
 
@@ -345,13 +345,13 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isIntegral,
+                                            integral,
                                             "b",
-                                            isIntegral,
+                                            integral,
                                             "c",
-                                            isIntegral,
+                                            integral,
                                             "d",
-                                            isNumber
+                                            number
                                            );
 
 
@@ -376,7 +376,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isIntegral
+                                            integral
                                            );
 
 
@@ -400,7 +400,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isObj
+                                            obj
                                            );
 
 
@@ -424,7 +424,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isArray
+                                            array
                                            );
 
 
@@ -448,26 +448,26 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isInt,
+                                            intNumber,
                                             "b",
-                                            isStr,
+                                            str,
                                             "c",
-                                            isLong,
+                                            longNumber,
                                             "d",
-                                            isBool,
+                                            bool,
                                             "e",
-                                            isTrue,
+                                            TRUE,
                                             "f",
                                             JsObjSpec.strict("a",
-                                                             isStr,
+                                                             str,
                                                              "b",
-                                                             isInt,
+                                                             intNumber,
                                                              "c",
-                                                             JsArraySpec.of(isStr,
-                                                                    isInt
+                                                             JsArraySpec.of(str,
+                                                                            intNumber
                                                                    ),
                                                              "d",
-                                                             JsSpecs.isArray(a -> a.head() == JsNull.NULL)
+                                                             JsSpecs.array(a -> a.head() == JsNull.NULL)
                                                             )
                                            );
 
@@ -512,22 +512,22 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isArrayOfInt,
+                                            arrayOfInt,
                                             "b",
-                                            isArrayOfStr,
+                                            arrayOfStr,
                                             "c",
-                                            isArrayOfLong,
+                                            arrayOfLong,
                                             "d",
-                                            isArrayOfDec,
+                                            arrayOfDec,
                                             "e",
-                                            isArrayOfIntegral,
+                                            arrayOfIntegral,
                                             "f",
                                             JsObjSpec.strict("a",
-                                                             isArrayOfNumber,
+                                                             arrayOfNumber,
                                                              "b",
-                                                             isArrayOfObj,
+                                                             arrayOfObj,
                                                              "c",
-                                                             isArrayOfBool
+                                                             arrayOfBool
                                                             )
                                            );
 
@@ -584,31 +584,31 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isArrayOfInt(i -> i > 0),
+                                            arrayOfInt(i -> i > 0),
                                             "b",
-                                            isArrayOfStr(s -> s.startsWith("a")),
+                                            arrayOfStr(s -> s.startsWith("a")),
                                             "c",
-                                            isArrayOfLong(i -> i < 0),
+                                            arrayOfLong(i -> i < 0),
                                             "d",
-                                            isArrayOfDec(b -> b.doubleValue() > 1.5),
+                                            arrayOfDec(b -> b.doubleValue() > 1.5),
                                             "e",
-                                            isArrayOfIntegral(i -> i.longValue() < 100),
+                                            arrayOfIntegral(i -> i.longValue() < 100),
                                             "f",
                                             JsObjSpec.strict("a",
-                                                             isArrayOfNumber(JsValue::isInt),
+                                                             arrayOfNumber(JsValue::isInt),
                                                              "b",
-                                                             isArrayOfObj(JsObj::isEmpty),
+                                                             arrayOfObj(JsObj::isEmpty),
                                                              "c",
-                                                             JsArraySpec.of(isArrayOfStrSuchThat(a -> a.size() > 2),
-                                                                    isArrayOfIntSuchThat(a -> a.size() > 1),
-                                                                    isArrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
-                                                                    isArrayOfDecSuchThat(a -> a.size() == 1)
+                                                             JsArraySpec.of(arrayOfStrSuchThat(a -> a.size() > 2),
+                                                                            arrayOfIntSuchThat(a -> a.size() > 1),
+                                                                            arrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
+                                                                            arrayOfDecSuchThat(a -> a.size() == 1)
                                                                    ),
                                                              "d",
-                                                             isIntegral(i -> i.longValue() > 10),
+                                                             integral(i -> i.longValue() > 10),
                                                              "e",
-                                                             isNumber(s -> s.isDouble()),
-                                                             "f", isObj(o->o.isEmpty())
+                                                             number(s -> s.isDouble()),
+                                                             "f", obj(o->o.isEmpty())
                                                             )
                                            );
 
@@ -681,7 +681,7 @@ public class TestJsObjSpec
                                JsStr.of("a")
                               );
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            isInt
+                                            intNumber
                                            );
     final Set<JsErrorPair> error = spec.test(obj);
 
@@ -760,7 +760,8 @@ public class TestJsObjSpec
 
     JsObjSpec spec = JsObjSpec.strict("a",
                                       JsSpecs.conforms(JsArraySpec.of(
-                                                                any,isInt
+                                        any,
+                                        intNumber
 
                                                                ))
                                      );

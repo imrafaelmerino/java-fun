@@ -1,6 +1,5 @@
 package jsonvalues;
 
-import jsonvalues.spec.IsObjSpec;
 import jsonvalues.spec.JsArrayParser;
 import jsonvalues.spec.JsArraySpec;
 import org.junit.jupiter.api.Assertions;
@@ -18,20 +17,20 @@ public class TestJsArrayParser
   public void test_array_of_different_elements()
   {
 
-    final JsArraySpec spec = JsArraySpec.of(isStr,
-                                            isInt,
-                                            isLong,
-                                            isDecimal,
-                                            isBool,
-                                            isIntegral,
-                                            isObj,
-                                            isArray,
-                                            isInt(i->i>0),
+    final JsArraySpec spec = JsArraySpec.of(str,
+                                            intNumber,
+                                            longNumber,
+                                            decimal,
+                                            bool,
+                                            integral,
+                                            obj,
+                                            array,
+                                            intNumber(i->i>0),
                                             any(v -> v.isStr() || v.isInt()),
-                                            isStr(s-> s.startsWith("1")),
-                                            isArrayOfIntegralSuchThat(a->a.size()==1),
-                                            isArrayOfNumberSuchThat(a->a.size()==2),
-                                            isNumber(a->a.isDecimal())
+                                            str(s-> s.startsWith("1")),
+                                            arrayOfIntegralSuchThat(a->a.size()==1),
+                                            arrayOfNumberSuchThat(a->a.size()==2),
+                                            number(a->a.isDecimal())
                                            );
 
 

@@ -22,7 +22,7 @@ public class TestJsArraySpec
     final JsArray array = JsArray.of(JsInt.of(1),
                                      JsStr.of("a")
                                     );
-    final JsArraySpec spec = JsArraySpec.of(intNumber);
+    final JsArraySpec spec = JsArraySpec.tuple(intNumber);
     final Set<JsErrorPair> error = spec.test(array);
     assertErrorIs(error,
                   SPEC_MISSING,
@@ -36,9 +36,9 @@ public class TestJsArraySpec
   {
 
 
-    JsArraySpec spec = JsArraySpec.of(any,
-                                      any(false)
-                                     );
+    JsArraySpec spec = JsArraySpec.tuple(any,
+                                         optAny
+                                        );
 
     Assertions.assertTrue(spec.test(JsArray.of(JsNull.NULL))
                               .isEmpty());
@@ -93,9 +93,9 @@ public class TestJsArraySpec
   {
 
 
-    JsArraySpec spec = JsArraySpec.of(any,
-                                      any
-                                     );
+    JsArraySpec spec = JsArraySpec.tuple(any,
+                                         any
+                                        );
 
     Assertions.assertTrue(spec.test(JsArray.of(JsBool.FALSE,
                                                JsBool.TRUE

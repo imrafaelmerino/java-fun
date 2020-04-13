@@ -1,8 +1,6 @@
 package jsonvalues.spec;
 
 import jsonvalues.*;
-import jsonvalues.spec.Error;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,11 +15,11 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
   final boolean elemNullable;
   final JsObjSpec spec;
 
-   IsArrayOfObjSpec(final boolean nullable,
-                          final boolean required,
-                          final boolean elemNullable,
-                          final JsObjSpec jsObjSpec
-                         )
+  IsArrayOfObjSpec(final boolean nullable,
+                   final boolean required,
+                   final boolean elemNullable,
+                   final JsObjSpec jsObjSpec
+                  )
   {
     this.nullable = nullable;
     this.required = required;
@@ -29,6 +27,7 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
     this.spec = jsObjSpec;
 
   }
+
   @Override
   public Set<JsErrorPair> test(final JsArray array)
   {

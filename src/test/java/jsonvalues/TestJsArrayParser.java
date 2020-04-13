@@ -17,21 +17,21 @@ public class TestJsArrayParser
   public void test_array_of_different_elements()
   {
 
-    final JsArraySpec spec = JsArraySpec.of(str,
-                                            intNumber,
-                                            longNumber,
-                                            decimal,
-                                            bool,
-                                            integral,
-                                            obj,
-                                            array,
-                                            intNumber(i->i>0),
-                                            any(v -> v.isStr() || v.isInt()),
-                                            str(s-> s.startsWith("1")),
-                                            arrayOfIntegralSuchThat(a->a.size()==1),
-                                            arrayOfNumberSuchThat(a->a.size()==2),
-                                            number(a->a.isDecimal())
-                                           );
+    final JsArraySpec spec = JsArraySpec.tuple(str,
+                                               intNumber,
+                                               longNumber,
+                                               decimal,
+                                               bool,
+                                               integral,
+                                               obj,
+                                               array,
+                                               intNumber(i->i>0),
+                                               any(v -> v.isStr() || v.isInt()),
+                                               str(s-> s.startsWith("1")),
+                                               arrayOfIntegralSuchThat(a->a.size()==1),
+                                               arrayOfNumberSuchThat(a->a.size()==2),
+                                               number(a->a.isDecimal())
+                                              );
 
 
     JsArray array = JsArray.of(JsStr.of("a"),

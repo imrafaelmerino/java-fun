@@ -56,9 +56,9 @@ public class TestJsObjParser
                                                              array(a -> a.head()
                                                                          .equals(JsStr.of("first"))),
                                                              "j",
-                                                             JsArraySpec.of(number(JsValue::isDecimal),
-                                                                            any
-                                                                           )
+                                                             JsArraySpec.tuple(number(JsValue::isDecimal),
+                                                                               any
+                                                                              )
                                                             )
                                            );
 
@@ -248,9 +248,9 @@ public class TestJsObjParser
                                                              array(a -> a.head()
                                                                          .equals(JsStr.of("first"))),
                                                              "j",
-                                                             JsArraySpec.of(number(JsValue::isDecimal),
-                                                                            any
-                                                                           )
+                                                             JsArraySpec.tuple(number(JsValue::isDecimal),
+                                                                               any
+                                                                              )
                                                             )
                                            );
 
@@ -313,53 +313,33 @@ public class TestJsObjParser
   public void test_required_fields()
   {
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNumber(false,
-                                                      true
-                                                     ),
+                                            optNullableIntNumber,
                                             "b",
-                                            str(false,
-                                                true
-                                               ),
+                                            optNullableStr,
                                             "c",
-                                            longNumber(false,
-                                                       true
-                                                      ),
+                                            optNullableLongNumber,
                                             "d",
-                                            obj(false,
-                                                true
-                                               ),
+                                            optNullableObj,
                                             "e",
-                                            array(false,
-                                                  true
-                                                 ),
+                                            optNullableArray,
                                             "f",
-                                            bool(false,
-                                                 true
-                                                ),
+                                            optNullableBool,
                                             "g",
-                                            decimal(false,
-                                                    true
-                                                   ),
+                                            optNullableDecimal,
                                             "h",
-                                            integral(false,
-                                                     true
-                                                    ),
+                                            optNullableIntegral,
                                             "i",
-                                            JsArraySpec.of(arrayOfInt(true,
-                                                                      true
-                                                                     ),
-                                                           arrayOfLong(true,
+                                            JsArraySpec.tuple(arrayOfInt(true,
+                                                                         true
+                                                                        ),
+                                                              arrayOfLong(true,
                                                                        true
                                                                       )
-                                                          ),
+                                                             ),
                                             "j",
-                                            obj(false,
-                                                true
-                                               ),
+                                            optNullableObj,
                                             "k",
-                                            obj(false,
-                                                true,
-                                                  a -> a.keySet()
+                                            optNullableObj(a -> a.keySet()
                                                         .equals(2)
                                                ),
                                             "j",
@@ -420,9 +400,7 @@ public class TestJsObjParser
   public void test_strict_mode()
   {
     final JsObjSpec spec = JsObjSpec.lenient("a",
-                                             str(false,
-                                                 true)
-                                            );
+                                             optNullableStr);
 
 
     final JsObj obj = JsObj.of("b",

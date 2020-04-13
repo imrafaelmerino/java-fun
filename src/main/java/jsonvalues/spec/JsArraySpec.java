@@ -18,18 +18,16 @@ public class JsArraySpec implements  Schema<JsArray>
     this.specs = specs;
   }
 
-  public static JsArraySpec of(JsSpec spec, JsSpec... others){
+  public static JsArraySpec tuple(JsSpec spec, JsSpec... others){
     Vector<JsSpec> specs = Vector.empty();
     specs = specs.append(spec);
     for(JsSpec s:others) specs=specs.append(s);
     return new JsArraySpec(specs);
-
   }
 
   @Override
   public Set<JsErrorPair> test(final JsArray json)
   {
-
     return test(JsPath.empty().append(JsPath.fromIndex(-1)), this, new HashSet<>(), json);
   }
 
@@ -65,7 +63,6 @@ public class JsArraySpec implements  Schema<JsArray>
                           spec
                          );
     }
-
     return errors;
   }
 }

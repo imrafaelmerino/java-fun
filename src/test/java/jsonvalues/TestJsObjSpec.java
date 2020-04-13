@@ -463,9 +463,9 @@ public class TestJsObjSpec
                                                              "b",
                                                              intNumber,
                                                              "c",
-                                                             JsArraySpec.of(str,
-                                                                            intNumber
-                                                                   ),
+                                                             JsArraySpec.tuple(str,
+                                                                               intNumber
+                                                                              ),
                                                              "d",
                                                              JsSpecs.array(a -> a.head() == JsNull.NULL)
                                                             )
@@ -599,11 +599,11 @@ public class TestJsObjSpec
                                                              "b",
                                                              arrayOfObj(JsObj::isEmpty),
                                                              "c",
-                                                             JsArraySpec.of(arrayOfStrSuchThat(a -> a.size() > 2),
-                                                                            arrayOfIntSuchThat(a -> a.size() > 1),
-                                                                            arrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
-                                                                            arrayOfDecSuchThat(a -> a.size() == 1)
-                                                                   ),
+                                                             JsArraySpec.tuple(arrayOfStrSuchThat(a -> a.size() > 2),
+                                                                               arrayOfIntSuchThat(a -> a.size() > 1),
+                                                                               arrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
+                                                                               arrayOfDecSuchThat(a -> a.size() == 1)
+                                                                              ),
                                                              "d",
                                                              integral(i -> i.longValue() > 10),
                                                              "e",
@@ -702,11 +702,9 @@ public class TestJsObjSpec
     JsObjSpec spec = JsObjSpec.strict("a",
                                       any,
                                       "b",
-                                      any(false),
+                                      optAny,
                                       "d",
-                                      any(JsValue::isStr,
-                                      true
-                                     )
+                                      any(JsValue::isStr)
                                      );
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
@@ -729,15 +727,13 @@ public class TestJsObjSpec
 
 
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      JsSpecs.conforms(JsObjSpec.strict("a",
-                                                                        any,
-                                                                        "b",
-                                                                        any(false),
-                                                                        "d",
-                                                                        any(JsValue::isStr,
-                                                                    true
-                                                                   )
-                                                                       ))
+                                      JsSpecs.spec(JsObjSpec.strict("a",
+                                                                    any,
+                                                                    "b",
+                                                                    optAny,
+                                                                    "d",
+                                                                    any(JsValue::isStr)
+                                                                   ))
                                      );
 
 
@@ -759,11 +755,11 @@ public class TestJsObjSpec
 
 
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      JsSpecs.conforms(JsArraySpec.of(
+                                      JsSpecs.spec(JsArraySpec.tuple(
                                         any,
                                         intNumber
 
-                                                               ))
+                                                                    ))
                                      );
 
 

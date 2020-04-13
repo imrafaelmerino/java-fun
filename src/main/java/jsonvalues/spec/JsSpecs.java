@@ -17,44 +17,73 @@ public class JsSpecs
 {
 
 
-  public static JsSpec conforms(final JsObjSpec spec)
+  public static JsSpec spec(final JsObjSpec spec)
   {
-    return conforms(spec,
-                    false,
-                    true
-                   );
+    return spec(spec,
+                false,
+                true
+               );
   }
 
-  public static JsSpec conforms(final JsObjSpec spec,
-                                final boolean nullable,
-                                final boolean required
-                               )
+  public static JsSpec nullableSpec(final JsObjSpec spec)
   {
-    return new IsObjSpec(nullable,
-                         required,
-                         requireNonNull(spec)
-    );
+    return spec(spec,
+                true,
+                false
+               );
   }
 
-  public static JsSpec conforms(final JsArraySpec spec
-                               )
+  public static JsSpec optSpec(final JsObjSpec spec)
   {
-    return conforms(spec,
-                    false,
-                    true
-                   );
+    return spec(spec,
+                false,
+                false
+               );
   }
 
-  public static JsSpec conforms(final JsArraySpec spec,
-                                final boolean nullable,
-                                final boolean required
-                               )
+  public static JsSpec optNullableSpec(final JsObjSpec spec)
   {
-    return new IsArraySpec(requireNonNull(spec),
-                           nullable,
-                           required
-    );
+    return spec(spec,
+                true,
+                false
+               );
   }
+
+
+
+  public static JsSpec spec(final JsArraySpec spec
+                           )
+  {
+    return spec(spec,
+                false,
+                true
+               );
+  }
+
+  public static JsSpec optSpec(final JsArraySpec spec)
+  {
+    return spec(spec,
+                false,
+                false
+               );
+  }
+
+  public static JsSpec nullableSpec(final JsArraySpec spec)
+  {
+    return spec(spec,
+                true,
+                true
+               );
+  }
+
+  public static JsSpec optNullableSpec(final JsArraySpec spec)
+  {
+    return spec(spec,
+                true,
+                false
+               );
+  }
+
 
   public static JsSpec arrayOf(final JsObjSpec spec)
   {
@@ -64,6 +93,35 @@ public class JsSpecs
                                 requireNonNull(spec)
     );
   }
+
+  public static JsSpec nullableArrayOf(final JsObjSpec spec)
+  {
+    return new IsArrayOfObjSpec(true,
+                                true,
+                                false,
+                                requireNonNull(spec)
+    );
+  }
+
+  public static JsSpec optArrayOf(final JsObjSpec spec)
+  {
+    return new IsArrayOfObjSpec(false,
+                                false,
+                                false,
+                                requireNonNull(spec)
+    );
+  }
+
+  public static JsSpec optNullableArrayOf(final JsObjSpec spec)
+  {
+    return new IsArrayOfObjSpec(true,
+                                false,
+                                false,
+                                requireNonNull(spec)
+    );
+  }
+
+
 
   public static JsSpec arrayOf(final JsObjSpec spec,
                                final boolean nullable,
@@ -78,75 +136,327 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec any(final Predicate<JsValue> predicate
-                          )
+
+
+
+  public static JsSpec any = new IsValue(true);
+
+  public static JsSpec any(final Predicate<JsValue> predicate)
   {
     return any(predicate,
-               true);
+               true
+              );
   }
+  public static JsSpec optAny =new IsValue(false);
 
-  /**returns a spec that conforms any value that is evaluated to true on the predicate.
-   * When the type is not specified by the spec, positive numbers are parsed as Long by default,
-   * which has to be taken into account in order to define any condition.
-   * @param predicate the predicate
-   * @param required if true, the value is mandatory
-   * @return a spec
-   */
-  public static JsSpec any(final Predicate<JsValue> predicate,
-                           final boolean required
-                          )
+  public static JsSpec optAny(final Predicate<JsValue> predicate)
   {
-    return new IsValueSuchThat(required,
-                               v ->
-                               {
-                                 if (requireNonNull(predicate).test(v)) return Optional.empty();
-                                 return Optional.of(new Error(v,
-                                                              VALUE_CONDITION
-                                 ));
-                               }
-    );
-  }
-
-  public static JsSpec any = any(true);
-
-  /**
-   * returns a spec that any value conforms
-   *
-   * @param required if true, the value is mandatory
-   * @return a spec
-   */
-  public static JsSpec any(boolean required)
-  {
-    return new IsValue(required);
+    return any(predicate,
+               false
+              );
   }
 
   public static JsSpec str = new IsStr(true,
                                        false
   );
 
+  public static JsSpec str(final Predicate<String> predicate)
+  {
+    return str(requireNonNull(predicate),
+               true,
+               false
+              );
+  }
+
+
+  public static JsSpec nullableStr = new IsStr(true,
+                                               true
+  );
+
+  public static JsSpec nullableStr(final Predicate<String> predicate)
+  {
+    return str(requireNonNull(predicate),
+               true,
+               true
+              );
+  }
+
+  public static JsSpec optStr = new IsStr(false,
+                                          false
+  );
+
+  public static JsSpec optStr(final Predicate<String> predicate)
+  {
+    return str(requireNonNull(predicate),
+               false,
+               false
+              );
+  }
+
+  public static JsSpec optNullableStr = new IsStr(false,
+                                                  true
+  );
+
+  public static JsSpec optNullableStr(final Predicate<String> predicate)
+  {
+    return str(requireNonNull(predicate),
+               false,
+               true
+              );
+  }
+
+
   public static JsSpec number = new IsNumber(true,
                                              false
   );
+
+  public static JsSpec number(final Predicate<JsNumber> predicate)
+  {
+    return number(true,
+                  false,
+                  predicate
+                 );
+  }
+
+  public static JsSpec optNumber = new IsNumber(false,
+                                                false
+  );
+
+  public static JsSpec optNumber(final Predicate<JsNumber> predicate)
+  {
+    return number(false,
+                  false,
+                  predicate
+                 );
+  }
+
+  public static JsSpec nullableNumber = new IsNumber(true,
+                                                     true
+  );
+
+  public static JsSpec nullableNumber(final Predicate<JsNumber> predicate)
+  {
+    return number(true,
+                  true,
+                  predicate
+                 );
+  }
+
+  public static JsSpec optNullableNumber = new IsNumber(false,
+                                                        true
+  );
+
+
+  public static JsSpec optNullableNumber(final Predicate<JsNumber> predicate)
+  {
+    return number(false,
+                  true,
+                  predicate
+                 );
+  }
 
   public static JsSpec bool = new IsBoolean(true,
                                             false
   );
 
-  public static JsSpec longNumber = new IsLong(true,
+  public static JsSpec nullableBool = new IsBoolean(true,
+                                                    true
+  );
+
+  public static JsSpec optBool = new IsBoolean(false,
                                                false
+  );
+
+  public static JsSpec optNullableBool = new IsBoolean(false,
+                                                       true
   );
 
   public static JsSpec decimal = new IsDecimal(true,
                                                false
   );
 
-  public static JsSpec intNumber = new IsInt(true,
-                                             false
+  public static JsSpec decimal(final Predicate<BigDecimal> predicate)
+  {
+    return decimal(true,
+                   false,
+                   predicate
+                  );
+  }
+
+  public static JsSpec nullableDecimal = new IsDecimal(true,
+                                                       true
   );
+
+  public static JsSpec nullableDecimal(final Predicate<BigDecimal> predicate)
+  {
+    return decimal(true,
+                   true,
+                   predicate
+                  );
+  }
+
+  public static JsSpec optDecimal = new IsDecimal(false,
+                                                  false
+  );
+
+  public static JsSpec optDecimal(final Predicate<BigDecimal> predicate)
+  {
+    return decimal(false,
+                   false,
+                   predicate
+                  );
+  }
+
+  public static JsSpec optNullableDecimal = new IsDecimal(false,
+                                                          true
+  );
+
+  public static JsSpec optNullableDecimal(final Predicate<BigDecimal> predicate)
+  {
+    return decimal(false,
+                   true,
+                   predicate
+                  );
+  }
 
   public static JsSpec integral = new IsIntegral(true,
                                                  false
   );
+
+  public static JsSpec integral(final Predicate<BigInteger> predicate)
+  {
+    return integral(true,
+                    false,
+                    predicate
+                   );
+  }
+
+  public static JsSpec nullableIntegral = new IsIntegral(true,
+                                                         true
+  );
+
+  public static JsSpec nullableIntegral(final Predicate<BigInteger> predicate)
+  {
+    return integral(true,
+                    true,
+                    predicate
+                   );
+  }
+
+  public static JsSpec optNullableIntegral = new IsIntegral(false,
+                                                         true
+  );
+
+  public static JsSpec optIntegral = new IsIntegral(false,
+                                                    false
+  );
+
+  public static JsSpec optIntegral(final Predicate<BigInteger> predicate)
+  {
+    return integral(false,
+                    false,
+                    predicate
+                   );
+  }
+
+  public static JsSpec optNullableIntegral(final Predicate<BigInteger> predicate)
+  {
+    return integral(false,
+                    true,
+                    predicate
+                   );
+  }
+
+  public static JsSpec longNumber = new IsLong(true,
+                                               false
+  );
+
+  public static JsSpec longNumber(final LongPredicate predicate)
+  {
+    return longNumber(true,
+                      false,
+                      predicate
+                     );
+  }
+  public static JsSpec nullableLongNumber = new IsLong(true,
+                                               true
+  );
+  public static JsSpec nullableLongNumber(final LongPredicate predicate)
+  {
+    return longNumber(true,
+                      true,
+                      predicate
+                     );
+  }
+  public static JsSpec optLongNumber = new IsLong(false,
+                                               false
+  );
+
+  public static JsSpec optLongNumber(final LongPredicate predicate)
+  {
+    return longNumber(false,
+                      false,
+                      predicate
+                     );
+  }
+
+  public static JsSpec optNullableLongNumber = new IsLong(false,
+                                                  true
+  );
+
+  public static JsSpec optNullableLongNumber(final LongPredicate predicate)
+  {
+    return longNumber(false,
+                      true,
+                      predicate
+                     );
+  }
+
+  public static JsSpec intNumber = new IsInt(true,
+                                             false
+  );
+
+  public static JsSpec intNumber(final IntPredicate predicate)
+  {
+    return intNumber(true,
+                     false,
+                     predicate
+                    );
+  }
+
+  public static JsSpec nullableIntNumber = new IsInt(true,
+                                             true
+  );
+
+  public static JsSpec nullableIntNumber(final IntPredicate predicate)
+  {
+    return intNumber(true,
+                     true,
+                     predicate
+                    );
+  }
+
+  public static JsSpec optIntNumber = new IsInt(false,
+                                             false
+  );
+  public static JsSpec optIntNumber(final IntPredicate predicate)
+  {
+    return intNumber(false,
+                     false,
+                     predicate
+                    );
+  }
+  public static JsSpec optNullableIntNumber = new IsInt(false,
+                                                true
+  );
+
+  public static JsSpec optNullableIntNumber(final IntPredicate predicate)
+  {
+    return intNumber(false,
+                     true,
+                     predicate
+                    );
+  }
 
   public static JsSpec TRUE = new IsTrue(true,
                                          false
@@ -160,9 +470,102 @@ public class JsSpecs
                                        false
   );
 
+
+  public static JsSpec obj(final Predicate<JsObj> predicate)
+  {
+    return obj(true,
+               false,
+               predicate
+              );
+  }
+
+  public static JsSpec nullableObj = new IsObj(true,
+                                       true
+  );
+
+  public static JsSpec nullableObj(final Predicate<JsObj> predicate)
+  {
+    return obj(true,
+               true,
+               predicate
+              );
+  }
+
+  public static JsSpec optObj = new IsObj(false,
+                                       false
+  );
+
+  public static JsSpec optObj(final Predicate<JsObj> predicate)
+  {
+    return obj(false,
+               false,
+               predicate
+              );
+  }
+
+  public static JsSpec optNullableObj(final Predicate<JsObj> predicate)
+  {
+    return obj(false,
+               true,
+               predicate
+              );
+  }
+
+  public static JsSpec optNullableObj = new IsObj(false,
+                                          true
+  );
+
   public static JsSpec array = new IsArray(true,
                                            false
   );
+
+  public static JsArrayPredicate array(final Predicate<JsArray> predicate)
+  {
+
+    return array(true,
+                 false,
+                 predicate
+                );
+  }
+
+  public static JsSpec nullableArray = new IsArray(true,
+                                           true
+  );
+
+  public static JsArrayPredicate nullableArray(final Predicate<JsArray> predicate)
+  {
+
+    return array(true,
+                 true,
+                 predicate
+                );
+  }
+
+  public static JsSpec optNullableArray = new IsArray(false,
+                                                   true
+  );
+
+  public static JsArrayPredicate optNullableArray(final Predicate<JsArray> predicate)
+  {
+
+    return array(false,
+                 true,
+                 predicate
+                );
+  }
+
+  public static JsSpec optArray = new IsArray(false,
+                                           false
+  );
+
+  public static JsArrayPredicate optArray(final Predicate<JsArray> predicate)
+  {
+
+    return array(false,
+                 false,
+                 predicate
+                );
+  }
 
   public static JsSpec arrayOfLong = new IsArrayOfLong(true,
                                                        false
@@ -615,24 +1018,11 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec str(final boolean required,
-                           final boolean nullable
-                          )
-  {
-    return new IsStr(required,
-                     nullable
-    );
-  }
 
-  public static JsSpec str(final Predicate<String> predicate)
-  {
-    return str(requireNonNull(predicate),
-               true,
-               false
-              );
-  }
 
-  public static JsSpec str(final Predicate<String> predicate,
+
+
+  private static JsSpec str(final Predicate<String> predicate,
                            final boolean required,
                            final boolean nullable
                           )
@@ -650,33 +1040,13 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec intNumber(final boolean required,
-                                 final boolean nullable
-                                )
-  {
-    return new IsInt(required,
-                     nullable
-    );
-  }
 
-  public static JsSpec bool(final boolean required,
-                            final boolean nullable
-                           )
-  {
-    return new IsBoolean(required,
-                         nullable
-    );
-  }
 
-  public static JsSpec number(final Predicate<JsNumber> predicate)
-  {
-    return number(true,
-                  false,
-                  predicate
-                 );
-  }
 
-  public static JsSpec number(final boolean required,
+
+
+
+  private static JsSpec number(final boolean required,
                               final boolean nullable,
                               final Predicate<JsNumber> predicate
                              )
@@ -693,24 +1063,11 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec number(final boolean required,
-                              final boolean nullable
-                             )
-  {
-    return new IsNumber(required,
-                        nullable
-    );
-  }
 
-  public static JsSpec intNumber(final IntPredicate predicate)
-  {
-    return intNumber(true,
-                     false,
-                     predicate
-                    );
-  }
 
-  public static JsSpec intNumber(final boolean required,
+
+
+  private static JsSpec intNumber(final boolean required,
                                  final boolean nullable,
                                  final IntPredicate predicate
                                 )
@@ -727,25 +1084,9 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec longNumber(final boolean required,
-                                  final boolean nullable
-                                 )
-  {
-    return new IsLong(required,
-                      nullable
-    );
-  }
 
 
-  public static JsSpec longNumber(final LongPredicate predicate)
-  {
-    return longNumber(true,
-                      false,
-                      predicate
-                     );
-  }
-
-  public static JsSpec longNumber(final boolean required,
+  private static JsSpec longNumber(final boolean required,
                                   final boolean nullable,
                                   final LongPredicate predicate
                                  )
@@ -762,7 +1103,7 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec decimal(final boolean required,
+  private static JsSpec decimal(final boolean required,
                                final boolean nullable,
                                final Predicate<BigDecimal> predicate
                               )
@@ -779,32 +1120,19 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec decimal(final Predicate<BigDecimal> predicate)
+  private static JsSpec spec(final JsArraySpec spec,
+                             final boolean nullable,
+                             final boolean required
+                            )
   {
-    return decimal(true,
-                   false,
-                   predicate
-                  );
-  }
-
-  public static JsSpec decimal(final boolean required,
-                               final boolean nullable
-                              )
-  {
-    return new IsDecimal(required,
-                         nullable
+    return new IsArraySpec(requireNonNull(spec),
+                           nullable,
+                           required
     );
   }
 
-  public static JsSpec integral(final Predicate<BigInteger> predicate)
-  {
-    return integral(true,
-                    false,
-                    predicate
-                   );
-  }
 
-  public static JsSpec integral(final boolean required,
+  private static JsSpec integral(final boolean required,
                                 final boolean nullable,
                                 final Predicate<BigInteger> predicate
                                )
@@ -821,25 +1149,43 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec integral(final boolean required,
-                                final boolean nullable
-                               )
+
+
+  /**returns a spec that conforms any value that is evaluated to true on the predicate.
+   * When the type is not specified by the spec, positive numbers are parsed as Long by default,
+   * which has to be taken into account in order to define any condition.
+   * @param predicate the predicate
+   * @param required if true, the value is mandatory
+   * @return a spec
+   */
+  private static JsSpec any(final Predicate<JsValue> predicate,
+                            final boolean required
+                           )
   {
-    return new IsIntegral(required,
-                          nullable
+    return new IsValueSuchThat(required,
+                               v ->
+                               {
+                                 if (requireNonNull(predicate).test(v)) return Optional.empty();
+                                 return Optional.of(new Error(v,
+                                                              VALUE_CONDITION
+                                 ));
+                               }
+    );
+  }
+
+  private static JsSpec spec(final JsObjSpec spec,
+                             final boolean nullable,
+                             final boolean required
+                            )
+  {
+    return new IsObjSpec(nullable,
+                         required,
+                         requireNonNull(spec)
     );
   }
 
 
-  public static JsSpec obj(final Predicate<JsObj> predicate)
-  {
-    return obj(true,
-               false,
-               predicate
-              );
-  }
-
-  public static JsSpec obj(final boolean required,
+  private static JsSpec obj(final boolean required,
                            final boolean nullable,
                            final Predicate<JsObj> predicate
                           )
@@ -856,25 +1202,8 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec obj(final boolean required,
-                           final boolean nullable
-                          )
-  {
-    return new IsObj(required,
-                     nullable
-    );
-  }
 
-  public static JsArrayPredicate array(final Predicate<JsArray> predicate)
-  {
-
-    return array(true,
-                 false,
-                 predicate
-                );
-  }
-
-  public static JsArrayPredicate array(final boolean required,
+  private static JsArrayPredicate array(final boolean required,
                                        final boolean nullable,
                                        final Predicate<JsArray> predicate
                                       )
@@ -892,14 +1221,7 @@ public class JsSpecs
 
   }
 
-  public static JsArrayPredicate array(final boolean required,
-                                       final boolean nullable
-                                      )
-  {
-    return new IsArray(required,
-                       nullable
-    );
-  }
+
 
   public static JsArrayPredicate arrayOfLong(final boolean required,
                                              final boolean nullable

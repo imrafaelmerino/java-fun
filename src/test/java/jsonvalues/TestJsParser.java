@@ -31,9 +31,9 @@ public class TestJsParser
                                                                 "e",
                                                                 decimal,
                                                                 "f",
-                                                                JsArraySpec.of(decimal,
-                                                                               decimal
-                                                                          ),
+                                                                JsArraySpec.tuple(decimal,
+                                                                                  decimal
+                                                                                 ),
                                                                 "g",
                                                                 integral,
                                                                 "h",

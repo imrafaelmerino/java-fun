@@ -3,6 +3,7 @@ package jsonvalues;
 import jsonvalues.spec.JsArraySpec;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
+import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -329,25 +330,15 @@ public class TestJsObjParser
                                             "h",
                                             optNullableIntegral,
                                             "i",
-                                            JsArraySpec.tuple(arrayOfInt(true,
-                                                                         true
-                                                                        ),
-                                                              arrayOfLong(true,
-                                                                       true
-                                                                      )
+                                            JsArraySpec.tuple(optNullableArrayOfInt,
+                                                              optNullableArrayOfLong
                                                              ),
                                             "j",
                                             optNullableObj,
                                             "k",
-                                            optNullableObj(a -> a.keySet()
-                                                        .equals(2)
-                                               ),
+                                            optNullableObj(a -> a.keySet().size() == 2),
                                             "j",
-                                            arrayOfObj(false,
-                                                       true,
-                                                         a -> a.keySet()
-                                                               .size() == 2
-                                                      )
+                                            optNullableArrayOfObj(a -> a.keySet().size() == 2)
                                            );
 
 

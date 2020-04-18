@@ -234,7 +234,10 @@ case class JsElemGens(strGen: Gen[String] = Gen.oneOf(Characters.ALPHABET),
       pairs <- Gen.containerOfN[Array, (String, JsValue)](size,
                                                           pairNameValueGen
                                                           )
-    } yield JsObj.ofIterable(scala.collection.immutable.HashMap[String, JsValue](pairs: _*).asJava.entrySet())
+    } yield {
+      val set = scala.collection.immutable.HashMap[String, JsValue](pairs: _*).asJava.entrySet()
+      JsObj.ofIterable(set)
+    }
 
   }
   val jsElemGen: Gen[JsValue] = Gen.oneOf(jsValueGen,

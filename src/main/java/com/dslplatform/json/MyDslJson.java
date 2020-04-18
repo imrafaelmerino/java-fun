@@ -150,13 +150,12 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
   }
 
-  public byte[] serialize() throws SerializerException
+  public byte[] serialize(Json<?> json) throws SerializerException
   {
     try
     {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      INSTANCE.serialize(this,
-                         outputStream
+      INSTANCE.serialize(json,outputStream
                         );
       outputStream.flush();
       return outputStream.toByteArray();
@@ -182,26 +181,6 @@ public final class MyDslJson<Object> extends DslJson<Object>
       throw new SerializerException(e);
     }
 
-  }
-
-  /** Returns the string representation of this Json
-   * @param json json to be serialized
-   * @return the string representation of this Json
-   */
-  public String serialize(Json<?> json)
-  {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try
-    {
-      MyDslJson.INSTANCE.serialize(json,
-                                   baos
-                                  );
-      return baos.toString(StandardCharsets.UTF_8.name());
-    }
-    catch (IOException e)
-    {
-      throw new SerializerException(e);
-    }
   }
 
   public String toPrettyString(Json<?> json)

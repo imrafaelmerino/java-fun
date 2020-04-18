@@ -6,37 +6,20 @@ import jsonvalues.JsValue;
 import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
-
 import static jsonvalues.spec.ERROR_CODE.*;
-
 class IsArrayOfTestedIntegral extends AbstractPredicate implements JsArrayPredicate
 {
   final Function<BigInteger,Optional<Error>> predicate;
-  final boolean elemNullable;
 
    IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,
                                  final boolean required,
                                  final boolean nullable
                                 )
   {
-    this(predicate,required,
-          nullable,false
-         );
-  }
-
-
-   IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,
-                                 final boolean required,
-                                 final boolean nullable,
-                                 final boolean elemNullable
-                                )
-  {
     super(required,
           nullable
          );
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

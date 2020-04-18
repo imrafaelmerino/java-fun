@@ -7,26 +7,15 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfLong extends AbstractPredicate implements JsArrayPredicate
 {
-  final boolean elemNullable;
-   IsArrayOfLong(final boolean required,
-                       final boolean nullable
-                      )
-  {
-    this(required,
-          nullable,
-          false
-         );
-  }
+
 
    IsArrayOfLong(final boolean required,
-                       final boolean nullable,
-                       final boolean elemNullable
+                       final boolean nullable
                       )
   {
     super(required,
           nullable
          );
-    this.elemNullable = elemNullable;
   }
 
   @Override

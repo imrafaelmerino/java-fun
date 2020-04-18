@@ -11,7 +11,7 @@ import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
 
 public class JsArraySpec implements  Schema<JsArray>
 {
-  Vector<JsSpec> specs = Vector.empty();
+  Vector<JsSpec> specs;
   private boolean strict = true;
 
   private JsArraySpec(final Vector<JsSpec> specs) {
@@ -28,6 +28,7 @@ public class JsArraySpec implements  Schema<JsArray>
   @Override
   public Set<JsErrorPair> test(final JsArray json)
   {
+
     return test(JsPath.empty().append(JsPath.fromIndex(-1)), this, new HashSet<>(), json);
   }
 

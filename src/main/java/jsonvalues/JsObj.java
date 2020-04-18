@@ -1363,7 +1363,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
 
   }
 
-  public static JsObj ofIterable(Iterable<Map.Entry<String, JsValue>> xs)
+  public static JsObj ofIterable(Iterable<Map.Entry<String,  JsValue>> xs)
   {
     JsObj acc = JsObj.EMPTY;
     for (Map.Entry<String, JsValue> x : requireNonNull(xs))
@@ -2333,7 +2333,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   {
     String result = str;
     if (result == null)
-      str = result = INSTANCE.serialize(this);
+      str = result = new String(INSTANCE.serialize(this));
     return result;
   }
 

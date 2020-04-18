@@ -9,27 +9,16 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfObj extends AbstractPredicate implements JsArrayPredicate
 {
-  final boolean elemNullable;
    IsArrayOfObj(final boolean required,
                       final boolean nullable
-                     )
-  {
-    this(required,
-          nullable,
-         false
-         );
-  }
-
-   IsArrayOfObj(final boolean required,
-                      final boolean nullable,
-                      final boolean elemNullable
                      )
   {
     super(required,
           nullable
          );
-    this.elemNullable = elemNullable;
   }
+
+
 
 
   @Override

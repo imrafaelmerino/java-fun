@@ -8,25 +8,14 @@ import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
 
 class IsArrayOfBool extends AbstractPredicate implements JsArrayPredicate
 {
-  final boolean elemNullable;
+
    IsArrayOfBool(final boolean required,
                        final boolean nullable
-                      )
-  {
-    this(required,
-          nullable,
-         false
-         );
-  }
-   IsArrayOfBool(final boolean required,
-                       final boolean nullable,
-                       final boolean elemNullable
                       )
   {
     super(required,
           nullable
          );
-    this.elemNullable = elemNullable;
   }
   @Override
   public Optional<Error> test(final JsValue value)

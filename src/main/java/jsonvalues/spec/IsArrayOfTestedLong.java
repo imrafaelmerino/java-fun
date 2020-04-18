@@ -3,36 +3,24 @@ package jsonvalues.spec;
 import jsonvalues.JsValue;
 import java.util.Optional;
 import java.util.function.LongFunction;
-import java.util.function.LongPredicate;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfTestedLong extends AbstractPredicate implements JsArrayPredicate
 {
   final LongFunction<Optional<Error>> predicate;
-  final boolean elemNullable;
+
+
 
    IsArrayOfTestedLong(final LongFunction<Optional<Error>> predicate,
                              final boolean required,
                              final boolean nullable
                             )
   {
-    this(predicate,required,
-          nullable,false
-         );
-  }
-
-   IsArrayOfTestedLong(final LongFunction<Optional<Error>> predicate,
-                             final boolean required,
-                             final boolean nullable,
-                             final boolean elemNullable
-                            )
-  {
     super(required,
           nullable
          );
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

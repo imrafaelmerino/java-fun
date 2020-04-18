@@ -40,54 +40,6 @@ public final  class JsArrayOfIntegralDeserializer extends JsArrayDeserializer
       }
     }
 
-    public JsValue arrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                             final Function<BigInteger, Optional<Error>> fn
-                                            ) throws DeserializerException
-    {
-      try
-      {
-        if (ifIsEmptyArray(reader)) return EMPTY;
-
-        JsArray buffer = appendNullOrValue(reader,
-                                           fn,
-                                           EMPTY
-                                          );
-
-        while (reader.getNextToken() == ',')
-        {
-            reader.getNextToken();
-            buffer = appendNullOrValue(reader,
-                                       fn,
-                                       buffer
-                                      );
-
-        }
-        reader.checkArrayEnd();
-        return buffer;
-      }
-      catch (IOException e)
-      {
-        throw new DeserializerException(e);
-
-      }
-    }
-
-    public JsValue nullOrArrayWithNullEachSuchThat(final JsonReader<?> reader,
-                                                   final Function<BigInteger, Optional<Error>> fn
-                                                  ) throws DeserializerException
-    {
-      try
-      {
-        return reader.wasNull() ? JsNull.NULL : arrayWithNullEachSuchThat(reader,
-                                                                              fn
-                                                                             );
-      }
-      catch (ParsingException e)
-      {
-        throw new DeserializerException(e);
-
-      }
-    }
 
     public JsArray arrayEachSuchThat(final JsonReader<?>reader,
                                      final Function<BigInteger, Optional<Error>> fn

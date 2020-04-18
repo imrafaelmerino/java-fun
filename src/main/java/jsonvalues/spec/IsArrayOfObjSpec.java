@@ -12,18 +12,15 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
 
   final boolean nullable;
   final boolean required;
-  final boolean elemNullable;
   final JsObjSpec spec;
 
   IsArrayOfObjSpec(final boolean nullable,
                    final boolean required,
-                   final boolean elemNullable,
                    final JsObjSpec jsObjSpec
                   )
   {
     this.nullable = nullable;
     this.required = required;
-    this.elemNullable = elemNullable;
     this.spec = jsObjSpec;
 
   }
@@ -59,14 +56,7 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
     final JsPath currentPath = path.inc();
     for (JsValue value : array)
     {
-      if (value.isNull() && !elemNullable)
-      {
-        result.add(JsErrorPair.of(currentPath,
-                                  new Error(value,
-                                            NULL
-                                  )
-                                 ));
-      } else if (!value.isObj())
+     if (!value.isObj())
       {
         result.add(JsErrorPair.of(currentPath,
                                   new Error(value,

@@ -8,10 +8,13 @@ import java.util.Optional;
 import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
 
 class IsArrayOfArray extends AbstractPredicate implements JsArrayPredicate
+
 {
-   IsArrayOfArray(final boolean required,
-                        final boolean nullable
-                       )
+
+
+  IsArrayOfArray(final boolean required,
+                 final boolean nullable
+                )
   {
     super(required, nullable);
   }

@@ -1426,7 +1426,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue>
     {
         String result = str;
         if (result == null)
-            str = result = INSTANCE.serialize(this);
+            str = result = new String(INSTANCE.serialize(this));
 
         return result;
     }

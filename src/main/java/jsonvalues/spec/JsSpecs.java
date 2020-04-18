@@ -4,6 +4,7 @@ import jsonvalues.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
@@ -16,134 +17,177 @@ import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
 public class JsSpecs
 {
 
-
+  /**
+   A spec that is conformed by any non nullable value that conforms the given spec
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec spec(final JsObjSpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 false,
                 true
                );
   }
-
+  /**
+   A spec that is conformed  any value that conforms the given spec or null
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec nullableSpec(final JsObjSpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 true,
-                false
+                true
                );
   }
 
+  /**
+   A spec that is conformed by any optional value that conforms the given spec
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec optSpec(final JsObjSpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 false,
                 false
                );
   }
 
+  /**
+   A spec that is conformed by any optional value that conforms the given spec or is null
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec optNullableSpec(final JsObjSpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 true,
                 false
                );
   }
 
-
-  public static JsSpec spec(final JsArraySpec spec
-                           )
+  /**
+   A required and non nullable json array spec
+   @param spec the given spec
+   @return a spec
+   */
+  public static JsSpec spec(final JsArraySpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 false,
                 true
                );
   }
 
+  /**
+   An optional and non nullable json array spec
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec optSpec(final JsArraySpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 false,
                 false
                );
   }
 
+  /**
+   A required and nullable json array spec
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec nullableSpec(final JsArraySpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 true,
                 true
                );
   }
 
+  /**
+   An optional and nullable json array spec
+   @param spec the given spec
+   @return a spec
+   */
   public static JsSpec optNullableSpec(final JsArraySpec spec)
   {
-    return spec(spec,
+    return spec(Objects.requireNonNull(spec),
                 true,
                 false
                );
   }
 
-
+  /**
+   A required and none nullable spec that specifies an array of objects that conform the given spec
+   @param spec the given spec that every object in the array has to conform
+   @return a spec
+   */
   public static JsSpec arrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 true,
-                                false,
                                 requireNonNull(spec)
     );
   }
-
+  /**
+   A required and nullable spec that specifies an array of objects that conform the given spec
+   @param spec the given spec that every object in the array has to conform
+   @return a spec
+   */
   public static JsSpec nullableArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(true,
                                 true,
-                                false,
                                 requireNonNull(spec)
     );
   }
-
+  /**
+   An optional and  none nullable spec that specifies an array of objects that conform the given spec
+   @param spec the given spec that every object in the array has to conform
+   @return a spec
+   */
   public static JsSpec optArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 false,
-                                false,
                                 requireNonNull(spec)
     );
   }
-
+  /**
+   An optional and nullable spec that specifies an array of objects that conform the given spec
+   @param spec the given spec that every object in the array has to conform
+   @return a spec
+   */
   public static JsSpec optNullableArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(true,
                                 false,
-                                false,
                                 requireNonNull(spec)
     );
   }
 
-
-  public static JsSpec arrayOf(final JsObjSpec spec,
-                               final boolean nullable,
-                               final boolean required,
-                               final boolean elemNullable
-                              )
-  {
-    return new IsArrayOfObjSpec(nullable,
-                                required,
-                                elemNullable,
-                                requireNonNull(spec)
-    );
-  }
-
-
+  /**
+   Spec that is conforms by any value of a Json
+   */
   public static JsSpec any = new IsValue(true);
 
+  /**
+   Spec that is conforms by any value that it's evaluated to true on the given predicate
+   @param predicate the given predicate
+   @return  a spec
+   */
   public static JsSpec any(final Predicate<JsValue> predicate)
   {
     return any(predicate,
                true
               );
   }
-
+  /**
+   Spec that is conforms by any value that it's evaluated to true on the given predicate
+   */
   public static JsSpec optAny = new IsValue(false);
 
   public static JsSpec optAny(final Predicate<JsValue> predicate)
@@ -702,7 +746,7 @@ public class JsSpecs
 
   public static JsSpec arrayOfStr(final Predicate<String> predicate)
   {
-    return arrayOfStr(requireNonNull(predicate),
+    return arrayOfString(requireNonNull(predicate),
                          true,
                          false
                         );
@@ -710,7 +754,7 @@ public class JsSpecs
 
   public static JsSpec nullableArrayOfStr(final Predicate<String> predicate)
   {
-    return arrayOfStr(requireNonNull(predicate),
+    return arrayOfString(requireNonNull(predicate),
                          true,
                          true
                         );
@@ -718,7 +762,7 @@ public class JsSpecs
 
   public static JsSpec optArrayOfStr(final Predicate<String> predicate)
   {
-    return arrayOfStr(requireNonNull(predicate),
+    return arrayOfString(requireNonNull(predicate),
                          false,
                          false
                         );
@@ -726,7 +770,7 @@ public class JsSpecs
 
   public static JsSpec optNullableArrayOfStr(final Predicate<String> predicate)
   {
-    return arrayOfStr(requireNonNull(predicate),
+    return arrayOfString(requireNonNull(predicate),
                          false,
                          true
                         );
@@ -860,15 +904,6 @@ public class JsSpecs
                               );
   }
 
-  public static JsSpec optArrayOfLongSuchThat(final Predicate<JsArray> predicate)
-  {
-
-    return arrayOfLongSuchThat(predicate,
-                               false,
-                               false
-                              );
-  }
-
   public static JsSpec optNullableArrayOfLongSuchThat(final Predicate<JsArray> predicate)
   {
 
@@ -878,15 +913,28 @@ public class JsSpecs
                               );
   }
 
+  public static JsSpec optArrayOfLongSuchThat(final Predicate<JsArray> predicate)
+  {
+
+    return arrayOfLongSuchThat(predicate,
+                               false,
+                               false
+                              );
+  }
+
+
+
+
+
 
   public static JsSpec arrayOfInt(final IntPredicate predicate)
-{
+  {
 
-  return arrayOfInt(requireNonNull(predicate),
-                    true,
-                    false
-                   );
-}
+    return arrayOfInt(requireNonNull(predicate),
+                      true,
+                      false
+                     );
+  }
 
   public static JsSpec optArrayOfInt(final IntPredicate predicate)
   {
@@ -896,7 +944,6 @@ public class JsSpecs
                       false
                      );
   }
-
   public static JsSpec nullableArrayOfInt(final IntPredicate predicate)
   {
 
@@ -915,23 +962,28 @@ public class JsSpecs
                      );
   }
 
-
-
   public static JsSpec arrayOfArray = new IsArrayOfArray(true,
                                                          false
   );
 
+
+
   public static JsSpec nullableArrayOfArray = new IsArrayOfArray(true,
-                                                         true
+                                                                 true
   );
+
+
 
   public static JsSpec optArrayOfArray = new IsArrayOfArray(false,
-                                                         false
+                                                            false
   );
 
+
+
   public static JsSpec optNullableArrayOfArray = new IsArrayOfArray(false,
-                                                            true
+                                                                    true
   );
+
 
   public static JsSpec arrayOfArray(final Predicate<JsArray> predicate)
   {
@@ -941,30 +993,22 @@ public class JsSpecs
                        );
   }
 
-  public static JsSpec nullableArrayOfArray(final Predicate<JsArray> predicate)
+  private static JsSpec arrayOfArray(final Predicate<JsArray> predicate,
+                                    final boolean required,
+                                    final boolean nullable
+                                   )
   {
-    return arrayOfArray(predicate,
-                        true,
-                        true
-                       );
+    return new IsArrayOfTestedArray(s ->
+                                    {
+                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
+                                      return Optional.of(new Error(s,
+                                                                   ARRAY_CONDITION
+                                      ));
+                                    },
+                                    required,
+                                    nullable
+    );
   }
-
-  public static JsSpec optNullableArrayOfArray(final Predicate<JsArray> predicate)
-  {
-    return arrayOfArray(predicate,
-                        false,
-                        true
-                       );
-  }
-
-  public static JsSpec optArrayOfArray(final Predicate<JsArray> predicate)
-  {
-    return arrayOfArray(predicate,
-                        false,
-                        false
-                       );
-  }
-
 
   public static JsSpec arrayOfIntSuchThat(final Predicate<JsArray> predicate)
   {
@@ -975,33 +1019,7 @@ public class JsSpecs
                              );
   }
 
-  public static JsSpec nullableArrayOfIntSuchThat(final Predicate<JsArray> predicate)
-  {
-
-    return arrayOfIntSuchThat(requireNonNull(predicate),
-                              true,
-                              true
-                             );
-  }
-  public static JsSpec optNullableArrayOfIntSuchThat(final Predicate<JsArray> predicate)
-  {
-
-    return arrayOfIntSuchThat(requireNonNull(predicate),
-                              false,
-                              true
-                             );
-  }
-
-  public static JsSpec optArrayOfIntSuchThat(final Predicate<JsArray> predicate)
-  {
-
-    return arrayOfIntSuchThat(requireNonNull(predicate),
-                              false,
-                              false
-                             );
-  }
-
-  private static JsSpec arrayOfIntSuchThat(final Predicate<JsArray> predicate,
+  public static JsSpec arrayOfIntSuchThat(final Predicate<JsArray> predicate,
                                           final boolean required,
                                           final boolean nullable
                                          )
@@ -1026,8 +1044,7 @@ public class JsSpecs
                       false
                      );
   }
-
-  public static JsSpec optArrayOfDec(final Predicate<BigDecimal> predicate)
+  public static JsSpec optArrayOfNullableDec(final Predicate<BigDecimal> predicate)
   {
 
     return arrayOfDec(requireNonNull(predicate),
@@ -1035,8 +1052,7 @@ public class JsSpecs
                       false
                      );
   }
-
-  public static JsSpec nullableAptArrayOfDec(final Predicate<BigDecimal> predicate)
+  public static JsSpec nullableArrayOfDec(final Predicate<BigDecimal> predicate)
   {
 
     return arrayOfDec(requireNonNull(predicate),
@@ -1045,7 +1061,8 @@ public class JsSpecs
                      );
   }
 
-  public static JsSpec optNullableAptArrayOfDec(final Predicate<BigDecimal> predicate)
+
+  public static JsSpec optNullableArrayOfDec(final Predicate<BigDecimal> predicate)
   {
 
     return arrayOfDec(requireNonNull(predicate),
@@ -1053,8 +1070,7 @@ public class JsSpecs
                       true
                      );
   }
-
-  private static JsSpec arrayOfDec(final Predicate<BigDecimal> predicate,
+  public static JsSpec arrayOfDec(final Predicate<BigDecimal> predicate,
                                   final boolean required,
                                   final boolean nullable
                                  )
@@ -1079,17 +1095,6 @@ public class JsSpecs
                               false
                              );
   }
-
-
-  public static JsSpec nullableArrayOfDecSuchThat(final Predicate<JsArray> predicate)
-  {
-
-    return arrayOfDecSuchThat(requireNonNull(predicate),
-                              true,
-                              true
-                             );
-  }
-
   public static JsSpec optNullableArrayOfDecSuchThat(final Predicate<JsArray> predicate)
   {
 
@@ -1098,7 +1103,6 @@ public class JsSpecs
                               true
                              );
   }
-
   public static JsSpec optArrayOfDecSuchThat(final Predicate<JsArray> predicate)
   {
 
@@ -1107,8 +1111,16 @@ public class JsSpecs
                               false
                              );
   }
+  public static JsSpec optArrayOfNullableDecSuchThat(final Predicate<JsArray> predicate)
+  {
 
-  private static JsSpec arrayOfDecSuchThat(final Predicate<JsArray> predicate,
+    return arrayOfDecSuchThat(requireNonNull(predicate),
+                              false,
+                              false
+                             );
+  }
+
+  public static JsSpec arrayOfDecSuchThat(final Predicate<JsArray> predicate,
                                           final boolean required,
                                           final boolean nullable
                                          )
@@ -1126,13 +1138,29 @@ public class JsSpecs
   }
 
   public static JsSpec arrayOfIntegral(final Predicate<BigInteger> predicate)
-{
-  return arrayOfIntegral(requireNonNull(predicate),
-                         true,
-                         false
-                        );
-}
+  {
+    return arrayOfIntegral(requireNonNull(predicate),
+                           true,
+                           false
+                          );
+  }
 
+  public static JsSpec arrayOfIntegral(final Predicate<BigInteger> predicate,
+                                       final boolean required,
+                                       final boolean nullable
+                                      )
+  {
+    return new IsArrayOfTestedIntegral(s ->
+                                       {
+                                         if (requireNonNull(predicate).test(s)) return Optional.empty();
+                                         return Optional.of(new Error(JsBigInt.of(s),
+                                                                      ERROR_CODE.INTEGRAL_CONDITION
+                                         ));
+                                       },
+                                       required,
+                                       nullable
+    );
+  }
   public static JsSpec nullableArrayOfIntegral(final Predicate<BigInteger> predicate)
   {
     return arrayOfIntegral(requireNonNull(predicate),
@@ -1155,23 +1183,6 @@ public class JsSpecs
                            false,
                            true
                           );
-  }
-
-  private static JsSpec arrayOfIntegral(final Predicate<BigInteger> predicate,
-                                       final boolean required,
-                                       final boolean nullable
-                                      )
-  {
-    return new IsArrayOfTestedIntegral(s ->
-                                       {
-                                         if (requireNonNull(predicate).test(s)) return Optional.empty();
-                                         return Optional.of(new Error(JsBigInt.of(s),
-                                                                      ERROR_CODE.INTEGRAL_CONDITION
-                                         ));
-                                       },
-                                       required,
-                                       nullable
-    );
   }
 
   public static JsSpec arrayOfIntegralSuchThat(final Predicate<JsArray> predicate)
@@ -1236,6 +1247,15 @@ public class JsSpecs
                         );
   }
 
+  public static JsSpec arrayOfNullableNumber(final Predicate<JsNumber> predicate)
+  {
+
+    return arrayOfNumber(requireNonNull(predicate),
+                         true,
+                         false
+                        );
+  }
+
   public static JsSpec optArrayOfNumber(final Predicate<JsNumber> predicate)
   {
 
@@ -1245,7 +1265,25 @@ public class JsSpecs
                         );
   }
 
+  public static JsSpec optArrayOfNullableNumber(final Predicate<JsNumber> predicate)
+  {
+
+    return arrayOfNumber(requireNonNull(predicate),
+                         false,
+                         false
+                        );
+  }
+
   public static JsSpec nullableArrayOfNumber(final Predicate<JsNumber> predicate)
+  {
+
+    return arrayOfNumber(requireNonNull(predicate),
+                         true,
+                         true
+                        );
+  }
+
+  public static JsSpec nullableArrayOfNullableNumber(final Predicate<JsNumber> predicate)
   {
 
     return arrayOfNumber(requireNonNull(predicate),
@@ -1264,15 +1302,15 @@ public class JsSpecs
   }
 
 
-
-  public static JsSpec arrayOfNumberSuchThat(final Predicate<JsArray> predicate)
+  public static JsSpec optNullableArrayOfNullableNumber(final Predicate<JsNumber> predicate)
   {
 
-    return arrayOfNumberSuchThat(requireNonNull(predicate),
-                                 true,
-                                 false
-                                );
+    return arrayOfNumber(requireNonNull(predicate),
+                         false,
+                         true
+                        );
   }
+
 
   public static JsSpec nullableArrayOfNumberSuchThat(final Predicate<JsArray> predicate)
   {
@@ -1282,7 +1320,31 @@ public class JsSpecs
                                  true
                                 );
   }
+  public static JsSpec arrayOfNumber(final Predicate<JsNumber> predicate,
+                                     final boolean required,
+                                     final boolean nullable
+                                    )
+  {
+    return new IsArrayOfTestedNumber(s ->
+                                     {
+                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
+                                       return Optional.of(new Error(s,
+                                                                    ERROR_CODE.NUMBER_CONDITION
+                                       ));
+                                     },
+                                     required,
+                                     nullable
+    );
+  }
 
+  public static JsSpec arrayOfNumberSuchThat(final Predicate<JsArray> predicate)
+  {
+
+    return arrayOfNumberSuchThat(requireNonNull(predicate),
+                                 true,
+                                 false
+                                );
+  }
   public static JsSpec optArrayOfNumberSuchThat(final Predicate<JsArray> predicate)
   {
 
@@ -1291,6 +1353,7 @@ public class JsSpecs
                                  false
                                 );
   }
+
 
   public static JsSpec optNullableArrayOfNumberSuchThat(final Predicate<JsArray> predicate)
   {
@@ -1301,7 +1364,7 @@ public class JsSpecs
                                 );
   }
 
-  private static JsSpec arrayOfNumberSuchThat(final Predicate<JsArray> predicate,
+  public static JsSpec arrayOfNumberSuchThat(final Predicate<JsArray> predicate,
                                              final boolean required,
                                              final boolean nullable
                                             )
@@ -1318,7 +1381,7 @@ public class JsSpecs
     );
   }
 
-  private static JsSpec arrayOfObj(final boolean required,
+  public static JsSpec arrayOfObj(final boolean required,
                                   final boolean nullable,
                                   final Predicate<JsObj> predicate
                                  )
@@ -1344,7 +1407,23 @@ public class JsSpecs
                      );
   }
 
+  public static JsSpec arrayOfNullableObj(final Predicate<JsObj> predicate)
+  {
+    return arrayOfObj(true,
+                      false,
+                      requireNonNull(predicate)
+                     );
+  }
+
   public static JsSpec nullableArrayOfObj(final Predicate<JsObj> predicate)
+  {
+    return arrayOfObj(true,
+                      true,
+                      requireNonNull(predicate)
+                     );
+  }
+
+  public static JsSpec nullableArrayOfNullableObj(final Predicate<JsObj> predicate)
   {
     return arrayOfObj(true,
                       true,
@@ -1360,6 +1439,14 @@ public class JsSpecs
                      );
   }
 
+  public static JsSpec optNullableArrayOfNullableObj(final Predicate<JsObj> predicate)
+  {
+    return arrayOfObj(false,
+                      true,
+                      requireNonNull(predicate)
+                     );
+  }
+
   public static JsSpec optArrayOfObj(final Predicate<JsObj> predicate)
   {
     return arrayOfObj(false,
@@ -1368,7 +1455,24 @@ public class JsSpecs
                      );
   }
 
+  public static JsSpec optArrayOfNullableObj(final Predicate<JsObj> predicate)
+  {
+    return arrayOfObj(false,
+                      false,
+                      requireNonNull(predicate)
+                     );
+  }
+
   public static JsSpec arrayOfObjSuchThat(final Predicate<JsArray> predicate)
+  {
+
+    return arrayOfObjSuchThat(requireNonNull(predicate),
+                              true,
+                              false
+                             );
+  }
+
+  public static JsSpec arrayOfNullableObjSuchThat(final Predicate<JsArray> predicate)
   {
 
     return arrayOfObjSuchThat(requireNonNull(predicate),
@@ -1396,6 +1500,7 @@ public class JsSpecs
                              );
   }
 
+
   public static JsSpec optArrayOfObjSuchThat(final Predicate<JsArray> predicate)
   {
 
@@ -1404,6 +1509,7 @@ public class JsSpecs
                               false
                              );
   }
+
 
   private static JsSpec arrayOfObjSuchThat(final Predicate<JsArray> predicate,
                                           final boolean required,
@@ -1592,7 +1698,7 @@ public class JsSpecs
     );
   }
 
-  private static JsSpec arrayOfStr(final Predicate<String> predicate,
+  private static JsSpec arrayOfString(final Predicate<String> predicate,
                                       final boolean required,
                                       final boolean nullable
                                      )
@@ -1678,7 +1784,6 @@ public class JsSpecs
     );
   }
 
-
   private static JsArrayPredicate array(final boolean required,
                                         final boolean nullable,
                                         final Predicate<JsArray> predicate
@@ -1712,7 +1817,9 @@ public class JsSpecs
                                   required,
                                   nullable
     );
+
   }
+
 
   private static JsArrayPredicate arrayOfLong(final boolean required,
                                              final boolean nullable
@@ -1732,7 +1839,7 @@ public class JsSpecs
     );
   }
 
-  private static JsArrayPredicate arrayOfStr(final boolean required,
+  public static JsArrayPredicate arrayOfStr(final boolean required,
                                             final boolean nullable
                                            )
   {
@@ -1786,37 +1893,15 @@ public class JsSpecs
     );
   }
 
-  private static JsSpec arrayOfArray(final Predicate<JsArray> predicate,
-                                     final boolean required,
-                                     final boolean nullable
-                                    )
+  private static JsSpec arrayOf(final JsObjSpec spec,
+                                final boolean nullable,
+                                final boolean required
+                               )
   {
-    return new IsArrayOfTestedArray(s ->
-                                    {
-                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
-                                      return Optional.of(new Error(s,
-                                                                   ARRAY_CONDITION
-                                      ));
-                                    },
-                                    required,
-                                    nullable
+    return new IsArrayOfObjSpec(nullable,
+                                required,
+                                requireNonNull(spec)
     );
   }
 
-  private static JsSpec arrayOfNumber(final Predicate<JsNumber> predicate,
-                                      final boolean required,
-                                      final boolean nullable
-                                     )
-  {
-    return new IsArrayOfTestedNumber(s ->
-                                     {
-                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
-                                       return Optional.of(new Error(s,
-                                                                    ERROR_CODE.NUMBER_CONDITION
-                                       ));
-                                     },
-                                     required,
-                                     nullable
-    );
-  }
 }

@@ -14,27 +14,18 @@ import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 class IsArrayOfTestedDecimal extends AbstractPredicate implements JsArrayPredicate
 {
   final Function<BigDecimal,Optional<Error>> predicate;
-  final boolean elemNullable;
+
+
 
    IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
                                 final boolean required,
                                 final boolean nullable
                                )
   {
-   this(predicate,required,nullable,false);
-  }
-
-   IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
-                                final boolean required,
-                                final boolean nullable,
-                                final boolean elemNullable
-                               )
-  {
     super(required,
           nullable
          );
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

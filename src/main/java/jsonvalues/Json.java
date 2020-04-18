@@ -2103,7 +2103,7 @@ public interface Json<T extends Json<T>> extends JsValue
    */
   default byte[] serialize() throws SerializerException
   {
-    return INSTANCE.serialize();
+    return INSTANCE.serialize(this);
   }
 
 }

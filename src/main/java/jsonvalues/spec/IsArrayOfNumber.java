@@ -9,26 +9,15 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfNumber extends AbstractPredicate implements JsArrayPredicate
 {
-  final boolean elemNullable;
-   IsArrayOfNumber(final boolean required,
-                         final boolean nullable
-                        )
-  {
-    this(required,
-          nullable,
-         false
-         );
-  }
+
 
    IsArrayOfNumber(final boolean required,
-                         final boolean nullable,
-                         final boolean elemNullable
+                         final boolean nullable
                         )
   {
     super(required,
           nullable
          );
-    this.elemNullable = elemNullable;
   }
 
   @Override

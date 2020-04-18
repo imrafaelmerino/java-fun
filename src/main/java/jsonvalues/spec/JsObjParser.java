@@ -157,7 +157,6 @@ public class JsObjParser
                                                 DeserializersFactory.INSTANCE.ofArrayOfObjSpec(pair._1,
                                                                                                pair._2,
                                                                                                arrayOfObjSpec.nullable,
-                                                                                               arrayOfObjSpec.elemNullable,
                                                                                                arrayOfObjSpec.spec.strict
                                                                                               )
                                                ),

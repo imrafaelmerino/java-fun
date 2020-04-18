@@ -6,27 +6,16 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfDecimal extends AbstractPredicate implements JsArrayPredicate
 {
-  final boolean elemNullable;
+
+
+
    IsArrayOfDecimal(final boolean required,
                           final boolean nullable
-                         )
-  {
-    this(required,
-          nullable,
-         false
-         );
-  }
-
-
-   IsArrayOfDecimal(final boolean required,
-                          final boolean nullable,
-                          final boolean elemNullable
                          )
   {
     super(required,
           nullable
          );
-    this.elemNullable = elemNullable;
   }
 
   @Override

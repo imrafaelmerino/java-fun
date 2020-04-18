@@ -11,25 +11,13 @@ class IsArrayOfIntegralSuchThat extends AbstractPredicate implements JsArrayPred
 
   private IsArrayOfIntegral isArrayOfIntegral;
   final Function<JsArray, Optional<Error>> predicate;
-  final boolean elemNullable;
+
+
 
 
    IsArrayOfIntegralSuchThat(final Function<JsArray, Optional<Error>> predicate,
                                    final boolean required,
                                    final boolean nullable
-                                  )
-  {
-    this(predicate,
-         required,
-         nullable,
-         false
-        );
-  }
-
-   IsArrayOfIntegralSuchThat(final Function<JsArray, Optional<Error>> predicate,
-                                   final boolean required,
-                                   final boolean nullable,
-                                   final boolean elemNullable
                                   )
   {
     super(required,
@@ -38,7 +26,6 @@ class IsArrayOfIntegralSuchThat extends AbstractPredicate implements JsArrayPred
     this.isArrayOfIntegral = new IsArrayOfIntegral(required,
                                                    nullable);
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

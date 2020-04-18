@@ -6,7 +6,6 @@ import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
 import io.vavr.collection.Vector;
 import jsonvalues.JsObj;
-import jsonvalues.JsPath;
 
 public final  class JsObjSpecWithRequiredKeysDeserializer extends JsObjSpecDeserializer
 {

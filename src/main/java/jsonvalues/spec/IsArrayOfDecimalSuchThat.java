@@ -10,22 +10,12 @@ class IsArrayOfDecimalSuchThat extends AbstractPredicate implements JsArrayPredi
 
   private IsArrayOfDecimal isArrayOfDecimal;
   final Function<JsArray,Optional<Error>> predicate;
-  final boolean elemNullable;
+
+
 
    IsArrayOfDecimalSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                   final boolean required,
                                   final boolean nullable
-                                 )
-  {
-    this(predicate,required,
-          nullable,false
-         );
-  }
-
-   IsArrayOfDecimalSuchThat(final Function<JsArray,Optional<Error>> predicate,
-                                  final boolean required,
-                                  final boolean nullable,
-                                  final boolean elemNullable
                                  )
   {
     super(required,
@@ -33,7 +23,6 @@ class IsArrayOfDecimalSuchThat extends AbstractPredicate implements JsArrayPredi
          );
     this.isArrayOfDecimal = new IsArrayOfDecimal(required,nullable);
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

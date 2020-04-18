@@ -9,20 +9,12 @@ import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
 class IsArrayOfTestedArray extends AbstractPredicate implements JsArrayPredicate
 {
   final Function<JsArray,Optional<Error>> predicate;
-  final boolean elemNullable;
+
+
 
    IsArrayOfTestedArray(final Function<JsArray,Optional<Error>> predicate,
                               final boolean required,
                               final boolean nullable
-                             )
-  {
-   this(predicate,required,nullable,false);
-  }
-
-   IsArrayOfTestedArray(final Function<JsArray,Optional<Error>> predicate,
-                              final boolean required,
-                              final boolean nullable,
-                              final boolean elemNullable
                              )
   {
     super(required,
@@ -30,7 +22,6 @@ class IsArrayOfTestedArray extends AbstractPredicate implements JsArrayPredicate
          );
 
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
   @Override
   public Optional<Error> test(final JsValue value)

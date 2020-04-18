@@ -10,7 +10,7 @@
         <ECLIPSE-COLLECTIONS.VERSION>10.0.0</ECLIPSE-COLLECTIONS.VERSION>
         <PCOLLECTIONS.VERSION>3.1.0</PCOLLECTIONS.VERSION>
         <VAVR.VERSION>0.9.3</VAVR.VERSION>
-        <JSON-VALUES.VERSION>5.0.0</JSON-VALUES.VERSION>
+        <JSON-VALUES.VERSION>6.0.0-RC3</JSON-VALUES.VERSION>
         <CLOJURE.VERSION>1.10.1</CLOJURE.VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <JMH-VERSION>1.21</JMH-VERSION>
@@ -22,6 +22,21 @@
         <JACKSON-VERSION>2.10.2</JACKSON-VERSION>
     </properties>
     <dependencies>
+      <dependency>
+        <groupId>org.leadpony.justify</groupId>
+        <artifactId>justify</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>1.1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.java-json-tools</groupId>
+        <artifactId>json-schema-validator</artifactId>
+        <version>2.2.11</version>
+      </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
@@ -128,3 +143,4 @@
         </plugins>
     </build>
 </project>
+

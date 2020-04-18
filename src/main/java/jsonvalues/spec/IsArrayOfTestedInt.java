@@ -2,42 +2,26 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-
 import java.util.Optional;
 import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
 
-import static jsonvalues.spec.ERROR_CODE.INT_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
 
 class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
 {
   final IntFunction<Optional<Error>> predicate;
-  final boolean elemNullable;
 
-   IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
-                            final boolean required,
-                            final boolean nullable
-                           )
-  {
-    this(predicate,
-         required,
-         nullable,
-         false
-        );
-  }
 
-   IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
-                            final boolean required,
-                            final boolean nullable,
-                            final boolean elemNullable
-                           )
+
+  IsArrayOfTestedInt(final IntFunction<Optional<Error>> predicate,
+                     final boolean required,
+                     final boolean nullable
+                    )
   {
     super(required,
           nullable
          );
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override
@@ -48,7 +32,8 @@ class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
                                            {
                                              if (v.isInt()) return predicate.apply(v.toJsInt().value);
                                              else return Optional.of(new Error(v,
-                                                                               INT_EXPECTED)
+                                                                               INT_EXPECTED
+                                                                     )
                                                                     );
                                            },
                                            required,

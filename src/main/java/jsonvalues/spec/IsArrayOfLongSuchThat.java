@@ -10,22 +10,11 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
 
   private IsArrayOfLong isArrayOfLong;
   final Function<JsArray,Optional<Error>> predicate;
-  final boolean elemNullable;
+
 
    IsArrayOfLongSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                final boolean required,
                                final boolean nullable
-                              )
-  {
-    this(predicate,required,
-          nullable,false
-         );
-
-  }
-   IsArrayOfLongSuchThat(final Function<JsArray,Optional<Error>> predicate,
-                               final boolean required,
-                               final boolean nullable,
-                               final boolean elemNullable
                               )
   {
     super(required,
@@ -33,7 +22,6 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
          );
     this.isArrayOfLong = new IsArrayOfLong(required,nullable);
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
   @Override
   public Optional<Error> test(final JsValue value)

@@ -5,33 +5,21 @@ import jsonvalues.JsValue;
 
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static jsonvalues.spec.ERROR_CODE.STRING_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
 
 class IsArrayOfTestedStr extends AbstractPredicate implements JsArrayPredicate
 {
-  final Function<String,Optional<Error>> predicate;
-  final boolean elemNullable;
+  final Function<String, Optional<Error>> predicate;
 
-   IsArrayOfTestedStr(final Function<String,Optional<Error>> predicate,
-                            final boolean required,
-                            final boolean nullable
-                           )
+  IsArrayOfTestedStr(final Function<String, Optional<Error>> predicate,
+                     final boolean required,
+                     final boolean nullable
+                    )
   {
-    this(predicate,required, nullable,false);
-  }
-
-   IsArrayOfTestedStr(final Function<String,Optional<Error>> predicate,
-                            final boolean required,
-                            final boolean nullable,
-                            final boolean elemNullable
-                           )
-  {
-    super(required, nullable );
+    super(required,
+          nullable
+         );
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override
@@ -41,7 +29,8 @@ class IsArrayOfTestedStr extends AbstractPredicate implements JsArrayPredicate
                                            {
                                              if (v.isStr()) return predicate.apply(v.toJsStr().value);
                                              else return Optional.of(new Error(v,
-                                                                               STRING_EXPECTED)
+                                                                               STRING_EXPECTED
+                                                                     )
                                                                     );
                                            },
                                            required,

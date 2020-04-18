@@ -12,81 +12,114 @@ import java.util.function.Predicate;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
- class Functions
+class Functions
 {
-  static Function<JsValue, Optional<Error>> testArray(boolean required, boolean nullable)
+  static Function<JsValue, Optional<Error>> testArray(boolean required,
+                                                      boolean nullable
+                                                     )
   {
     return value ->
     {
-      final Optional<Error> error = testFlags(required,nullable).apply(value);
-      if(error.isPresent()) return error;
-      return value.isArray() ? Optional.empty() : Optional.of(new Error(value, ARRAY_EXPECTED));
+      final Optional<Error> error = testFlags(required,
+                                              nullable
+                                             ).apply(value);
+      if (error.isPresent()) return error;
+      return value.isArray() ? Optional.empty() : Optional.of(new Error(value,
+                                                                        ARRAY_EXPECTED
+      ));
     };
 
   }
 
-  static Function<JsValue,Optional<Error>> testElem(final Predicate<JsValue> elemCondition,
-                                                    final ERROR_CODE errorCode,
-                                                    final boolean required,
-                                                    final boolean nullable
-                                                   ){
+  static Function<JsValue, Optional<Error>> testElem(final Predicate<JsValue> elemCondition,
+                                                     final ERROR_CODE errorCode,
+                                                     final boolean required,
+                                                     final boolean nullable
+                                                    )
+  {
 
-    return value -> {
-      final Optional<Error> error = testFlags(required,nullable).apply(value);
-      if(error.isPresent()) return error;
-      if (!elemCondition.test(value)) return Optional.of(new Error(value, errorCode));
+    return value ->
+    {
+      final Optional<Error> error = testFlags(required,
+                                              nullable
+                                             ).apply(value);
+      if (error.isPresent()) return error;
+      if (!elemCondition.test(value)) return Optional.of(new Error(value,
+                                                                   errorCode
+      ));
       return Optional.empty();
     };
   }
 
-  static Function<JsValue,Optional<Error>> testArrayOfTestedElem(final Function<JsValue,Optional<Error>> elemCondition,
-                                                                 final boolean required,
-                                                                 final boolean nullable
-                                                                ){
+  static Function<JsValue, Optional<Error>> testArrayOfTestedElem(final Function<JsValue, Optional<Error>> elemCondition,
+                                                                  final boolean required,
+                                                                  final boolean nullable
+                                                                 )
+  {
 
     return testArrayPredicate(required,
                               nullable,
-                              array -> {
+                              array ->
+                              {
                                 for (final JsValue next : array)
                                 {
                                   final Optional<Error> result = elemCondition.apply(next);
-                                  if(result.isPresent()) return result;
+                                  if (result.isPresent()) return result;
                                 }
                                 return Optional.empty();
-                              });
+                              }
+                             );
   }
 
-  static Function<JsValue,Optional<Error>> testArraySuchThat(final Predicate<JsArray> predicate){
+  static Function<JsValue, Optional<Error>> testArraySuchThat(final Predicate<JsArray> predicate)
+  {
 
     return testArrayPredicate(true,
                               false,
-                              array -> {
+                              array ->
+                              {
                                 boolean valid = predicate.test(array);
                                 return valid ?
                                   Optional.empty() :
-                                  Optional.of(new Error(array,ARRAY_CONDITION));
-                              });
+                                  Optional.of(new Error(array,
+                                                        ARRAY_CONDITION
+                                  ));
+                              }
+                             );
 
   }
 
-  private static Function<JsValue,Optional<Error>> testArrayPredicate(final boolean required,
-                                                                      final boolean nullable,
-                                                                      final Function<JsArray,Optional<Error>> validation){
+  private static Function<JsValue, Optional<Error>> testArrayPredicate(final boolean required,
+                                                                       final boolean nullable,
+                                                                       final Function<JsArray, Optional<Error>> validation
+                                                                      )
+  {
     return value ->
     {
-      final Optional<Error> errors = testArray(required,nullable).apply(value);
-      if(errors.isPresent()) return errors;
+      final Optional<Error> errors = testArray(required,
+                                               nullable
+                                              ).apply(value);
+      if (errors.isPresent()) return errors;
       return validation.apply(value.toJsArray());
     };
   }
 
-  private static Function<JsValue,Optional<Error>> testFlags(boolean required,boolean nullable){
-    return value ->  {
-      if(value.isNothing() && required) return Optional.of(new Error(value, REQUIRED));
-      if(value.isNull() && !nullable) return Optional.of(new Error(value, NULL));
+  private static Function<JsValue, Optional<Error>> testFlags(boolean required,
+                                                              boolean nullable
+                                                             )
+  {
+    return value ->
+    {
+      if (value.isNothing() && required) return Optional.of(new Error(value,
+                                                                      REQUIRED
+      ));
+      if (value.isNull() && !nullable) return Optional.of(new Error(value,
+                                                                    NULL
+      ));
       return Optional.empty();
     };
   }
+
   static void addErrors(final Set<JsErrorPair> errors,
                         final JsValue value,
                         final JsPath currentPath,
@@ -99,31 +132,46 @@ import static jsonvalues.spec.ERROR_CODE.*;
       {
         errors.add(JsErrorPair.of(currentPath,
                                   new Error(value,
-                                            OBJ_EXPECTED))
+                                            OBJ_EXPECTED
+                                  )
+                                 )
                   );
       }
 
       final JsObjSpec objSpec = (JsObjSpec) spec;
       final JsObj obj = value.toJsObj();
-      errors.addAll(JsObjSpec.test(currentPath, objSpec, errors, obj));
+      errors.addAll(JsObjSpec.test(currentPath,
+                                   objSpec,
+                                   errors,
+                                   obj
+                                  ));
 
-    }
-    else if (spec instanceof IsObjSpec){
+    } else if (spec instanceof IsObjSpec)
+    {
       if (!value.isObj())
       {
         errors.add(JsErrorPair.of(currentPath,
                                   new Error(value,
-                                            OBJ_EXPECTED))
+                                            OBJ_EXPECTED
+                                  )
+                                 )
                   );
       }
 
       final IsObjSpec isObjSpec = (IsObjSpec) spec;
       final JsObj obj = value.toJsObj();
-      errors.addAll(JsObjSpec.test(currentPath, isObjSpec.spec, errors, obj));
-    }
-    else if (spec instanceof JsArraySpec)
+      errors.addAll(JsObjSpec.test(currentPath,
+                                   isObjSpec.spec,
+                                   errors,
+                                   obj
+                                  ));
+    } else if (spec instanceof JsArraySpec)
     {
-      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath, new Error(value, ARRAY_EXPECTED)));
+      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
+                                                      new Error(value,
+                                                                ARRAY_EXPECTED
+                                                      )
+                                                     ));
       final JsArraySpec arraySpec = (JsArraySpec) spec;
       final JsArray array = value.toJsArray();
       errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
@@ -133,11 +181,14 @@ import static jsonvalues.spec.ERROR_CODE.*;
                                     )
                    );
 
-    }
+    } else if (spec instanceof IsArraySpec)
+    {
 
-    else if (spec instanceof IsArraySpec){
-
-      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath, new Error(value, ARRAY_EXPECTED)));
+      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
+                                                      new Error(value,
+                                                                ARRAY_EXPECTED
+                                                      )
+                                                     ));
       final IsArraySpec isArraySpec = (IsArraySpec) spec;
       final JsArray array = value.toJsArray();
       errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
@@ -147,12 +198,32 @@ import static jsonvalues.spec.ERROR_CODE.*;
                                     )
                    );
     }
+    else if(spec instanceof IsArrayOfObjSpec){
+      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
+                                                      new Error(value,
+                                                                ARRAY_EXPECTED
+                                                      )
+                                                     ));
+      final IsArrayOfObjSpec isArraySpec = (IsArrayOfObjSpec) spec;
+      final JsArray array = value.toJsArray();
+      for (int i = 0; i < array.size(); i++)
+      {
+        Functions.addErrors(errors,
+                            array.get(i),
+                            currentPath.index(i),
+                            isArraySpec.spec
+                           );
+      }
 
+
+    }
     else
     {
       final JsPredicate predicate = (JsPredicate) spec;
       final Optional<Error> error = predicate.test(value);
-      error.ifPresent(e -> errors.add(JsErrorPair.of(currentPath, e)));
+      error.ifPresent(e -> errors.add(JsErrorPair.of(currentPath,
+                                                     e
+                                                    )));
     }
   }
 }

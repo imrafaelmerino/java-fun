@@ -39,7 +39,7 @@ public final  class JsArraySpecDeserializer
         reader.getNextToken();
         if (reader.last() == ']') return JsArray.empty();
         JsArray buffer = JsArray.empty();
-        Integer i = 0;
+        int i = 0;
         buffer = buffer.append(deserializers.get(i).read(reader));
         while (reader.getNextToken() == ',')
         {

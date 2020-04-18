@@ -8,23 +8,13 @@ import java.util.function.Function;
 class IsArrayOfNumberSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
   final Function<JsArray,Optional<Error>> predicate;
-final boolean elemNullable;
   private IsArrayOfNumber isArrayOfNumber;
+
+
 
    IsArrayOfNumberSuchThat(final Function<JsArray,Optional<Error>> predicate,
                                  final boolean required,
                                  final boolean nullable
-                                )
-  {
-    this(predicate,required,
-          nullable,false
-         );
-  }
-
-   IsArrayOfNumberSuchThat(final Function<JsArray,Optional<Error>> predicate,
-                                 final boolean required,
-                                 final boolean nullable,
-                                 final boolean elemNullable
                                 )
   {
     super(required,
@@ -32,7 +22,6 @@ final boolean elemNullable;
          );
     this.isArrayOfNumber=new IsArrayOfNumber(required,nullable);
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

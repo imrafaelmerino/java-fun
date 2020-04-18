@@ -10,29 +10,16 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsArrayOfTestedNumber extends AbstractPredicate implements JsArrayPredicate
 {
   final Function<JsNumber, Optional<Error>> predicate;
-  final boolean elemNullable;
 
    IsArrayOfTestedNumber(final Function<JsNumber,Optional<Error>> predicate,
                                final boolean required,
                                final boolean nullable
                               )
   {
-    this(predicate,required,
-          nullable,false
-         );
-  }
-
-   IsArrayOfTestedNumber(final Function<JsNumber,Optional<Error>> predicate,
-                               final boolean required,
-                               final boolean nullable,
-                               final boolean elemNullable
-                              )
-  {
     super(required,
           nullable
          );
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
   }
 
   @Override

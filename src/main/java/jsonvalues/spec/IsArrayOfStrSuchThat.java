@@ -11,12 +11,10 @@ class IsArrayOfStrSuchThat extends AbstractPredicate implements JsArrayPredicate
 
   final Function<JsArray, Optional<Error>> predicate;
   private IsArrayOfStr isArrayOfString;
-  final boolean elemNullable;
 
    IsArrayOfStrSuchThat(final Function<JsArray, Optional<Error>> predicate,
                               final boolean required,
-                              final boolean nullable,
-                              final boolean elemNullable
+                              final boolean nullable
                              )
   {
     super(required,
@@ -25,19 +23,6 @@ class IsArrayOfStrSuchThat extends AbstractPredicate implements JsArrayPredicate
     this.isArrayOfString = new IsArrayOfStr(required,
                                             nullable);
     this.predicate = predicate;
-    this.elemNullable = elemNullable;
-  }
-
-   IsArrayOfStrSuchThat(final Function<JsArray, Optional<Error>> predicate,
-                              final boolean required,
-                              final boolean nullable
-                             )
-  {
-    this(predicate,
-         required,
-         nullable,
-         false
-        );
   }
 
   @Override

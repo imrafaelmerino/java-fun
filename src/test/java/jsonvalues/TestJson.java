@@ -20,9 +20,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b/0");
     final Json<JsObj> b = a.append(path,
-                            "a",
-                            "b"
-                           );
+                                   "a",
+                                   "b"
+                                  );
 
     Assertions.assertEquals(JsArray.of("a",
                                        "b"
@@ -41,9 +41,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b/0");
     final Json<JsArray> b = a.append(path,
-                            "a",
-                            "b"
-                           );
+                                     "a",
+                                     "b"
+                                    );
 
     Assertions.assertEquals(JsArray.of("a",
                                        "b"
@@ -58,15 +58,15 @@ public class TestJson
   {
 
     Json<JsObj> a = JsObj.empty()
-                  .put(JsPath.path("/a/b"),
-                       1
-                      );
+                         .put(JsPath.path("/a/b"),
+                              1
+                             );
 
     final JsPath path = JsPath.path("/a/b");
     final Json<JsObj> b = a.append(path,
-                            "a",
-                            "b"
-                           );
+                                   "a",
+                                   "b"
+                                  );
 
     Assertions.assertEquals(JsArray.of("a",
                                        "b"
@@ -81,15 +81,15 @@ public class TestJson
   {
 
     Json<JsArray> a = JsArray.empty()
-                    .put(JsPath.path("/a/b"),
-                         1
-                        );
+                             .put(JsPath.path("/a/b"),
+                                  1
+                                 );
 
     final JsPath path = JsPath.path("/0/b");
     final Json<JsArray> b = a.append(path,
-                            "a",
-                            "b"
-                           );
+                                     "a",
+                                     "b"
+                                    );
 
     Assertions.assertEquals(JsArray.of("a",
                                        "b"
@@ -107,9 +107,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b/0");
     final Json<JsObj> b = a.append(path,
-                            JsStr.of("a"),
-                            JsInt.of(1)
-                           );
+                                   JsStr.of("a"),
+                                   JsInt.of(1)
+                                  );
     Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                                        JsInt.of(1)
                                       ),
@@ -126,9 +126,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b/0");
     final Json<JsArray> b = a.append(path,
-                            JsStr.of("a"),
-                            JsInt.of(1)
-                           );
+                                     JsStr.of("a"),
+                                     JsInt.of(1)
+                                    );
     Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                                        JsInt.of(1)
                                       ),
@@ -142,15 +142,15 @@ public class TestJson
   {
 
     Json<JsObj> a = JsObj.empty()
-                  .put(JsPath.path("/a/b"),
-                       1
-                      );
+                         .put(JsPath.path("/a/b"),
+                              1
+                             );
 
     final JsPath path = JsPath.path("/a/b");
     final Json<JsObj> b = a.append(path,
-                            JsStr.of("a"),
-                            JsInt.of(1)
-                           );
+                                   JsStr.of("a"),
+                                   JsInt.of(1)
+                                  );
 
     Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                                        JsInt.of(1)
@@ -166,15 +166,15 @@ public class TestJson
   {
 
     Json<JsArray> a = JsArray.empty()
-                    .put(JsPath.path("/a/b"),
-                         1
-                        );
+                             .put(JsPath.path("/a/b"),
+                                  1
+                                 );
 
     final JsPath path = JsPath.path("/0/b");
     final Json<JsArray> b = a.append(path,
-                            JsStr.of("a"),
-                            JsInt.of(1)
-                           );
+                                     JsStr.of("a"),
+                                     JsInt.of(1)
+                                    );
 
     Assertions.assertEquals(JsArray.of(JsStr.of("a"),
                                        JsInt.of(1)
@@ -192,9 +192,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b/0");
     final Json<JsObj> b = a.append(path,
-                            1,
-                            2
-                           );
+                                   1,
+                                   2
+                                  );
 
     Assertions.assertEquals(JsArray.of(1,
                                        2
@@ -212,9 +212,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b/0");
     final Json<JsArray> b = a.append(path,
-                            1,
-                            2
-                           );
+                                     1,
+                                     2
+                                    );
 
     Assertions.assertEquals(JsArray.of(1,
                                        2
@@ -229,15 +229,15 @@ public class TestJson
   {
 
     Json<JsObj> a = JsObj.empty()
-                  .put(JsPath.path("/a/b"),
-                       1
-                      );
+                         .put(JsPath.path("/a/b"),
+                              1
+                             );
 
     final JsPath path = JsPath.path("/a/b");
     final Json<JsObj> b = a.append(path,
-                            1,
-                            2
-                           );
+                                   1,
+                                   2
+                                  );
 
     Assertions.assertEquals(JsArray.of(1,
                                        2
@@ -253,15 +253,15 @@ public class TestJson
   {
 
     Json<JsArray> a = JsArray.empty()
-                    .put(JsPath.path("/a/b"),
-                         1
-                        );
+                             .put(JsPath.path("/a/b"),
+                                  1
+                                 );
 
     final JsPath path = JsPath.path("/0/b");
     final Json<JsArray> b = a.append(path,
-                            1,
-                            2
-                           );
+                                     1,
+                                     2
+                                    );
 
     Assertions.assertEquals(JsArray.of(1,
                                        2
@@ -279,9 +279,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b/0");
     final Json<JsObj> b = a.append(path,
-                            1L,
-                            2L
-                           );
+                                   1L,
+                                   2L
+                                  );
 
     Assertions.assertEquals(JsArray.of(1L,
                                        2L
@@ -299,9 +299,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b/0");
     final Json<JsArray> b = a.append(path,
-                            1L,
-                            2L
-                           );
+                                     1L,
+                                     2L
+                                    );
 
     Assertions.assertEquals(JsArray.of(1L,
                                        2L
@@ -316,15 +316,15 @@ public class TestJson
   {
 
     Json<JsObj> a = JsObj.empty()
-                  .put(JsPath.path("/a/b"),
-                       1
-                      );
+                         .put(JsPath.path("/a/b"),
+                              1
+                             );
 
     final JsPath path = JsPath.path("/a/b");
     final Json<JsObj> b = a.append(path,
-                            1L,
-                            2L
-                           );
+                                   1L,
+                                   2L
+                                  );
 
     Assertions.assertEquals(JsArray.of(1L,
                                        2L
@@ -339,15 +339,15 @@ public class TestJson
   {
 
     Json<JsArray> a = JsArray.empty()
-                    .put(JsPath.path("/a/b"),
-                         1
-                        );
+                             .put(JsPath.path("/a/b"),
+                                  1
+                                 );
 
     final JsPath path = JsPath.path("/0/b");
     final Json<JsArray> b = a.append(path,
-                            1L,
-                            2L
-                           );
+                                     1L,
+                                     2L
+                                    );
 
     Assertions.assertEquals(JsArray.of(1L,
                                        2L
@@ -366,9 +366,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b/0");
     final Json<JsObj> b = a.append(path,
-                            true,
-                            false
-                           );
+                                   true,
+                                   false
+                                  );
 
     Assertions.assertEquals(JsArray.of(true,
                                        false
@@ -386,9 +386,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b/0");
     final Json<JsArray> b = a.append(path,
-                            true,
-                            false
-                           );
+                                     true,
+                                     false
+                                    );
 
     Assertions.assertEquals(JsArray.of(true,
                                        false
@@ -403,15 +403,15 @@ public class TestJson
   {
 
     Json<JsObj> a = JsObj.empty()
-                  .put(JsPath.path("/a/b"),
-                       1
-                      );
+                         .put(JsPath.path("/a/b"),
+                              1
+                             );
 
     final JsPath path = JsPath.path("/a/b");
     final Json<JsObj> b = a.append(path,
-                            true,
-                            false
-                           );
+                                   true,
+                                   false
+                                  );
 
     Assertions.assertEquals(JsArray.of(true,
                                        false
@@ -428,14 +428,14 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b");
     Json<JsArray> a = JsArray.empty()
-                    .put(path,
-                         1
-                        );
+                             .put(path,
+                                  1
+                                 );
 
     final Json<JsArray> b = a.append(path,
-                            true,
-                            false
-                           );
+                                     true,
+                                     false
+                                    );
 
     Assertions.assertEquals(JsArray.of(true,
                                        false
@@ -453,9 +453,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b/0");
     final Json<JsObj> b = a.append(path,
-                            1.5,
-                            1.6
-                           );
+                                   1.5,
+                                   1.6
+                                  );
 
     Assertions.assertEquals(JsArray.of(1.5,
                                        1.6
@@ -473,9 +473,9 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b/0");
     final Json<JsArray> b = a.append(path,
-                            1.5,
-                            1.6
-                           );
+                                     1.5,
+                                     1.6
+                                    );
 
     Assertions.assertEquals(JsArray.of(1.5,
                                        1.6
@@ -491,14 +491,14 @@ public class TestJson
 
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> a = JsObj.empty()
-                  .put(path,
-                       1
-                      );
+                         .put(path,
+                              1
+                             );
 
     final Json<JsObj> b = a.append(path,
-                            1.5,
-                            1.6
-                           );
+                                   1.5,
+                                   1.6
+                                  );
 
     Assertions.assertEquals(JsArray.of(1.5,
                                        1.6
@@ -514,14 +514,14 @@ public class TestJson
 
     final JsPath path = JsPath.path("/0/b");
     Json<JsArray> a = JsArray.empty()
-                    .put(path,
-                         1
-                        );
+                             .put(path,
+                                  1
+                                 );
 
     final Json<JsArray> b = a.append(path,
-                            1.5,
-                            1.6
-                           );
+                                     1.5,
+                                     1.6
+                                    );
 
     Assertions.assertEquals(JsArray.of(1.5,
                                        1.6
@@ -536,15 +536,15 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendAllIfPresent(path,
-                                     () -> JsArray.of(1,
-                                                      2,
-                                                      3
-                                                     )
-                                    );
+                                            () -> JsArray.of(1,
+                                                             2,
+                                                             3
+                                                            )
+                                           );
 
     Assertions.assertEquals(JsArray.of(1,
                                        2,
@@ -554,12 +554,12 @@ public class TestJson
                            );
 
     Json<JsObj> b = JsObj.empty()
-                  .appendAllIfPresent(path,
-                                      () -> JsArray.of(1,
-                                                       2,
-                                                       3
-                                                      )
-                                     );
+                         .appendAllIfPresent(path,
+                                             () -> JsArray.of(1,
+                                                              2,
+                                                              3
+                                                             )
+                                            );
 
     Assertions.assertEquals(Optional.empty(),
                             b.getOptArray(path)
@@ -572,19 +572,19 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendIfPresent(path,
-                                  () -> JsInt.of(1)
-                                 );
+                                         () -> JsInt.of(1)
+                                        );
 
     Assertions.assertTrue(1 == a.getInt(path.index(0)));
 
     Json<JsObj> b = JsObj.empty()
-                  .appendIfPresent(path,
-                                   () -> JsInt.of(1)
-                                  );
+                         .appendIfPresent(path,
+                                          () -> JsInt.of(1)
+                                         );
 
     Assertions.assertEquals(Optional.empty(),
                             b.getOptArray(path)
@@ -598,13 +598,13 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendIfPresent(path,
-                                  "a",
-                                  "b"
-                                 );
+                                         "a",
+                                         "b"
+                                        );
 
     Assertions.assertEquals(JsArray.of("a",
                                        "b"
@@ -613,10 +613,10 @@ public class TestJson
                            );
 
     Json<JsObj> b = JsObj.empty()
-                  .appendIfPresent(path,
-                                   "a",
-                                   "b"
-                                  );
+                         .appendIfPresent(path,
+                                          "a",
+                                          "b"
+                                         );
 
     Assertions.assertEquals(Optional.empty(),
                             b.getOptArray(path)
@@ -630,13 +630,13 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendIfPresent(path,
-                                  1,
-                                  2
-                                 );
+                                         1,
+                                         2
+                                        );
 
     Assertions.assertEquals(JsArray.of(1,
                                        2
@@ -645,10 +645,10 @@ public class TestJson
                            );
 
     Json<JsObj> b = JsObj.empty()
-                  .appendIfPresent(path,
-                                   1,
-                                   2
-                                  );
+                         .appendIfPresent(path,
+                                          1,
+                                          2
+                                         );
 
     Assertions.assertEquals(Optional.empty(),
                             b.getOptArray(path)
@@ -661,13 +661,13 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendIfPresent(path,
-                                  1L,
-                                  2L
-                                 );
+                                         1L,
+                                         2L
+                                        );
 
     Assertions.assertEquals(JsArray.of(1L,
                                        2L
@@ -676,10 +676,10 @@ public class TestJson
                            );
 
     Json<JsObj> b = JsObj.empty()
-                  .appendIfPresent(path,
-                                   1L,
-                                   2L
-                                  );
+                         .appendIfPresent(path,
+                                          1L,
+                                          2L
+                                         );
 
     Assertions.assertEquals(Optional.empty(),
                             b.getOptArray(path)
@@ -692,13 +692,13 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendIfPresent(path,
-                                  1.5,
-                                  2.5
-                                 );
+                                         1.5,
+                                         2.5
+                                        );
 
     Assertions.assertEquals(JsArray.of(1.5,
                                        2.5
@@ -724,13 +724,13 @@ public class TestJson
   {
     final JsPath path = JsPath.path("/a/b");
     Json<JsObj> json = JsObj.of(JsPair.of(path,
-                                   JsArray.empty()
-                                  ));
+                                          JsArray.empty()
+                                         ));
 
     Json<JsObj> a = json.appendIfPresent(path,
-                                  true,
-                                  false
-                                 );
+                                         true,
+                                         false
+                                        );
 
     Assertions.assertEquals(JsArray.of(true,
                                        false
@@ -739,10 +739,10 @@ public class TestJson
                            );
 
     Json<JsObj> b = JsObj.empty()
-                  .appendIfPresent(path,
-                                   true,
-                                   false
-                                  );
+                         .appendIfPresent(path,
+                                          true,
+                                          false
+                                         );
 
     Assertions.assertEquals(Optional.empty(),
                             b.getOptArray(path)
@@ -756,71 +756,85 @@ public class TestJson
   {
 
     Json<JsObj> a = JsObj.of("a",
-                      JsInt.of(1),
-                      "b",
-                      JsStr.of("hi"),
-                      "c",
-                      JsBool.TRUE,
-                      "d",
-                      JsLong.of(1),
-                      "e",
-                      JsDouble.of(1.5),
-                      "f",
-                      JsBigInt.of(BigInteger.TEN),
-                      "g",
-                      JsBigDec.of(BigDecimal.TEN),
-                      "h",
-                      JsArray.of(JsStr.of("bye"),
-                                 JsInt.of(1),
-                                 JsBool.FALSE,
-                                 JsLong.of(1L)
-                                ),
-                      "i",
-                      JsObj.of("a",
-                               JsInt.of(1),
-                               "b",
-                               JsArray.of(1,
-                                          2,
-                                          3
-                                         ),
-                               "c",
-                               JsObj.empty()
-                              )
-                     );
+                             JsInt.of(1),
+                             "b",
+                             JsStr.of("hi"),
+                             "c",
+                             JsBool.TRUE,
+                             "d",
+                             JsLong.of(1),
+                             "e",
+                             JsDouble.of(1.5),
+                             "f",
+                             JsBigInt.of(BigInteger.TEN),
+                             "g",
+                             JsBigDec.of(BigDecimal.TEN),
+                             "h",
+                             JsArray.of(JsStr.of("bye"),
+                                        JsInt.of(1),
+                                        JsBool.FALSE,
+                                        JsLong.of(1L)
+                                       ),
+                             "i",
+                             JsObj.of("a",
+                                      JsInt.of(1),
+                                      "b",
+                                      JsArray.of(1,
+                                                 2,
+                                                 3
+                                                ),
+                                      "c",
+                                      JsObj.empty()
+                                     )
+                            );
 
     Assertions.assertTrue(1 == a.getInt(JsPath.path("/a")));
     Assertions.assertEquals("hi",
-                            a.getStr(JsPath.path("/b")));
+                            a.getStr(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(true,
-                            a.getBool(JsPath.path("/c")));
+                            a.getBool(JsPath.path("/c"))
+                           );
     Assertions.assertTrue(1L == a.getLong(JsPath.path("/d")));
     Assertions.assertTrue(1.5 == a.getDouble(JsPath.path("/e")));
     Assertions.assertEquals(BigInteger.TEN,
-                            a.getBigInt(JsPath.path("/f")));
+                            a.getBigInt(JsPath.path("/f"))
+                           );
     Assertions.assertEquals(BigDecimal.TEN,
-                            a.getBigDec(JsPath.path("/g")));
+                            a.getBigDec(JsPath.path("/g"))
+                           );
     Assertions.assertEquals(JsArray.of(1,
                                        2,
-                                       3),
-                            a.getArray(JsPath.path("/i/b")));
+                                       3
+                                      ),
+                            a.getArray(JsPath.path("/i/b"))
+                           );
 
     Assertions.assertEquals(JsObj.empty(),
-                            a.getObj(JsPath.path("/i/c")));
+                            a.getObj(JsPath.path("/i/c"))
+                           );
 
     Assertions.assertEquals(null,
-                            a.getInt(JsPath.path("/b")));
+                            a.getInt(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(null,
-                            a.getLong(JsPath.path("/b")));
+                            a.getLong(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(null,
-                            a.getBigDec(JsPath.path("/b")));
+                            a.getBigDec(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(null,
-                            a.getBigInt(JsPath.path("/b")));
+                            a.getBigInt(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(null,
-                            a.getBool(JsPath.path("/b")));
+                            a.getBool(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(null,
-                            a.getObj(JsPath.path("/b")));
+                            a.getObj(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(null,
-                            a.getArray(JsPath.path("/b")));
+                            a.getArray(JsPath.path("/b"))
+                           );
 
     Assertions.assertEquals(OptionalInt.empty(),
                             a.getOptInt(JsPath.path("/b"))
@@ -829,15 +843,103 @@ public class TestJson
                             a.getOptLong(JsPath.path("/b"))
                            );
     Assertions.assertEquals(Optional.empty(),
-                            a.getOptBigDec(JsPath.path("/b")));
+                            a.getOptBigDec(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(Optional.empty(),
-                            a.getOptBigInt(JsPath.path("/b")));
+                            a.getOptBigInt(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(Optional.empty(),
-                            a.getOptBool(JsPath.path("/b")));
+                            a.getOptBool(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(Optional.empty(),
-                            a.getOptObj(JsPath.path("/b")));
+                            a.getOptObj(JsPath.path("/b"))
+                           );
     Assertions.assertEquals(Optional.empty(),
-                            a.getOptArray(JsPath.path("/b")));
+                            a.getOptArray(JsPath.path("/b"))
+                           );
+
+  }
+
+  @Test
+  public void testPutIfAbsent()
+  {
+
+    Json<?> json = JsObj.empty();
+
+    JsPath path = JsPath.path("/a/b/c/0");
+
+    Json<?> a = json.putIfAbsent(path,
+                                 1
+                                );
+
+    Assertions.assertTrue(1 == a.getInt(path));
+    Assertions.assertTrue(1 == a.putIfAbsent(path,
+                                             10
+                                            )
+                                .getInt(path));
+
+    Json<?> b = json.putIfAbsent(path,
+                                 "a"
+                                );
+
+    Assertions.assertEquals("a",
+                            b.getStr(path)
+                           );
+    Assertions.assertEquals("a",
+                            b.putIfAbsent(path,
+                                          "hi"
+                                         )
+                             .getStr(path)
+                           );
+
+
+    Json<?> c = json.putIfAbsent(path,
+                                 true
+                                );
+
+    Assertions.assertEquals(true,
+                            c.getBool(path)
+                           );
+    Assertions.assertEquals(true,
+                            c.putIfAbsent(path,
+                                          false
+                                         )
+                             .getBool(path)
+                           );
+
+    Json<?> d = json.putIfAbsent(path,
+                                 1L
+                                );
+
+    Assertions.assertTrue(1L == d.getLong(path));
+    Assertions.assertTrue(1L == d.putIfAbsent(path,
+                                              10L
+                                             )
+                                 .getLong(path));
+
+    Json<?> e = json.putIfAbsent(path,
+                                 JsObj.empty()
+                                );
+
+    Assertions.assertTrue(JsObj.empty() == e.getObj(path));
+    Assertions.assertTrue(JsObj.empty() == e.putIfAbsent(path,
+                                                         JsObj.of("a",
+                                                                  JsInt.of(1)
+                                                                 )
+                                                        )
+                                            .getObj(path));
+    Json<?> f = json.putIfAbsent(path,
+                                 JsObj.empty()
+                                );
+
+    Assertions.assertTrue(JsObj.empty() == f.getObj(path));
+    Assertions.assertTrue(JsObj.empty() == f.getObj(path));
+
+    Json<?> g = json.putIfAbsent(path,
+                                 JsArray.empty()
+                                );
+
+    Assertions.assertTrue(JsArray.empty() == g.getArray(path));
 
   }
 }

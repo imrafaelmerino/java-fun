@@ -27,6 +27,7 @@ class SetTheoryOpsSpec extends BasePropSpec
   {
     check(forAll(jsGen.jsArrGen)
           { js =>
+            println(js)
             js.union(js,
                      TYPE.LIST
                      ).equals(js) && js.union(js,

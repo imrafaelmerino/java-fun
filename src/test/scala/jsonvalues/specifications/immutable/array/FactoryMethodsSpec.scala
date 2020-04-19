@@ -133,7 +133,6 @@ class FactoryMethodsSpec extends BasePropSpec
             val parsed = JsArray.parse(js.toString,
                                        ParseBuilder.builder().withElemFilter(p => !p.value.isStr)
                                        )
-            println(js)
             parsed.streamAll().filter(p => p.value.isStr).findFirst().equals(Optional.empty)
           }
           )

@@ -9,6 +9,5 @@ class JacksonFactory
   {
   }
 
-  ;
   static final JsonFactory INSTANCE = new JsonFactory();
 }

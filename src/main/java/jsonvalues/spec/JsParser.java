@@ -5,7 +5,7 @@ import io.vavr.Tuple2;
 
 class JsParser
 {
-  static Tuple2<Boolean, SpecDeserializer> getDeserializer(JsPredicate spec)
+  static Tuple2<Boolean, SpecDeserializer> getDeserializer(final JsPredicate spec)
   {
     if (spec instanceof IsValue)
     {

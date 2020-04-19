@@ -279,7 +279,7 @@ public interface Json<T extends Json<T>> extends JsValue
   /**
    Appends all the elements of the array computed by the supplier, starting from the head, to an
    array located at the given path in this json, returning the same this instance if the array is
-   not present, in which case, the supplier is not invoked.
+   not present, in which case, the supplier is not evaluated.
    @param path the given JsPath object pointing to the existing array in which all the elements will be appended
    @param supplier   the supplier of the array of elements that will be appended
    @return same this instance or a new json of the same type T
@@ -988,65 +988,8 @@ public interface Json<T extends Json<T>> extends JsValue
    @see #mapAllKeys(Function) to map keys of json objects
    @see #mapObjs(BiFunction) to map only the first level
    */
-  T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn
-              );
+  T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn);
 
-  /**
-   Tries to parse the string into an immutable json.
-   @return an immutable json
-   @param str the string that will be parsed
-   @throws MalformedJson if the string doesnt represent a json
-   */
-  static Json<?> parse(String str) throws MalformedJson
-  {
-
-    try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str)))
-    {
-      final JsonToken event = parser.nextToken();
-      if (event == START_ARRAY) return new JsArray(JsArray.parse(parser));
-      return new JsObj(JsObj.parse(parser));
-    }
-
-
-    catch (IOException e)
-    {
-      throw new MalformedJson(e.getMessage());
-    }
-  }
-
-  /**
-   Tries to parse the string into an immutable json, performing the specified transformations while the parsing.
-   @return an immutable json
-   @param str     the string that will be parsed
-   @param builder a builder with the transformations that will be applied during the parsing
-   @throws MalformedJson if it's not a valid Json
-   */
-  static Json<?> parse(String str,
-                       ParseBuilder builder
-                      ) throws MalformedJson
-  {
-    try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str)))
-    {
-      final JsonToken event = parser.nextToken();
-      if (event == START_ARRAY)
-        return new JsArray(JsArray.parse(parser,
-                                         builder.create(),
-                                         JsPath.empty()
-                                               .index(-1)
-                                        ));
-      return new JsObj(JsObj.parse(parser,
-                                   builder.create(),
-                                   JsPath.empty()
-                                  ));
-
-    }
-    catch (IOException e)
-    {
-      throw new MalformedJson(e.getMessage());
-    }
-
-
-  }
 
   /**
    prepends one or more elements, starting from the first, to the array located at the path in this
@@ -2043,7 +1986,7 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the size of the json located at the given path in this json or OptionalInt.empty() if it
+   Returns the number of all the elements of the json located at the given path in this json or OptionalInt.empty() if it
    doesn't exist or it's not a Json
    @param path the given JsPath object
    @return an OptionalInt

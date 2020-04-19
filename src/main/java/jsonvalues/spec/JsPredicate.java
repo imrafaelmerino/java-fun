@@ -8,6 +8,6 @@ import java.util.Optional;
  interface JsPredicate extends JsSpec
 {
 
-  Optional<Error> test(JsValue value);
+  Optional<Error> test(final JsValue value);
 
 }

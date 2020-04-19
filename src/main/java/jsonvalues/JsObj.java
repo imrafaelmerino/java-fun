@@ -1363,7 +1363,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
 
   }
 
-  public static JsObj ofIterable(Iterable<Map.Entry<String,  JsValue>> xs)
+  public static JsObj ofIterable(final Iterable<Map.Entry<String, JsValue>> xs)
   {
     JsObj acc = JsObj.EMPTY;
     for (Map.Entry<String, JsValue> x : requireNonNull(xs))
@@ -1434,8 +1434,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     }
   }
 
-  static HashMap<String, JsValue> parse(final JsonParser parser
-                                       ) throws IOException
+  static HashMap<String, JsValue> parse(final JsonParser parser) throws IOException
   {
     HashMap<String, JsValue> map = HashMap.empty();
     String key = parser.nextFieldName();
@@ -1837,7 +1836,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                         )
   {
     return put(JsPath.fromKey(key),
-               fn);
+               fn
+              );
   }
 
   public final JsObj put(final JsPath path,

@@ -28,8 +28,8 @@ public final class MyDslJson<Object> extends DslJson<Object>
   static
   {
     final JsValueSerializer valueSerializer = new JsValueSerializer();
-    final JsonWriter.WriteObject<JsObj> objSerializer = new JsObjSerializer<>(valueSerializer);
-    final JsonWriter.WriteObject<JsArray> arraySerializer = new JsArraySerializer<>(valueSerializer);
+    final JsonWriter.WriteObject<JsObj> objSerializer = new JsObjSerializer(valueSerializer);
+    final JsonWriter.WriteObject<JsArray> arraySerializer = new JsArraySerializer(valueSerializer);
     valueSerializer.setArraySerializer(arraySerializer);
     valueSerializer.setObjectSerializer(objSerializer);
     INSTANCE.registerWriter(JsObj.class,
@@ -150,12 +150,13 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
   }
 
-  public byte[] serialize(Json<?> json) throws SerializerException
+  public byte[] serialize(final Json<?> json) throws SerializerException
   {
     try
     {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      INSTANCE.serialize(json,outputStream
+      INSTANCE.serialize(json,
+                         outputStream
                         );
       outputStream.flush();
       return outputStream.toByteArray();
@@ -166,15 +167,15 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
   }
 
-  public void serialize(Json<?> json,
-                        OutputStream ouputstream
+  public void serialize(final Json<?> json,
+                        final OutputStream ouputstream
                        ) throws SerializerException
   {
     try
     {
       super.serialize(json,
-                requireNonNull(ouputstream)
-               );
+                      requireNonNull(ouputstream)
+                     );
     }
     catch (IOException e)
     {
@@ -183,7 +184,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
 
   }
 
-  public String toPrettyString(Json<?> json)
+  public String toPrettyString(final Json<?> json)
   {
 
     try

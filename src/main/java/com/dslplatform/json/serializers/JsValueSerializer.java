@@ -34,8 +34,7 @@ public final class JsValueSerializer
     {
       case 0:
       {
-        writer.writeAscii(Boolean.toString(value.toJsBool()
-                                             .value));
+        writer.writeAscii(Boolean.toString(value.toJsBool().value));
         break;
       }
       case 1:
@@ -45,8 +44,7 @@ public final class JsValueSerializer
       }
       case 2:
       {
-        writer.writeString(value.toJsStr()
-                             .value);
+        writer.writeString(value.toJsStr().value);
         break;
       }
       case 3:
@@ -66,32 +64,28 @@ public final class JsValueSerializer
       case 5:
       case 8:
       {
-        NumberConverter.serialize(value.toJsBigDec()
-                                    .value,
+        NumberConverter.serialize(value.toJsBigDec().value,
                                   writer
                                  );
         break;
       }
       case 6:
       {
-        writer.writeAscii(value.toJsBigInt()
-                            .value
+        writer.writeAscii(value.toJsBigInt().value
                             .toString());
 
         break;
       }
       case 7:
       {
-        NumberConverter.serialize(value.toJsLong()
-                                    .value,
+        NumberConverter.serialize(value.toJsLong().value,
                                   writer
                                  );
         break;
       }
       case 9:
       {
-        NumberConverter.serialize(value.toJsInt()
-                                    .value,
+        NumberConverter.serialize(value.toJsInt().value,
                                   writer
                                  );
         break;

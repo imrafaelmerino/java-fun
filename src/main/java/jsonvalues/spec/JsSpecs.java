@@ -635,8 +635,8 @@ public class JsSpecs
                                                      false
   );
 
-  public static JsSpec nullableArrayOfInt = new IsArrayOfInt(false,
-                                                             false
+  public static JsSpec nullableArrayOfInt = new IsArrayOfInt(true,
+                                                             true
   );
 
   public static JsSpec optArrayOfInt = new IsArrayOfInt(false,

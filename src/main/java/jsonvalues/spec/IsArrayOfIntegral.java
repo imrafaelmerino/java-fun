@@ -11,9 +11,9 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
 {
 
 
-   IsArrayOfIntegral(final boolean required,
-                           final boolean nullable
-                          )
+  IsArrayOfIntegral(final boolean required,
+                    final boolean nullable
+                   )
   {
     super(required,
           nullable
@@ -21,13 +21,18 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
   }
 
 
-
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v-> {
-      if(v.isIntegral())return Optional.empty();
-      else return Optional.of(new Error(v,INTEGRAL_EXPECTED));
-    }, required, nullable).apply(value);
+    return Functions.testArrayOfTestedElem(v ->
+                                           {
+                                             if (v.isIntegral()) return Optional.empty();
+                                             else return Optional.of(new Error(v,
+                                                                               INTEGRAL_EXPECTED));
+                                           },
+                                           required,
+                                           nullable
+                                          )
+                    .apply(value);
   }
 }

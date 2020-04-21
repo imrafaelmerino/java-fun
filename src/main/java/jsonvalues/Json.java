@@ -1758,6 +1758,25 @@ public interface Json<T extends Json<T>> extends JsValue
 
 
   /**
+   Inserts at the given path in this json, if no element is present, the specified json value, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param value the specified json value
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final JsValue value
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> value
+                );
+  }
+
+
+  /**
    Inserts at the given path in this json, if some element is present, the specified integer.
    @param path the given path
    @param number the specified integer
@@ -1890,6 +1909,21 @@ public interface Json<T extends Json<T>> extends JsValue
   {
     return putIfPresent(path,
                         e -> JsBigDec.of(number)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified value.
+   @param path the given path
+   @param value the specified value
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final JsValue value
+                        )
+  {
+    return putIfPresent(path,
+                        e -> value
                        );
   }
 

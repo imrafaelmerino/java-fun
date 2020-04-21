@@ -52,7 +52,8 @@ public class IsObjSpec implements Schema<JsObj>
                                   new Error(JsNothing.NOTHING,
                                             ERROR_CODE.REQUIRED
                                   )
-                                 ));
+                                 )
+                  );
 
         return errors;
       }

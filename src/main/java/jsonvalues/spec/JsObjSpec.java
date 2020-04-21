@@ -36,13 +36,15 @@ public class JsObjSpec implements Schema<JsObj>
       final JsSpec spec = parentObjSpec.bindings.getOrElse(key,
                                                            null
                                                           );
-      if (spec == null && parentObjSpec.strict)
-      {
-        errors.add(JsErrorPair.of(currentPath,
-                                  new Error(value,
-                                            SPEC_MISSING
-                                  )
-                                 ));
+      if (spec == null) {
+        if(parentObjSpec.strict)
+        {
+          errors.add(JsErrorPair.of(currentPath,
+                                    new Error(value,
+                                              SPEC_MISSING
+                                    )
+                                   ));
+        }
       } else Functions.addErrors(errors,
                                  value,
                                  currentPath,

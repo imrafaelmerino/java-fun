@@ -24,7 +24,7 @@ class Functions
                                               nullable
                                              ).apply(value);
       if (error.isPresent()) return error;
-      return value.isArray() ? Optional.empty() : Optional.of(new Error(value,
+      return value.isNull() || value.isArray() ? Optional.empty() : Optional.of(new Error(value,
                                                                         ARRAY_EXPECTED
       ));
     };
@@ -43,10 +43,10 @@ class Functions
       final Optional<Error> error = testFlags(required,
                                               nullable
                                              ).apply(value);
-      if (error.isPresent()) return error;
+      if (error.isPresent() || value.isNull()) return error;
       if (!elemCondition.test(value)) return Optional.of(new Error(value,
-                                                                   errorCode
-      ));
+                                                                   errorCode)
+                                                        );
       return Optional.empty();
     };
   }
@@ -99,7 +99,7 @@ class Functions
       final Optional<Error> errors = testArray(required,
                                                nullable
                                               ).apply(value);
-      if (errors.isPresent()) return errors;
+      if (errors.isPresent() || value.isNull()) return errors;
       return validation.apply(value.toJsArray());
     };
   }
@@ -146,7 +146,8 @@ class Functions
                                    obj
                                   ));
 
-    } else if (spec instanceof IsObjSpec)
+    }
+    else if (spec instanceof IsObjSpec)
     {
       if (!value.isObj())
       {
@@ -165,7 +166,8 @@ class Functions
                                    errors,
                                    obj
                                   ));
-    } else if (spec instanceof JsArraySpec)
+    }
+    else if (spec instanceof JsArraySpec)
     {
       if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
                                                       new Error(value,
@@ -181,15 +183,16 @@ class Functions
                                     )
                    );
 
-    } else if (spec instanceof IsArraySpec)
+    }
+    else if (spec instanceof IsArraySpec)
     {
 
+      final IsArraySpec isArraySpec = (IsArraySpec) spec;
       if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
                                                       new Error(value,
                                                                 ARRAY_EXPECTED
                                                       )
                                                      ));
-      final IsArraySpec isArraySpec = (IsArraySpec) spec;
       final JsArray array = value.toJsArray();
       errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
                                      isArraySpec.arraySpec,
@@ -199,12 +202,14 @@ class Functions
                    );
     }
     else if(spec instanceof IsArrayOfObjSpec){
+      final IsArrayOfObjSpec isArraySpec = (IsArrayOfObjSpec) spec;
+      if(value.isNull() && isArraySpec.nullable) return;
+
       if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
                                                       new Error(value,
                                                                 ARRAY_EXPECTED
                                                       )
                                                      ));
-      final IsArrayOfObjSpec isArraySpec = (IsArrayOfObjSpec) spec;
       final JsArray array = value.toJsArray();
       for (int i = 0; i < array.size(); i++)
       {

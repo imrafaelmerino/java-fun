@@ -203,7 +203,8 @@ public class TestJsArraySpec
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsArray.of(JsObj.of("a",
-                                                                 JsNull.NULL),
+                                                                 JsNull.NULL
+                                                                ),
                                                         JsObj.empty()
                                                        )
                                             )
@@ -255,6 +256,76 @@ public class TestJsArraySpec
 
     Assertions.assertTrue(spec.test(JsObj.parse(json_str))
                               .isEmpty());
+
+
+  }
+
+  @Test
+  public void isArrayOfElementsTypeError()
+  {
+
+    Assertions.assertEquals(1,
+                            JsArraySpec.tuple(arrayOfDec)
+                                       .test(JsArray.of(JsArray.of(1,
+                                                                   2
+                                                                  )))
+                                       .size());
+
+
+    Assertions.assertEquals(1,
+                            JsArraySpec.tuple(arrayOfInt)
+                                       .test(JsArray.of(JsArray.of("a",
+                                                                   "b"
+                                                                  )))
+                                       .size());
+
+
+    Assertions.assertEquals(1,
+                            JsArraySpec.tuple(arrayOfLong)
+                                       .test(JsArray.of(JsArray.of("a",
+                                                                   "b"
+                                                                  )))
+                                       .size());
+
+
+    Assertions.assertEquals(1,
+                            JsArraySpec.tuple(arrayOfObj)
+                                       .test(JsArray.of(JsArray.of("a",
+                                                                   "b"
+                                                                  )))
+                                       .size());
+
+    Assertions.assertEquals(1,
+                            JsArraySpec.tuple(arrayOfStr)
+                                       .test(JsArray.of(JsArray.of(true,
+                                                                   false
+                                                                  )))
+                                       .size());
+
+  }
+
+  @Test
+  public void test_is_array_of_object_spec()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       str,
+                                       "b",
+                                       intNumber
+                                      );
+    JsObjSpec objSpec = JsObjSpec.strict("a",
+                                         nullableArrayOf(spec),
+                                         "b",optNullableArrayOf(spec));
+
+    Assertions.assertTrue(JsSpecs.arrayOf(spec)
+                                 .test(JsArray.of(JsObj.of("a",
+                                                           JsStr.of("hi"),
+                                                           "b",
+                                                           JsInt.of(1))))
+                                 .isEmpty());
+    Assertions.assertTrue(objSpec.test(JsObj.of("a",
+                                                JsNull.NULL)).isEmpty()
+                         );
+
 
 
   }

@@ -780,7 +780,7 @@ public class TestJsArray
 
         final JsArray arr = JsArray.parse("[1,2,3,true,false,null,[null,true,4]]",
                                           ParseBuilder.builder()
-                                                      .withElemFilter(p -> p.value.isInt())
+                                                      .withValueFilter(p -> p.value.isInt())
                                                       .withElemMap(p -> Functions.mapIfInt(i -> i + 10)
                                                                                  .apply(p.value))
                                          );
@@ -818,7 +818,7 @@ public class TestJsArray
                                 JsArray.parse(
                                 array.toString(),
                                 ParseBuilder.builder()
-                                            .withElemFilter(p -> p.value.isNotNull())
+                                            .withValueFilter(p -> p.value.isNotNull())
                                              )
 
                                );

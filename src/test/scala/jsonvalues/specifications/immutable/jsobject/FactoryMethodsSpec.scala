@@ -100,7 +100,7 @@ class FactoryMethodsSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
             val parsed = JsObj.parse(js.toString,
-                                     ParseBuilder.builder().withElemFilter(_ => false)
+                                     ParseBuilder.builder().withValueFilter(_ => false)
                                      )
             parsed.streamAll().filter(p => p.value.isNotJson).findFirst().equals(Optional.empty)
           }
@@ -113,7 +113,7 @@ class FactoryMethodsSpec extends BasePropSpec
           { js =>
             val parsed = JsObj
               .parse(js.toString,
-                     ParseBuilder.builder().withElemFilter(p => p.value.isNotNull)
+                     ParseBuilder.builder().withValueFilter(p => p.value.isNotNull)
                      )
 
             parsed.streamAll().filter(p => p.value.isNull).findFirst().equals(Optional.empty)
@@ -127,7 +127,7 @@ class FactoryMethodsSpec extends BasePropSpec
           { js =>
 
             val parsed = JsObj.parse(js.toString,
-                                     ParseBuilder.builder().withElemFilter(p => !p.value.isStr)
+                                     ParseBuilder.builder().withValueFilter(p => !p.value.isStr)
                                      )
 
             parsed.streamAll().filter(p => p.value.isStr).findFirst().equals(Optional.empty)
@@ -142,7 +142,7 @@ class FactoryMethodsSpec extends BasePropSpec
             val predicate: Predicate[JsPair] = (p: JsPair) => p.value.isNotNumber
 
             val parsed = JsObj.parse(js.toString,
-                                     ParseBuilder.builder().withElemFilter(predicate)
+                                     ParseBuilder.builder().withValueFilter(predicate)
                                      )
 
             parsed.streamAll().filter(p => p.value.isNumber).findFirst().equals(Optional.empty)

@@ -125,7 +125,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static JsSpec arrayOf(final JsObjSpec spec)
+  public static Schema<JsArray> arrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 true,
@@ -137,7 +137,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static JsSpec nullableArrayOf(final JsObjSpec spec)
+  public static Schema<JsArray> nullableArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(true,
                                 true,
@@ -149,7 +149,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static JsSpec optArrayOf(final JsObjSpec spec)
+  public static Schema<JsArray> optArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 false,

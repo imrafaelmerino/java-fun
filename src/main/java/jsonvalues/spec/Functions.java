@@ -71,24 +71,6 @@ class Functions
                              );
   }
 
-  static Function<JsValue, Optional<Error>> testArraySuchThat(final Predicate<JsArray> predicate)
-  {
-
-    return testArrayPredicate(true,
-                              false,
-                              array ->
-                              {
-                                boolean valid = predicate.test(array);
-                                return valid ?
-                                  Optional.empty() :
-                                  Optional.of(new Error(array,
-                                                        ARRAY_CONDITION
-                                  ));
-                              }
-                             );
-
-  }
-
   private static Function<JsValue, Optional<Error>> testArrayPredicate(final boolean required,
                                                                        final boolean nullable,
                                                                        final Function<JsArray, Optional<Error>> validation
@@ -261,7 +243,9 @@ class Functions
       final Optional<Error> error = predicate.test(value);
       error.ifPresent(e -> errors.add(JsErrorPair.of(currentPath,
                                                      e
-                                                    )));
+                                                    )
+                                     )
+                     );
     }
   }
 }

@@ -214,9 +214,7 @@ public class TestJsElems
                                 JsDouble.of(0.1d)
                                         .map(i -> i * 5)
                                );
-        Assertions.assertEquals(JsBool.TRUE,
-                                JsBool.FALSE.negate()
-                               );
+     
 
     }
 

@@ -90,35 +90,6 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
         return JsLong.of(requireNonNull(fn).applyAsLong(value));
     }
 
-    /**
-     adds up this long to the specified one
-     @param that the specified long
-     @return the sum of both longs
-     */
-    public JsLong plus(JsLong that)
-    {
-        return JsLong.of(value + that.value);
-    }
-
-    /**
-     subtract this long from the specified one
-     @param that the specified long
-     @return this long minus the specified one
-     */
-    public JsLong minus(JsLong that)
-    {
-        return JsLong.of(value - that.value);
-    }
-
-    /**
-     multiplies this long by the specified one
-     @param that the specified long
-     @return this long times the specified one
-     */
-    public JsLong times(JsLong that)
-    {
-        return JsLong.of(value * that.value);
-    }
 
     /**
      Tests the value of this json long on a predicate.
@@ -171,7 +142,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      @param jsBigDec the specified JsBigDec
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigDec jsBigDec)
+     boolean equals(JsBigDec jsBigDec)
     {
         return requireNonNull(jsBigDec).equals(this);
     }
@@ -181,7 +152,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      @param jsBigInt the specified JsBigInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigInt jsBigInt)
+     boolean equals(JsBigInt jsBigInt)
     {
         return requireNonNull(jsBigInt).equals(this);
     }
@@ -190,7 +161,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      @param jsInt the specified JsInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsInt jsInt)
+    boolean equals(JsInt jsInt)
     {
         return value == (long) requireNonNull(jsInt).value;
     }
@@ -200,7 +171,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      @param jsDouble the specified JsDouble
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsDouble jsDouble)
+     boolean equals(JsDouble jsDouble)
     {
         return (double) value == requireNonNull(jsDouble).value;
     }

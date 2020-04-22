@@ -137,19 +137,28 @@ class Functions
                                  )
                   );
       }
+      else
+      {
 
-      final JsObjSpec objSpec = (JsObjSpec) spec;
-      final JsObj obj = value.toJsObj();
-      errors.addAll(JsObjSpec.test(currentPath,
-                                   objSpec,
-                                   errors,
-                                   obj
-                                  ));
+        final JsObjSpec objSpec = (JsObjSpec) spec;
+        final JsObj obj = value.toJsObj();
+        errors.addAll(JsObjSpec.test(currentPath,
+                                     objSpec,
+                                     errors,
+                                     obj
+                                    ));
+      }
 
     }
     else if (spec instanceof IsObjSpec)
     {
-      if (!value.isObj())
+
+      final IsObjSpec isObjSpec = (IsObjSpec) spec;
+      final Optional<Error> error = testFlags(isObjSpec.required,
+                                              isObjSpec.nullable).apply(value);
+      if(!errors.isEmpty()) errors.add(JsErrorPair.of(currentPath,error.get()));
+      else if(value.isNull())return;
+      else if (!value.isObj() )
       {
         errors.add(JsErrorPair.of(currentPath,
                                   new Error(value,
@@ -159,65 +168,89 @@ class Functions
                   );
       }
 
-      final IsObjSpec isObjSpec = (IsObjSpec) spec;
-      final JsObj obj = value.toJsObj();
-      errors.addAll(JsObjSpec.test(currentPath,
-                                   isObjSpec.spec,
-                                   errors,
-                                   obj
-                                  ));
+      else
+      {
+        final JsObj obj = value.toJsObj();
+        errors.addAll(JsObjSpec.test(currentPath,
+                                     isObjSpec.spec,
+                                     errors,
+                                     obj
+                                    ));
+      }
     }
     else if (spec instanceof JsArraySpec)
     {
-      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
+
+      if (!value.isArray()) {errors.add(JsErrorPair.of(currentPath,
                                                       new Error(value,
                                                                 ARRAY_EXPECTED
                                                       )
-                                                     ));
-      final JsArraySpec arraySpec = (JsArraySpec) spec;
-      final JsArray array = value.toJsArray();
-      errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
-                                     arraySpec,
-                                     errors,
-                                     array
-                                    )
-                   );
+                                                     ));}
+      else
+      {
+        final JsArraySpec arraySpec = (JsArraySpec) spec;
+        final JsArray array = value.toJsArray();
+        errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
+                                       arraySpec,
+                                       errors,
+                                       array
+                                      )
+                     );
+      }
 
     }
     else if (spec instanceof IsArraySpec)
     {
 
       final IsArraySpec isArraySpec = (IsArraySpec) spec;
-      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
-                                                      new Error(value,
-                                                                ARRAY_EXPECTED
-                                                      )
-                                                     ));
-      final JsArray array = value.toJsArray();
-      errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
-                                     isArraySpec.arraySpec,
-                                     errors,
-                                     array
-                                    )
-                   );
+      final Optional<Error> error = testFlags(isArraySpec.required,
+                                              isArraySpec.nullable).apply(value);
+      if(!errors.isEmpty()) errors.add(JsErrorPair.of(currentPath,error.get()));
+      else if(value.isNull())return;
+      else if (!value.isArray())
+      {
+        errors.add(JsErrorPair.of(currentPath,
+                                  new Error(value,
+                                            ARRAY_EXPECTED
+                                  )
+                                 ));
+      }
+      else
+      {
+        final JsArray array = value.toJsArray();
+        errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
+                                       isArraySpec.arraySpec,
+                                       errors,
+                                       array
+                                      )
+                     );
+      }
     }
     else if(spec instanceof IsArrayOfObjSpec){
       final IsArrayOfObjSpec isArraySpec = (IsArrayOfObjSpec) spec;
-      if(value.isNull() && isArraySpec.nullable) return;
-
-      if (!value.isArray()) errors.add(JsErrorPair.of(currentPath,
-                                                      new Error(value,
-                                                                ARRAY_EXPECTED
-                                                      )
-                                                     ));
-      final JsArray array = value.toJsArray();
-      for (int i = 0; i < array.size(); i++)
+      final Optional<Error> error = testFlags(isArraySpec.required,
+                                              isArraySpec.nullable).apply(value);
+      if(!errors.isEmpty()) errors.add(JsErrorPair.of(currentPath,error.get()));
+      else if(value.isNull())return;
+      else if (!value.isArray())
       {
-        Functions.addErrors(errors,
-                            array.get(i),
-                            currentPath.index(i),
-                            isArraySpec.spec
-                           );
+        errors.add(JsErrorPair.of(currentPath,
+                                  new Error(value,
+                                            ARRAY_EXPECTED
+                                  )
+                                 ));
+      }
+      else
+      {
+        final JsArray array = value.toJsArray();
+        for (int i = 0; i < array.size(); i++)
+        {
+          Functions.addErrors(errors,
+                              array.get(i),
+                              currentPath.index(i),
+                              isArraySpec.spec
+                             );
+        }
       }
 
 

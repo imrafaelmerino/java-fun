@@ -89,8 +89,8 @@ public class JsObjSpec implements Schema<JsObj>
     }
   }
 
-  public JsObjSpec strict(Pair pair,
-                          Pair... others
+  public static JsObjSpec strict(final Pair pair,
+                                 final Pair... others
                          )
   {
     return new JsObjSpec(true,
@@ -99,8 +99,8 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  public JsObjSpec lenient(Pair pair,
-                           Pair... others
+  public static JsObjSpec lenient(final Pair pair,
+                                  final Pair... others
                           )
   {
     return new JsObjSpec(false,
@@ -109,9 +109,9 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(boolean strict,
-            Pair pair,
-            Pair... others
+  JsObjSpec(final boolean strict,
+            final Pair pair,
+            final Pair... others
            )
   {
     bindings = bindings.put(pair.key,
@@ -124,8 +124,8 @@ public class JsObjSpec implements Schema<JsObj>
     this.strict = strict;
   }
 
-  public static JsObjSpec strict(String key,
-                                 JsSpec spec
+  public static JsObjSpec strict(final String key,
+                                 final JsSpec spec
                                 )
   {
     return new JsObjSpec(key,
@@ -134,8 +134,8 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  public static JsObjSpec lenient(String key,
-                                  JsSpec spec
+  public static JsObjSpec lenient(final String key,
+                                  final JsSpec spec
                                  )
   {
     return new JsObjSpec(key,
@@ -144,9 +144,9 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            boolean strict
+  JsObjSpec(final String key,
+            final JsSpec spec,
+            final boolean strict
            )
   {
     bindings = bindings.put(key,
@@ -155,10 +155,10 @@ public class JsObjSpec implements Schema<JsObj>
     this.strict = strict;
   }
 
-  public static JsObjSpec strict(String key,
-                                 JsSpec spec,
-                                 String key1,
-                                 JsSpec spec1
+  public static JsObjSpec strict(final String key,
+                                 final JsSpec spec,
+                                 final String key1,
+                                 final JsSpec spec1
                                 )
   {
     return new JsObjSpec(key,
@@ -169,10 +169,10 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  public static JsObjSpec lenient(String key,
-                                  JsSpec spec,
-                                  String key1,
-                                  JsSpec spec1
+  public static JsObjSpec lenient(final String key,
+                                  final JsSpec spec,
+                                  final String key1,
+                                  final JsSpec spec1
                                  )
   {
     return new JsObjSpec(key,
@@ -183,11 +183,11 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            boolean strict
+  JsObjSpec(final String key,
+            final JsSpec spec,
+            final String key1,
+            final JsSpec spec1,
+            final boolean strict
            )
   {
     this(key,
@@ -199,12 +199,12 @@ public class JsObjSpec implements Schema<JsObj>
                            );
   }
 
-  public static JsObjSpec strict(String key,
-                                 JsSpec spec,
-                                 String key1,
-                                 JsSpec spec1,
-                                 String key2,
-                                 JsSpec spec2
+  public static JsObjSpec strict(final String key,
+                                 final JsSpec spec,
+                                 final String key1,
+                                 final JsSpec spec1,
+                                 final String key2,
+                                 final JsSpec spec2
                                 )
   {
     return new JsObjSpec(key,
@@ -217,12 +217,12 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  public static JsObjSpec lenient(String key,
-                                  JsSpec spec,
-                                  String key1,
-                                  JsSpec spec1,
-                                  String key2,
-                                  JsSpec spec2
+  public static JsObjSpec lenient(final String key,
+                                  final JsSpec spec,
+                                  final String key1,
+                                  final JsSpec spec1,
+                                  final String key2,
+                                  final JsSpec spec2
                                  )
   {
     return new JsObjSpec(key,
@@ -255,14 +255,14 @@ public class JsObjSpec implements Schema<JsObj>
                            );
   }
 
-  public static JsObjSpec strict(String key,
-                                 JsSpec spec,
-                                 String key1,
-                                 JsSpec spec1,
-                                 String key2,
-                                 JsSpec spec2,
-                                 String key3,
-                                 JsSpec spec3
+  public static JsObjSpec strict(final String key,
+                                 final JsSpec spec,
+                                 final String key1,
+                                 final  JsSpec spec1,
+                                 final String key2,
+                                 final JsSpec spec2,
+                                 final String key3,
+                                 final JsSpec spec3
                                 )
   {
     return new JsObjSpec(key,
@@ -277,14 +277,14 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  public static JsObjSpec lenient(String key,
-                                  JsSpec spec,
-                                  String key1,
-                                  JsSpec spec1,
-                                  String key2,
-                                  JsSpec spec2,
-                                  String key3,
-                                  JsSpec spec3
+  public static JsObjSpec lenient(final String key,
+                                  final JsSpec spec,
+                                  final String key1,
+                                  final JsSpec spec1,
+                                  final String key2,
+                                  final JsSpec spec2,
+                                  final String key3,
+                                  final JsSpec spec3
                                  )
   {
     return new JsObjSpec(key,
@@ -299,15 +299,15 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            boolean strict
+  JsObjSpec(final String key,
+            final JsSpec spec,
+            final String key1,
+            final JsSpec spec1,
+            final String key2,
+            final JsSpec spec2,
+            final String key3,
+            final JsSpec spec3,
+            final boolean strict
            )
   {
     this(key,
@@ -323,16 +323,16 @@ public class JsObjSpec implements Schema<JsObj>
                            );
   }
 
-  public static JsObjSpec strict(String key,
-                                 JsSpec spec,
-                                 String key1,
-                                 JsSpec spec1,
-                                 String key2,
-                                 JsSpec spec2,
-                                 String key3,
-                                 JsSpec spec3,
-                                 String key4,
-                                 JsSpec spec4
+  public static JsObjSpec strict(final String key,
+                                 final JsSpec spec,
+                                 final String key1,
+                                 final JsSpec spec1,
+                                 final String key2,
+                                 final JsSpec spec2,
+                                 final String key3,
+                                 final JsSpec spec3,
+                                 final String key4,
+                                 final JsSpec spec4
                                 )
   {
     return new JsObjSpec(key,

@@ -369,6 +369,16 @@ class JsParser
           );
 
         }
+        else if (spec instanceof IsArrayOfBoolSuchThat)
+        {
+          IsArrayOfBoolSuchThat isArrayOfBool = ((IsArrayOfBoolSuchThat) spec);
+          return new Tuple2<>(isArrayOfBool.required,
+                              DeserializersFactory.INSTANCE.ofArrayOfBoolSuchThat(isArrayOfBool.predicate,
+                                                                                  isArrayOfBool.nullable
+                                                                                   )
+          );
+
+        }
 
       } else if (spec instanceof JsObjPredicate)
       {

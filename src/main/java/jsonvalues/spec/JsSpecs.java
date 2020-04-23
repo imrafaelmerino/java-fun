@@ -60,7 +60,7 @@ public class JsSpecs
    @param spec the given spec
    @return a spec
    */
-  public static JsSpec optNullableSpec(final JsObjSpec spec)
+  public static Schema<JsObj> optNullableSpec(final JsObjSpec spec)
   {
     return spec(Objects.requireNonNull(spec),
                 true,
@@ -125,7 +125,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static Schema<JsArray> arrayOf(final JsObjSpec spec)
+  public static JsSpec arrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 true,
@@ -137,7 +137,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static Schema<JsArray> nullableArrayOf(final JsObjSpec spec)
+  public static JsSpec nullableArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(true,
                                 true,
@@ -149,7 +149,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static Schema<JsArray> optArrayOf(final JsObjSpec spec)
+  public static JsSpec optArrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 false,
@@ -1669,7 +1669,7 @@ public class JsSpecs
     );
   }
 
-  private static JsSpec spec(final JsArraySpec spec,
+  private static Schema<JsArray> spec(final JsArraySpec spec,
                              final boolean nullable,
                              final boolean required
                             )
@@ -1738,7 +1738,7 @@ public class JsSpecs
     );
   }
 
-  private static JsSpec spec(final JsObjSpec spec,
+  private static Schema<JsObj> spec(final JsObjSpec spec,
                              final boolean nullable,
                              final boolean required
                             )

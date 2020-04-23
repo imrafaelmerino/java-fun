@@ -316,12 +316,7 @@ public class TestJsArraySpec
                                          nullableArrayOf(spec),
                                          "b",optNullableArrayOf(spec));
 
-    Assertions.assertTrue(JsSpecs.arrayOf(spec)
-                                 .test(JsArray.of(JsObj.of("a",
-                                                           JsStr.of("hi"),
-                                                           "b",
-                                                           JsInt.of(1))))
-                                 .isEmpty());
+
     Assertions.assertTrue(objSpec.test(JsObj.of("a",
                                                 JsNull.NULL)).isEmpty()
                          );

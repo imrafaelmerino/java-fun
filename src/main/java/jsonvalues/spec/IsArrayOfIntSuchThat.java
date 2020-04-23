@@ -28,7 +28,7 @@ class IsArrayOfIntSuchThat extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
     final Optional<Error> result = isArrayOfInt.test(value);
-    if(result.isPresent())return result;
+    if(result.isPresent()|| value.isNull())return result;
     return predicate.apply(value.toJsArray());
   }
 }

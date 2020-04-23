@@ -36,7 +36,7 @@ class IsIntSuchThat extends AbstractPredicate implements JsIntPredicate
                                                                     )
                                                            .apply(value);
 
-    if (error.isPresent()) return error;
+    if (error.isPresent() || value.isNull()) return error;
     return predicate.apply(value.toJsInt().value);
   }
 }

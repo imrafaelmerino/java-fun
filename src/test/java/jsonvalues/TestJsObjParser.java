@@ -1,14 +1,12 @@
 package jsonvalues;
 
-import jsonvalues.spec.JsArraySpec;
-import jsonvalues.spec.JsObjParser;
-import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsSpecs;
+import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Set;
 
 import static jsonvalues.spec.JsSpecs.*;
 
@@ -336,9 +334,11 @@ public class TestJsObjParser
                                             "j",
                                             optNullableObj,
                                             "k",
-                                            optNullableObj(a -> a.keySet().size() == 2),
+                                            optNullableObj(a -> a.keySet()
+                                                                 .size() == 2),
                                             "j",
-                                            optNullableArrayOfObj(a -> a.keySet().size() == 2)
+                                            optNullableArrayOfObj(a -> a.keySet()
+                                                                        .size() == 2)
                                            );
 
 
@@ -391,7 +391,8 @@ public class TestJsObjParser
   public void test_strict_mode()
   {
     final JsObjSpec spec = JsObjSpec.lenient("a",
-                                             optNullableStr);
+                                             optNullableStr
+                                            );
 
 
     final JsObj obj = JsObj.of("b",
@@ -401,8 +402,263 @@ public class TestJsObjParser
     final JsObj parsed = new JsObjParser(spec).parse(obj.toPrettyString());
 
     Assertions.assertEquals(obj,
-                            parsed);
+                            parsed
+                           );
   }
 
+
+  @Test
+  public void test_int_spec()
+  {
+
+    JsObjSpec isint = JsObjSpec.strict("a",
+                                       nullableIntNumber(i -> i > 0),
+                                       "b",
+                                       optNullableIntNumber(i -> i > 0),
+                                       "c",
+                                       intNumber(i -> i > 0),
+                                       "d",
+                                       nullableIntNumber(i -> i < 0),
+                                       "e",
+                                       optNullableIntNumber(i -> i % 2 == 1),
+                                       "f",
+                                       nullableIntNumber(i -> i % 2 == 0)
+                                      );
+
+    final JsObj a = JsObj.of("a",
+                              JsNull.NULL,
+                              "c",
+                              JsInt.of(3),
+                              "d",
+                              JsNull.NULL,
+                              "f",
+                              JsNull.NULL
+                             );
+    final JsObjParser parser = new JsObjParser(isint);
+    Assertions.assertEquals(a,
+                            parser.parse(a.toString()));
+
+    final JsObj b = JsObj.of("a",
+                              JsInt.of(1),
+                              "b",
+                              JsInt.of(2),
+                              "c",
+                              JsInt.of(3),
+                              "d",
+                              JsInt.of(-5),
+                              "e",
+                              JsInt.of(11),
+                              "f",
+                              JsInt.of(20)
+                             );
+
+
+    Assertions.assertEquals(b,
+                            parser.parse(b.toString()));
+  }
+
+
+  @Test
+  public void test_obj_spec()
+  {
+
+    JsObjSpec isint = JsObjSpec.strict("a",
+                                       nullableLongNumber(i -> i > 0),
+                                       "b",
+                                       optNullableLongNumber(i -> i > 0),
+                                       "c",
+                                       longNumber(i -> i > 0),
+                                       "d",
+                                       nullableLongNumber(i -> i < 0),
+                                       "e",
+                                       optNullableLongNumber(i -> i % 2 == 1),
+                                       "f",
+                                       nullableLongNumber(i -> i % 2 == 0)
+                                      );
+
+    final JsObj a = JsObj.of("a",
+                             JsNull.NULL,
+                             "c",
+                             JsLong.of(3L),
+                             "d",
+                             JsNull.NULL,
+                             "f",
+                             JsNull.NULL
+                            );
+    final JsObjParser parser = new JsObjParser(isint);
+    Assertions.assertEquals(a,
+                            parser.parse(a.toString()));
+
+    final JsObj b = JsObj.of("a",
+                             JsLong.of(1L),
+                             "b",
+                             JsLong.of(2L),
+                             "c",
+                             JsLong.of(3L),
+                             "d",
+                             JsLong.of(-5L),
+                             "e",
+                             JsLong.of(11L),
+                             "f",
+                             JsLong.of(20L)
+                            );
+
+
+    Assertions.assertEquals(b,
+                            parser.parse(b.toString()));
+  }
+
+  @Test
+  public void test_dec_spec()
+  {
+
+    JsObjSpec isdec = JsObjSpec.strict("a",
+                                       nullableDecimal(i -> i.longValueExact() > 0),
+                                       "b",
+                                       optNullableDecimal(i -> i.longValueExact() > 0),
+                                       "c",
+                                       decimal(i -> i.longValueExact() > 0),
+                                       "d",
+                                       nullableDecimal(i -> i.longValueExact() < 0),
+                                       "e",
+                                       optNullableDecimal(i -> i.longValueExact() % 2 == 1),
+                                       "f",
+                                       nullableDecimal(i -> i.longValueExact() % 2 == 0)
+                                      );
+
+    final JsObj a = JsObj.of("a",
+                             JsNull.NULL,
+                             "c",
+                             JsBigDec.of(new BigDecimal(3L)),
+                             "d",
+                             JsNull.NULL,
+                             "f",
+                             JsNull.NULL
+                            );
+    final JsObjParser parser = new JsObjParser(isdec);
+    Assertions.assertEquals(a,
+                            parser.parse(a.toString()));
+
+    final JsObj b = JsObj.of("a",
+                             JsBigDec.of(new BigDecimal(1L)),
+                             "b",
+                             JsBigDec.of(new BigDecimal(2L)),
+                             "c",
+                             JsBigDec.of(new BigDecimal(3L)),
+
+                             "d",
+                             JsBigDec.of(new BigDecimal(-5L)),
+
+                             "e",
+                             JsBigDec.of(new BigDecimal(1L)),
+                             "f",
+                             JsBigDec.of(new BigDecimal(20L))
+                            );
+
+
+    Assertions.assertEquals(b,
+                            parser.parse(b.toString()));
+  }
+
+
+  @Test
+  public void test_integral_spec()
+  {
+
+    JsObjSpec isint = JsObjSpec.strict("a",
+                                       nullableIntegral(i -> i.longValueExact() > 0),
+                                       "b",
+                                       optNullableIntegral(i -> i.longValueExact() > 0),
+                                       "c",
+                                       integral(i -> i.longValueExact() > 0),
+                                       "d",
+                                       nullableIntegral(i -> i.longValueExact() < 0),
+                                       "e",
+                                       optNullableIntegral(i -> i.longValueExact() % 2 == 1),
+                                       "f",
+                                       nullableIntegral(i -> i.longValueExact() % 2 == 0)
+                                      );
+
+    final JsObj a = JsObj.of("a",
+                             JsNull.NULL,
+                             "c",
+                             JsInt.of(3),
+                             "d",
+                             JsNull.NULL,
+                             "f",
+                             JsNull.NULL
+                            );
+    final JsObjParser parser = new JsObjParser(isint);
+    Assertions.assertEquals(a,
+                            parser.parse(a.toString()));
+
+    final JsObj b = JsObj.of("a",
+                             JsInt.of(1),
+                             "b",
+                             JsInt.of(2),
+                             "c",
+                             JsInt.of(3),
+                             "d",
+                             JsInt.of(-5),
+                             "e",
+                             JsInt.of(11),
+                             "f",
+                             JsInt.of(20)
+                            );
+
+
+    Assertions.assertEquals(b,
+                            parser.parse(b.toString()));
+  }
+
+  @Test
+  public void test_string_spec()
+  {
+
+    JsObjSpec isint = JsObjSpec.strict("a",
+                                       nullableStr(i -> i.length() > 3),
+                                       "b",
+                                       optNullableStr(i -> i.length() > 3),
+                                       "c",
+                                       str(i -> i.length() > 3),
+                                       "d",
+                                       nullableStr(i -> i.length() > 2),
+                                       "e",
+                                       optNullableStr(i -> i.length() == 1),
+                                       "f",
+                                       nullableStr(i -> i.length() % 2 == 0)
+                                      );
+
+    final JsObj a = JsObj.of("a",
+                             JsNull.NULL,
+                             "c",
+                             JsStr.of("abcd"),
+                             "d",
+                             JsNull.NULL,
+                             "f",
+                             JsNull.NULL
+                            );
+    final JsObjParser parser = new JsObjParser(isint);
+    Assertions.assertEquals(a,
+                            parser.parse(a.toString()));
+
+    final JsObj b = JsObj.of("a",
+                             JsStr.of("abcd"),
+                             "b",
+                             JsStr.of("abcd"),
+                             "c",
+                             JsStr.of("abcd"),
+                             "d",
+                             JsStr.of("abcd"),
+                             "e",
+                             JsStr.of("a"),
+                             "f",
+                             JsStr.of("abcd")
+                            );
+
+
+    Assertions.assertEquals(b,
+                            parser.parse(b.toString()));
+  }
 
 }

@@ -32,7 +32,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
                                                                          )
                                                                 .apply(value);
 
-    if(error.isPresent())return error;
+    if(error.isPresent()|| value.isNull())return error;
     return predicate.apply(value.toJsStr().value);
   }
 }

@@ -34,7 +34,7 @@ class IsLongSuchThat extends AbstractPredicate implements JsLongPredicate
                                                                          )
                                                                 .apply(value);
 
-    if(error.isPresent())return error;
+    if(error.isPresent()|| value.isNull())return error;
     return predicate.apply(value.toJsLong().value);
   }
 }

@@ -33,7 +33,7 @@ class IsNumberSuchThat extends AbstractPredicate implements JsNumberPredicate
                                                                          )
                                                                 .apply(value);
 
-    if(error.isPresent())return error;
+    if(error.isPresent()|| value.isNull())return error;
     return predicate.apply(value.toJsNumber());
   }
 }

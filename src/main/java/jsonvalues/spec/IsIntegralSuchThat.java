@@ -35,7 +35,7 @@ class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicat
                                                                     )
                                                            .apply(value);
 
-    if (error.isPresent()) return error;
+    if (error.isPresent()|| value.isNull()) return error;
     return predicate.apply(value.toJsBigInt().value);
   }
 }

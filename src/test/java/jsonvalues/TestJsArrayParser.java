@@ -160,4 +160,9 @@ public class TestJsArrayParser
     Assertions.assertEquals(d, new JsObjParser(specSuchThat).parse(d.toString()));
 
   }
+
+  @Test
+  public void testArrayOf(){
+      Assertions.assertEquals(true, true);
+  }
 }

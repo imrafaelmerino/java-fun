@@ -1091,6 +1091,10 @@ public class TestJsObj
 
       Assertions.assertEquals(empty,i);
 
+      JsObj j = empty.putIfPresent("i",1.5);
+
+      Assertions.assertEquals(empty,j);
+
     }
 
   @Test

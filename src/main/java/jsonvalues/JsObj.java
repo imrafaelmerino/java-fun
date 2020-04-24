@@ -1013,7 +1013,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param el6 JsElem to be associated to the key6
    @param key7 name of a key
    @param el7 JsElem to be associated to the key7
-   @return an immutable six-element JsObj
+   @return an immutable seven-element JsObj
    @throws UserError if an elem is a mutable Json
    */
   // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -1071,7 +1071,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param el7 JsElem to be associated to the key7
    @param key8 name of a key
    @param el8 JsElem to be associated to the key8
-   @return an immutable six-element JsObj
+   @return an immutable eight-element JsObj
    @throws UserError if an elem is a mutable Json
    */
   // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -1135,7 +1135,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param el8 JsElem to be associated to the key8
    @param key9 name of a key
    @param el9 JsElem to be associated to the key9
-   @return an immutable six-element JsObj
+   @return an immutable nine-element JsObj
    @throws UserError if an elem is a mutable Json
    */
   // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -1205,7 +1205,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param el9 JsElem to be associated to the key9
    @param key10 name of a key
    @param el10 JsElem to be associated to the key10
-   @return an immutable six-element JsObj
+   @return an immutable ten-element JsObj
    @throws UserError if an elem is a mutable Json
    */
   // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -1281,7 +1281,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
    @param el10 JsElem to be associated to the key10
    @param key11 name of a key
    @param el11 JsElem to be associated to the key11
-   @return an immutable six-element JsObj
+   @return an immutable eleven-element JsObj
    @throws UserError if an elem is a mutable Json
    */
   // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
@@ -1334,6 +1334,93 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
              ).put(JsPath.empty()
                          .key(requireNonNull(key11)),
                    el11
+                  );
+  }
+
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @param key9 name of a key
+   @param el9 JsElem to be associated to the key9
+   @param key10 name of a key
+   @param el10 JsElem to be associated to the key10
+   @param key11 name of a key
+   @param el11 JsElem to be associated to the key11
+   @param key12 name of a key
+   @param el12 JsElem to be associated to the key12
+   @return an immutable twelve-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8,
+                         final String key9,
+                         final JsValue el9,
+                         final String key10,
+                         final JsValue el10,
+                         final String key11,
+                         final JsValue el11,
+                         final String key12,
+                         final JsValue el12
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7,
+              key8,
+              el8,
+              key9,
+              el9,
+              key10,
+              el10,
+              key11,
+              el11
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key12)),
+                   el12
                   );
   }
 

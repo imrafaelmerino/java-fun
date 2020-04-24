@@ -29,7 +29,11 @@ public class TestJsArrayParser
                                                str(s -> s.startsWith("1")),
                                                arrayOfIntegralSuchThat(a -> a.size() == 1),
                                                arrayOfNumberSuchThat(a -> a.size() == 2),
-                                               number(a -> a.isDecimal())
+                                               number(a -> a.isDecimal()),
+                                               arrayOfIntegral(a->a.longValueExact() > 0),
+                                               nullableArrayOfIntegral(a->a.longValueExact() > 0),
+                                               arrayOfObj,
+                                               nullableArrayOfObj
                                               );
 
 
@@ -46,12 +50,18 @@ public class TestJsArrayParser
                                JsStr.of("1aaa"),
                                JsArray.of(1),
                                JsArray.of(1.5,
-                                          2.5),
-                               JsDouble.of(1.5)
+                                          2.5
+                                         ),
+                               JsDouble.of(1.5),
+                               JsArray.of(1,2),
+                               JsNull.NULL,
+                               JsArray.of(JsObj.empty(),JsObj.empty()),
+                               JsNull.NULL
                               );
 
     Assertions.assertEquals(array,
-                            new JsArrayParser(spec).parse(array.toPrettyString()));
+                            new JsArrayParser(spec).parse(array.toPrettyString())
+                           );
   }
 
   @Test
@@ -106,63 +116,129 @@ public class TestJsArrayParser
                                       JsSpecs.arrayOf(JsObjSpec.strict("a",
                                                                        str,
                                                                        "b",
-                                                                       intNumber)));
+                                                                       intNumber
+                                                                      ))
+                                     );
 
     final JsObj a = JsObj.of("a",
-                              JsArray.of(JsObj.of("a",
-                                                  JsStr.of("a"),
-                                                  "b",
-                                                  JsInt.of(1)
-                                                 ))
-                             );
+                             JsArray.of(JsObj.of("a",
+                                                 JsStr.of("a"),
+                                                 "b",
+                                                 JsInt.of(1)
+                                                ))
+                            );
 
 
-    Assertions.assertEquals(a,new JsObjParser(spec).parse(a.toString())
-                         );
+    Assertions.assertEquals(a,
+                            new JsObjParser(spec).parse(a.toString())
+                           );
 
     JsObjSpec specNullable = JsObjSpec.strict("a",
-                                      JsSpecs.nullableArrayOf(JsObjSpec.strict("a",
-                                                                       str,
-                                                                       "b",
-                                                                       intNumber)));
+                                              JsSpecs.nullableArrayOf(JsObjSpec.strict("a",
+                                                                                       str,
+                                                                                       "b",
+                                                                                       intNumber
+                                                                                      ))
+                                             );
 
     final JsObj b = JsObj.of("a",
-                              JsNull.NULL);
-    Assertions.assertEquals(b, new JsObjParser(specNullable).parse(b
-                                                                .toString())
+                             JsNull.NULL
+                            );
+    Assertions.assertEquals(b,
+                            new JsObjParser(specNullable).parse(b
+                                                                  .toString())
                            );
 
     JsObjSpec specTested = JsObjSpec.strict("a",
-                                              JsSpecs.arrayOfObj(o->o.containsKey("a")));
+                                            JsSpecs.arrayOfObj(o -> o.containsKey("a"))
+                                           );
 
     final JsObj c = JsObj.of("a",
-                             JsArray.of(JsObj.of("a",JsBool.TRUE),JsObj.of("a",JsInt.of(1))));
-    Assertions.assertEquals(c, new JsObjParser(specTested).parse(c
-                                                                     .toString())
+                             JsArray.of(JsObj.of("a",
+                                                 JsBool.TRUE),
+                                        JsObj.of("a",
+                                                 JsInt.of(1)))
+                            );
+    Assertions.assertEquals(c,
+                            new JsObjParser(specTested).parse(c
+                                                                .toString())
                            );
 
     JsObjSpec specSuchThat = JsObjSpec.strict("a",
-                                              JsSpecs.arrayOfObjSuchThat(arr->arr.size() > 1),
-                                              "b",JsSpecs.arrayOfBoolSuchThat(arr->arr.size()>2),
-                                              "c",JsSpecs.arrayOfNumberSuchThat(arr->arr.head().equals(JsInt.of(1))),
-                                              "d",JsSpecs.arrayOfDecSuchThat(arr->arr.head().equals(JsBigDec.of(BigDecimal.TEN))),
-                                              "e",JsSpecs.arrayOfLongSuchThat(arr->arr.size()==3),
-                                              "f",JsSpecs.arrayOfIntSuchThat(arr->arr.size()==3));
+                                              arrayOfObjSuchThat(arr -> arr.size() > 1),
+                                              "b",
+                                              arrayOfBoolSuchThat(arr -> arr.size() > 2),
+                                              "c",
+                                              arrayOfNumberSuchThat(arr -> arr.head()
+                                                                              .equals(JsInt.of(1))),
+                                              "d",
+                                              arrayOfDecSuchThat(arr -> arr.head()
+                                                                           .equals(JsBigDec.of(BigDecimal.TEN))),
+                                              "e",
+                                              arrayOfLongSuchThat(arr -> arr.size() == 3),
+                                              "f",
+                                              arrayOfIntSuchThat(arr -> arr.size() == 3),
+                                              "g",
+                                              arrayOfDec(i -> i.longValueExact() % 2 == 0),
+                                              "h",
+                                              nullableArrayOfDec(i -> i.longValueExact() % 2 == 1),
+                                              "i",
+                                              nullableArrayOfStr(i -> i.length() % 2 == 0),
+                                              "j",
+                                              nullableArrayOfStr(i -> i.length() % 2 == 0),
+                                              "k",
+                                              arrayOfNumber(JsValue::isDecimal),
+                                              "l",
+                                              nullableArrayOfNumber(JsValue::isDecimal)
+                                             );
 
     final JsObj d = JsObj.of("a",
-                             JsArray.of(JsObj.empty(),JsObj.empty()),
-                             "b",JsArray.of(true,true,false),
-                             "c",JsArray.of(1,2,3),
-                             "d",JsArray.of(JsBigDec.of(BigDecimal.TEN)),
-                             "e",JsArray.of(1L,2L,3L),
-                             "f",JsArray.of(1,2,3)
-                             );
-    Assertions.assertEquals(d, new JsObjParser(specSuchThat).parse(d.toString()));
+                             JsArray.of(JsObj.empty(),
+                                        JsObj.empty()),
+                             "b",
+                             JsArray.of(true,
+                                        true,
+                                        false),
+                             "c",
+                             JsArray.of(1,
+                                        2,
+                                        3),
+                             "d",
+                             JsArray.of(JsBigDec.of(BigDecimal.TEN)),
+                             "e",
+                             JsArray.of(1L,
+                                        2L,
+                                        3L),
+                             "f",
+                             JsArray.of(1,
+                                        2,
+                                        3),
+                             "g",
+                             JsArray.of(4.000,
+                                        10.000),
+                             "h",
+                             JsNull.NULL,
+                             "i",
+                             JsNull.NULL,
+                             "j",
+                             JsArray.of("abce",
+                                        "cdee"),
+                             "k",JsArray.of(1.5,2.5),
+                             "l",
+                             JsNull.NULL
+
+                            );
+    Assertions.assertEquals(d,
+                            new JsObjParser(specSuchThat).parse(d.toString())
+                           );
 
   }
 
   @Test
-  public void testArrayOf(){
-      Assertions.assertEquals(true, true);
+  public void testArrayOf()
+  {
+    Assertions.assertEquals(true,
+                            true
+                           );
   }
 }

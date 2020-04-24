@@ -174,8 +174,7 @@ class DeserializersFactory
 
   }
 
-  SpecDeserializer ofArrayOfObj(boolean nullable
-                               )
+  SpecDeserializer ofArrayOfObj(boolean nullable)
   {
     return getDeserializer(arrayOfObjParser,
                            nullable
@@ -275,8 +274,7 @@ class DeserializersFactory
                           );
   }
 
-  SpecDeserializer ofArrayOfValue(boolean nullable
-                                 )
+  SpecDeserializer ofArrayOfValue(boolean nullable)
   {
     return getDeserializer(arrayOfValueParser,
                            nullable

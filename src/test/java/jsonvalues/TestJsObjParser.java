@@ -612,6 +612,62 @@ public class TestJsObjParser
   }
 
   @Test
+  public void test_number_spec()
+  {
+
+    JsObjSpec isint = JsObjSpec.strict("a",
+                                       nullableNumber(JsValue::isDecimal),
+                                       "b",
+                                       optNullableNumber(JsValue::isIntegral),
+                                       "c",
+                                       number(JsValue::isIntegral),
+                                       "d",
+                                       nullableNumber(JsValue::isIntegral),
+                                       "e",
+                                       optNullableNumber(JsValue::isDecimal),
+                                       "f",
+                                       nullableNumber(JsValue::isIntegral),
+                                       "g",
+                                       nullableArray
+                                      );
+
+    final JsObj a = JsObj.of("a",
+                             JsNull.NULL,
+                             "c",
+                             JsInt.of(3),
+                             "d",
+                             JsNull.NULL,
+                             "f",
+                             JsNull.NULL,
+                             "g",
+                             JsNull.NULL
+                            );
+    final JsObjParser parser = new JsObjParser(isint);
+    Assertions.assertEquals(a,
+                            parser.parse(a.toString()));
+
+    final JsObj b = JsObj.of("a",
+                             JsDouble.of(1.5),
+                             "b",
+                             JsInt.of(2),
+                             "c",
+                             JsInt.of(3),
+                             "d",
+                             JsInt.of(-5),
+                             "e",
+                             JsDouble.of(11.5),
+                             "f",
+                             JsInt.of(20),
+                             "g",
+                             JsArray.empty()
+                            );
+
+
+    Assertions.assertEquals(b,
+                            parser.parse(b.toString()));
+  }
+
+  @Test
   public void test_string_spec()
   {
 

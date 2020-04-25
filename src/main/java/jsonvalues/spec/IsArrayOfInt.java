@@ -24,7 +24,7 @@ class IsArrayOfInt extends AbstractPredicate implements JsArrayPredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v-> {
+    return Functions.testArrayOfTestedValue(v-> {
       if(v.isInt())return Optional.empty();
       else return Optional.of(new Error(v,INT_EXPECTED));
     }, required, nullable).apply(value);

@@ -24,15 +24,15 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v ->
+    return Functions.testArrayOfTestedValue(v ->
                                            {
                                              if (v.isIntegral()) return Optional.empty();
                                              else return Optional.of(new Error(v,
                                                                                INTEGRAL_EXPECTED));
                                            },
-                                           required,
-                                           nullable
-                                          )
+                                            required,
+                                            nullable
+                                           )
                     .apply(value);
   }
 }

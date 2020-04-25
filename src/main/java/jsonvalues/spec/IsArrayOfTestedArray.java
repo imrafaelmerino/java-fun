@@ -26,16 +26,16 @@ class IsArrayOfTestedArray extends AbstractPredicate implements JsArrayPredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v ->
+    return Functions.testArrayOfTestedValue(v ->
                                            {
                                              if (v.isArray()) return predicate.apply(v.toJsArray());
                                              else return Optional.of(new Error(v,
                                                                                ARRAY_EXPECTED)
                                                                     );
                                            },
-                                           required,
-                                           nullable
-                                          )
+                                            required,
+                                            nullable
+                                           )
                     .apply(value);
   }
 }

@@ -159,7 +159,17 @@ class JsParser
                               DeserializersFactory.INSTANCE.ofArrayOfValue(isArray.nullable
                                                                           )
           );
-        } else if (spec instanceof IsArraySuchThat)
+        }
+        else if (spec instanceof IsArrayOfTestedValue)
+        {
+          IsArrayOfTestedValue isArray = ((IsArrayOfTestedValue) spec);
+          return new Tuple2<>(isArray.required,
+                              DeserializersFactory.INSTANCE.ofArrayOfValueEachSuchThat(isArray.predicate,
+                                                                                     isArray.nullable
+                                                                                    )
+          );
+        }
+        else if (spec instanceof IsArraySuchThat)
         {
           IsArraySuchThat isArray = ((IsArraySuchThat) spec);
           return new Tuple2<>(isArray.required,

@@ -30,8 +30,8 @@ public class TestJsArrayParser
                                                arrayOfIntegralSuchThat(a -> a.size() == 1),
                                                arrayOfNumberSuchThat(a -> a.size() == 2),
                                                number(a -> a.isDecimal()),
-                                               arrayOfIntegral(a->a.longValueExact() > 0),
-                                               nullableArrayOfIntegral(a->a.longValueExact() > 0),
+                                               arrayOfIntegral(a -> a.longValueExact() > 0),
+                                               nullableArrayOfIntegral(a -> a.longValueExact() > 0),
                                                arrayOfObj,
                                                nullableArrayOfObj
                                               );
@@ -53,9 +53,13 @@ public class TestJsArrayParser
                                           2.5
                                          ),
                                JsDouble.of(1.5),
-                               JsArray.of(1,2),
+                               JsArray.of(1,
+                                          2
+                                         ),
                                JsNull.NULL,
-                               JsArray.of(JsObj.empty(),JsObj.empty()),
+                               JsArray.of(JsObj.empty(),
+                                          JsObj.empty()
+                                         ),
                                JsNull.NULL
                               );
 
@@ -155,9 +159,12 @@ public class TestJsArrayParser
 
     final JsObj c = JsObj.of("a",
                              JsArray.of(JsObj.of("a",
-                                                 JsBool.TRUE),
+                                                 JsBool.TRUE
+                                                ),
                                         JsObj.of("a",
-                                                 JsInt.of(1)))
+                                                 JsInt.of(1)
+                                                )
+                                       )
                             );
     Assertions.assertEquals(c,
                             new JsObjParser(specTested).parse(c
@@ -194,36 +201,46 @@ public class TestJsArrayParser
 
     final JsObj d = JsObj.of("a",
                              JsArray.of(JsObj.empty(),
-                                        JsObj.empty()),
+                                        JsObj.empty()
+                                       ),
                              "b",
                              JsArray.of(true,
                                         true,
-                                        false),
+                                        false
+                                       ),
                              "c",
                              JsArray.of(1,
                                         2,
-                                        3),
+                                        3
+                                       ),
                              "d",
                              JsArray.of(JsBigDec.of(BigDecimal.TEN)),
                              "e",
                              JsArray.of(1L,
                                         2L,
-                                        3L),
+                                        3L
+                                       ),
                              "f",
                              JsArray.of(1,
                                         2,
-                                        3),
+                                        3
+                                       ),
                              "g",
                              JsArray.of(4.000,
-                                        10.000),
+                                        10.000
+                                       ),
                              "h",
                              JsNull.NULL,
                              "i",
                              JsNull.NULL,
                              "j",
                              JsArray.of("abce",
-                                        "cdee"),
-                             "k",JsArray.of(1.5,2.5),
+                                        "cdee"
+                                       ),
+                             "k",
+                             JsArray.of(1.5,
+                                        2.5
+                                       ),
                              "l",
                              JsNull.NULL
 
@@ -234,11 +251,44 @@ public class TestJsArrayParser
 
   }
 
+
   @Test
-  public void testArrayOf()
+  public void testArrayOfValue()
   {
-    Assertions.assertEquals(true,
-                            true
+
+
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       array,
+                                       "b",
+                                       nullableArray,
+                                       "c",
+                                       optNullableArray,
+                                       "d",
+                                       optNullableArray(v -> v.isIntegral() || v.isStr()),
+                                       "e",
+                                       nullableArray(v -> v.isIntegral() || v.isStr()),
+                                       "f",
+                                       optNullableArray(v -> v.isIntegral() || v.isStr())
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    JsObj a = JsObj.of("a",
+                       JsArray.of(1,
+                                  2
+                                 ),
+                       "b",
+                       JsNull.NULL,
+                       "d",
+                       JsArray.of(JsInt.of(10),
+                                  JsStr.of("a")
+                                 ),
+                       "e",
+                       JsNull.NULL
+                      );
+
+    Assertions.assertEquals(a,
+                            parser.parse(a.toPrettyString())
                            );
   }
 }

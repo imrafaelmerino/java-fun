@@ -26,16 +26,16 @@ class IsArrayOfTestedLong extends AbstractPredicate implements JsArrayPredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v ->
+    return Functions.testArrayOfTestedValue(v ->
                                            {
                                              if (v.isLong() || v.isInt()) return predicate.apply(v.toJsLong().value);
                                              else return Optional.of(new Error(v,
                                                                                LONG_EXPECTED)
                                                                     );
                                            },
-                                           required,
-                                           nullable
-                                          )
+                                            required,
+                                            nullable
+                                           )
                     .apply(value);
   }
 }

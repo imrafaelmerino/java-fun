@@ -51,10 +51,10 @@ class Functions
     };
   }
 
-  static Function<JsValue, Optional<Error>> testArrayOfTestedElem(final Function<JsValue, Optional<Error>> elemCondition,
-                                                                  final boolean required,
-                                                                  final boolean nullable
-                                                                 )
+  static Function<JsValue, Optional<Error>> testArrayOfTestedValue(final Function<JsValue, Optional<Error>> elemCondition,
+                                                                   final boolean required,
+                                                                   final boolean nullable
+                                                                  )
   {
 
     return testArrayPredicate(required,
@@ -138,7 +138,7 @@ class Functions
       final IsObjSpec isObjSpec = (IsObjSpec) spec;
       final Optional<Error> error = testFlags(isObjSpec.required,
                                               isObjSpec.nullable).apply(value);
-      if(!errors.isEmpty()) errors.add(JsErrorPair.of(currentPath,error.get()));
+      if(error.isPresent()) errors.add(JsErrorPair.of(currentPath,error.get()));
       else if(value.isNull())return;
       else if (!value.isObj() )
       {
@@ -187,7 +187,7 @@ class Functions
       final IsArraySpec isArraySpec = (IsArraySpec) spec;
       final Optional<Error> error = testFlags(isArraySpec.required,
                                               isArraySpec.nullable).apply(value);
-      if(!errors.isEmpty()) errors.add(JsErrorPair.of(currentPath,error.get()));
+      if(error.isPresent()) errors.add(JsErrorPair.of(currentPath,error.get()));
       else if(value.isNull())return;
       else if (!value.isArray())
       {
@@ -212,7 +212,7 @@ class Functions
       final IsArrayOfObjSpec isArraySpec = (IsArrayOfObjSpec) spec;
       final Optional<Error> error = testFlags(isArraySpec.required,
                                               isArraySpec.nullable).apply(value);
-      if(!errors.isEmpty()) errors.add(JsErrorPair.of(currentPath,error.get()));
+      if(error.isPresent()) errors.add(JsErrorPair.of(currentPath,error.get()));
       else if(value.isNull())return;
       else if (!value.isArray())
       {

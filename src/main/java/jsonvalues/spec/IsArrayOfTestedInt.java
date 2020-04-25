@@ -28,7 +28,7 @@ class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
   public Optional<Error> test(final JsValue value)
   {
 
-    return Functions.testArrayOfTestedElem(v ->
+    return Functions.testArrayOfTestedValue(v ->
                                            {
                                              if (v.isInt()) return predicate.apply(v.toJsInt().value);
                                              else return Optional.of(new Error(v,
@@ -36,9 +36,9 @@ class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
                                                                      )
                                                                     );
                                            },
-                                           required,
-                                           nullable
-                                          )
+                                            required,
+                                            nullable
+                                           )
                     .apply(value);
   }
 }

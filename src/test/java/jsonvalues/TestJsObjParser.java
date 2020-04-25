@@ -908,4 +908,36 @@ public class TestJsObjParser
     Assertions.assertEquals(b,parser.parse(b.toString()));
   }
 
+
+  @Test
+  public void test_value_parser(){
+
+    JsObjSpec spec = JsObjSpec.strict("a",any(JsValue::isBool));
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    Assertions.assertThrows(DeserializerException.class,()->parser.parse(JsObj.of("a",
+                                                                              JsStr.of("a"))
+                                                                          .toString()
+                                                                        )
+                           );
+
+
+  }
+
+  @Test
+  public void test_array_value_parser(){
+
+    JsObjSpec spec = JsObjSpec.strict("a",array(a->a.isBool() || a.isIntegral()));
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    final JsObj a = JsObj.of("a",
+                             JsArray.of(JsBool.FALSE,
+                                        JsInt.of(1))
+                            );
+    Assertions.assertEquals(a,parser.parse(a.toString()));
+
+
+  }
 }

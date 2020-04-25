@@ -1,18 +1,158 @@
 package jsonvalues;
 
+import com.dslplatform.json.derializers.DeserializerException;
 import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import scala.math.Ordering;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static jsonvalues.spec.JsSpecs.*;
 
 public class TestJsObjParser
 {
 
+  @Test
+  public void test_parse_obj_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       obj(a -> a.containsKey("a"))
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsObj.of("b",
+                                                                 JsBool.TRUE
+                                                                )
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
+
+  @Test
+  public void test_parse_int_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       intNumber(i -> i > 0)
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsInt.of(-1)
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
+
+  @Test
+  public void test_parse_long_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       longNumber(i -> i > 0)
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsLong.of(-1L)
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
+
+  @Test
+  public void test_parse_integral_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       integral(i -> i.longValueExact() > 0)
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsLong.of(-1L)
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
+
+
+  @Test
+  public void test_parse_number_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       number(JsValue::isDecimal)
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsBool.TRUE
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
+
+  @Test
+  public void test_parse_string_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       str(i -> i.length() == 3)
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsStr.of("ab")
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
+
+  @Test
+  public void test_parse_decimal_error()
+  {
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       decimal(i -> i.divide(BigDecimal.TEN)
+                                                     .equals(new BigDecimal(1)))
+                                      );
+
+    JsObjParser parser = new JsObjParser(spec);
+
+
+    Assertions.assertThrows(DeserializerException.class,
+                            () -> parser.parse(JsObj.of("a",
+                                                        JsBigDec.of(BigDecimal.ONE)
+                                                       )
+                                                    .toPrettyString())
+                           );
+
+  }
 
   @Test
   public void test_parse_obj_all_primitive_types()
@@ -52,8 +192,8 @@ public class TestJsObjParser
                                                              "h",
                                                              obj(o -> o.containsKey("b")),
                                                              "i",
-                                                             array(a -> a.head()
-                                                                         .equals(JsStr.of("first"))),
+                                                             arraySuchThat(a -> a.head()
+                                                                                 .equals(JsStr.of("first"))),
                                                              "j",
                                                              JsArraySpec.tuple(number(JsValue::isDecimal),
                                                                                any
@@ -140,7 +280,15 @@ public class TestJsObjParser
                                                              "b",
                                                              arrayOfStr(s -> s.startsWith("a")),
                                                              "c",
-                                                             arrayOfLong(l -> l < 10)
+                                                             arrayOfLong(l -> l < 10),
+                                                             "d",
+                                                             nullableArrayOfLong(i -> i > 0),
+                                                             "e",
+                                                             nullableArrayOfLong(i -> i > 0),
+                                                             "f",
+                                                             optNullableArrayOfLong(i -> i > 0),
+                                                             "g",
+                                                             optNullableArrayOfLong(i -> i > 0)
                                                             )
                                            );
 
@@ -194,7 +342,16 @@ public class TestJsObjParser
                                         JsArray.of(1,
                                                    2,
                                                    3
-                                                  )
+                                                  ),
+                                        "d",
+                                        JsArray.of(1,
+                                                   2
+                                                  ),
+                                        "e",
+                                        JsNull.NULL,
+                                        "f",
+                                        JsArray.of(4)
+
                                        )
                               );
 
@@ -244,8 +401,8 @@ public class TestJsObjParser
                                                              "h",
                                                              obj(o -> o.containsKey("b")),
                                                              "i",
-                                                             array(a -> a.head()
-                                                                         .equals(JsStr.of("first"))),
+                                                             arraySuchThat(a -> a.head()
+                                                                                 .equals(JsStr.of("first"))),
                                                              "j",
                                                              JsArraySpec.tuple(number(JsValue::isDecimal),
                                                                                any
@@ -426,35 +583,37 @@ public class TestJsObjParser
                                       );
 
     final JsObj a = JsObj.of("a",
-                              JsNull.NULL,
-                              "c",
-                              JsInt.of(3),
-                              "d",
-                              JsNull.NULL,
-                              "f",
-                              JsNull.NULL
-                             );
+                             JsNull.NULL,
+                             "c",
+                             JsInt.of(3),
+                             "d",
+                             JsNull.NULL,
+                             "f",
+                             JsNull.NULL
+                            );
     final JsObjParser parser = new JsObjParser(isint);
     Assertions.assertEquals(a,
-                            parser.parse(a.toString()));
+                            parser.parse(a.toString())
+                           );
 
     final JsObj b = JsObj.of("a",
-                              JsInt.of(1),
-                              "b",
-                              JsInt.of(2),
-                              "c",
-                              JsInt.of(3),
-                              "d",
-                              JsInt.of(-5),
-                              "e",
-                              JsInt.of(11),
-                              "f",
-                              JsInt.of(20)
-                             );
+                             JsInt.of(1),
+                             "b",
+                             JsInt.of(2),
+                             "c",
+                             JsInt.of(3),
+                             "d",
+                             JsInt.of(-5),
+                             "e",
+                             JsInt.of(11),
+                             "f",
+                             JsInt.of(20)
+                            );
 
 
     Assertions.assertEquals(b,
-                            parser.parse(b.toString()));
+                            parser.parse(b.toString())
+                           );
   }
 
 
@@ -487,7 +646,8 @@ public class TestJsObjParser
                             );
     final JsObjParser parser = new JsObjParser(isint);
     Assertions.assertEquals(a,
-                            parser.parse(a.toString()));
+                            parser.parse(a.toString())
+                           );
 
     final JsObj b = JsObj.of("a",
                              JsLong.of(1L),
@@ -505,7 +665,8 @@ public class TestJsObjParser
 
 
     Assertions.assertEquals(b,
-                            parser.parse(b.toString()));
+                            parser.parse(b.toString())
+                           );
   }
 
   @Test
@@ -537,7 +698,8 @@ public class TestJsObjParser
                             );
     final JsObjParser parser = new JsObjParser(isdec);
     Assertions.assertEquals(a,
-                            parser.parse(a.toString()));
+                            parser.parse(a.toString())
+                           );
 
     final JsObj b = JsObj.of("a",
                              JsBigDec.of(new BigDecimal(1L)),
@@ -557,7 +719,8 @@ public class TestJsObjParser
 
 
     Assertions.assertEquals(b,
-                            parser.parse(b.toString()));
+                            parser.parse(b.toString())
+                           );
   }
 
 
@@ -590,7 +753,8 @@ public class TestJsObjParser
                             );
     final JsObjParser parser = new JsObjParser(isint);
     Assertions.assertEquals(a,
-                            parser.parse(a.toString()));
+                            parser.parse(a.toString())
+                           );
 
     final JsObj b = JsObj.of("a",
                              JsInt.of(1),
@@ -608,7 +772,8 @@ public class TestJsObjParser
 
 
     Assertions.assertEquals(b,
-                            parser.parse(b.toString()));
+                            parser.parse(b.toString())
+                           );
   }
 
   @Test
@@ -644,7 +809,8 @@ public class TestJsObjParser
                             );
     final JsObjParser parser = new JsObjParser(isint);
     Assertions.assertEquals(a,
-                            parser.parse(a.toString()));
+                            parser.parse(a.toString())
+                           );
 
     final JsObj b = JsObj.of("a",
                              JsDouble.of(1.5),
@@ -664,7 +830,8 @@ public class TestJsObjParser
 
 
     Assertions.assertEquals(b,
-                            parser.parse(b.toString()));
+                            parser.parse(b.toString())
+                           );
   }
 
   @Test
@@ -696,7 +863,8 @@ public class TestJsObjParser
                             );
     final JsObjParser parser = new JsObjParser(isint);
     Assertions.assertEquals(a,
-                            parser.parse(a.toString()));
+                            parser.parse(a.toString())
+                           );
 
     final JsObj b = JsObj.of("a",
                              JsStr.of("abcd"),
@@ -714,7 +882,30 @@ public class TestJsObjParser
 
 
     Assertions.assertEquals(b,
-                            parser.parse(b.toString()));
+                            parser.parse(b.toString())
+                           );
+  }
+
+  @Test
+  public void testArrayOfObjSpec()
+  {
+    JsObjSpec spec = JsObjSpec.strict("a",
+                                      nullableSpec(JsArraySpec.tuple(str,
+                                                                     bool)));
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    final JsObj a = JsObj.of("a",
+                              JsArray.of(JsStr.of("a"),
+                                         JsBool.TRUE
+                                        )
+                             );
+
+    final JsObj b = JsObj.of("a",
+                            JsNull.NULL
+                            );
+    Assertions.assertEquals(a,parser.parse(a.toString()));
+    Assertions.assertEquals(b,parser.parse(b.toString()));
   }
 
 }

@@ -23,7 +23,7 @@ class IsArrayOfNumber extends AbstractPredicate implements JsArrayPredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v-> {
+    return Functions.testArrayOfTestedValue(v-> {
       if(v.isNumber())return Optional.empty();
       else return Optional.of(new Error(v,NUMBER_EXPECTED));
     }, required, nullable).apply(value);

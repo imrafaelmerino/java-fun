@@ -6,21 +6,18 @@ import jsonvalues.JsValue;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
-import static jsonvalues.spec.ERROR_CODE.DECIMAL_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 
 class IsArrayOfTestedDecimal extends AbstractPredicate implements JsArrayPredicate
 {
-  final Function<BigDecimal,Optional<Error>> predicate;
+  final Function<BigDecimal, Optional<Error>> predicate;
 
 
-
-   IsArrayOfTestedDecimal(final Function<BigDecimal,Optional<Error>> predicate,
-                                final boolean required,
-                                final boolean nullable
-                               )
+  IsArrayOfTestedDecimal(final Function<BigDecimal, Optional<Error>> predicate,
+                         final boolean required,
+                         final boolean nullable
+                        )
   {
     super(required,
           nullable
@@ -31,16 +28,17 @@ class IsArrayOfTestedDecimal extends AbstractPredicate implements JsArrayPredica
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v ->
+    return Functions.testArrayOfTestedValue(v ->
                                            {
                                              if (v.isDouble() || v.isBigDec()) return predicate.apply(v.toJsBigDec().value);
                                              else return Optional.of(new Error(v,
-                                                                               DECIMAL_EXPECTED)
+                                                                               DECIMAL_EXPECTED
+                                                                     )
                                                                     );
                                            },
-                                           required,
-                                           nullable
-                                          )
+                                            required,
+                                            nullable
+                                           )
                     .apply(value);
   }
 }

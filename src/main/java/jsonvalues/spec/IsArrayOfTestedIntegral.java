@@ -25,16 +25,16 @@ class IsArrayOfTestedIntegral extends AbstractPredicate implements JsArrayPredic
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v ->
+    return Functions.testArrayOfTestedValue(v ->
                                            {
                                              if (v.isIntegral()) return predicate.apply(v.toJsBigInt().value);
                                              else return Optional.of(new Error(v,
                                                                                INTEGRAL_EXPECTED)
                                                                     );
                                            },
-                                           required,
-                                           nullable
-                                          )
+                                            required,
+                                            nullable
+                                           )
                     .apply(value);
   }
 }

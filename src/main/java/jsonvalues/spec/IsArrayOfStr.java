@@ -22,7 +22,7 @@ class IsArrayOfStr extends AbstractPredicate implements JsArrayPredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testArrayOfTestedElem(v-> {
+    return Functions.testArrayOfTestedValue(v-> {
       if(v.isStr())return Optional.empty();
       else return Optional.of(new Error(v,STRING_EXPECTED));
     }, required, nullable).apply(value);

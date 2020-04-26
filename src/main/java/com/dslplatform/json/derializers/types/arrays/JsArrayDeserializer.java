@@ -116,7 +116,8 @@ public abstract class JsArrayDeserializer
   {
     try
     {
-      if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
+      if (reader.last() != '[')
+        throw reader.newParseError("Expecting '[' for list start");
       reader.getNextToken();
       return reader.last() == ']';
     }

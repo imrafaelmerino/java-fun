@@ -37,7 +37,7 @@ public class TestJsArraySpec
 
 
     JsArraySpec spec = JsArraySpec.tuple(any,
-                                         optAny
+                                         any.optional()
                                         );
 
     Assertions.assertTrue(spec.test(JsArray.of(JsNull.NULL))

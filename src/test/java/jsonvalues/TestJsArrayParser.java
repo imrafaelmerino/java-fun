@@ -31,9 +31,9 @@ public class TestJsArrayParser
                                                arrayOfNumberSuchThat(a -> a.size() == 2),
                                                number(a -> a.isDecimal()),
                                                arrayOfIntegral(a -> a.longValueExact() > 0),
-                                               nullableArrayOfIntegral(a -> a.longValueExact() > 0),
+                                               arrayOfIntegral(a -> a.longValueExact() > 0).nullable(),
                                                arrayOfObj,
-                                               nullableArrayOfObj
+                                               arrayOfObj.nullable()
                                               );
 
 
@@ -72,7 +72,7 @@ public class TestJsArrayParser
   public void testNullable()
   {
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      nullableArrayOfStr
+                                      arrayOfStr.nullable()
                                      );
 
     JsObjParser parser = new JsObjParser(spec);
@@ -97,7 +97,7 @@ public class TestJsArrayParser
 
 
     JsObjSpec specST = JsObjSpec.strict("a",
-                                        nullableArrayOfStrSuchThat(it -> it.size() % 2 == 0)
+                                        arrayOfStrSuchThat(it -> it.size() % 2 == 0).nullable()
                                        );
     JsObjParser parserST = new JsObjParser(specST);
 
@@ -188,15 +188,15 @@ public class TestJsArrayParser
                                               "g",
                                               arrayOfDec(i -> i.longValueExact() % 2 == 0),
                                               "h",
-                                              nullableArrayOfDec(i -> i.longValueExact() % 2 == 1),
+                                              arrayOfDec(i -> i.longValueExact() % 2 == 1).nullable(),
                                               "i",
-                                              nullableArrayOfStr(i -> i.length() % 2 == 0),
+                                              arrayOfStr(i -> i.length() % 2 == 0).nullable(),
                                               "j",
-                                              nullableArrayOfStr(i -> i.length() % 2 == 0),
+                                              arrayOfStr(i -> i.length() % 2 == 0).nullable(),
                                               "k",
                                               arrayOfNumber(JsValue::isDecimal),
                                               "l",
-                                              nullableArrayOfNumber(JsValue::isDecimal)
+                                              arrayOfNumber(JsValue::isDecimal).nullable()
                                              );
 
     final JsObj d = JsObj.of("a",
@@ -256,19 +256,18 @@ public class TestJsArrayParser
   public void testArrayOfValue()
   {
 
-
     JsObjSpec spec = JsObjSpec.lenient("a",
                                        array,
                                        "b",
-                                       nullableArray,
+                                       array.nullable(),
                                        "c",
-                                       optNullableArray,
+                                       array.optional().nullable(),
                                        "d",
-                                       optNullableArray(v -> v.isIntegral() || v.isStr()),
+                                       array(v -> v.isIntegral() || v.isStr()).optional().nullable(),
                                        "e",
-                                       nullableArray(v -> v.isIntegral() || v.isStr()),
+                                       array(v -> v.isIntegral() || v.isStr()).nullable(),
                                        "f",
-                                       optNullableArray(v -> v.isIntegral() || v.isStr())
+                                       array(v -> v.isIntegral() || v.isStr()).optional().nullable()
                                       );
 
     JsObjParser parser = new JsObjParser(spec);

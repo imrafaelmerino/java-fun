@@ -282,13 +282,13 @@ public class TestJsObjParser
                                                              "c",
                                                              arrayOfLong(l -> l < 10),
                                                              "d",
-                                                             nullableArrayOfLong(i -> i > 0),
+                                                             arrayOfLong(i -> i > 0).nullable(),
                                                              "e",
-                                                             nullableArrayOfLong(i -> i > 0),
+                                                             arrayOfLong(i -> i > 0).nullable(),
                                                              "f",
-                                                             optNullableArrayOfLong(i -> i > 0),
+                                                             arrayOfLong(i -> i > 0).optional().nullable(),
                                                              "g",
-                                                             optNullableArrayOfLong(i -> i > 0)
+                                                             arrayOfLong(i -> i > 0).optional().nullable()
                                                             )
                                            );
 
@@ -469,33 +469,33 @@ public class TestJsObjParser
   public void test_required_fields()
   {
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            optNullableIntNumber,
+                                            intNumber.optional().nullable(),
                                             "b",
-                                            optNullableStr,
+                                            str.optional().nullable(),
                                             "c",
-                                            optNullableLongNumber,
+                                            longNumber.optional().nullable(),
                                             "d",
-                                            optNullableObj,
+                                            obj.nullable().optional(),
                                             "e",
-                                            optNullableArray,
+                                            array.nullable().optional(),
                                             "f",
-                                            optNullableBool,
+                                            bool.nullable().optional(),
                                             "g",
-                                            optNullableDecimal,
+                                            decimal.nullable().optional(),
                                             "h",
-                                            optNullableIntegral,
+                                            integral.optional().nullable(),
                                             "i",
-                                            JsArraySpec.tuple(optNullableArrayOfInt,
-                                                              optNullableArrayOfLong
+                                            JsArraySpec.tuple(arrayOfInt.optional().nullable(),
+                                                              arrayOfLong.nullable().optional()
                                                              ),
                                             "j",
-                                            optNullableObj,
+                                            obj.optional().nullable(),
                                             "k",
-                                            optNullableObj(a -> a.keySet()
-                                                                 .size() == 2),
+                                            obj(a -> a.keySet()
+                                                                 .size() == 2).optional().nullable(),
                                             "j",
-                                            optNullableArrayOfObj(a -> a.keySet()
-                                                                        .size() == 2)
+                                            arrayOfObj(a -> a.keySet()
+                                                                        .size() == 2).optional().nullable()
                                            );
 
 
@@ -548,7 +548,7 @@ public class TestJsObjParser
   public void test_strict_mode()
   {
     final JsObjSpec spec = JsObjSpec.lenient("a",
-                                             optNullableStr
+                                             str.optional().nullable()
                                             );
 
 
@@ -569,17 +569,17 @@ public class TestJsObjParser
   {
 
     JsObjSpec isint = JsObjSpec.strict("a",
-                                       nullableIntNumber(i -> i > 0),
+                                       intNumber(i -> i > 0).nullable(),
                                        "b",
-                                       optNullableIntNumber(i -> i > 0),
+                                       intNumber(i -> i > 0).optional().nullable(),
                                        "c",
                                        intNumber(i -> i > 0),
                                        "d",
-                                       nullableIntNumber(i -> i < 0),
+                                       intNumber(i -> i < 0).nullable(),
                                        "e",
-                                       optNullableIntNumber(i -> i % 2 == 1),
+                                       intNumber(i -> i % 2 == 1).optional().nullable(),
                                        "f",
-                                       nullableIntNumber(i -> i % 2 == 0)
+                                       intNumber(i -> i % 2 == 0).nullable()
                                       );
 
     final JsObj a = JsObj.of("a",
@@ -622,17 +622,17 @@ public class TestJsObjParser
   {
 
     JsObjSpec isint = JsObjSpec.strict("a",
-                                       nullableLongNumber(i -> i > 0),
+                                       longNumber(i -> i > 0).nullable(),
                                        "b",
-                                       optNullableLongNumber(i -> i > 0),
+                                       longNumber(i -> i > 0).nullable().optional(),
                                        "c",
                                        longNumber(i -> i > 0),
                                        "d",
-                                       nullableLongNumber(i -> i < 0),
+                                       longNumber(i -> i < 0).nullable(),
                                        "e",
-                                       optNullableLongNumber(i -> i % 2 == 1),
+                                       longNumber(i -> i % 2 == 1).optional().nullable(),
                                        "f",
-                                       nullableLongNumber(i -> i % 2 == 0)
+                                       longNumber(i -> i % 2 == 0).nullable()
                                       );
 
     final JsObj a = JsObj.of("a",
@@ -674,17 +674,17 @@ public class TestJsObjParser
   {
 
     JsObjSpec isdec = JsObjSpec.strict("a",
-                                       nullableDecimal(i -> i.longValueExact() > 0),
+                                       decimal(i -> i.longValueExact() > 0).nullable(),
                                        "b",
-                                       optNullableDecimal(i -> i.longValueExact() > 0),
+                                       decimal(i -> i.longValueExact() > 0).optional().nullable(),
                                        "c",
                                        decimal(i -> i.longValueExact() > 0),
                                        "d",
-                                       nullableDecimal(i -> i.longValueExact() < 0),
+                                       decimal(i -> i.longValueExact() < 0).nullable(),
                                        "e",
-                                       optNullableDecimal(i -> i.longValueExact() % 2 == 1),
+                                       decimal(i -> i.longValueExact() % 2 == 1).optional().nullable(),
                                        "f",
-                                       nullableDecimal(i -> i.longValueExact() % 2 == 0)
+                                       decimal(i -> i.longValueExact() % 2 == 0).nullable()
                                       );
 
     final JsObj a = JsObj.of("a",
@@ -729,17 +729,17 @@ public class TestJsObjParser
   {
 
     JsObjSpec isint = JsObjSpec.strict("a",
-                                       nullableIntegral(i -> i.longValueExact() > 0),
+                                       integral(i -> i.longValueExact() > 0).nullable(),
                                        "b",
-                                       optNullableIntegral(i -> i.longValueExact() > 0),
+                                       integral(i -> i.longValueExact() > 0).optional().nullable(),
                                        "c",
                                        integral(i -> i.longValueExact() > 0),
                                        "d",
-                                       nullableIntegral(i -> i.longValueExact() < 0),
+                                       integral(i -> i.longValueExact() < 0).nullable(),
                                        "e",
-                                       optNullableIntegral(i -> i.longValueExact() % 2 == 1),
+                                       integral(i -> i.longValueExact() % 2 == 1).optional().nullable(),
                                        "f",
-                                       nullableIntegral(i -> i.longValueExact() % 2 == 0)
+                                       integral(i -> i.longValueExact() % 2 == 0).nullable()
                                       );
 
     final JsObj a = JsObj.of("a",
@@ -781,19 +781,19 @@ public class TestJsObjParser
   {
 
     JsObjSpec isint = JsObjSpec.strict("a",
-                                       nullableNumber(JsValue::isDecimal),
+                                       number(JsValue::isDecimal).nullable(),
                                        "b",
-                                       optNullableNumber(JsValue::isIntegral),
+                                       number(JsValue::isIntegral).nullable().optional(),
                                        "c",
                                        number(JsValue::isIntegral),
                                        "d",
-                                       nullableNumber(JsValue::isIntegral),
+                                       number(JsValue::isIntegral).nullable(),
                                        "e",
-                                       optNullableNumber(JsValue::isDecimal),
+                                       number(JsValue::isDecimal).optional().nullable(),
                                        "f",
-                                       nullableNumber(JsValue::isIntegral),
+                                       number(JsValue::isIntegral).nullable(),
                                        "g",
-                                       nullableArray
+                                       array.nullable()
                                       );
 
     final JsObj a = JsObj.of("a",
@@ -839,17 +839,17 @@ public class TestJsObjParser
   {
 
     JsObjSpec isint = JsObjSpec.strict("a",
-                                       nullableStr(i -> i.length() > 3),
+                                       str(i -> i.length() > 3).nullable(),
                                        "b",
-                                       optNullableStr(i -> i.length() > 3),
+                                       str(i -> i.length() > 3).nullable().optional(),
                                        "c",
                                        str(i -> i.length() > 3),
                                        "d",
-                                       nullableStr(i -> i.length() > 2),
+                                       str(i -> i.length() > 2).nullable(),
                                        "e",
-                                       optNullableStr(i -> i.length() == 1),
+                                       str(i -> i.length() == 1).optional().nullable(),
                                        "f",
-                                       nullableStr(i -> i.length() % 2 == 0)
+                                       str(i -> i.length() % 2 == 0).nullable()
                                       );
 
     final JsObj a = JsObj.of("a",
@@ -944,9 +944,9 @@ public class TestJsObjParser
   @Test
   public void array_of_number(){
     JsObjSpec spec = JsObjSpec.strict("a",arrayOfNumber(a->a.isDecimal()),
-                                      "b",nullableArrayOfNumber(a->a.isDecimal()),
-                                      "c",optArrayOfNumber(a->a.isIntegral()),
-                                      "e",optArrayOfNumber(a->a.isDecimal()));
+                                      "b",arrayOfNumber(a->a.isDecimal()).nullable(),
+                                      "c",arrayOfNumber(a->a.isIntegral()).optional(),
+                                      "e",arrayOfNumber(a->a.isDecimal()).optional());
 
     JsObjParser parser = new JsObjParser(spec);
 
@@ -962,9 +962,9 @@ public class TestJsObjParser
   @Test
   public void array_of_number_with_predicate(){
     JsObjSpec spec = JsObjSpec.strict("a",arrayOfIntegral(a->a.longValueExact()>0),
-                                      "b",nullableArrayOfIntegral(a->a.longValueExact() < 0),
-                                      "c",optArrayOfIntegral(a->a.longValueExact() % 2== 0),
-                                      "e",optArrayOfIntegral(a->a.longValueExact() % 3 == 0));
+                                      "b",arrayOfIntegral(a->a.longValueExact() < 0).nullable(),
+                                      "c",arrayOfIntegral(a->a.longValueExact() % 2== 0).optional(),
+                                      "e",arrayOfIntegral(a->a.longValueExact() % 3 == 0).optional());
 
     JsObjParser parser = new JsObjParser(spec);
 
@@ -980,9 +980,9 @@ public class TestJsObjParser
   @Test
   public void array_of_decimal_with_predicate(){
     JsObjSpec spec = JsObjSpec.strict("a",arrayOfDec(a->a.longValueExact()>0),
-                                      "b",nullableArrayOfDec(a->a.longValueExact() < 0),
-                                      "c",optArrayOfDec(a->a.longValueExact() % 2== 0),
-                                      "e",optNullableArrayOfDec(a->a.longValueExact() % 3 == 0));
+                                      "b",arrayOfDec(a->a.longValueExact() < 0).nullable(),
+                                      "c",arrayOfDec(a->a.longValueExact() % 2== 0).optional(),
+                                      "e",arrayOfDec(a->a.longValueExact() % 3 == 0).optional().nullable());
 
     JsObjParser parser = new JsObjParser(spec);
 

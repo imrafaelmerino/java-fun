@@ -17,7 +17,7 @@ class IsArray extends AbstractPredicate implements JsArrayPredicate
   @Override
   public JsSpec nullable()
   {
-    return new IsArray(required,false);
+    return new IsArray(required,true);
   }
 
   @Override

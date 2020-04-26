@@ -715,7 +715,7 @@ public class TestJsObjSpec
                                       "b",
                                       any.optional(),
                                       "d",
-                                      any(JsValue::isStr)
+                                      any(JsValue::isStr).optional()
                                      );
 
     Assertions.assertTrue(spec.test(JsObj.of("a",
@@ -1138,9 +1138,9 @@ public class TestJsObjSpec
                                       "h",
                                       arrayOfNumber.optional(),
                                       "i",
-                                      arrayOfObj.nullable(),
+                                      arrayOfObj.optional(),
                                       "j",
-                                      arrayOfStr.nullable(),
+                                      arrayOfStr.optional(),
                                       "k",
                                       arrayOf(JsObjSpec.lenient("a",
                                                                    bool.optional(),

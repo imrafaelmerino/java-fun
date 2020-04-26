@@ -12,8 +12,6 @@ public interface JsSpec {
    indicated whether or not it can be null
    */
   boolean isNullable();
-
-
   JsSpec nullable();
   JsSpec optional();
 

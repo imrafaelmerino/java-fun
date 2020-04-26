@@ -3,13 +3,13 @@ package jsonvalues.spec;
 import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
-import jsonvalues.JsObj;
-import jsonvalues.JsPath;
-import jsonvalues.JsValue;
+import io.vavr.collection.Seq;
+import jsonvalues.*;
 
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.REQUIRED;
 import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
 
 
@@ -20,11 +20,13 @@ public class JsObjSpec implements Schema<JsObj>
   {
     return nullable;
   }
+
   @Override
   public boolean isRequired()
   {
     return required;
   }
+
   final boolean strict;
   /**
    When this spec is associated to a key in another JsObjSpec, the required flag indicates whether or
@@ -35,25 +37,36 @@ public class JsObjSpec implements Schema<JsObj>
   final boolean nullable;
 
   @Override
-  public JsObjSpec optional(){
-    return new JsObjSpec(bindings,false,nullable,strict);
+  public JsObjSpec optional()
+  {
+    return new JsObjSpec(bindings,
+                         false,
+                         nullable,
+                         strict);
   }
 
   @Override
-  public JsObjSpec nullable(){
-    return new JsObjSpec(bindings,required,true,strict);
+  public JsObjSpec nullable()
+  {
+    return new JsObjSpec(bindings,
+                         required,
+                         true,
+                         strict);
   }
 
-  public JsObjSpec(final Map<String, JsSpec> bindings,boolean required,boolean nullable,boolean strict)
+  public JsObjSpec(final Map<String, JsSpec> bindings,
+                   boolean required,
+                   boolean nullable,
+                   boolean strict
+                  )
   {
     this.bindings = bindings;
-    this.required =required;
+    this.required = required;
     this.nullable = nullable;
     this.strict = strict;
   }
 
   Map<String, JsSpec> bindings = HashMap.empty();
-
 
 
   static Set<JsErrorPair> test(final JsPath parent,
@@ -72,8 +85,9 @@ public class JsObjSpec implements Schema<JsObj>
       final JsSpec spec = parentObjSpec.bindings.getOrElse(key,
                                                            null
                                                           );
-      if (spec == null) {
-        if(parentObjSpec.strict)
+      if (spec == null)
+      {
+        if (parentObjSpec.strict)
         {
           errors.add(JsErrorPair.of(currentPath,
                                     new Error(value,
@@ -88,6 +102,8 @@ public class JsObjSpec implements Schema<JsObj>
                                 );
 
     }
+
+
     return errors;
   }
 
@@ -95,11 +111,27 @@ public class JsObjSpec implements Schema<JsObj>
   @Override
   public Set<JsErrorPair> test(final JsObj json)
   {
-    return test(JsPath.empty(),
-                this,
-                new HashSet<>(),
-                json
-               );
+    final Set<JsErrorPair> errors = test(JsPath.empty(),
+                                         this,
+                                         new HashSet<>(),
+                                         json
+                                        );
+
+    final Seq<String> requiredFields = bindings.filter((key, spec) -> spec.isRequired())
+                                               .map(p -> p._1);
+
+
+    for (final String requiredField : requiredFields)
+    {
+      if (!json.containsKey(requiredField)) errors.add(JsErrorPair.of(JsPath.fromKey(requiredField),
+                                                                      new Error(JsNothing.NOTHING,
+                                                                                REQUIRED)
+                                                                     )
+                                                      );
+    }
+
+
+    return errors;
   }
 
   public final static class Pair
@@ -127,7 +159,7 @@ public class JsObjSpec implements Schema<JsObj>
 
   public static JsObjSpec strict(final Pair pair,
                                  final Pair... others
-                         )
+                                )
   {
     return new JsObjSpec(true,
                          true,
@@ -139,7 +171,7 @@ public class JsObjSpec implements Schema<JsObj>
 
   public static JsObjSpec lenient(final Pair pair,
                                   final Pair... others
-                          )
+                                 )
   {
     return new JsObjSpec(false,
                          true,
@@ -313,7 +345,7 @@ public class JsObjSpec implements Schema<JsObj>
   public static JsObjSpec strict(final String key,
                                  final JsSpec spec,
                                  final String key1,
-                                 final  JsSpec spec1,
+                                 final JsSpec spec1,
                                  final String key2,
                                  final JsSpec spec2,
                                  final String key3,
@@ -1254,7 +1286,7 @@ public class JsObjSpec implements Schema<JsObj>
                                   final String key2,
                                   final JsSpec spec2,
                                   final String key3,
-                                  final  JsSpec spec3,
+                                  final JsSpec spec3,
                                   final String key4,
                                   final JsSpec spec4,
                                   final String key5,

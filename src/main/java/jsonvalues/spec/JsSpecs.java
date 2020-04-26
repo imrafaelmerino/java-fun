@@ -241,8 +241,8 @@ public class JsSpecs
                                          {
                                            if (requireNonNull(predicate).test(s)) return Optional.empty();
                                            return Optional.of(new Error(s,
-                                                                        ARRAY_CONDITION
-                                           ));
+                                                                        ARRAY_CONDITION)
+                                                             );
                                          },
                                          true,
                                          false
@@ -255,8 +255,8 @@ public class JsSpecs
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ERROR_CODE.NUMBER_CONDITION
-                                       ));
+                                                                    ERROR_CODE.NUMBER_CONDITION)
+                                                         );
                                      },
                                      true,
                                      false
@@ -270,8 +270,8 @@ public class JsSpecs
                                        {
                                          if (requireNonNull(predicate).test(s)) return Optional.empty();
                                          return Optional.of(new Error(s,
-                                                                      ARRAY_CONDITION
-                                         ));
+                                                                      ARRAY_CONDITION)
+                                                           );
                                        },
                                        true,
                                        false
@@ -285,8 +285,8 @@ public class JsSpecs
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(s,
-                                                                 OBJ_CONDITION
-                                    ));
+                                                                 OBJ_CONDITION)
+                                                      );
                                   },
                                   true,
                                   false
@@ -300,8 +300,8 @@ public class JsSpecs
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
-                                                                   ARRAY_CONDITION
-                                      ));
+                                                                   ARRAY_CONDITION)
+                                                        );
                                     },
                                     true,
                                     false
@@ -320,8 +320,8 @@ public class JsSpecs
                              {
                                if (requireNonNull(predicate).test(s)) return Optional.empty();
                                return Optional.of(new Error(JsInt.of(s),
-                                                            INT_CONDITION
-                               ));
+                                                            INT_CONDITION)
+                                                 );
                              }
     );
   }
@@ -363,8 +363,8 @@ public class JsSpecs
                                    {
                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
                                      return Optional.of(new Error(JsLong.of(s),
-                                                                  LONG_CONDITION
-                                     ));
+                                                                  LONG_CONDITION)
+                                                       );
                                    },
                                    true,
                                    false
@@ -378,8 +378,8 @@ public class JsSpecs
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ARRAY_CONDITION
-                                       ));
+                                                                    ARRAY_CONDITION)
+                                                         );
                                      },
                                      true,
                                      false
@@ -396,8 +396,8 @@ public class JsSpecs
                               {
                                 if (requireNonNull(predicate).test(s)) return Optional.empty();
                                 return Optional.of(new Error(JsLong.of(s),
-                                                             LONG_CONDITION
-                                ));
+                                                             LONG_CONDITION)
+                                                  );
                               }
     );
   }
@@ -412,8 +412,8 @@ public class JsSpecs
                                  {
                                    if (requireNonNull(predicate).test(s)) return Optional.empty();
                                    return Optional.of(new Error(JsBigDec.of(s),
-                                                                DECIMAL_CONDITION
-                                   ));
+                                                                DECIMAL_CONDITION)
+                                                     );
                                  }
     );
   }
@@ -429,8 +429,8 @@ public class JsSpecs
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(JsBigInt.of(s),
-                                                                 INTEGRAL_CONDITION
-                                    ));
+                                                                 INTEGRAL_CONDITION)
+                                                      );
                                   }
     );
   }
@@ -443,8 +443,8 @@ public class JsSpecs
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(JsStr.of(s),
-                                                                 STRING_CONDITION
-                                    ));
+                                                                 STRING_CONDITION)
+                                                      );
                                   },
                                   true,
                                   false
@@ -465,8 +465,8 @@ public class JsSpecs
                                {
                                  if (requireNonNull(predicate).test(v)) return Optional.empty();
                                  return Optional.of(new Error(v,
-                                                              VALUE_CONDITION
-                                 ));
+                                                              VALUE_CONDITION)
+                                                   );
                                }
     );
   }
@@ -479,8 +479,8 @@ public class JsSpecs
                              {
                                if (requireNonNull(predicate).test(s)) return Optional.empty();
                                return Optional.of(new Error(s,
-                                                            OBJ_CONDITION
-                               ));
+                                                            OBJ_CONDITION)
+                                                 );
                              }
     );
   }
@@ -491,8 +491,8 @@ public class JsSpecs
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
-                                                                    ARRAY_CONDITION
-                                       ));
+                                                                    ARRAY_CONDITION)
+                                                         );
                                      },
                                      true,
                                      false
@@ -505,8 +505,8 @@ public class JsSpecs
                                {
                                  if (requireNonNull(predicate).test(s)) return Optional.empty();
                                  return Optional.of(new Error(s,
-                                                              ARRAY_CONDITION
-                                 ));
+                                                              ARRAY_CONDITION)
+                                                   );
                                },
                                true,
                                false
@@ -520,8 +520,8 @@ public class JsSpecs
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(JsInt.of(s),
-                                                                 INT_CONDITION
-                                    ));
+                                                                 INT_CONDITION)
+                                                      );
                                   },
                                   true,
                                   false

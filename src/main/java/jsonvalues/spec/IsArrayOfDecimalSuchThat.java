@@ -8,6 +8,30 @@ import java.util.function.Function;
 class IsArrayOfDecimalSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
 
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfDecimalSuchThat(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfDecimalSuchThat(predicate,false,nullable);
+
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   private IsArrayOfDecimal isArrayOfDecimal;
   final Function<JsArray,Optional<Error>> predicate;
 

@@ -9,6 +9,30 @@ import java.util.function.Function;
 class IsArrayOfBoolSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
 
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfBoolSuchThat(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfBoolSuchThat(predicate,false,nullable);
+
+  }
+
   private IsArrayOfBool isArrayOfBool;
   final Function<JsArray,Optional<Error>> predicate;
 

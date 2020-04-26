@@ -890,8 +890,9 @@ public class TestJsObjParser
   public void testArrayOfObjSpec()
   {
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      nullableSpec(JsArraySpec.tuple(str,
-                                                                     bool)));
+                                      JsArraySpec.tuple(str,
+                                                        bool).nullable()
+                                     );
 
     JsObjParser parser = new JsObjParser(spec);
 
@@ -938,6 +939,70 @@ public class TestJsObjParser
                             );
     Assertions.assertEquals(a,parser.parse(a.toString()));
 
+  }
+
+  @Test
+  public void array_of_number(){
+    JsObjSpec spec = JsObjSpec.strict("a",arrayOfNumber(a->a.isDecimal()),
+                                      "b",nullableArrayOfNumber(a->a.isDecimal()),
+                                      "c",optArrayOfNumber(a->a.isIntegral()),
+                                      "e",optArrayOfNumber(a->a.isDecimal()));
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    final JsObj a = JsObj.of("a",
+                             JsArray.of(1.5,
+                                        1.7),
+                             "b",JsNull.NULL,
+                             "c",JsArray.of(1,2,3)
+                            );
+    Assertions.assertEquals(a,parser.parse(a.toString()));
+  }
+
+  @Test
+  public void array_of_number_with_predicate(){
+    JsObjSpec spec = JsObjSpec.strict("a",arrayOfIntegral(a->a.longValueExact()>0),
+                                      "b",nullableArrayOfIntegral(a->a.longValueExact() < 0),
+                                      "c",optArrayOfIntegral(a->a.longValueExact() % 2== 0),
+                                      "e",optArrayOfIntegral(a->a.longValueExact() % 3 == 0));
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    final JsObj a = JsObj.of("a",
+                             JsArray.of(1,
+                                        2),
+                             "b",JsNull.NULL,
+                             "c",JsArray.of(2,4,6)
+                            );
+    Assertions.assertEquals(a,parser.parse(a.toString()));
+  }
+
+  @Test
+  public void array_of_decimal_with_predicate(){
+    JsObjSpec spec = JsObjSpec.strict("a",arrayOfDec(a->a.longValueExact()>0),
+                                      "b",nullableArrayOfDec(a->a.longValueExact() < 0),
+                                      "c",optArrayOfDec(a->a.longValueExact() % 2== 0),
+                                      "e",optNullableArrayOfDec(a->a.longValueExact() % 3 == 0));
+
+    JsObjParser parser = new JsObjParser(spec);
+
+    final JsObj a = JsObj.of("a",
+                             JsArray.of(15,
+                                        25),
+                             "b",JsNull.NULL,
+                             "c",JsArray.of(24,46)
+                            );
+    Assertions.assertEquals(a,parser.parse(a.toString()));
+  }
+
+  @Test
+  public void test_number_error(){
+    JsObjSpec spec = JsObjSpec.strict("a",JsSpecs.number(a -> a.isDouble()));
+    JsObjParser parser = new JsObjParser(spec);
+
+    Assertions.assertThrows(DeserializerException.class,()->parser.parse(JsObj.of("a",JsInt.of(1)).toString()));
 
   }
+
+
 }

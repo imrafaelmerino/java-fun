@@ -8,7 +8,27 @@ import java.util.function.Function;
 
 class IsArrayOfStrSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfStrSuchThat(predicate,required,true);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfStrSuchThat(predicate,false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<JsArray, Optional<Error>> predicate;
   private IsArrayOfStr isArrayOfString;
 

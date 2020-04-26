@@ -4,12 +4,10 @@ import jsonvalues.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
-
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.ERROR_CODE.ARRAY_CONDITION;
 import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
@@ -18,115 +16,11 @@ public class JsSpecs
 {
 
   /**
-   A spec that is conformed by any non nullable value that conforms the given spec
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec spec(final JsObjSpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                false,
-                true
-               );
-  }
-
-  /**
-   A spec that is conformed  any value that conforms the given spec or null
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec nullableSpec(final JsObjSpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                true,
-                true
-               );
-  }
-
-  /**
-   A spec that is conformed by any optional value that conforms the given spec
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec optSpec(final JsObjSpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                false,
-                false
-               );
-  }
-
-  /**
-   A spec that is conformed by any optional value that conforms the given spec or is null
-   @param spec the given spec
-   @return a spec
-   */
-  public static Schema<JsObj> optNullableSpec(final JsObjSpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                true,
-                false
-               );
-  }
-
-  /**
-   A required and non nullable json array spec
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec spec(final JsArraySpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                false,
-                true
-               );
-  }
-
-  /**
-   An optional and non nullable json array spec
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec optSpec(final JsArraySpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                false,
-                false
-               );
-  }
-
-  /**
-   A required and nullable json array spec
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec nullableSpec(final JsArraySpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                true,
-                true
-               );
-  }
-
-  /**
-   An optional and nullable json array spec
-   @param spec the given spec
-   @return a spec
-   */
-  public static JsSpec optNullableSpec(final JsArraySpec spec)
-  {
-    return spec(Objects.requireNonNull(spec),
-                true,
-                false
-               );
-  }
-
-  /**
    A required and none nullable spec that specifies an array of objects that conform the given spec
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static JsSpec arrayOf(final JsObjSpec spec)
+  public static Schema<JsArray> arrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 true,
@@ -134,44 +28,7 @@ public class JsSpecs
     );
   }
 
-  /**
-   A required and nullable spec that specifies an array of objects that conform the given spec
-   @param spec the given spec that every object in the array has to conform
-   @return a spec
-   */
-  public static JsSpec nullableArrayOf(final JsObjSpec spec)
-  {
-    return new IsArrayOfObjSpec(true,
-                                true,
-                                requireNonNull(spec)
-    );
-  }
 
-  /**
-   An optional and  none nullable spec that specifies an array of objects that conform the given spec
-   @param spec the given spec that every object in the array has to conform
-   @return a spec
-   */
-  public static JsSpec optArrayOf(final JsObjSpec spec)
-  {
-    return new IsArrayOfObjSpec(false,
-                                false,
-                                requireNonNull(spec)
-    );
-  }
-
-  /**
-   An optional and nullable spec that specifies an array of objects that conform the given spec
-   @param spec the given spec that every object in the array has to conform
-   @return a spec
-   */
-  public static JsSpec optNullableArrayOf(final JsObjSpec spec)
-  {
-    return new IsArrayOfObjSpec(true,
-                                false,
-                                requireNonNull(spec)
-    );
-  }
 
   /**
    Spec that is conforms by any value of a Json
@@ -1093,6 +950,14 @@ public class JsSpecs
                      );
   }
 
+  public static JsSpec optArrayOfDec(final Predicate<BigDecimal> predicate)
+  {
+
+    return arrayOfDec(requireNonNull(predicate),
+                      false,
+                      false
+                     );
+  }
 
   public static JsSpec optNullableArrayOfDec(final Predicate<BigDecimal> predicate)
   {
@@ -1725,16 +1590,6 @@ public class JsSpecs
     );
   }
 
-  private static Schema<JsArray> spec(final JsArraySpec spec,
-                                      final boolean nullable,
-                                      final boolean required
-                                     )
-  {
-    return new IsArraySpec(requireNonNull(spec),
-                           nullable,
-                           required
-    );
-  }
 
 
   private static JsSpec integral(final boolean required,
@@ -1794,16 +1649,7 @@ public class JsSpecs
     );
   }
 
-  private static Schema<JsObj> spec(final JsObjSpec spec,
-                                    final boolean nullable,
-                                    final boolean required
-                                   )
-  {
-    return new IsObjSpec(nullable,
-                         required,
-                         requireNonNull(spec)
-    );
-  }
+
 
 
   private static JsSpec obj(final boolean required,

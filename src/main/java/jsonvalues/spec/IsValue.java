@@ -4,8 +4,30 @@ import jsonvalues.JsValue;
 
 import java.util.Optional;
 
-class IsValue implements JsPredicate
+class IsValue implements JsValuePredicate
 {
+
+  @Override
+  public JsSpec nullable()
+  {
+    return this;
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsValue(false);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return true;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final boolean required;
 
   IsValue(final boolean required)

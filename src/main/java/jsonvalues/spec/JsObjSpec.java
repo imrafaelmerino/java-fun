@@ -7,8 +7,7 @@ import jsonvalues.JsObj;
 import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
@@ -16,9 +15,46 @@ import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
 
 public class JsObjSpec implements Schema<JsObj>
 {
-
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final boolean strict;
+  /**
+   When this spec is associated to a key in another JsObjSpec, the required flag indicates whether or
+   not the key is optional. If this JsObjSpec is the root of the spec, the flag doesn't have
+   any meaning
+   */
+  final boolean required;
+  final boolean nullable;
+
+  @Override
+  public JsObjSpec optional(){
+    return new JsObjSpec(bindings,false,nullable,strict);
+  }
+
+  @Override
+  public JsObjSpec nullable(){
+    return new JsObjSpec(bindings,required,true,strict);
+  }
+
+  public JsObjSpec(final Map<String, JsSpec> bindings,boolean required,boolean nullable,boolean strict)
+  {
+    this.bindings = bindings;
+    this.required =required;
+    this.nullable = nullable;
+    this.strict = strict;
+  }
+
   Map<String, JsSpec> bindings = HashMap.empty();
+
+
 
   static Set<JsErrorPair> test(final JsPath parent,
                                final JsObjSpec parentObjSpec,
@@ -94,6 +130,8 @@ public class JsObjSpec implements Schema<JsObj>
                          )
   {
     return new JsObjSpec(true,
+                         true,
+                         false,
                          pair,
                          others
     );
@@ -104,12 +142,16 @@ public class JsObjSpec implements Schema<JsObj>
                           )
   {
     return new JsObjSpec(false,
+                         true,
+                         false,
                          pair,
                          others
     );
   }
 
   JsObjSpec(final boolean strict,
+            final boolean required,
+            final boolean nullable,
             final Pair pair,
             final Pair... others
            )
@@ -122,6 +164,9 @@ public class JsObjSpec implements Schema<JsObj>
                               p.spec
                              );
     this.strict = strict;
+    this.required = required;
+    this.nullable = nullable;
+
   }
 
   public static JsObjSpec strict(final String key,
@@ -130,7 +175,9 @@ public class JsObjSpec implements Schema<JsObj>
   {
     return new JsObjSpec(key,
                          spec,
-                         true
+                         true,
+                         true,
+                         false
     );
   }
 
@@ -140,19 +187,25 @@ public class JsObjSpec implements Schema<JsObj>
   {
     return new JsObjSpec(key,
                          spec,
+                         false,
+                         true,
                          false
     );
   }
 
   JsObjSpec(final String key,
             final JsSpec spec,
-            final boolean strict
+            final boolean strict,
+            final boolean required,
+            final boolean nullable
            )
   {
     bindings = bindings.put(key,
                             spec
                            );
     this.strict = strict;
+    this.required = required;
+    this.nullable = nullable;
   }
 
   public static JsObjSpec strict(final String key,
@@ -192,7 +245,9 @@ public class JsObjSpec implements Schema<JsObj>
   {
     this(key,
          spec,
-         strict
+         strict,
+         true,
+         false
         );
     bindings = bindings.put(key1,
                             spec1

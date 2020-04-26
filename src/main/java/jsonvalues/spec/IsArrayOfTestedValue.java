@@ -7,6 +7,27 @@ import java.util.function.Function;
 
 class IsArrayOfTestedValue extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfTestedValue(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfTestedValue(predicate,false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<JsValue, Optional<Error>> predicate;
 
 

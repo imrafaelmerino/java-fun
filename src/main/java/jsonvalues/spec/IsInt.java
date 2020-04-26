@@ -9,6 +9,29 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsInt extends AbstractPredicate implements JsIntPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsInt(required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsInt(false,nullable);
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
 
    IsInt(final boolean required,
                final boolean nullable

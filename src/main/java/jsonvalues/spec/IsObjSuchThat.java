@@ -8,7 +8,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsObjSuchThat extends AbstractPredicate implements JsObjPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsObjSuchThat(required,true,predicate);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsObjSuchThat(false,nullable,predicate);
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<JsObj,Optional<Error>> predicate;
 
    IsObjSuchThat(final boolean required,

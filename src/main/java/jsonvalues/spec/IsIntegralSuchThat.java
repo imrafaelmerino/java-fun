@@ -10,7 +10,29 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
 
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsIntegralSuchThat(required,true,predicate);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsIntegralSuchThat(false,nullable,predicate);
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<BigInteger, Optional<Error>> predicate;
 
   IsIntegralSuchThat(final boolean required,

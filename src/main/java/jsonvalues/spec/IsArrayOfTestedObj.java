@@ -11,6 +11,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfTestedObj extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfTestedObj(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfTestedObj(predicate,false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<JsObj,Optional<Error>> predicate;
 
 

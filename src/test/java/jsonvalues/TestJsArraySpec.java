@@ -313,8 +313,8 @@ public class TestJsArraySpec
                                        intNumber
                                       );
     JsObjSpec objSpec = JsObjSpec.strict("a",
-                                         nullableArrayOf(spec),
-                                         "b",optNullableArrayOf(spec));
+                                         arrayOf(spec).nullable(),
+                                         "b",arrayOf(spec).nullable().optional());
 
 
     Assertions.assertTrue(objSpec.test(JsObj.of("a",

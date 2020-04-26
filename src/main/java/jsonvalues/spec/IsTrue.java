@@ -9,10 +9,38 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsTrue extends AbstractPredicate implements JsBoolPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
 
-   IsTrue(final boolean required,
-                final boolean nullable
-               )
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsTrue(required,
+                      true
+    );
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsTrue(false,
+                      nullable
+    );
+  }
+
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  IsTrue(final boolean required,
+         final boolean nullable
+        )
   {
     super(required,
           nullable
@@ -25,6 +53,8 @@ class IsTrue extends AbstractPredicate implements JsBoolPredicate
     return Functions.testElem(JsValue::isTrue,
                               TRUE_EXPECTED,
                               required,
-                              nullable).apply(value);
+                              nullable
+                             )
+                    .apply(value);
   }
 }

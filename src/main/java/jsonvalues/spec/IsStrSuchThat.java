@@ -7,7 +7,29 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
  class IsStrSuchThat extends AbstractPredicate implements JsStrPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
 
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsStrSuchThat(required,true,predicate);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsStrSuchThat(false,nullable,predicate);
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<String,Optional<Error>> predicate;
 
    IsStrSuchThat(final boolean required,

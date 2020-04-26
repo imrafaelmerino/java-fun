@@ -738,13 +738,13 @@ public class TestJsObjSpec
 
 
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      spec(JsObjSpec.strict("a",
+                                      JsObjSpec.strict("a",
                                                             any,
                                                             "b",
                                                             optAny,
                                                             "d",
                                                             any(JsValue::isStr)
-                                                           ))
+                                                           )
                                      );
 
 
@@ -766,11 +766,11 @@ public class TestJsObjSpec
 
 
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      spec(JsArraySpec.tuple(
+                                      JsArraySpec.tuple(
                                         any,
                                         intNumber
 
-                                                            ))
+                                                            )
                                      );
 
 
@@ -933,7 +933,7 @@ public class TestJsObjSpec
                                       "j",
                                       nullableArrayOfStr,
                                       "k",
-                                      nullableArrayOf(JsObjSpec.lenient("a",
+                                      arrayOf(JsObjSpec.lenient("a",
                                                                         nullableBool,
                                                                         "b",
                                                                         nullableStr,
@@ -952,7 +952,7 @@ public class TestJsObjSpec
                                                                         "i",
                                                                         nullableNumber
                                                                        )
-                                                     )
+                                                     ).nullable()
                                      );
 
     final Set<JsErrorPair> result = spec.test(JsObj.of("a",
@@ -1012,7 +1012,7 @@ public class TestJsObjSpec
                                       "j",
                                       optNullableArrayOfStr,
                                       "k",
-                                      optNullableArrayOf(JsObjSpec.lenient("a",
+                                      arrayOf(JsObjSpec.lenient("a",
                                                                            optNullableBool,
                                                                            "b",
                                                                            optNullableStr,
@@ -1031,7 +1031,7 @@ public class TestJsObjSpec
                                                                            "i",
                                                                            optNullableNumber
                                                                           )
-                                                        )
+                                                        ).nullable().optional()
                                      );
 
     final Set<JsErrorPair> result = spec.test(JsObj.of("a",
@@ -1142,7 +1142,7 @@ public class TestJsObjSpec
                                       "j",
                                       optArrayOfStr,
                                       "k",
-                                      optArrayOf(JsObjSpec.lenient("a",
+                                      arrayOf(JsObjSpec.lenient("a",
                                                                    optBool,
                                                                    "b",
                                                                    optStr,
@@ -1161,7 +1161,7 @@ public class TestJsObjSpec
                                                                    "i",
                                                                    optNumber
                                                                   )
-                                                )
+                                                ).optional()
                                      );
 
 
@@ -1182,13 +1182,13 @@ public class TestJsObjSpec
                                                 str
                                                );
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      spec(objSpec),
+                                      objSpec,
                                       "b",
-                                      nullableSpec(objSpec),
+                                      objSpec.optional().nullable(),
                                       "c",
-                                      optSpec(objSpec),
+                                      objSpec.optional(),
                                       "d",
-                                      optNullableSpec(objSpec)
+                                      objSpec.optional().nullable()
                                      );
 
     final Set<JsErrorPair> set = spec.test(JsObj.of("a",
@@ -1214,15 +1214,15 @@ public class TestJsObjSpec
     final JsSpec a = arrayOf(JsObjSpec.lenient("a",
                                                integral
                                               ));
-    final JsSpec b = nullableArrayOf(JsObjSpec.lenient("a",
+    final JsSpec b = arrayOf(JsObjSpec.lenient("a",
                                                        str
-                                                      ));
-    final JsSpec c = optNullableArrayOf(JsObjSpec.lenient("a",
+                                                      )).nullable();
+    final JsSpec c = arrayOf(JsObjSpec.lenient("a",
                                                           integral
-                                                         ));
-    final JsSpec d = optArrayOf(JsObjSpec.lenient("a",
+                                                         )).nullable().optional();
+    final JsSpec d = arrayOf(JsObjSpec.lenient("a",
                                                   integral
-                                                 ));
+                                                 )).optional();
 
     final JsObjSpec objspec = JsObjSpec.strict("a",
                                                a,
@@ -1236,13 +1236,15 @@ public class TestJsObjSpec
 
     final Set<JsErrorPair> errors = objspec.test(JsObj.of("a",
                                                           JsArray.of(JsObj.of("a",
-                                                                              JsInt.of(1))),
+                                                                              JsInt.of(1)
+                                                                             )),
 
                                                           "b",
                                                           JsNull.NULL,
                                                           "d",
                                                           JsArray.of(JsObj.of("a",
-                                                                              JsInt.of(1)))
+                                                                              JsInt.of(1)
+                                                                             ))
                                                          )
                                                 );
 
@@ -1252,4 +1254,37 @@ public class TestJsObjSpec
 
   }
 
+  @Test
+  public void test_is_array_of_obspec()
+  {
+
+    JsObjSpec spec = JsObjSpec.strict("a",
+                                      str,
+                                      "b",
+                                      integral);
+    JsObjSpec b = JsObjSpec.strict("a",
+                                   arrayOf(spec),
+                                   "b",
+                                   arrayOf(spec).nullable(),
+                                   "c",
+                                   arrayOf(spec).optional(),
+                                   "d",
+                                   arrayOf(spec).nullable().optional()
+                                  );
+
+    Assertions.assertTrue(b.test(JsObj.of("a",
+                                          JsArray.of(JsObj.of("a",
+                                                              JsStr.of("a"),
+                                                              "b",
+                                                              JsInt.of(1)
+                                                             )
+                                                    ),
+                                          "b",JsNull.NULL,"d",JsNull.NULL
+                                         )
+                                )
+                                      .isEmpty());
+
+
+
+  }
 }

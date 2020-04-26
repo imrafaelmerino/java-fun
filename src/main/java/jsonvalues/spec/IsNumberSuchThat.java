@@ -8,7 +8,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsNumberSuchThat extends AbstractPredicate implements JsNumberPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsNumberSuchThat(required,true,predicate);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsNumberSuchThat(false,nullable,predicate);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<JsNumber,Optional<Error>> predicate;
 
    IsNumberSuchThat(final boolean required,

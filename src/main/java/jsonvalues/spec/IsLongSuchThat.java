@@ -9,7 +9,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsLongSuchThat extends AbstractPredicate implements JsLongPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsLongSuchThat(required,true,predicate);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsLongSuchThat(false,nullable,predicate);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final LongFunction<Optional<Error>> predicate;
 
    IsLongSuchThat(final boolean required,

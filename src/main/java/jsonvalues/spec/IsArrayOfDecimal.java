@@ -6,8 +6,29 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfDecimal extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
 
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfDecimal(required,true);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfDecimal(false,nullable);
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
 
    IsArrayOfDecimal(final boolean required,
                           final boolean nullable

@@ -10,13 +10,35 @@ import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
 class IsArrayOfArray extends AbstractPredicate implements JsArrayPredicate
 
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
 
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfArray(required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfArray(false,nullable);
+  }
 
   IsArrayOfArray(final boolean required,
                  final boolean nullable
                 )
   {
     super(required, nullable);
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
   }
 
   @Override

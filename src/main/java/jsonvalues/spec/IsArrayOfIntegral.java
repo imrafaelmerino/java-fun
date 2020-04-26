@@ -9,7 +9,28 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfIntegral(required,true);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfIntegral(false,nullable);
+
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
 
   IsArrayOfIntegral(final boolean required,
                     final boolean nullable

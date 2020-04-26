@@ -9,6 +9,27 @@ import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
 
 class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfTestedInt(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfTestedInt(predicate,false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final IntFunction<Optional<Error>> predicate;
 
 

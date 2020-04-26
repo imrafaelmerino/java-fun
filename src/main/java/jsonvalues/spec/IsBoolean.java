@@ -9,10 +9,35 @@ import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
 
 class IsBoolean extends AbstractPredicate implements JsBoolPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsBoolean(required,
+                         true);
+  }
 
-   IsBoolean(final boolean required,
-                   final boolean nullable
-                  )
+  @Override
+  public JsSpec optional()
+  {
+    return new IsBoolean(false,
+                         nullable);
+  }
+
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  IsBoolean(final boolean required,
+            final boolean nullable
+           )
   {
     super(required,
           nullable
@@ -26,7 +51,9 @@ class IsBoolean extends AbstractPredicate implements JsBoolPredicate
     return Functions.testElem(JsValue::isBool,
                               BOOLEAN_EXPECTED,
                               required,
-                              nullable).apply(value);
+                              nullable
+                             )
+                    .apply(value);
 
   }
 }

@@ -8,10 +8,35 @@ import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
 
 class IsStr extends AbstractPredicate implements JsStrPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsStr(required,
+                     true);
+  }
 
-   IsStr(final boolean required,
-               final boolean nullable
-              )
+  @Override
+  public JsSpec optional()
+  {
+    return new IsStr(false,
+                     nullable);
+  }
+
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  IsStr(final boolean required,
+        final boolean nullable
+       )
   {
     super(required,
           nullable
@@ -24,6 +49,8 @@ class IsStr extends AbstractPredicate implements JsStrPredicate
     return Functions.testElem(JsValue::isStr,
                               STRING_EXPECTED,
                               required,
-                              nullable).apply(value);
+                              nullable
+                             )
+                    .apply(value);
   }
 }

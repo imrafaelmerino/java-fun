@@ -5,7 +5,7 @@ import jsonvalues.JsValue;
 
 import java.util.Optional;
 
- interface JsPredicate extends JsSpec
+ interface JsValuePredicate extends JsSpec
 {
 
   Optional<Error> test(final JsValue value);

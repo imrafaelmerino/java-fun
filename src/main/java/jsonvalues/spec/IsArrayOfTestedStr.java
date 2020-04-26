@@ -9,6 +9,27 @@ import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
 
 class IsArrayOfTestedStr extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfTestedStr(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfTestedStr(predicate,false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<String, Optional<Error>> predicate;
 
   IsArrayOfTestedStr(final Function<String, Optional<Error>> predicate,

@@ -9,10 +9,35 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsObj extends AbstractPredicate implements JsObjPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsObj(required,
+                     true);
+  }
 
-   IsObj(final boolean required,
-               final boolean nullable
-              )
+  @Override
+  public JsSpec optional()
+  {
+    return new IsObj(false,
+                     nullable);
+  }
+
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  IsObj(final boolean required,
+        final boolean nullable
+       )
   {
     super(required,
           nullable
@@ -25,7 +50,9 @@ class IsObj extends AbstractPredicate implements JsObjPredicate
     return Functions.testElem(JsValue::isObj,
                               OBJ_EXPECTED,
                               required,
-                              nullable).apply(value);
+                              nullable
+                             )
+                    .apply(value);
 
   }
 }

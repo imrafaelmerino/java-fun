@@ -10,6 +10,29 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsArrayOfInt extends AbstractPredicate implements JsArrayPredicate
 {
 
+
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfInt(required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfInt(false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
+
    IsArrayOfInt(final boolean required,
                       final boolean nullable
                      )

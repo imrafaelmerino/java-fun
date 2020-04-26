@@ -10,6 +10,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsDecimalSuchThat extends AbstractPredicate implements JsDecimalPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsDecimalSuchThat(required,true,predicate);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsDecimalSuchThat(false,nullable,predicate);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
 
   final Function<BigDecimal,Optional<Error>> predicate;
 

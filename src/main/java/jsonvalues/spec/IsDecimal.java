@@ -9,7 +9,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsDecimal extends AbstractPredicate implements JsDecimalPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsDecimal(required,true);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsDecimal(false,nullable);
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
    IsDecimal(final boolean required,
                    final boolean nullable
                   )

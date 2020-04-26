@@ -30,7 +30,7 @@ public class JsArrayParser
                                                                                      Vector.empty()
                                                                                     );
     deserializer = DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
-                                                             false
+                                                             spec.nullable
                                                             );
 
   }
@@ -94,35 +94,7 @@ public class JsArrayParser
     if (spec.isEmpty()) return result;
 
     final JsSpec head = spec.head();
-    if (head instanceof IsObjSpec)
-    {
-      final IsObjSpec isObjSpec = (IsObjSpec) head;
-      final Tuple2<Vector<String>, Map<String, SpecDeserializer>> pair = JsObjParser.createDeserializers(isObjSpec.spec.bindings,
-                                                                                                         HashMap.empty(),
-                                                                                                         Vector.empty()
-                                                                                                        );
-      return createDeserializers(spec.tail(),
-                                 result.append(DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
-                                                                                       pair._2,
-                                                                                       isObjSpec.nullable,
-                                                                                       isObjSpec.spec.strict
-                                                                                      )
-                                              )
-                                );
-    } else if (head instanceof IsArraySpec)
-    {
-      final IsArraySpec arraySpec = (IsArraySpec) head;
-      final Vector<SpecDeserializer> deserializers = createDeserializers(arraySpec.arraySpec.specs,
-                                                                         Vector.empty()
-                                                                        );
-      return createDeserializers(spec.tail(),
-                                 result.append(
-                                   DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
-                                                                             arraySpec.nullable
-                                                                            )
-                                              )
-                                );
-    } else if (head instanceof JsObjSpec)
+   if (head instanceof JsObjSpec)
     {
       final JsObjSpec jsObjSpec = (JsObjSpec) head;
       final Tuple2<Vector<String>, Map<String, SpecDeserializer>> pair = JsObjParser.createDeserializers(jsObjSpec.bindings,
@@ -133,7 +105,7 @@ public class JsArrayParser
                                  result.append(
                                    DeserializersFactory.INSTANCE.ofObjSpec(pair._1,
                                                                            pair._2,
-                                                                           false,
+                                                                           jsObjSpec.nullable,
                                                                            jsObjSpec.strict
                                                                           )
                                               )
@@ -163,13 +135,13 @@ public class JsArrayParser
                                    DeserializersFactory.INSTANCE.ofArraySpec(createDeserializers(jsArraySpec.specs,
                                                                                                  Vector.empty()
                                                                                                 ),
-                                                                             false
+                                                                             jsArraySpec.nullable
                                                                             )
                                               )
                                 );
-    } else if (head instanceof JsPredicate)
+    } else if (head instanceof JsValuePredicate)
     {
-      final JsPredicate jsPredicate = (JsPredicate) head;
+      final JsValuePredicate jsPredicate = (JsValuePredicate) head;
       return createDeserializers(spec.tail(),
                                  result.append(getDeserializer(jsPredicate)._2)
                                 );

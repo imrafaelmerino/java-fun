@@ -7,6 +7,30 @@ import java.util.function.Function;
 
 class IsArrayOfNumberSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfNumberSuchThat(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfNumberSuchThat(predicate,false,nullable);
+
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<JsArray,Optional<Error>> predicate;
   private IsArrayOfNumber isArrayOfNumber;
 

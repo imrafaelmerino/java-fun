@@ -10,13 +10,44 @@ import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
 
 
 public class JsArraySpec implements  Schema<JsArray>
+
 {
+
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+
+  @Override
+  public JsArraySpec optional(){
+    return new JsArraySpec(specs,false,nullable);
+  }
+  @Override
+  public JsArraySpec nullable(){
+   return new JsArraySpec(specs,required,true);
+  }
+
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   Vector<JsSpec> specs;
   private boolean strict = true;
+  final boolean required;
+  final boolean nullable;
 
-  private JsArraySpec(final Vector<JsSpec> specs) {
+  JsArraySpec(final Vector<JsSpec> specs,boolean required,boolean nullable) {
     this.specs = specs;
+    this.required = required;
+    this.nullable = nullable;
   }
+
+  JsArraySpec(final Vector<JsSpec> specs) {
+    this(specs,true,false);
+  }
+
 
   public static JsArraySpec tuple(JsSpec spec, JsSpec... others){
     Vector<JsSpec> specs = Vector.empty();
@@ -28,7 +59,6 @@ public class JsArraySpec implements  Schema<JsArray>
   @Override
   public Set<JsErrorPair> test(final JsArray json)
   {
-
     return test(JsPath.empty().append(JsPath.fromIndex(-1)), this, new HashSet<>(), json);
   }
 

@@ -10,6 +10,27 @@ import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 public class IsArrayOfObjSpec implements Schema<JsArray>
 {
 
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfObjSpec(true,required,spec);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfObjSpec(nullable,false,spec);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final boolean nullable;
   final boolean required;
   final JsObjSpec spec;

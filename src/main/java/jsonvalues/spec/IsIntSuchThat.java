@@ -11,7 +11,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsIntSuchThat extends AbstractPredicate implements JsIntPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsIntSuchThat(required,true,predicate);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsIntSuchThat(false,nullable,predicate);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final IntFunction<Optional<Error>> predicate;
 
    IsIntSuchThat(final boolean required,

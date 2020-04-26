@@ -9,7 +9,27 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
  class IsLong extends AbstractPredicate implements JsLongPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsLong(required,true);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsLong(false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
    IsLong(final boolean required,
                 final boolean nullable
                )

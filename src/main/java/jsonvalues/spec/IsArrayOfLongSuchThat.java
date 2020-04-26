@@ -7,7 +7,28 @@ import java.util.function.Function;
 
 class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfLongSuchThat(predicate,required,true);
+  }
 
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfLongSuchThat(predicate,false,nullable);
+
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   private IsArrayOfLong isArrayOfLong;
   final Function<JsArray,Optional<Error>> predicate;
 

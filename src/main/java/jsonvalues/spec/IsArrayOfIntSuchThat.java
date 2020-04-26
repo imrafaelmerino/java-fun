@@ -6,7 +6,30 @@ import java.util.Optional;
 import java.util.function.Function;
 
 class IsArrayOfIntSuchThat extends AbstractPredicate implements JsArrayPredicate
+
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfIntSuchThat(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfIntSuchThat(predicate,false,nullable);
+
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
 
   final Function<JsArray,Optional<Error>> predicate;
   private IsArrayOfInt isArrayOfInt;

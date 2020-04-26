@@ -9,6 +9,27 @@ import java.util.function.Function;
 import static jsonvalues.spec.ERROR_CODE.*;
 class IsArrayOfTestedIntegral extends AbstractPredicate implements JsArrayPredicate
 {
+  @Override
+  public JsSpec nullable()
+  {
+    return new IsArrayOfTestedIntegral(predicate,required,true);
+  }
+
+  @Override
+  public JsSpec optional()
+  {
+    return new IsArrayOfTestedIntegral(predicate,false,nullable);
+  }
+  @Override
+  public boolean isNullable()
+  {
+    return nullable;
+  }
+  @Override
+  public boolean isRequired()
+  {
+    return required;
+  }
   final Function<BigInteger,Optional<Error>> predicate;
 
    IsArrayOfTestedIntegral(final Function<BigInteger,Optional<Error>> predicate,

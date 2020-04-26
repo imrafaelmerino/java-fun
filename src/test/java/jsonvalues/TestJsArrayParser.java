@@ -138,11 +138,11 @@ public class TestJsArrayParser
                            );
 
     JsObjSpec specNullable = JsObjSpec.strict("a",
-                                              JsSpecs.nullableArrayOf(JsObjSpec.strict("a",
+                                              JsSpecs.arrayOf(JsObjSpec.strict("a",
                                                                                        str,
                                                                                        "b",
                                                                                        intNumber
-                                                                                      ))
+                                                                                      )).nullable()
                                              );
 
     final JsObj b = JsObj.of("a",

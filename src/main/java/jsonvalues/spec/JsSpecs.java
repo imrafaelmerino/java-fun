@@ -20,9 +20,9 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static IsArrayOfObjSpec arrayOf(final JsObjSpec spec)
+  public static ArrayOfJsObjSpec arrayOf(final JsObjSpec spec)
   {
-    return new IsArrayOfObjSpec(false,
+    return new ArrayOfJsObjSpec(false,
                                 true,
                                 requireNonNull(spec)
     );
@@ -32,17 +32,17 @@ public class JsSpecs
   /**
    Spec that is conforms by any value of a Json
    */
-  public static JsSpec any = new IsValue(true);
+  public static JsSpec any = new AnySpec(true);
 
 
-  public static JsSpec str = new IsStr(true,
-                                       false
+  public static JsSpec str = new StrSpec(true,
+                                         false
   );
 
   public static JsSpec str(final Predicate<String> predicate)
   {
-    return new IsStrSuchThat(true,
-                             false,
+    return new StrSuchThatSpec(true,
+                               false,
                              s ->
                              {
                                if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -54,14 +54,14 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec number = new IsNumber(true,
-                                             false
+  public static JsSpec number = new NumberSpec(true,
+                                               false
   );
 
   public static JsSpec number(final Predicate<JsNumber> predicate)
   {
-    return new IsNumberSuchThat(true,
-                                false,
+    return new NumberSuchThatSpec(true,
+                                  false,
                                 s ->
                                 {
                                   if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -73,97 +73,97 @@ public class JsSpecs
   }
 
 
-  public static JsSpec bool = new IsBoolean(true,
-                                            false
+  public static JsSpec bool = new BooleanSpec(true,
+                                              false
   );
 
 
-  public static JsSpec decimal = new IsDecimal(true,
-                                               false
-  );
-
-
-  public static JsSpec integral = new IsIntegral(true,
+  public static JsSpec decimal = new DecimalSpec(true,
                                                  false
   );
 
-  public static JsSpec longNumber = new IsLong(true,
+
+  public static JsSpec integral = new IntegralSpec(true,
+                                                   false
+  );
+
+  public static JsSpec longNumber = new LongSpec(true,
+                                                 false
+  );
+
+  public static JsSpec intNumber = new IntSpec(true,
                                                false
   );
 
-  public static JsSpec intNumber = new IsInt(true,
-                                             false
+  public static JsSpec TRUE = new TrueConstantSpec(true,
+                                                   false
   );
 
-  public static JsSpec TRUE = new IsTrue(true,
+  public static JsSpec FALSE = new FalseConstantSpec(true,
+                                                     false
+  );
+
+  public static JsSpec obj = new ObjSpec(true,
                                          false
   );
 
-  public static JsSpec FALSE = new IsFalse(true,
-                                           false
-  );
 
-  public static JsSpec obj = new IsObj(true,
-                                       false
+  public static JsSpec array = new ArraySpec(true,
+                                             false
   );
 
 
-  public static JsSpec array = new IsArray(true,
-                                           false
-  );
-
-
-  public static JsSpec arrayOfLong = new IsArrayOfLong(true,
-                                                       false
-  );
-
-
-  public static JsSpec arrayOfInt = new IsArrayOfInt(true,
-                                                     false
-  );
-
-
-  public static JsSpec arrayOfStr = new IsArrayOfStr(true,
-                                                     false
-  );
-
-
-  public static JsSpec arrayOfBool = new IsArrayOfBool(true,
-                                                       false
-  );
-
-
-  public static JsSpec arrayOfDec = new IsArrayOfDecimal(true,
+  public static JsSpec arrayOfLong = new ArrayOfLongSpec(true,
                                                          false
   );
 
 
-  public static JsSpec arrayOfNumber = new IsArrayOfNumber(true,
+  public static JsSpec arrayOfInt = new ArrayOfIntSpec(true,
+                                                       false
+  );
+
+
+  public static JsSpec arrayOfStr = new ArrayOfStrSpec(true,
+                                                       false
+  );
+
+
+  public static JsSpec arrayOfBool = new ArrayOfBoolSpec(true,
+                                                         false
+  );
+
+
+  public static JsSpec arrayOfDec = new ArrayOfDecimalSpec(true,
                                                            false
   );
 
 
-  public static JsSpec arrayOfIntegral = new IsArrayOfIntegral(true,
-                                                               false
+  public static JsSpec arrayOfNumber = new ArrayOfNumberSpec(true,
+                                                             false
   );
 
 
-  public static JsSpec arrayOfObj = new IsArrayOfObj(true,
-                                                     false
+  public static JsSpec arrayOfIntegral = new ArrayOfIntegralSpec(true,
+                                                                 false
+  );
+
+
+  public static JsSpec arrayOfObj = new ArrayOfObjSpec(true,
+                                                       false
   );
 
 
   public static JsSpec arrayOfIntSuchThat(final Predicate<JsArray> predicate)
   {
-    return new IsArrayOfIntSuchThat(s ->
+    return new ArrayOfIntSuchThatSpec(s ->
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
                                                                    ARRAY_CONDITION
                                       ));
                                     },
-                                    true,
-                                    false
+                                      true,
+                                      false
     );
 
   }
@@ -172,119 +172,119 @@ public class JsSpecs
   public static JsSpec arrayOfDec(final Predicate<BigDecimal> predicate)
   {
 
-    return new IsArrayOfTestedDecimal(s ->
+    return new ArrayOfTestedDecimalSpec(s ->
                                       {
                                         if (requireNonNull(predicate).test(s)) return Optional.empty();
                                         return Optional.of(new Error(JsBigDec.of(s),
                                                                      DECIMAL_CONDITION
                                         ));
                                       },
-                                      true,
-                                      false
+                                        true,
+                                        false
     );
   }
 
   public static JsSpec arrayOfDecSuchThat(final Predicate<JsArray> predicate
                                          )
   {
-    return new IsArrayOfDecimalSuchThat(s ->
+    return new ArrayOfDecimalSuchThatSpec(s ->
                                         {
                                           if (requireNonNull(predicate).test(s)) return Optional.empty();
                                           return Optional.of(new Error(s,
                                                                        ARRAY_CONDITION
                                           ));
                                         },
-                                        true,
-                                        false
+                                          true,
+                                          false
     );
   }
 
   public static JsSpec arrayOfIntegral(final Predicate<BigInteger> predicate
                                       )
   {
-    return new IsArrayOfTestedIntegral(s ->
+    return new ArrayOfTestedIntegralSpec(s ->
                                        {
                                          if (requireNonNull(predicate).test(s)) return Optional.empty();
                                          return Optional.of(new Error(JsBigInt.of(s),
                                                                       INTEGRAL_CONDITION
                                          ));
                                        },
-                                       true,
-                                       false
+                                         true,
+                                         false
     );
   }
 
 
   public static JsSpec arrayOfIntegralSuchThat(final Predicate<JsArray> predicate)
   {
-    return new IsArrayOfIntegralSuchThat(s ->
+    return new ArrayOfIntegralSuchThatSpec(s ->
                                          {
                                            if (requireNonNull(predicate).test(s)) return Optional.empty();
                                            return Optional.of(new Error(s,
                                                                         ARRAY_CONDITION)
                                                              );
                                          },
-                                         true,
-                                         false
+                                           true,
+                                           false
     );
   }
 
   public static JsSpec arrayOfNumber(final Predicate<JsNumber> predicate)
   {
-    return new IsArrayOfTestedNumber(s ->
+    return new ArrayOfTestedNumberSpec(s ->
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
                                                                     ERROR_CODE.NUMBER_CONDITION)
                                                          );
                                      },
-                                     true,
-                                     false
+                                       true,
+                                       false
     );
   }
 
   public static JsSpec arrayOfNumberSuchThat(final Predicate<JsArray> predicate
                                             )
   {
-    return new IsArrayOfNumberSuchThat(s ->
+    return new ArrayOfNumberSuchThatSpec(s ->
                                        {
                                          if (requireNonNull(predicate).test(s)) return Optional.empty();
                                          return Optional.of(new Error(s,
                                                                       ARRAY_CONDITION)
                                                            );
                                        },
-                                       true,
-                                       false
+                                         true,
+                                         false
     );
   }
 
   public static JsSpec arrayOfObj(final Predicate<JsObj> predicate
                                  )
   {
-    return new IsArrayOfTestedObj(s ->
+    return new ArrayOfTestedObjSpec(s ->
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(s,
                                                                  OBJ_CONDITION)
                                                       );
                                   },
-                                  true,
-                                  false
+                                    true,
+                                    false
     );
 
   }
 
   public static JsSpec arrayOfObjSuchThat(final Predicate<JsArray> predicate)
   {
-    return new IsArrayOfObjSuchThat(s ->
+    return new ArrayOfObjSuchThatSpec(s ->
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
                                                                    ARRAY_CONDITION)
                                                         );
                                     },
-                                    true,
-                                    false
+                                      true,
+                                      false
     );
 
   }
@@ -294,8 +294,8 @@ public class JsSpecs
     final IntPredicate predicate
                                 )
   {
-    return new IsIntSuchThat(true,
-                             false,
+    return new IntSuchThatSpec(true,
+                               false,
                              s ->
                              {
                                if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -309,29 +309,29 @@ public class JsSpecs
   public static JsSpec arrayOfStrSuchThat(final Predicate<JsArray> predicate
                                          )
   {
-    return new IsArrayOfStrSuchThat(s ->
+    return new ArrayOfStrSuchThatSpec(s ->
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
                                                                    ARRAY_CONDITION
                                       ));
                                     },
-                                    true,
-                                    false
+                                      true,
+                                      false
     );
   }
 
   public static JsSpec array(final Predicate<JsValue> predicate)
   {
-    return new IsArrayOfTestedValue(s ->
+    return new ArrayOfTestedValueSpec(s ->
                                     {
                                       if (requireNonNull(predicate).test(s)) return Optional.empty();
                                       return Optional.of(new Error(s,
                                                                    VALUE_CONDITION
                                       ));
                                     },
-                                    true,
-                                    false
+                                      true,
+                                      false
     );
   }
 
@@ -339,30 +339,30 @@ public class JsSpecs
   public static JsSpec arrayOfLong(final LongPredicate predicate
                                   )
   {
-    return new IsArrayOfTestedLong(s ->
+    return new ArrayOfTestedLongSpec(s ->
                                    {
                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
                                      return Optional.of(new Error(JsLong.of(s),
                                                                   LONG_CONDITION)
                                                        );
                                    },
-                                   true,
-                                   false
+                                     true,
+                                     false
     );
   }
 
   public static JsSpec arrayOfBoolSuchThat(final Predicate<JsArray> predicate
                                           )
   {
-    return new IsArrayOfBoolSuchThat(s ->
+    return new ArrayOfBoolSuchThatSpec(s ->
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
                                                                     ARRAY_CONDITION)
                                                          );
                                      },
-                                     true,
-                                     false
+                                       true,
+                                       false
     );
   }
 
@@ -370,8 +370,8 @@ public class JsSpecs
     final LongPredicate predicate
                                  )
   {
-    return new IsLongSuchThat(true,
-                              false,
+    return new LongSuchThatSpec(true,
+                                false,
                               s ->
                               {
                                 if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -386,8 +386,8 @@ public class JsSpecs
     final Predicate<BigDecimal> predicate
                               )
   {
-    return new IsDecimalSuchThat(true,
-                                 false,
+    return new DecimalSuchThatSpec(true,
+                                   false,
                                  s ->
                                  {
                                    if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -403,8 +403,8 @@ public class JsSpecs
     final Predicate<BigInteger> predicate
                                )
   {
-    return new IsIntegralSuchThat(true,
-                                  false,
+    return new IntegralSuchThatSpec(true,
+                                    false,
                                   s ->
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -419,15 +419,15 @@ public class JsSpecs
                                  )
   {
 
-    return new IsArrayOfTestedStr(s ->
+    return new ArrayOfTestedStrSpec(s ->
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(JsStr.of(s),
                                                                  STRING_CONDITION)
                                                       );
                                   },
-                                  true,
-                                  false
+                                    true,
+                                    false
     );
   }
 
@@ -440,7 +440,7 @@ public class JsSpecs
   public static JsSpec any(final Predicate<JsValue> predicate
                           )
   {
-    return new IsValueSuchThat(true,
+    return new AnySuchThatSpec(true,
                                v ->
                                {
                                  if (requireNonNull(predicate).test(v)) return Optional.empty();
@@ -453,8 +453,8 @@ public class JsSpecs
 
   public static JsSpec obj(final Predicate<JsObj> predicate)
   {
-    return new IsObjSuchThat(true,
-                             false,
+    return new ObjSuchThatSpec(true,
+                               false,
                              s ->
                              {
                                if (requireNonNull(predicate).test(s)) return Optional.empty();
@@ -467,44 +467,44 @@ public class JsSpecs
 
   public static JsSpec arrayOfLongSuchThat(final Predicate<JsArray> predicate)
   {
-    return new IsArrayOfLongSuchThat(s ->
+    return new ArrayOfLongSuchThatSpec(s ->
                                      {
                                        if (requireNonNull(predicate).test(s)) return Optional.empty();
                                        return Optional.of(new Error(s,
                                                                     ARRAY_CONDITION)
                                                          );
                                      },
-                                     true,
-                                     false
+                                       true,
+                                       false
     );
   }
 
   public static JsArrayPredicate arraySuchThat(final Predicate<JsArray> predicate)
   {
-    return new IsArraySuchThat(s ->
+    return new ArraySuchThatSpec(s ->
                                {
                                  if (requireNonNull(predicate).test(s)) return Optional.empty();
                                  return Optional.of(new Error(s,
                                                               ARRAY_CONDITION)
                                                    );
                                },
-                               true,
-                               false
+                                 true,
+                                 false
     );
 
   }
 
   public static JsSpec arrayOfInt(final IntPredicate predicate)
   {
-    return new IsArrayOfTestedInt(s ->
+    return new ArrayOfTestedIntSpec(s ->
                                   {
                                     if (requireNonNull(predicate).test(s)) return Optional.empty();
                                     return Optional.of(new Error(JsInt.of(s),
                                                                  INT_CONDITION)
                                                       );
                                   },
-                                  true,
-                                  false
+                                    true,
+                                    false
     );
 
   }

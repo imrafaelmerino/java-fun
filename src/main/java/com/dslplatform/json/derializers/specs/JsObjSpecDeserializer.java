@@ -33,7 +33,7 @@ public class JsObjSpecDeserializer extends AbstractJsObjDeserializer
         String key = reader.readKey();
         if (strict && !deserializers.containsKey(key))
         {
-          throw reader.newParseError("There no spec defined for the key " + key);
+          throw reader.newParseError("There is no spec defined for the key " + key);
         }
         HashMap<String, JsValue> map = EMPTY_MAP.put(key,
                                                      deserializers.getOrElse(key,

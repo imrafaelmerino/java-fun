@@ -1,4 +1,5 @@
 package jsonvalues.spec;
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 import java.util.Optional;
 import java.util.function.Function;
@@ -7,11 +8,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
  class IsStrSuchThat extends AbstractPredicate implements JsStrPredicate
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
+
 
   @Override
   public JsSpec nullable()
@@ -23,6 +20,14 @@ import static jsonvalues.spec.ERROR_CODE.*;
   public JsSpec optional()
   {
     return new IsStrSuchThat(false,nullable,predicate);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return DeserializersFactory.INSTANCE.ofStrSuchThat(predicate,
+                                                       nullable
+                                                      );
   }
 
   @Override

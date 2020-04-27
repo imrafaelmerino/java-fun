@@ -1,5 +1,11 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import jsonvalues.JsPath;
+import jsonvalues.JsValue;
+
+import java.util.Set;
+
 public interface JsSpec {
   /**
    When this spec is associated to a key in a JsObjSpec, the required flag indicates whether or
@@ -8,13 +14,26 @@ public interface JsSpec {
   boolean isRequired();
 
   /**
-   A spec describes a value associated to a key in a JsObj or a value in a JsArray. The flag nullable
-   indicated whether or not it can be null
+   @return the same spec with the nullable flag enabled
    */
-  boolean isNullable();
   JsSpec nullable();
+
+
+  /**
+   @return the same spec with the optional flag enabled
+   */
   JsSpec optional();
 
+  /**
+   @return the deserializer used during the parsing process to parse an array of bytes or string
+   into a json value
+   */
+  SpecDeserializer deserializer();
+
+
+
+  Set<JsErrorPair> test(final JsPath parentPath,
+                        final JsValue value);
 
 }
 

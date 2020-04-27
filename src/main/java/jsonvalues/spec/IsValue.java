@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -18,11 +19,13 @@ class IsValue implements JsValuePredicate
   {
     return new IsValue(false);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return true;
+    return DeserializersFactory.INSTANCE.ofValue();
   }
+
   @Override
   public boolean isRequired()
   {

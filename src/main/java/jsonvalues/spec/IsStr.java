@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -23,9 +24,9 @@ class IsStr extends AbstractPredicate implements JsStrPredicate
   }
 
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return DeserializersFactory.INSTANCE.ofStr(nullable);
   }
 
   @Override

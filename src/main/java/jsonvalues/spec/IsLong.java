@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 
@@ -20,11 +21,13 @@ import static jsonvalues.spec.ERROR_CODE.*;
   {
     return new IsLong(false,nullable);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return DeserializersFactory.INSTANCE.ofLong(nullable);
   }
+
   @Override
   public boolean isRequired()
   {

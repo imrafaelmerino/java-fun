@@ -1,39 +1,56 @@
 package jsonvalues.spec;
-
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import io.vavr.Tuple2;
 import jsonvalues.*;
 import java.util.HashSet;
 import java.util.Set;
+import static jsonvalues.spec.ERROR_CODE.*;
 
-import static jsonvalues.spec.ERROR_CODE.NULL;
-import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
-
-public class IsArrayOfObjSpec implements Schema<JsArray>
+public class IsArrayOfObjSpec implements JsSpec
 {
 
   @Override
   public JsSpec nullable()
   {
-    return new IsArrayOfObjSpec(true,required,spec);
+    return new IsArrayOfObjSpec(true,
+                                required,
+                                spec
+    );
   }
 
   @Override
   public JsSpec optional()
   {
-    return new IsArrayOfObjSpec(nullable,false,spec);
+    return new IsArrayOfObjSpec(nullable,
+                                false,
+                                spec
+    );
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+
+    return DeserializersFactory.INSTANCE.ofArrayOfObjSpec(spec.bindings.filter((k,s)->s.isRequired()).map(it-> it._1).toVector(),
+                                                          spec.bindings.map((k,s)-> new Tuple2<>(k,s.deserializer())),
+                                                          nullable,
+                                                          spec.strict
+                                                         );
+
   }
+
+
+
+
   @Override
   public boolean isRequired()
   {
     return required;
   }
-  final boolean nullable;
-  final boolean required;
-  final JsObjSpec spec;
+
+  private final boolean nullable;
+  private final boolean required;
+  private final JsObjSpec spec;
 
   IsArrayOfObjSpec(final boolean nullable,
                    final boolean required,
@@ -46,27 +63,25 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
 
   }
 
+
   @Override
-  public Set<JsErrorPair> test(final JsArray array)
+  public Set<JsErrorPair> test(final JsPath parentPath,
+                               final JsValue value
+                              )
   {
-    if (array == null)
-    {
-      if (nullable) return new HashSet<>();
-      else
-      {
-        final HashSet<JsErrorPair> empty = new HashSet<>();
-        empty.add(JsErrorPair.of(JsPath.empty(),
-                                 new Error(JsNull.NULL,
-                                           NULL
-                                 )
-                                ));
-        return empty;
-      }
+    Set<JsErrorPair> errors = new HashSet<>();
+    if(value.isNull() && nullable)return errors;
+    if(!value.isArray()) {
+      errors.add(JsErrorPair.of(parentPath,new Error(value,ARRAY_EXPECTED)));
+      return errors;
     }
-    return apply(JsPath.fromIndex(-1),
-                 array
-                );
+    return apply(parentPath.index(-1),
+          value.toJsArray()
+         );
   }
+
+
+
 
   public Set<JsErrorPair> apply(final JsPath path,
                                 final JsArray array
@@ -77,21 +92,11 @@ public class IsArrayOfObjSpec implements Schema<JsArray>
     final JsPath currentPath = path.inc();
     for (JsValue value : array)
     {
-     if (!value.isObj())
-      {
-        result.add(JsErrorPair.of(currentPath,
-                                  new Error(value,
-                                            OBJ_EXPECTED
-                                  )
-                                 ));
-      } else
-      {
-        result.addAll(spec.test(value.toJsObj()));
-      }
-
+        result.addAll(spec.test(currentPath,value));
     }
     return result;
   }
+
 
 }
 

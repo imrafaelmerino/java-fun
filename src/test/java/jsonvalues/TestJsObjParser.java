@@ -487,7 +487,7 @@ public class TestJsObjParser
                                             "i",
                                             JsArraySpec.tuple(arrayOfInt.optional().nullable(),
                                                               arrayOfLong.nullable().optional()
-                                                             ),
+                                                             ).optional(),
                                             "j",
                                             obj.optional().nullable(),
                                             "k",

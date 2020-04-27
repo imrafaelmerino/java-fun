@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 
@@ -24,10 +25,11 @@ class IsNumber extends AbstractPredicate implements JsNumberPredicate
   }
 
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return  DeserializersFactory.INSTANCE.ofNumber(nullable);
   }
+
 
   @Override
   public boolean isRequired()

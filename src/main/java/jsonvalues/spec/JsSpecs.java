@@ -20,7 +20,7 @@ public class JsSpecs
    @param spec the given spec that every object in the array has to conform
    @return a spec
    */
-  public static Schema<JsArray> arrayOf(final JsObjSpec spec)
+  public static IsArrayOfObjSpec arrayOf(final JsObjSpec spec)
   {
     return new IsArrayOfObjSpec(false,
                                 true,
@@ -151,26 +151,6 @@ public class JsSpecs
   public static JsSpec arrayOfObj = new IsArrayOfObj(true,
                                                      false
   );
-
-
-  public static JsSpec arrayOfArray = new IsArrayOfArray(true,
-                                                         false
-  );
-
-
-  public static JsSpec arrayOfArray(final Predicate<JsArray> predicate)
-  {
-    return new IsArrayOfTestedArray(s ->
-                                    {
-                                      if (requireNonNull(predicate).test(s)) return Optional.empty();
-                                      return Optional.of(new Error(s,
-                                                                   ARRAY_CONDITION
-                                      ));
-                                    },
-                                    true,
-                                    false
-    );
-  }
 
 
   public static JsSpec arrayOfIntSuchThat(final Predicate<JsArray> predicate)

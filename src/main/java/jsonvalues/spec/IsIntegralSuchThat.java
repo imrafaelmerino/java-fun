@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.math.BigInteger;
@@ -10,11 +11,6 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicate
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
 
   @Override
   public JsSpec nullable()
@@ -26,6 +22,14 @@ class IsIntegralSuchThat extends AbstractPredicate implements JsIntegralPredicat
   public JsSpec optional()
   {
     return new IsIntegralSuchThat(false,nullable,predicate);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return  DeserializersFactory.INSTANCE.ofIntegralSuchThat(predicate,
+                                                             nullable
+                                                            );
   }
 
   @Override

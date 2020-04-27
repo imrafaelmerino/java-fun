@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -14,11 +15,7 @@ class IsArrayOfBoolSuchThat extends AbstractPredicate implements JsArrayPredicat
   {
     return required;
   }
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
+
 
   @Override
   public JsSpec nullable()
@@ -33,8 +30,16 @@ class IsArrayOfBoolSuchThat extends AbstractPredicate implements JsArrayPredicat
 
   }
 
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return   DeserializersFactory.INSTANCE.ofArrayOfBoolSuchThat(predicate,
+                                                                 nullable
+                                                                );
+  }
+
   private IsArrayOfBool isArrayOfBool;
-  final Function<JsArray,Optional<Error>> predicate;
+  private final Function<JsArray,Optional<Error>> predicate;
 
 
    IsArrayOfBoolSuchThat(final Function<JsArray,Optional<Error>>  predicate,

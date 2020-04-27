@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.math.BigDecimal;
@@ -21,11 +22,15 @@ class IsDecimalSuchThat extends AbstractPredicate implements JsDecimalPredicate
   {
     return new IsDecimalSuchThat(false,nullable,predicate);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return   DeserializersFactory.INSTANCE.ofDecimalSuchThat(predicate,
+                                                             nullable
+                                                            );
   }
+
   @Override
   public boolean isRequired()
   {

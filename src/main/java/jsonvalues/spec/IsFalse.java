@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 
@@ -9,12 +10,6 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsFalse extends AbstractPredicate implements JsBoolPredicate
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
-
   @Override
   public JsSpec nullable()
   {
@@ -27,6 +22,12 @@ class IsFalse extends AbstractPredicate implements JsBoolPredicate
   {
     return new IsFalse(false,
                        nullable);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return  DeserializersFactory.INSTANCE.ofFalse(nullable);
   }
 
   @Override

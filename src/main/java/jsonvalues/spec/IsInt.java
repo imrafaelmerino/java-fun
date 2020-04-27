@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 
@@ -10,12 +11,6 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsInt extends AbstractPredicate implements JsIntPredicate
 {
   @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
-
-  @Override
   public JsSpec nullable()
   {
     return new IsInt(required,true);
@@ -25,6 +20,12 @@ class IsInt extends AbstractPredicate implements JsIntPredicate
   public JsSpec optional()
   {
     return new IsInt(false,nullable);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return DeserializersFactory.INSTANCE.ofInt(nullable);
   }
 
   @Override

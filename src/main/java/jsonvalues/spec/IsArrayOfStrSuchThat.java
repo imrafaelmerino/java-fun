@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
@@ -19,11 +20,16 @@ class IsArrayOfStrSuchThat extends AbstractPredicate implements JsArrayPredicate
   {
     return new IsArrayOfStrSuchThat(predicate,false,nullable);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return DeserializersFactory.INSTANCE.ofArrayOfStrSuchThat(predicate,
+                                                              nullable
+                                                             );
   }
+
+
   @Override
   public boolean isRequired()
   {

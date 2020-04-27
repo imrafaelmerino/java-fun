@@ -1,25 +1,21 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
+import io.vavr.collection.Vector;
 import jsonvalues.*;
 
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.spec.ERROR_CODE.REQUIRED;
-import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
+import static jsonvalues.spec.ERROR_CODE.*;
 
 
-public class JsObjSpec implements Schema<JsObj>
+public class JsObjSpec implements JsSpec
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
 
   @Override
   public boolean isRequired()
@@ -33,8 +29,8 @@ public class JsObjSpec implements Schema<JsObj>
    not the key is optional. If this JsObjSpec is the root of the spec, the flag doesn't have
    any meaning
    */
-  final boolean required;
-  final boolean nullable;
+  private final boolean required;
+  private final boolean nullable;
 
   @Override
   public JsObjSpec optional()
@@ -42,7 +38,35 @@ public class JsObjSpec implements Schema<JsObj>
     return new JsObjSpec(bindings,
                          false,
                          nullable,
-                         strict);
+                         strict
+    );
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    Map<String, SpecDeserializer> deserializers = HashMap.empty();
+    Vector<String> required = Vector.empty();
+    for (final String key : bindings.keySet())
+    {
+
+      final JsSpec spec = bindings.get(key)
+                                  .get();
+      if (spec.isRequired()) required = required.append(key);
+      deserializers = deserializers.put(key,
+                        spec.deserializer());
+    }
+
+
+    return DeserializersFactory.INSTANCE.ofObjSpec(required,
+                                                   deserializers,
+                                                   nullable,
+                                                   strict
+                                                  );
+  }
+
+  public Set<JsErrorPair> test(final JsObj obj){
+    return test(JsPath.empty(),obj);
   }
 
   @Override
@@ -51,7 +75,8 @@ public class JsObjSpec implements Schema<JsObj>
     return new JsObjSpec(bindings,
                          required,
                          true,
-                         strict);
+                         strict
+    );
   }
 
   public JsObjSpec(final Map<String, JsSpec> bindings,
@@ -69,13 +94,19 @@ public class JsObjSpec implements Schema<JsObj>
   Map<String, JsSpec> bindings = HashMap.empty();
 
 
-  static Set<JsErrorPair> test(final JsPath parent,
+  private Set<JsErrorPair> test(final JsPath parent,
                                final JsObjSpec parentObjSpec,
                                final Set<JsErrorPair> errors,
-                               final JsObj json
+                               final JsValue parentValue
                               )
   {
 
+    if(parentValue.isNull() && nullable) return errors;
+    if(!parentValue.isObj()) {
+      errors.add(JsErrorPair.of(parent,new Error(parentValue,OBJ_EXPECTED)));
+      return errors;
+    }
+    JsObj json = parentValue.toJsObj();
     for (final Tuple2<String, JsValue> next : json)
     {
       final String key = next._1;
@@ -95,37 +126,17 @@ public class JsObjSpec implements Schema<JsObj>
                                     )
                                    ));
         }
-      } else Functions.addErrors(errors,
-                                 value,
-                                 currentPath,
-                                 spec
-                                );
+      } else errors.addAll(spec.test(currentPath,value));
 
     }
-
-
-    return errors;
-  }
-
-
-  @Override
-  public Set<JsErrorPair> test(final JsObj json)
-  {
-    final Set<JsErrorPair> errors = test(JsPath.empty(),
-                                         this,
-                                         new HashSet<>(),
-                                         json
-                                        );
-
-    final Seq<String> requiredFields = bindings.filter((key, spec) -> spec.isRequired())
-                                               .map(p -> p._1);
-
-
+    final Seq<String> requiredFields = parentObjSpec.bindings.filter((key, spec) -> spec.isRequired())
+                                                             .map(p -> p._1);
     for (final String requiredField : requiredFields)
     {
-      if (!json.containsKey(requiredField)) errors.add(JsErrorPair.of(JsPath.fromKey(requiredField),
+      if (!json.containsKey(requiredField)) errors.add(JsErrorPair.of(parent.key(requiredField),
                                                                       new Error(JsNothing.NOTHING,
-                                                                                REQUIRED)
+                                                                                REQUIRED
+                                                                      )
                                                                      )
                                                       );
     }
@@ -133,6 +144,16 @@ public class JsObjSpec implements Schema<JsObj>
 
     return errors;
   }
+
+  @Override
+  public Set<JsErrorPair> test(final JsPath parentPath,
+                               final JsValue value
+                              )
+  {
+    return test(parentPath,this,new HashSet<>(),value);
+  }
+
+
 
   public final static class Pair
   {
@@ -181,12 +202,12 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(final boolean strict,
-            final boolean required,
-            final boolean nullable,
-            final Pair pair,
-            final Pair... others
-           )
+  private JsObjSpec(final boolean strict,
+                    final boolean required,
+                    final boolean nullable,
+                    final Pair pair,
+                    final Pair... others
+                   )
   {
     bindings = bindings.put(pair.key,
                             pair.spec
@@ -225,12 +246,12 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(final String key,
-            final JsSpec spec,
-            final boolean strict,
-            final boolean required,
-            final boolean nullable
-           )
+  private JsObjSpec(final String key,
+                    final JsSpec spec,
+                    final boolean strict,
+                    final boolean required,
+                    final boolean nullable
+                   )
   {
     bindings = bindings.put(key,
                             spec
@@ -268,12 +289,12 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(final String key,
-            final JsSpec spec,
-            final String key1,
-            final JsSpec spec1,
-            final boolean strict
-           )
+  private JsObjSpec(final String key,
+                    final JsSpec spec,
+                    final String key1,
+                    final JsSpec spec1,
+                    final boolean strict
+                   )
   {
     this(key,
          spec,
@@ -322,14 +343,14 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -386,16 +407,16 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(final String key,
-            final JsSpec spec,
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final boolean strict
-           )
+  private JsObjSpec(final String key,
+                    final JsSpec spec,
+                    final String key1,
+                    final JsSpec spec1,
+                    final String key2,
+                    final JsSpec spec2,
+                    final String key3,
+                    final JsSpec spec3,
+                    final boolean strict
+                   )
   {
     this(key,
          spec,
@@ -462,18 +483,18 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    String key3,
+                    JsSpec spec3,
+                    String key4,
+                    JsSpec spec4,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -550,20 +571,20 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    String key3,
+                    JsSpec spec3,
+                    String key4,
+                    JsSpec spec4,
+                    String key5,
+                    JsSpec spec5,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -650,22 +671,22 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5,
-            String key6,
-            JsSpec spec6,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    String key3,
+                    JsSpec spec3,
+                    String key4,
+                    JsSpec spec4,
+                    String key5,
+                    JsSpec spec5,
+                    String key6,
+                    JsSpec spec6,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -762,24 +783,24 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5,
-            String key6,
-            JsSpec spec6,
-            String key7,
-            JsSpec spec7,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    String key3,
+                    JsSpec spec3,
+                    String key4,
+                    JsSpec spec4,
+                    String key5,
+                    JsSpec spec5,
+                    String key6,
+                    JsSpec spec6,
+                    String key7,
+                    JsSpec spec7,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -886,26 +907,26 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5,
-            String key6,
-            JsSpec spec6,
-            String key7,
-            JsSpec spec7,
-            String key8,
-            JsSpec spec8,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    String key3,
+                    JsSpec spec3,
+                    String key4,
+                    JsSpec spec4,
+                    String key5,
+                    JsSpec spec5,
+                    String key6,
+                    JsSpec spec6,
+                    String key7,
+                    JsSpec spec7,
+                    String key8,
+                    JsSpec spec8,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -1022,28 +1043,28 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5,
-            String key6,
-            JsSpec spec6,
-            String key7,
-            JsSpec spec7,
-            String key8,
-            JsSpec spec8,
-            String key9,
-            JsSpec spec9,
-            boolean strict
-           )
+  private JsObjSpec(String key,
+                    JsSpec spec,
+                    String key1,
+                    JsSpec spec1,
+                    String key2,
+                    JsSpec spec2,
+                    String key3,
+                    JsSpec spec3,
+                    String key4,
+                    JsSpec spec4,
+                    String key5,
+                    JsSpec spec5,
+                    String key6,
+                    JsSpec spec6,
+                    String key7,
+                    JsSpec spec7,
+                    String key8,
+                    JsSpec spec8,
+                    String key9,
+                    JsSpec spec9,
+                    boolean strict
+                   )
   {
     this(key,
          spec,
@@ -1171,30 +1192,30 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(final String key,
-            final JsSpec spec,
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final boolean strict
-           )
+  private JsObjSpec(final String key,
+                    final JsSpec spec,
+                    final String key1,
+                    final JsSpec spec1,
+                    final String key2,
+                    final JsSpec spec2,
+                    final String key3,
+                    final JsSpec spec3,
+                    final String key4,
+                    final JsSpec spec4,
+                    final String key5,
+                    final JsSpec spec5,
+                    final String key6,
+                    final JsSpec spec6,
+                    final String key7,
+                    final JsSpec spec7,
+                    final String key8,
+                    final JsSpec spec8,
+                    final String key9,
+                    final JsSpec spec9,
+                    final String key10,
+                    final JsSpec spec10,
+                    final boolean strict
+                   )
   {
     this(key,
          spec,
@@ -1333,32 +1354,32 @@ public class JsObjSpec implements Schema<JsObj>
     );
   }
 
-  JsObjSpec(final String key,
-            final JsSpec spec,
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final boolean strict
-           )
+  private JsObjSpec(final String key,
+                    final JsSpec spec,
+                    final String key1,
+                    final JsSpec spec1,
+                    final String key2,
+                    final JsSpec spec2,
+                    final String key3,
+                    final JsSpec spec3,
+                    final String key4,
+                    final JsSpec spec4,
+                    final String key5,
+                    final JsSpec spec5,
+                    final String key6,
+                    final JsSpec spec6,
+                    final String key7,
+                    final JsSpec spec7,
+                    final String key8,
+                    final JsSpec spec8,
+                    final String key9,
+                    final JsSpec spec9,
+                    final String key10,
+                    final JsSpec spec10,
+                    final String key11,
+                    final JsSpec spec11,
+                    final boolean strict
+                   )
   {
     this(key,
          spec,
@@ -1388,4 +1409,7 @@ public class JsObjSpec implements Schema<JsObj>
                             spec11
                            );
   }
+
+
+
 }

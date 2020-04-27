@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -22,11 +23,15 @@ class IsIntSuchThat extends AbstractPredicate implements JsIntPredicate
   {
     return new IsIntSuchThat(false,nullable,predicate);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return DeserializersFactory.INSTANCE.ofIntSuchThat(predicate,
+                                                nullable
+                                               );
   }
+
   @Override
   public boolean isRequired()
   {

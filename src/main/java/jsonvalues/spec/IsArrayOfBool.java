@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -13,11 +14,7 @@ class IsArrayOfBool extends AbstractPredicate implements JsArrayPredicate
   {
     return required;
   }
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
+
 
   @Override
   public JsSpec nullable()
@@ -29,6 +26,12 @@ class IsArrayOfBool extends AbstractPredicate implements JsArrayPredicate
   public JsSpec optional()
   {
     return new IsArrayOfBool(false,nullable);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return  DeserializersFactory.INSTANCE.ofArrayOfBool(nullable);
   }
 
   IsArrayOfBool(final boolean required,

@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -9,11 +10,6 @@ import static jsonvalues.spec.ERROR_CODE.*;
 class IsIntegral extends AbstractPredicate implements JsIntegralPredicate
 
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
 
   @Override
   public JsSpec nullable()
@@ -25,6 +21,12 @@ class IsIntegral extends AbstractPredicate implements JsIntegralPredicate
   public JsSpec optional()
   {
     return new IsIntegral(false,nullable);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return  DeserializersFactory.INSTANCE.ofIntegral(nullable);
   }
 
   @Override

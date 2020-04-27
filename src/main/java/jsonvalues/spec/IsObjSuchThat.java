@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -8,11 +9,7 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsObjSuchThat extends AbstractPredicate implements JsObjPredicate
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
+
   @Override
   public JsSpec nullable()
   {
@@ -24,6 +21,15 @@ class IsObjSuchThat extends AbstractPredicate implements JsObjPredicate
   {
     return new IsObjSuchThat(false,nullable,predicate);
   }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return  DeserializersFactory.INSTANCE.ofObjSuchThat(predicate,
+                                                        nullable
+                                                       );
+  }
+
   @Override
   public boolean isRequired()
   {

@@ -110,31 +110,7 @@ public class TestJsArraySpec
                                .isEmpty());
   }
 
-  @Test
-  public void test_array_of_array_spec()
-  {
-    JsObjSpec spec = JsObjSpec.strict("a",
-                                      arrayOfArray
-                                     );
 
-    Assertions.assertTrue(spec.test(JsObj.of("a",
-                                             JsArray.of(JsArray.empty(),
-                                                        JsArray.empty()
-                                                       )
-                                            )
-                                   )
-                              .isEmpty());
-
-    Assertions.assertFalse(spec.test(JsObj.of("a",
-                                              JsArray.of(JsObj.empty(),
-                                                         JsArray.empty()
-                                                        )
-                                             )
-                                    )
-                               .isEmpty());
-
-
-  }
 
   @Test
   public void test_array_of_integral_spec()

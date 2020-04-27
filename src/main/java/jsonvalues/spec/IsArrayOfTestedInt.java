@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -20,11 +21,15 @@ class IsArrayOfTestedInt extends AbstractPredicate implements JsArrayPredicate
   {
     return new IsArrayOfTestedInt(predicate,false,nullable);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return  DeserializersFactory.INSTANCE.ofArrayOfIntEachSuchThat(predicate,
+                                                                   nullable
+                                                                  );
   }
+
   @Override
   public boolean isRequired()
   {

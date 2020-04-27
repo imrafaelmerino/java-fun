@@ -1,4 +1,5 @@
 package jsonvalues.spec;
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsNumber;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -19,11 +20,15 @@ class IsNumberSuchThat extends AbstractPredicate implements JsNumberPredicate
   {
     return new IsNumberSuchThat(false,nullable,predicate);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return   DeserializersFactory.INSTANCE.ofNumberSuchThat(predicate,
+                                                            nullable
+                                                           );
   }
+
   @Override
   public boolean isRequired()
   {

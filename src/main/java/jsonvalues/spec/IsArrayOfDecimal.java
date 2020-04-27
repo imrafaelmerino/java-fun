@@ -1,16 +1,12 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 import java.util.Optional;
 import static jsonvalues.spec.ERROR_CODE.*;
 
 class IsArrayOfDecimal extends AbstractPredicate implements JsArrayPredicate
 {
-  @Override
-  public boolean isNullable()
-  {
-    return nullable;
-  }
 
   @Override
   public JsSpec nullable()
@@ -22,6 +18,12 @@ class IsArrayOfDecimal extends AbstractPredicate implements JsArrayPredicate
   public JsSpec optional()
   {
     return new IsArrayOfDecimal(false,nullable);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return   DeserializersFactory.INSTANCE.ofArrayOfDecimal(nullable);
   }
 
   @Override

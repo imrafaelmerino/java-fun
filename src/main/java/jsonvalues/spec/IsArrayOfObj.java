@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 
@@ -20,11 +21,15 @@ class IsArrayOfObj extends AbstractPredicate implements JsArrayPredicate
   {
     return new IsArrayOfObj(false,nullable);
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return  DeserializersFactory.INSTANCE.ofArrayOfObj(nullable
+                                                      );
   }
+
+
   @Override
   public boolean isRequired()
   {

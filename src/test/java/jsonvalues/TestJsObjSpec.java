@@ -1,5 +1,6 @@
 package jsonvalues;
 
+import com.dslplatform.json.derializers.specs.JsArrayOfObjSpecDeserializer;
 import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -797,8 +798,6 @@ public class TestJsObjSpec
 
     JsObjSpec spec = JsObjSpec.strict("a",
                                       array,
-                                      "b",
-                                      arrayOfArray,
                                       "c",
                                       arrayOfBool,
                                       "d",
@@ -841,10 +840,6 @@ public class TestJsObjSpec
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsArray.of(1,
                                                         2
-                                                       ),
-                                             "b",
-                                             JsArray.of(JsArray.empty(),
-                                                        JsArray.empty()
                                                        ),
                                              "c",
                                              JsArray.of(true,
@@ -914,8 +909,6 @@ public class TestJsObjSpec
 
     JsObjSpec spec = JsObjSpec.strict("a",
                                       array.nullable(),
-                                      "b",
-                                      arrayOfArray.nullable(),
                                       "c",
                                       arrayOfBool.nullable(),
                                       "d",
@@ -957,8 +950,6 @@ public class TestJsObjSpec
 
     final Set<JsErrorPair> result = spec.test(JsObj.of("a",
                                                        JsNull.NULL,
-                                                       "b",
-                                                       JsNull.NULL,
                                                        "c",
                                                        JsNull.NULL,
                                                        "d",
@@ -991,10 +982,8 @@ public class TestJsObjSpec
   public void testOptionalNullableJsSpec()
   {
 
-    JsObjSpec spec = JsObjSpec.strict("a",
+    JsObjSpec spec = JsObjSpec.lenient("a",
                                       array.nullable().optional(),
-                                      "b",
-                                      arrayOfArray.optional().nullable(),
                                       "c",
                                       arrayOfBool.nullable().optional(),
                                       "d",
@@ -1036,8 +1025,6 @@ public class TestJsObjSpec
 
     final Set<JsErrorPair> result = spec.test(JsObj.of("a",
                                                        JsNull.NULL,
-                                                       "b",
-                                                       JsNull.NULL,
                                                        "c",
                                                        JsNull.NULL,
                                                        "d",
@@ -1059,7 +1046,7 @@ public class TestJsObjSpec
                                                       )
                                              );
 
-
+System.out.println(result);
     Assertions.assertTrue(result
                             .isEmpty()
                          );
@@ -1112,7 +1099,7 @@ public class TestJsObjSpec
                                                                   )
                                                        )
                                               );
-
+System.out.println(result1);
     Assertions.assertTrue(result1.isEmpty());
   }
 
@@ -1123,8 +1110,6 @@ public class TestJsObjSpec
 
     JsObjSpec spec = JsObjSpec.strict("a",
                                       array.optional(),
-                                      "b",
-                                      arrayOfArray.optional(),
                                       "c",
                                       arrayOfBool.optional(),
                                       "d",
@@ -1284,6 +1269,49 @@ public class TestJsObjSpec
                                 )
                                       .isEmpty());
 
+
+
+  }
+
+  @Test
+  public void test_required_fields() {
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                              str.optional(),
+                                              "b",
+                                              JsObjSpec.strict("c",
+                                                               integral));
+
+    final Set<JsErrorPair> errors = spec.test(JsObj.of("b",JsObj.empty()));
+
+    Assertions.assertEquals(1,errors.size());
+    Assertions.assertEquals(JsPath.path("/b/c"),errors.stream().findFirst().get().path);
+
+  }
+
+  @Test
+  public void test_errors_schemas(){
+    final JsObjSpec spec = JsObjSpec.strict("a",
+                                              JsObjSpec.strict("A",
+                                                               intNumber),
+                                              "b",
+                                              JsArraySpec.tuple(str),
+                                              "c",
+                                              arrayOf(JsObjSpec.lenient("a",
+                                                                        str)
+                                                     )
+                                             );
+
+    final Set<JsErrorPair> errors = spec.test(JsObj.of("a",
+                                                     JsStr.of("a"),
+                                                     "b",
+                                                     JsInt.of(1),
+                                                     "c",
+                                                     JsBool.TRUE
+                                                    ));
+
+    System.out.println(errors);
+
+    Assertions.assertFalse(errors.isEmpty());
 
 
   }

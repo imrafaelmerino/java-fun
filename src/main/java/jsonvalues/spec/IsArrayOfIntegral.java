@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 
@@ -21,11 +22,13 @@ class IsArrayOfIntegral extends AbstractPredicate implements JsArrayPredicate
     return new IsArrayOfIntegral(false,nullable);
 
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return  DeserializersFactory.INSTANCE.ofArrayOfIntegral(nullable);
   }
+
   @Override
   public boolean isRequired()
   {

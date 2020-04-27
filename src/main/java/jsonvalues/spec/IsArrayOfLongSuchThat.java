@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -19,11 +20,16 @@ class IsArrayOfLongSuchThat extends AbstractPredicate implements JsArrayPredicat
     return new IsArrayOfLongSuchThat(predicate,false,nullable);
 
   }
+
   @Override
-  public boolean isNullable()
+  public SpecDeserializer deserializer()
   {
-    return nullable;
+    return DeserializersFactory.INSTANCE.ofArrayOfLongSuchThat(predicate,
+                                                               nullable
+                                                              );
   }
+
+
   @Override
   public boolean isRequired()
   {

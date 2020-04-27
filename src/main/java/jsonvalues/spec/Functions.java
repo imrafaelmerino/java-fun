@@ -1,12 +1,8 @@
 package jsonvalues.spec;
 
 import jsonvalues.JsArray;
-import jsonvalues.JsObj;
-import jsonvalues.JsPath;
 import jsonvalues.JsValue;
-
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -93,107 +89,14 @@ class Functions
     return value ->
     {
       if (value.isNothing() && required) return Optional.of(new Error(value,
-                                                                      REQUIRED
-      ));
+                                                                      REQUIRED)
+                                                           );
       if (value.isNull() && !nullable) return Optional.of(new Error(value,
-                                                                    NULL
-      ));
+                                                                    NULL)
+                                                         );
       return Optional.empty();
     };
   }
 
-  static void addErrors(final Set<JsErrorPair> errors,
-                        final JsValue value,
-                        final JsPath currentPath,
-                        final JsSpec spec
-                       )
-  {
-    if (spec instanceof JsObjSpec)
-    {
-      final JsObjSpec objSpec = (JsObjSpec) spec;
-      if(objSpec.nullable && value.isNull()) return;
-      if (!value.isObj())
-      {
-        errors.add(JsErrorPair.of(currentPath,
-                                  new Error(value,
-                                            OBJ_EXPECTED
-                                  )
-                                 )
-                  );
-      }
-      else
-      {
 
-        final JsObj obj = value.toJsObj();
-        errors.addAll(JsObjSpec.test(currentPath,
-                                     objSpec,
-                                     errors,
-                                     obj
-                                    ));
-      }
-
-    }
-
-    else if (spec instanceof JsArraySpec)
-    {
-
-      if (!value.isArray()) {errors.add(JsErrorPair.of(currentPath,
-                                                      new Error(value,
-                                                                ARRAY_EXPECTED
-                                                      )
-                                                     ));}
-      else
-      {
-        final JsArraySpec arraySpec = (JsArraySpec) spec;
-        final JsArray array = value.toJsArray();
-        errors.addAll(JsArraySpec.test(currentPath.append(JsPath.fromIndex(-1)),
-                                       arraySpec,
-                                       errors,
-                                       array
-                                      )
-                     );
-      }
-
-    }
-
-    else if(spec instanceof IsArrayOfObjSpec){
-      final IsArrayOfObjSpec isArraySpec = (IsArrayOfObjSpec) spec;
-      final Optional<Error> error = testFlags(isArraySpec.required,
-                                              isArraySpec.nullable).apply(value);
-      if(error.isPresent()) errors.add(JsErrorPair.of(currentPath,error.get()));
-      else if(value.isNull())return;
-      else if (!value.isArray())
-      {
-        errors.add(JsErrorPair.of(currentPath,
-                                  new Error(value,
-                                            ARRAY_EXPECTED
-                                  )
-                                 ));
-      }
-      else
-      {
-        final JsArray array = value.toJsArray();
-        for (int i = 0; i < array.size(); i++)
-        {
-          Functions.addErrors(errors,
-                              array.get(i),
-                              currentPath.index(i),
-                              isArraySpec.spec
-                             );
-        }
-      }
-
-
-    }
-    else
-    {
-      final JsValuePredicate predicate = (JsValuePredicate) spec;
-      final Optional<Error> error = predicate.test(value);
-      error.ifPresent(e -> errors.add(JsErrorPair.of(currentPath,
-                                                     e
-                                                    )
-                                     )
-                     );
-    }
-  }
 }

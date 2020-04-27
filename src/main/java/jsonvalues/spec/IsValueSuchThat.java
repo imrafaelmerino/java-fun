@@ -1,5 +1,6 @@
 package jsonvalues.spec;
 
+import com.dslplatform.json.derializers.specs.SpecDeserializer;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -7,11 +8,6 @@ import java.util.function.Function;
 
 class IsValueSuchThat implements JsValuePredicate
 {
-  @Override
-  public boolean isNullable()
-  {
-    return true;
-  }
 
   @Override
   public JsSpec nullable()
@@ -23,6 +19,12 @@ class IsValueSuchThat implements JsValuePredicate
   public JsSpec optional()
   {
     return new IsValueSuchThat(false,predicate);
+  }
+
+  @Override
+  public SpecDeserializer deserializer()
+  {
+    return DeserializersFactory.INSTANCE.ofValueSuchThat(predicate);
   }
 
   @Override

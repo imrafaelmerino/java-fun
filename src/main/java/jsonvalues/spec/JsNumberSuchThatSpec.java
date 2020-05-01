@@ -1,33 +1,32 @@
 package jsonvalues.spec;
 import com.dslplatform.json.parsers.specs.SpecParser;
+import jsonvalues.JsNumber;
 import jsonvalues.JsValue;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
- class StrSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate
+class JsNumberSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate
 {
-
-
   @Override
   public JsSpec nullable()
   {
-    return new StrSuchThatSpec(required, true, predicate);
+    return new JsNumberSuchThatSpec(required, true, predicate);
   }
 
   @Override
   public JsSpec optional()
   {
-    return new StrSuchThatSpec(false, nullable, predicate);
+    return new JsNumberSuchThatSpec(false, nullable, predicate);
   }
 
   @Override
   public SpecParser parser()
   {
-    return ParserFactory.INSTANCE.ofStrSuchThat(predicate,
-                                                nullable
-                                               );
+    return   ParserFactory.INSTANCE.ofNumberSuchThat(predicate,
+                                                     nullable
+                                                    );
   }
 
   @Override
@@ -35,12 +34,12 @@ import static jsonvalues.spec.ERROR_CODE.*;
   {
     return required;
   }
-  final Function<String,Optional<Error>> predicate;
+  final Function<JsNumber,Optional<Error>> predicate;
 
-   StrSuchThatSpec(final boolean required,
-                   final boolean nullable,
-                   final Function<String,Optional<Error>> predicate
-                  )
+   JsNumberSuchThatSpec(final boolean required,
+                        final boolean nullable,
+                        final Function<JsNumber,Optional<Error>> predicate
+                       )
   {
     super(required,
           nullable
@@ -52,14 +51,14 @@ import static jsonvalues.spec.ERROR_CODE.*;
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    final Optional<Error> error = jsonvalues.spec.Functions.testElem(JsValue::isStr,
-                                                                          STRING_EXPECTED,
+    final Optional<Error> error = jsonvalues.spec.Functions.testElem(JsValue::isNumber,
+                                                                          NUMBER_EXPECTED,
                                                                           required,
                                                                           nullable
                                                                          )
                                                                 .apply(value);
 
     if(error.isPresent()|| value.isNull())return error;
-    return predicate.apply(value.toJsStr().value);
+    return predicate.apply(value.toJsNumber());
   }
 }

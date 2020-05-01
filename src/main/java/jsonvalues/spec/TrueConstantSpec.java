@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.*;
 
-class TrueConstantSpec extends AbstractPredicateSpec implements JsBoolPredicate
+class TrueConstantSpec extends AbstractPredicateSpec implements JsValuePredicate
 {
 
   @Override

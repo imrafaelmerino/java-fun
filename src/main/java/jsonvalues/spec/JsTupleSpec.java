@@ -12,7 +12,7 @@ import java.util.Set;
 import static jsonvalues.spec.ERROR_CODE.*;
 
 
-public class JsTupleSpec implements JsSpec
+public class JsTupleSpec implements JsArraySpec
 
 {
 

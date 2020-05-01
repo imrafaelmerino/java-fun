@@ -6,7 +6,8 @@ import jsonvalues.JsValue;
 
 import java.util.Set;
 
-public interface JsSpec {
+public interface JsSpec
+{
   /**
    When this spec is associated to a key in a JsObjSpec, the required flag indicates whether or
    not the key is optional.
@@ -31,9 +32,11 @@ public interface JsSpec {
   SpecParser parser();
 
 
-
   Set<JsErrorPair> test(final JsPath parentPath,
-                        final JsValue value);
+                        final JsValue value
+                       );
+
+
 
 }
 

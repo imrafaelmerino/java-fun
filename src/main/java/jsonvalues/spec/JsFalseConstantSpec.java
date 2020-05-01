@@ -3,30 +3,31 @@ package jsonvalues.spec;
 import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
+
 import java.util.Optional;
 
-import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
+import static jsonvalues.spec.ERROR_CODE.*;
 
-class StrSpec extends AbstractPredicateSpec implements JsValuePredicate
+class JsFalseConstantSpec extends AbstractPredicateSpec implements JsValuePredicate
 {
   @Override
   public JsSpec nullable()
   {
-    return new StrSpec(required,
-                       true);
+    return new JsFalseConstantSpec(required,
+                                   false);
   }
 
   @Override
   public JsSpec optional()
   {
-    return new StrSpec(false,
-                       nullable);
+    return new JsFalseConstantSpec(false,
+                                   nullable);
   }
 
   @Override
   public SpecParser parser()
   {
-    return ParserFactory.INSTANCE.ofStr(nullable);
+    return  ParserFactory.INSTANCE.ofFalse(nullable);
   }
 
   @Override
@@ -35,9 +36,9 @@ class StrSpec extends AbstractPredicateSpec implements JsValuePredicate
     return required;
   }
 
-  StrSpec(final boolean required,
-          final boolean nullable
-         )
+  JsFalseConstantSpec(final boolean required,
+                      final boolean nullable
+                     )
   {
     super(required,
           nullable
@@ -47,8 +48,8 @@ class StrSpec extends AbstractPredicateSpec implements JsValuePredicate
   @Override
   public Optional<Error> test(final JsValue value)
   {
-    return Functions.testElem(JsValue::isStr,
-                              STRING_EXPECTED,
+    return Functions.testElem(JsValue::isFalse,
+                              FALSE_EXPECTED,
                               required,
                               nullable
                              )

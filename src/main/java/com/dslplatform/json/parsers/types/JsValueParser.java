@@ -97,22 +97,5 @@ public final class JsValueParser extends AbstractParser
 
   }
 
-  public JsValue nullOrValueSuchThat(final JsonReader<?> reader,
-                                     final Function<JsValue, Optional<Error>> fn
-                                    ) throws JsParserException
-  {
-    try
-    {
-      return reader.wasNull() ? JsNull.NULL : valueSuchThat(reader,
-                                                            fn
-                                                           );
-    }
-    catch (ParsingException e)
-    {
-      throw new JsParserException(e);
-
-    }
-  }
-
 
 }

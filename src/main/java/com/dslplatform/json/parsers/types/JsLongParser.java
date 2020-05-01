@@ -50,22 +50,7 @@ public final class JsLongParser extends AbstractParser
 
   }
 
-  public JsValue nullOrValueSuchThat(final JsonReader<?> reader,
-                                     final LongFunction<Optional<Error>> fn
-                                    ) throws JsParserException
-  {
-    try
-    {
-      return reader.wasNull() ? JsNull.NULL : valueSuchThat(reader,
-                                                            fn
-                                                           );
-    }
-    catch (ParsingException e)
-    {
-      throw new JsParserException(e);
 
-    }
-  }
 
 
 }

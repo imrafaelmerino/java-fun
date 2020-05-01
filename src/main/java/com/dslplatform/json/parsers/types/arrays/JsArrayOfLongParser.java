@@ -71,22 +71,5 @@ public final  class JsArrayOfLongParser extends JsArrayParser
       }
     }
 
-    private JsArray appendNullOrValue(final JsonReader<?> reader,
-                                      final LongFunction<Optional<Error>> fn,
-                                      JsArray buffer
-                                     ) throws JsParserException
-    {
-      try
-      {
-        return reader.wasNull() ? buffer.append(JsNull.NULL) : buffer.append(parser.valueSuchThat(reader,
-                                                                                                  fn
-                                                                                                 ));
-      }
-      catch (ParsingException e)
-      {
-        throw new JsParserException(e);
 
-      }
-
-    }
 }

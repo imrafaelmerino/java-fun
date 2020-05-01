@@ -87,12 +87,12 @@ public class JsSpecs
                                                    false
   );
 
-  public static JsSpec longNumber = new LongSpec(true,
-                                                 false
+  public static JsSpec longNum = new LongSpec(true,
+                                              false
   );
 
-  public static JsSpec intNumber = new IntSpec(true,
-                                               false
+  public static JsSpec intNum = new IntSpec(true,
+                                            false
   );
 
   public static JsSpec TRUE = new TrueConstantSpec(true,

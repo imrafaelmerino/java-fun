@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 
@@ -23,10 +23,9 @@ class ArrayOfObjSpec extends AbstractPredicateSpec implements JsArrayPredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return  DeserializersFactory.INSTANCE.ofArrayOfObj(nullable
-                                                      );
+    return  ParserFactory.INSTANCE.ofArrayOfObj(nullable);
   }
 
 

@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -21,9 +21,9 @@ class AnySpec implements JsValuePredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofValue();
+    return ParserFactory.INSTANCE.ofValue();
   }
 
   @Override

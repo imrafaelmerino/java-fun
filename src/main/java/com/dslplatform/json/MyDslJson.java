@@ -1,7 +1,7 @@
 package com.dslplatform.json;
 
-import com.dslplatform.json.derializers.DeserializerException;
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.JsParserException;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import com.dslplatform.json.serializers.JsArraySerializer;
 import com.dslplatform.json.serializers.JsObjSerializer;
 import com.dslplatform.json.serializers.JsValueSerializer;
@@ -50,7 +50,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
                               );
   }
 
-  private JsonReader<?> getReader(final InputStream is) throws DeserializerException
+  private JsonReader<?> getReader(final InputStream is) throws JsParserException
   {
     try
     {
@@ -59,25 +59,25 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
     catch (IOException e)
     {
-      throw new DeserializerException(e);
+      throw new JsParserException(e);
 
     }
   }
 
-  public JsObj deserializeToJsObj(final byte[] bytes,
-                                  final SpecDeserializer deserializer
-                                 ) throws DeserializerException
+  public JsObj parseToJsObj(final byte[] bytes,
+                            final SpecParser parser
+                           ) throws JsParserException
   {
     JsonReader<?> reader = getReader(bytes);
     try
     {
       reader.getNextToken();
-      return deserializer.read(reader)
+      return parser.parse(reader)
                          .toJsObj();
     }
     catch (IOException e)
     {
-      throw new DeserializerException(e);
+      throw new JsParserException(e);
 
     }
     finally
@@ -87,19 +87,19 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsArray deserializeToJsArray(final byte[] bytes,
-                                      final SpecDeserializer deserializer
-                                     ) throws DeserializerException
+                                      final SpecParser parser
+                                     ) throws JsParserException
   {
     JsonReader<?> reader = getReader(bytes);
     try
     {
       reader.getNextToken();
-      return deserializer.read(reader)
+      return parser.parse(reader)
                          .toJsArray();
     }
     catch (IOException e)
     {
-      throw new DeserializerException(e);
+      throw new JsParserException(e);
     }
     finally
     {
@@ -107,21 +107,21 @@ public final class MyDslJson<Object> extends DslJson<Object>
     }
   }
 
-  public JsObj deserializeToJsObj(final InputStream is,
-                                  final SpecDeserializer deserializer
+  public JsObj parseToJsObj(final InputStream is,
+                            final SpecParser parser
 
-                                 ) throws DeserializerException
+                           ) throws JsParserException
   {
     JsonReader<?> reader = getReader(is);
     try
     {
       reader.getNextToken();
-      return deserializer.read(reader)
+      return parser.parse(reader)
                          .toJsObj();
     }
     catch (IOException e)
     {
-      throw new DeserializerException(e);
+      throw new JsParserException(e);
     }
     finally
     {
@@ -130,19 +130,19 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsArray deserializeToJsArray(final InputStream is,
-                                      final SpecDeserializer deserializer
+                                      final SpecParser parser
                                      ) throws SerializerException
   {
     JsonReader<?> reader = getReader(is);
     try
     {
       reader.getNextToken();
-      return deserializer.read(reader)
+      return parser.parse(reader)
                          .toJsArray();
     }
     catch (IOException e)
     {
-      throw new DeserializerException(e);
+      throw new JsParserException(e);
     }
     finally
     {

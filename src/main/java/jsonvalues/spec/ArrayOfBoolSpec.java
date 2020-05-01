@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -29,9 +29,9 @@ class ArrayOfBoolSpec extends AbstractPredicateSpec implements JsArrayPredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return  DeserializersFactory.INSTANCE.ofArrayOfBool(nullable);
+    return  ParserFactory.INSTANCE.ofArrayOfBool(nullable);
   }
 
   ArrayOfBoolSpec(final boolean required,

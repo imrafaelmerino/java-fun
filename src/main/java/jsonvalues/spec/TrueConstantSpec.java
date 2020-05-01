@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 
@@ -28,9 +28,9 @@ class TrueConstantSpec extends AbstractPredicateSpec implements JsBoolPredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofTrue(nullable);
+    return ParserFactory.INSTANCE.ofTrue(nullable);
   }
 
 

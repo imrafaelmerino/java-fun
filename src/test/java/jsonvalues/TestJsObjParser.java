@@ -1,16 +1,12 @@
 package jsonvalues;
 
-import com.dslplatform.json.derializers.DeserializerException;
+import com.dslplatform.json.parsers.JsParserException;
 import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import scala.math.Ordering;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static jsonvalues.spec.JsSpecs.*;
 
@@ -27,7 +23,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsObj.of("b",
                                                                  JsBool.TRUE
@@ -48,7 +44,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsInt.of(-1)
                                                        )
@@ -67,7 +63,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsLong.of(-1L)
                                                        )
@@ -86,7 +82,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsLong.of(-1L)
                                                        )
@@ -106,7 +102,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsBool.TRUE
                                                        )
@@ -125,7 +121,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsStr.of("ab")
                                                        )
@@ -145,7 +141,7 @@ public class TestJsObjParser
     JsObjParser parser = new JsObjParser(spec);
 
 
-    Assertions.assertThrows(DeserializerException.class,
+    Assertions.assertThrows(JsParserException.class,
                             () -> parser.parse(JsObj.of("a",
                                                         JsBigDec.of(BigDecimal.ONE)
                                                        )
@@ -159,11 +155,11 @@ public class TestJsObjParser
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNumber,
+                                            intNum,
                                             "b",
                                             str,
                                             "c",
-                                            longNumber,
+                                            longNum,
                                             "d",
                                             bool,
                                             "e",
@@ -469,11 +465,11 @@ public class TestJsObjParser
   public void test_required_fields()
   {
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNumber.optional().nullable(),
+                                            intNum.optional().nullable(),
                                             "b",
                                             str.optional().nullable(),
                                             "c",
-                                            longNumber.optional().nullable(),
+                                            longNum.optional().nullable(),
                                             "d",
                                             obj.nullable().optional(),
                                             "e",
@@ -917,10 +913,10 @@ public class TestJsObjParser
 
     JsObjParser parser = new JsObjParser(spec);
 
-    Assertions.assertThrows(DeserializerException.class,()->parser.parse(JsObj.of("a",
-                                                                              JsStr.of("a"))
-                                                                          .toString()
-                                                                        )
+    Assertions.assertThrows(JsParserException.class, ()->parser.parse(JsObj.of("a",
+                                                                               JsStr.of("a"))
+                                                                           .toString()
+                                                                     )
                            );
 
 
@@ -1000,7 +996,7 @@ public class TestJsObjParser
     JsObjSpec spec = JsObjSpec.strict("a",JsSpecs.number(a -> a.isDouble()));
     JsObjParser parser = new JsObjParser(spec);
 
-    Assertions.assertThrows(DeserializerException.class,()->parser.parse(JsObj.of("a",JsInt.of(1)).toString()));
+    Assertions.assertThrows(JsParserException.class, ()->parser.parse(JsObj.of("a", JsInt.of(1)).toString()));
 
   }
 

@@ -104,7 +104,7 @@ public abstract class MyNumberConverter
   }
 
 
-  public static int deserializeInt(final JsonReader<?> reader) throws ParsingException
+  public static int parseInt(final JsonReader<?> reader) throws ParsingException
   {
     final int start = reader.scanNumber();
     final int end = reader.getCurrentIndex();
@@ -235,7 +235,7 @@ public abstract class MyNumberConverter
   }
 
 
-  public static long deserializeLong(final JsonReader<?> reader) throws IOException
+  public static long parseLong(final JsonReader<?> reader) throws IOException
   {
     final int start = reader.scanNumber();
     final int end = reader.getCurrentIndex();
@@ -337,7 +337,7 @@ public abstract class MyNumberConverter
     return v.longValue();
   }
 
-  public static BigDecimal deserializeDecimal(final JsonReader<?> reader) throws IOException
+  public static BigDecimal parseDecimal(final JsonReader<?> reader) throws IOException
   {
     final int start = reader.scanNumber();
     int end = reader.getCurrentIndex();

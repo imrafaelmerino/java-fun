@@ -1,5 +1,5 @@
 package jsonvalues.spec;
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsNumber;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -22,11 +22,11 @@ class NumberSuchThatSpec extends AbstractPredicateSpec implements JsNumberPredic
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return   DeserializersFactory.INSTANCE.ofNumberSuchThat(predicate,
-                                                            nullable
-                                                           );
+    return   ParserFactory.INSTANCE.ofNumberSuchThat(predicate,
+                                                     nullable
+                                                    );
   }
 
   @Override

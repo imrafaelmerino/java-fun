@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 import java.math.BigDecimal;
@@ -24,11 +24,11 @@ class DecimalSuchThatSpec extends AbstractPredicateSpec implements JsDecimalPred
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return   DeserializersFactory.INSTANCE.ofDecimalSuchThat(predicate,
-                                                             nullable
-                                                            );
+    return   ParserFactory.INSTANCE.ofDecimalSuchThat(predicate,
+                                                      nullable
+                                                     );
   }
 
   @Override

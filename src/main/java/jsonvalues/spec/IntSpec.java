@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 
@@ -23,9 +23,9 @@ class IntSpec extends AbstractPredicateSpec implements JsIntPredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofInt(nullable);
+    return ParserFactory.INSTANCE.ofInt(nullable);
   }
 
   @Override

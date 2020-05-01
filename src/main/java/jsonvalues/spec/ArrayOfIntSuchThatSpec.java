@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -23,11 +23,11 @@ class ArrayOfIntSuchThatSpec extends AbstractPredicateSpec implements JsArrayPre
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofArrayOfIntSuchThat(predicate,
-                                                              nullable
-                                                             );
+    return ParserFactory.INSTANCE.ofArrayOfIntSuchThat(predicate,
+                                                       nullable
+                                                      );
   }
 
   @Override

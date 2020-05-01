@@ -1,5 +1,5 @@
 package jsonvalues.spec;
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 import java.util.Optional;
 import java.util.function.Function;
@@ -23,11 +23,11 @@ import static jsonvalues.spec.ERROR_CODE.*;
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofStrSuchThat(predicate,
-                                                       nullable
-                                                      );
+    return ParserFactory.INSTANCE.ofStrSuchThat(predicate,
+                                                nullable
+                                               );
   }
 
   @Override

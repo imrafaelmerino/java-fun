@@ -1,5 +1,5 @@
 package jsonvalues.spec;
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import io.vavr.Tuple2;
 import jsonvalues.*;
 import java.util.HashSet;
@@ -28,14 +28,14 @@ public class ArrayOfJsObjSpec implements JsSpec
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
 
-    return DeserializersFactory.INSTANCE.ofArrayOfObjSpec(spec.bindings.filter((k,s)->s.isRequired()).map(it-> it._1).toVector(),
-                                                          spec.bindings.map((k,s)-> new Tuple2<>(k,s.deserializer())),
-                                                          nullable,
-                                                          spec.strict
-                                                         );
+    return ParserFactory.INSTANCE.ofArrayOfObjSpec(spec.bindings.filter((k, s)->s.isRequired()).map(it-> it._1).toVector(),
+                                                   spec.bindings.map((k,s)-> new Tuple2<>(k,s.parser())),
+                                                   nullable,
+                                                   spec.strict
+                                                  );
 
   }
 

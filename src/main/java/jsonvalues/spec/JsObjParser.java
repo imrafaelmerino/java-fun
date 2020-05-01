@@ -1,7 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.DeserializerException;
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.JsParserException;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsObj;
 
 import java.io.InputStream;
@@ -16,13 +16,13 @@ public class JsObjParser
    @param spec the Json spec what defines the schema the json has to conform
    @param strict if true, no more keys different than the specified by the spec are allowed
    */
-  private final SpecDeserializer deserializer;
+  private final SpecParser parser;
 
   public JsObjParser(final JsObjSpec spec)
   {
 
 
-   deserializer = spec.deserializer();
+   parser = spec.parser();
 
   }
 
@@ -36,11 +36,11 @@ public class JsObjParser
    * @param bytes a Json object serialized in an array of bytes
    * @return a try computation with the result
    */
-  public JsObj parse(byte[] bytes) throws DeserializerException
+  public JsObj parse(byte[] bytes) throws JsParserException
   {
-    return INSTANCE.deserializeToJsObj(requireNonNull(bytes),
-                                       deserializer
-                                      );
+    return INSTANCE.parseToJsObj(requireNonNull(bytes),
+                                 parser
+                                );
 
   }
 
@@ -53,12 +53,12 @@ public class JsObjParser
    * @param str a Json object serialized in a string
    * @return a try computation with the result
    */
-  public JsObj parse(String str) throws DeserializerException
+  public JsObj parse(String str) throws JsParserException
   {
 
-    return INSTANCE.deserializeToJsObj(requireNonNull(str).getBytes(),
-                                       deserializer
-                                      );
+    return INSTANCE.parseToJsObj(requireNonNull(str).getBytes(),
+                                 parser
+                                );
   }
 
   /**
@@ -70,11 +70,11 @@ public class JsObjParser
    * @param inputstream the input stream of bytes
    * @return a try computation with the result
    */
-  public JsObj parse(InputStream inputstream) throws DeserializerException
+  public JsObj parse(InputStream inputstream) throws JsParserException
   {
-    return INSTANCE.deserializeToJsObj(requireNonNull(inputstream),
-                                       deserializer
-                                      );
+    return INSTANCE.parseToJsObj(requireNonNull(inputstream),
+                                 parser
+                                );
   }
 
 

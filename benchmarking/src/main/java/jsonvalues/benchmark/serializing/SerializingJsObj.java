@@ -3,7 +3,7 @@ package jsonvalues.benchmark.serializing;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.dslplatform.json.derializers.DeserializerException;
+import com.dslplatform.json.parsers.JsParserException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsonvalues.JsObj;
@@ -103,7 +103,7 @@ public class SerializingJsObj
     {
       json = JsObj.parse(objectUT);
     }
-    catch (DeserializerException e)
+    catch (JsParserException e)
     {
       throw new RuntimeException(e);
     }

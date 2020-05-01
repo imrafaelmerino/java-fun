@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.Map;
@@ -43,9 +43,9 @@ public class JsObjSpec implements JsSpec
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    Map<String, SpecDeserializer> deserializers = HashMap.empty();
+    Map<String, SpecParser> parsers = HashMap.empty();
     Vector<String> required = Vector.empty();
     for (final String key : bindings.keySet())
     {
@@ -53,16 +53,16 @@ public class JsObjSpec implements JsSpec
       final JsSpec spec = bindings.get(key)
                                   .get();
       if (spec.isRequired()) required = required.append(key);
-      deserializers = deserializers.put(key,
-                        spec.deserializer());
+      parsers = parsers.put(key,
+                        spec.parser());
     }
 
 
-    return DeserializersFactory.INSTANCE.ofObjSpec(required,
-                                                   deserializers,
-                                                   nullable,
-                                                   strict
-                                                  );
+    return ParserFactory.INSTANCE.ofObjSpec(required,
+                                            parsers,
+                                            nullable,
+                                            strict
+                                           );
   }
 
   public Set<JsErrorPair> test(final JsObj obj){

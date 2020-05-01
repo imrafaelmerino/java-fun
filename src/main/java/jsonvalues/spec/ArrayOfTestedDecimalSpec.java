@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 
@@ -25,11 +25,11 @@ class ArrayOfTestedDecimalSpec extends AbstractPredicateSpec implements JsArrayP
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofArrayOfDecimalEachSuchThat(predicate,
-                                                                      nullable
-                                                                     );
+    return ParserFactory.INSTANCE.ofArrayOfDecimalEachSuchThat(predicate,
+                                                               nullable
+                                                              );
   }
 
   @Override

@@ -22,7 +22,7 @@ public class TestJsArraySpec
     final JsArray array = JsArray.of(JsInt.of(1),
                                      JsStr.of("a")
                                     );
-    final JsArraySpec spec = JsArraySpec.tuple(intNumber);
+    final JsArraySpec spec = JsArraySpec.tuple(intNum);
     final Set<JsErrorPair> error = spec.test(array);
     assertErrorIs(error,
                   SPEC_MISSING,
@@ -286,7 +286,7 @@ public class TestJsArraySpec
     JsObjSpec spec = JsObjSpec.lenient("a",
                                        str,
                                        "b",
-                                       intNumber
+                                       intNum
                                       );
     JsObjSpec objSpec = JsObjSpec.strict("a",
                                          arrayOf(spec).nullable(),

@@ -1,8 +1,8 @@
 package jsonvalues.spec;
 
 import com.dslplatform.json.MyDslJson;
-import com.dslplatform.json.derializers.DeserializerException;
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.JsParserException;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsArray;
 
 import java.io.InputStream;
@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 public class JsArrayParser
 {
 
-  private final SpecDeserializer deserializer;
+  private final SpecParser parser;
 
   /**
 
@@ -21,7 +21,7 @@ public class JsArrayParser
   public JsArrayParser(final JsArraySpec spec)
   {
 
-    deserializer = spec.deserializer();
+    parser = spec.parser();
 
   }
 
@@ -39,7 +39,7 @@ public class JsArrayParser
   {
 
     return MyDslJson.INSTANCE.deserializeToJsArray(requireNonNull(bytes),
-                                                   this.deserializer
+                                                   this.parser
                                                   );
   }
 
@@ -53,10 +53,10 @@ public class JsArrayParser
    * @param str a Json array serialized in a string
    * @return a try computation with the result
    */
-  public JsArray parse(String str) throws DeserializerException
+  public JsArray parse(String str) throws JsParserException
   {
     return MyDslJson.INSTANCE.deserializeToJsArray(requireNonNull(str).getBytes(),
-                                                   this.deserializer
+                                                   this.parser
                                                   );
   }
 
@@ -69,10 +69,10 @@ public class JsArrayParser
    * @param inputstream the input stream of bytes
    * @return a try computation with the result
    */
-  public JsArray parse(InputStream inputstream) throws DeserializerException
+  public JsArray parse(InputStream inputstream) throws JsParserException
   {
     return MyDslJson.INSTANCE.deserializeToJsArray(requireNonNull(inputstream),
-                                                   this.deserializer
+                                                   this.parser
                                                   );
 
   }

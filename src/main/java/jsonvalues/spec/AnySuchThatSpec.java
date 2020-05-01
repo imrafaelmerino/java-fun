@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -22,9 +22,9 @@ class AnySuchThatSpec implements JsValuePredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofValueSuchThat(predicate);
+    return ParserFactory.INSTANCE.ofValueSuchThat(predicate);
   }
 
   @Override

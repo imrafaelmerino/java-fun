@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
 import jsonvalues.JsPath;
@@ -25,17 +25,17 @@ public class JsArraySpec implements JsSpec
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
 
-    Vector<SpecDeserializer> deserializers = Vector.empty();
+    Vector<SpecParser> parsers = Vector.empty();
     for (final JsSpec spec : specs)
     {
-      deserializers = deserializers.append(spec.deserializer());
+      parsers = parsers.append(spec.parser());
     }
-    return DeserializersFactory.INSTANCE.ofArraySpec(deserializers,
-                                                     nullable
-                                                    );
+    return ParserFactory.INSTANCE.ofArraySpec(parsers,
+                                              nullable
+                                             );
   }
 
 

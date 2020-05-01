@@ -17,8 +17,8 @@ public class TestJsArrayParser
   {
 
     final JsArraySpec spec = JsArraySpec.tuple(str,
-                                               intNumber,
-                                               longNumber,
+                                               intNum,
+                                               longNum,
                                                decimal,
                                                bool,
                                                integral,
@@ -120,7 +120,7 @@ public class TestJsArrayParser
                                       JsSpecs.arrayOf(JsObjSpec.strict("a",
                                                                        str,
                                                                        "b",
-                                                                       intNumber
+                                                                       intNum
                                                                       ))
                                      );
 
@@ -141,7 +141,7 @@ public class TestJsArrayParser
                                               JsSpecs.arrayOf(JsObjSpec.strict("a",
                                                                                        str,
                                                                                        "b",
-                                                                                       intNumber
+                                                                               intNum
                                                                                       )).nullable()
                                              );
 

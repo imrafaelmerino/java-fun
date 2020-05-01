@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 
@@ -24,9 +24,9 @@ class DecimalSpec extends AbstractPredicateSpec implements JsDecimalPredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofDecimal(nullable);
+    return ParserFactory.INSTANCE.ofDecimal(nullable);
   }
 
   @Override

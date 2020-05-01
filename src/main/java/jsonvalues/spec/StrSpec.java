@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.derializers.specs.SpecDeserializer;
+import com.dslplatform.json.parsers.specs.SpecParser;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -24,9 +24,9 @@ class StrSpec extends AbstractPredicateSpec implements JsStrPredicate
   }
 
   @Override
-  public SpecDeserializer deserializer()
+  public SpecParser parser()
   {
-    return DeserializersFactory.INSTANCE.ofStr(nullable);
+    return ParserFactory.INSTANCE.ofStr(nullable);
   }
 
   @Override

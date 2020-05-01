@@ -135,7 +135,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code biginteger}.
      @return this bigdecimal as an biginteger wrapped in an OptionalInt
      */
-    public Optional<BigInteger> bigIntegerExact()
+    Optional<BigInteger> bigIntegerExact()
     {
         try
         {
@@ -152,7 +152,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code int}.
      @return this bigdecimal as an int wrapped in an OptionalInt
      */
-    public OptionalInt intValueExact()
+    OptionalInt intValueExact()
     {
         try
         {
@@ -168,7 +168,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code long}.
      @return this bigdecimal as an long wrapped in an OptionalLong
      */
-    public OptionalLong longValueExact()
+    OptionalLong longValueExact()
     {
         try
         {
@@ -186,7 +186,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      @return this bigdecimal as an double wrapped in an OptionalDouble
      @see BigDecimal#doubleValue()
      */
-    public OptionalDouble doubleValueExact()
+    OptionalDouble doubleValueExact()
     {
         final double value = this.value.doubleValue();
         if (value == Double.NEGATIVE_INFINITY) return OptionalDouble.empty();

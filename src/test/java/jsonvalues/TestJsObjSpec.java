@@ -1,5 +1,8 @@
 package jsonvalues;
 
+import jsonvalues.gen.JsGenPair;
+import jsonvalues.gen.JsGens;
+import jsonvalues.gen.JsObjGen;
 import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,12 +12,36 @@ import java.math.BigInteger;
 import java.util.Set;
 
 import static jsonvalues.Functions.assertErrorIs;
+import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.spec.ERROR_CODE.*;
 import static jsonvalues.spec.JsSpecs.*;
 
 public class TestJsObjSpec
 {
 
+  @Test
+  public void test_spec_from_pairs(){
+    final JsObjSpec spec = JsObjSpec.strict(JsSpecPair.of("a",
+                                                            str
+                                                           ),
+                                              JsSpecPair.of("b",
+                                                            integral),
+                                              JsSpecPair.of("c",
+                                                            decimal)
+                                             );
+
+    final JsObjGen gen = JsObjGen.of(JsGenPair.of("a",
+                                                       JsGens.strGen
+                                                      ),
+                                          JsGenPair.of("b",
+                                                       JsGens.intNumGen),
+                                          JsGenPair.of("c",
+                                                          JsGens.doubleNumGen)
+                                          );
+
+    TestGenerators.test(gen,v->spec.test(v.toJsObj()).isEmpty(),1000);
+
+  }
   @Test
   public void testIsStrSpec()
   {
@@ -101,7 +128,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNumber(n -> n % 2 == 0)
+                                            intNum(n -> n % 2 == 0)
                                            );
 
 
@@ -159,7 +186,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            longNumber(l -> l % 2 == 1)
+                                            longNum(l -> l % 2 == 1)
                                            );
 
 
@@ -277,7 +304,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            TRUE
+                                            JsSpecs.TRUE
                                            );
 
 
@@ -316,7 +343,7 @@ public class TestJsObjSpec
 
 
     final Set<JsErrorPair> error = spec.test(JsObj.of("a",
-                                                      JsBool.TRUE
+                                                      TRUE
                                                      ));
 
     Assertions.assertFalse(error.isEmpty());
@@ -330,7 +357,7 @@ public class TestJsObjSpec
                            );
 
     Assertions.assertEquals(pair.error.value,
-                            JsBool.TRUE
+                            TRUE
                            );
 
     Assertions.assertEquals(pair.path,
@@ -456,7 +483,7 @@ public class TestJsObjSpec
                                             "d",
                                             bool,
                                             "e",
-                                            TRUE,
+                                            JsSpecs.TRUE,
                                             "f",
                                             JsObjSpec.strict("a",
                                                              str,
@@ -479,9 +506,9 @@ public class TestJsObjSpec
                                                       "c",
                                                       JsLong.of(100),
                                                       "d",
-                                                      JsBool.TRUE,
+                                                      TRUE,
                                                       "e",
-                                                      JsBool.TRUE,
+                                                      TRUE,
                                                       "f",
                                                       JsObj.of("a",
                                                                JsStr.of("hi"),
@@ -584,11 +611,11 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            arrayOfInt(i -> i > 0),
+                                            arrayOfInt(i -> i > 0).optional().nullable(),
                                             "b",
                                             arrayOfStr(s -> s.startsWith("a")),
                                             "c",
-                                            arrayOfLong(i -> i < 0),
+                                            arrayOfLong(i -> i < 0).optional().nullable(),
                                             "c1",
                                             arrayOfLong(i -> i < 0).nullable(),
                                             "c2",
@@ -601,7 +628,7 @@ public class TestJsObjSpec
                                             JsObjSpec.strict("a",
                                                              arrayOfNumber(JsValue::isInt),
                                                              "b",
-                                                             arrayOfObj(JsObj::isEmpty),
+                                                             arrayOfObj(JsObj::isEmpty).optional().nullable(),
                                                              "c",
                                                              JsArraySpec.tuple(arrayOfStrSuchThat(a -> a.size() > 2),
                                                                                arrayOfIntSuchThat(a -> a.size() > 1),
@@ -611,9 +638,9 @@ public class TestJsObjSpec
                                                              "d",
                                                              integral(i -> i.longValue() > 10),
                                                              "e",
-                                                             number(s -> s.isDouble()),
+                                                             number(JsValue::isDouble),
                                                              "f",
-                                                             obj(o -> o.isEmpty())
+                                                             obj(JsObj::isEmpty)
                                                             )
                                            );
 
@@ -725,7 +752,7 @@ public class TestJsObjSpec
     Assertions.assertTrue(spec.test(JsObj.of("a",
                                              JsNull.NULL,
                                              "b",
-                                             JsBool.TRUE,
+                                             TRUE,
                                              "d",
                                              JsStr.of("hi")
                                             ))
@@ -752,7 +779,7 @@ public class TestJsObjSpec
                                              JsObj.of("a",
                                                       JsNull.NULL,
                                                       "b",
-                                                      JsBool.TRUE,
+                                                      TRUE,
                                                       "d",
                                                       JsStr.of("hi")
                                                      )
@@ -808,7 +835,7 @@ public class TestJsObjSpec
                                       "g",
                                       arrayOfIntegral,
                                       "h",
-                                      arrayOfNumber,
+                                      arrayOfNumber.optional().nullable(),
                                       "i",
                                       arrayOfObj,
                                       "j",
@@ -878,7 +905,7 @@ public class TestJsObjSpec
                                                        ),
                                              "k",
                                              JsArray.of(JsObj.of("a",
-                                                                 JsBool.TRUE,
+                                                                 TRUE,
                                                                  "b",
                                                                  JsStr.of("a"),
                                                                  "c",
@@ -1179,7 +1206,7 @@ System.out.println(result1);
                                                     JsObj.of("a",
                                                              JsStr.of("a"),
                                                              "b",
-                                                             JsBool.TRUE
+                                                             TRUE
                                                             ),
                                                     "b",
                                                     JsNull.NULL
@@ -1306,7 +1333,7 @@ System.out.println(result1);
                                                      "b",
                                                      JsInt.of(1),
                                                      "c",
-                                                     JsBool.TRUE
+                                                     TRUE
                                                     ));
 
     System.out.println(errors);

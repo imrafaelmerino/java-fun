@@ -290,9 +290,9 @@ public class JsSpecs
   }
 
 
-  public static JsSpec intNumber(
+  public static JsSpec intNum(
     final IntPredicate predicate
-                                )
+                             )
   {
     return new IntSuchThatSpec(true,
                                false,
@@ -366,9 +366,9 @@ public class JsSpecs
     );
   }
 
-  public static JsSpec longNumber(
+  public static JsSpec longNum(
     final LongPredicate predicate
-                                 )
+                              )
   {
     return new LongSuchThatSpec(true,
                                 false,
@@ -479,7 +479,7 @@ public class JsSpecs
     );
   }
 
-  public static JsArrayPredicate arraySuchThat(final Predicate<JsArray> predicate)
+  public static JsSpec arraySuchThat(final Predicate<JsArray> predicate)
   {
     return new ArraySuchThatSpec(s ->
                                {

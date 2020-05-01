@@ -1,18 +1,12 @@
 package jsonvalues;
 
 import jsonvalues.gen.*;
-import jsonvalues.spec.JsArraySpec;
-import jsonvalues.spec.JsErrorPair;
 import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Predicate;
-
 import static jsonvalues.gen.JsGens.*;
 import static jsonvalues.spec.JsArraySpec.tuple;
 import static jsonvalues.spec.JsSpecs.*;
@@ -43,9 +37,9 @@ public class TestGenerators
 
     test(gen,
          v -> JsObjSpec.strict("a",
-                               arrayOfStrSuchThat(a -> a.size() <= 10),
+                               arrayOfStrSuchThat(a -> a.size() <= 10).optional().nullable(),
                                "b",
-                               arrayOfIntSuchThat(a -> a.size() <= 10)
+                               arrayOfIntSuchThat(a -> a.size() <= 10).nullable().optional()
                               )
                        .test(v.toJsObj())
                        .isEmpty(),
@@ -202,7 +196,7 @@ public class TestGenerators
     test(gen,v -> spec.test(v.toJsObj()).isEmpty(), 1000);
   }
 
-  private void test(JsGen<?> gen,
+  public static void test(JsGen<?> gen,
                     Predicate<JsValue> condition,
                     int times
                    )

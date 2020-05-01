@@ -83,7 +83,7 @@ public class ArrayOfJsObjSpec implements JsSpec
 
 
 
-  public Set<JsErrorPair> apply(final JsPath path,
+  private Set<JsErrorPair> apply(final JsPath path,
                                 final JsArray array
                                )
   {

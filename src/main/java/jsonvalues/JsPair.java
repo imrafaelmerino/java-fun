@@ -34,7 +34,7 @@ public final class JsPair
     }
 
     /**
-     Declarative way of implementing {@code  if(pair.elem.isInt()) return Pair.of(pair.path, pair.elem.asJsInt().map(operator)) else return pair}
+     Declarative way of implementing {@code  if(pair.elem.isInt()) return JsSpecPair.of(pair.path, pair.elem.asJsInt().map(operator)) else return pair}
      @param operator the function to be applied to map the integer
      @return the same this instance if the JsElem is not a JsInt or a new pair
      */
@@ -49,7 +49,7 @@ public final class JsPair
     }
 
     /**
-     Declarative way of implementing {@code  if(pair.elem.isStr()) return Pair.of(pair.path, pair.elem.asJsStr().map(mapFn)) else return pair}
+     Declarative way of implementing {@code  if(pair.elem.isStr()) return JsSpecPair.of(pair.path, pair.elem.asJsStr().map(mapFn)) else return pair}
      @param fn the function to be applied to map the string of the JsStr
      @return the same this instance if the JsElem is not a JsStr or a new pair
      */

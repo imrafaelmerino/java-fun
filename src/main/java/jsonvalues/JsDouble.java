@@ -139,7 +139,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      * optional is returned if this {@code double} has a nonzero fractional part.
      @return this double as an bigint wrapped in an Optional
      */
-    public Optional<BigInteger> bigIntegerExact()
+    Optional<BigInteger> bigIntegerExact()
     {
         try
         {
@@ -157,7 +157,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsBigDec the specified JsBigDec
      @return true if both JsElem are the same value
      */
-    boolean equals(JsBigDec jsBigDec)
+    private boolean equals(JsBigDec jsBigDec)
     {
         return requireNonNull(jsBigDec).equals(this);
     }
@@ -180,7 +180,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsLong the specified JsLong
      @return true if both JsElem are the same value
      */
-     boolean equals(JsLong jsLong)
+    private boolean equals(JsLong jsLong)
     {
         return requireNonNull(jsLong).equals(this);
     }
@@ -190,7 +190,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsInt the specified JsInt
      @return true if both JsElem are the same value
      */
-     boolean equals(JsInt jsInt)
+    private boolean equals(JsInt jsInt)
     {
         return requireNonNull(jsInt).equals(this);
     }

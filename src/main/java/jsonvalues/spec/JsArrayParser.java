@@ -25,6 +25,17 @@ public class JsArrayParser
 
   }
 
+  /**
+
+   @param spec the Json spec what defines the schema that every element in the array has to conform
+   */
+  public JsArrayParser(final ArrayOfJsObjSpec spec)
+  {
+
+    parser = spec.parser();
+
+  }
+
 
   /**
    * parses an array of bytes into a Json array that must conform the spec of the parser. If the

@@ -15,29 +15,6 @@ public final class MatchExp
 
     private MatchExp(){}
 
-    /**
-     Declarative way of consuming an element based on its type
-     @param ifValue the consumer to be invoked if this JsElem is a JsValue
-     @param ifObj the consumer to be invoked if this JsElem is a JsObj
-     @param ifArray the consumer to be invoked if this JsElem is a JsArray
-     @return consumer of a json element
-     */
-    public static Consumer<JsValue> accept(final Consumer<JsValue> ifValue,
-                                           final Consumer<JsObj> ifObj,
-                                           final Consumer<JsArray> ifArray
-                                          )
-    {
-        requireNonNull(ifValue);
-        requireNonNull(ifObj);
-        requireNonNull(ifArray);
-        return e ->
-        {
-            if (e.isNotJson()) ifValue.accept(e);
-            if (e.isObj()) ifObj.accept(e.toJsObj());
-            if (e.isArray()) ifArray.accept(e.toJsArray());
-        };
-
-    }
 
     /**
      return a matching expression to extract arrays out of json elements.

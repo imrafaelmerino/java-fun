@@ -126,7 +126,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      * Returns the value of this long; or an empty optional if the value overflows an {@code int}.
      @return this long as an int wrapped in an OptionalInt
      */
-    public OptionalInt intValueExact()
+     OptionalInt intValueExact()
     {
         try
         {
@@ -142,7 +142,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      @param jsBigDec the specified JsBigDec
      @return true if both JsElem are the same value
      */
-     boolean equals(JsBigDec jsBigDec)
+    private boolean equals(JsBigDec jsBigDec)
     {
         return requireNonNull(jsBigDec).equals(this);
     }
@@ -152,7 +152,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong>
      @param jsBigInt the specified JsBigInt
      @return true if both JsElem are the same value
      */
-     boolean equals(JsBigInt jsBigInt)
+    private boolean equals(JsBigInt jsBigInt)
     {
         return requireNonNull(jsBigInt).equals(this);
     }

@@ -940,7 +940,8 @@ public class TestJson
                                 );
 
     Assertions.assertEquals(new BigDecimal("1.4"),
-                            h.getBigDec(path));
+                            h.getBigDec(path)
+                           );
 
 
     Json<?> i = json.putIfAbsent(path,
@@ -948,7 +949,8 @@ public class TestJson
                                 );
 
     Assertions.assertEquals("hi",
-                            i.getStr(path));
+                            i.getStr(path)
+                           );
 
 
     Json<?> j = json.putIfAbsent(path,
@@ -966,30 +968,30 @@ public class TestJson
                            );
 
     Json<?> k = json.putIfAbsent(path,
-                                1.5
+                                 1.5
                                 );
 
-    Assertions.assertTrue(1.5==
+    Assertions.assertTrue(1.5 ==
                             k.getDouble(path)
-                           );
-    Assertions.assertTrue(1.5==
+                         );
+    Assertions.assertTrue(1.5 ==
                             k.putIfAbsent(path,
-                                        10.5
+                                          10.5
                                          )
                              .getDouble(path)
-                           );
+                         );
 
 
     Json<?> l = json.putIfAbsent(path,
-                                 ()->JsDouble.of(1.5)
+                                 () -> JsDouble.of(1.5)
                                 );
 
-    Assertions.assertTrue(1.5==
+    Assertions.assertTrue(1.5 ==
                             l.getDouble(path)
                          );
-    Assertions.assertTrue(1.5==
+    Assertions.assertTrue(1.5 ==
                             l.putIfAbsent(path,
-                                          ()->JsDouble.of(11.5)
+                                          () -> JsDouble.of(11.5)
                                          )
                              .getDouble(path)
                          );
@@ -1026,10 +1028,16 @@ public class TestJson
                           .prepend(path,
                                    1.3,
                                    1.4
-                                  ).prepend(path,JsStr.of("a"),JsInt.of(10));
+                                  )
+                          .prepend(path,
+                                   JsStr.of("a"),
+                                   JsInt.of(10)
+                                  );
 
 
-    Assertions.assertEquals(JsArray.of(JsStr.of("a"),JsInt.of(10),JsDouble.of(1.3),
+    Assertions.assertEquals(JsArray.of(JsStr.of("a"),
+                                       JsInt.of(10),
+                                       JsDouble.of(1.3),
                                        JsDouble.of(1.4),
                                        JsLong.of(1L),
                                        JsLong.of(2L),
@@ -1052,7 +1060,8 @@ public class TestJson
     Json<?> empty = JsArray.empty();
     Json<?> a = JsArray.empty()
                        .put(path,
-                            JsNull.NULL);
+                            JsNull.NULL
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              "a"
@@ -1060,15 +1069,18 @@ public class TestJson
                                .getStr(path));
     Assertions.assertEquals("a",
                             a.putIfPresent(path,
-                                           "a")
-                             .getStr(path));
+                                           "a"
+                                          )
+                             .getStr(path)
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              1
                                             )
                                .getInt(path));
     Assertions.assertTrue(1 == a.putIfPresent(path,
-                                              1)
+                                              1
+                                             )
                                 .getInt(path));
 
     Assertions.assertNull(empty.putIfPresent(path,
@@ -1076,7 +1088,8 @@ public class TestJson
                                             )
                                .getLong(path));
     Assertions.assertTrue(1 == a.putIfPresent(path,
-                                              1L)
+                                              1L
+                                             )
                                 .getLong(path));
 
     Assertions.assertNull(empty.putIfPresent(path,
@@ -1085,8 +1098,10 @@ public class TestJson
                                .getBool(path));
     Assertions.assertEquals(true,
                             a.putIfPresent(path,
-                                           true)
-                             .getBool(path));
+                                           true
+                                          )
+                             .getBool(path)
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              BigInteger.TEN
@@ -1094,8 +1109,10 @@ public class TestJson
                                .getBigInt(path));
     Assertions.assertEquals(BigInteger.TEN,
                             a.putIfPresent(path,
-                                           BigInteger.TEN)
-                             .getBigInt(path));
+                                           BigInteger.TEN
+                                          )
+                             .getBigInt(path)
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              BigDecimal.TEN
@@ -1103,8 +1120,10 @@ public class TestJson
                                .getBigDec(path));
     Assertions.assertEquals(BigDecimal.TEN,
                             a.putIfPresent(path,
-                                           BigDecimal.TEN)
-                             .getBigDec(path));
+                                           BigDecimal.TEN
+                                          )
+                             .getBigDec(path)
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              JsObj.empty()
@@ -1112,8 +1131,10 @@ public class TestJson
                                .getObj(path));
     Assertions.assertEquals(JsObj.empty(),
                             a.putIfPresent(path,
-                                           JsObj.empty())
-                             .getObj(path));
+                                           JsObj.empty()
+                                          )
+                             .getObj(path)
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              JsArray.empty()
@@ -1121,8 +1142,10 @@ public class TestJson
                                .getArray(path));
     Assertions.assertEquals(JsArray.empty(),
                             a.putIfPresent(path,
-                                           JsArray.empty())
-                             .getArray(path));
+                                           JsArray.empty()
+                                          )
+                             .getArray(path)
+                           );
 
     Assertions.assertNull(empty.putIfPresent(path,
                                              JsStr.of("a")
@@ -1130,28 +1153,185 @@ public class TestJson
                                .getStr(path));
     Assertions.assertEquals("a",
                             a.putIfPresent(path,
-                                           JsStr.of("a"))
-                             .getStr(path));
+                                           JsStr.of("a")
+                                          )
+                             .getStr(path)
+                           );
   }
 
   @Test
-  public void test_times(){
+  public void test_times()
+  {
 
     final JsObj a = JsObj.of("a",
-                              JsArray.of(JsObj.of("a",
-                                                  JsInt.of(1)),
-                                         JsNull.NULL,
-                                         JsInt.of(1)),
-                              "b",
-                              JsInt.of(1));
+                             JsArray.of(JsObj.of("a",
+                                                 JsInt.of(1)
+                                                ),
+                                        JsNull.NULL,
+                                        JsInt.of(1)
+                                       ),
+                             "b",
+                             JsInt.of(1)
+                            );
 
-    Assertions.assertTrue(1==a.times(JsInt.of(1)));
-    Assertions.assertTrue(3==a.timesAll(JsInt.of(1)));
-    Assertions.assertTrue(2==a.size());
+    Assertions.assertTrue(1 == a.times(JsInt.of(1)));
+    Assertions.assertTrue(3 == a.timesAll(JsInt.of(1)));
+    Assertions.assertTrue(2 == a.size());
 
     final OptionalInt size = a.size(JsPath.path("/a"));
     System.out.println(size);
-    Assertions.assertEquals(OptionalInt.of(3), size);
+    Assertions.assertEquals(OptionalInt.of(3),
+                            size
+                           );
+  }
+
+
+  @Test
+  public void prepend_if_present()
+  {
+    final JsPath path = JsPath.empty()
+                              .key("a")
+                              .key("b");
+    final JsObj a = JsObj.empty()
+                         .put(path,
+                              JsArray.empty()
+                             )
+                         .prependIfPresent(path,
+                                           1,
+                                           2
+                                          );
+
+    Assertions.assertEquals(JsArray.of(1,
+                                       2
+                                      ),
+                            a.getArray(path)
+                           );
+
+    Assertions.assertEquals(JsObj.empty(),
+                            JsObj.empty()
+                                 .prependIfPresent(path,
+                                                   "a"
+                                                  )
+                           );
+
+    final JsObj b = a.prependIfPresent(path,
+                                       "a",
+                                       "b"
+                                      );
+
+    Assertions.assertEquals(JsArray.of(JsStr.of("a"),
+                                       JsStr.of("b"),
+                                       JsInt.of(1),
+                                       JsInt.of(2)
+                                      ),
+                            b.getArray(path)
+                           );
+
+
+    final JsObj c = b.prependIfPresent(path,
+                                       true,
+                                       false
+                                      );
+
+
+    Assertions.assertEquals(JsArray.of(JsBool.TRUE,
+                                       JsBool.FALSE,
+                                       JsStr.of("a"),
+                                       JsStr.of("b"),
+                                       JsInt.of(1),
+                                       JsInt.of(2)
+                                      ),
+                            c.getArray(path)
+                           );
+
+
+    final JsObj d = c.prependIfPresent(path,
+                                       10L,
+                                       20L
+                                      );
+
+
+    Assertions.assertEquals(JsArray.of(JsLong.of(10L),
+                                       JsLong.of(20L),
+                                       JsBool.TRUE,
+                                       JsBool.FALSE,
+                                       JsStr.of("a"),
+                                       JsStr.of("b"),
+                                       JsInt.of(1),
+                                       JsInt.of(2)
+                                      ),
+                            d.getArray(path)
+                           );
+
+
+    final JsObj e = d.prependIfPresent(path,
+                                       10.5,
+                                       12.5
+                                      );
+
+
+    Assertions.assertEquals(JsArray.of(JsDouble.of(10.5),
+                                       JsDouble.of(12.5),
+                                       JsLong.of(10L),
+                                       JsLong.of(20L),
+                                       JsBool.TRUE,
+                                       JsBool.FALSE,
+                                       JsStr.of("a"),
+                                       JsStr.of("b"),
+                                       JsInt.of(1),
+                                       JsInt.of(2)
+                                      ),
+                            e.getArray(path)
+                           );
+
+
+    Assertions.assertEquals(JsObj.empty(),
+                            JsObj.empty()
+                                 .prependIfPresent(path,
+                                                   1,
+                                                   2
+                                                  )
+                                 .prependIfPresent(path,
+                                                   "a",
+                                                   "b"
+                                                  )
+                                 .prependIfPresent(path,
+                                                   1L,
+                                                   2L
+                                                  )
+                                 .prependIfPresent(path,
+                                                   true,
+                                                   false
+                                                  )
+                                 .prependIfPresent(path,
+                                                   1.5,
+                                                   2.5
+                                                  )
+                           );
+
+
+
+
+  }
+
+
+  @Test
+  public void test_prepend_if_all_suppliers(){
+    JsPath path = JsPath.fromKey("a").key("b");
+    JsObj a = JsObj.empty().put(path,JsArray.of(3));
+
+    final JsObj b = a.prependAllIfPresent(path,
+                                         () -> JsArray.of(0,
+                                                          1,
+                                                          2));
+
+    Assertions.assertEquals(JsArray.of(0,1,2,3),b.getArray(path));
+
+    final JsObj d = b.prependIfPresent(path,
+                                         () -> JsInt.of(-1));
+
+    Assertions.assertEquals(JsArray.of(-1,0,1,2,3),d.getArray(path));
+
   }
 
 

@@ -24,10 +24,10 @@ public class TestJsArrayParser
                                                integral,
                                                obj,
                                                array,
-                                               intNumber(i -> i > 0),
+                                               intNum(i -> i > 0),
                                                any(v -> v.isStr() || v.isInt()),
                                                str(s -> s.startsWith("1")),
-                                               arrayOfIntegralSuchThat(a -> a.size() == 1),
+                                               arrayOfIntegralSuchThat(a -> a.size() == 1).optional().nullable(),
                                                arrayOfNumberSuchThat(a -> a.size() == 2),
                                                number(a -> a.isDecimal()),
                                                arrayOfIntegral(a -> a.longValueExact() > 0),
@@ -154,7 +154,7 @@ public class TestJsArrayParser
                            );
 
     JsObjSpec specTested = JsObjSpec.strict("a",
-                                            JsSpecs.arrayOfObj(o -> o.containsKey("a"))
+                                            arrayOfObj(o -> o.containsKey("a")).optional().nullable()
                                            );
 
     final JsObj c = JsObj.of("a",
@@ -172,17 +172,17 @@ public class TestJsArrayParser
                            );
 
     JsObjSpec specSuchThat = JsObjSpec.strict("a",
-                                              arrayOfObjSuchThat(arr -> arr.size() > 1),
+                                              arrayOfObjSuchThat(arr -> arr.size() > 1).nullable().optional(),
                                               "b",
-                                              arrayOfBoolSuchThat(arr -> arr.size() > 2),
+                                              arrayOfBoolSuchThat(arr -> arr.size() > 2).optional().nullable(),
                                               "c",
                                               arrayOfNumberSuchThat(arr -> arr.head()
-                                                                              .equals(JsInt.of(1))),
+                                                                              .equals(JsInt.of(1))).optional().nullable(),
                                               "d",
                                               arrayOfDecSuchThat(arr -> arr.head()
-                                                                           .equals(JsBigDec.of(BigDecimal.TEN))),
+                                                                           .equals(JsBigDec.of(BigDecimal.TEN))).optional().nullable(),
                                               "e",
-                                              arrayOfLongSuchThat(arr -> arr.size() == 3),
+                                              arrayOfLongSuchThat(arr -> arr.size() == 3).optional().nullable(),
                                               "f",
                                               arrayOfIntSuchThat(arr -> arr.size() == 3),
                                               "g",
@@ -190,7 +190,7 @@ public class TestJsArrayParser
                                               "h",
                                               arrayOfDec(i -> i.longValueExact() % 2 == 1).nullable(),
                                               "i",
-                                              arrayOfStr(i -> i.length() % 2 == 0).nullable(),
+                                              arrayOfStr(i -> i.length() % 2 == 0).nullable().optional(),
                                               "j",
                                               arrayOfStr(i -> i.length() % 2 == 0).nullable(),
                                               "k",

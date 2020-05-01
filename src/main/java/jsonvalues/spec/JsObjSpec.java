@@ -10,7 +10,6 @@ import jsonvalues.*;
 
 import java.util.*;
 
-import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.ERROR_CODE.*;
 
 
@@ -54,7 +53,8 @@ public class JsObjSpec implements JsSpec
                                   .get();
       if (spec.isRequired()) required = required.append(key);
       parsers = parsers.put(key,
-                        spec.parser());
+                            spec.parser()
+                           );
     }
 
 
@@ -65,8 +65,10 @@ public class JsObjSpec implements JsSpec
                                            );
   }
 
-  public Set<JsErrorPair> test(final JsObj obj){
-    return test(JsPath.empty(),obj);
+  public Set<JsErrorPair> test(final JsObj obj)
+  {
+    return test(JsPath.empty(),
+                obj);
   }
 
   @Override
@@ -95,15 +97,18 @@ public class JsObjSpec implements JsSpec
 
 
   private Set<JsErrorPair> test(final JsPath parent,
-                               final JsObjSpec parentObjSpec,
-                               final Set<JsErrorPair> errors,
-                               final JsValue parentValue
-                              )
+                                final JsObjSpec parentObjSpec,
+                                final Set<JsErrorPair> errors,
+                                final JsValue parentValue
+                               )
   {
 
-    if(parentValue.isNull() && nullable) return errors;
-    if(!parentValue.isObj()) {
-      errors.add(JsErrorPair.of(parent,new Error(parentValue,OBJ_EXPECTED)));
+    if (parentValue.isNull() && nullable) return errors;
+    if (!parentValue.isObj())
+    {
+      errors.add(JsErrorPair.of(parent,
+                                new Error(parentValue,
+                                          OBJ_EXPECTED)));
       return errors;
     }
     JsObj json = parentValue.toJsObj();
@@ -126,7 +131,8 @@ public class JsObjSpec implements JsSpec
                                     )
                                    ));
         }
-      } else errors.addAll(spec.test(currentPath,value));
+      } else errors.addAll(spec.test(currentPath,
+                                     value));
 
     }
     final Seq<String> requiredFields = parentObjSpec.bindings.filter((key, spec) -> spec.isRequired())
@@ -150,36 +156,15 @@ public class JsObjSpec implements JsSpec
                                final JsValue value
                               )
   {
-    return test(parentPath,this,new HashSet<>(),value);
+    return test(parentPath,
+                this,
+                new HashSet<>(),
+                value);
   }
 
 
-
-  public final static class Pair
-  {
-    public final String key;
-    public final JsSpec spec;
-
-    public static Pair pair(final String key,
-                            final JsSpec spec
-                           )
-    {
-      return new Pair(requireNonNull(key),
-                      requireNonNull(spec)
-      );
-    }
-
-    private Pair(final String key,
-                 final JsSpec spec
-                )
-    {
-      this.key = key;
-      this.spec = spec;
-    }
-  }
-
-  public static JsObjSpec strict(final Pair pair,
-                                 final Pair... others
+  public static JsObjSpec strict(final JsSpecPair pair,
+                                 final JsSpecPair... others
                                 )
   {
     return new JsObjSpec(true,
@@ -190,8 +175,8 @@ public class JsObjSpec implements JsSpec
     );
   }
 
-  public static JsObjSpec lenient(final Pair pair,
-                                  final Pair... others
+  public static JsObjSpec lenient(final JsSpecPair pair,
+                                  final JsSpecPair... others
                                  )
   {
     return new JsObjSpec(false,
@@ -205,14 +190,14 @@ public class JsObjSpec implements JsSpec
   private JsObjSpec(final boolean strict,
                     final boolean required,
                     final boolean nullable,
-                    final Pair pair,
-                    final Pair... others
+                    final JsSpecPair pair,
+                    final JsSpecPair... others
                    )
   {
     bindings = bindings.put(pair.key,
                             pair.spec
                            );
-    for (Pair p : others)
+    for (JsSpecPair p : others)
       bindings = bindings.put(p.key,
                               p.spec
                              );
@@ -1409,7 +1394,6 @@ public class JsObjSpec implements JsSpec
                             spec11
                            );
   }
-
 
 
 }

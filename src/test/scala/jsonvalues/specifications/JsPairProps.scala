@@ -3,7 +3,7 @@ package jsonvalues.specifications
 import jsonvalues.JsPair
 import org.scalacheck.Prop.forAll
 
-class JsPairSpec extends BasePropSpec
+class JsPairProps extends BasePropSpec
 {
 
   property("appends elements to the back after creating a new array in an empty object")

@@ -6,3 +6,6 @@ documentar que deserializing numeros enteros a long y decimales a big decimal, t
 
 
 implementar arrayOfJsSpec (solo esta arrayOfJsObjSpec)
+
+
+prepend  y append methods by key in JsOb

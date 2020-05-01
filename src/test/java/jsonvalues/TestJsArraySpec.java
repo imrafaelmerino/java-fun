@@ -212,7 +212,7 @@ public class TestJsArraySpec
                                       "lastName",
                                       JsSpecs.str,
                                       "age",
-                                      JsSpecs.intNumber(i -> i >= 0),
+                                      JsSpecs.intNum(i -> i >= 0),
                                       "latitude",
                                       decimal,
                                       "longitude",

@@ -1,9 +1,7 @@
 package jsonvalues;
 
 import com.dslplatform.json.parsers.JsParserException;
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import jsonvalues.gen.JsArrayGen;
-import jsonvalues.gen.JsGens;
 import jsonvalues.gen.JsObjGen;
 import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
@@ -197,9 +195,9 @@ public class TestJsObjParser
                                                              arraySuchThat(a -> a.head()
                                                                                  .equals(JsStr.of("first"))).optional().nullable(),
                                                              "j",
-                                                             JsArraySpec.tuple(number(JsValue::isDecimal),
-                                                                               any
-                                                                              )
+                                                             JsTupleSpec.of(number(JsValue::isDecimal),
+                                                                            any
+                                                                           )
                                                             )
                                            );
 
@@ -408,9 +406,9 @@ public class TestJsObjParser
                                                              arraySuchThat(a -> a.head()
                                                                                  .equals(JsStr.of("first"))),
                                                              "j",
-                                                             JsArraySpec.tuple(number(JsValue::isDecimal),
-                                                                               any
-                                                                              )
+                                                             JsTupleSpec.of(number(JsValue::isDecimal),
+                                                                            any
+                                                                           )
                                                             )
                                            );
 
@@ -497,11 +495,11 @@ public class TestJsObjParser
                                             integral.optional()
                                                     .nullable(),
                                             "i",
-                                            JsArraySpec.tuple(arrayOfInt.optional()
-                                                                        .nullable(),
-                                                              arrayOfLong.nullable()
+                                            JsTupleSpec.of(arrayOfInt.optional()
+                                                                     .nullable(),
+                                                           arrayOfLong.nullable()
                                                                          .optional()
-                                                             )
+                                                          )
                                                        .optional(),
                                             "j",
                                             obj.optional()
@@ -921,9 +919,9 @@ public class TestJsObjParser
   public void testArrayOfObjSpec()
   {
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      JsArraySpec.tuple(str,
-                                                        bool
-                                                       )
+                                      JsTupleSpec.of(str,
+                                                     bool
+                                                    )
                                                  .nullable()
                                      );
 

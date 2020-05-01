@@ -1,6 +1,6 @@
 package jsonvalues;
 
-import jsonvalues.spec.JsArraySpec;
+import jsonvalues.spec.JsTupleSpec;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
 import org.junit.jupiter.api.Assertions;
@@ -31,9 +31,9 @@ public class TestJsParser
                                                                 "e",
                                                                 decimal,
                                                                 "f",
-                                                                JsArraySpec.tuple(decimal,
-                                                                                  decimal
-                                                                                 ),
+                                                                JsTupleSpec.of(decimal,
+                                                                               decimal
+                                                                              ),
                                                                 "g",
                                                                 integral,
                                                                 "h",

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Predicate;
 import static jsonvalues.gen.JsGens.*;
-import static jsonvalues.spec.JsArraySpec.tuple;
+import static jsonvalues.spec.JsTupleSpec.of;
 import static jsonvalues.spec.JsSpecs.*;
 import static jsonvalues.spec.JsSpecs.intNum;
 
@@ -111,9 +111,9 @@ public class TestGenerators
                                "c",
                                str(s -> s.length() <= 10),
                                "d",
-                               tuple(intNum,
-                                     str(s -> s.length() <= 10)
-                                    )
+                               of(intNum,
+                                  str(s -> s.length() <= 10)
+                                 )
                               )
                        .test(v.toJsObj())
                        .isEmpty(),
@@ -154,10 +154,10 @@ public class TestGenerators
            JsObjSpec.strict("a",
                             arrayOfStr,
                             "b",
-                            tuple(str,
-                                  bool,
-                                  intNum
-                                 ),
+                            of(str,
+                               bool,
+                               intNum
+                              ),
                             "c",
                             JsObjSpec.strict("a",
                                              any(v -> v.isStr() || v.isBool())

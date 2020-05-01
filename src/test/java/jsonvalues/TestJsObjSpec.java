@@ -490,9 +490,9 @@ public class TestJsObjSpec
                                                              "b",
                                                              intNum,
                                                              "c",
-                                                             JsArraySpec.tuple(str,
-                                                                               intNum
-                                                                              ),
+                                                             JsTupleSpec.of(str,
+                                                                            intNum
+                                                                           ),
                                                              "d",
                                                              arraySuchThat(a -> a.head() == JsNull.NULL)
                                                             )
@@ -630,11 +630,11 @@ public class TestJsObjSpec
                                                              "b",
                                                              arrayOfObj(JsObj::isEmpty).optional().nullable(),
                                                              "c",
-                                                             JsArraySpec.tuple(arrayOfStrSuchThat(a -> a.size() > 2),
-                                                                               arrayOfIntSuchThat(a -> a.size() > 1),
-                                                                               arrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
-                                                                               arrayOfDecSuchThat(a -> a.size() == 1)
-                                                                              ),
+                                                             JsTupleSpec.of(arrayOfStrSuchThat(a -> a.size() > 2),
+                                                                            arrayOfIntSuchThat(a -> a.size() > 1),
+                                                                            arrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
+                                                                            arrayOfDecSuchThat(a -> a.size() == 1)
+                                                                           ),
                                                              "d",
                                                              integral(i -> i.longValue() > 10),
                                                              "e",
@@ -793,11 +793,11 @@ public class TestJsObjSpec
 
 
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      JsArraySpec.tuple(
+                                      JsTupleSpec.of(
                                         any,
                                         intNum
 
-                                                            )
+                                                    )
                                      );
 
 
@@ -1317,13 +1317,13 @@ System.out.println(result1);
   @Test
   public void test_errors_schemas(){
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                              JsObjSpec.strict("A",
+                                            JsObjSpec.strict("A",
                                                                intNum
                                                               ),
-                                              "b",
-                                              JsArraySpec.tuple(str),
-                                              "c",
-                                              arrayOf(JsObjSpec.lenient("a",
+                                            "b",
+                                            JsTupleSpec.of(str),
+                                            "c",
+                                            arrayOf(JsObjSpec.lenient("a",
                                                                         str)
                                                      )
                                              );

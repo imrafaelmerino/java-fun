@@ -12,14 +12,14 @@ import java.util.Set;
 import static jsonvalues.spec.ERROR_CODE.*;
 
 
-public class JsArraySpec implements JsSpec
+public class JsTupleSpec implements JsSpec
 
 {
 
   @Override
-  public JsArraySpec optional()
+  public JsTupleSpec optional()
   {
-    return new JsArraySpec(specs,
+    return new JsTupleSpec(specs,
                            false,
                            nullable);
   }
@@ -41,9 +41,9 @@ public class JsArraySpec implements JsSpec
 
 
   @Override
-  public JsArraySpec nullable()
+  public JsTupleSpec nullable()
   {
-    return new JsArraySpec(specs,
+    return new JsTupleSpec(specs,
                            required,
                            true);
   }
@@ -59,7 +59,7 @@ public class JsArraySpec implements JsSpec
   final boolean required;
   final boolean nullable;
 
-  JsArraySpec(final Vector<JsSpec> specs,
+  JsTupleSpec(final Vector<JsSpec> specs,
               boolean required,
               boolean nullable
              )
@@ -69,7 +69,7 @@ public class JsArraySpec implements JsSpec
     this.nullable = nullable;
   }
 
-  JsArraySpec(final Vector<JsSpec> specs)
+  JsTupleSpec(final Vector<JsSpec> specs)
   {
     this(specs,
          true,
@@ -77,14 +77,14 @@ public class JsArraySpec implements JsSpec
   }
 
 
-  public static JsArraySpec tuple(JsSpec spec,
-                                  JsSpec... others
-                                 )
+  public static JsTupleSpec of(JsSpec spec,
+                               JsSpec... others
+                              )
   {
     Vector<JsSpec> specs = Vector.empty();
     specs = specs.append(spec);
     for (JsSpec s : others) specs = specs.append(s);
-    return new JsArraySpec(specs);
+    return new JsTupleSpec(specs);
   }
 
 
@@ -105,7 +105,7 @@ public class JsArraySpec implements JsSpec
                );
   }
   private Set<JsErrorPair> test(final JsPath parent,
-                               final JsArraySpec parentSpec,
+                               final JsTupleSpec parentSpec,
                                final Set<JsErrorPair> errors,
                                final JsValue parentValue
                               )

@@ -16,25 +16,25 @@ public class TestJsArrayParser
   public void test_array_of_different_elements()
   {
 
-    final JsArraySpec spec = JsArraySpec.tuple(str,
-                                               intNum,
-                                               longNum,
-                                               decimal,
-                                               bool,
-                                               integral,
-                                               obj,
-                                               array,
-                                               intNum(i -> i > 0),
-                                               any(v -> v.isStr() || v.isInt()),
-                                               str(s -> s.startsWith("1")),
-                                               arrayOfIntegralSuchThat(a -> a.size() == 1).optional().nullable(),
-                                               arrayOfNumberSuchThat(a -> a.size() == 2),
-                                               number(a -> a.isDecimal()),
-                                               arrayOfIntegral(a -> a.longValueExact() > 0),
-                                               arrayOfIntegral(a -> a.longValueExact() > 0).nullable(),
-                                               arrayOfObj,
-                                               arrayOfObj.nullable()
-                                              );
+    final JsTupleSpec spec = JsTupleSpec.of(str,
+                                            intNum,
+                                            longNum,
+                                            decimal,
+                                            bool,
+                                            integral,
+                                            obj,
+                                            array,
+                                            intNum(i -> i > 0),
+                                            any(v -> v.isStr() || v.isInt()),
+                                            str(s -> s.startsWith("1")),
+                                            arrayOfIntegralSuchThat(a -> a.size() == 1).optional().nullable(),
+                                            arrayOfNumberSuchThat(a -> a.size() == 2),
+                                            number(a -> a.isDecimal()),
+                                            arrayOfIntegral(a -> a.longValueExact() > 0),
+                                            arrayOfIntegral(a -> a.longValueExact() > 0).nullable(),
+                                            arrayOfObj,
+                                            arrayOfObj.nullable()
+                                           );
 
 
     JsArray array = JsArray.of(JsStr.of("a"),

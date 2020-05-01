@@ -22,7 +22,7 @@ public class TestJsArraySpec
     final JsArray array = JsArray.of(JsInt.of(1),
                                      JsStr.of("a")
                                     );
-    final JsArraySpec spec = JsArraySpec.tuple(intNum);
+    final JsTupleSpec spec = JsTupleSpec.of(intNum);
     final Set<JsErrorPair> error = spec.test(array);
     assertErrorIs(error,
                   SPEC_MISSING,
@@ -36,9 +36,9 @@ public class TestJsArraySpec
   {
 
 
-    JsArraySpec spec = JsArraySpec.tuple(any,
-                                         any.optional()
-                                        );
+    JsTupleSpec spec = JsTupleSpec.of(any,
+                                      any.optional()
+                                     );
 
     Assertions.assertTrue(spec.test(JsArray.of(JsNull.NULL))
                               .isEmpty());
@@ -93,9 +93,9 @@ public class TestJsArraySpec
   {
 
 
-    JsArraySpec spec = JsArraySpec.tuple(any,
-                                         any
-                                        );
+    JsTupleSpec spec = JsTupleSpec.of(any,
+                                      any
+                                     );
 
     Assertions.assertTrue(spec.test(JsArray.of(JsBool.FALSE,
                                                JsBool.TRUE
@@ -241,7 +241,7 @@ public class TestJsArraySpec
   {
 
     Assertions.assertEquals(1,
-                            JsArraySpec.tuple(arrayOfDec)
+                            JsTupleSpec.of(arrayOfDec)
                                        .test(JsArray.of(JsArray.of(1,
                                                                    2
                                                                   )))
@@ -249,7 +249,7 @@ public class TestJsArraySpec
 
 
     Assertions.assertEquals(1,
-                            JsArraySpec.tuple(arrayOfInt)
+                            JsTupleSpec.of(arrayOfInt)
                                        .test(JsArray.of(JsArray.of("a",
                                                                    "b"
                                                                   )))
@@ -257,7 +257,7 @@ public class TestJsArraySpec
 
 
     Assertions.assertEquals(1,
-                            JsArraySpec.tuple(arrayOfLong)
+                            JsTupleSpec.of(arrayOfLong)
                                        .test(JsArray.of(JsArray.of("a",
                                                                    "b"
                                                                   )))
@@ -265,14 +265,14 @@ public class TestJsArraySpec
 
 
     Assertions.assertEquals(1,
-                            JsArraySpec.tuple(arrayOfObj)
+                            JsTupleSpec.of(arrayOfObj)
                                        .test(JsArray.of(JsArray.of("a",
                                                                    "b"
                                                                   )))
                                        .size());
 
     Assertions.assertEquals(1,
-                            JsArraySpec.tuple(arrayOfStr)
+                            JsTupleSpec.of(arrayOfStr)
                                        .test(JsArray.of(JsArray.of(true,
                                                                    false
                                                                   )))

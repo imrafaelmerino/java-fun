@@ -18,7 +18,7 @@ public class JsArrayParser
 
    @param spec the Json spec what defines the schema that every element in the array has to conform
    */
-  public JsArrayParser(final JsArraySpec spec)
+  public JsArrayParser(final JsTupleSpec spec)
   {
 
     parser = spec.parser();

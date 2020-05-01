@@ -3,6 +3,7 @@ package jsonvalues.gen;
 import jsonvalues.JsArray;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -16,7 +17,7 @@ public class JsTupleGen implements JsGen<JsArray>
                     )
   {
     gens.add(gen);
-    for (final JsGen<?> other : others) gens.add(other);
+    gens.addAll(Arrays.asList(others));
   }
 
   @Override

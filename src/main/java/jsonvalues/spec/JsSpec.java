@@ -9,8 +9,7 @@ import java.util.Set;
 public interface JsSpec
 {
   /**
-   When this spec is associated to a key in a JsObjSpec, the required flag indicates whether or
-   not the key is optional.
+   @return whether or not the key is optional.
    */
   boolean isRequired();
 

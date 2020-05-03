@@ -39,7 +39,7 @@ public final class ParseBuilder
      @param filter the predicate to filter pair of elements.
      @return this ParseOptions builder
      */
-    public ParseBuilder withElemFilter(final Predicate<? super JsPair> filter)
+    public ParseBuilder withValueFilter(final Predicate<? super JsPair> filter)
     {
         this.filter = filter;
         return this;

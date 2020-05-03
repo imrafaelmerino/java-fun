@@ -61,15 +61,6 @@ public final class JsBool implements JsValue
     }
 
     /**
-     Negates this json boolean (implementation of ! operator).
-     @return the inverse value of this
-     */
-    public JsBool negate()
-    {
-        return JsBool.of(!value);
-    }
-
-    /**
      * Static factory method to create a JsBool from a boolean primitive type.
      * @param b the boolean value
      * @return either {@link JsBool#TRUE} or {@link JsBool#FALSE}

@@ -8,10 +8,8 @@
     <name>json-values-benchmark</name>
     <properties>
         <ECLIPSE-COLLECTIONS.VERSION>10.0.0</ECLIPSE-COLLECTIONS.VERSION>
-        <PCOLLECTIONS.VERSION>3.1.0</PCOLLECTIONS.VERSION>
-        <VAVR.VERSION>0.9.3</VAVR.VERSION>
-        <JSON-VALUES.VERSION>5.0.0</JSON-VALUES.VERSION>
-        <CLOJURE.VERSION>1.10.1</CLOJURE.VERSION>
+        <VAVR.VERSION>1.0.0-alpha-3</VAVR.VERSION>
+        <JSON-VALUES.VERSION>8.0.0-RC1</JSON-VALUES.VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <JMH-VERSION>1.21</JMH-VERSION>
         <JUNIT-VERSION>5.5.2</JUNIT-VERSION>
@@ -19,10 +17,24 @@
         <COMPILER_SOURCE_VERSION>1.8</COMPILER_SOURCE_VERSION>
         <COMPILER_TARGET_VERSION>1.8</COMPILER_TARGET_VERSION>
         <PLUGIN_COMPILER_VERSION>3.8.0</PLUGIN_COMPILER_VERSION>
-        <JACKSON-VERSION>2.9.10</JACKSON-VERSION>
-
+        <JACKSON-VERSION>2.11.0</JACKSON-VERSION>
     </properties>
     <dependencies>
+      <dependency>
+        <groupId>org.leadpony.justify</groupId>
+        <artifactId>justify</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>1.1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.java-json-tools</groupId>
+        <artifactId>json-schema-validator</artifactId>
+        <version>2.2.11</version>
+      </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
@@ -68,7 +80,6 @@
             <version>${JACKSON-VERSION}</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -130,3 +141,4 @@
         </plugins>
     </build>
 </project>
+

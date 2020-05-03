@@ -100,15 +100,6 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
         return JsDouble.of(requireNonNull(fn).applyAsDouble(value));
     }
 
-    /**
-     subtract this long from the specified one
-     @param that the specified long
-     @return this long minus the specified one
-     */
-    public JsDouble minus(JsDouble that)
-    {
-        return JsDouble.of(value - that.value);
-    }
 
     /**
      * Static factory method to create a JsDouble from a double primitive type.
@@ -120,15 +111,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
         return new JsDouble(n);
     }
 
-    /**
-     adds up this long to the specified one
-     @param that the specified long
-     @return the sum of both longs
-     */
-    public JsDouble plus(JsDouble that)
-    {
-        return JsDouble.of(value + that.value);
-    }
+
 
     /**
      Tests the value of this json double on a predicate.
@@ -140,15 +123,6 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
         return predicate.test(value);
     }
 
-    /**
-     multiplies this long by the specified one
-     @param that the specified long
-     @return this long times the specified one
-     */
-    public JsDouble times(JsDouble that)
-    {
-        return JsDouble.of(value * that.value);
-    }
 
     /**
      * @return a string representation of this object.
@@ -165,7 +139,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      * optional is returned if this {@code double} has a nonzero fractional part.
      @return this double as an bigint wrapped in an Optional
      */
-    public Optional<BigInteger> bigIntegerExact()
+    Optional<BigInteger> bigIntegerExact()
     {
         try
         {
@@ -183,7 +157,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsBigDec the specified JsBigDec
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigDec jsBigDec)
+    private boolean equals(JsBigDec jsBigDec)
     {
         return requireNonNull(jsBigDec).equals(this);
     }
@@ -193,7 +167,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsBigInt the specified JsBigInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigInt jsBigInt)
+     boolean equals(JsBigInt jsBigInt)
     {
 
         final Optional<BigInteger> y = bigIntegerExact();
@@ -206,7 +180,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsLong the specified JsLong
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsLong jsLong)
+    private boolean equals(JsLong jsLong)
     {
         return requireNonNull(jsLong).equals(this);
     }
@@ -216,7 +190,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble>
      @param jsInt the specified JsInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsInt jsInt)
+    private boolean equals(JsInt jsInt)
     {
         return requireNonNull(jsInt).equals(this);
     }

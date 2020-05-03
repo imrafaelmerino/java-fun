@@ -27,43 +27,44 @@ class StreamCollectorSpec extends BasePropSpec
 
             List(
               testPredicateIf(p => p.value.isStr,
-                              pair => js.getStrOpt(pair.path).get == pair.value.toJsStr.value
+                              pair => js.getOptStr(pair.path).get == pair.value.toJsStr.value
                               ),
               testPredicateIf(p => p.value.isInt,
                               pair =>
                               {
                                 val n = pair.value.toJsInt.value
-                                (js.getIntOpt(pair.path).getAsInt == n) &&
-                                (js.getLongOpt(pair.path).getAsLong == n) &&
-                                (js.getBigIntOpt(pair.path).get() == BigInteger.valueOf(n))
+                                (js.getOptInt(pair.path).getAsInt == n) &&
+                                (js.getOptLong(pair.path).getAsLong == n) &&
+                                (js.getOptBigInt(pair.path).get() == BigInteger.valueOf(n))
                               }
                               ),
               testPredicateIf(p => p.value.isLong,
                               pair =>
                               {
                                 val n = pair.value.toJsLong.value
-                                (js.getLongOpt(pair.path).getAsLong == n) &&
-                                (js.getBigIntOpt(pair.path).get() == BigInteger.valueOf(n))
+                                (js.getOptLong(pair.path).getAsLong == n) &&
+                                (js.getOptBigInt(pair.path).get() == BigInteger.valueOf(n))
                               }
                               ),
               testPredicateIf(p => p.value.isDouble,
                               pair =>
                               {
                                 val n = pair.value.toJsDouble.value
-                                (js.getDoubleOpt(pair.path).getAsDouble == n) &&
-                                (js.getBigDecimalOpt(pair.path).get() == java.math.BigDecimal.valueOf(n))
+                                (js.getOptDouble(pair.path).getAsDouble == n) &&
+                                (js.getOptBigDec(pair.path).get() == java.math.BigDecimal.valueOf(n))
                               }
                               ),
               testPredicateIf(p => p.value.isBigInt,
-                              pair => js.getBigIntOpt(pair.path).get == pair.value.toJsBigInt.value
+                              pair => js.getOptBigInt(pair.path).get == pair.value.toJsBigInt.value
                               ),
               testPredicateIf(pair => pair.value.isBigDec,
-                              pair => js.getBigDecimalOpt(pair.path).get == pair.value.toJsBigDec.value
+                              pair => js.getOptBigDec(pair.path).get == pair.value.toJsBigDec.value
                               ),
               testPredicateIf(pair => pair.value.isBool,
-                              pair => js.getBoolOpt(pair.path).get == pair.value.toJsBool.value
+                              pair => js.getOptBool(pair.path).get == pair.value.toJsBool.value
                               )
-              ).map(f => f(js)).reduce(_ && _)
+              ).map(f => f(js))
+              .reduce(_ && _)
           }
           )
   }
@@ -77,7 +78,7 @@ class StreamCollectorSpec extends BasePropSpec
     check(forAll(jsGen.jsObjGen)
           { js =>
 
-            val function: Function[JsPair, Long] = pair => pair.value.toJsLong.value
+            val function: Function[JsPair, Long] = pair => pair.value.toJsLong().value
 
             val value: stream.Stream[Long] = js.streamAll().filter(p => p.value.isLong || p.value.isInt).map(function)
             val a = value.reduce((a: Long,

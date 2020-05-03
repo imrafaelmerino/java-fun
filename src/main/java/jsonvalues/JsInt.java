@@ -20,7 +20,9 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
         return ID;
     }
 
-    /**
+
+
+  /**
      The integer value.
      */
     public final int value;
@@ -59,7 +61,7 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
         final JsNumber number = (JsNumber) that;
 
         if (number.isInt()) return value == number.toJsInt().value;
-        if (number.isLong()) return (long) value == number.toJsLong().value;
+        if (number.isLong()) return equals(number.toJsLong());
         if (number.isBigInt()) return equals(number.toJsBigInt());
         if (number.isBigDec()) return equals(number.toJsBigDec());
         if (number.isDouble()) return equals(number.toJsDouble());
@@ -109,34 +111,6 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
     }
 
     /**
-     adds up this integer to the specified one
-     @param that the specified integer
-     @return the sum of both integers
-     */
-    public JsInt plus(JsInt that)
-    {
-        return JsInt.of(value + that.value);
-    }
-
-    /**
-     subtract this integer from the specified one
-     @param that the specified integer
-     @return this integer minus the specified one
-     */
-    public JsInt minus(JsInt that)
-    {
-        return JsInt.of(value - that.value);
-    }
-
-    /**
-     multiplies this integer by the specified one
-     @param that the specified integer
-     @return this integer times the specified one
-     */
-    public JsInt times(JsInt that)
-    {
-        return JsInt.of(value * that.value);
-    }
 
     /**
      Tests the value of this json integer on a predicate.
@@ -153,7 +127,7 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
      @param jsBigInt the specified JsBigInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigInt jsBigInt)
+    private boolean equals(JsBigInt jsBigInt)
     {
         return requireNonNull(jsBigInt).equals(this);
     }
@@ -163,7 +137,7 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
      @param jsBigDec the specified JsBigDec
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigDec jsBigDec)
+    private boolean equals(JsBigDec jsBigDec)
     {
         return requireNonNull(jsBigDec).equals(this);
     }
@@ -173,7 +147,7 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
      @param jsLong the specified JsLong
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsLong jsLong)
+    private boolean equals(JsLong jsLong)
     {
         return requireNonNull(jsLong).equals(this);
     }
@@ -183,7 +157,7 @@ public final class JsInt extends JsNumber implements Comparable<JsInt>
      @param jsDouble the specified JsDouble
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsDouble jsDouble)
+    boolean equals(JsDouble jsDouble)
     {
         return (double) value == requireNonNull(jsDouble).value;
     }

@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <packaging>jar</packaging>
-    <version>7.0.0</version>
+    <version>8.0.0-RC1</version>
     <name>json-values</name>
     <description>json-values is a functional Java library to work with immutable jsons using persistent data structures.</description>
     <url>https://github.com/imrafaelmerino/json-values</url>
@@ -28,7 +28,7 @@
         <url>https://github.com/imrafaelmerino/json-values.git</url>
     </scm>
     <properties>
-        <JACKSON-VERSION>2.10.2</JACKSON-VERSION>
+        <JACKSON-VERSION>2.11.0</JACKSON-VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <DEPENDENCY_SCALA_CHECK_VERSION>1.14.0</DEPENDENCY_SCALA_CHECK_VERSION>
         <DEPENDENCY_SCALA_VERSION>2.12.8</DEPENDENCY_SCALA_VERSION>

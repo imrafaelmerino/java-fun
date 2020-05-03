@@ -13,33 +13,8 @@ import static java.util.Objects.requireNonNull;
 public final class MatchExp
 {
 
-    private MatchExp()
-    {
-    }
+    private MatchExp(){}
 
-    /**
-     Declarative way of consuming an element based on its type
-     @param ifValue the consumer to be invoked if this JsElem is a JsValue
-     @param ifObj the consumer to be invoked if this JsElem is a JsObj
-     @param ifArray the consumer to be invoked if this JsElem is a JsArray
-     @return consumer of a json element
-     */
-    public static Consumer<JsValue> accept(final Consumer<JsValue> ifValue,
-                                           final Consumer<JsObj> ifObj,
-                                           final Consumer<JsArray> ifArray
-                                          )
-    {
-        requireNonNull(ifValue);
-        requireNonNull(ifObj);
-        requireNonNull(ifArray);
-        return e ->
-        {
-            if (e.isNotJson()) ifValue.accept(e);
-            if (e.isObj()) ifObj.accept(e.toJsObj());
-            if (e.isArray()) ifArray.accept(e.toJsArray());
-        };
-
-    }
 
     /**
      return a matching expression to extract arrays out of json elements.
@@ -50,7 +25,6 @@ public final class MatchExp
      */
     public static <T> Function<JsValue, T> ifArrElse(final Function<? super JsArray, T> ifArr,
                                                      final Function<? super JsValue, T> ifNotArr
-
                                                     )
     {
 
@@ -134,8 +108,6 @@ public final class MatchExp
 
         return elem ->
         {
-
-
             if (elem.isObj()) return requireNonNull(ifObj).apply(elem.toJsObj());
             if (elem.isArray()) return requireNonNull(ifArr).apply(elem.toJsArray());
             return ifValue.apply(elem);
@@ -153,7 +125,6 @@ public final class MatchExp
                                                       final Function<JsValue, T> ifNotJson
                                                      )
     {
-
         return elem -> requireNonNull(elem).isJson() ? requireNonNull(ifJson).apply(elem.toJson()) : requireNonNull(ifNotJson).apply(elem);
     }
 
@@ -168,7 +139,6 @@ public final class MatchExp
                                                          final Function<JsValue, T> elseFn
                                                         )
     {
-
         return elem -> elem.isNothing() ? requireNonNull(nothingSupplier).get() : requireNonNull(elseFn).apply(elem);
     }
 
@@ -203,7 +173,6 @@ public final class MatchExp
                                                            final Function<JsValue, T> ifFalse
                                                           )
     {
-
         return elem ->
         {
             if (requireNonNull(predicate).test(elem)) return requireNonNull(ifTrue).apply(elem);

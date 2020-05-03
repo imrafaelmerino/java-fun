@@ -31,10 +31,9 @@ class PutGetMergeRemoveSpec extends BasePropSpec
            { (path,
               str
              ) =>
-             val array = JsArray.empty().put(path,
-                                             JsStr.of(str)
-                                             )
-             array.getStrOpt(path).get() == str && array.getStr(path) == str
+             JsArray.empty().put(path,
+                                 JsStr.of(str)
+                                 ).getOptStr(path).get() == str
            }
            )
   }
@@ -53,15 +52,15 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              val obj = JsArray.empty().put(path,
                                            JsBool.of(bool)
                                            )
-             obj.getBool(path) == bool && obj.getBool(path) == bool &&
-             obj.getIntOpt(path) == OptionalInt.empty() && obj.getInt(path) == null &&
-             obj.getLongOpt(path) == OptionalLong.empty() && obj.getLong(path) == null &&
-             obj.getStrOpt(path) == Optional.empty() && obj.getStr(path) == null &&
-             obj.getObjOpt(path) == Optional.empty() && obj.getObj(path) == null &&
-             obj.getArrayOpt(path) == Optional.empty() && obj.getArray(path) == null &&
-             obj.getBigDecimalOpt(path) == Optional.empty() && obj.getBigDecimal(path) == null &&
-             obj.getBigIntOpt(path) == Optional.empty() && obj.getBigInt(path) == null &&
-             obj.getDoubleOpt(path) == OptionalDouble.empty() && obj.getDouble(path) == null &&
+             obj.getOptBool(path).get() == bool
+             obj.getOptInt(path) == OptionalInt.empty()
+             obj.getOptLong(path) == OptionalLong.empty()
+             obj.getOptStr(path) == Optional.empty()
+             obj.getOptObj(path) == Optional.empty()
+             obj.getOptArray(path) == Optional.empty()
+             obj.getOptBigDec(path) == Optional.empty()
+             obj.getOptBigInt(path) == Optional.empty()
+             obj.getOptDouble(path) == OptionalDouble.empty()
              obj.get(path) == JsBool.of(bool)
 
            }
@@ -81,14 +80,14 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              val arr = JsArray.empty().put(path,
                                            JsInt.of(n)
                                            )
-             arr.getIntOpt(path).getAsInt == n && arr.getInt(path) == n &&
-             arr.getBoolOpt(path) == Optional.empty() &&
-             arr.getLongOpt(path).getAsLong == n &&
-             arr.getBigInt(path) == BigInteger.valueOf(n) &&
-             arr.getObjOpt(path) == Optional.empty() &&
-             arr.getArrayOpt(path) == Optional.empty() &&
-             arr.getBigDecimalOpt(path) == Optional.empty() &&
-             arr.getDoubleOpt(path) == OptionalDouble.empty() &&
+             arr.getOptInt(path).getAsInt == n
+             arr.getOptBool(path) == Optional.empty()
+             arr.getOptLong(path).getAsLong == n
+             arr.getOptBigInt(path).get() == BigInteger.valueOf(n)
+             arr.getOptObj(path) == Optional.empty()
+             arr.getOptArray(path) == Optional.empty()
+             arr.getOptBigDec(path) == Optional.empty()
+             arr.getOptDouble(path) == OptionalDouble.empty()
              arr.get(path) == JsInt.of(n)
 
            }
@@ -112,14 +111,15 @@ class PutGetMergeRemoveSpec extends BasePropSpec
                                            JsLong.of(n)
                                            )
 
-             arr.getIntOpt(path) == Try.apply(OptionalInt.of(Math.toIntExact(n))).getOrElse(OptionalInt.empty()) &&
-             arr.getBoolOpt(path) == Optional.empty() &&
-             arr.getLongOpt(path).getAsLong == n &&
-             arr.getBigInt(path) == BigInteger.valueOf(n) &&
-             arr.getObjOpt(path) == Optional.empty() &&
-             arr.getArrayOpt(path) == Optional.empty() &&
-             arr.getBigDecimalOpt(path) == Optional.empty() &&
-             arr.getDoubleOpt(path) == OptionalDouble.empty() &&
+             arr.getOptInt(path) == Try.apply(OptionalInt.of(Math.toIntExact(n))).getOrElse(OptionalInt.empty())
+
+             arr.getOptBool(path) == Optional.empty()
+             arr.getOptLong(path).getAsLong == n
+             arr.getOptBigInt(path).get() == BigInteger.valueOf(n)
+             arr.getOptObj(path) == Optional.empty()
+             arr.getOptArray(path) == Optional.empty()
+             arr.getOptBigDec(path) == Optional.empty()
+             arr.getOptDouble(path) == OptionalDouble.empty()
              arr.get(path) == JsLong.of(n)
 
            }
@@ -141,15 +141,14 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              val arr = JsArray.empty().put(path,
                                            JsBigInt.of(n.bigInteger)
                                            )
-             arr.getIntOpt(path) == Try.apply(OptionalInt.of(n.bigInteger.intValueExact())).getOrElse(OptionalInt.empty()) &&
-             arr.getBigInt(path) == n.bigInteger &&
-             arr.getBoolOpt(path) == Optional.empty() &&
-             arr.getLongOpt(path) == Try.apply(OptionalLong.of(n.bigInteger.longValueExact())).getOrElse(OptionalLong.empty()) &&
-             arr.getBigInt(path) == n.bigInteger &&
-             arr.getObjOpt(path) == Optional.empty() &&
-             arr.getArrayOpt(path) == Optional.empty() &&
-             arr.getBigDecimalOpt(path) == Optional.empty() &&
-             arr.getDoubleOpt(path) == OptionalDouble.empty() &&
+             arr.getOptInt(path) == Try.apply(OptionalInt.of(n.bigInteger.intValueExact())).getOrElse(OptionalInt.empty())
+             arr.getOptBool(path) == Optional.empty()
+             arr.getOptLong(path) == Try.apply(OptionalLong.of(n.bigInteger.longValueExact())).getOrElse(OptionalLong.empty())
+             arr.getOptBigInt(path).get() == n.bigInteger
+             arr.getOptObj(path) == Optional.empty()
+             arr.getOptArray(path) == Optional.empty()
+             arr.getOptBigDec(path) == Optional.empty()
+             arr.getOptDouble(path) == OptionalDouble.empty()
              arr.get(path) == JsBigInt.of(n.bigInteger)
 
            }
@@ -241,7 +240,7 @@ class PutGetMergeRemoveSpec extends BasePropSpec
              val json = JsArray.empty().put(path,
                                             JsBool.of(value)
                                             )
-             (json.getBool(path) == value) &&
+             (json.getOptBool(path).get() == value) &&
              (json.remove(path).get(path) == JsNothing.NOTHING)
 
 

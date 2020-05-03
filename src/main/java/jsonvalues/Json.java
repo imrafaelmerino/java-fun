@@ -1,23 +1,22 @@
 package jsonvalues;
 
+import com.dslplatform.json.serializers.SerializerException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import jsonvalues.JsArray.TYPE;
+import jsonvalues.spec.JsSpec;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.JsNothing.NOTHING;
-import static jsonvalues.JsonLibsFactory.dslJson;
 
 /**
  <pre>
@@ -67,9 +66,17 @@ json.putIfAbsent(path,supplier)
 
  @author Rafael Merino Garcia */
 public interface Json<T extends Json<T>> extends JsValue
-
-
 {
+
+  /** Converts the string representation of this Json to a pretty print version
+   *
+   * @return pretty print version of the string representation of this Json
+   *
+   */
+  default String toPrettyString()
+  {
+    return INSTANCE.toPrettyString(this);
+  }
 
   /**
    Appends one or more elements, starting from the first, to the array located at the given path in
@@ -88,15 +95,13 @@ public interface Json<T extends Json<T>> extends JsValue
                    final JsValue... others
                   )
   {
-
-
     T result = append(path,
                       elem
                      );
-    for (final JsValue other : Objects.requireNonNull(others))
+    for (final JsValue other : requireNonNull(others))
     {
       result = result.append(path,
-                             Objects.requireNonNull(other)
+                             requireNonNull(other)
                             );
     }
     return result;
@@ -274,7 +279,7 @@ public interface Json<T extends Json<T>> extends JsValue
   /**
    Appends all the elements of the array computed by the supplier, starting from the head, to an
    array located at the given path in this json, returning the same this instance if the array is
-   not present, in which case, the supplier is not invoked.
+   not present, in which case, the supplier is not evaluated.
    @param path the given JsPath object pointing to the existing array in which all the elements will be appended
    @param supplier   the supplier of the array of elements that will be appended
    @return same this instance or a new json of the same type T
@@ -312,8 +317,8 @@ public interface Json<T extends Json<T>> extends JsValue
                            )
   {
     return MatchExp.ifArrElse(it -> append(path,
-                                           Objects.requireNonNull(supplier)
-                                                  .get()
+                                           requireNonNull(supplier)
+                                             .get()
                                           ),
                               it ->
                               {
@@ -348,7 +353,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                 return t;
                               }
                              )
-                   .apply(get(Objects.requireNonNull(path)));
+                   .apply(get(requireNonNull(path)));
   }
 
   /**
@@ -375,7 +380,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                 return t;
                               }
                              )
-                   .apply(get(Objects.requireNonNull(path)));
+                   .apply(get(requireNonNull(path)));
 
   }
 
@@ -403,7 +408,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                 return t;
                               }
                              )
-                   .apply(get(Objects.requireNonNull(path)));
+                   .apply(get(requireNonNull(path)));
 
   }
 
@@ -431,7 +436,7 @@ public interface Json<T extends Json<T>> extends JsValue
                                 return t;
                               }
                              )
-                   .apply(get(Objects.requireNonNull(path)));
+                   .apply(get(requireNonNull(path)));
 
   }
 
@@ -459,9 +464,17 @@ public interface Json<T extends Json<T>> extends JsValue
                                 return t;
                               }
                              )
-                   .apply(get(Objects.requireNonNull(path)));
+                   .apply(get(requireNonNull(path)));
 
   }
+
+  /**
+   Returns true if this json contains the given element in the first level.
+   @param element the give element JsElem whose presence in this JsArray is to be tested
+   @return true if this JsArray contains the  JsElem
+   */
+  boolean containsValue(JsValue element);
+
 
   /**
    Returns true if an element exists in this json at the given path.
@@ -473,13 +486,6 @@ public interface Json<T extends Json<T>> extends JsValue
     return get(requireNonNull(path)).isNotNothing();
 
   }
-
-  /**
-   Returns true if this json contains the given element in the first level.
-   @param element the give element JsElem whose presence in this JsArray is to be tested
-   @return true if this JsArray contains the  JsElem
-   */
-  boolean containsValue(JsValue element);
 
   @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
   default boolean equals(final JsValue elem,
@@ -498,21 +504,13 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Filters all the keys of this json, removing those that don't ifPredicateElse the predicate.
-   @param filter the predicate which takes as the input every JsPair of this json
-   @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
-   @see #filterKeys(Predicate) how to filter the keys of only the first level
-   */
-  T filterAllKeys(final Predicate<? super JsPair> filter);
-
-  /**
-   Filters all the pair of jsons of this json, removing those that don't ifPredicateElse the predicate.
-   @param filter the predicate which takes as the input every JsPair of this json
+   Filters the pairs of elements in the first level of this json, removing those that don't ifPredicateElse
+   the predicate.
+   @param filter the predicate which takes as the input every JsPair in the first level of this json
    @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-   @see #filterObjs(BiPredicate) how to filter the pair of jsons of only the first level
+   @see #filterAllValues(Predicate) how to filter the pair of elements of the whole json and not only the first level
    */
-  T filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter
-                 );
+  T filterValues(final Predicate<? super JsPair> filter);
 
   /**
    Filters all the pairs of elements of this json, removing those that don't ifPredicateElse the predicate.
@@ -531,6 +529,14 @@ public interface Json<T extends Json<T>> extends JsValue
   T filterKeys(final Predicate<? super JsPair> filter);
 
   /**
+   Filters all the keys of this json, removing those that don't ifPredicateElse the predicate.
+   @param filter the predicate which takes as the input every JsPair of this json
+   @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
+   @see #filterKeys(Predicate) how to filter the keys of only the first level
+   */
+  T filterAllKeys(final Predicate<? super JsPair> filter);
+
+  /**
    Filters the pair of jsons in the first level of this json, removing those that don't ifPredicateElse
    the predicate.
    @param filter the predicate which takes as the input every JsPair in the first level of this json
@@ -543,46 +549,28 @@ public interface Json<T extends Json<T>> extends JsValue
               );
 
   /**
-   Filters the pairs of elements in the first level of this json, removing those that don't ifPredicateElse
-   the predicate.
-   @param filter the predicate which takes as the input every JsPair in the first level of this json
+   Filters all the pair of jsons of this json, removing those that don't ifPredicateElse the predicate.
+   @param filter the predicate which takes as the input every JsPair of this json
    @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-   @see #filterAllValues(Predicate) how to filter the pair of elements of the whole json and not only the first level
+   @see #filterObjs(BiPredicate) how to filter the pair of jsons of only the first level
    */
-  T filterValues(final Predicate<? super JsPair> filter);
+  T filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter);
 
-  /**
-   Returns the element located at the key or index specified by the given position or {@link JsNothing} if it
-   doesn't exist.
-   @param position key or index of the element
-   @return the JsElem located at the given Position or JsNothing if it doesn't exist
-   */
-  JsValue get(final Position position);
 
   /**
    Returns the element located at the given path or {@link JsNothing} if it doesn't exist.
    @param path the JsPath object of the element that will be returned
    @return the JsElem located at the given JsPath or JsNothing if it doesn't exist
    */
-  default JsValue get(final JsPath path)
-  {
-    if (path.isEmpty()) return this;
-    final JsValue e = get(path.head());
-    final JsPath tail = path.tail();
-    if (tail.isEmpty()) return e;
-    if (e.isNotJson()) return NOTHING;
-    return e.toJson()
-            .get(tail);
-  }
+  JsValue get(final JsPath path);
 
   /**
    Returns the array located at the given path or {@link Optional#empty()} if it doesn't exist or
    it's not an array.
-   @param path the JsPath object of the JsArray that will be returned
+   @param path the path
    @return the JsArray located at the given JsPath wrapped in an Optional
-
    */
-  default Optional<JsArray> getArrayOpt(final JsPath path)
+  default Optional<JsArray> getOptArray(final JsPath path)
   {
     final Function<JsValue, Optional<JsArray>> ifElse = MatchExp.ifArrElse(Optional::of,
                                                                            it -> Optional.empty()
@@ -591,24 +579,22 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the array located at the given path or null if it doesn't exist or
-   it's not an array.
+   Returns the array located at the given path or null if it doesn't exist or it's not an array.
    @param path the path
-   @return the JsArray located at the given path or null
-
+   @return the JsArray located at the given JsPath or null
    */
   default JsArray getArray(final JsPath path)
   {
-    return getArrayOpt(path).orElse(null);
+    return getOptArray(path).orElse(null);
   }
 
   /**
-   Returns the big decimal located at the given path as a big decimal or {@link Optional#empty()} if
+   Returns the number located at the given path as a big decimal or {@link Optional#empty()} if
    it doesn't exist or it's not a decimal number.
-   @param path the JsPath object of the BigDecimal that will be returned
-   @return the BigDecimal located at the given JsPath wrapped in an Optional
+   @param path the path
+   @return the number located at the given JsPath wrapped in an Optional
    */
-  default Optional<BigDecimal> getBigDecimalOpt(final JsPath path)
+  default Optional<BigDecimal> getOptBigDec(final JsPath path)
   {
     final Function<JsValue, Optional<BigDecimal>> ifElse = MatchExp.ifDecimalElse(it -> Optional.of(BigDecimal.valueOf(it)),
                                                                                   Optional::of,
@@ -618,24 +604,23 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the big decimal located at the given path as a big decimal or null if
+   Returns the number located at the given path as a big decimal or null if
    it doesn't exist or it's not a decimal number.
    @param path the path
-   @return the BigDecimal located at the given path
+   @return the number located at the given JsPath or null
    */
-  default BigDecimal getBigDecimal(final JsPath path)
+  default BigDecimal getBigDec(final JsPath path)
   {
-    final Optional<BigDecimal> opt = getBigDecimalOpt(path);
-    return opt.orElse(null);
+    return getOptBigDec(path).orElse(null);
   }
 
   /**
-   Returns the big integer located at the given path as a big integer or {@link Optional#empty()} if it doesn't
+   Returns the number located at the given path as a big integer or {@link Optional#empty()} if it doesn't
    exist or it's not an integral number.
    @param path the path
    @return the BigInteger located at the given JsPath wrapped in an Optional
    */
-  default Optional<BigInteger> getBigIntOpt(final JsPath path)
+  default Optional<BigInteger> getOptBigInt(final JsPath path)
   {
     final Function<JsValue, Optional<BigInteger>> ifElse = MatchExp.ifIntegralElse(it -> Optional.of(BigInteger.valueOf(it)),
                                                                                    it -> Optional.of(BigInteger.valueOf(it)),
@@ -646,22 +631,22 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the big integer located at the given path as a big integer or null if it doesn't
+   Returns the number located at the given path as a big integer or null if it doesn't
    exist or it's not an integral number.
    @param path the path
-   @return the BigInteger located at the given path
+   @return the BigInteger located at the given JsPath or null
    */
   default BigInteger getBigInt(final JsPath path)
   {
-    return getBigIntOpt(path).orElse(null);
+    return getOptBigInt(path).orElse(null);
   }
 
   /**
    Returns the boolean located at the given path or {@link Optional#empty()} if it doesn't exist.
-   @param path the JsPath object of the Boolean that will be returned
+   @param path the path
    @return the Boolean located at the given JsPath wrapped in an Optional
    */
-  default Optional<Boolean> getBoolOpt(final JsPath path)
+  default Optional<Boolean> getOptBool(final JsPath path)
   {
     final Function<JsValue, Optional<Boolean>> fn = MatchExp.ifBoolElse(Optional::of,
                                                                         it -> Optional.empty()
@@ -672,11 +657,11 @@ public interface Json<T extends Json<T>> extends JsValue
   /**
    Returns the boolean located at the given path or null if it doesn't exist.
    @param path the path
-   @return the Boolean located at the given path or null
+   @return the Boolean located at the given JsPath or null
    */
   default Boolean getBool(final JsPath path)
   {
-    return getBoolOpt(path).orElse(null);
+    return getOptBool(path).orElse(null);
   }
 
   /**
@@ -684,10 +669,10 @@ public interface Json<T extends Json<T>> extends JsValue
    doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
    to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
    the precision of the BigDecimal
-   @param path the JsPath object of the double that will be returned
+   @param path the path
    @return the decimal number located at the given JsPath wrapped in an OptionalDouble
    */
-  default OptionalDouble getDoubleOpt(final JsPath path)
+  default OptionalDouble getOptDouble(final JsPath path)
   {
     return MatchExp.ifDecimalElse(OptionalDouble::of,
                                   bd -> JsBigDec.of(bd)
@@ -697,29 +682,27 @@ public interface Json<T extends Json<T>> extends JsValue
                    .apply(this.get(requireNonNull(path)));
   }
 
-
   /**
    Returns the decimal number located at the given path as a double or null if it
    doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
    to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
    the precision of the BigDecimal
    @param path the path
-   @return the decimal number located at the given path or null
+   @return the decimal number located at the given JsPath or null
    */
   default Double getDouble(final JsPath path)
   {
-    final OptionalDouble opt = getDoubleOpt(path);
-    return opt.isPresent() ? opt.getAsDouble() : null;
+    final OptionalDouble optDouble = getOptDouble(path);
+    return optDouble.isPresent() ? optDouble.getAsDouble() : null;
   }
-
 
   /**
    Returns the integral number located at the given path as an integer or {@link OptionalInt#empty()} if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
-   @param path the JsPath object of the integral number that will be returned
+   @param path the path
    @return the integral number located at the given JsPath wrapped in an OptionalInt
    */
-  default OptionalInt getIntOpt(final JsPath path)
+  default OptionalInt getOptInt(final JsPath path)
   {
     return MatchExp.ifIntegralElse(OptionalInt::of,
                                    l -> JsLong.of(l)
@@ -731,29 +714,25 @@ public interface Json<T extends Json<T>> extends JsValue
                    .apply(this.get(requireNonNull(path)));
   }
 
-
-
   /**
    Returns the integral number located at the given path as an integer or null if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
    @param path the path
-   @return the integral number located at the given path or null
+   @return the integral number located at the given JsPath or null
    */
   default Integer getInt(final JsPath path)
   {
-    final OptionalInt opt = getIntOpt(path);
-    return opt.isPresent() ? opt.getAsInt() : null;
-
+    final OptionalInt optInt = getOptInt(path);
+    return optInt.isPresent() ? optInt.getAsInt() : null;
   }
-
 
   /**
    Returns the integral number located at the given path as a long or {@link OptionalLong#empty()} if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
-   @param path the JsPath object of the integral number that will be returned
+   @param path the path
    @return the integral number located at the given JsPath wrapped in an OptionalLong
    */
-  default OptionalLong getLongOpt(final JsPath path)
+  default OptionalLong getOptLong(final JsPath path)
   {
     return MatchExp.ifIntegralElse(OptionalLong::of,
                                    OptionalLong::of,
@@ -769,22 +748,21 @@ public interface Json<T extends Json<T>> extends JsValue
    Returns the integral number located at the given path as a long or null if it
    doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
    @param path the path
-   @return the integral number located at the given path or null
+   @return the integral number located at the given JsPath or null
    */
   default Long getLong(final JsPath path)
   {
-    final OptionalLong opt = getLongOpt(path);
-    return opt.isPresent() ? opt.getAsLong() : null;
+    final OptionalLong optLong = getOptLong(path);
+    return optLong.isPresent() ? optLong.getAsLong() : null;
   }
-
 
   /**
    Returns the object located at the given path or {@link Optional#empty()} if it doesn't exist or it's
    not an object.
-   @param path the JsPath object of the JsObj that will be returned
+   @param path the path
    @return the JsObj located at the given JsPath wrapped in an Optional
    */
-  default Optional<JsObj> getObjOpt(final JsPath path)
+  default Optional<JsObj> getOptObj(final JsPath path)
   {
     final Function<JsValue, Optional<JsObj>> ifElse = MatchExp.ifObjElse(Optional::of,
                                                                          it -> Optional.empty()
@@ -792,28 +770,24 @@ public interface Json<T extends Json<T>> extends JsValue
     return ifElse.apply(this.get(requireNonNull(path)));
   }
 
-
-
   /**
    Returns the object located at the given path or null if it doesn't exist or it's
    not an object.
    @param path the path
-   @return the JsObj located at the given path or null
+   @return the JsObj located at the given JsPath or null
    */
   default JsObj getObj(final JsPath path)
   {
-    return getObjOpt(path).orElse(null);
+    return getOptObj(path).orElse(null);
   }
-
-
 
   /**
    Returns the string located at the given path or {@link Optional#empty()} if it doesn't exist or it's
    not an string.
-   @param path the JsPath object of the JsStr that will be returned
+   @param path the path
    @return the JsStr located at the given path wrapped in an Optional
    */
-  default Optional<String> getStrOpt(final JsPath path)
+  default Optional<String> getOptStr(final JsPath path)
   {
     final Function<JsValue, Optional<String>> ifStrElseFn = MatchExp.ifStrElse(Optional::of,
                                                                                it -> Optional.empty()
@@ -826,14 +800,13 @@ public interface Json<T extends Json<T>> extends JsValue
    Returns the string located at the given path or null if it doesn't exist or it's
    not an string.
    @param path the path
-   @return the string located at the given path or null
+   @return the JsStr located at the given path or null
    */
   default String getStr(final JsPath path)
   {
-    return getStrOpt(path).orElse(null);
+    return getOptStr(path).orElse(null);
+
   }
-
-
 
   /**
    Declarative way of implementing if(this.isEmpty()) return emptySupplier.get() else return
@@ -875,51 +848,30 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Maps all the keys of this json.
+   Maps the values in the first level of this json.
    @param fn the mapping function
+
    @return a new mapped json of the same type T
-   @see #mapAllValues(Function) to map values
-   @see #mapAllObjs(BiFunction) to map jsons
-   @see #mapKeys(Function) to map only the first level
+   @see #mapObjs(BiFunction) to map jsons
+   @see #mapKeys(Function) to map keys of json objects
+   @see #mapAllValues(Function) to map all the values and not only the first level
    */
-  T mapAllKeys(final Function<? super JsPair, String> fn);
+  T mapValues(final Function<? super JsPair, ? extends JsValue> fn);
 
   /**
-   Maps all the keys of this json that satisfies a given predicate.
+   Maps the values in the first level of this json that satisfies a given predicate.
    @param fn the mapping function
-   @param predicate the given predicate that determines what keys will be mapped
+   @param predicate the given predicate that determines what JsValues will be mapped
    @return same this instance or a new mapped json of the same type T
-   @see #mapAllValues(Function, Predicate) to map values
-   @see #mapAllObjs(BiFunction, BiPredicate) to map jsons
-   @see #mapKeys(Function, Predicate) to map only the first level
-   */
-  T mapAllKeys(final Function<? super JsPair, String> fn,
-               final Predicate<? super JsPair> predicate
-              );
 
-  /**
-   Maps all the jsons of this json that satisfies a given predicate.
-   @param fn the  mapping function
-   @param predicate the given predicate that determines what Jsons will be mapped
-   @return same this instance or a new mapped json of the same type T
-   @see #mapAllValues(Function, Predicate) to map values
-   @see #mapAllKeys(Function, Predicate) to map keys of json objects
-   @see #mapObjs(BiFunction, BiPredicate) to map only the first level
-   */
-  T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
-               final BiPredicate<? super JsPath, ? super JsObj> predicate
-              );
 
-  /**
-   Maps all the jsons of this json.
-   @param fn the mapping function
-   @return a new mapped json of the same type T
-   @see #mapAllValues(Function) to map values
-   @see #mapAllKeys(Function) to map keys of json objects
-   @see #mapObjs(BiFunction) to map only the first level
+   @see #mapObjs(BiFunction, BiPredicate) to map jsons
+   @see #mapKeys(Function, Predicate) to map keys of json objects
+   @see #mapAllValues(Function, Predicate) to map all the values and not only the first level
    */
-  T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn
-              );
+  T mapValues(final Function<? super JsPair, ? extends JsValue> fn,
+              final Predicate<? super JsPair> predicate
+             );
 
   /**
    Maps all the values of this json.
@@ -969,6 +921,29 @@ public interface Json<T extends Json<T>> extends JsValue
            );
 
   /**
+   Maps all the keys of this json.
+   @param fn the mapping function
+   @return a new mapped json of the same type T
+   @see #mapAllValues(Function) to map values
+   @see #mapAllObjs(BiFunction) to map jsons
+   @see #mapKeys(Function) to map only the first level
+   */
+  T mapAllKeys(final Function<? super JsPair, String> fn);
+
+  /**
+   Maps all the keys of this json that satisfies a given predicate.
+   @param fn the mapping function
+   @param predicate the given predicate that determines what keys will be mapped
+   @return same this instance or a new mapped json of the same type T
+   @see #mapAllValues(Function, Predicate) to map values
+   @see #mapAllObjs(BiFunction, BiPredicate) to map jsons
+   @see #mapKeys(Function, Predicate) to map only the first level
+   */
+  T mapAllKeys(final Function<? super JsPair, String> fn,
+               final Predicate<? super JsPair> predicate
+              );
+
+  /**
    Maps the jsons in the first level of this json that satisfies a given predicate.
    @param fn the mapping function
    @param predicate the given predicate that determines what Jsons will be mapped
@@ -993,106 +968,28 @@ public interface Json<T extends Json<T>> extends JsValue
            );
 
   /**
-   Maps the values in the first level of this json.
-   @param fn the mapping function
-
-   @return a new mapped json of the same type T
-   @see #mapObjs(BiFunction) to map jsons
-   @see #mapKeys(Function) to map keys of json objects
-   @see #mapAllValues(Function) to map all the values and not only the first level
-   */
-  T mapValues(final Function<? super JsPair, ? extends JsValue> fn);
-
-  /**
-   Maps the values in the first level of this json that satisfies a given predicate.
-   @param fn the mapping function
-   @param predicate the given predicate that determines what JsValues will be mapped
+   Maps all the jsons of this json that satisfies a given predicate.
+   @param fn the  mapping function
+   @param predicate the given predicate that determines what Jsons will be mapped
    @return same this instance or a new mapped json of the same type T
-
-
-   @see #mapObjs(BiFunction, BiPredicate) to map jsons
-   @see #mapKeys(Function, Predicate) to map keys of json objects
-   @see #mapAllValues(Function, Predicate) to map all the values and not only the first level
+   @see #mapAllValues(Function, Predicate) to map values
+   @see #mapAllKeys(Function, Predicate) to map keys of json objects
+   @see #mapObjs(BiFunction, BiPredicate) to map only the first level
    */
-  T mapValues(final Function<? super JsPair, ? extends JsValue> fn,
-              final Predicate<? super JsPair> predicate
-             );
+  T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn,
+               final BiPredicate<? super JsPath, ? super JsObj> predicate
+              );
 
   /**
-   Tries to parse the string into an immutable json.
-   @return an immutable json
-   @param str the string that will be parsed
-   @throws MalformedJson if the string doesnt represent a json
+   Maps all the jsons of this json.
+   @param fn the mapping function
+   @return a new mapped json of the same type T
+   @see #mapAllValues(Function) to map values
+   @see #mapAllKeys(Function) to map keys of json objects
+   @see #mapObjs(BiFunction) to map only the first level
    */
-  static Json<?> parse(String str) throws MalformedJson
-  {
+  T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsObj> fn);
 
-    try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str)))
-    {
-      final JsonToken event = parser.nextToken();
-      if (event == START_ARRAY)
-      {
-        return new JsArray(JsArray.parse(parser
-                                        )
-        );
-      }
-      return new JsObj(JsObj.parse(parser
-                                  )
-
-      );
-    }
-
-
-    catch (IOException e)
-    {
-
-      throw new MalformedJson(e.getMessage());
-
-    }
-
-
-  }
-
-  /**
-   Tries to parse the string into an immutable json, performing the specified transformations while the parsing.
-   @return an immutable json
-   @param str     the string that will be parsed
-   @param builder a builder with the transformations that will be applied during the parsing
-   @throws MalformedJson if it's not a valid Json
-   */
-  static Json<?> parse(String str,
-                       ParseBuilder builder
-                      ) throws MalformedJson
-  {
-
-    try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str)))
-    {
-      final JsonToken event = parser.nextToken();
-      if (event == START_ARRAY) return new JsArray(JsArray.parse(parser,
-                                                                 builder.create(),
-                                                                 JsPath.empty()
-                                                                       .index(-1)
-
-                                                                )
-
-      );
-      return new JsObj(JsObj.parse(parser,
-                                   builder.create(),
-                                   JsPath.empty()
-                                  )
-
-      );
-
-    }
-    catch (IOException e)
-    {
-
-      throw new MalformedJson(e.getMessage());
-
-    }
-
-
-  }
 
   /**
    prepends one or more elements, starting from the first, to the array located at the path in this
@@ -1113,10 +1010,10 @@ public interface Json<T extends Json<T>> extends JsValue
     // T recursive type, this is an instance of T
     @SuppressWarnings("unchecked")
     T result = (T) this;
-    for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+    for (int i = requireNonNull(others).length; i > 0; i--)
     {
       result = result.prepend(path,
-                              Objects.requireNonNull(others[i - 1])
+                              requireNonNull(others[i - 1])
                              );
     }
     return result.prepend(path,
@@ -1156,10 +1053,10 @@ public interface Json<T extends Json<T>> extends JsValue
     // T recursive type, this is an instance of T
     @SuppressWarnings("unchecked")
     T result = (T) this;
-    for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+    for (int i = requireNonNull(others).length; i > 0; i--)
     {
       result = result.prepend(path,
-                              JsStr.of(Objects.requireNonNull(others[i - 1]))
+                              JsStr.of(requireNonNull(others[i - 1]))
                              );
     }
     return result.prepend(path,
@@ -1186,7 +1083,7 @@ public interface Json<T extends Json<T>> extends JsValue
 // T recursive type, this is an instance of T
     @SuppressWarnings("unchecked")
     T result = (T) this;
-    for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+    for (int i = requireNonNull(others).length; i > 0; i--)
     {
       result = result.prepend(path,
                               JsInt.of(others[i - 1])
@@ -1216,7 +1113,7 @@ public interface Json<T extends Json<T>> extends JsValue
 // T recursive type, this is an instance of T
     @SuppressWarnings("unchecked")
     T result = (T) this;
-    for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+    for (int i = requireNonNull(others).length; i > 0; i--)
     {
       result = result.prepend(path,
                               JsLong.of(others[i - 1])
@@ -1246,7 +1143,7 @@ public interface Json<T extends Json<T>> extends JsValue
     // T recursive type, this is an instance of T
     @SuppressWarnings("unchecked")
     T result = (T) this;
-    for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+    for (int i = requireNonNull(others).length; i > 0; i--)
     {
       result = result.prepend(path,
                               JsBool.of(others[i - 1])
@@ -1276,7 +1173,7 @@ public interface Json<T extends Json<T>> extends JsValue
     // T recursive type, this is an instance of T
     @SuppressWarnings("unchecked")
     T result = (T) this;
-    for (int i = Objects.requireNonNull(others).length; i > 0; i--)
+    for (int i = requireNonNull(others).length; i > 0; i--)
     {
       result = result.prepend(path,
                               JsDouble.of(others[i - 1])
@@ -1733,6 +1630,42 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Inserts at the given path in this json, if no element is present, the specified object, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param obj the specified object
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final JsObj obj
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> obj
+                );
+  }
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified array, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param array the specified array
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final JsArray array
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> array
+                );
+  }
+
+  /**
    Inserts at the given path in this json, if no element is present, the specified double, replacing
    any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
    arrays when necessary.
@@ -1751,6 +1684,99 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
+   Inserts at the given path in this json, if no element is present, the specified string, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param str the specified String
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final String str
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsStr.of(str)
+                );
+  }
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified boolean, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param bool the specified boolean
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final boolean bool
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsBool.of(bool)
+                );
+  }
+
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified number, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param number the specified number
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final BigDecimal number
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsBigDec.of(number)
+                );
+  }
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified number, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param number the specified number
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final BigInteger number
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> JsBigInt.of(number)
+                );
+  }
+
+
+  /**
+   Inserts at the given path in this json, if no element is present, the specified json value, replacing
+   any existing element in the path and filling with {@link jsonvalues.JsNull} empty positions in
+   arrays when necessary.
+   @param path the given JsPath object
+   @param value the specified json value
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfAbsent(final JsPath path,
+                        final JsValue value
+                       )
+  {
+    return putIf(JsValue::isNothing,
+                 requireNonNull(path),
+                 elem -> value
+                );
+  }
+
+
+  /**
    Inserts at the given path in this json, if some element is present, the specified integer.
    @param path the given path
    @param number the specified integer
@@ -1762,6 +1788,36 @@ public interface Json<T extends Json<T>> extends JsValue
   {
     return putIfPresent(path,
                         e -> JsInt.of(number)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified integer.
+   @param path the given path
+   @param obj the specified object
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final JsObj obj
+                        )
+  {
+    return putIfPresent(path,
+                        e -> obj
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified integer.
+   @param path the given path
+   @param array the specified array
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final JsArray array
+                        )
+  {
+    return putIfPresent(path,
+                        e -> array
                        );
   }
 
@@ -1792,6 +1848,82 @@ public interface Json<T extends Json<T>> extends JsValue
   {
     return putIfPresent(path,
                         e -> JsDouble.of(number)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified string.
+   @param path the given path
+   @param str the specified string
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final String str
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsStr.of(str)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified boolean.
+   @param path the given path
+   @param bool the specified boolean
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final boolean bool
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsBool.of(bool)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified big integer.
+   @param path the given path
+   @param number the specified big integer
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final BigInteger number
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsBigInt.of(number)
+                       );
+  }
+
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified big decimal.
+   @param path the given path
+   @param number the specified big decimal
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final BigDecimal number
+                        )
+  {
+    return putIfPresent(path,
+                        e -> JsBigDec.of(number)
+                       );
+  }
+
+  /**
+   Inserts at the given path in this json, if some element is present, the specified value.
+   @param path the given path
+   @param value the specified value
+   @return the same instance or a new json of the same type T
+   */
+  default T putIfPresent(final JsPath path,
+                         final JsValue value
+                        )
+  {
+    return putIfPresent(path,
+                        e -> value
                        );
   }
 
@@ -1852,17 +1984,6 @@ public interface Json<T extends Json<T>> extends JsValue
    */
   T remove(final JsPath path);
 
-  default byte[] serialize()
-  {
-    return JsonLibsFactory.serialize(this);
-  }
-
-  default void serialize(final OutputStream os) throws IOException
-  {
-    JsonLibsFactory.serialize(this,
-                              os);
-  }
-
   /**
    Returns the number of elements in the first level of this json
    @return the number of elements in the first level of this json
@@ -1899,7 +2020,7 @@ public interface Json<T extends Json<T>> extends JsValue
   }
 
   /**
-   Returns the size of the json located at the given path in this json or OptionalInt.empty() if it
+   Returns the number of all the elements of the json located at the given path in this json or OptionalInt.empty() if it
    doesn't exist or it's not a Json
    @param path the given JsPath object
    @return an OptionalInt
@@ -1930,35 +2051,36 @@ public interface Json<T extends Json<T>> extends JsValue
 
   default long times(JsValue e)
   {
-    return stream().filter(p -> p.value.equals(Objects.requireNonNull(e)))
+    return stream().filter(p -> p.value.equals(requireNonNull(e)))
                    .count();
   }
 
   default long timesAll(JsValue e)
   {
-    return streamAll().filter(p -> p.value.equals(Objects.requireNonNull(e)))
+    return streamAll().filter(p -> p.value.equals(requireNonNull(e)))
                       .count();
   }
 
-  /** Converts the string representation of this Json to a pretty print version
+  /**
+   * Serializes this Json into the given output stream, no returning anything
    *
-   * @return pretty print version of the string representation of this Json
+   * @param ouputstream the output stream
    */
-  default String toPrettyString()
+  default void serialize(OutputStream ouputstream) throws SerializerException
   {
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try
-    {
-      dslJson.serialize(this,
-                        new MyPrettifyOutputStream(baos)
-                       );
-      return baos.toString(StandardCharsets.UTF_8.name());
-
-    }
-    catch (IOException e)
-    {
-      throw InternalError.unexpectedErrorSerializingAJsonIntoString(e);
-    }
+    INSTANCE.serialize(this,
+                       requireNonNull(ouputstream)
+                      );
   }
+
+  /** Serialize this Json into an array of bytes. When possible,
+   * it's more efficient to work on byte level that with strings
+   *
+   * @return this Json serialized into an array of bytes
+   */
+  default byte[] serialize() throws SerializerException
+  {
+    return INSTANCE.serialize(this);
+  }
+
 }

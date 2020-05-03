@@ -83,13 +83,13 @@ class SetTheoryOpsSpec extends BasePropSpec
                        ).keySet().containsAll(b.unionAll(a,
                                                          SET
                                                          ).keySet()
-                                            ) &&
+                                              ) &&
             b.unionAll(a,
                        SET
                        ).keySet().containsAll(a.unionAll(b,
                                                          SET
                                                          ).keySet()
-                                            )
+                                              )
 
           }
           )

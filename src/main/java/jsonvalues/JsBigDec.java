@@ -135,7 +135,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code biginteger}.
      @return this bigdecimal as an biginteger wrapped in an OptionalInt
      */
-    public Optional<BigInteger> bigIntegerExact()
+    Optional<BigInteger> bigIntegerExact()
     {
         try
         {
@@ -152,7 +152,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code int}.
      @return this bigdecimal as an int wrapped in an OptionalInt
      */
-    public OptionalInt intValueExact()
+    OptionalInt intValueExact()
     {
         try
         {
@@ -168,7 +168,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      * Returns the value of this bigdecimal; or an empty optional if the value overflows an {@code long}.
      @return this bigdecimal as an long wrapped in an OptionalLong
      */
-    public OptionalLong longValueExact()
+    OptionalLong longValueExact()
     {
         try
         {
@@ -186,7 +186,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      @return this bigdecimal as an double wrapped in an OptionalDouble
      @see BigDecimal#doubleValue()
      */
-    public OptionalDouble doubleValueExact()
+    OptionalDouble doubleValueExact()
     {
         final double value = this.value.doubleValue();
         if (value == Double.NEGATIVE_INFINITY) return OptionalDouble.empty();
@@ -200,7 +200,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      @param jsBigInt the specified JsBigInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsBigInt jsBigInt)
+    boolean equals(JsBigInt jsBigInt)
     {
         final Optional<BigInteger> optional = bigIntegerExact();
         return optional.isPresent() && optional.get()
@@ -212,7 +212,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      @param jsInt the specified JsInt
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsInt jsInt)
+    boolean equals(JsInt jsInt)
     {
         final OptionalInt optional = intValueExact();
         return optional.isPresent() && optional.getAsInt() == requireNonNull(jsInt).value;
@@ -223,7 +223,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      @param jsLong the specified JsLong
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsLong jsLong)
+    boolean equals(JsLong jsLong)
     {
         final OptionalLong optional = longValueExact();
         return optional.isPresent() && optional.getAsLong() == requireNonNull(jsLong).value;
@@ -234,7 +234,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec>
      @param jsDouble the specified JsDouble
      @return true if both JsElem are the same value
      */
-    public boolean equals(JsDouble jsDouble)
+    boolean equals(JsDouble jsDouble)
     {
 
         //errorProne warning BigDecimalEquals -> compareTo instead of equals so 2.0 = 2.000

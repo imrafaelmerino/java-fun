@@ -32,7 +32,7 @@ public class TestJsObj
         Assertions.assertTrue(empty.isEmpty());
 
         Assertions.assertEquals(JsArray.of("hi"),
-                                obj.getArrayOpt(path("/a/b"))
+                                obj.getOptArray(path("/a/b"))
                                    .get()
                                );
 
@@ -41,11 +41,11 @@ public class TestJsObj
                                      );
 
         Assertions.assertEquals(Optional.of("bye"),
-                                obj1.getStrOpt(path("/a/b/-1"))
+                                obj1.getOptStr(path("/a/b/-1"))
                                );
 
         Assertions.assertEquals(Optional.of("hi"),
-                                obj1.getStrOpt(path("/a/b/0"))
+                                obj1.getOptStr(path("/a/b/0"))
                                );
     }
 
@@ -60,7 +60,7 @@ public class TestJsObj
                                   );// obj is mutable
         Assertions.assertTrue(obj.isEmpty());
         Assertions.assertEquals(OptionalInt.of(1),
-                                obj1.getIntOpt(JsPath.fromKey("a"))
+                                obj1.getOptInt(JsPath.fromKey("a"))
                                );
     }
 
@@ -188,7 +188,7 @@ public class TestJsObj
                                );
 
         Assertions.assertEquals(OptionalInt.of(6),
-                                obj.getIntOpt(path("/d/0/1"))
+                                obj.getOptInt(path("/d/0/1"))
                                );
 
 
@@ -296,35 +296,12 @@ public class TestJsObj
                                          "c"
                                         )
                              );
-        Assertions.assertTrue(obj.equals(obj,
-                                         LIST
-                                        )
-                             );
 
-        Assertions.assertFalse(obj.equals(obj2,
-                                          LIST
-                                         )
-                              );
-        Assertions.assertTrue(obj2.equals(obj3,
-                                          SET
-                                         )
-                             );
-        Assertions.assertTrue(obj2.equals(obj3,
-                                          MULTISET
-                                         )
-                             );
         Assertions.assertTrue(obj.equals(obj2,
                                          SET
                                         )
                              );
-        Assertions.assertTrue(obj2.equals(obj2,
-                                          LIST
-                                         )
-                             );
-        Assertions.assertTrue(obj3.equals(obj3,
-                                          LIST
-                                         )
-                             );
+
     }
 
     @Test
@@ -1063,13 +1040,104 @@ public class TestJsObj
                                  );
 
         Assertions.assertEquals(OptionalDouble.of(0.1d),
-                                a.getDoubleOpt(fromKey("a"))
+                                a.getOptDouble(fromKey("a"))
                                );
         Assertions.assertEquals(Optional.of(BigDecimal.valueOf(0.1d)),
-                                a.getBigDecimalOpt(fromKey("a"))
+                                a.getOptBigDec(fromKey("a"))
                                );
     }
 
 
+    @Test
+    public void testPutIfPresentDoesntInsertIfNotPresent(){
+
+      JsObj empty = JsObj.empty();
+
+
+      JsObj a = empty.putIfPresent("a",1);
+
+      Assertions.assertEquals(empty,a);
+
+      JsObj b = empty.putIfPresent("b","hi");
+
+      Assertions.assertEquals(empty,b);
+
+      JsObj c = empty.putIfPresent("c",true);
+
+      Assertions.assertEquals(empty,c);
+
+
+      JsObj d = empty.putIfPresent("d",JsObj.empty());
+
+      Assertions.assertEquals(empty,d);
+
+      JsObj e = empty.putIfPresent("e",JsArray.empty());
+
+      Assertions.assertEquals(empty,e);
+
+      JsObj f = empty.putIfPresent("f",1L);
+
+      Assertions.assertEquals(empty,f);
+
+      JsObj g = empty.putIfPresent("g",1.5);
+
+      Assertions.assertEquals(empty,g);
+
+      JsObj h = empty.putIfPresent("h",BigInteger.TEN);
+
+      Assertions.assertEquals(empty,h);
+
+      JsObj i = empty.putIfPresent("i",BigDecimal.TEN);
+
+      Assertions.assertEquals(empty,i);
+
+      JsObj j = empty.putIfPresent("i",1.5);
+
+      Assertions.assertEquals(empty,j);
+
+    }
+
+  @Test
+  public void testPutIfPresentInsertIfPresent(){
+
+    JsObj obj = JsObj.empty().put("a","hi");
+
+    JsObj a = obj.putIfPresent("a",1);
+
+    Assertions.assertTrue(a.getInt("a")==1);
+
+    JsObj b = obj.putIfPresent("a","hi");
+
+    Assertions.assertEquals(b.getStr("a"),"hi");
+
+    JsObj c =  obj.putIfPresent("a",true);
+
+    Assertions.assertEquals( c.getBool("a"),true);
+
+    JsObj d =  obj.putIfPresent("a",JsObj.empty());
+
+    Assertions.assertEquals( d.getObj("a"),JsObj.empty());
+
+    JsObj e =  obj.putIfPresent("a",JsArray.empty());
+
+    Assertions.assertEquals(e.getArray("a"),JsArray.empty());
+
+    JsObj f = obj.putIfPresent("a",1L);
+
+    Assertions.assertTrue(f.getLong("a")==1L);
+
+    JsObj g = obj.putIfPresent("a",1.5);
+
+    Assertions.assertTrue(g.getDouble("a")==1.5);
+
+    JsObj h = obj.putIfPresent("a",BigInteger.TEN);
+
+    Assertions.assertEquals(h.getBigInt("a"),BigInteger.TEN);
+
+    JsObj i = obj.putIfPresent("a",BigDecimal.TEN);
+
+    Assertions.assertEquals(i.getBigDec("a"),BigDecimal.TEN);
+
+  }
 
 }

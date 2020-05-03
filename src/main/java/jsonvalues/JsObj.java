@@ -9,9 +9,13 @@ import jsonvalues.JsArray.TYPE;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
+
+import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsArray.streamOfArr;
@@ -42,7 +46,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   @Nullable
   private volatile String str;
 
-  JsObj(final HashMap<String, JsValue> myMap)
+  public JsObj(final HashMap<String, JsValue> myMap)
   {
     this.map = myMap;
   }
@@ -65,7 +69,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                    .append(elem)
                                                                                                 ))
                                                                         )
-                                                              .apply(get(Key.of(head))),
+                                                              .apply(get(this,
+                                                                         Key.of(head)
+                                                                        )),
                                                 () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                  t
                                                                                                                 ),
@@ -121,7 +127,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                    .appendAll(elems)
                                                                                                 ))
                                                                         )
-                                                              .apply(get(Key.of(head))),
+                                                              .apply(get(this,
+                                                                         Key.of(head)
+                                                                        )),
                                                 () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                  t
                                                                                                                 ),
@@ -152,6 +160,17 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                       index -> this
                      );
   }
+
+  /**
+   return true if the key is present
+   @param key the key
+   @return true if the specified key exists
+   */
+  public boolean containsKey(String key)
+  {
+    return map.containsKey(key);
+  }
+
 
   public final boolean containsValue(final JsValue el)
   {
@@ -184,10 +203,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                if (!exists) return false;
                                final JsValue elem = get(JsPath.fromKey(field));
                                final JsValue thatElem = that.get(JsPath.fromKey(field));
-                               if (elem.isJson() && thatElem.isJson()) return elem.toJson()
-                                                                                  .equals(thatElem,
-                                                                                          ARRAY_AS
-                                                                                         );
+                               if (elem.isJson() && thatElem.isJson())
+                                 return elem.toJson()
+                                            .equals(thatElem,
+                                                    ARRAY_AS
+                                                   );
                                return elem.equals(thatElem);
                              }) && that.keySet()
                                        .stream()
@@ -209,7 +229,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                    .allMatch(f ->
                                thatMap.map.get(f)
                                           .map(it -> it.equals(map.get(f)
-                                                                  .get()))
+                                                                  .get())
+                                              )
                                           .getOrElse(false) && thatMap.keySet()
                                                                       .stream()
                                                                       .allMatch(map::containsKey));
@@ -278,15 +299,237 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                      .get();
   }
 
-  public final JsValue get(final Position position)
+  static JsValue get(final JsObj obj,
+                     final Position position
+                    )
   {
-    return requireNonNull(position).match(key -> map.getOrElse(key,
-                                                               NOTHING
-                                                              ),
+    return requireNonNull(position).match(key -> obj.map.getOrElse(key,
+                                                                   NOTHING
+                                                                  ),
                                           index -> NOTHING
                                          );
   }
 
+  @Override
+  public JsValue get(final JsPath path)
+  {
+    if (path.isEmpty()) return this;
+    final JsValue e = get(this,
+                          path.head()
+                         );
+    final JsPath tail = path.tail();
+    if (tail.isEmpty()) return e;
+    if (e.isNotJson()) return NOTHING;
+    return e.toJson()
+            .get(tail);
+  }
+
+  public JsValue get(final String key)
+  {
+    return get(JsPath.fromKey(Objects.requireNonNull(key)));
+  }
+
+  /**
+   Returns the array located at the given key or {@link Optional#empty()} if it doesn't exist or
+   it's not an array.
+   @param key the key
+   @return the JsArray located at the given key wrapped in an Optional
+
+   */
+  public Optional<JsArray> getOptArray(final String key)
+  {
+    return getOptArray(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the array located at the given key or null if it doesn't exist or it's not an array.
+   @param key the key
+   @return the JsArray located at the given key or null
+   */
+  public JsArray getArray(final String key)
+  {
+    return getOptArray(key).orElse(null);
+  }
+
+  /**
+   Returns the number located at the given key as a big decimal or {@link Optional#empty()} if it doesn't
+   exist or it's not a decimal number.
+   @param key the key
+   @return the BigDecimal located at the given key wrapped in an Optional
+   */
+  public Optional<BigDecimal> getOptBigDec(final String key)
+  {
+    return getOptBigDec(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the number located at the given key as a big decimal or null if it doesn't exist or it's
+   not a decimal number.
+   @param key the key
+   @return the BigDecimal located at the given key or null
+   */
+  public BigDecimal getBigDec(final String key)
+  {
+    return getOptBigDec(key).orElse(null);
+
+  }
+
+  /**
+   Returns the big integer located at the given key as a big integer or {@link Optional#empty()} if it doesn't
+   exist or it's not an integral number.
+   @param key the key
+   @return the BigInteger located at the given key wrapped in an Optional
+   */
+  public Optional<BigInteger> getOptBigInt(final String key)
+  {
+    return getOptBigInt(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the big integer located at the given key as a big integer or null if it doesn't
+   exist or it's not an integral number.
+   @param key the key
+   @return the BigInteger located at the given key or null
+   */
+  public BigInteger getBigInt(final String key)
+  {
+    return getOptBigInt(key).orElse(null);
+  }
+
+  /**
+   Returns the boolean located at the given key or {@link Optional#empty()} if it doesn't exist.
+   @param key the key
+   @return the Boolean located at the given key wrapped in an Optional
+   */
+  public Optional<Boolean> getOptBool(final String key)
+  {
+    return getOptBool(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the boolean located at the given key or null if it doesn't exist.
+   @param key the key
+   @return the Boolean located at the given key or null
+   */
+  public Boolean getBool(final String key)
+  {
+    return getOptBool(key).orElse(null);
+  }
+
+  /**
+   Returns the number located at the given key as a double or {@link OptionalDouble#empty()} if it
+   doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
+   to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
+   the precision of the BigDecimal
+   @param key the key
+   @return the decimal number located at the given key wrapped in an OptionalDouble
+   */
+  public OptionalDouble getOptDouble(final String key)
+  {
+    return getOptDouble(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the number located at the given key as a double or null if it
+   doesn't exist or it's not a decimal number. If the number is a BigDecimal, the conversion is identical
+   to the specified in {@link BigDecimal#doubleValue()} and in some cases it can lose information about
+   the precision of the BigDecimal
+   @param key the key
+   @return the decimal number located at the given key or null
+   */
+  public Double getDouble(final String key)
+  {
+    final OptionalDouble optDouble = getOptDouble(key);
+    return optDouble.isPresent() ? optDouble.getAsDouble() : null;
+  }
+
+  /**
+   Returns the integral number located at the given key as an integer or {@link OptionalInt#empty()} if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
+   @param key the key
+   @return the integral number located at the given key wrapped in an OptionalInt
+   */
+  public OptionalInt getOptInt(final String key)
+  {
+    return getOptInt(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the integral number located at the given key as an integer or null if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in an integer.
+   @param key the key
+   @return the integral number located at the given key or null
+   */
+  public Integer getInt(final String key)
+  {
+    final OptionalInt optInt = getOptInt(key);
+    return optInt.isPresent() ? optInt.getAsInt() : null;
+  }
+
+  /**
+   Returns the integral number located at the given key as a long or {@link OptionalLong#empty()} if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
+   @param key the key
+   @return the integral number located at the given key wrapped in an OptionalLong
+   */
+  public OptionalLong getOptLong(final String key)
+  {
+    return getOptLong(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the integral number located at the given key as a long or null if it
+   doesn't exist or it's not an integral number or it's an integral number but doesn't fit in a long.
+   @param key the key
+   @return the integral number located at the given key or null
+   */
+  public Long getLong(final String key)
+  {
+    final OptionalLong optLong = getOptLong(key);
+    return optLong.isPresent() ? optLong.getAsLong() : null;
+  }
+
+  /**
+   Returns the json object located at the given key or {@link Optional#empty()} if it doesn't exist or it's
+   not an object.
+   @param key the key
+   @return the json object located at the given key wrapped in an Optional
+   */
+  public Optional<JsObj> getOptObj(final String key)
+  {
+    return getOptObj(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the json object located at the given key or null if it doesn't exist or it's not an object.
+   @param key the key
+   @return the json object located at the given key or null
+   */
+  public JsObj getObj(final String key)
+  {
+    return getOptObj(key).orElse(null);
+  }
+
+  /**
+   Returns the string located at the given key or {@link Optional#empty()} if it doesn't exist or it's
+   not an string.
+   @param key the key
+   @return the string located at the given key wrapped in an Optional
+   */
+  public Optional<String> getOptStr(final String key)
+  {
+    return getOptStr(JsPath.fromKey(key));
+  }
+
+  /**
+   Returns the string located at the given key or null if it doesn't exist or it's not an string.
+   @param key the key
+   @return the string located at the given key or null
+   */
+  public String getStr(final String key)
+  {
+    return getOptStr(key).orElse(null);
+  }
 
   /**
    equals method is inherited, so it's implemented. The purpose of this method is to cache
@@ -424,7 +667,6 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   {
     return map.iterator();
   }
-
 
   public final JsObj mapAllKeys(final Function<? super JsPair, String> fn)
   {
@@ -756,6 +998,433 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   }
 
   /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @return an immutable seven-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key7)),
+                   el7
+                  );
+  }
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @return an immutable eight-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key8)),
+                   el8
+                  );
+  }
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @param key9 name of a key
+   @param el9 JsElem to be associated to the key9
+   @return an immutable nine-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8,
+                         final String key9,
+                         final JsValue el9
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7,
+              key8,
+              el8
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key9)),
+                   el9
+                  );
+  }
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @param key9 name of a key
+   @param el9 JsElem to be associated to the key9
+   @param key10 name of a key
+   @param el10 JsElem to be associated to the key10
+   @return an immutable ten-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8,
+                         final String key9,
+                         final JsValue el9,
+                         final String key10,
+                         final JsValue el10
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7,
+              key8,
+              el8,
+              key9,
+              el9
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key10)),
+                   el10
+                  );
+  }
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @param key9 name of a key
+   @param el9 JsElem to be associated to the key9
+   @param key10 name of a key
+   @param el10 JsElem to be associated to the key10
+   @param key11 name of a key
+   @param el11 JsElem to be associated to the key11
+   @return an immutable eleven-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8,
+                         final String key9,
+                         final JsValue el9,
+                         final String key10,
+                         final JsValue el10,
+                         final String key11,
+                         final JsValue el11
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7,
+              key8,
+              el8,
+              key9,
+              el9,
+              key10,
+              el10
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key11)),
+                   el11
+                  );
+  }
+
+
+  /**
+   Returns a six-element immutable object.
+   @param key1 name of a key
+   @param el1  JsElem to be associated to the key1
+   @param key2 name of a key
+   @param el2  JsElem to be associated to the key2
+   @param key3 name of a key
+   @param el3  JsElem to be associated to the key3
+   @param key4 name of a key
+   @param el4 JsElem to be associated to the key4
+   @param key5 name of a key
+   @param el5 JsElem to be associated to the key5
+   @param key6 name of a key
+   @param el6 JsElem to be associated to the key6
+   @param key7 name of a key
+   @param el7 JsElem to be associated to the key7
+   @param key8 name of a key
+   @param el8 JsElem to be associated to the key8
+   @param key9 name of a key
+   @param el9 JsElem to be associated to the key9
+   @param key10 name of a key
+   @param el10 JsElem to be associated to the key10
+   @param key11 name of a key
+   @param el11 JsElem to be associated to the key11
+   @param key12 name of a key
+   @param el12 JsElem to be associated to the key12
+   @return an immutable twelve-element JsObj
+   @throws UserError if an elem is a mutable Json
+   */
+  // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+  @SuppressWarnings("squid:S00107")
+  public static JsObj of(final String key1,
+                         final JsValue el1,
+                         final String key2,
+                         final JsValue el2,
+                         final String key3,
+                         final JsValue el3,
+                         final String key4,
+                         final JsValue el4,
+                         final String key5,
+                         final JsValue el5,
+                         final String key6,
+                         final JsValue el6,
+                         final String key7,
+                         final JsValue el7,
+                         final String key8,
+                         final JsValue el8,
+                         final String key9,
+                         final JsValue el9,
+                         final String key10,
+                         final JsValue el10,
+                         final String key11,
+                         final JsValue el11,
+                         final String key12,
+                         final JsValue el12
+                        )
+  {
+
+    return of(key1,
+              el1,
+              key2,
+              el2,
+              key3,
+              el3,
+              key4,
+              el4,
+              key5,
+              el5,
+              key6,
+              el6,
+              key7,
+              el7,
+              key8,
+              el8,
+              key9,
+              el9,
+              key10,
+              el10,
+              key11,
+              el11
+             ).put(JsPath.empty()
+                         .key(requireNonNull(key12)),
+                   el12
+                  );
+  }
+
+  /**
    Returns an immutable object from one or more pairs.
    @param pair a pair
    @param others more optional pairs
@@ -781,8 +1450,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
 
   }
 
-
-  public static JsObj ofIterable(Iterable<Map.Entry<String, JsValue>> xs)
+  public static JsObj ofIterable(final Iterable<Map.Entry<String, JsValue>> xs)
   {
     JsObj acc = JsObj.EMPTY;
     for (Map.Entry<String, JsValue> x : requireNonNull(xs))
@@ -804,7 +1472,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   public static JsObj parse(final String str) throws MalformedJson
   {
 
-    try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str)))
+    try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str)))
     {
       JsonToken keyEvent = parser.nextToken();
       if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
@@ -833,7 +1501,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                            ) throws MalformedJson
   {
 
-    try (JsonParser parser = JsonLibsFactory.jackson.createParser(requireNonNull(str.getBytes())))
+    try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str.getBytes())))
     {
       final JsonToken keyEvent = parser.nextToken();
       if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
@@ -853,8 +1521,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
     }
   }
 
-  static HashMap<String, JsValue> parse(final JsonParser parser
-                                       ) throws IOException
+  static HashMap<String, JsValue> parse(final JsonParser parser) throws IOException
   {
     HashMap<String, JsValue> map = HashMap.empty();
     String key = parser.nextFieldName();
@@ -883,21 +1550,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
           elem = NULL;
           break;
         case JsonTokenId.ID_START_OBJECT:
-          elem = new JsObj(parse(parser)
-
-          );
+          elem = new JsObj(parse(parser));
           break;
         case JsonTokenId.ID_START_ARRAY:
-          elem = new JsArray(JsArray.parse(parser
-                                          )
-
-          );
+          elem = new JsArray(JsArray.parse(parser));
           break;
         default:
           throw InternalError.tokenNotExpected(parser.currentToken()
                                                      .name());
-
-
       }
       map = map.put(key,
                     elem
@@ -1026,20 +1686,20 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                    .prepend(elem)
                                                                                                 ))
                                                                         )
-                                                              .apply(get(Key.of(head))),
+                                                              .apply(get(this,
+                                                                         Key.of(head)
+                                                                        )),
                                                 () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                  t
                                                                                                                 ),
                                                                            () -> new JsObj(map.put(head,
                                                                                                    tail.head()
-                                                                                                       .match(key -> JsObj.EMPTY
-                                                                                                                .prepend(tail,
-                                                                                                                         elem
-                                                                                                                        ),
-                                                                                                              index -> JsArray.EMPTY
-                                                                                                                .prepend(tail,
-                                                                                                                         elem
-                                                                                                                        )
+                                                                                                       .match(key -> JsObj.EMPTY.prepend(tail,
+                                                                                                                                         elem
+                                                                                                                                        ),
+                                                                                                              index -> JsArray.EMPTY.prepend(tail,
+                                                                                                                                             elem
+                                                                                                                                            )
                                                                                                              )
                                                                                                   )),
                                                                            () -> new JsObj(map.put(head,
@@ -1080,7 +1740,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                                                                                    .prependAll(elems)
                                                                                                 ))
                                                                         )
-                                                              .apply(get(Key.of(head))),
+                                                              .apply(get(this,
+                                                                         Key.of(head)
+                                                                        )),
                                                 () -> tail.ifPredicateElse(t -> isReplaceWithEmptyJson(map).test(head,
                                                                                                                  t
                                                                                                                 ),
@@ -1112,6 +1774,157 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                       index -> this
                      );
 
+  }
+
+  /**
+   Inserts the element at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the element
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final JsValue value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the string at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the string
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final String value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the integer number at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the number
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final int value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the long number at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the number
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final long value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the boolean at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the boolean
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final boolean value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the object at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the object
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final JsObj value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the array at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the array
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final JsArray value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the big decimal number at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the number
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final BigDecimal value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the big integer number at the key in this json, replacing any existing element.
+   @param key the key
+   @param value the number
+   @return a new json object
+   */
+  public JsObj put(final String key,
+                   final BigInteger value
+                  )
+  {
+    return put(JsPath.fromKey(key),
+               value
+              );
+  }
+
+  /**
+   Inserts the element returned by the function at the given key in this json, replacing any existing element
+   @param key  the key
+   @param fn the function that takes as an input the JsElem at the key and produces the JsElem to
+   be inserted at the key
+   @return the same instance or a new json of the same type T
+   */
+  public final JsObj put(final String key,
+                         final Function<? super JsValue, ? extends JsValue> fn
+                        )
+  {
+    return put(JsPath.fromKey(key),
+               fn
+              );
   }
 
   public final JsObj put(final JsPath path,
@@ -1165,12 +1978,308 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
 
   }
 
+  /**
+   Inserts the element returned by the supplier at the given key in this json, if no element is present.
+   The supplier is not invoked if the element is present.
+   @param key the key
+   @param supplier the supplier which computes the new JsElem if absent
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final Supplier<? extends JsValue> supplier
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       supplier
+                      );
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified integer.
+   @param key the key
+   @param number the integer
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final int number
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       number
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified string.
+   @param key the key
+   @param str the string
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final String str
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       str
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified boolean.
+   @param key the key
+   @param bool the boolean
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final boolean bool
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       bool
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified obj.
+   @param key the key
+   @param obj the json object
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final JsObj obj
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       obj
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified array.
+   @param key the key
+   @param array the json array
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final JsArray array
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       array
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified long number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final long number
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       number
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if no element is present, the specified double number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfAbsent(final String key,
+                           final double number
+                          )
+  {
+    return putIfAbsent(JsPath.fromKey(key),
+                       number
+                      );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified integer number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final int number
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        number
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified string.
+   @param key the key
+   @param str the string
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final String str
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        str
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified obj.
+   @param key the key
+   @param obj the object
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final JsObj obj
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        obj
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified array.
+   @param key the key
+   @param array the array
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final JsArray array
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        array
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified long number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final long number
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        number
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified double number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final double number
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        number
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified boolean.
+   @param key the key
+   @param bool the boolean
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final boolean bool
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        bool
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified big integer number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final BigInteger number
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        number
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the specified big decimal number.
+   @param key the key
+   @param number the number
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final BigDecimal number
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        number
+                       );
+
+  }
+
+  /**
+   Inserts at the given key in this json, if some element is present, the element returned by the
+   function.
+   @param key the key
+   @param fn the function which computes the new JsElem from the existing one
+   @return the same instance or a new obj
+   */
+  public JsObj putIfPresent(final String key,
+                            final Function<? super JsValue, ? extends JsValue> fn
+                           )
+  {
+    return putIfPresent(JsPath.fromKey(key),
+                        fn
+                       );
+
+  }
+
+  public JsObj putNull(final String key)
+  {
+    return put(JsPath.fromKey(key),
+               NULL
+              );
+  }
+
   public final <R> Optional<R> reduce(final BinaryOperator<R> op,
                                       final Function<? super JsPair, R> map,
                                       final Predicate<? super JsPair> predicate
                                      )
   {
-    return new OpMapReduce<>(predicate,
+    return new OpMapReduce<>(requireNonNull(predicate),
                              map,
                              op
     ).reduce(this);
@@ -1181,7 +2290,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                          final Predicate<? super JsPair> predicate
                                         )
   {
-    return new OpMapReduce<>(predicate,
+    return new OpMapReduce<>(requireNonNull(predicate),
                              map,
                              op
     ).reduceAll(this);
@@ -1212,25 +2321,51 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
 
   }
 
+  public final boolean same(final JsObj obj)
+  {
+    final HashMap<String, JsValue> other = obj.map;
+    final boolean thisEmpty = isEmpty();
+    final boolean thatEmpty = other.isEmpty();
+    if (thisEmpty && thatEmpty) return true;
+    if (thisEmpty != thatEmpty) return false;
+
+    return keySet().stream()
+                   .allMatch(f ->
+                               other.get(f)
+                                    .map(it ->
+                                         {
+                                           final JsValue a = map.get(f)
+                                                                .get();
+                                           if (a.isObj() && it.isObj()) return a.toJsObj()
+                                                                                .equals(it.toJsObj());
+                                           else if (a.isArray() && it.isArray()) return a.toJsArray()
+                                                                                         .equals(it.toJsArray());
+                                           else return it.equals(a);
+                                         })
+                                    .getOrElse(false) && other.keySet()
+                                                              .toJavaStream()
+                                                              .allMatch(map::containsKey));
+  }
+
   public final int size()
   {
     return map.size();
   }
 
-    public final Stream<JsPair> stream()
-    {
-        return this.keySet()
-                   .stream()
-                   .map(f ->
-                        {
-                            final JsPath key = JsPath.fromKey(f);
-                            return JsPair.of(key,
-                                             this.get(key)
-                                            );
-                        }
+  public final Stream<JsPair> stream()
+  {
+    return this.keySet()
+               .stream()
+               .map(f ->
+                    {
+                      final JsPath key = JsPath.fromKey(f);
+                      return JsPair.of(key,
+                                       this.get(key)
+                                      );
+                    }
 
-                       );
-    }
+                   );
+  }
 
   public final Stream<JsPair> streamAll()
   {
@@ -1251,7 +2386,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
                                            () -> obj.keySet()
                                                     .stream()
                                                     .map(key -> JsPair.of(path.key(key),
-                                                                          obj.get(Key.of(key))
+                                                                          get(obj,
+                                                                              Key.of(key)
+                                                                             )
                                                                          ))
                                                     .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                           pair.path
@@ -1283,9 +2420,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>>
   {
     String result = str;
     if (result == null)
-      str = result = JsonLibsFactory.toString(this);
+      str = result = new String(INSTANCE.serialize(this));
     return result;
   }
+
 
   /**
    returns {@code this} json object plus those pairs from the given json object {@code that} which

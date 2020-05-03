@@ -1,15 +1,17 @@
 package jsonvalues;
 
 
+import jsonvalues.gen.JsGens;
+import jsonvalues.gen.JsObjGen;
+import jsonvalues.gen.state.JsStateGen;
+import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import static jsonvalues.JsArray.TYPE.*;
@@ -20,7 +22,6 @@ import static jsonvalues.JsPath.path;
 
 public class TestJsArray
 {
-
 
     @Test
     public void test_contains_element_in_js_array()
@@ -781,9 +782,9 @@ public class TestJsArray
 
         final JsArray arr = JsArray.parse("[1,2,3,true,false,null,[null,true,4]]",
                                           ParseBuilder.builder()
-                                                      .withElemFilter(p -> p.value.isInt())
-                                                      .withElemMap(p -> JsElems.mapIfInt(i -> i + 10)
-                                                                               .apply(p.value))
+                                                      .withValueFilter(p -> p.value.isInt())
+                                                      .withElemMap(p -> Functions.mapIfInt(i -> i + 10)
+                                                                                 .apply(p.value))
                                          );
 
         Assertions.assertEquals(JsArray.of(JsInt.of(11),
@@ -819,7 +820,7 @@ public class TestJsArray
                                 JsArray.parse(
                                 array.toString(),
                                 ParseBuilder.builder()
-                                            .withElemFilter(p -> p.value.isNotNull())
+                                            .withValueFilter(p -> p.value.isNotNull())
                                              )
 
                                );
@@ -1006,11 +1007,5 @@ public class TestJsArray
                                        arr);
     }
 
-  @Test
-  public void test_of_iterable_PECS_rule(){
-    List<JsInt> xs = Arrays.asList(JsInt.of(1),
-                                     JsInt.of(2)
-                                    );
-    Assertions.assertTrue(JsArray.ofIterable(xs).isNotEmpty());
-  }
+
 }

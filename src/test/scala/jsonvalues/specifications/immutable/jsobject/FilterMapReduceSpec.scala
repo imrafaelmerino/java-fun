@@ -74,7 +74,7 @@ class FilterMapReduceSpec extends BasePropSpec
       )
   }
 
-  property("filterValues (removes null)")
+  property("filterVAlues (removes null)")
   {
     check(
       forAll(jsGen.jsObjGen)

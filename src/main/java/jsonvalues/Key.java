@@ -4,8 +4,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  Represents the Key of a JsElem in a JsObj.
  */

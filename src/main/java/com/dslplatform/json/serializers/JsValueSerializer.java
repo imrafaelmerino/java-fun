@@ -9,7 +9,7 @@ import jsonvalues.JsValue;
 import java.util.Objects;
 
 
-public final class ValueSerializer
+public final class JsValueSerializer
 {
 
   private JsonWriter.WriteObject<JsObj> objectSerializer;

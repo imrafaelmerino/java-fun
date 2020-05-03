@@ -204,8 +204,8 @@ After the development of json-values, I published two more related projects:
 project I'm especially proud of. I think there is no Json generator more declarative, concise, and why not, beautiful in the
 whole wide world! If I'm wrong, please let me know!
 
-json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
-a stream of tokens, and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
+json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson]() to parse a string/bytes into
+a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
 
 
 

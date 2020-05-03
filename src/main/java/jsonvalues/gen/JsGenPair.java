@@ -9,8 +9,8 @@ public class JsGenPair<O extends JsValue>
   public final String key;
   public final JsGen<O> gen;
 
-  public static <O extends JsValue> JsGenPair of(final String key,
-                                                 final JsGen<O> gen
+  public static <O extends JsValue> JsGenPair<O> of(final String key,
+                                                    final JsGen<O> gen
                                                 )
   {
     return new JsGenPair<>(requireNonNull(key),

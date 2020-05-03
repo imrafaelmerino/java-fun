@@ -132,6 +132,7 @@ String jsonStr = ...; // somo json
 
 JsObj a = parser.parse(jsonBytes);
 JsObj b = parser.parse(jsonStr);
+
 ```
 
 As you can see, creating specs and generators is as simple as creating raw JSON. Writing specs and 
@@ -140,8 +141,34 @@ generators for our tests is child's play. It has enormous advantages for develop
     -Increase productivity.
     -More readable code. The more readable code is, the easier it is to maintain and reason about that code.
 
+Sometimes you need to generate a Json which key-value pairs are not independent to each other. 
+Consider the following example. If the generated value for the key 'a' is Nothing, then no element is inserted.
+When the key 'a' doesnt exist, then an integer between 0 and 10 is associated to the key 'b', and then
+the same integer plus one is associated to the key 'c':
+
+```
+
+JsObjStateGen gen = JsObjStateGen.of("a", generated -> JsGens.oneOf(JsGens.alphabetic,
+                                                                    JsGens.single(JsNothing.NOTHING)
+                                                                   ),
+                                     "b", JsStateGens.ifNotContains("a",
+                                                                    JsGens.choose(0,10)
+                                                                    ),
+                                     "c", JsStateGens.ifContains("b",
+                                                                  bValue-> single(bValue.toJsInt().map(i -> i + 1))
+                                                                )
+                                     );`
+
+//Some examples
+
+{"b":3,"c":4}
+{"a":"okegwg"}
+{"b":5,"c":6}
+``
+
+
 This is just a quick intro, but I'd like to highlight that generators and specs are really powerful and composable.
-Any spec can be defined in terms of predicates.
+Furthermore, any spec can be defined in terms of predicates, which allows you to define any imaginable validation.
 
 ## <a name="notwhatfor"><a/> When not to use it
 **json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for 

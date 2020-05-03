@@ -1,13 +1,11 @@
 # JSON-VALUES
-## v5.0.1  ( Sun Mar 01 2020 12:18:39 GMT+0100 (Central European Standard Time) )
-
+## v8.0.0-RC1  ( Sun May 03 2020 14:30:56 GMT+0200 (Central European Summer Time) )
 
 ## Features
-  - 🎸 remove InputCoercionException dependency from jackson 2.10.1 so that older versions of Jackson can be used.
-  ([18e757dc](https://github.com/imrafaelmerino/json-values/commit/18e757dc963b1b2f514a7b49d390dae39c749af8))
-
-
-
-
+  - 🎸 generators
+  - 🎸 spec
+  - 🎸 parser from specs
+  - 🎸 getXXX methods return primitive types and getOptXXX return Optional 
+ 
 
 

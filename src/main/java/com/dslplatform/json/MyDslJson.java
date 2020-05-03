@@ -1,7 +1,7 @@
 package com.dslplatform.json;
 
 import com.dslplatform.json.parsers.JsParserException;
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
 import com.dslplatform.json.serializers.JsArraySerializer;
 import com.dslplatform.json.serializers.JsObjSerializer;
 import com.dslplatform.json.serializers.JsValueSerializer;
@@ -21,9 +21,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
 {
   public static final MyDslJson<java.lang.Object> INSTANCE = new MyDslJson<>();
 
-  private MyDslJson()
-  {
-  }
+  private MyDslJson() { }
 
   static
   {
@@ -65,7 +63,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsObj parseToJsObj(final byte[] bytes,
-                            final SpecParser parser
+                            final JsSpecParser parser
                            ) throws JsParserException
   {
     JsonReader<?> reader = getReader(bytes);
@@ -87,7 +85,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsArray deserializeToJsArray(final byte[] bytes,
-                                      final SpecParser parser
+                                      final JsSpecParser parser
                                      ) throws JsParserException
   {
     JsonReader<?> reader = getReader(bytes);
@@ -108,7 +106,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsObj parseToJsObj(final InputStream is,
-                            final SpecParser parser
+                            final JsSpecParser parser
 
                            ) throws JsParserException
   {
@@ -130,7 +128,7 @@ public final class MyDslJson<Object> extends DslJson<Object>
   }
 
   public JsArray deserializeToJsArray(final InputStream is,
-                                      final SpecParser parser
+                                      final JsSpecParser parser
                                      ) throws SerializerException
   {
     JsonReader<?> reader = getReader(is);

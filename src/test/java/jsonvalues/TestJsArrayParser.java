@@ -16,15 +16,15 @@ public class TestJsArrayParser
   public void test_array_of_different_elements()
   {
 
-    final JsTupleSpec spec = JsTupleSpec.of(str,
-                                            intNum,
-                                            longNum,
+    final JsTupleSpec spec = JsSpecs.tuple(str,
+                                            integer,
+                                            longInteger,
                                             decimal,
                                             bool,
                                             integral,
                                             obj,
                                             array,
-                                            intNum(i -> i > 0),
+                                            integer(i -> i > 0),
                                             any(v -> v.isStr() || v.isInt()),
                                             str(s -> s.startsWith("1")),
                                             arrayOfIntegralSuchThat(a -> a.size() == 1).optional().nullable(),
@@ -120,7 +120,7 @@ public class TestJsArrayParser
                                       JsSpecs.arrayOf(JsObjSpec.strict("a",
                                                                        str,
                                                                        "b",
-                                                                       intNum
+                                                                       integer
                                                                       ))
                                      );
 
@@ -141,7 +141,7 @@ public class TestJsArrayParser
                                               JsSpecs.arrayOf(JsObjSpec.strict("a",
                                                                                        str,
                                                                                        "b",
-                                                                               intNum
+                                                                               integer
                                                                                       )).nullable()
                                              );
 

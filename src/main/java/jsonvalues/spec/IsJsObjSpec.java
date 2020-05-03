@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
 
 
@@ -25,9 +26,9 @@ class IsJsObjSpec extends AbstractPredicateSpec implements JsValuePredicate
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
-    return  ParserFactory.INSTANCE.ofObj(nullable);
+    return  JsSpecParsers.INSTANCE.ofObj(nullable);
   }
 
   @Override

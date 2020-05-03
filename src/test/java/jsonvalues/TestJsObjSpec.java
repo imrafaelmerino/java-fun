@@ -31,12 +31,14 @@ public class TestJsObjSpec
                                              );
 
     final JsObjGen gen = JsObjGen.of(JsGenPair.of("a",
-                                                       JsGens.strGen
+                                                       JsGens.str
                                                       ),
                                           JsGenPair.of("b",
-                                                       JsGens.intNumGen),
+                                                       JsGens.integer
+                                                      ),
                                           JsGenPair.of("c",
-                                                          JsGens.doubleNumGen)
+                                                          JsGens.decimal
+                                                      )
                                           );
 
     TestGenerators.test(gen,v->spec.test(v.toJsObj()).isEmpty(),1000);
@@ -104,7 +106,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNum
+                                            integer
                                            );
 
 
@@ -128,7 +130,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNum(n -> n % 2 == 0)
+                                            integer(n -> n % 2 == 0)
                                            );
 
 
@@ -162,7 +164,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            longNum
+                                            longInteger
                                            );
 
 
@@ -186,7 +188,7 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            longNum(l -> l % 2 == 1)
+                                            longInteger(l -> l % 2 == 1)
                                            );
 
 
@@ -475,11 +477,11 @@ public class TestJsObjSpec
   {
 
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNum,
+                                            integer,
                                             "b",
                                             str,
                                             "c",
-                                            longNum,
+                                            longInteger,
                                             "d",
                                             bool,
                                             "e",
@@ -488,10 +490,10 @@ public class TestJsObjSpec
                                             JsObjSpec.strict("a",
                                                              str,
                                                              "b",
-                                                             intNum,
+                                                             integer,
                                                              "c",
-                                                             JsTupleSpec.of(str,
-                                                                            intNum
+                                                             JsSpecs.tuple(str,
+                                                                            integer
                                                                            ),
                                                              "d",
                                                              arraySuchThat(a -> a.head() == JsNull.NULL)
@@ -630,7 +632,7 @@ public class TestJsObjSpec
                                                              "b",
                                                              arrayOfObj(JsObj::isEmpty).optional().nullable(),
                                                              "c",
-                                                             JsTupleSpec.of(arrayOfStrSuchThat(a -> a.size() > 2),
+                                                             JsSpecs.tuple(arrayOfStrSuchThat(a -> a.size() > 2),
                                                                             arrayOfIntSuchThat(a -> a.size() > 1),
                                                                             arrayOfLongSuchThat(a -> a.containsValue(JsLong.of(10))),
                                                                             arrayOfDecSuchThat(a -> a.size() == 1)
@@ -719,7 +721,7 @@ public class TestJsObjSpec
                                JsStr.of("a")
                               );
     final JsObjSpec spec = JsObjSpec.strict("a",
-                                            intNum
+                                            integer
                                            );
     final Set<JsErrorPair> error = spec.test(obj);
 
@@ -793,11 +795,7 @@ public class TestJsObjSpec
 
 
     JsObjSpec spec = JsObjSpec.strict("a",
-                                      JsTupleSpec.of(
-                                        any,
-                                        intNum
-
-                                                    )
+                                      JsSpecs.tuple(any, integer)
                                      );
 
 
@@ -846,9 +844,9 @@ public class TestJsObjSpec
                                                                 "b",
                                                                 str,
                                                                 "c",
-                                                                intNum,
+                                                                integer,
                                                                 "d",
-                                                                longNum,
+                                                                longInteger,
                                                                 "e",
                                                                 obj,
                                                                 "f",
@@ -957,9 +955,9 @@ public class TestJsObjSpec
                                                                 "b",
                                                                 str.nullable(),
                                                                 "c",
-                                                                intNum.nullable(),
+                                                                integer.nullable(),
                                                                 "d",
-                                                                longNum.nullable(),
+                                                                longInteger.nullable(),
                                                                 "e",
                                                                 obj.nullable(),
                                                                 "f",
@@ -1032,9 +1030,9 @@ public class TestJsObjSpec
                                                                 "b",
                                                                 str.optional().nullable(),
                                                                 "c",
-                                                                intNum.nullable().optional(),
+                                                                integer.nullable().optional(),
                                                                 "d",
-                                                                longNum.nullable().optional(),
+                                                                longInteger.nullable().optional(),
                                                                 "e",
                                                                 obj.nullable().optional(),
                                                                 "f",
@@ -1158,9 +1156,9 @@ System.out.println(result1);
                                                                 "b",
                                                                 str.optional(),
                                                                 "c",
-                                                                intNum.optional(),
+                                                                integer.optional(),
                                                                 "d",
-                                                                longNum.optional(),
+                                                                longInteger.optional(),
                                                                 "e",
                                                                 obj.optional(),
                                                                 "f",
@@ -1318,10 +1316,10 @@ System.out.println(result1);
   public void test_errors_schemas(){
     final JsObjSpec spec = JsObjSpec.strict("a",
                                             JsObjSpec.strict("A",
-                                                               intNum
+                                                             integer
                                                               ),
                                             "b",
-                                            JsTupleSpec.of(str),
+                                            JsSpecs.tuple(str),
                                             "c",
                                             arrayOf(JsObjSpec.lenient("a",
                                                                         str)

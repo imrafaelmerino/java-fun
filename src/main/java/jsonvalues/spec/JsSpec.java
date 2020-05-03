@@ -1,6 +1,6 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
 import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
@@ -29,7 +29,7 @@ public interface JsSpec
    @return the deserializer used during the parsing process to parse an array of bytes or string
    into a json value
    */
-  SpecParser parser();
+  JsSpecParser parser();
 
 
   Set<JsErrorPair> test(final JsPath parentPath,

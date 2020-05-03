@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -21,9 +22,9 @@ class AnySpec implements JsValuePredicate
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
-    return ParserFactory.INSTANCE.ofValue();
+    return JsSpecParsers.INSTANCE.ofValue();
   }
 
   @Override

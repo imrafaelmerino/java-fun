@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
 import java.util.Optional;
 import java.util.function.LongFunction;
@@ -22,9 +23,9 @@ class JsLongSuchThatSpec extends AbstractPredicateSpec implements JsValuePredica
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
-    return ParserFactory.INSTANCE.ofLongSuchThat(predicate,
+    return JsSpecParsers.INSTANCE.ofLongSuchThat(predicate,
                                                  nullable
                                                 );
   }

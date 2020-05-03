@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
 import jsonvalues.JsPath;
@@ -25,15 +26,15 @@ public class JsTupleSpec implements JsArraySpec
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
 
-    Vector<SpecParser> parsers = Vector.empty();
+    Vector<JsSpecParser> parsers = Vector.empty();
     for (final JsSpec spec : specs)
     {
       parsers = parsers.append(spec.parser());
     }
-    return ParserFactory.INSTANCE.ofArraySpec(parsers,
+    return JsSpecParsers.INSTANCE.ofArraySpec(parsers,
                                               nullable
                                              );
   }
@@ -54,22 +55,22 @@ public class JsTupleSpec implements JsArraySpec
     return required;
   }
 
-  Vector<JsSpec> specs;
+  private Vector<JsSpec> specs;
   private boolean strict = true;
-  final boolean required;
-  final boolean nullable;
+  private final boolean required;
+  private final boolean nullable;
 
-  JsTupleSpec(final Vector<JsSpec> specs,
-              boolean required,
-              boolean nullable
-             )
+  private JsTupleSpec(final Vector<JsSpec> specs,
+                      boolean required,
+                      boolean nullable
+                     )
   {
     this.specs = specs;
     this.required = required;
     this.nullable = nullable;
   }
 
-  JsTupleSpec(final Vector<JsSpec> specs)
+  private JsTupleSpec(final Vector<JsSpec> specs)
   {
     this(specs,
          true,
@@ -77,7 +78,7 @@ public class JsTupleSpec implements JsArraySpec
   }
 
 
-  public static JsTupleSpec of(JsSpec spec,
+   static JsTupleSpec of(JsSpec spec,
                                JsSpec... others
                               )
   {

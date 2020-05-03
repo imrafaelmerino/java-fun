@@ -462,7 +462,8 @@ public abstract class MyNumberConverter
                                  i,
                                  end
                                 );
-        } else if (ch == '+')
+        }
+        else if (ch == '+')
         {
           exp = parsePositiveInt(buf,
                                  reader,

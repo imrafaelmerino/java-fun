@@ -1,16 +1,19 @@
 package jsonvalues;
 
 import jsonvalues.gen.*;
+import jsonvalues.gen.state.JsStateGen;
 import jsonvalues.spec.JsObjSpec;
+import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Predicate;
+
 import static jsonvalues.gen.JsGens.*;
-import static jsonvalues.spec.JsTupleSpec.of;
 import static jsonvalues.spec.JsSpecs.*;
-import static jsonvalues.spec.JsSpecs.intNum;
+import static jsonvalues.spec.JsSpecs.integer;
 
 public class TestGenerators
 {
@@ -20,16 +23,16 @@ public class TestGenerators
   public void test_js_array()
   {
     final JsGen<JsObj> gen = JsObjGen.of("a",
-                                         chooseGen(0,
-                                                   10
-                                                  ).flatMap(n -> JsArrayGen.of(alphabeticGen,
+                                         choose(0,
+                                                10
+                                               ).flatMap(n -> JsGens.arrayOf(alphabetic,
                                                                                n.value
                                                                               )
                                                            ),
                                          "b",
-                                         chooseGen(0,
-                                                   10
-                                                  ).flatMap(n -> JsArrayGen.of(intNumGen,
+                                         choose(0,
+                                                10
+                                               ).flatMap(n -> JsGens.arrayOf(JsGens.integer,
                                                                                n.value
                                                                               )
                                                            )
@@ -37,9 +40,11 @@ public class TestGenerators
 
     test(gen,
          v -> JsObjSpec.strict("a",
-                               arrayOfStrSuchThat(a -> a.size() <= 10).optional().nullable(),
+                               arrayOfStrSuchThat(a -> a.size() <= 10).optional()
+                                                                      .nullable(),
                                "b",
-                               arrayOfIntSuchThat(a -> a.size() <= 10).nullable().optional()
+                               arrayOfIntSuchThat(a -> a.size() <= 10).nullable()
+                                                                      .optional()
                               )
                        .test(v.toJsObj())
                        .isEmpty(),
@@ -53,33 +58,33 @@ public class TestGenerators
   {
 
     JsObjGen gen = JsObjGen.of(JsGenPair.of("a",
-                                            intNumGen
+                                            JsGens.integer
                                            ),
                                JsGenPair.of("b",
-                                            strGen
+                                            JsGens.str
                                            ),
                                JsGenPair.of("c",
-                                            boolGen
+                                            JsGens.bool
                                            ),
                                JsGenPair.of("d",
-                                            alphabeticGen
+                                            alphabetic
                                            ),
                                JsGenPair.of("e",
-                                            alphanumericGen
+                                            alphanumeric
                                            )
                               );
 
     test(gen,
          v -> JsObjSpec.strict("a",
-                               intNum,
+                               integer,
                                "b",
-                               str,
+                               JsSpecs.str,
                                "c",
-                               bool,
+                               JsSpecs.bool,
                                "d",
-                               str,
+                               JsSpecs.str,
                                "e",
-                               str
+                               JsSpecs.str
                               )
                        .test(v.toJsObj())
                        .isEmpty(),
@@ -92,26 +97,26 @@ public class TestGenerators
   {
 
     final JsObjGen gen = JsObjGen.of("a",
-                                     intNumGen,
+                                     JsGens.integer,
                                      "b",
-                                     strGen,
+                                     JsGens.str,
                                      "c",
-                                     alphabeticGen,
+                                     alphabetic,
                                      "d",
-                                     JsTupleGen.of(intNumGen,
-                                                   strGen
+                                     JsGens.tuple(JsGens.integer,
+                                                   JsGens.str
                                                   )
                                     );
 
     test(gen,
          v -> JsObjSpec.strict("a",
-                               intNum,
+                               integer,
                                "b",
                                str(s -> s.length() <= 10),
                                "c",
                                str(s -> s.length() <= 10),
                                "d",
-                               of(intNum,
+                               tuple(integer,
                                   str(s -> s.length() <= 10)
                                  )
                               )
@@ -127,26 +132,32 @@ public class TestGenerators
   public void test_nested_gen()
   {
     JsObjGen gen = JsObjGen.of("a",
-                               JsArrayGen.of(alphanumericGen,
-                                             5),
+                               JsGens.arrayOf(alphanumeric,
+                                             5
+                                            ),
                                "b",
-                               JsTupleGen.of(strGen,
-                                             boolGen,
-                                             intNumGen),
+                               JsGens.tuple(JsGens.str,
+                                             JsGens.bool,
+                                             JsGens.integer
+                                            ),
                                "c",
                                JsObjGen.of("a",
-                                           JsGens.oneOfGen(JsStr.of("a"),
-                                                           JsBool.TRUE)),
+                                           JsGens.oneOf(JsStr.of("a"),
+                                                        JsBool.TRUE
+                                                       )
+                                          ),
                                "d",
-                               boolGen,
+                               JsGens.bool,
                                "e",
-                               oneOfGen(JsStr.of("hi"),
-                                        JsNothing.NOTHING),
+                               JsGens.oneOf(JsStr.of("hi"),
+                                            JsNothing.NOTHING
+                                           ),
                                "f",
-                               oneOfGen(strGen,
-                                        intNumGen),
+                               oneOf(JsGens.str,
+                                     JsGens.integer
+                                    ),
                                "g",
-                               singleGen(JsStr.of("a"))
+                               single(JsStr.of("a"))
                               );
 
     test(gen,
@@ -154,22 +165,22 @@ public class TestGenerators
            JsObjSpec.strict("a",
                             arrayOfStr,
                             "b",
-                            of(str,
-                               bool,
-                               intNum
+                            tuple( JsSpecs.str,
+                                JsSpecs.bool,
+                               integer
                               ),
                             "c",
                             JsObjSpec.strict("a",
                                              any(v -> v.isStr() || v.isBool())
                                             ),
                             "d",
-                            bool,
+                            JsSpecs.bool,
                             "e",
-                            str.optional(),
+                            JsSpecs.str.optional(),
                             "f",
                             any(v -> v.isStr() || v.isIntegral()),
                             "g",
-                            str(b->b.equals("a"))
+                            str(b -> b.equals("a"))
                            )
                     .test(a.toJsObj())
                     .isEmpty(),
@@ -179,32 +190,93 @@ public class TestGenerators
 
 
   @Test
-  public void test_constructors(){
-    final JsGen<JsBool> listGen = oneOfGen(Arrays.asList(JsBool.TRUE,
-                                                             JsBool.FALSE));
-    JsObjGen gen = JsObjGen.of("a", strGen, "b", intNumGen, "c", listGen, "d", alphabeticGen,
-                               "e", alphanumericGen, "f", longNumGen, "g", doubleNumGen, "h", singleGen(JsBool.TRUE),
-                               "i", oneOfGen(strGen,doubleNumGen),
-                               "j", oneOfGen(JsStr.of("a"),JsBool.TRUE), "k", strGen
+  public void test_constructors()
+  {
+    final JsGen<JsBool> listGen = JsGens.oneOf(Arrays.asList(JsBool.TRUE,
+                                                             JsBool.FALSE
+                                                            ));
+    JsObjGen gen = JsObjGen.of("a",
+                               JsGens.str,
+                               "b",
+                               JsGens.integer,
+                               "c",
+                               listGen,
+                               "d",
+                               alphabetic,
+                               "e",
+                               alphanumeric,
+                               "f",
+                               JsGens.longInteger,
+                               "g",
+                               JsGens.decimal,
+                               "h",
+                               single(JsBool.TRUE),
+                               "i",
+                               oneOf(JsGens.str,
+                                     JsGens.decimal
+                                    ),
+                               "j",
+                               JsGens.oneOf(JsStr.of("a"),
+                                            JsBool.TRUE
+                                           ),
+                               "k",
+                               JsGens.str
                               );
 
-    JsObjSpec spec = JsObjSpec.lenient("a",str,"b",intNum,"c",bool,"d",str,"e",str,"f",integral,"g",decimal,"h",bool,
-                                       "i",any(v->v.isStr() || v.isDecimal()),"j",any(v->v.isStr() || v.isBool()),
-                                       "k",str
+    JsObjSpec spec = JsObjSpec.lenient("a",
+                                       JsSpecs.str,
+                                       "b",
+                                       integer,
+                                       "c",
+                                       JsSpecs.bool,
+                                       "d",
+                                       JsSpecs.str,
+                                       "e",
+                                       JsSpecs.str,
+                                       "f",
+                                       integral,
+                                       "g",
+                                       JsSpecs.decimal,
+                                       "h",
+                                       JsSpecs.bool,
+                                       "i",
+                                       any(v -> v.isStr() || v.isDecimal()),
+                                       "j",
+                                       any(v -> v.isStr() || v.isBool()),
+                                       "k",
+                                       JsSpecs.str
                                       );
 
-    test(gen,v -> spec.test(v.toJsObj()).isEmpty(), 1000);
+    test(gen,
+         v -> spec.test(v.toJsObj())
+                  .isEmpty(),
+         1000
+        );
   }
 
   public static void test(JsGen<?> gen,
-                    Predicate<JsValue> condition,
-                    int times
-                   )
+                          Predicate<JsValue> condition,
+                          int times
+                         )
   {
     for (int i = 0; i < times; i++)
     {
 
       final JsValue value = gen.apply(new Random())
+                               .get();
+      Assertions.assertTrue(condition.test(value));
+    }
+  }
+
+  public static void test(JsStateGen gen,
+                          Predicate<JsValue> condition,
+                          int times
+                         )
+  {
+    for (int i = 0; i < times; i++)
+    {
+
+      final JsValue value = gen.apply(JsObj.empty()).apply(new Random())
                                .get();
       Assertions.assertTrue(condition.test(value));
     }

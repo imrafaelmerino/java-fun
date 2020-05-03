@@ -100,7 +100,7 @@ public class JsSchemaValidations
                                                          "lastName",
                                                          JsSpecs.str,
                                                          "age",
-                                                         JsSpecs.intNum(greaterOrEqualThan(0)),
+                                                         JsSpecs.integer(greaterOrEqualThan(0)),
                                                          "latitude",
                                                          decimal(interval(new BigDecimal(-90),
                                                                   new BigDecimal(90)

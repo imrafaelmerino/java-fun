@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-public class JsTupleGen implements JsGen<JsArray>
+final class JsTupleGen implements JsGen<JsArray>
 {
   private List<JsGen<?>> gens = new ArrayList<>();
 
-  private JsTupleGen(final JsGen<?> gen,
+   JsTupleGen(final JsGen<?> gen,
                      final JsGen<?>... others
                     )
   {
@@ -34,13 +34,6 @@ public class JsTupleGen implements JsGen<JsArray>
     };
   }
 
-  public static JsTupleGen of(final JsGen<?> gen,
-                              final JsGen<?>... others
-                             )
-  {
-    return new JsTupleGen(gen,
-                          others
-    );
-  }
+
 
 }

@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
 
 
@@ -23,9 +24,9 @@ import static jsonvalues.spec.ERROR_CODE.*;
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
-    return ParserFactory.INSTANCE.ofLong(nullable);
+    return JsSpecParsers.INSTANCE.ofLong(nullable);
   }
 
   @Override

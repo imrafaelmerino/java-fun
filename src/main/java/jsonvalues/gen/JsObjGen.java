@@ -367,7 +367,7 @@ public class JsObjGen implements JsGen<JsObj>
   }
 
   public static JsObjGen of(final String key,
-                            final JsGen gen
+                            final JsGen<?> gen
                            )
   {
     return new JsObjGen(key,

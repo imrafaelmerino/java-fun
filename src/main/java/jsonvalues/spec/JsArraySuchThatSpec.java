@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 import java.util.Optional;
@@ -23,9 +24,9 @@ class JsArraySuchThatSpec extends AbstractPredicateSpec implements JsValuePredic
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
-    return  ParserFactory.INSTANCE.ofArrayOfValueSuchThat(predicate,
+    return  JsSpecParsers.INSTANCE.ofArrayOfValueSuchThat(predicate,
                                                           nullable
                                                          );
   }

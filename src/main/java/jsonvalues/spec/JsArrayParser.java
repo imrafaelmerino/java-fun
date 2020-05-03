@@ -2,7 +2,7 @@ package jsonvalues.spec;
 
 import com.dslplatform.json.MyDslJson;
 import com.dslplatform.json.parsers.JsParserException;
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
 import jsonvalues.JsArray;
 
 import java.io.InputStream;
@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 public class JsArrayParser
 {
 
-  private final SpecParser parser;
+  private final JsSpecParser parser;
 
   /**
 

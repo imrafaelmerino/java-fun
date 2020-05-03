@@ -1,7 +1,7 @@
 package jsonvalues.spec;
 
 import com.dslplatform.json.parsers.JsParserException;
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
 import jsonvalues.JsObj;
 
 import java.io.InputStream;
@@ -16,7 +16,7 @@ public class JsObjParser
    @param spec the Json spec what defines the schema the json has to conform
    @param strict if true, no more keys different than the specified by the spec are allowed
    */
-  private final SpecParser parser;
+  private final JsSpecParser parser;
 
   public JsObjParser(final JsObjSpec spec)
   {

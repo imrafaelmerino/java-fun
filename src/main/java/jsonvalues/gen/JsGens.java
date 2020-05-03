@@ -14,13 +14,13 @@ public class JsGens
   private final static int ZERO = 48;
   private static final String LENGTH_EQUAL_ZERO_ERROR = "string length must be greater than zero.";
 
-  public static JsGen<JsStr> strGen = chooseGen(0, 10).flatMap(n-> strGen(n.value));
+  public static JsGen<JsStr> str = choose(0, 10).flatMap(n-> str(n.value));
 
-  public static JsGen<JsStr> alphabeticGen = chooseGen(0, 10).flatMap(n-> alphabeticGen(n.value));
+  public static JsGen<JsStr> alphabetic = choose(0, 10).flatMap(n-> alphabetic(n.value));
 
-  public static JsGen<JsStr> alphanumericGen = chooseGen(0, 10).flatMap(n-> alphanumericGen(n.value));
+  public static JsGen<JsStr> alphanumeric = choose(0, 10).flatMap(n-> alphanumeric(n.value));
 
-  public static JsGen<JsStr> strGen(final int length)
+  public static JsGen<JsStr> str(final int length)
   {
     if(length<0)throw new IllegalArgumentException(LENGTH_EQUAL_ZERO_ERROR);
 
@@ -36,15 +36,15 @@ public class JsGens
     };
   }
 
-  public static JsGen<JsBool> boolGen = r -> () -> JsBool.of(r.nextBoolean());
+  public static JsGen<JsBool> bool = r -> () -> JsBool.of(r.nextBoolean());
 
-  public static JsGen<JsLong> longNumGen = r -> () -> JsLong.of(r.nextLong());
+  public static JsGen<JsLong> longInteger = r -> () -> JsLong.of(r.nextLong());
 
-  public static JsGen<JsInt> intNumGen = r -> () -> JsInt.of(r.nextInt());
+  public static JsGen<JsInt> integer = r -> () -> JsInt.of(r.nextInt());
 
-  public static JsGen<JsDouble> doubleNumGen = r -> () -> JsDouble.of(r.nextDouble());
+  public static JsGen<JsDouble> decimal = r -> () -> JsDouble.of(r.nextDouble());
 
-  public static JsGen<JsStr> alphabeticGen(final int length)
+  public static JsGen<JsStr> alphabetic(final int length)
   {
     if(length<0)throw new IllegalArgumentException(LENGTH_EQUAL_ZERO_ERROR);
 
@@ -59,7 +59,7 @@ public class JsGens
                                 .toString());
   }
 
-  public static JsGen<JsStr> alphanumericGen(final int length)
+  public static JsGen<JsStr> alphanumeric(final int length)
   {
     if(length<0)throw new IllegalArgumentException(LENGTH_EQUAL_ZERO_ERROR);
 
@@ -75,20 +75,20 @@ public class JsGens
                                 .toString());
   }
 
-  public static JsGen<JsInt> chooseGen(final int min, final int max){
+  public static JsGen<JsInt> choose(final int min, final int max){
     if(min>max)throw new IllegalArgumentException("min must be lower than max");
     return r -> () -> JsInt.of(r.nextInt((max - min) + 1) + min);
   }
 
-  public static JsGen<JsValue> singleGen(final JsValue value)
+  public static JsGen<JsValue> single(final JsValue value)
   {
     return r -> () -> requireNonNull(value);
   }
 
 
-  public static JsGen<JsValue> oneOfGen(final JsValue a,
-                                        final JsValue... others
-                                       )
+  public static JsGen<JsValue> oneOf(final JsValue a,
+                                     final JsValue... others
+                                    )
   {
     return r -> () ->
     {
@@ -98,9 +98,9 @@ public class JsGens
     };
   }
 
-  public static JsGen<?> oneOfGen(final JsGen<?> a,
-                                  final JsGen<?>... others
-                                 )
+  public static JsGen<?> oneOf(final JsGen<?> a,
+                               final JsGen<?>... others
+                              )
   {
     int n = new Random().nextInt(1 + others.length);
     final List<JsGen<?>> gens = new ArrayList<>();
@@ -111,12 +111,27 @@ public class JsGens
     return gens.get(n);
   }
 
-  public static <O extends JsValue> JsGen<O> oneOfGen(final List<O> list){
+  public static <O extends JsValue> JsGen<O> oneOf(final List<O> list){
     return r -> () -> {
       if(requireNonNull(list).size()==0)return list.get(0);
       final int index = r.nextInt(list.size());
       return list.get(index);
     };
   }
+
+
+  public static JsGen<JsArray> tuple(final JsGen<?> gen,
+                              final JsGen<?>... others
+                             )
+  {
+    return new JsTupleGen(gen,
+                          others
+    );
+  }
+
+  public static JsGen<JsArray> arrayOf(final JsGen<?> gen,final int size){
+    return JsArrayGen.of(gen,size);
+  }
+
 
 }

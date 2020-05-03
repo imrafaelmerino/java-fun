@@ -1,6 +1,7 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.parsers.specs.SpecParser;
+import com.dslplatform.json.parsers.JsSpecParser;
+import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -22,9 +23,9 @@ class AnySuchThatSpec implements JsValuePredicate
   }
 
   @Override
-  public SpecParser parser()
+  public JsSpecParser parser()
   {
-    return ParserFactory.INSTANCE.ofValueSuchThat(predicate);
+    return JsSpecParsers.INSTANCE.ofValueSuchThat(predicate);
   }
 
   @Override
@@ -32,8 +33,8 @@ class AnySuchThatSpec implements JsValuePredicate
   {
     return required;
   }
-  final boolean required;
-  final Function<JsValue,Optional<Error>> predicate;
+  private final boolean required;
+  private final Function<JsValue,Optional<Error>> predicate;
 
   AnySuchThatSpec(final boolean required,
                   final Function<JsValue, Optional<Error>> predicate

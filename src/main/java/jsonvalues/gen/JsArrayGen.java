@@ -5,7 +5,9 @@ import jsonvalues.JsArray;
 import java.util.Random;
 import java.util.function.Supplier;
 
- public class JsArrayGen implements JsGen<JsArray>
+import static java.util.Objects.requireNonNull;
+
+final class JsArrayGen implements JsGen<JsArray>
 {
 
   private final int size;
@@ -32,7 +34,7 @@ import java.util.function.Supplier;
     return () ->
     {
       JsArray array = JsArray.empty();
-      for (int i = 0; i < size; i++) array = array.append(gen.apply(random).get());
+      for (int i = 0; i < size; i++) array = array.append(gen.apply(requireNonNull(random)).get());
       return array;
     };
   }

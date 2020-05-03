@@ -1,5 +1,6 @@
 package jsonvalues;
 
+import jsonvalues.spec.JsSpecs;
 import jsonvalues.spec.JsTupleSpec;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
@@ -23,17 +24,17 @@ public class TestJsParser
     final JsObjParser parser = new JsObjParser(JsObjSpec.strict("a",
                                                                 str,
                                                                 "b",
-                                                                intNum,
+                                                                integer,
                                                                 "c",
                                                                 bool,
                                                                 "d",
-                                                                longNum,
+                                                                longInteger,
                                                                 "e",
                                                                 decimal,
                                                                 "f",
-                                                                JsTupleSpec.of(decimal,
-                                                                               decimal
-                                                                              ),
+                                                                JsSpecs.tuple(decimal,
+                                                                              decimal
+                                                                             ),
                                                                 "g",
                                                                 integral,
                                                                 "h",
@@ -77,4 +78,6 @@ public class TestJsParser
                             example
                            );
   }
+
+
 }

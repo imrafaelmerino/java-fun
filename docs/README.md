@@ -68,23 +68,81 @@ a.union(b, JsArray.TYPE.LIST)
 a.union(b, JsArray.TYPE.MULTISET)
 
 a.intersection(b)
-
-// creation of Jsons from primitive types
-
-JsObj.of("a",JsInt.of(13),
-         "b",JsStr.of("hi!")
-         )
-
-JsArray.of(1,2,3)
-
-// creation of Jsons parsing strings
-
-JsObj.parse("{...}")
-
-JsArray.parse("[...]")
 ```
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
 data structure shows very well the essence of **json-values**.
+
+If you need more reasons, I'll give you more! Data generation and validation are extremely important in software. 
+If you struggle generating data for your tests, it slows you down and make your tests difficult to develop and maintain 
+On the other hand, corrupt data can propagate throughout your system and cause a nightmare. Errors that blow up in your face 
+are way better! If you think about it, the definition, validation, and generation of a JSON value could be 
+implemented using the same data structure; after all, the three of them are just bindings with different 
+elements: values, generators, or specifications. Let's check out an example:
+
+```
+// defining a json object
+
+JsObj person = JsObj.of("name", JsStr.of("Rafael"),
+                        "age", JsInt.of(37),
+                        "languages", JsArray.of("Haskell", "Scala", "Java", "Clojure")
+                        "github", JsStr.of("imrafaelmerino"),
+                        "profession", JsStr.of("frustrated consultant"),
+                        "address", JsObj.of("city", JsStr.of("Madrid"),
+                                            "location", JsArray.of(40.566, 87.987),
+                                            "country",JsStr.of("ES")
+                                            )
+                        );
+
+// defining a generator
+JsObjGen gen = JsObjGen.of("name", JsGens.alphabetic,
+                           "age",  JsGens.choose(18,100),
+                           "languages", JsGens.arrayOf(JsGens.str,10), 
+                           "github", JsGens.alphanumeric
+                                           .optional(),
+                           "profession", JsGens.oneOf(professions),
+                           "address", JsObjGen.of("city", JsGens.oneOf(cities),
+                                                  "location", JsGens.tuple(JsGens.decimal, JsGens.decimal),
+                                                  "country",JsGens.oneOf(countries)
+                                                  )
+                           );
+
+// defining a spec
+JsObjSpec spec = JsObjSpec.strict("name", JsSpecs.str,
+                                  "age", JsSpecs.integer(n-> n>15 && n<100),
+                                  "languages", JsSpecs.arrayOfStr,
+                                  "github", JsSpecs.str.optional(),
+                                  "profession", JsSpecs.str,
+                                  "address", JsObjSpec.lenient("city", JsSpecs.str,
+                                                               "location", JsSpecs.tuple(JsSpecs.decimal, 
+                                                                                         JsSpecs.decimal
+                                                                                         ),
+                                                               "country",JsSpecs.str
+                                                               )
+                                  );
+
+// if the object doesn't conform the spec, the errors and their locations are returned in a set
+
+Set<JsErrorPair> errors = spec.test(person);
+
+// you can use a spec to parse a string! as soon as an error is found, the parsing ends.
+
+JsObjParser parser = new JsObjParser(spec);
+byte[] jsonBytes = ...; // somo json
+String jsonStr = ...; // somo json
+
+JsObj a = parser.parse(jsonBytes);
+JsObj b = parser.parse(jsonStr);
+```
+
+As you can see, creating specs and generators is as simple as creating raw JSON. Writing specs and 
+generators for our tests is child's play. It has enormous advantages for development, such as:
+
+    -Increase productivity.
+    -More readable code. The more readable code is, the easier it is to maintain and reason about that code.
+
+This is just a quick intro, but I'd like to highlight that generators and specs are really powerful and composable.
+Any spec can be defined in terms of predicates.
+
 ## <a name="notwhatfor"><a/> When not to use it
 **json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for 
 Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters 

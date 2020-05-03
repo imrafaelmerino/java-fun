@@ -1,14 +1,17 @@
 package jsonvalues;
 
 
+import jsonvalues.gen.JsGens;
+import jsonvalues.gen.JsObjGen;
+import jsonvalues.gen.state.JsStateGen;
+import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import static jsonvalues.JsArray.TYPE.*;
@@ -20,6 +23,57 @@ import static jsonvalues.JsPath.path;
 public class TestJsArray
 {
 
+  @Test
+  public void a(){
+    JsObj person = JsObj.of("name", JsStr.of("Rafael"),
+                            "age", JsInt.of(37),
+                            "languages", JsArray.of("Haskell", "Scala", "Java", "Clojure")
+                            "github", JsStr.of("imrafaelmerino"),
+                            "profession", JsStr.of("frustrated consultant"),
+                            "address", JsObj.of("city", JsStr.of("Madrid"),
+                                                "location", JsArray.of(40.566, 87.987),
+                                                "country",JsStr.of("ES")
+                                               )
+                           );
+
+    final List<JsValue> professions = new ArrayList<>();
+    final List<JsValue> cities = new ArrayList<>();
+    final List<JsValue> countries = new ArrayList<>();
+
+    JsObjGen gen = JsObjGen.of("name", JsGens.alphabetic,
+                               "age",  JsGens.choose(18,100),
+                               "languages", JsGens.arrayOf(JsGens.str,10),
+                               "github", JsGens.alphanumeric
+                                 .optional(),
+                               "profession", JsGens.oneOf(professions),
+                               "address", JsObjGen.of("city", JsGens.oneOf(cities),
+                                                      "location", JsGens.tuple(JsGens.decimal, JsGens.decimal),
+                                                      "country",JsGens.oneOf(countries)
+                                                     )
+                              );
+
+    JsObjSpec spec = JsObjSpec.strict("name", JsSpecs.str,
+                                      "age", JsSpecs.integer(n-> n>15 && n<100),
+                                      "languages", JsSpecs.arrayOfStr,
+                                      "github", JsSpecs.str.optional(),
+                                      "profession", JsSpecs.str,
+                                                                 "address", JsObjSpec.lenient("city", JsSpecs.str,
+                                                                   "location", JsSpecs.tuple(JsSpecs.decimal, JsSpecs.decimal),
+                                                                   "country",JsSpecs.str
+                                                                  )
+                                                                );
+
+
+    final Set<JsErrorPair> errors = spec.test(person);
+
+    JsObjParser parser = new JsObjParser(spec);
+    byte[] jsonBytes = ...; // somo json
+    String jsonStr = ...; // somo json
+
+    JsObj a = parser.parse(jsonBytes);
+    JsObj b = parser.parse(jsonStr);
+      Assertions.assertEquals(true, true);
+  }
 
     @Test
     public void test_contains_element_in_js_array()

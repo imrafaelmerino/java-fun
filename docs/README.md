@@ -24,27 +24,27 @@
 
 
 ## <a name="introduction"><a/> Introduction
-Welcome to **json-values**, the first-ever Json library in _Java_ implemented with persistent data structures.  
+Welcome to **json-values**, the first-ever Json library in _Java_ implemented with persistent data structures.
 
-One of the most important aspects of functional programming is immutable data structures, better known as values. Updating these structures using the copy-on-write approach is very inefficient, and this is the reason why persistent 
-data structures were created. On the other hand, JSON is a lightweight, text-based, language-independent data interchange format. It's become so popular due to its simplicity. 
+One of the most important aspects of functional programming is immutable data structures, better known as values. Updating these structures using the copy-on-write approach is very inefficient, and this is the reason why persistent
+data structures were created. On the other hand, JSON is a lightweight, text-based, language-independent data interchange format. It's become so popular due to its simplicity.
 
-There are a lot of libraries out there to work with JSON in the JVM ecosystem; however, none of them use persistent data structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that? JSON is a great structure. 
-It's simple, easy to aggregate, ease to create, easy to reason about, so why create yet another abstraction over JSON? Moreover, there are many architectures that work with JSON end-to-end. Going from JSON to objects or strings back and forth is not very 
-efficient, especially when copy-on-write is the only option to avoid mutation. All these points are way better elaborated in the talk [the value of values](https://www.youtube.com/watch?v=-6BsiVyC1kM), a masterpiece from Rich Hickey. 
+There are a lot of libraries out there to work with JSON in the JVM ecosystem; however, none of them use persistent data structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that? JSON is a great structure.
+It's simple, easy to aggregate, ease to create, easy to reason about, so why create yet another abstraction over JSON? Moreover, there are many architectures that work with JSON end-to-end. Going from JSON to objects or strings back and forth is not very
+efficient, especially when copy-on-write is the only option to avoid mutation. All these points are way better elaborated in the talk [the value of values](https://www.youtube.com/watch?v=-6BsiVyC1kM), a masterpiece from Rich Hickey.
 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 * You need to deal with Jsons, and you want to program following a functional style, **using functions and immutable types (or values)**,
 but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide Persistent Data Structures**.
-The thing is that Java 8 brought functions, lambdas, lazy evaluation to some extent, streams... but, without immutability, 
+The thing is that Java 8 brought functions, lambdas, lazy evaluation to some extent, streams... but, without immutability,
 something is still missing, and as _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
-* You manipulate Jsons all the time, and you'd like to do it with less ceremony. **json-values** is declarative and takes advantages of all the new features that were introduced 
-in Java 8, like functions, suppliers, streams, and collectors, making json manipulation simple, fast, and efficient. 
+* You manipulate Jsons all the time, and you'd like to do it with less ceremony. **json-values** is declarative and takes advantages of all the new features that were introduced
+in Java 8, like functions, suppliers, streams, and collectors, making json manipulation simple, fast, and efficient.
 * Simplicity matters, and I 'd argue that **json-values** is simple.
 * As a developer, I'm convinced that code should win arguments, so let me enumerate some examples, where I
 leave the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
-  
+
 ```
 json.mapKeys(toSneakeCase)
 
@@ -72,11 +72,11 @@ a.intersection(b)
 I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
 data structure shows very well the essence of **json-values**.
 
-If you need more reasons, I'll give you more! Data generation and validation are extremely important in software. 
-If you struggle generating data for your tests, it slows you down and make your tests difficult to develop and maintain 
-On the other hand, corrupt data can propagate throughout your system and cause a nightmare. Errors that blow up in your face 
-are way better! If you think about it, the definition, validation, and generation of a JSON value could be 
-implemented using the same data structure; after all, the three of them are just bindings with different 
+If you need more reasons, I'll give you more! Data generation and validation are extremely important in software.
+If you struggle generating data for your tests, it slows you down and make your tests difficult to develop and maintain
+On the other hand, corrupt data can propagate throughout your system and cause a nightmare. Errors that blow up in your face
+are way better! If you think about it, the definition, validation, and generation of a JSON value could be
+implemented using the same data structure; after all, the three of them are just bindings with different
 elements: values, generators, or specifications. Let's check out an example:
 
 ```
@@ -97,12 +97,12 @@ JsObj person = JsObj.of("name", JsStr.of("Rafael"),
 
 JsObjGen gen = JsObjGen.of("name", JsGens.alphabetic,
                            "age",  JsGens.choose(18,100),
-                           "languages", JsGens.arrayOf(JsGens.str,10), 
+                           "languages", JsGens.arrayOf(JsGens.str,10),
                            "github", JsGens.alphanumeric
                                            .optional(),
                            "profession", JsGens.oneOf(professions),
                            "address", JsObjGen.of("city", JsGens.oneOf(cities),
-                                                  "location", JsGens.tuple(JsGens.decimal, 
+                                                  "location", JsGens.tuple(JsGens.decimal,
                                                                            JsGens.decimal
                                                                           ),
                                                   "country",JsGens.oneOf(countries)
@@ -117,7 +117,7 @@ JsObjSpec spec = JsObjSpec.strict("name", JsSpecs.str,
                                   "github", JsSpecs.str.optional(),
                                   "profession", JsSpecs.str,
                                   "address", JsObjSpec.lenient("city", JsSpecs.str,
-                                                               "location", JsSpecs.tuple(JsSpecs.decimal, 
+                                                               "location", JsSpecs.tuple(JsSpecs.decimal,
                                                                                          JsSpecs.decimal
                                                                                          ),
                                                                "country",JsSpecs.str
@@ -130,22 +130,47 @@ Set<JsErrorPair> errors = spec.test(person);
 
 // you can use a spec to parse a string! as soon as an error is found, the parsing ends.
 
+byte[] jsonBytes = ...;
+String jsonStr = ...;
+
 JsObjParser parser = new JsObjParser(spec);
-byte[] jsonBytes = ...; // somo json
-String jsonStr = ...; // somo json
 
 JsObj a = parser.parse(jsonBytes);
 JsObj b = parser.parse(jsonStr);
 
+// given a generator you can define properties and test them using randomized inputs
+// this is a key concept in property-based-testing
+
+
+/**
+   @param gen generator to produce randomized input data
+   @param property the property to be tested
+   @param times number of iterations an input is produced and tested on the property
+*/
+public void testProperty(JsGen<JsObj> gen,
+                         Predicate<JsObj> property,
+                         int times
+                        )
+{
+    for (int i = 0; i < times; i++)
+    {
+
+      final JsValue value = gen.apply(new Random())
+                               .get();
+      Assertions.assertTrue(property.test(value));
+    }
+}
+
+
 ```
 
-As you can see, creating specs and generators is as simple as creating raw JSON. Writing specs and 
+As you can see, creating specs and generators is as simple as creating raw JSON. Writing specs and
 generators for our tests is child's play. It has enormous advantages for development, such as:
 
 * Increase productivity.
 * More readable code. The more readable code is, the easier it is to maintain and reason about that code.
 
-Sometimes you need to generate a Json which key-value pairs are not independent to each other. 
+Sometimes you need to generate a Json which key-value pairs are not independent to each other.
 Consider the following example. If the generated value for the key 'a' is Nothing, then no element is inserted.
 When the key 'a' doesnt exist, then an integer between 0 and 10 is associated to the key 'b', and then
 the same integer plus one is associated to the key 'c':
@@ -177,9 +202,9 @@ This is just a quick intro, but I'd like to highlight that generators and specs 
 Furthermore, any spec can be defined in terms of predicates, which allows you to define any imaginable validation.
 
 ## <a name="notwhatfor"><a/> When not to use it
-**json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for 
-Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters 
-or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart Halloway** is a 
+**json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
+Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters
+or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart Halloway** is a
 great talk that elaborates ironically on this point.
 ## <a name="requirements"><a/> Requirements
 Java 8 or greater.
@@ -193,20 +218,20 @@ Add the following dependency to your building tool:
 </dependency>
 ```
 
-## <a ><a/> Documentation   
+## <a ><a/> Documentation
 Go to https://imrafaelmerino.github.io/json-values/
 ## <a name="wth"><a/> Want to help
 I've set up a separate document for [contributors](./CONTRIBUTING.md).
 ## <a name="develop"><a/> Develop
 I've set up a separate document for [developers](./developers.md). Things like why json-values is a one-package library, if it was developed using TDD or anything related to the
 development of the library can be found there. I'll be adding little by little more and more
-information.    
+information.
 ## <a name="rp"><a/> Related projects
 “Ideas are like rabbits. You get a couple and learn how to handle them, and pretty soon you have a dozen.” – John Steinbeck
 
 After the development of json-values, I published two more related projects:
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
-* Json generators in Scala to do property-based testing: [json-scala-values-generator](https://github.com/imrafaelmerino/json-scala-values-generator) . This is a 
+* Json generators in Scala to do property-based testing: [json-scala-values-generator](https://github.com/imrafaelmerino/json-scala-values-generator) . This is a
 project I'm especially proud of. I think there is no Json generator more declarative, concise, and why not, beautiful in the
 whole wide world! If I'm wrong, please let me know!
 

@@ -154,10 +154,9 @@ public void testProperty(JsGen<JsObj> gen,
 {
     for (int i = 0; i < times; i++)
     {
-
-      final JsValue value = gen.apply(new Random())
-                               .get();
-      Assertions.assertTrue(property.test(value));
+      final JsObj obj = gen.apply(new Random())
+                           .get();
+      Assertions.assertTrue(property.test(obj));
     }
 }
 

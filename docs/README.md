@@ -93,7 +93,8 @@ JsObj person = JsObj.of("name", JsStr.of("Rafael"),
                                             )
                         );
 
-// defining a generator
+// defining a json generator
+
 JsObjGen gen = JsObjGen.of("name", JsGens.alphabetic,
                            "age",  JsGens.choose(18,100),
                            "languages", JsGens.arrayOf(JsGens.str,10), 
@@ -101,12 +102,15 @@ JsObjGen gen = JsObjGen.of("name", JsGens.alphabetic,
                                            .optional(),
                            "profession", JsGens.oneOf(professions),
                            "address", JsObjGen.of("city", JsGens.oneOf(cities),
-                                                  "location", JsGens.tuple(JsGens.decimal, JsGens.decimal),
+                                                  "location", JsGens.tuple(JsGens.decimal, 
+                                                                           JsGens.decimal
+                                                                          ),
                                                   "country",JsGens.oneOf(countries)
                                                   )
                            );
 
-// defining a spec
+// defining a json spec
+
 JsObjSpec spec = JsObjSpec.strict("name", JsSpecs.str,
                                   "age", JsSpecs.integer(n-> n>15 && n<100),
                                   "languages", JsSpecs.arrayOfStr,
@@ -138,8 +142,8 @@ JsObj b = parser.parse(jsonStr);
 As you can see, creating specs and generators is as simple as creating raw JSON. Writing specs and 
 generators for our tests is child's play. It has enormous advantages for development, such as:
 
-    -Increase productivity.
-    -More readable code. The more readable code is, the easier it is to maintain and reason about that code.
+* Increase productivity.
+* More readable code. The more readable code is, the easier it is to maintain and reason about that code.
 
 Sometimes you need to generate a Json which key-value pairs are not independent to each other. 
 Consider the following example. If the generated value for the key 'a' is Nothing, then no element is inserted.
@@ -148,14 +152,16 @@ the same integer plus one is associated to the key 'c':
 
 ```
 
-JsObjStateGen gen = JsObjStateGen.of("a", generated -> JsGens.oneOf(JsGens.alphabetic,
-                                                                    JsGens.single(JsNothing.NOTHING)
-                                                                   ),
+JsObjStateGen gen = JsObjStateGen.of("a", obj -> JsGens.oneOf(JsGens.alphabetic,
+                                                              JsGens.single(JsNothing.NOTHING)
+                                                             ),
                                      "b", JsStateGens.ifNotContains("a",
                                                                     JsGens.choose(0,10)
                                                                     ),
                                      "c", JsStateGens.ifContains("b",
-                                                                  bValue-> single(bValue.toJsInt().map(i -> i + 1))
+                                                                  bVal-> single(bVal.toJsInt()
+                                                                                    .map(i -> i + 1)
+                                                                               )
                                                                 )
                                      );`
 
@@ -164,7 +170,7 @@ JsObjStateGen gen = JsObjStateGen.of("a", generated -> JsGens.oneOf(JsGens.alpha
 {"b":3,"c":4}
 {"a":"okegwg"}
 {"b":5,"c":6}
-``
+`````
 
 
 This is just a quick intro, but I'd like to highlight that generators and specs are really powerful and composable.

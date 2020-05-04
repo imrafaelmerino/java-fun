@@ -98,8 +98,7 @@ JsObj person = JsObj.of("name", JsStr.of("Rafael"),
 JsObjGen gen = JsObjGen.of("name", JsGens.alphabetic,
                            "age",  JsGens.choose(18,100),
                            "languages", JsGens.arrayOf(JsGens.str,10),
-                           "github", JsGens.alphanumeric
-                                           .optional(),
+                           "github", JsGens.alphanumeric.optional(),
                            "profession", JsGens.oneOf(professions),
                            "address", JsObjGen.of("city", JsGens.oneOf(cities),
                                                   "location", JsGens.tuple(JsGens.decimal,
@@ -144,8 +143,8 @@ JsObj b = parser.parse(jsonStr);
 
 /**
    @param gen generator to produce randomized input data
-   @param property the property to be tested
-   @param times number of iterations an input is produced and tested on the property
+   @param property a predicate that represents a property that the code under test  has to satisfy
+   @param times number of iterations that an input is generated and evaluated on the predicate
 */
 public void testProperty(JsGen<JsObj> gen,
                          Predicate<JsObj> property,
@@ -154,8 +153,8 @@ public void testProperty(JsGen<JsObj> gen,
 {
     for (int i = 0; i < times; i++)
     {
-      final JsObj obj = gen.apply(new Random())
-                           .get();
+      JsObj obj = gen.apply(new Random())
+                     .get();
       Assertions.assertTrue(property.test(obj));
     }
 }
@@ -171,7 +170,7 @@ generators for our tests is child's play. It has enormous advantages for develop
 
 Sometimes you need to generate a Json which key-value pairs are not independent to each other.
 Consider the following example. If the generated value for the key 'a' is Nothing, then no element is inserted.
-When the key 'a' doesnt exist, then an integer between 0 and 10 is associated to the key 'b', and then
+When the key 'a' doesn't exist, then an integer between 0 and 10 is associated to the key 'b', and then
 the same integer plus one is associated to the key 'c':
 
 ```

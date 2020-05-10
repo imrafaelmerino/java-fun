@@ -158,6 +158,8 @@ public void testProperty(JsGen<JsObj> gen,
 }
 
 
+
+
 ```
 
 As you can see, creating specs and generators is as simple as creating raw JSON. Writing specs and
@@ -173,9 +175,8 @@ the same integer plus one is associated to the key 'c':
 
 ```
 
-JsObjStateGen gen = JsObjStateGen.of("a", obj -> JsGens.oneOf(JsGens.alphabetic,
-                                                              JsGens.single(JsNothing.NOTHING)
-                                                             ),
+JsObjStateGen gen = JsObjStateGen.of("a", obj -> JsGens.alphabetic
+                                                       .optional(),
                                      "b", JsStateGens.ifNotContains("a",
                                                                     JsGens.choose(0,10)
                                                                     ),

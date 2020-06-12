@@ -9,7 +9,6 @@ import jsonvalues.JsValue;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import static java.util.Objects.requireNonNull;
 
 /**
  represent a generator of Json objects.
@@ -21,6 +20,7 @@ public class JsObjGen implements JsGen<JsObj> {
     private JsObjGen(final Map<String, JsGen<?>> bindings) {
         this.bindings = bindings;
     }
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -89,7 +89,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen15
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -162,7 +162,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen16
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -239,7 +239,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen17
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -320,7 +320,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen18
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -405,7 +405,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen19
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -494,6 +494,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen20
                                );
     }
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -558,7 +559,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen14
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -619,7 +620,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen13
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -676,7 +677,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen12
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -729,7 +730,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen11
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -778,7 +779,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen10
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -824,7 +825,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                );
     }
 
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -865,7 +866,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen8
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -902,7 +903,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen7
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -935,7 +936,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen6
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -964,7 +965,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen5
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -989,7 +990,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen4
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -1010,7 +1011,7 @@ public class JsObjGen implements JsGen<JsObj> {
                                 gen3
                                );
     }
-
+    @SuppressWarnings("squid:S00107")
     private JsObjGen(final String key,
                      final JsGen<?> gen,
                      final String key1,
@@ -1084,7 +1085,7 @@ public class JsObjGen implements JsGen<JsObj> {
                             gen2
         );
     }
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final JsGen<?> gen,
                               final String key1,
@@ -1104,7 +1105,7 @@ public class JsObjGen implements JsGen<JsObj> {
                             gen3
         );
     }
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final JsGen<?> gen,
                               final String key1,
@@ -1128,7 +1129,7 @@ public class JsObjGen implements JsGen<JsObj> {
                             gen4
         );
     }
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final JsGen<?> gen,
                               final String key1,
@@ -1156,7 +1157,7 @@ public class JsObjGen implements JsGen<JsObj> {
                             gen5
         );
     }
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final JsGen<?> gen,
                               final String key1,
@@ -1188,7 +1189,7 @@ public class JsObjGen implements JsGen<JsObj> {
                             gen6
         );
     }
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final JsGen<?> gen,
                               final String key1,
@@ -1225,7 +1226,7 @@ public class JsObjGen implements JsGen<JsObj> {
         );
 
     }
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final JsGen<?> gen,
                               final String key1,
@@ -1291,6 +1292,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen10 the mapping associated to the eleventh key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1362,6 +1364,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen11 the mapping associated to the eleventh key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1439,6 +1442,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen12 the mapping associated to the twelfth key,
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1522,6 +1526,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen13 the mapping associated to the thirteenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1611,6 +1616,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen14 the mapping associated to the fourteenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1706,6 +1712,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen15 the mapping associated to the fifteenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1807,6 +1814,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen16 the mapping associated to the sixteenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -1913,6 +1921,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen17 the mapping associated to the seventeenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -2025,6 +2034,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen18 the mapping associated to the eighteenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -2143,6 +2153,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen19 the mapping associated to the nineteenth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -2268,6 +2279,7 @@ public class JsObjGen implements JsGen<JsObj> {
      @param gen20 the mapping associated to the twentieth key
      @return a JsObjGen
      */
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final JsGen<?> gen1,
                               final String key2,
@@ -2351,20 +2363,7 @@ public class JsObjGen implements JsGen<JsObj> {
                             gen20
         );
     }
-    @SafeVarargs
-    public static JsObjGen of(final Tuple2<String, JsGen<?>> pair,
-                              final Tuple2<String, JsGen<?>>... others
-                             ) {
 
-        JsObjGen gen = new JsObjGen(requireNonNull(pair)._1,
-                                    pair._2
-        );
-        for (final Tuple2<String, JsGen<?>> other : requireNonNull(others))
-            gen = gen.set(other._1,
-                          other._2
-                         );
-        return gen;
-    }
 
     public JsObjGen set(final String key,
                         final JsGen<?> gen

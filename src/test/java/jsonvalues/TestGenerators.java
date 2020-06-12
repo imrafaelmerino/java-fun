@@ -4,7 +4,6 @@ import io.vavr.Tuple2;
 import jsonvalues.gen.JsGen;
 import jsonvalues.gen.JsGens;
 import jsonvalues.gen.JsObjGen;
-import jsonvalues.gen.state.JsStateGen;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
@@ -27,19 +26,6 @@ import static jsonvalues.spec.JsSpecs.*;
 
 public class TestGenerators {
 
-
-    public static void test(JsStateGen gen,
-                            Predicate<JsValue> condition,
-                            int times
-                           ) {
-        for (int i = 0; i < times; i++) {
-
-            final JsValue value = gen.apply(JsObj.empty())
-                                     .apply(new Random())
-                                     .get();
-            Assertions.assertTrue(condition.test(value));
-        }
-    }
 
     @Test
     public void test_js_array() {
@@ -90,43 +76,6 @@ public class TestGenerators {
         }
     }
 
-    @Test
-    public void test_pair_gen() {
-
-        JsObjGen gen = JsObjGen.of(new Tuple2<>("a",
-                                                JsGens.integer
-                                   ),
-                                   new Tuple2<>("b",
-                                                JsGens.str
-                                   ),
-                                   new Tuple2<>("c",
-                                                JsGens.bool
-                                   ),
-                                   new Tuple2<>("d",
-                                                alphabetic
-                                   ),
-                                   new Tuple2<>("e",
-                                                alphanumeric
-                                   )
-                                  );
-
-        test(gen,
-             v -> JsObjSpec.strict("a",
-                                   integer,
-                                   "b",
-                                   str,
-                                   "c",
-                                   bool,
-                                   "d",
-                                   str,
-                                   "e",
-                                   str
-                                  )
-                           .test(v.toJsObj())
-                           .isEmpty(),
-             1000
-            );
-    }
 
     @Test
     public void test_js_obj() {

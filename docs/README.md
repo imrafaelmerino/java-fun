@@ -6,7 +6,7 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/8.0.0-RC3)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/8.0.0-RC3/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/8.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/8.0.0/jar)
 [![](https://jitpack.io/v/imrafaelmerino/json-values.svg)](https://jitpack.io/#imrafaelmerino/json-values)
 
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
@@ -25,22 +25,22 @@
 ## <a name="introduction"><a/> Introduction
 Welcome to **json-values**, the first-ever Json library in _Java_ implemented with persistent data structures.
 
-One of the most important aspects of functional programming is immutable data structures, better known as values. Updating these structures using the copy-on-write approach is very inefficient, and this is the reason why persistent
+One of the most essential aspects of functional programming is immutable data structures, better known as values. Updating these structures using the copy-on-write approach is inefficient, and this is why persistent
 data structures were created. On the other hand, JSON is a lightweight, text-based, language-independent data interchange format. It's become so popular due to its simplicity.
 
-There are a lot of libraries out there to work with JSON in the JVM ecosystem; however, none of them use persistent data structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that? JSON is a great structure.
-It's simple, easy to aggregate, ease to create, easy to reason about, so why create yet another abstraction over JSON? Moreover, there are many architectures that work with JSON end-to-end. Going from JSON to objects or strings back and forth is not very
-efficient, especially when copy-on-write is the only option to avoid mutation. All these points are way better elaborated in the talk [the value of values](https://www.youtube.com/watch?v=-6BsiVyC1kM), a masterpiece from Rich Hickey.
+There are many libraries out there to work with JSON in the JVM ecosystem; however, none of them use persistent data structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that? JSON is a magnificent structure.
+It's simple, easy to aggregate, ease to create, easy to reason about, so why create yet another abstraction over JSON? Moreover, many architectures work with JSON end-to-end. Going from JSON to objects or strings back and forth is not
+efficient, especially when copy-on-write is the only option to avoid mutation.
 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 * You need to deal with Jsons, and you want to program following a functional style, **using functions and immutable types (or values)**,
-but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide Persistent Data Structures**.
-The thing is that Java 8 brought functions, lambdas, lazy evaluation to some extent, streams... but, without immutability,
+but you can't benefit from all the advantage that immutability brings to your code because **Java doesn't provide Persistent Data Structures**.
+The thing is that Java 8 brought functions, lambdas, lazy evaluation to some extent, and streams, but without immutability,
 something is still missing, and as _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
 * You manipulate Jsons all the time, and you'd like to do it with less ceremony. **json-values** is declarative and takes advantages of all the new features that were introduced
 in Java 8, like functions, suppliers, streams, and collectors, making json manipulation simple, fast, and efficient.
 * Simplicity matters, and I 'd argue that **json-values** is simple.
-* As a developer, I'm convinced that code should win arguments, so let me enumerate some examples.examples, where I
+* As a developer, I'm convinced that code should win arguments, so let me enumerate some examples, where I
 leave the functions passed in as arguments with no implementation for brevity reasons (go to the [project page](https://imrafaelmerino.github.io/json-values/) for further
 details)
 
@@ -64,14 +64,14 @@ a.union(b, JsArray.TYPE.MULTISET)
 
 a.intersection(b)
 ```
-I'd argue that it's very simple, expressive and concise. And that plus the fact that it's a persistent
+I'd argue that it's straightforward, expressive, and concise. And that plus the fact that it's a persistent
 data structure shows very well the essence of **json-values**.
 
-That was just a little taste! Data generation and validation are extremely important in software.
-If you struggle generating data for your tests, it slows you down and make your tests difficult to develop and maintain
+That was just a little taste! Data generation and validation are significant in software.
+If you struggle to generate data, it slows down the testing.
 On the other hand, corrupt data can propagate throughout your system and cause a nightmare. Errors that blow up in your face
 are way better! If you think about it, the definition, validation, and generation of a JSON value could be
-implemented using the same data structure; after all, the three of them are just bindings with different
+implemented using the same data structure; after all, the three are just bindings with different
 elements: values, generators, or specifications. Let's check out an example:
 
 ```
@@ -132,44 +132,12 @@ var parser = new JsObjParser(spec);
 var a = parser.parse(jsonBytes);
 var b = parser.parse(jsonStr);
 
-// given a generator you can define properties and test them using randomized inputs
-// this is a key concept in property-based-testing
-
-/**
-   @param gen generator to produce randomized input data
-   @param property a predicate that represents a property that the code under test  has to satisfy
-   @param times number of iterations that an input is generated and evaluated on the predicate
-*/
-public void testProperty(JsGen<JsObj> gen,
-                         Predicate<JsObj> property,
-                         int times
-                        )
-{
-    for (int i = 0; i < times; i++)
-    {
-      JsObj obj = gen.apply(new Random())
-                     .get();
-      Assertions.assertTrue(property.test(obj));
-    }
-}
-
-
 ```
-
-As you can see, creating specs, generators is as simple as creating raw JSON. Writing specs and
-generators for our tests is child's play. It has enormous advantages for development, such as:
-
-* Increase productivity.
-* More readable code. The more readable code is, the easier it is to maintain and reason about that code.
 
 We can create futures as well following the same philosophy:
 
 ```
-//given some futures
-
 CompletableFuture<JsValue> nameFut, ageFut, languagesFut, handleFut, professionFut, streetFut, lonFut, latFut, countryFut;
-
-// we can describe a functional effect that will return a Json
 
 var future = JsObjFuture.of("name", () -> nameFut,
                             "age", () -> ageFut,
@@ -177,48 +145,69 @@ var future = JsObjFuture.of("name", () -> nameFut,
                             "github", () -> handleFut,
                             "profession", () -> professionFut,
                             "address", JsObjFuture.of("street", streetFut,
-                                                      "location", JsArrayFuture.of(() -> latFut,
-                                                                                   () -> lonFut
-                                                                                  ),
+                                                      "location", tuple(() -> latFut,
+                                                                        () -> lonFut
+                                                                       ),
                                                       "country", () -> countryFut
                                                       )
                             );
-
-// and then execute it
 
 CompletableFuture<JsObj> completableFuture = future.get();
 
 ```
 
-To put data in and get data out in a composable and concise way, we can use optics. Lenses, optionals and prism have been
+We can even create suppliers:
+
+```
+//given some suppliers
+
+Supplier<JsValue> name, age, languages, handle, profession, street, lon, lat, country;
+
+var supplier = JsObjSupplier.of("name", name,
+                                "age", age,
+                                "languages", languages,
+                                "github", handle,
+                                "profession", profession,
+                                "address", JsObjFuture.of("street", street,
+                                                          "location", tuple(lat,
+                                                                            lon
+                                                                           ),
+                                                          "country", country
+                                                          )
+                                );
+
+JsObj obj = supplier.get();
+
+```
+
+
+We can use optics to put data in and get data out in a composable and concise way.Lenses, Optionals, and Prism have been
 defined for every json type.
 
 ```
-//let's define some optics to manipulate person Jsons
+Lens<JsObj,String> nameLens = JsObj.lens.str("name");
+Lens<JsObj,Integer> ageLens = JsObj.lens.intNum("age");
+Lens<JsObj,JsArray>   languagesLens = JsObj.lens.array("languages");
+Option<JsObj, String> githubOpt     = JsObj.optional.str("name");
+Lens<JsObj,String>    cityLens      = JsObj.lens.str(path("/address/city"));
+Lens<JsObj,Double> latitudeLens = JsObj.lens.doubleNum(path("/address/location/0"));
+Lens<JsObj,Double> longitudeLens = JsObj.lens.doubleNum(path("/address/location/1"));
+Lens<JsObj,JsValue> countryLens = JsObj.lens.value(path("/address/country"));
 
-var nameLens = JsObj.optics.lens.str("name");
-var ageLens = JsObj.optics.lens.intNum("age");
-var languagesLens = JsObj.optics.lens.array("languages");
-var githubOpt = JsObj.optics.optional.str("name");
-var cityLens = JsObj.optics.lens.str(path("/address/city"));
-var latitudeLens = JsObj.optics.lens.doubleNum(path("/address/location/0"));
-var longitudeLens = JsObj.optics.lens.doubleNum(path("/address/location/1"));
-var countryLens = JsObj.optics.lens.value(path("/address/country"));
+Function<Integer,Function<JsObj,JsObj>> incAge =
+                    i -> ageLens.modify.apply(n -> n+i);
+Function<String,Function<JsObj,JsObj>> addLanguage =
+                    lan -> languagesLens.modify.apply(a -> a.append(JsStr.of(lan)));
+Function<Function<Double,Double>,Function<JsObj,JsObj>> modifyLatitude = latitudeLens.modify::apply;
+Function<Function<Double,Double>,Function<JsObj,JsObj>> modifyLongitude = longitudeLens.modify::apply;
+Function<String,Function<JsObj,JsObj>> setCountry = c -> countryLens.set.apply(JsStr.of(c));
+Function<String,Function<JsObj,JsObj>> setName = nameLens.set::apply;
 
-// it's all about composition, expresiveness and error free code with no ceremony!
-
-var incAge = i -> ageLens.modify.apply(n -> n+i);
-var addLanguage = lan -> languagesLens.modify.apply(a -> a.append(lan));
-var modifyLatitude = fn -> latitudLens.modify.apply(fn);
-var modifyLongitude = fn -> longitudeLens.modify.apply(fn);
-var setCountry = c -> countryLens.set.apply(c)
-var setName = n -> nameLens.set.apply(n)
-
-var fn = setName.apply("Philip").andThen(incAge.apply(1))
-                                .andThen(addLanguage.apply("Lisp"))
-                                .andThen(setCountry.apply("ES"))
-                                .andThen(modifyLatitude.apply(l -> l + 0.5))
-                                .andThen(modifyLongitude.apply(l -> l + 0.8));
+Function<JsObj,JsObj> fn = setName.apply("Philip").andThen(incAge.apply(1))
+                                  .andThen(addLanguage.apply("Lisp"))
+                                  .andThen(setCountry.apply("ES"))
+                                  .andThen(modifyLatitude.apply(l -> l + 0.5))
+                                  .andThen(modifyLongitude.apply(l -> l + 0.8));
 
 var newPerson =  fn.apply(person);
 
@@ -240,12 +229,10 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>8.0.0-RC3</version>
+  <version>8.0.0</version>
 </dependency>
 ```
 
-## <a ><a/> Documentation
-Go to https://imrafaelmerino.github.io/json-values/
 ## <a name="wth"><a/> Want to help
 I've set up a separate document for [contributors](./CONTRIBUTING.md).
 ## <a name="develop"><a/> Develop
@@ -261,8 +248,9 @@ After the development of json-values, I published two more related projects:
 project I'm especially proud of. I think there is no Json generator more declarative, concise, and why not, beautiful in the
 whole wide world! If I'm wrong, please let me know!
 
-json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson]() to parse a string/bytes into
+json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
 
-
+I've written about json-values on my blog:
+* [The value of json values - Recursive data structures](http://blog.imrafaelmerino.dev/2020/06/the-value-of-json-values-recursive-data.html)
 

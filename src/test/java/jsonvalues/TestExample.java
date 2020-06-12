@@ -1,24 +1,22 @@
 package jsonvalues;
 
-import jsonvalues.console.JsArrayIO;
+import jsonvalues.console.JsArrayConsole;
 import jsonvalues.console.JsIOs;
-import jsonvalues.console.JsObjIO;
-import jsonvalues.future.JsArrayFuture;
-import jsonvalues.future.JsObjFuture;
+import jsonvalues.console.JsObjConsole;
 import jsonvalues.gen.JsGens;
 import jsonvalues.gen.JsObjGen;
+import jsonvalues.spec.JsErrorPair;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-
-import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class TestExample {
 
@@ -42,27 +40,16 @@ public class TestExample {
                                                            JsSpecs.str.nullable(),
                                                            "coordinates",
                                                            JsSpecs.tuple(JsSpecs.decimal,
-                                                                         JsSpecs.any,
                                                                          JsSpecs.decimal
                                                                         )
                                                           )
                                          );
 
-        JsObj person = JsObj.of("name",
-                                JsStr.of("Rafael"),
-                                "surname",
-                                JsStr.of("Merino García"),
-                                "languages",
-                                JsArray.of("Haskell",
-                                           "Java",
-                                           "Clojure",
-                                           "Scala",
-                                           "Erlang",
-                                           "Prolog"),
-                                "age",
-                                JsInt.of(37),
-                                "address",
-                                JsObj.of("street",
+        JsObj person = JsObj.of("name", JsStr.of("Rafael"),
+                                "surname", JsStr.of("Merino García"),
+                                "languages", JsArray.of("Java", "Clojure", "Scala"),
+                                "age", JsInt.of(37),
+                                "address", JsObj.of("street",
                                          JsStr.of("Elm Street"),
                                          "number",
                                          JsInt.of(12),
@@ -77,28 +64,29 @@ public class TestExample {
 
         JsObjParser parser = new JsObjParser(spec);
 
-        Assertions.assertTrue(spec.test(person)
+        Set<JsErrorPair> test = spec.test(person);
+        Assertions.assertTrue(test
                                   .isEmpty());
 
         Assertions.assertEquals(person,
                                 parser.parse(person.toPrettyString()));
 
 
-        JsStrLens<JsObj>       nameLens   = JsObj.optics.lens.str("name");
+        JsStrLens<JsObj>       nameLens   = JsObj.lens.str("name");
 
-        Option<JsObj, String>  surnameOpt = JsObj.optics.optional.str("surname");
+        Option<JsObj, String>  surnameOpt = JsObj.optional.str("surname");
 
-        Option<JsObj, Integer> ageOpt     = JsObj.optics.optional.intNum("age");
-        JsStrLens<JsObj>       streetLens = JsObj.optics.lens.str(JsPath.path("/address/street"));
-        JsValueLens<JsObj>     cityLens   = JsObj.optics.lens.value(JsPath.path("/address/city"));
+        Option<JsObj, Integer> ageOpt     = JsObj.optional.intNum("age");
+        JsStrLens<JsObj>       streetLens = JsObj.lens.str(JsPath.path("/address/street"));
+        JsValueLens<JsObj>     cityLens   = JsObj.lens.value(JsPath.path("/address/city"));
 
-        JsArrayLens<JsObj> languagesLens = JsObj.optics.lens.array("languages");
+        JsArrayLens<JsObj> languagesLens = JsObj.lens.array("languages");
 
-        JsValueLens<JsObj> numberLens = JsObj.optics.lens.value(JsPath.path("/address/number"));
+        JsValueLens<JsObj> numberLens = JsObj.lens.value(JsPath.path("/address/number"));
 
-        JsDoubleLens<JsObj> latitudeLens = JsObj.optics.lens.doubleNum(JsPath.path("/address/coordinates/0"));
+        JsDoubleLens<JsObj> latitudeLens = JsObj.lens.doubleNum(JsPath.path("/address/coordinates/0"));
 
-        JsDoubleLens<JsObj> longitudeLens = JsObj.optics.lens.doubleNum(JsPath.path("/address/coordinates/1"));
+        JsDoubleLens<JsObj> longitudeLens = JsObj.lens.doubleNum(JsPath.path("/address/coordinates/1"));
 
         IntFunction<Function<JsObj, JsObj>> incAge = n -> ageOpt.modify.apply(i -> i + n);
 
@@ -106,7 +94,8 @@ public class TestExample {
 
         Function<JsObj, JsObj> nameToUppercase = nameLens.modify.apply(String::toUpperCase);
 
-        Function<String, Function<JsObj, JsObj>> addLanguage = language -> languagesLens.modify.apply(a -> a.append(JsStr.of(language)));
+        Function<String, Function<JsObj, JsObj>> addLanguage =
+                language -> languagesLens.modify.apply(a -> a.append(JsStr.of(language)));
 
         Function<JsObj, JsObj> modifyPerson = incAge.apply(1)
                                                     .andThen(nameToUppercase)
@@ -121,7 +110,6 @@ public class TestExample {
         JsObj newPerson = modifyPerson.apply(person);
 
 
-        System.out.println(newPerson);
         Assertions.assertEquals(ageOpt.get.apply(newPerson),
                                 ageOpt.get.apply(person)
                                           .map(i -> i + 1));
@@ -154,6 +142,8 @@ public class TestExample {
                                    JsGens.alphabetic,
                                    "surname",
                                    JsGens.alphabetic.optional(),
+                                   "languages",
+                                   JsGens.choose(1,10).flatMap(n -> JsGens.array(JsGens.alphabetic, n.value)),
                                    "age",
                                    JsGens.choose(16,
                                                  100
@@ -177,52 +167,53 @@ public class TestExample {
                                               )
                                   );
 
-        JsObjFuture future = JsObjFuture.of("name",
-                                            () -> completedFuture(JsStr.of("a")),
-                                            "surname",
-                                            () -> completedFuture(JsObj.empty()),
-                                            "age",
-                                            () -> completedFuture(JsInt.of(1)),
-                                            "address",
-                                            JsObjFuture.of("street",
-                                                           () -> completedFuture(JsStr.of("b")),
-                                                           "number",
-                                                           () -> completedFuture(JsStr.of("1")),
-                                                           "coordinates",
-                                                           JsArrayFuture.of(() -> completedFuture(JsDouble.of(1.5)),
-                                                                            () -> completedFuture(JsDouble.of(1.5))
-                                                                           )
-                                                          )
-                                           );
 
-        JsObjIO consoleIO = JsObjIO.of("name",
-                                       JsIOs.read(JsSpecs.str),
-                                       "surname",
-                                       JsIOs.read(JsSpecs.str),
-                                       "age",
-                                       JsIOs.read(JsSpecs.integer),
-                                       "address",
-                                       JsObjIO.of("street",
-                                                  JsIOs.read(JsSpecs.str),
-                                                  "number",
-                                                  JsIOs.read(JsSpecs.str),
-                                                  "coordinates",
-                                                  JsArrayIO.of(JsIOs.read(JsSpecs.decimal),
-                                                               JsIOs.read(JsSpecs.decimal)
-                                                              )
-                                                 )
-                                      );
+
+        JsObjConsole consoleIO = JsObjConsole.of("name",
+                                                 JsIOs.read(JsSpecs.str),
+                                                 "surname",
+                                                 JsIOs.read(JsSpecs.str),
+                                                 "age",
+                                                 JsIOs.read(JsSpecs.integer),
+                                                 "address",
+                                                 JsObjConsole.of("street",
+                                                                 JsIOs.read(JsSpecs.str),
+                                                                 "number",
+                                                                 JsIOs.read(JsSpecs.str),
+                                                                 "coordinates",
+                                                                 JsArrayConsole.tuple(JsIOs.read(JsSpecs.decimal),
+                                                                                      JsIOs.read(JsSpecs.decimal)
+                                                                                     )
+                                                                )
+                                                );
 
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
 
 
 
-        System.out.println(JsStr.prism.modify(String::toLowerCase)
-                                      .apply(JsInt.of(1)));
+        JsObjConsole consoleIO = JsObjConsole.of("name",
+                                                 JsIOs.read(JsSpecs.str),
+                                                 "surname",
+                                                 JsIOs.read(JsSpecs.str),
+                                                 "age",
+                                                 JsIOs.read(JsSpecs.integer),
+                                                 "address",
+                                                 JsObjConsole.of("street",
+                                                                 JsIOs.read(JsSpecs.str),
+                                                                 "number",
+                                                                 JsIOs.read(JsSpecs.str),
+                                                                 "coordinates",
+                                                                 JsArrayConsole.tuple(JsIOs.read(JsSpecs.decimal),
+                                                                                      JsIOs.read(JsSpecs.decimal)
+                                                                                     )
+                                                                )
+                                                );
+
+        System.out.println(consoleIO.exec());
 
     }
 }

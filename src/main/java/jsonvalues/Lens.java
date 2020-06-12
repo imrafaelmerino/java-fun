@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A Lens is an optic that can be seen as a pair of functions:
  {@code
@@ -30,6 +32,16 @@ public class Lens<S, O> {
    * function to modify the whole by setting the subpart
    */
   public final Function<O, Function<S, S>> set;
+
+    /**
+     find if the target satisfies the predicate
+     */
+  public final Function<Predicate<O>,Function<S, Optional<O>>> find;
+
+    /**
+     check if there is a target and it satisfies the predicate
+     */
+  public final Function<Predicate<O>,Predicate<S>> exists;
   /**
    * function to modify the whole by modifying the subpart with a function
    */
@@ -38,39 +50,23 @@ public class Lens<S, O> {
   Lens(final Function<S, O> get,
        final Function<O, Function<S, S>> set) {
 
-    this.modify = f -> json -> set.apply(f.apply(get.apply(json))).apply(json);
     this.set = set;
     this.get = get;
-
+    this.modify = f -> json -> set.apply(f.apply(get.apply(json))).apply(json);
+    this.find = predicate -> s -> predicate.test(get.apply(s)) ?
+                                     Optional.of((get.apply(s))) :
+                                     Optional.empty();
+    this.exists = predicate -> s -> predicate.test(get.apply(s));
   }
 
-  /**
-   * find if the target satisfies the predicate
-   *
-   * @param predicate the predicate
-   * @return a function from the whole to an optional subpart
-   */
-  public Function<S, Optional<O>> find(final Predicate<O> predicate) {
-    return s -> predicate.test(get.apply(s)) ?
-      Optional.of((get.apply(s))) :
-      Optional.empty();
-  }
 
-  public <A> Function<S,A> compose(Lens<O,A> other){
-      //TODO
-      return null;
-  }
+  public <T> Option<S, T> compose(final Prism<O, T> prism) {
+        return new Option<>(json -> requireNonNull(prism).getOptional.apply(get.apply(json)),
+                            value -> json -> set.apply(prism.reverseGet.apply(value))
+                                                .apply(json)
+        );
 
-  /**
-   * check if there is a target and it satisfies the predicate
-   *
-   * @param predicate the predicate
-   * @return a predicate on the whole
-   */
-  public Predicate<S> exists(final Predicate<O> predicate) {
-      Objects.requireNonNull(predicate);
-    return s -> predicate.test(get.apply(s));
-  }
 
+    }
 
 }

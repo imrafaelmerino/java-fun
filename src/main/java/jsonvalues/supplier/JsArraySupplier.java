@@ -3,7 +3,6 @@ package jsonvalues.supplier;
 import io.vavr.collection.Vector;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
-import java.util.Arrays;
 import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
@@ -28,11 +27,14 @@ public class JsArraySupplier implements java.util.function.Supplier<JsArray> {
     private JsArraySupplier() {
     }
 
+    @SafeVarargs
     private JsArraySupplier(final Supplier<? extends JsValue> fut,
                             final Supplier<? extends JsValue>... others
                            ) {
-        array = array.append(fut)
-                     .appendAll(Arrays.asList(others));
+        array = array.append(fut);
+        for (final Supplier<? extends JsValue> other : others) {
+            array = array.append(other);
+        }
     }
 
     /**
@@ -42,9 +44,9 @@ public class JsArraySupplier implements java.util.function.Supplier<JsArray> {
      @return a new JsArraySupplier
      */
     @SafeVarargs
-    public static JsArraySupplier of(final Supplier<? extends JsValue> head,
-                                     final Supplier<? extends JsValue>... tail
-                                    ) {
+    public static JsArraySupplier tuple(final Supplier<? extends JsValue> head,
+                                        final Supplier<? extends JsValue>... tail
+                                       ) {
         return new JsArraySupplier(requireNonNull(head),
                                    requireNonNull(tail)
         );

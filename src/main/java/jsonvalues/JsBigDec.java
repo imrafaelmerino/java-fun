@@ -114,7 +114,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
      returns true if this bigdecimal and the specified biginteger represent the same number
 
      @param jsBigInt the specified JsBigInt
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsBigInt jsBigInt) {
         final Optional<BigInteger> optional = bigIntegerExact();
@@ -126,7 +126,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
      returns true if this bigdecimal and the specified integer represent the same number
 
      @param jsInt the specified JsInt
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsInt jsInt) {
         final OptionalInt optional = intValueExact();
@@ -137,7 +137,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
      returns true if this bigdecimal and the specified long represent the same number
 
      @param jsLong the specified JsLong
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsLong jsLong) {
         final OptionalLong optional = longValueExact();
@@ -148,7 +148,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
      returns true if this bigdecimal and the specified double represent the same number
 
      @param jsDouble the specified JsDouble
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsDouble jsDouble) {
 

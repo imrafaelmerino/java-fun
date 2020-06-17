@@ -19,15 +19,15 @@ import static java.util.Objects.requireNonNull;
  implements two kind of methods:
  <ul>
  <li>Classificatory methods, which starts with the prefix <b>isXXX</b></li>
- <li>Accessory methods to convert the JsElem to the real implementation, which starts with the prefix asJsXXX</li>
+ <li>Accessory methods to convert the JsValue to the real implementation, which starts with the prefix asJsXXX</li>
  </ul>
  */
 public interface JsValue {
     int id();
 
     /**
-     @return this JsElem as a JsBool
-     @throws UserError if this JsElem is not a JsBool
+     @return this JsValue as a JsBool
+     @throws UserError if this JsValue is not a JsBool
      */
     default JsBool toJsBool() {
         try {
@@ -39,7 +39,7 @@ public interface JsValue {
     }
 
     /**
-     @return true if this JsElem is a JsBool
+     @return true if this JsValue is a JsBool
      */
     default boolean isBool() {
         return false;
@@ -49,21 +49,21 @@ public interface JsValue {
      returns true if this elem and the given have the same type
 
      @param that the given elem
-     @return true if this JsElem and the given have the same type
+     @return true if this JsValue and the given have the same type
      */
     default boolean isSameType(final JsValue that) {
         return this.getClass() == requireNonNull(that).getClass();
     }
 
     /**
-     @return true if this JsElem is a JsBool and it's true
+     @return true if this JsValue is a JsBool and it's true
      */
     default boolean isTrue() {
         return false;
     }
 
     /**
-     @return true if this JsElem is a JsBool and it's false
+     @return true if this JsValue is a JsBool and it's false
      */
     default boolean isFalse() {
         return false;
@@ -73,22 +73,22 @@ public interface JsValue {
      Returns true if this elem is a JsInt and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsInt and satisfies the predicate
+     @return true if this JsValue is a JsInt and satisfies the predicate
      */
     default boolean isInt(IntPredicate predicate) {
         return isInt() && predicate.test(toJsInt().value);
     }
 
     /**
-     @return true if this JsElem is a JsInt
+     @return true if this JsValue is a JsInt
      */
     default boolean isInt() {
         return false;
     }
 
     /**
-     @return this JsElem as a JsInt
-     @throws UserError if this JsElem is not a JsInt
+     @return this JsValue as a JsInt
+     @throws UserError if this JsValue is not a JsInt
      */
     default JsInt toJsInt() {
         try {
@@ -102,22 +102,22 @@ public interface JsValue {
      Returns true if this elem is a JsDouble and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsDouble and satisfies the predicate
+     @return true if this JsValue is a JsDouble and satisfies the predicate
      */
     default boolean isDouble(DoublePredicate predicate) {
         return isDouble() && predicate.test(toJsDouble().value);
     }
 
     /**
-     @return true if this JsElem is a JsDouble
+     @return true if this JsValue is a JsDouble
      */
     default boolean isDouble() {
         return false;
     }
 
     /**
-     @return this JsElem as a JsDouble
-     @throws UserError if this JsElem is not a JsDouble
+     @return this JsValue as a JsDouble
+     @throws UserError if this JsValue is not a JsDouble
      */
     default JsDouble toJsDouble() {
         try {
@@ -131,22 +131,22 @@ public interface JsValue {
      Returns true if this elem is a JsBigDec and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsBigDec and satisfies the predicate
+     @return true if this JsValue is a JsBigDec and satisfies the predicate
      */
     default boolean isBigDec(Predicate<BigDecimal> predicate) {
         return isBigDec() && predicate.test(toJsBigDec().value);
     }
 
     /**
-     @return true if this JsElem is a JsBigDec
+     @return true if this JsValue is a JsBigDec
      */
     default boolean isBigDec() {
         return false;
     }
 
     /**
-     @return this JsElem as a JsBigDec
-     @throws UserError if this JsElem is not a JsBigDec or a JsDouble
+     @return this JsValue as a JsBigDec
+     @throws UserError if this JsValue is not a JsBigDec or a JsDouble
      */
     default JsBigDec toJsBigDec() {
         try {
@@ -161,22 +161,22 @@ public interface JsValue {
      Returns true if this elem is a JsLong and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsLong and satisfies the predicate
+     @return true if this JsValue is a JsLong and satisfies the predicate
      */
     default boolean isLong(LongPredicate predicate) {
         return isLong() && predicate.test(toJsLong().value);
     }
 
     /**
-     @return true if this JsElem is a JsLong
+     @return true if this JsValue is a JsLong
      */
     default boolean isLong() {
         return false;
     }
 
     /**
-     @return this JsElem as a JsLong
-     @throws UserError if this JsElem is not a JsLong or a JsInt
+     @return this JsValue as a JsLong
+     @throws UserError if this JsValue is not a JsLong or a JsInt
      */
     default JsLong toJsLong() {
         try {
@@ -188,28 +188,28 @@ public interface JsValue {
     }
 
     /**
-     @return true if this JsElem is a not a Json (neither JsObj nor JsArray)
+     @return true if this JsValue is a not a Json (neither JsObj nor JsArray)
      */
     default boolean isNotJson() {
         return !isJson();
     }
 
     /**
-     @return true if this JsElem is a Json (JsObj or JsArray)
+     @return true if this JsValue is a Json (JsObj or JsArray)
      */
     default boolean isJson() {
         return isObj() || isArray();
     }
 
     /**
-     @return true if this JsElem is a JsObj
+     @return true if this JsValue is a JsObj
      */
     default boolean isObj() {
         return false;
     }
 
     /**
-     @return true if this JsElem is a JsArray
+     @return true if this JsValue is a JsArray
      */
 
     default boolean isArray() {
@@ -220,15 +220,15 @@ public interface JsValue {
      Returns true if this elem is a Json and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a Json and satisfies the predicate
+     @return true if this JsValue is a Json and satisfies the predicate
      */
     default boolean isJson(Predicate<Json<?>> predicate) {
         return isJson() && predicate.test(toJson());
     }
 
     /**
-     @return this JsElem as a Json
-     @throws UserError if this JsElem is not a JsObj or a JsArray
+     @return this JsValue as a Json
+     @throws UserError if this JsValue is not a JsObj or a JsArray
      */
     //S1452: Json<?> has only two possible types: JsObj or JsArr,
     @SuppressWarnings("squid:S1452")
@@ -241,8 +241,8 @@ public interface JsValue {
     }
 
     /**
-     @return this JsElem as a JsObj
-     @throws UserError if this JsElem is not a JsObj
+     @return this JsValue as a JsObj
+     @throws UserError if this JsValue is not a JsObj
      */
     default JsObj toJsObj() {
         try {
@@ -253,8 +253,8 @@ public interface JsValue {
     }
 
     /**
-     @return this JsElem as a JsArray
-     @throws UserError if this JsElem is not a JsArray
+     @return this JsValue as a JsArray
+     @throws UserError if this JsValue is not a JsArray
      */
     default JsArray toJsArray() {
         try {
@@ -268,7 +268,7 @@ public interface JsValue {
      Returns true if this elem is a JsObj and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsObj and satisfies the predicate
+     @return true if this JsValue is a JsObj and satisfies the predicate
      */
     default boolean isObj(Predicate<JsObj> predicate) {
         return isObj() && predicate.test(toJsObj());
@@ -278,15 +278,15 @@ public interface JsValue {
      Returns true if this elem is a JsArray and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsArray and satisfies the predicate
+     @return true if this JsValue is a JsArray and satisfies the predicate
      */
     default boolean isArray(Predicate<JsArray> predicate) {
         return isArray() && predicate.test(toJsArray());
     }
 
     /**
-     @return this JsElem as a JsStr
-     @throws UserError if this JsElem is not a JsStr
+     @return this JsValue as a JsStr
+     @throws UserError if this JsValue is not a JsStr
      */
     default JsNumber toJsNumber() {
         try {
@@ -300,22 +300,22 @@ public interface JsValue {
      Returns true if this elem is a JsBigInt and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsBigInt and satisfies the predicate
+     @return true if this JsValue is a JsBigInt and satisfies the predicate
      */
     default boolean isBigInt(Predicate<BigInteger> predicate) {
         return isBigInt() && predicate.test(toJsBigInt().value);
     }
 
     /**
-     @return true if this JsElem is a JsBigInt
+     @return true if this JsValue is a JsBigInt
      */
     default boolean isBigInt() {
         return false;
     }
 
     /**
-     @return this JsElem as a JsBigInt
-     @throws UserError if this JsElem is not a JsBigInt or JsLong or JsInt
+     @return this JsValue as a JsBigInt
+     @throws UserError if this JsValue is not a JsBigInt or JsLong or JsInt
      */
     default JsBigInt toJsBigInt() {
         try {
@@ -328,7 +328,7 @@ public interface JsValue {
     }
 
     /**
-     @return true if this JsElem is a JsStr that contains an instant in the format {@link DateTimeFormatter#ISO_INSTANT}
+     @return true if this JsValue is a JsStr that contains an instant in the format {@link DateTimeFormatter#ISO_INSTANT}
      */
     default boolean isInstant() {
         return isStr(str ->
@@ -346,22 +346,22 @@ public interface JsValue {
      Returns true if this elem is a JsStr and satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsStr and satisfies the predicate
+     @return true if this JsValue is a JsStr and satisfies the predicate
      */
     default boolean isStr(Predicate<String> predicate) {
         return isStr() && predicate.test(toJsStr().value);
     }
 
     /**
-     @return true if this JsElem is a JsStr
+     @return true if this JsValue is a JsStr
      */
     default boolean isStr() {
         return false;
     }
 
     /**
-     @return this JsElem as a JsStr
-     @throws UserError if this JsElem is not a JsStr
+     @return this JsValue as a JsStr
+     @throws UserError if this JsValue is not a JsStr
      */
     default JsStr toJsStr() {
         try {
@@ -375,7 +375,7 @@ public interface JsValue {
      Returns true if this elem is a JsStr that contains an Instant and  satisfies the given predicate
 
      @param predicate the given predicate
-     @return true if this JsElem is a JsStr that contains an Instant and satisfies the predicate
+     @return true if this JsValue is a JsStr that contains an Instant and satisfies the predicate
      */
     default boolean isInstant(Predicate<Instant> predicate) {
         return isStr(str ->
@@ -392,10 +392,10 @@ public interface JsValue {
     }
 
     /**
-     return true if this JsElem is a JsStr that contains a local date that can be parsed with the given formatter
+     return true if this JsValue is a JsStr that contains a local date that can be parsed with the given formatter
 
      @param formatter the given formatter
-     @return true if this JsElem is a JsStr that contains a local date that can be parsed with the given formatter
+     @return true if this JsValue is a JsStr that contains a local date that can be parsed with the given formatter
      */
     default boolean isLocalDate(DateTimeFormatter formatter) {
         requireNonNull(formatter);
@@ -414,12 +414,12 @@ public interface JsValue {
     }
 
     /**
-     return true if this JsElem is a JsStr that contains a local date that can be parsed with the given formatter
+     return true if this JsValue is a JsStr that contains a local date that can be parsed with the given formatter
      and satisfies the given predicate
 
      @param formatter the given formatter
      @param predicate the given predicate
-     @return true if this JsElem is a JsStr that contains a local date that can be parsed with the formatter
+     @return true if this JsValue is a JsStr that contains a local date that can be parsed with the formatter
      and satisfies the  predicate
      */
     default boolean isLocalDate(DateTimeFormatter formatter,
@@ -444,10 +444,10 @@ public interface JsValue {
     }
 
     /**
-     return true if this JsElem is a JsStr that contains a local date-time that can be parsed with the given formatter
+     return true if this JsValue is a JsStr that contains a local date-time that can be parsed with the given formatter
 
      @param formatter the given formatter
-     @return true if this JsElem is a JsStr that contains a local date-time that can be parsed with the given formatter
+     @return true if this JsValue is a JsStr that contains a local date-time that can be parsed with the given formatter
      */
     default boolean isLocalDateTime(DateTimeFormatter formatter) {
         requireNonNull(formatter);
@@ -466,12 +466,12 @@ public interface JsValue {
     }
 
     /**
-     return true if this JsElem is a JsStr that contains a local date-time that can be parsed with the given formatter
+     return true if this JsValue is a JsStr that contains a local date-time that can be parsed with the given formatter
      and satisfies the given predicate
 
      @param formatter the given formatter
      @param predicate the given predicate
-     @return true if this JsElem is a JsStr that contains a local date-time that can be parsed with the formatter
+     @return true if this JsValue is a JsStr that contains a local date-time that can be parsed with the formatter
      and satisfies the  predicate
      */
     default boolean isLocalDateTime(DateTimeFormatter formatter,

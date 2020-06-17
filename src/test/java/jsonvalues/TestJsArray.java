@@ -18,6 +18,20 @@ import static jsonvalues.JsPath.path;
 
 public class TestJsArray {
 
+
+    @Test
+    public void test_set_and_get_with_padding(){
+
+        JsArray array = JsArray.empty()
+                             .set(JsPath.fromIndex(2),
+                                  JsInt.of(1),
+                                  JsInt.of(0));
+        Assertions.assertTrue(array.getInt(JsPath.fromIndex(0))==0);
+        Assertions.assertTrue(array.getInt(JsPath.fromIndex(1))==0);
+        Assertions.assertTrue(array.getInt(JsPath.fromIndex(2))==1);
+
+
+    }
     @Test
     public void test_contains_element_in_js_array() {
         JsArray arr = JsArray.of(JsInt.of(1),

@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
  <pre>
  Represents a json of type T, where T is the type of the container, either a JsObj or a JsArray.
  A json of any type can be modeled as a set of pairs {@link JsPair}=({@link JsPath}, {@link JsValue}), where:
- - a JsElem is a {@link JsBool} or {@link JsStr} or {@link JsNumber} or {@link JsNull}, or another {@link Json} like {@link JsObj} or {@link JsArray},
+ - a JsValue is a {@link JsBool} or {@link JsStr} or {@link JsNumber} or {@link JsNull}, or another {@link Json} like {@link JsObj} or {@link JsArray},
  what makes the data structure recursive.
  - a JsPath represents the location of the element in the json.
  For example, the json
@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  in a json doesn't change the json, which is very convenient when passing functions as parameters to
  put data in:
  //all the logic goes into the supplier{@code
-Supplier<JsElem> supplier = ()-> (doesnt-put-anything-condition) ? JsNothing.NOTHING : JsInt.of(2);
+Supplier<JsValue> supplier = ()-> (doesnt-put-anything-condition) ? JsNothing.NOTHING : JsInt.of(2);
 json.putIfAbsent(path,supplier)
 }
  Another way to see a json is like a stream of pairs, which opens the door to doing all the operations
@@ -64,8 +64,8 @@ public interface Json<T extends Json<T>> extends JsValue {
     /**
      Returns true if this json contains the given element in the first level.
 
-     @param element the give element JsElem whose presence in this JsArray is to be tested
-     @return true if this JsArray contains the  JsElem
+     @param element the give element JsValue whose presence in this JsArray is to be tested
+     @return true if this JsArray contains the  JsValue
      */
     boolean containsValue(final JsValue element);
 
@@ -74,7 +74,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      Returns true if an element exists in this json at the given path.
 
      @param path the JsPath
-     @return true if a JsElem exists at the JsPath
+     @return true if a JsValue exists at the JsPath
      */
     default boolean containsPath(final JsPath path) {
         return get(requireNonNull(path)).isNotNothing();
@@ -85,7 +85,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      Returns the element located at the given path or {@link JsNothing} if it doesn't exist.
 
      @param path the JsPath object of the element that will be returned
-     @return the JsElem located at the given JsPath or JsNothing if it doesn't exist
+     @return the JsValue located at the given JsPath or JsNothing if it doesn't exist
      */
     JsValue get(final JsPath path);
 
@@ -393,19 +393,35 @@ public interface Json<T extends Json<T>> extends JsValue {
 
 
     /**
-     Inserts the element at the path in this json, replacing any existing element and filling with {@link jsonvalues.JsNull} empty
-     indexes in arrays when necessary.
+     Inserts the element at the path in this json, replacing any existing element and filling with padElement
+     empty indexes in arrays when necessary.
      <p>
      The same instance is returned when the head of the path is a key and this is an array or the head
      of the path is an index and this is an object or the element is {@link JsNothing}
 
      @param path    the JsPath object where the element will be inserted at
-     @param element the JsElem that will be inserted
+     @param element the JsValue that will be inserted
+     @param padElement the JsValue that will be inserted in arrays when padding is necessary
      @return the same instance or a new json of the same type T
      */
     T set(final JsPath path,
-          final JsValue element);
+          final JsValue element,
+          final JsValue padElement);
+    /**
+     Inserts the element at the path in this json, replacing any existing element and filling with
+     {@link jsonvalues.JsNull} empty indexes in arrays when necessary.
+     <p>
+     The same instance is returned when the head of the path is a key and this is an array or the head
+     of the path is an index and this is an object or the element is {@link JsNothing}
 
+     @param path    the JsPath object where the element will be inserted at
+     @param element the JsValue that will be inserted
+     @return the same instance or a new json of the same type T
+     */
+    default T set(final JsPath path,
+                  final JsValue element) {
+        return set(path,element,JsNull.NULL);
+    }
 
     /**
      Performs a reduction on the values that satisfy the predicate in the first level of this json. The reduction is performed mapping

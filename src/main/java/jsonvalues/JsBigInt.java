@@ -108,7 +108,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      returns true if this biginteger and the specified integer represent the same number
 
      @param jsInt the specified JsInt
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsInt jsInt) {
         final Optional<Integer> optional = intValueExact();
@@ -119,7 +119,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      returns true if this bigint and the specified long represent the same number
 
      @param jsLong the specified JsLong
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsLong jsLong) {
         final Optional<Long> optional = longValueExact();
@@ -130,7 +130,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      returns true if this bigint and the specified bigdecimal represent the same number
 
      @param jsBigDec the specified JsBigDec
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     private boolean equals(JsBigDec jsBigDec) {
         return requireNonNull(jsBigDec).equals(this);
@@ -140,7 +140,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      returns true if this bigint and the specified double represent the same number
 
      @param jsDouble the specified JsDouble
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     private boolean equals(JsDouble jsDouble) {
         return requireNonNull(jsDouble).equals(this);

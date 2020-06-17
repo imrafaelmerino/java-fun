@@ -116,7 +116,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      returns true if this double and the specified long represent the same number
 
      @param jsLong the specified JsLong
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     private boolean equals(JsLong jsLong) {
         return requireNonNull(jsLong).equals(this);
@@ -126,7 +126,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      returns true if this double and the specified integer represent the same number
 
      @param jsInt the specified JsInt
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     private boolean equals(JsInt jsInt) {
         return requireNonNull(jsInt).equals(this);
@@ -136,7 +136,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      returns true if this double and the specified biginteger represent the same number
 
      @param jsBigInt the specified JsBigInt
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     boolean equals(JsBigInt jsBigInt) {
 
@@ -149,7 +149,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      returns true if this double and the specified bigdecimal represent the same number
 
      @param jsBigDec the specified JsBigDec
-     @return true if both JsElem are the same value
+     @return true if both JsValue are the same value
      */
     private boolean equals(JsBigDec jsBigDec) {
         return requireNonNull(jsBigDec).equals(this);

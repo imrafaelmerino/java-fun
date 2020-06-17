@@ -20,11 +20,11 @@ final class MatchExp {
     /**
      return a matching expression to extract objs and arrays out of json elements.
 
-     @param ifObj   function to be applied if the JsElem is a JsObj
-     @param ifArr   function to be applied if the JsElem is not a JsArr
-     @param ifValue function to be applied if the JsElem is not a Json
+     @param ifObj   function to be applied if the JsValue is a JsObj
+     @param ifArr   function to be applied if the JsValue is not a JsArr
+     @param ifValue function to be applied if the JsValue is not a Json
      @param <T>     the type of the result
-     @return a function that takes a JsElem and returns an object of type T
+     @return a function that takes a JsValue and returns an object of type T
      */
     public static <T> Function<JsValue, T> ifJsonElse(final Function<? super JsObj, T> ifObj,
                                                       final Function<? super JsArray, T> ifArr,
@@ -42,10 +42,10 @@ final class MatchExp {
     /**
      return a matching expression to extract jsons out of json elements.
 
-     @param ifJson    function to be applied if the JsElem is a Json
-     @param ifNotJson function to be applied if the JsElem is not a Json
+     @param ifJson    function to be applied if the JsValue is a Json
+     @param ifNotJson function to be applied if the JsValue is not a Json
      @param <T>       the type of the result
-     @return a function that takes a JsElem and returns an object of type T
+     @return a function that takes a JsValue and returns an object of type T
      */
     public static <T> Function<JsValue, T> ifJsonElse(final Function<Json<?>, T> ifJson,
                                                       final Function<JsValue, T> ifNotJson
@@ -56,10 +56,10 @@ final class MatchExp {
     /**
      return a matching expression to extract JsNothing out of json elements.
 
-     @param nothingSupplier supplier to be invoked if the JsElem is JsNothing
-     @param elseFn          function to be applied if the JsElem is not JsNothing
+     @param nothingSupplier supplier to be invoked if the JsValue is JsNothing
+     @param elseFn          function to be applied if the JsValue is not JsNothing
      @param <T>             the type of the result
-     @return a function that takes a JsElem and returns an object of type T
+     @return a function that takes a JsValue and returns an object of type T
      */
     public static <T> Function<JsValue, T> ifNothingElse(final Supplier<T> nothingSupplier,
                                                          final Function<JsValue, T> elseFn
@@ -70,10 +70,10 @@ final class MatchExp {
     /**
      return a matching expression to extract json objects out of json elements.
 
-     @param ifObj    function to be applied if the JsElem is a JsObj
-     @param ifNotObj function to be applied if the JsElem is not a JsObj
+     @param ifObj    function to be applied if the JsValue is a JsObj
+     @param ifNotObj function to be applied if the JsValue is not a JsObj
      @param <T>      the type of the result
-     @return a function that takes a JsElem and returns an object of type T
+     @return a function that takes a JsValue and returns an object of type T
      */
     public static <T> Function<JsValue, T> ifObjElse(final Function<? super JsObj, T> ifObj,
                                                      final Function<? super JsValue, T> ifNotObj
@@ -92,7 +92,7 @@ final class MatchExp {
      @param ifTrue    the function to be applied if the predicate is evaluated to true
      @param ifFalse   the function to be applied if the predicate is evaluated to false
      @param <T>       the type of the result
-     @return a function that takes a JsElem and returns an object of type T
+     @return a function that takes a JsValue and returns an object of type T
      */
     public static <T> Function<JsValue, T> ifPredicateElse(final Predicate<JsValue> predicate,
                                                            final Function<JsValue, T> ifTrue,

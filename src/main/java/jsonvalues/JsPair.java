@@ -40,7 +40,7 @@ public final class JsPair {
      Returns a json pair from the path and the json element.
 
      @param path the JsPath object
-     @param elem the JsElem
+     @param elem the JsValue
      @return an immutable JsPair
      */
     public static JsPair of(final JsPath path,

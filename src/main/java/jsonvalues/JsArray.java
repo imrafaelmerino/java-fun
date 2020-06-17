@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -102,12 +101,12 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns an immutable array.
 
-     @param e    a JsElem
-     @param e1   a JsElem
-     @param e2   a JsElem
-     @param e3   a JsElem
-     @param e4   a JsElem
-     @param rest more optional JsElem
+     @param e    a JsValue
+     @param e1   a JsValue
+     @param e2   a JsValue
+     @param e3   a JsValue
+     @param e4   a JsValue
+     @param rest more optional JsValue
      @return an immutable JsArray
      @throws UserError if an elem is a mutable Json
      */
@@ -137,11 +136,11 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns an immutable five-element array.
 
-     @param e  a JsElem
-     @param e1 a JsElem
-     @param e2 a JsElem
-     @param e3 a JsElem
-     @param e4 a JsElem
+     @param e  a JsValue
+     @param e1 a JsValue
+     @param e2 a JsValue
+     @param e3 a JsValue
+     @param e4 a JsValue
      @return an immutable five-element JsArray
      @throws UserError if an elem is a mutable Json
      */
@@ -164,8 +163,8 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Adds one or more elements, starting from the first, to the back of this array.
 
-     @param e      the JsElem to be added to the back.
-     @param others more optional JsElem to be added to the back
+     @param e      the JsValue to be added to the back.
+     @param others more optional JsValue to be added to the back
      @return a new JsArray
      */
     public final JsArray append(final JsValue e,
@@ -179,10 +178,10 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns an immutable four-element array.
 
-     @param e  a JsElem
-     @param e1 a JsElem
-     @param e2 a JsElem
-     @param e3 a JsElem
+     @param e  a JsValue
+     @param e1 a JsValue
+     @param e2 a JsValue
+     @param e3 a JsValue
      @return an immutable four-element JsArray
      @throws UserError if an elem is a mutable Json
      */
@@ -200,9 +199,9 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns an immutable three-element array.
 
-     @param e  a JsElem
-     @param e1 a JsElem
-     @param e2 a JsElem
+     @param e  a JsValue
+     @param e1 a JsValue
+     @param e2 a JsValue
      @return an immutable three-element JsArray
      @throws UserError if an elem is a mutable Json
      */
@@ -219,8 +218,8 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns an immutable two-element array.
 
-     @param e  a JsElem
-     @param e1 a JsElem
+     @param e  a JsValue
+     @param e1 a JsValue
      @return an immutable two-element JsArray
      @throws UserError if an elem is a mutable Json
      */
@@ -766,8 +765,16 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                      .get();
     }
 
+    @Override
+    public JsArray set(final JsPath path,
+                       final JsValue element) {
+        return set(path, element,
+                   NULL);
+    }
+
     public final JsArray set(final JsPath path,
-                             final JsValue value
+                             final JsValue value,
+                             final JsValue padElement
                             ) {
 
         requireNonNull(value);
@@ -781,7 +788,8 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                               return tail.isEmpty() ? ifNothingElse(() -> this,
                                                                     elem -> new JsArray(nullPadding(index,
                                                                                                     seq,
-                                                                                                    elem
+                                                                                                    elem,
+                                                                                                    padElement
                                                                                                    ))
                                                                    )
                                       .apply(value) :
@@ -793,20 +801,25 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                                              tail.head()
                                                                  .match(key -> JsObj.EMPTY
                                                                                 .set(tail,
-                                                                                     value
+                                                                                     value,
+                                                                                     padElement
+
                                                                                     ),
                                                                         i -> JsArray.EMPTY
                                                                                 .set(tail,
-                                                                                     value
+                                                                                     value,
+                                                                                     padElement
                                                                                     )
-                                                                       )
+                                                                       ),
+                                                             padElement
                                                             )) :
 
                                      new JsArray(seq.update(index,
                                                             seq.get(index)
                                                                .toJson()
                                                                .set(tail,
-                                                                    value
+                                                                    value,
+                                                                    padElement
                                                                    )
                                                            ));
 
@@ -970,7 +983,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns the first element of this array.
 
-     @return the first JsElem of this JsArray
+     @return the first JsValue of this JsArray
      @throws UserError if this JsArray is empty
      */
     public final JsValue head() {
@@ -990,7 +1003,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns all the elements of this array except the last one.
 
-     @return JsArray with all the JsElem except the last one
+     @return JsArray with all the JsValue except the last one
      @throws UserError if this JsArray is empty
      */
     public final JsArray init() {
@@ -1049,7 +1062,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Returns the last element of this array.
 
-     @return the last JsElem of this JsArray
+     @return the last JsValue of this JsArray
      @throws UserError if this JsArray is empty
      */
     public final JsValue last() {
@@ -1060,8 +1073,8 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     /**
      Adds one or more elements, starting from the last, to the front of this array.
 
-     @param e      the JsElem to be added to the front.
-     @param others more optional JsElem to be added to the front
+     @param e      the JsValue to be added to the front.
+     @param others more optional JsValue to be added to the front
      @return a new JsArray
      */
     public final JsArray prepend(final JsValue e,
@@ -1184,20 +1197,23 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     private Vector<JsValue> nullPadding(final int index,
                                         final Vector<JsValue> arr,
-                                        final JsValue e
+                                        final JsValue e,
+                                        final JsValue pad
                                        ) {
         assert arr != null;
         assert e != null;
 
         return nullPaddingTrampoline(index,
                                      arr,
-                                     e
+                                     e,
+                                    pad
                                     ).get();
     }
 
     private Trampoline<Vector<JsValue>> nullPaddingTrampoline(final int i,
                                                               final Vector<JsValue> arr,
-                                                              final JsValue e
+                                                              final JsValue e,
+                                                              final JsValue pad
                                                              ) {
 
         if (i == arr.size()) return Trampoline.done(arr.append(e));
@@ -1210,8 +1226,9 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                                               e
                                                              ));
         return Trampoline.more(() -> nullPaddingTrampoline(i,
-                                                           arr.append(JsNull.NULL),
-                                                           e
+                                                           arr.append(pad),
+                                                           e,
+                                                           pad
                                                           ));
     }
 

@@ -3,7 +3,7 @@ package jsonvalues;
 
 /**
  It's a special json element that represents 'nothing'. Inserting nothing in a json leaves the json
- unchanged. The functions that return a JsElem, like {@link Json#get(JsPath)},
+ unchanged. The functions that return a JsValue, like {@link Json#get(JsPath)},
  return nothing when no element is found, what makes them total on the input path.
  */
 public final class JsNothing implements JsValue {

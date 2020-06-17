@@ -702,7 +702,7 @@ public class TestJsObj {
 
 
     @Test
-    public void test_put_and_get() {
+    public void test_set_and_get() {
         final JsObj empty = JsObj.empty();
         final JsObj a = empty.set(JsPath.fromKey("a"),
                                   JsBigDec.of(BigDecimal.valueOf(0.1d))
@@ -716,6 +716,30 @@ public class TestJsObj {
                 a.getBigDec(fromKey("a"))
                  .equals(BigDecimal.valueOf(0.1d))
                              );
+    }
+
+    @Test
+    public void test_set_and_get_with_padding() {
+        final JsObj empty = JsObj.empty();
+        JsPath      path  = path("/a/b/2");
+        final JsObj a = empty.set(path,
+                                  JsBigDec.of(BigDecimal.valueOf(0.1d)),
+                                  JsDouble.of(0.0)
+                                 );
+
+        Assertions.assertTrue(
+                a.getDouble(path)
+                 .equals(0.1d)
+                             );
+        Assertions.assertTrue(
+                a.getDouble(path("/a/b/0"))
+                 .equals(0.0d)
+                             );
+        Assertions.assertTrue(
+                a.getDouble(path("/a/b/1"))
+                 .equals(0.0d)
+                             );
+
     }
 
     @Test

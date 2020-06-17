@@ -74,7 +74,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a one-element immutable object.
 
      @param key name of a key
-     @param el  JsElem to be associated to the key
+     @param el  JsValue to be associated to the key
      @return an immutable one-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -92,9 +92,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a two-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @return an immutable two-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -116,11 +116,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a three-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @return an immutable three-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -147,13 +147,13 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a four-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @param key4 name of a key
-     @param el4  JsElem to be associated to the key4
+     @param el4  JsValue to be associated to the key4
      @return an immutable four-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -185,15 +185,15 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a five-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @param key4 name of a key
-     @param el4  JsElem to be associated to the key4
+     @param el4  JsValue to be associated to the key4
      @param key5 name of a key
-     @param el5  JsElem to be associated to the key5
+     @param el5  JsValue to be associated to the key5
      @return an immutable five-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -229,17 +229,17 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @param key4 name of a key
-     @param el4  JsElem to be associated to the key4
+     @param el4  JsValue to be associated to the key4
      @param key5 name of a key
-     @param el5  JsElem to be associated to the key5
+     @param el5  JsValue to be associated to the key5
      @param key6 name of a key
-     @param el6  JsElem to be associated to the key6
+     @param el6  JsValue to be associated to the key6
      @return an immutable six-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -279,19 +279,19 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @param key4 name of a key
-     @param el4  JsElem to be associated to the key4
+     @param el4  JsValue to be associated to the key4
      @param key5 name of a key
-     @param el5  JsElem to be associated to the key5
+     @param el5  JsValue to be associated to the key5
      @param key6 name of a key
-     @param el6  JsElem to be associated to the key6
+     @param el6  JsValue to be associated to the key6
      @param key7 name of a key
-     @param el7  JsElem to be associated to the key7
+     @param el7  JsValue to be associated to the key7
      @return an immutable seven-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -335,21 +335,21 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @param key4 name of a key
-     @param el4  JsElem to be associated to the key4
+     @param el4  JsValue to be associated to the key4
      @param key5 name of a key
-     @param el5  JsElem to be associated to the key5
+     @param el5  JsValue to be associated to the key5
      @param key6 name of a key
-     @param el6  JsElem to be associated to the key6
+     @param el6  JsValue to be associated to the key6
      @param key7 name of a key
-     @param el7  JsElem to be associated to the key7
+     @param el7  JsValue to be associated to the key7
      @param key8 name of a key
-     @param el8  JsElem to be associated to the key8
+     @param el8  JsValue to be associated to the key8
      @return an immutable eight-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -397,23 +397,23 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1 name of a key
-     @param el1  JsElem to be associated to the key1
+     @param el1  JsValue to be associated to the key1
      @param key2 name of a key
-     @param el2  JsElem to be associated to the key2
+     @param el2  JsValue to be associated to the key2
      @param key3 name of a key
-     @param el3  JsElem to be associated to the key3
+     @param el3  JsValue to be associated to the key3
      @param key4 name of a key
-     @param el4  JsElem to be associated to the key4
+     @param el4  JsValue to be associated to the key4
      @param key5 name of a key
-     @param el5  JsElem to be associated to the key5
+     @param el5  JsValue to be associated to the key5
      @param key6 name of a key
-     @param el6  JsElem to be associated to the key6
+     @param el6  JsValue to be associated to the key6
      @param key7 name of a key
-     @param el7  JsElem to be associated to the key7
+     @param el7  JsValue to be associated to the key7
      @param key8 name of a key
-     @param el8  JsElem to be associated to the key8
+     @param el8  JsValue to be associated to the key8
      @param key9 name of a key
-     @param el9  JsElem to be associated to the key9
+     @param el9  JsValue to be associated to the key9
      @return an immutable nine-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -465,25 +465,25 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1  name of a key
-     @param el1   JsElem to be associated to the key1
+     @param el1   JsValue to be associated to the key1
      @param key2  name of a key
-     @param el2   JsElem to be associated to the key2
+     @param el2   JsValue to be associated to the key2
      @param key3  name of a key
-     @param el3   JsElem to be associated to the key3
+     @param el3   JsValue to be associated to the key3
      @param key4  name of a key
-     @param el4   JsElem to be associated to the key4
+     @param el4   JsValue to be associated to the key4
      @param key5  name of a key
-     @param el5   JsElem to be associated to the key5
+     @param el5   JsValue to be associated to the key5
      @param key6  name of a key
-     @param el6   JsElem to be associated to the key6
+     @param el6   JsValue to be associated to the key6
      @param key7  name of a key
-     @param el7   JsElem to be associated to the key7
+     @param el7   JsValue to be associated to the key7
      @param key8  name of a key
-     @param el8   JsElem to be associated to the key8
+     @param el8   JsValue to be associated to the key8
      @param key9  name of a key
-     @param el9   JsElem to be associated to the key9
+     @param el9   JsValue to be associated to the key9
      @param key10 name of a key
-     @param el10  JsElem to be associated to the key10
+     @param el10  JsValue to be associated to the key10
      @return an immutable ten-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -539,27 +539,27 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1  name of a key
-     @param el1   JsElem to be associated to the key1
+     @param el1   JsValue to be associated to the key1
      @param key2  name of a key
-     @param el2   JsElem to be associated to the key2
+     @param el2   JsValue to be associated to the key2
      @param key3  name of a key
-     @param el3   JsElem to be associated to the key3
+     @param el3   JsValue to be associated to the key3
      @param key4  name of a key
-     @param el4   JsElem to be associated to the key4
+     @param el4   JsValue to be associated to the key4
      @param key5  name of a key
-     @param el5   JsElem to be associated to the key5
+     @param el5   JsValue to be associated to the key5
      @param key6  name of a key
-     @param el6   JsElem to be associated to the key6
+     @param el6   JsValue to be associated to the key6
      @param key7  name of a key
-     @param el7   JsElem to be associated to the key7
+     @param el7   JsValue to be associated to the key7
      @param key8  name of a key
-     @param el8   JsElem to be associated to the key8
+     @param el8   JsValue to be associated to the key8
      @param key9  name of a key
-     @param el9   JsElem to be associated to the key9
+     @param el9   JsValue to be associated to the key9
      @param key10 name of a key
-     @param el10  JsElem to be associated to the key10
+     @param el10  JsValue to be associated to the key10
      @param key11 name of a key
-     @param el11  JsElem to be associated to the key11
+     @param el11  JsValue to be associated to the key11
      @return an immutable eleven-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -619,29 +619,29 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1  name of a key
-     @param el1   JsElem to be associated to the key1
+     @param el1   JsValue to be associated to the key1
      @param key2  name of a key
-     @param el2   JsElem to be associated to the key2
+     @param el2   JsValue to be associated to the key2
      @param key3  name of a key
-     @param el3   JsElem to be associated to the key3
+     @param el3   JsValue to be associated to the key3
      @param key4  name of a key
-     @param el4   JsElem to be associated to the key4
+     @param el4   JsValue to be associated to the key4
      @param key5  name of a key
-     @param el5   JsElem to be associated to the key5
+     @param el5   JsValue to be associated to the key5
      @param key6  name of a key
-     @param el6   JsElem to be associated to the key6
+     @param el6   JsValue to be associated to the key6
      @param key7  name of a key
-     @param el7   JsElem to be associated to the key7
+     @param el7   JsValue to be associated to the key7
      @param key8  name of a key
-     @param el8   JsElem to be associated to the key8
+     @param el8   JsValue to be associated to the key8
      @param key9  name of a key
-     @param el9   JsElem to be associated to the key9
+     @param el9   JsValue to be associated to the key9
      @param key10 name of a key
-     @param el10  JsElem to be associated to the key10
+     @param el10  JsValue to be associated to the key10
      @param key11 name of a key
-     @param el11  JsElem to be associated to the key11
+     @param el11  JsValue to be associated to the key11
      @param key12 name of a key
-     @param el12  JsElem to be associated to the key12
+     @param el12  JsValue to be associated to the key12
      @return an immutable twelve-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -705,31 +705,31 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1  name of a key
-     @param el1   JsElem to be associated to the key1
+     @param el1   JsValue to be associated to the key1
      @param key2  name of a key
-     @param el2   JsElem to be associated to the key2
+     @param el2   JsValue to be associated to the key2
      @param key3  name of a key
-     @param el3   JsElem to be associated to the key3
+     @param el3   JsValue to be associated to the key3
      @param key4  name of a key
-     @param el4   JsElem to be associated to the key4
+     @param el4   JsValue to be associated to the key4
      @param key5  name of a key
-     @param el5   JsElem to be associated to the key5
+     @param el5   JsValue to be associated to the key5
      @param key6  name of a key
-     @param el6   JsElem to be associated to the key6
+     @param el6   JsValue to be associated to the key6
      @param key7  name of a key
-     @param el7   JsElem to be associated to the key7
+     @param el7   JsValue to be associated to the key7
      @param key8  name of a key
-     @param el8   JsElem to be associated to the key8
+     @param el8   JsValue to be associated to the key8
      @param key9  name of a key
-     @param el9   JsElem to be associated to the key9
+     @param el9   JsValue to be associated to the key9
      @param key10 name of a key
-     @param el10  JsElem to be associated to the key10
+     @param el10  JsValue to be associated to the key10
      @param key11 name of a key
-     @param el11  JsElem to be associated to the key11
+     @param el11  JsValue to be associated to the key11
      @param key12 name of a key
-     @param el12  JsElem to be associated to the key12
+     @param el12  JsValue to be associated to the key12
      @param key13 name of a key
-     @param el13  JsElem to be associated to the key13
+     @param el13  JsValue to be associated to the key13
      @return an immutable twelve-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -797,33 +797,33 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1  name of a key
-     @param el1   JsElem to be associated to the key1
+     @param el1   JsValue to be associated to the key1
      @param key2  name of a key
-     @param el2   JsElem to be associated to the key2
+     @param el2   JsValue to be associated to the key2
      @param key3  name of a key
-     @param el3   JsElem to be associated to the key3
+     @param el3   JsValue to be associated to the key3
      @param key4  name of a key
-     @param el4   JsElem to be associated to the key4
+     @param el4   JsValue to be associated to the key4
      @param key5  name of a key
-     @param el5   JsElem to be associated to the key5
+     @param el5   JsValue to be associated to the key5
      @param key6  name of a key
-     @param el6   JsElem to be associated to the key6
+     @param el6   JsValue to be associated to the key6
      @param key7  name of a key
-     @param el7   JsElem to be associated to the key7
+     @param el7   JsValue to be associated to the key7
      @param key8  name of a key
-     @param el8   JsElem to be associated to the key8
+     @param el8   JsValue to be associated to the key8
      @param key9  name of a key
-     @param el9   JsElem to be associated to the key9
+     @param el9   JsValue to be associated to the key9
      @param key10 name of a key
-     @param el10  JsElem to be associated to the key10
+     @param el10  JsValue to be associated to the key10
      @param key11 name of a key
-     @param el11  JsElem to be associated to the key11
+     @param el11  JsValue to be associated to the key11
      @param key12 name of a key
-     @param el12  JsElem to be associated to the key12
+     @param el12  JsValue to be associated to the key12
      @param key13 name of a key
-     @param el13  JsElem to be associated to the key13
+     @param el13  JsValue to be associated to the key13
      @param key14 name of a key
-     @param el14  JsElem to be associated to the key14
+     @param el14  JsValue to be associated to the key14
      @return an immutable twelve-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -895,35 +895,35 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      Returns a six-element immutable object.
 
      @param key1  name of a key
-     @param el1   JsElem to be associated to the key1
+     @param el1   JsValue to be associated to the key1
      @param key2  name of a key
-     @param el2   JsElem to be associated to the key2
+     @param el2   JsValue to be associated to the key2
      @param key3  name of a key
-     @param el3   JsElem to be associated to the key3
+     @param el3   JsValue to be associated to the key3
      @param key4  name of a key
-     @param el4   JsElem to be associated to the key4
+     @param el4   JsValue to be associated to the key4
      @param key5  name of a key
-     @param el5   JsElem to be associated to the key5
+     @param el5   JsValue to be associated to the key5
      @param key6  name of a key
-     @param el6   JsElem to be associated to the key6
+     @param el6   JsValue to be associated to the key6
      @param key7  name of a key
-     @param el7   JsElem to be associated to the key7
+     @param el7   JsValue to be associated to the key7
      @param key8  name of a key
-     @param el8   JsElem to be associated to the key8
+     @param el8   JsValue to be associated to the key8
      @param key9  name of a key
-     @param el9   JsElem to be associated to the key9
+     @param el9   JsValue to be associated to the key9
      @param key10 name of a key
-     @param el10  JsElem to be associated to the key10
+     @param el10  JsValue to be associated to the key10
      @param key11 name of a key
-     @param el11  JsElem to be associated to the key11
+     @param el11  JsValue to be associated to the key11
      @param key12 name of a key
-     @param el12  JsElem to be associated to the key12
+     @param el12  JsValue to be associated to the key12
      @param key13 name of a key
-     @param el13  JsElem to be associated to the key13
+     @param el13  JsValue to be associated to the key13
      @param key14 name of a key
-     @param el14  JsElem to be associated to the key14
+     @param el14  JsValue to be associated to the key14
      @param key15 name of a key
-     @param el15  JsElem to be associated to the key15
+     @param el15  JsValue to be associated to the key15
      @return an immutable twelve-element JsObj
      @throws UserError if an elem is a mutable Json
      */
@@ -1262,8 +1262,16 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                      .get();
     }
 
+    @Override
+    public JsObj set(final JsPath path,
+                     final JsValue element) {
+        return set(path, element,
+                   NULL);
+    }
+
     public final JsObj set(final JsPath path,
-                           final JsValue value
+                           final JsValue value,
+                           final JsValue padElement
 
                           ) {
         requireNonNull(value);
@@ -1286,11 +1294,13 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                                        tail.head()
                                                            .match(key -> JsObj.EMPTY
                                                                           .set(tail,
-                                                                               value
+                                                                               value,
+                                                                               padElement
                                                                               ),
                                                                   index -> JsArray.EMPTY
                                                                           .set(tail,
-                                                                               value
+                                                                               value,
+                                                                               padElement
                                                                               )
                                                                  )
                                                       )) :
@@ -1299,7 +1309,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                                           .get()
                                                           .toJson()
                                                           .set(tail,
-                                                               value
+                                                               value,
+                                                               padElement
                                                               )
                                                       ));
                           },
@@ -1603,7 +1614,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      and tail to process a JsObj, the key of the pair returned must be passed in to get the tail using
      the method {@link #tail()}.
 
-     @return an arbitrary {@code Map.Entry<String,JsElem>} of this JsObj
+     @return an arbitrary {@code Map.Entry<String,JsValue>} of this JsObj
      @throws UserError if this json object is empty
      */
     public final Tuple2<String, JsValue> head() {

@@ -16,9 +16,7 @@
 - [When not to use it](#notwhatfor)
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Documentation](https://imrafaelmerino.github.io/json-values/)
 - [Want to help](#wth)
-- [Develop](#develop)
 - [Related projects](#rp)
 
 ## <a name="introduction"><a/> Introduction

@@ -21,8 +21,8 @@ public class JsTupleSpec implements JsArraySpec {
 
     private final boolean required;
     private final boolean nullable;
-    private Vector<JsSpec> specs;
-    private boolean strict = true;
+    private final Vector<JsSpec> specs;
+    private final boolean strict = true;
 
     private JsTupleSpec(final Vector<JsSpec> specs) {
         this(specs,

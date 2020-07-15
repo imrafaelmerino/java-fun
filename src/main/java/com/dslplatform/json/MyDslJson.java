@@ -9,7 +9,6 @@ import com.dslplatform.json.serializers.SerializerException;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import jsonvalues.Json;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

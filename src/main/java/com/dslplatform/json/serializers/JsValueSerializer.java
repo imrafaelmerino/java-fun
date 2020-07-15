@@ -1,12 +1,9 @@
 package com.dslplatform.json.serializers;
-
 import com.dslplatform.json.JsonWriter;
 import com.dslplatform.json.NumberConverter;
 import jsonvalues.*;
-
 import java.util.Objects;
 
-import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 
 public final class JsValueSerializer {
@@ -82,7 +79,7 @@ public final class JsValueSerializer {
                 break;
             }
             case JsInstant.ID: {
-                writer.writeString(ISO_INSTANT.format(value.toJsInstant().value));
+                writer.writeString(value.toJsInstant().value.toString());
                 break;
             }
             default:

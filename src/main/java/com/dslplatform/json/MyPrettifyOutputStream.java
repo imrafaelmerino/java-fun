@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-
 final class MyPrettifyOutputStream extends OutputStream {
     private static final int INDENT_CACHE_SIZE = 257;
 

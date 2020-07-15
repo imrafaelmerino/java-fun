@@ -4,6 +4,8 @@ import com.dslplatform.json.JsonWriter;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
+import java.util.Objects;
+
 
 public final class JsArraySerializer implements JsonWriter.WriteObject<JsArray> {
     private final JsValueSerializer valueSerializer;
@@ -17,7 +19,7 @@ public final class JsArraySerializer implements JsonWriter.WriteObject<JsArray> 
                       final JsArray list
                      ) {
         writer.writeByte(JsonWriter.ARRAY_START);
-        final int size = list.size();
+        final int size = Objects.requireNonNull(list).size();
         if (size != 0) {
             final JsValue first = list.get(0);
             valueSerializer.serialize(writer,

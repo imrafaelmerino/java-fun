@@ -4,11 +4,17 @@ import io.vavr.Tuple2;
 import jsonvalues.gen.JsGen;
 import jsonvalues.gen.JsGens;
 import jsonvalues.gen.JsObjGen;
+import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
+import jsonvalues.spec.JsSpec;
 import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
@@ -72,7 +78,9 @@ public class TestGenerators {
 
             final JsValue value = gen.apply(new Random())
                                      .get();
-            Assertions.assertTrue(condition.test(value));
+            boolean test = condition.test(value);
+            if(!test) System.out.println("Error testing \n"+value);
+            Assertions.assertTrue(test);
         }
     }
 
@@ -215,7 +223,11 @@ public class TestGenerators {
                                    "m",
                                    characterAlpha,
                                    "n",
-                                   letter
+                                   letter,
+                                   "o",
+                                   JsGens.binary.optional(),
+                                   "p",
+                                   JsGens.dateBetween(0,1000).optional()
                                   );
 
         JsObjSpec spec = JsObjSpec.lenient("a",
@@ -247,7 +259,11 @@ public class TestGenerators {
                                            "m",
                                            str(s -> s.length() == 1),
                                            "n",
-                                           str(s -> s.length() == 1)
+                                           str(s -> s.length() == 1),
+                                           "o",
+                                           JsSpecs.binary.optional(),
+                                           "p",
+                                           JsSpecs.instant.optional()
                                           );
 
         test(gen,
@@ -255,6 +271,11 @@ public class TestGenerators {
                       .isEmpty(),
              1000
             );
+
+        test(gen,v -> {
+            String s = v.toString();
+            return v.equals(JsObj.parse(s));
+        }, 1000);
     }
 
     @Test
@@ -339,6 +360,24 @@ public class TestGenerators {
         }, 100);
     }
 
+    @Test
+    public void testDates(){
+
+       test(JsGens.dateBetween(ZonedDateTime.now(),ZonedDateTime.now().plus(Duration.ofDays(2))),
+            value -> value.isInstant(),100);
+    }
 
 
+    @Test
+    public void testBinary(){
+        test(JsGens.binary,
+             value -> value.isBinary() & value.toJsBinary().value.length<=1024, 100);
+    }
+
+    public static void main(String[] args) {
+        JsInstant instant = JsInstant.of(Instant.parse("1970-01-01T00:02:20Z"));
+        JsStr str = JsStr.of("1970-01-01T00:02:20Z");
+
+        System.out.println(instant.equals(str));
+    }
 }

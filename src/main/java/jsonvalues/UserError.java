@@ -40,12 +40,31 @@ public final class UserError extends RuntimeException {
                                           ));
     }
 
+    static UserError isNotAJsInstant(final JsValue elem) {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsInstant expected or a JsString representing an instant formatted in ISO-8601, but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isInstant() before invoking asJsInstant()"
+                                          ));
+    }
+
+    static UserError isNotAJsBinary(final JsValue elem) {
+        return new UserError(String.format(GENERAL_MESSAGE,
+                                           String.format("JsBinary expected or a JsString representing an array of bytes encoded in base64, " +
+                                                                 "but %s was found",
+                                                         elem.getClass()
+                                                        ),
+                                           "call the guard condition isBinary() before invoking toJsBinary()"
+                                          ));
+    }
+
     static UserError isNotAJsLong(final JsValue elem) {
         return new UserError(String.format(GENERAL_MESSAGE,
                                            String.format("JsLong expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isLong() or isInt() before invoking asJsLong()"
+                                           "call the guard condition isLong() or isInt() before invoking toJsLong()"
                                           ));
     }
 
@@ -54,7 +73,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsDouble expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isDouble() or isDecimal() before invoking asJsDouble()"
+                                           "call the guard condition isDouble() or isDecimal() before invoking toJsDouble()"
                                           ));
     }
 
@@ -63,7 +82,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsBigInt expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isBigInt() or isIntegral() before invoking asJsBigInt()"
+                                           "call the guard condition isBigInt() or isIntegral() before invoking toJsBigInt()"
                                           ));
     }
 
@@ -72,7 +91,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsBigDec expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isBigDec() or isDecimal() before invoking asJsBigDec()"
+                                           "call the guard condition isBigDec() or isDecimal() before invoking toJsBigDec()"
                                           ));
     }
 
@@ -81,7 +100,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsArray expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isArray() before invoking asJsArray()"
+                                           "call the guard condition isArray() before invoking toJsArray()"
                                           ));
     }
 
@@ -90,7 +109,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsNumber expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isNumber() before invoking asJsArray()"
+                                           "call the guard condition isNumber() before invoking toJsArray()"
                                           ));
     }
 
@@ -99,7 +118,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsObj expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isObj() before invoking asJsObj()"
+                                           "call the guard condition isObj() before invoking toJsObj()"
                                           ));
     }
 
@@ -108,7 +127,7 @@ public final class UserError extends RuntimeException {
                                            String.format("Json expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isJson() or isArray() or isObj() before invoking asJson()"
+                                           "call the guard condition isJson() or isArray() or isObj() before invoking toJson()"
                                           ));
     }
 
@@ -117,7 +136,7 @@ public final class UserError extends RuntimeException {
                                            String.format("JsStr expected, but %s was found",
                                                          elem.getClass()
                                                         ),
-                                           "call the guard condition isStr() before invoking asJsStr()"
+                                           "call the guard condition isStr() before invoking toJsStr()"
                                           ));
     }
 

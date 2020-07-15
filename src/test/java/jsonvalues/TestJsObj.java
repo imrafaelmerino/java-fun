@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -625,7 +628,7 @@ public class TestJsObj {
                                                                         obj.get(pair.path)
                                                                        );
                                                 return JsStr.prism.modify.apply(String::toLowerCase)
-                                                                  .apply(pair.value);
+                                                                         .apply(pair.value);
                                             });
 
         final Optional<String> reduced_ = obj1.reduceAll(String::concat,
@@ -773,7 +776,8 @@ public class TestJsObj {
 
     @Test
     public void testJsObj() {
-
+        Instant now   = Instant.now();
+        byte[]  bytes = "hola".getBytes();
         JsObj o = JsObj.of("a",
                            JsBigDec.of(BigDecimal.valueOf(1.5)),
                            "b",
@@ -781,7 +785,11 @@ public class TestJsObj {
                            "c",
                            JsDouble.of(1.5d),
                            "d",
-                           JsLong.of(15L)
+                           JsLong.of(15L),
+                           "e",
+                           JsInstant.of(now),
+                           "f",
+                           JsBinary.of(bytes)
                           );
 
         Assertions.assertNull(o.getStr("b"));
@@ -791,6 +799,7 @@ public class TestJsObj {
         Assertions.assertNull(o.getDouble("b"));
         Assertions.assertNull(o.getArray("b"));
         Assertions.assertNull(o.getLong("c"));
+        Assertions.assertNull(o.getStr("e"));
 
         Assertions.assertEquals(BigDecimal.valueOf(1.5),
                                 o.getBigDec("a")
@@ -805,6 +814,51 @@ public class TestJsObj {
                                 o.getLong("d")
                                );
 
+        Assertions.assertEquals(now,
+                                o.getInstant("e")
+                               );
+
+        Assertions.assertTrue(
+                Arrays.equals(o.getBinary("f"),
+                              "hola".getBytes())
+                             );
+
+        JsObj parsed = JsObj.parse(o.toString());
+
+        Assertions.assertEquals(parsed,o);
+
+        Assertions.assertEquals(parsed
+                                        .getStr("f"),
+                                Base64.getEncoder()
+                                      .encodeToString("hola".getBytes())
+                               );
+
+
+        Option<JsObj, byte[]> fOpt = JsObj.lens.str("f")
+                                               .compose(JsStr.base64Prism);
+
+        Option<JsObj, Instant> eOpt = JsObj.lens.str("e")
+                                                .compose(JsStr.instantPrism);
+
+        Assertions.assertTrue(Arrays.equals(fOpt.get.apply(parsed)
+                                                    .get(),
+                                            "hola".getBytes()));
+
+
+        Assertions.assertTrue(!fOpt.get.apply(JsObj.of("f",
+                                                       JsStr.of("a")))
+                                       .isPresent());
+
+
+        Assertions.assertEquals(eOpt.get.apply(parsed)
+                                        .get(),
+                                now);
+
+        Assertions.assertTrue(!eOpt.get.apply(JsObj.of("e",
+                                                       JsStr.of(DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now()))
+                                                      )
+                                             )
+                                       .isPresent());
     }
 
 

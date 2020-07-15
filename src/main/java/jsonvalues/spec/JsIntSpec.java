@@ -3,7 +3,6 @@ package jsonvalues.spec;
 import com.dslplatform.json.parsers.JsSpecParser;
 import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
-
 import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
@@ -51,4 +50,6 @@ class JsIntSpec extends AbstractPredicateSpec implements JsValuePredicate {
                         .apply(value);
 
     }
+
+
 }

@@ -28,7 +28,7 @@ public final class JsStr implements JsValue, Comparable<JsStr> {
             new Prism<>(s -> {
                 try {
                     return Optional.of(Base64.getDecoder()
-                                             .decode(s.getBytes()));
+                                             .decode(s));
                 } catch (IllegalArgumentException e) {
                     return Optional.empty();
                 }

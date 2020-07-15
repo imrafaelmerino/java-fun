@@ -22,20 +22,4 @@ final class JsInstantParser extends AbstractParser {
 
     }
 
-    JsInstant valueSuchThat(final JsonReader<?> reader,
-                            final Function<Instant,Optional<Error>> fn
-                       ) throws JsParserException {
-        try {
-            final Instant            value  = Instant.from(ISO_INSTANT.parse(reader.readString()));
-            final Optional<Error> result = fn.apply(value);
-            if (!result.isPresent()) return JsInstant.of(value);
-            throw reader.newParseError(result.toString());
-        } catch (IOException | DateTimeParseException e) {
-            throw new JsParserException(e.getMessage());
-
-        }
-
-    }
-
-
 }

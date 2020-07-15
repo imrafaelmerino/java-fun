@@ -4,12 +4,10 @@ import com.dslplatform.json.parsers.JsSpecParser;
 import com.dslplatform.json.parsers.JsSpecParsers;
 import jsonvalues.JsValue;
 
-import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.BINARY_EXPECTED;
-import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
 
 class JsBinarySuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
 
@@ -49,18 +47,18 @@ class JsBinarySuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
     @Override
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofBinarySuchThat(predicate,
-                                                         nullable
-                                                        );
+                                                       nullable
+                                                      );
     }
 
     @Override
     public Optional<Error> test(final JsValue value) {
-        final Optional<Error> error = Functions.testElem(JsValue::isIntegral,
-                                                                         BINARY_EXPECTED,
-                                                                         required,
-                                                                         nullable
-                                                                        )
-                                                               .apply(value);
+        final Optional<Error> error = Functions.testElem(JsValue::isBinary,
+                                                         BINARY_EXPECTED,
+                                                         required,
+                                                         nullable
+                                                        )
+                                               .apply(value);
 
         if (error.isPresent() || value.isNull()) return error;
         return predicate.apply(value.toJsBinary().value);

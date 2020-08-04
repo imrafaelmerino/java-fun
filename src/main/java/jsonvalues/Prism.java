@@ -39,32 +39,32 @@ public class Prism<S, T> {
      modify the target of a Prism with a function, returning the same source if the prism is not matching. Basically
      it means we dont care about the success of the operation
      */
-    public final Function<Function<T,T>,Function<S,S>> modify;
+    public final Function<Function<T, T>, Function<S, S>> modify;
 
     /**
      modify the target of a Prism with a function, returning empty if the prism is not matching. Unless modify, we
      need to know the success of the operation
      */
-    public final Function<Function<T,T>,Function<S,Optional<S>>> modifyOpt;
+    public final Function<Function<T, T>, Function<S, Optional<S>>> modifyOpt;
 
     /**
      find if the target satisfies the predicate
      */
-    public final Function<Predicate<T>,Function<S, Optional<T>>> find;
+    public final Function<Predicate<T>, Function<S, Optional<T>>> find;
 
     /**
      check if there is a target and it satisfies the predicate
      */
-    public final Function<Predicate<T>,Predicate<S>> exists;
+    public final Function<Predicate<T>, Predicate<S>> exists;
 
     /**
      check if there is no target or the target satisfies the predicate
      */
-    public final Function<Predicate<T>,Predicate<S>> all;
+    public final Function<Predicate<T>, Predicate<S>> all;
 
-    Prism(final Function<S, Optional<T>> getOptional,
-          final Function<T, S> reverseGet
-         ) {
+    public Prism(final Function<S, Optional<T>> getOptional,
+                 final Function<T, S> reverseGet
+                ) {
         this.getOptional = getOptional;
         this.reverseGet = reverseGet;
         this.modify = f -> {
@@ -84,9 +84,9 @@ public class Prism<S, T> {
             };
         };
         this.isEmpty = target -> !getOptional.apply(target)
-                                            .isPresent();
+                                             .isPresent();
         this.nonEmpty = target -> getOptional.apply(target)
-                                              .isPresent();
+                                             .isPresent();
         this.find = predicate -> v -> getOptional.apply(v)
                                                  .filter(predicate);
 

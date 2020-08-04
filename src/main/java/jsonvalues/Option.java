@@ -31,9 +31,9 @@ public class Option<S, T> {
      */
     public final Function<Function<T, T>, Function<S, S>> modify;
 
-    Option(final Function<S, Optional<T>> get,
-           final Function<T, Function<S, S>> set
-          ) {
+    public Option(final Function<S, Optional<T>> get,
+                  final Function<T, Function<S, S>> set
+                 ) {
         this.get = get;
         this.set = set;
 
@@ -49,20 +49,25 @@ public class Option<S, T> {
 
     /**
      compose this optional with the given as parameter
+
      @param other the other optional
-     @param <F> the type of the focus
+     @param <F>   the type of the focus
      @return a new optional
      */
-    public <F> Option<S,F> compose(final Option<T,F> other){
+    public <F> Option<S, F> compose(final Option<T, F> other) {
         return new Option<>(s -> {
             Optional<T> t = this.get.apply(s);
-            if(t.isPresent()) return other.get.apply(t.get());
+            if (t.isPresent()) return other.get.apply(t.get());
             else return Optional.empty();
-        }, f -> s -> {
-            Optional<T> t = this.get.apply(s);
-            if(t.isPresent()) return this.set.apply(other.set.apply(f).apply(t.get())).apply(s);
-            else return s;
-        });
+        },
+                            f -> s -> {
+                                Optional<T> t = this.get.apply(s);
+                                if (t.isPresent()) return this.set.apply(other.set.apply(f)
+                                                                                  .apply(t.get()))
+                                                                  .apply(s);
+                                else return s;
+                            }
+        );
     }
 
 }

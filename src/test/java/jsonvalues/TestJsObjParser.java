@@ -4,6 +4,7 @@ import com.dslplatform.json.parsers.JsParserException;
 import jsonvalues.gen.JsGen;
 import jsonvalues.gen.JsGens;
 import jsonvalues.gen.JsObjGen;
+import jsonvalues.gen.TestProperty;
 import jsonvalues.spec.JsArrayParser;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
@@ -1102,17 +1103,25 @@ public class TestJsObjParser {
                                      );
 
 
-        TestGenerators.test(objGen,
+        TestProperty.test(objGen,
                             v -> objParser.parse(v.toString()
                                                   .getBytes())
-                                          .equals(v),
-                            1000
-                           );
-        TestGenerators.test(objGen,
+                                          .equals(v)
+                ,
+                          v -> {
+                              System.out.println(v);
+                              Assertions.fail("Equals after parsing serialized");
+                          }
+
+                         );
+        TestProperty.test(objGen,
                             v -> objParser.parse(new ByteArrayInputStream(v.toString()
                                                                            .getBytes()))
                                           .equals(v),
-                            1000
+                          v -> {
+                              System.out.println(v);
+                              Assertions.fail("Equals after parsing serialized");
+                          }
                            );
 
 
@@ -1122,17 +1131,23 @@ public class TestJsObjParser {
 
         JsArrayParser arrayParser = new JsArrayParser(JsSpecs.arrayOf(objSpec));
 
-        TestGenerators.test(arrayGen,
+        TestProperty.test(arrayGen,
                             v -> arrayParser.parse(v.toString()
                                                     .getBytes())
                                             .equals(v),
-                            1000
+                          v -> {
+                              System.out.println(v);
+                              Assertions.fail("Equals after parsing serialized");
+                          }
                            );
-        TestGenerators.test(arrayGen,
+        TestProperty.test(arrayGen,
                             v -> arrayParser.parse(new ByteArrayInputStream(v.toString()
                                                                              .getBytes()))
                                             .equals(v),
-                            1000
+                          v -> {
+                              System.out.println(v);
+                              Assertions.fail("Equals after parsing serialized");
+                          }
                            );
 
     }

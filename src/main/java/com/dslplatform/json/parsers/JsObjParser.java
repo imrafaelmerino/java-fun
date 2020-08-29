@@ -2,9 +2,7 @@ package com.dslplatform.json.parsers;
 
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
-import io.vavr.collection.HashMap;
 import jsonvalues.JsObj;
-import jsonvalues.JsValue;
 import jsonvalues.spec.Error;
 
 import java.io.IOException;
@@ -21,7 +19,7 @@ final class JsObjParser extends AbstractJsObjParser {
 
     JsObj valueSuchThat(final JsonReader<?> reader,
                         final Function<JsObj, Optional<Error>> fn
-                       ) throws JsParserException {
+                       ){
         try {
             final JsObj           value  = value(reader);
             final Optional<Error> result = fn.apply(value);
@@ -35,7 +33,7 @@ final class JsObjParser extends AbstractJsObjParser {
     }
 
     @Override
-    public JsObj value(final JsonReader<?> reader) throws JsParserException {
+    public JsObj value(final JsonReader<?> reader){
         try {
             if (isEmptyObj(reader)) return EMPTY_OBJ;
 

@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
  Represents an immutable json number of type BigInteger.
  */
 public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
-    public static final int ID = 6;
-    public static Prism<JsValue, BigInteger> prism =
+    public static final int TYPE_ID = 6;
+    public static final Prism<JsValue, BigInteger> prism =
             new Prism<>(s ->
                         {
                             if (s.isLong())
@@ -37,7 +37,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
 
     @Override
     public int id() {
-        return ID;
+        return TYPE_ID;
     }
 
     @Override

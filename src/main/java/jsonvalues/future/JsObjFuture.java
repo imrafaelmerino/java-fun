@@ -4,7 +4,6 @@ import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.LinkedHashMap;
 import io.vavr.collection.Map;
-import io.vavr.collection.TreeMap;
 import jsonvalues.JsObj;
 
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +35,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
     private Executor executor = ForkJoinPool.commonPool();
 
 
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -100,7 +101,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut14
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -162,7 +164,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                );
     }
 
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -219,7 +222,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut12
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -272,7 +276,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut11
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -321,7 +326,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut10
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -366,7 +372,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut9
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -407,7 +414,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut8
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -445,7 +453,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                );
     }
 
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -478,7 +487,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut6
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -507,7 +517,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut5
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -532,7 +543,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut4
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,
@@ -553,7 +565,8 @@ public class JsObjFuture implements JsFuture<JsObj> {
                                 fut3
                                );
     }
-
+    // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
+    @SuppressWarnings("squid:S00107")
     private JsObjFuture(final String key,
                         final JsFuture<?> fut,
                         final String key1,

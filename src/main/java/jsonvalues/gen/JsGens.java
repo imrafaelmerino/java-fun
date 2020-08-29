@@ -17,29 +17,32 @@ import static java.util.Objects.requireNonNull;
  */
 public class JsGens {
     private static final int Z = 122;
-    private final static int A = 97;
-    private final static int ZERO = 48;
+    private static final int A = 97;
+    private static final int ZERO = 48;
     private static final String LENGTH_EQUAL_ZERO_ERROR = "length must be greater than zero.";
+    private static final String SIZE_NEGATIVE_ERROR_MESSAGE = "size negative";
+
+    private JsGens(){}
 
     /**
      Generates character from 0-255
      */
-    public static JsGen<JsStr> character = r -> () -> JsStr.of(Character.toString(((char) requireNonNull(r).nextInt(256))));
+    public static final JsGen<JsStr> character = r -> () -> JsStr.of(Character.toString(((char) requireNonNull(r).nextInt(256))));
 
     //TODO some chars are missing
     /**
      Generates character from 65-122
      */
-    public static JsGen<JsStr> characterAlpha = choose(65,
-                                                       122
-                                                      ).map(i -> JsStr.of(Character.toString((char) i.value)));
+    public static final JsGen<JsStr> characterAlpha = choose(65,
+                                                             122
+                                                            ).map(i -> JsStr.of(Character.toString((char) i.value)));
 
     /**
      Generates a digit from 0-9
      */
-    public static JsGen<JsStr> digit = choose(0,
-                                              9
-                                             ).map(i -> JsStr.of(Integer.toString(i.value)));
+    public static final JsGen<JsStr> digit = choose(0,
+                                                    9
+                                                   ).map(i -> JsStr.of(Integer.toString(i.value)));
 
 
     /**
@@ -63,52 +66,52 @@ public class JsGens {
     /**
      Generates a letter from a-z
      */
-    public static JsGen<JsStr> letter = choose(0,
-                                               25
-                                              ).map(i -> JsStr.of(Character.toString(((char) i.value))));
+    public static final JsGen<JsStr> letter = choose(0,
+                                                     25
+                                                    ).map(i -> JsStr.of(Character.toString(((char) i.value))));
 
     /**
      Generates a positive integer (zero included)
      */
-    public static JsGen<JsInt> natural = r -> () -> JsInt.of(requireNonNull(r).nextInt(Integer.MAX_VALUE));
+    public static final JsGen<JsInt> natural = r -> () -> JsInt.of(requireNonNull(r).nextInt(Integer.MAX_VALUE));
 
 
     /**
      Generates a string where the length is between [0-10]
      */
-    public static JsGen<JsStr> str = choose(0,
-                                            10
-                                           ).flatMap(n -> str(n.value));
+    public static final JsGen<JsStr> str = choose(0,
+                                                  10
+                                                 ).flatMap(n -> str(n.value));
 
     /**
      Generates a alphabetic string where the length is between [0-10]
      */
-    public static JsGen<JsStr> alphabetic = choose(0,
-                                                   10
-                                                  ).flatMap(n -> alphabetic(n.value));
+    public static final JsGen<JsStr> alphabetic = choose(0,
+                                                         10
+                                                        ).flatMap(n -> alphabetic(n.value));
 
     /**
      Generates a alphanumeric string where the length is between [0-10]
      */
-    public static JsGen<JsStr> alphanumeric = choose(0,
-                                                     10
-                                                    ).flatMap(n -> alphanumeric(n.value));
+    public static final JsGen<JsStr> alphanumeric = choose(0,
+                                                           10
+                                                          ).flatMap(n -> alphanumeric(n.value));
     /**
      Generates a boolean
      */
-    public static JsGen<JsBool> bool = r -> () -> JsBool.of(requireNonNull(r).nextBoolean());
+    public static final JsGen<JsBool> bool = r -> () -> JsBool.of(requireNonNull(r).nextBoolean());
     /**
      Generates a long number
      */
-    public static JsGen<JsLong> longInteger = r -> () -> JsLong.of(requireNonNull(r).nextLong());
+    public static final JsGen<JsLong> longInteger = r -> () -> JsLong.of(requireNonNull(r).nextLong());
     /**
      Generates an integer number
      */
-    public static JsGen<JsInt> integer = r -> () -> JsInt.of(requireNonNull(r).nextInt());
+    public static final JsGen<JsInt> integer = r -> () -> JsInt.of(requireNonNull(r).nextInt());
     /**
      Generates a decimal number
      */
-    public static JsGen<JsDouble> decimal = r -> () -> JsDouble.of(requireNonNull(r).nextDouble());
+    public static final JsGen<JsDouble> decimal = r -> () -> JsDouble.of(requireNonNull(r).nextDouble());
 
     /**
      Generates an alphabetic string of the given length
@@ -134,10 +137,11 @@ public class JsGens {
     /**
      Generates an array of 1024 bytes
      */
-    public static JsGen<JsBinary> binary =  binary(1024);
+    public static final JsGen<JsBinary> binary = binary(1024);
 
     /**
      Generates an array of bytes of the given length
+
      @param length the number of bytes generated
      @return an array of bytes generator
      */
@@ -250,7 +254,7 @@ public class JsGens {
      @return a generator
      */
     public static <O extends JsValue> JsGen<O> oneOf(final List<O> list) {
-        if (requireNonNull(list).size() == 0)
+        if (requireNonNull(list).isEmpty())
             throw new RuntimeException("list empty. No value can be generated");
 
         return r -> () ->
@@ -286,7 +290,7 @@ public class JsGens {
     public static JsGen<JsArray> array(final JsGen<?> gen,
                                        final int size
                                       ) {
-        if (size < 0) throw new IllegalArgumentException("size negative");
+        if (size < 0) throw new IllegalArgumentException(SIZE_NEGATIVE_ERROR_MESSAGE);
         return JsArrayGen.of(requireNonNull(gen),
                              size
                             );
@@ -304,7 +308,7 @@ public class JsGens {
     public static JsGen<JsArray> arrayDistinct(final JsGen<?> gen,
                                                final int size
                                               ) {
-        if (size < 0) throw new IllegalArgumentException("size negative");
+        if (size < 0) throw new IllegalArgumentException(SIZE_NEGATIVE_ERROR_MESSAGE);
 
         return arrayDistinct(requireNonNull(gen),
                              size,
@@ -327,7 +331,7 @@ public class JsGens {
                                                final int maxTries
                                               ) {
         requireNonNull(gen);
-        if (size < 0) throw new IllegalArgumentException("size negative");
+        if (size < 0) throw new IllegalArgumentException(SIZE_NEGATIVE_ERROR_MESSAGE);
         if (maxTries < 0) throw new IllegalArgumentException("maxTries negative");
 
         return r -> () ->
@@ -371,7 +375,7 @@ public class JsGens {
                                                                .filter(it -> it._1 > 0)
                                                                .collect(Collectors.toList());
         if (requireNonNull(freq)._1 > 0) filtered.add(freq);
-        if (filtered.size() == 0) {
+        if (filtered.isEmpty()) {
             throw new IllegalArgumentException("no items with positive weights");
         }
         int                        total   = 0;
@@ -455,10 +459,11 @@ public class JsGens {
 
     /**
      generates a constant
+
      @param value the constant
      @return a generator
      */
-    public static JsGen<JsValue> cons(final JsValue value){
+    public static JsGen<JsValue> cons(final JsValue value) {
         requireNonNull(value);
         return random -> () -> value;
     }

@@ -34,7 +34,7 @@ import static jsonvalues.Trampoline.more;
  Represents a json array, which is an ordered list of elements.
  */
 public class JsArray implements Json<JsArray>, Iterable<JsValue> {
-    public static final int ID = 4;
+    public static final int TYPE_ID = 4;
     /**
      lenses defined for a Json array
      */
@@ -44,11 +44,11 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public static final JsOptics.JsArrayOptionals optional = JsOptics.array.optional;
 
-    public static JsArray EMPTY = new JsArray(Vector.empty());
+    public static final JsArray EMPTY = new JsArray(Vector.empty());
     /**
      prism between the sum type JsValue and JsArray
      */
-    public static Prism<JsValue, JsArray> prism =
+    public static final Prism<JsValue, JsArray> prism =
             new Prism<>(
                     s -> s.isArray() ? Optional.of(s.toJsArray()) : Optional.empty(),
                     a -> a
@@ -370,7 +370,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
      @return a JsArray
      @throws MalformedJson if the string doesnt represent a json array
      */
-    public static JsArray parse(final String str) throws MalformedJson {
+    public static JsArray parse(final String str){
 
         try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str))) {
             final JsonToken keyEvent = parser.nextToken();
@@ -1048,9 +1048,10 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     @Override
     public int id() {
-        return ID;
+        return TYPE_ID;
     }
 
+    @Override
     public boolean isArray() {
         return true;
     }

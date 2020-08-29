@@ -2,15 +2,14 @@ package com.dslplatform.json.parsers;
 
 import com.dslplatform.json.JsonReader;
 import com.dslplatform.json.ParsingException;
-import io.vavr.collection.HashMap;
 import jsonvalues.JsNull;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
 
 abstract class AbstractParser {
-    final static JsObj EMPTY_OBJ = JsObj.empty();
+    static final JsObj EMPTY_OBJ = JsObj.empty();
 
-    JsValue nullOrValue(final JsonReader<?> reader) throws JsParserException {
+    JsValue nullOrValue(final JsonReader<?> reader){
         try {
             return reader.wasNull() ? JsNull.NULL : value(reader);
         } catch (ParsingException e) {
@@ -18,7 +17,7 @@ abstract class AbstractParser {
         }
     }
 
-    abstract JsValue value(final JsonReader<?> reader) throws JsParserException;
+    abstract JsValue value(final JsonReader<?> reader) ;
 
 
 }

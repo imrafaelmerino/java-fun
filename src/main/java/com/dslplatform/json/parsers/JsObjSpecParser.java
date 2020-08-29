@@ -7,8 +7,8 @@ import jsonvalues.JsObj;
 import java.io.IOException;
 
 class JsObjSpecParser extends AbstractJsObjParser {
-    private final static JsValueParser valueParser = JsParsers.PARSERS.valueParser;
-    private final static JsSpecParser defaultParser = valueParser::value;
+    private static final JsValueParser valueParser = JsParsers.PARSERS.valueParser;
+    private static final JsSpecParser defaultParser = valueParser::value;
     protected final boolean strict;
     private final Map<String, JsSpecParser> parsers;
 
@@ -20,7 +20,7 @@ class JsObjSpecParser extends AbstractJsObjParser {
     }
 
     @Override
-    JsObj value(final JsonReader<?> reader) throws JsParserException {
+    JsObj value(final JsonReader<?> reader){
         try {
             if (isEmptyObj(reader)) return EMPTY_OBJ;
             String key = reader.readKey();

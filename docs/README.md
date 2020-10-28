@@ -1,6 +1,6 @@
 <img src="https://github.com/imrafaelmerino/json-values/blob/master/logo/package_highres_if9bsyj4/black/full/black_logo_white_background.png" width="250" height="150"/>
 
-[![Build Status](https://travis-ci.org/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.org/imrafaelmerino/json-values)
+[![Build Status](https://travis-ci.com/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.com/imrafaelmerino/json-values)
 [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg?style=svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
@@ -225,9 +225,7 @@ Add the following dependency to your building tool:
 
 After the development of json-values, I published two more related projects:
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
-* Json generators in Scala to do property-based testing: [json-scala-values-generator](https://github.com/imrafaelmerino/json-scala-values-generator) . This is a
-project I'm especially proud of. I think there is no Json generator more declarative, concise, and why not, beautiful in the
-whole wide world! If I'm wrong, please let me know!
+* [vertx-effect] 
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.

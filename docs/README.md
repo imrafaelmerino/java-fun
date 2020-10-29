@@ -1,5 +1,3 @@
-<img src="https://github.com/imrafaelmerino/json-values/blob/master/logo/package_highres_if9bsyj4/black/full/black_logo_white_background.png" width="250" height="150"/>
-
 [![Build Status](https://travis-ci.com/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.com/imrafaelmerino/json-values)
 [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg?style=svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)

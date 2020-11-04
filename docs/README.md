@@ -1,6 +1,5 @@
 <img src="./logo/package_twitter_if9bsyj4/color1/full/coverphoto/color1-white_logo_dark_background.png" alt="logo"/>
 
-
 [![Build Status](https://travis-ci.com/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.com/imrafaelmerino/json-values)
 [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg?style=svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
@@ -226,7 +225,7 @@ Add the following dependency to your building tool:
 
 After the development of json-values, I published two more related projects:
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
-* [vertx-effect] 
+* [vertx-effect](https://github.com/imrafaelmerino/vertx-effect) 
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.

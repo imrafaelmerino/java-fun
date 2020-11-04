@@ -1,4 +1,4 @@
-<img src="./logo/package_twitter_swe2n4mg/color1/full/coverphoto/color1_logo_light_background.png" alt="logo"/>
+<img src="./logo/package_twitter_if9bsyj4/color1/full/coverphoto/color1-white_logo_dark_background.png" alt="logo"/>
 
 
 [![Build Status](https://travis-ci.com/imrafaelmerino/json-values.svg?branch=master)](https://travis-ci.com/imrafaelmerino/json-values)

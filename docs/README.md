@@ -194,7 +194,7 @@ JsObj obj = supplier.get();
 
 ```
 
-It supports the standard Json types: string, number, null, object, array; There are five number especializations:
+It supports the standard Json types: string, number, null, object, array; There are five number specializations:
 int, long, double, decimal and biginteger. json-values adds support for instants and binary data. Instants 
 are serialized into its string representation according to ISO-8601; and the binary type is serialized into a 
 string encoded in base 64.

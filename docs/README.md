@@ -212,7 +212,8 @@ great talk that elaborates ironically on this point.
 Java 8 or greater.
 ## <a name="installation"><a/> Installation
 Add the following dependency to your building tool:
-```
+
+```xml
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>

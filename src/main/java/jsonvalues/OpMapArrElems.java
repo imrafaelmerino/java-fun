@@ -1,72 +1,115 @@
 package jsonvalues;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static jsonvalues.MatchExp.ifJsonElse;
-import static jsonvalues.Trampoline.more;
+final class OpMapArrElems {
 
-final class OpMapArrElems extends OpMapElems<JsArray> {
-    OpMapArrElems(final JsArray json) {
-        super(json);
+    static JsArray map(JsArray json,
+                       final BiFunction<? super Integer, ? super JsPrimitive, ? extends JsValue> fn
+                      ) {
+        for (int i = json.size() - 1; i >= 0; i--) {
+
+            JsValue value = json.get(i);
+            if (value.isPrimitive()) {
+                JsValue headMapped = fn.apply(i,
+                                              value.toJsPrimitive()
+                                             );
+                json = json.set(i,
+                                headMapped
+                               );
+            }
+
+        }
+
+        return json;
     }
 
-    @Override
-    Trampoline<JsArray> map(final Function<? super JsPair, ? extends JsValue> fn,
-                            final JsPath startingPath
-                           ) {
-        return json.ifEmptyElse(Trampoline.done(json),
-                                (head, tail) ->
-                                {
-                                    final JsPath headPath = startingPath.inc();
-
-                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpMapArrElems(tail).map(fn,
-                                                                                                                           headPath
-                                                                                                                          ));
-                                    return ifJsonElse(headJson -> more(() -> tailCall).map(it -> it.prepend(headJson)),
-                                                      headElem ->
-                                                      {
-                                                          JsValue headMapped = fn.apply(JsPair.of(headPath,
-                                                                                                  headElem
-                                                                                                 ));
-
-                                                          return more(() -> tailCall).map(tailResult -> tailResult.prepend(headMapped));
-                                                      }
-                                                     ).apply(head);
-                                }
+    static JsArray mapAll(JsArray json,
+                          final BiFunction<? super JsPath, ? super JsPrimitive, ? extends JsValue> fn,
+                          final JsPath startingPath
+                         ) {
+        for (int i = json.size() - 1; i >= 0; i--) {
+            final JsPath headPath = startingPath.index(i);
+            JsValue      value    = json.get(i);
+            if (value.isObj()) {
+                json = json.set(i,
+                                OpMapObjElems.mapAll(value.toJsObj(),
+                                                     fn,
+                                                     headPath
+                                                    )
                                );
+            }
+            else if (value.isArray()) {
+                json = json.set(i,
+                                mapAll(value.toJsArray(),
+                                       fn,
+                                       headPath
+                                      )
+                               );
+            }
+            else {
+
+                JsValue headMapped = fn.apply(headPath,
+                                              value.toJsPrimitive()
+                                             );
+                json = json.set(i,
+                                headMapped
+                               );
+            }
+
+        }
+
+        return json;
+
     }
 
-    @Override
-    Trampoline<JsArray> mapAll(final Function<? super JsPair, ? extends JsValue> fn,
-                               final JsPath startingPath
-                              ) {
-        return json.ifEmptyElse(Trampoline.done(json),
-                                (head, tail) ->
-                                {
-                                    final JsPath headPath = startingPath.inc();
-
-                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpMapArrElems(tail).mapAll(fn,
-                                                                                                                              headPath
-                                                                                                                             ));
-                                    return ifJsonElse(headObj -> more(() -> tailCall).flatMap(tailResult -> new OpMapObjElems(headObj).mapAll(fn,
-                                                                                                                                              headPath
-                                                                                                                                             )
-                                                                                                                                      .map(tailResult::prepend)
-                                                                                             ),
-                                                      headArr -> more(() -> tailCall).flatMap(tailResult -> new OpMapArrElems(headArr).mapAll(fn,
-                                                                                                                                              headPath.index(-1)
-                                                                                                                                             )
-                                                                                                                                      .map(tailResult::prepend)
-                                                                                             ),
-                                                      headElem -> more(() -> tailCall).map(tailResult -> tailResult.prepend(fn.apply(JsPair.of(headPath,
-                                                                                                                                               headElem
-                                                                                                                                              ))))
-                                                     )
-                                            .apply(head);
-
-
-                                }
+    static JsArray mapAll(JsArray json,
+                          final Function<? super JsPrimitive, ? extends JsValue> fn) {
+        for (int i = json.size() - 1; i >= 0; i--) {
+            JsValue value = json.get(i);
+            if (value.isObj()) {
+                json = json.set(i,
+                                OpMapObjElems.mapAll(value.toJsObj(),
+                                                     fn
+                                                    )
                                );
+            }
+            else if (value.isArray()) {
+                json = json.set(i,
+                                OpMapArrElems.mapAll(value.toJsArray(),
+                                                     fn
+                                                    )
+                               );
+            }
+            else {
+
+                JsValue headMapped = fn.apply(value.toJsPrimitive());
+                json = json.set(i,
+                                headMapped
+                               );
+            }
+
+        }
+
+        return json;
+    }
+
+    static JsArray map(JsArray json,
+                       final Function<? super JsPrimitive, ? extends JsValue> fn) {
+        for (int i = json.size() - 1; i >= 0; i--) {
+
+            JsValue value = json.get(i);
+            if (value.isPrimitive()) {
+                JsValue headMapped = fn.apply(value.toJsPrimitive());
+                json = json.set(i,
+                                headMapped
+                               );
+            }
+
+        }
+
+        return json;
     }
 }
 

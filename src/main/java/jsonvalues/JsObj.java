@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.*;
 import java.util.stream.Stream;
+
 import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
@@ -27,8 +28,6 @@ import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsNull.NULL;
 import static jsonvalues.MatchExp.ifNothingElse;
-import static jsonvalues.Trampoline.done;
-import static jsonvalues.Trampoline.more;
 
 /**
  Represents a json object, which is an unordered set of name/element pairs. Two implementations are
@@ -52,9 +51,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
             new Prism<>(s -> s.isObj() ? Optional.of(s.toJsObj()) : Optional.empty(),
                         o -> o
             );
+    public static final int TYPE_ID = 3;
     @SuppressWarnings("squid:S3008")//EMPTY_PATH should be a valid name
     private static final JsPath EMPTY_PATH = JsPath.empty();
-    public static final int TYPE_ID = 3;
     private final Map<String, JsValue> map;
     private volatile int hascode;
     //squid:S3077: doesn't make any sense, volatile is perfectly valid here an as a matter of fact
@@ -63,9 +62,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     private volatile String str;
 
-    public JsObj(){
+    public JsObj() {
         this.map = LinkedHashMap.empty();
     }
+
     JsObj(final Map<String, JsValue> myMap) {
         this.map = myMap;
     }
@@ -1027,11 +1027,36 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         JsObj acc = JsObj.EMPTY;
         for (java.util.Map.Entry<String, JsValue> x : requireNonNull(xs)) {
 
-            acc = acc.set(JsPath.fromKey(x.getKey()),
+            acc = acc.set(x.getKey(),
                           x.getValue()
                          );
         }
         return acc;
+    }
+
+    /**
+     Inserts the element at the key in this json, replacing any existing element.
+
+     @param key   the key
+     @param value the element
+     @return a new json object
+     */
+    public JsObj set(final String key,
+                     final JsValue value
+                    ) {
+        requireNonNull(key);
+        return ifNothingElse(() -> this.delete(key),
+                             elem -> new JsObj(map.put(key,
+                                                       elem
+                                                      )
+                             )
+                            )
+                .apply(requireNonNull(value));
+    }
+
+    public final JsObj delete(final String key) {
+        if (!map.containsKey(requireNonNull(key))) return this;
+        return new JsObj(map.remove(key));
     }
 
     /**
@@ -1041,7 +1066,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      @return a JsOb object
      @throws MalformedJson if the string doesnt represent a json object
      */
-    public static JsObj parse(final String str){
+    public static JsObj parse(final String str) {
 
         try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str))) {
             JsonToken keyEvent = parser.nextToken();
@@ -1054,7 +1079,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     static Map<String, JsValue> parse(final JsonParser parser) throws IOException {
         Map<String, JsValue> map = LinkedHashMap.empty();
-        String                   key = parser.nextFieldName();
+        String               key = parser.nextFieldName();
         for (; key != null; key = parser.nextFieldName()) {
             JsValue elem;
             switch (parser.nextToken()
@@ -1124,16 +1149,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     }
 
-    /**
-     return true if the key is present
-
-     @param key the key
-     @return true if the specified key exists
-     */
-    public boolean containsKey(String key) {
-        return map.containsKey(key);
-    }
-
+    @Override
     public final boolean containsValue(final JsValue el) {
         return stream().anyMatch(p -> p.value.equals(Objects.requireNonNull(el)));
     }
@@ -1166,111 +1182,152 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                              );
         final JsPath tail = path.tail();
         if (tail.isEmpty()) return e;
-        if (e.isNotJson()) return NOTHING;
+        if (e.isPrimitive()) return NOTHING;
         return e.toJson()
                 .get(tail);
     }
 
-    public final JsObj filterValues(final Predicate<? super JsPair> filter) {
-        return new OpFilterObjElems(this).filter(JsPath.empty(),
-                                                 requireNonNull(filter)
-                                                )
-
-                                         .get();
+    @Override
+    public JsObj filterValues(final Predicate<? super JsPrimitive> filter) {
+        return OpFilterObjElems.filter(this,
+                                       requireNonNull(filter)
+                                      );
     }
 
-    public final JsObj filterAllValues(final Predicate<? super JsPair> filter) {
-        return new OpFilterObjElems(this).filterAll(JsPath.empty(),
-                                                    requireNonNull(filter)
-                                                   )
-
-                                         .get();
-
-    }
-
-    public final JsObj filterKeys(final Predicate<? super JsPair> filter) {
-        return new OpFilterObjKeys(this).filter(filter)
-                                        .get();
+    @Override
+    public final JsObj filterAllValues(final BiPredicate<? super JsPath, ? super JsPrimitive> filter) {
+        return OpFilterObjElems.filterAll(this,
+                                          JsPath.empty(),
+                                          requireNonNull(filter)
+                                         );
 
     }
 
-    public JsObj filterAllKeys(final Predicate<? super JsPair> filter) {
-        return new OpFilterObjKeys(this).filterAll(JsPath.empty(),
-                                                   filter
-                                                  )
-                                        .get();
+    @Override
+    public JsObj filterAllValues(final Predicate<? super JsPrimitive> filter) {
+        return OpFilterObjElems.filterAll(this,
+                                          requireNonNull(filter)
+                                         );
     }
 
-    public final JsObj filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter) {
-        return new OpFilterObjObjs(this).filter(JsPath.empty(),
-                                                requireNonNull(filter)
-                                               )
+    @Override
+    public JsObj filterKeys(final Predicate<? super String> filter) {
 
-                                        .get();
+        return OpFilterObjKeys.filter(this,
+                                      filter
+                                     );
     }
 
+    @Override
+    public JsObj filterAllKeys(final BiPredicate<? super JsPath, ? super JsValue> filter) {
+        return OpFilterObjKeys.filterAll(this,
+                                         JsPath.empty(),
+                                         filter
+                                        );
+    }
+
+    @Override
+    public JsObj filterAllKeys(final Predicate<? super String> filter) {
+        return OpFilterObjKeys.filterAll(this,
+                                         filter
+                                        );
+    }
+
+    @Override
+    public JsObj filterObjs(final Predicate<? super JsObj> filter) {
+        return OpFilterObjObjs.filter(this,
+                                      requireNonNull(filter)
+                                     );
+    }
+
+    @Override
     public final JsObj filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter) {
-        return new OpFilterObjObjs(this).filterAll(JsPath.empty(),
-                                                   requireNonNull(filter)
-                                                  )
-
-                                        .get();
+        return OpFilterObjObjs.filterAll(this,
+                                         JsPath.empty(),
+                                         requireNonNull(filter)
+                                        );
 
     }
 
+    @Override
+    public JsObj filterAllObjs(final Predicate<? super JsObj> filter) {
+        return OpFilterObjObjs.filterAll(this,
+                                         requireNonNull(filter)
+                                        );
+    }
+
+    @Override
     public final boolean isEmpty() {
         return map.isEmpty();
     }
 
-    public final JsObj mapValues(final Function<? super JsPair, ? extends JsValue> fn) {
-        return new OpMapObjElems(this).map(requireNonNull(fn),
-                                           EMPTY_PATH
-                                          )
-                                      .get();
-    }
-
-    public final JsObj mapAllValues(final Function<? super JsPair, ? extends JsValue> fn) {
-        return new OpMapObjElems(this).mapAll(requireNonNull(fn),
-                                              EMPTY_PATH
-                                             )
-                                      .get();
-    }
-
-    public final JsObj mapKeys(final Function<? super JsPair, String> fn) {
-        return new OpMapObjKeys(this).map(requireNonNull(fn),
-                                          EMPTY_PATH
-                                         )
-                                     .get();
-    }
-
-    public final JsObj mapAllKeys(final Function<? super JsPair, String> fn) {
-        return new OpMapObjKeys(this).mapAll(requireNonNull(fn),
-                                             EMPTY_PATH
-                                            )
-                                     .get();
-    }
-
-    public final JsObj mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsValue> fn) {
-        return new OpMapObjObjs(this).map(requireNonNull(fn),
-                                          JsPath.empty()
-                                         )
-                                     .get();
-    }
-
-    public final JsObj mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsValue> fn) {
-        return new OpMapObjObjs(this).mapAll(requireNonNull(fn),
-                                             JsPath.empty()
-                                            )
-                                     .get();
+    @Override
+    public JsObj mapValues(final Function<? super JsPrimitive, ? extends JsValue> fn) {
+        return OpMapObjElems.map(this,
+                                 requireNonNull(fn)
+                                );
     }
 
     @Override
-    public JsObj set(final JsPath path,
-                     final JsValue element) {
-        return set(path, element,
-                   NULL);
+    public final JsObj mapAllValues(final BiFunction<? super JsPath, ? super JsPrimitive, ? extends JsValue> fn) {
+        return OpMapObjElems.mapAll(this,
+                                    requireNonNull(fn),
+                                    EMPTY_PATH
+                                   );
     }
 
+    @Override
+    public JsObj mapAllValues(final Function<? super JsPrimitive, ? extends JsValue> fn) {
+        return OpMapObjElems.mapAll(this,
+                                    requireNonNull(fn)
+                                   );
+    }
+
+    @Override
+    public JsObj mapKeys(final Function<? super String, String> fn) {
+        return OpMapObjKeys.map(this,
+                                requireNonNull(fn)
+                               );
+    }
+
+    @Override
+    public final JsObj mapAllKeys(final BiFunction<? super JsPath, ? super JsValue, String> fn) {
+        return OpMapObjKeys.mapAll(this,
+                                   requireNonNull(fn),
+                                   EMPTY_PATH
+                                  );
+    }
+
+    @Override
+    public JsObj mapAllKeys(final Function<? super String, String> fn) {
+        return OpMapObjKeys.mapAll(this,
+                                   requireNonNull(fn)
+                                  );
+    }
+
+    @Override
+    public JsObj mapObjs(final Function<? super JsObj, JsValue> fn) {
+        return OpMapObjObjs.map(this,
+                                requireNonNull(fn)
+                               );
+    }
+
+    @Override
+    public final JsObj mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsValue> fn) {
+        return OpMapObjObjs.mapAll(this,
+                                   requireNonNull(fn),
+                                   JsPath.empty()
+                                  );
+    }
+
+    @Override
+    public JsObj mapAllObjs(final Function<? super JsObj, JsValue> fn) {
+        return OpMapObjObjs.mapAll(this,
+                                   requireNonNull(fn)
+                                  );
+    }
+
+    @Override
     public final JsObj set(final JsPath path,
                            final JsValue value,
                            final JsValue padElement
@@ -1283,7 +1340,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                           {
                               final JsPath tail = path.tail();
 
-                              return tail.isEmpty() ? ifNothingElse(() -> this,
+                              return tail.isEmpty() ? ifNothingElse(() -> this.delete(head),
                                                                     elem -> new JsObj(map.put(head,
                                                                                               elem
                                                                                              ))
@@ -1322,27 +1379,55 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     }
 
-    public final <R> Optional<R> reduce(final BinaryOperator<R> op,
-                                        final Function<? super JsPair, R> map,
-                                        final Predicate<? super JsPair> predicate
-                                       ) {
-        return new OpMapReduce<>(requireNonNull(predicate),
-                                 map,
-                                 op
-        ).reduce(this);
+    @Override
+    public JsObj set(final JsPath path,
+                     final JsValue element) {
+        return set(path,
+                   element,
+                   NULL
+                  );
     }
 
+    @Override
+    public <R> Optional<R> reduce(final BinaryOperator<R> op,
+                                  final Function<? super JsPrimitive, R> map,
+                                  final Predicate<? super JsPrimitive> predicate) {
+        return OpMapReduce.reduceObj(this,
+                                     requireNonNull(predicate),
+                                     map,
+                                     op,
+                                     Optional.empty()
+                                    );
+    }
+
+    @Override
     public final <R> Optional<R> reduceAll(final BinaryOperator<R> op,
-                                           final Function<? super JsPair, R> map,
-                                           final Predicate<? super JsPair> predicate
+                                           final BiFunction<? super JsPath, ? super JsPrimitive, R> map,
+                                           final BiPredicate<? super JsPath, ? super JsPrimitive> predicate
                                           ) {
-        return new OpMapReduce<>(requireNonNull(predicate),
-                                 map,
-                                 op
-        ).reduceAll(this);
+        return OpMapReduce.reduceAllObj(this,
+                                        JsPath.empty(),
+                                        requireNonNull(predicate),
+                                        map,
+                                        op,
+                                        Optional.empty()
+                                       );
 
     }
 
+    @Override
+    public <R> Optional<R> reduceAll(final BinaryOperator<R> op,
+                                     final Function<? super JsPrimitive, R> map,
+                                     final Predicate<? super JsPrimitive> predicate) {
+        return OpMapReduce.reduceAllObj(this,
+                                        requireNonNull(predicate),
+                                        map,
+                                        op,
+                                        Optional.empty()
+                                       );
+    }
+
+    @Override
     public final JsObj delete(final JsPath path) {
         if (requireNonNull(path).isEmpty()) return this;
         return path.head()
@@ -1365,16 +1450,19 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     }
 
+    @Override
     public final int size() {
         return map.size();
     }
 
+    @Override
     public final Stream<JsPair> streamAll() {
         return streamOfObj(this,
                            JsPath.empty()
                           );
     }
 
+    @Override
     public final Stream<JsPair> stream() {
         return this.keySet()
                    .stream()
@@ -1387,6 +1475,65 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                         }
 
                        );
+    }
+
+    public final JsObj filterValues(final BiPredicate<? super String, ? super JsPrimitive> filter) {
+        return OpFilterObjElems.filter(this,
+                                       requireNonNull(filter)
+                                      );
+    }
+
+    public final JsObj filterKeys(final BiPredicate<? super String, ? super JsValue> filter) {
+        return OpFilterObjKeys.filter(this,
+                                      filter
+                                     );
+
+    }
+
+    public final JsObj filterObjs(final BiPredicate<? super String, ? super JsObj> filter) {
+        return OpFilterObjObjs.filter(this,
+                                      requireNonNull(filter)
+                                     );
+    }
+
+    public final JsObj mapValues(final BiFunction<? super String, ? super JsPrimitive, ? extends JsValue> fn) {
+        return OpMapObjElems.map(this,
+                                 requireNonNull(fn)
+                                );
+    }
+
+    public final JsObj mapKeys(final BiFunction<? super String, ? super JsValue, String> fn) {
+        return OpMapObjKeys.map(this,
+                                requireNonNull(fn)
+                               );
+    }
+
+    public final JsObj mapObjs(final BiFunction<? super String, ? super JsObj, JsValue> fn) {
+        return OpMapObjObjs.map(this,
+                                requireNonNull(fn)
+                               );
+    }
+
+    /**
+     Performs a reduction on the values that satisfy the predicate in the first level of this json. The reduction is performed mapping
+     each value with the mapping function and then applying the operator
+
+     @param op        the operator upon two objects of type R
+     @param map       the mapping function which produces an object of type R from a JsValue
+     @param predicate the predicate that determines what JsValue will be mapped and reduced
+     @param <R>       the type of the operands of the operator
+     @return an {@link Optional} describing the of of the reduction
+     @see #reduceAll(BinaryOperator, BiFunction, BiPredicate) to apply the reduction in all the Json and not only in the first level
+     */
+    public final <R> Optional<R> reduce(final BinaryOperator<R> op,
+                                        final BiFunction<? super String, ? super JsPrimitive, R> map,
+                                        final BiPredicate<? super String, ? super JsPrimitive> predicate
+                                       ) {
+        return OpMapReduce.reduceObj(this,
+                                     requireNonNull(predicate),
+                                     map,
+                                     op
+                                    );
     }
 
     /**
@@ -1406,10 +1553,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return keySet().stream()
                        .allMatch(field ->
                                  {
-                                     final boolean exists = that.containsPath(JsPath.fromKey(field));
+                                     final boolean exists = that.containsKey(field);
                                      if (!exists) return false;
-                                     final JsValue elem     = get(JsPath.fromKey(field));
-                                     final JsValue thatElem = that.get(JsPath.fromKey(field));
+                                     final JsValue elem     = get(field);
+                                     final JsValue thatElem = that.get(field);
                                      if (elem.isJson() && thatElem.isJson())
                                          return elem.toJson()
                                                     .equals(thatElem,
@@ -1418,7 +1565,23 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                      return elem.equals(thatElem);
                                  }) && that.keySet()
                                            .stream()
-                                           .allMatch(f -> this.containsPath(JsPath.fromKey(f)));
+                                           .allMatch(this::containsKey);
+    }
+
+    /**
+     return true if the key is present
+
+     @param key the key
+     @return true if the specified key exists
+     */
+    public boolean containsKey(String key) {
+        return map.containsKey(key);
+    }
+
+    public JsValue get(final String key) {
+        return map.getOrElse(requireNonNull(key),
+                             NOTHING
+                            );
     }
 
     /**
@@ -1431,10 +1594,6 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return JsArray.prism.getOptional.apply(get(requireNonNull(key)))
                                         .orElse(null);
 
-    }
-
-    public JsValue get(final String key) {
-        return get(JsPath.fromKey(Objects.requireNonNull(key)));
     }
 
     /**
@@ -1465,8 +1624,6 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     }
 
-
-
     /**
      Returns the big integer located at the given key as a big integer or null if it doesn't
      exist or it's not an integral number.
@@ -1480,7 +1637,6 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     }
 
-
     /**
      Returns the instant located at the given key or null if it doesn't exist or it's
      not an instant.
@@ -1490,7 +1646,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      */
     public Instant getInstant(final String key) {
         return JsInstant.prism.getOptional.apply(get(requireNonNull(key)))
-                                         .orElse(null);
+                                          .orElse(null);
 
 
     }
@@ -1576,8 +1732,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      the hashcode once calculated. the object is immutable and it won't change
      Single-check idiom  Item 83 from Effective Java
      */
+    @Override
     @SuppressWarnings("squid:S1206")
-
     public final int hashCode() {
         int result = hascode;
         if (result == 0)
@@ -1585,6 +1741,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return result;
     }
 
+    @Override
     public final boolean equals(final Object that) {
         if (!(that instanceof JsObj)) return false;
         if (this == that) return true;
@@ -1597,17 +1754,18 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
         return keySet().stream()
                        .allMatch(f -> thatMap.map.get(f)
-                                                    .map(it -> it.equals(map.get(f)
-                                                                            .get())
-                                                        )
-                                                    .getOrElse(false) && thatMap.keySet()
-                                                                                .stream()
-                                                                                .allMatch(map::containsKey));
+                                                 .map(it -> it.equals(map.get(f)
+                                                                         .get())
+                                                     )
+                                                 .getOrElse(false) && thatMap.keySet()
+                                                                             .stream()
+                                                                             .allMatch(map::containsKey));
     }
 
     /**
      // Single-check idiom Item 83 from effective java
      */
+    @Override
     public final String toString() {
         String result = str;
         if (result == null)
@@ -1623,23 +1781,6 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     @Override
     public boolean isObj() {
         return true;
-    }
-
-    <T> Trampoline<T> ifEmptyElse(final Trampoline<T> empty,
-                                  final BiFunction<Tuple2<String, JsValue>, JsObj, Trampoline<T>> fn
-                                 ) {
-
-
-        if (this.isEmpty()) return empty;
-
-        final Tuple2<String, JsValue> head = this.head();
-
-        final JsObj tail = this.tail();
-
-        return fn.apply(head,
-                        tail
-                       );
-
     }
 
     /**
@@ -1684,7 +1825,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return intersection(this,
                             that,
                             ARRAY_AS
-                           ).get();
+                           );
     }
 
     /**
@@ -1701,12 +1842,11 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     public JsObj intersectionAll(final JsObj that,
                                  final TYPE ARRAY_AS
                                 ) {
-        requireNonNull(that);
-        requireNonNull(ARRAY_AS);
+
         return intersectionAll(this,
-                               that,
-                               ARRAY_AS
-                              ).get();
+                               requireNonNull(that),
+                               requireNonNull(ARRAY_AS)
+                              );
     }
 
     @SuppressWarnings("squid:S1602")
@@ -1716,14 +1856,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return (head, tail) ->
         {
             return (!pmap.containsKey(head) || !pmap.get(head)
-                                                    .filter(JsValue::isNotJson)
+                                                    .filter(JsValue::isPrimitive)
                                                     .isEmpty())
                     ||
                     (
                             tail.head()
-                                 .isKey() && !pmap.get(head)
-                                                  .filter(JsValue::isArray)
-                                                  .isEmpty()
+                                .isKey() && !pmap.get(head)
+                                                 .filter(JsValue::isArray)
+                                                 .isEmpty()
                     )
                     ||
                     (tail.head()
@@ -1739,25 +1879,6 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     }
 
     /**
-     Inserts the element at the key in this json, replacing any existing element.
-
-     @param key   the key
-     @param value the element
-     @return a new json object
-     */
-    public JsObj set(final String key,
-                     final JsValue value
-                    ) {
-        return set(JsPath.fromKey(key),
-                   value
-                  );
-    }
-
-    public final JsObj delete(final String key) {
-        return delete(JsPath.fromKey(requireNonNull(key)));
-    }
-
-    /**
      returns {@code this} json object plus those pairs from the given json object {@code that} which
      keys don't exist in {@code this}. Taking that into account, it's not a commutative operation unless
      the elements associated with the keys that exist in both json objects are equals.
@@ -1769,7 +1890,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                             ) {
         return union(this,
                      requireNonNull(that)
-                    ).get();
+                    );
 
     }
 
@@ -1796,150 +1917,107 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                                                  that,
                                                                  ARRAY_AS
                                                                 )
-                                                          .get()
                                                  )
                           );
 
     }
 
     @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
-    private Trampoline<JsObj> intersection(final JsObj a,
-                                           final JsObj b,
-                                           final JsArray.TYPE ARRAY_AS
-                                          ) {
-        if (a.isEmpty()) return done(a);
-        if (b.isEmpty()) return done(b);
-        Tuple2<String, JsValue> head = a.head();
-        JsObj                   tail = a.tail();
-        final Trampoline<Trampoline<JsObj>> tailCall = () -> intersection(tail,
-                                                                          b,
-                                                                          ARRAY_AS
-                                                                         );
-        final JsValue bElem = b.get(JsPath.fromKey(head._1));
+    private JsObj intersection(final JsObj a,
+                               final JsObj b,
+                               final JsArray.TYPE ARRAY_AS
+                              ) {
+        if (a.isEmpty()) return a;
+        if (b.isEmpty()) return b;
 
-        return ((bElem.isJson() && bElem.toJson()
+        JsObj result = JsObj.empty();
+        for (final Tuple2<String, JsValue> head : a) {
+            final JsValue bElem = b.get(head._1);
+            if ((bElem.isJson() && bElem.toJson()
                                         .equals(head._2,
                                                 ARRAY_AS
-                                               )) || bElem.equals(head._2)) ?
-               more(tailCall).map(it -> it.set(JsPath.fromKey(head._1),
-                                               head._2
-                                              )) :
-               more(tailCall);
+                                               )) || bElem.equals(head._2))
+                result = result.set(head._1,
+                                    head._2
+                                   );
+        }
+        return result;
     }
 
     @SuppressWarnings({"squid:S00117",}) // ARRAY_AS should be a valid name for an enum constant
-    private Trampoline<JsObj> intersectionAll(final JsObj a,
-                                              final JsObj b,
-                                              final JsArray.TYPE ARRAY_AS
-                                             ) {
-        if (a.isEmpty()) return done(a);
-        if (b.isEmpty()) return done(b);
-        Tuple2<String, JsValue> head = a.head();
+    private JsObj intersectionAll(final JsObj a,
+                                  final JsObj b,
+                                  final JsArray.TYPE ARRAY_AS
+                                 ) {
+        if (a.isEmpty()) return a;
+        if (b.isEmpty()) return b;
+        JsObj result = JsObj.empty();
+        for (final Tuple2<String, JsValue> aVal : a) {
 
-        JsObj tail = a.tail();
+            if(b.containsKey(aVal._1)){
+                final JsValue bVal = b.get(aVal._1);
 
-        final Trampoline<JsObj> tailCall = more(() -> intersectionAll(tail,
-                                                                      b,
-                                                                      ARRAY_AS
-                                                                     ));
-        if (b.containsPath(JsPath.fromKey(head._1))) {
-
-            final JsValue headOtherElement = b.get(JsPath.fromKey(head._1));
-            if (headOtherElement.equals(head._2)) {
-                return more(() -> intersectionAll(tail,
-                                                  b.tail(),
-                                                  ARRAY_AS
-                                                 )).map(it -> it.set(JsPath.fromKey(head._1),
-                                                                     head._2
-                                                                    ));
-
-            }
-            else if (head._2
-                    .isJson() && head._2
-                    .isSameType(headOtherElement)) {//different but same container
-                Json<?> obj = head._2
-                        .toJson();
-                Json<?> obj1 = headOtherElement.toJson();
-
-                Trampoline<? extends Json<?>> headCall = more(() -> () -> new OpIntersectionJsons().intersectionAll(obj,
-                                                                                                                    obj1,
-                                                                                                                    ARRAY_AS
-                                                                                                                   )
-                                                             );
-                return more(() -> tailCall).flatMap(json -> headCall
-                                                            .map(it -> json.set(JsPath.fromKey(head._1),
-                                                                                it
-                                                                               )
-                                                                )
-                                                   );
+                if(bVal.equals(aVal._2))result=result.set(aVal._1,aVal._2);
+                else if(bVal.isJson() && bVal.isSameType(aVal._2)){
+                   result = result.set(aVal._1,OpIntersectionJsons.intersectionAll(aVal._2.toJson(),
+                                                                                   bVal.toJson(),
+                                                                                   ARRAY_AS
+                                                                                  )
+                                      );
+                }
             }
 
         }
-        return tailCall;
+
+        return result;
+
     }
 
-    private Trampoline<JsObj> union(JsObj a,
-                                    JsObj b
-                                   ) {
-        if (b.isEmpty()) return done(a);
-        Tuple2<String, JsValue> head = b.head();
-        JsObj                   tail = b.tail();
-        return union(a,
-                     tail
-                    ).map(it ->
-                                  JsValueLens.of(head._1).modify.apply(c-> c.isNothing() ? head._2 : c).apply(it)
+    private JsObj union(JsObj a,
+                        JsObj b
+                       ) {
+        if (b.isEmpty()) return a;
+        JsObj result = a;
+        for (final Tuple2<String, JsValue> head : b) {
+            if (!a.containsKey(head._1)) result = result.set(head._1,
+                                                             head._2
+                                                            );
+        }
 
-                         );
+        return result;
 
     }
 
     //squid:S00117 ARRAY_AS should be a valid name
-    private Trampoline<JsObj> unionAll(final JsObj a,
-                                       final JsObj b,
-                                       final JsArray.TYPE ARRAY_AS
-                                      ) {
+    private JsObj unionAll(final JsObj a,
+                           final JsObj b,
+                           final JsArray.TYPE ARRAY_AS
+                          ) {
 
-        if (b.isEmpty()) return done(a);
-        Tuple2<String, JsValue> head = b.head();
-        JsObj                   tail = b.tail();
-        Trampoline<JsObj> tailCall = more(() -> unionAll(a,
-                                                         tail,
-                                                         ARRAY_AS
-                                                        ));
-        return ifNothingElse(() -> more(() -> tailCall).map(it -> it.set(JsPath.fromKey(head._1),
-                                                                         head._2
-                                                                        )),
-                             MatchExp.ifPredicateElse(e -> e.isJson() && e.isSameType(head._2),
-                                                      it ->
-                                                      {
-                                                          Json<?> obj = a.get(JsPath.empty()
-                                                                                    .key(head._1))
-                                                                         .toJson();
-                                                          Json<?> obj1 = head._2
-                                                                  .toJson();
+        if (b.isEmpty()) return a;
+        JsObj result = a;
+        for (final Tuple2<String, JsValue> bVal : b) {
+            if (!a.containsKey(bVal._1))
+                result = result.set(bVal._1,
+                                    bVal._2
+                                   );
+            JsValue aVal = a.get(bVal._1);
+            if (aVal.isJson() && aVal.isSameType(bVal._2)) {
+                Json<?> aJson = aVal.toJson();
+                Json<?> bJson = bVal._2.toJson();
 
-                                                          Trampoline<? extends Json<?>> headCall = more(() -> () -> new OpUnionJsons().unionAll(obj,
-                                                                                                                                                obj1,
-                                                                                                                                                ARRAY_AS
-                                                                                                                                               )
-                                                                                                       );
-                                                          return more(() -> tailCall).flatMap(tailResult -> headCall.map(headUnion_ ->
-                                                                                                                                 tailResult.set(JsPath.fromKey(head._1),
-                                                                                                                                                headUnion_
-                                                                                                                                               )
-                                                                                                                        )
-                                                                                             );
-                                                      },
-                                                      it -> tailCall
-                                                     )
-                            )
-                .apply(a.get(JsPath.empty()
-                                   .key(head._1)));
+                result = result.set(bVal._1,
+                                    OpUnionJsons.unionAll(aJson,
+                                                          bJson,
+                                                          ARRAY_AS
+                                                         )
+                                   );
+            }
+        }
 
+        return result;
 
     }
-
-
 
 
 }

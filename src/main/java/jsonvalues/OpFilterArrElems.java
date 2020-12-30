@@ -1,74 +1,108 @@
 package jsonvalues;
 
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import static jsonvalues.MatchExp.ifJsonElse;
-import static jsonvalues.Trampoline.more;
-
-final class OpFilterArrElems extends OpFilterElems<JsArray> {
+final class OpFilterArrElems {
 
 
-    OpFilterArrElems(final JsArray a) {
-        super(a);
+    static JsArray filter(JsArray json,
+                          final BiPredicate<? super Integer, ? super JsPrimitive> predicate
+                         ) {
+
+        for (int i = json.size() - 1; i >= 0; i--) {
+            JsValue value = json.get(i);
+            if (value.isPrimitive()) {
+                if (predicate.negate()
+                             .test(i,
+                                   value.toJsPrimitive()
+                                  )) json = json.delete(i);
+            }
+
+        }
+        return json;
     }
 
-    @Override
-    Trampoline<JsArray> filterAll(final JsPath startingPath,
-                                  final Predicate<? super JsPair> predicate
-                                 ) {
-        return json.ifEmptyElse(Trampoline.done(json),
-                                (head, tail) ->
-                                {
 
-                                    final JsPath headPath = startingPath.inc();
+    static JsArray filterAll(JsArray json,
+                             final Predicate<? super JsPrimitive> predicate) {
+        for (int i = json.size() - 1; i >= 0; i--) {
 
-                                    final Trampoline<JsArray> tailCall =
-                                            Trampoline.more(() -> new OpFilterArrElems(tail).filterAll(headPath,
-                                                                                                       predicate
-                                                                                                      ));
-                                    return ifJsonElse(headObj -> more(() -> tailCall).flatMap(tailResult -> new OpFilterObjElems(headObj).filterAll(headPath,
-                                                                                                                                                    predicate
-                                                                                                                                                   )
-                                                                                                                                         .map(tailResult::prepend)
-                                                                                             ),
-                                                      headArray -> more(() -> tailCall).flatMap(tailResult -> new OpFilterArrElems(headArray).filterAll(headPath.index(-1),
-                                                                                                                                                        predicate
-                                                                                                                                                       )
-                                                                                                                                             .map(tailResult::prepend)
-                                                                                               ),
-                                                      headElem -> predicate.test(JsPair.of(headPath,
-                                                                                           headElem
-                                                                                          )) ?
-                                                                  more(() -> tailCall).map(tailResult -> tailResult.prepend(headElem)) :
-                                                                  tailCall
-                                                     ).apply(head);
-                                }
+            JsValue value = json.get(i);
+
+            if (value.isObj()) {
+                json = json.set(i,
+                                OpFilterObjElems.filterAll(value.toJsObj(),
+                                                           predicate
+                                                          )
                                );
-    }
-
-    @Override
-    Trampoline<JsArray> filter(final JsPath startingPath,
-                               final Predicate<? super JsPair> predicate
-                              ) {
-        return json.ifEmptyElse(Trampoline.done(json),
-                                (head, tail) ->
-                                {
-
-                                    final JsPath headPath = startingPath.inc();
-
-                                    final Trampoline<JsArray> tailCall = Trampoline.more(() -> new OpFilterArrElems(tail).filter(headPath,
-                                                                                                                                 predicate
-                                                                                                                                ));
-                                    return ifJsonElse(elem -> more(() -> tailCall).map(it -> it.prepend(elem)),
-                                                      elem -> predicate.test(JsPair.of(headPath,
-                                                                                       elem
-                                                                                      )) ?
-                                                              more(() -> tailCall).map(it -> it.prepend(elem)) :
-                                                              tailCall
-
-                                                     )
-                                            .apply(head);
-                                }
+            }
+            else if (value.isArray()) {
+                json = json.set(i,
+                                filterAll(value.toJsArray(),
+                                          predicate
+                                         )
                                );
+            }
+            else if (predicate.negate()
+                              .test(
+                                      value.toJsPrimitive()
+                                   )) {
+                json = json.delete(i);
+            }
+        }
+
+        return json;
     }
+
+    static JsArray filter(JsArray json,
+                          final Predicate<? super JsPrimitive> predicate) {
+
+        for (int i = json.size() - 1; i >= 0; i--) {
+            JsValue value = json.get(i);
+            if (value.isPrimitive()) {
+                if (predicate.negate()
+                             .test(value.toJsPrimitive())) json = json.delete(i);
+            }
+
+        }
+        return json;
+    }
+
+    static JsArray filterAll(JsArray json,
+                             final JsPath startingPath,
+                             final BiPredicate<? super JsPath, ? super JsPrimitive> predicate
+                            ) {
+        for (int i = json.size() - 1; i >= 0; i--) {
+
+            final JsPath headPath = startingPath.index(i);
+            JsValue      value    = json.get(i);
+
+            if (value.isObj()) {
+                json = json.set(i,
+                                OpFilterObjElems.filterAll(value.toJsObj(),
+                                                           headPath,
+                                                           predicate
+                                                          )
+                               );
+            }
+            else if (value.isArray()) {
+                json = json.set(i,
+                                filterAll(value.toJsArray(),
+                                          headPath,
+                                          predicate
+                                         )
+                               );
+            }
+            else if (predicate.negate()
+                              .test(headPath,
+                                    value.toJsPrimitive()
+                                   )) {
+                json = json.delete(i);
+            }
+        }
+
+        return json;
+    }
+
 }

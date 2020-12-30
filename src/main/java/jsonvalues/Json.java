@@ -104,42 +104,60 @@ public interface Json<T extends Json<T>> extends JsValue {
 
     }
 
+
     /**
      Filters the pairs of elements in the first level of this json, removing those that don't ifPredicateElse
      the predicate.
 
      @param filter the predicate which takes as the input every JsPair in the first level of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-     @see #filterAllValues(Predicate) how to filter the pair of elements of the whole json and not only the first level
+     @see #filterAllValues(BiPredicate) how to filter the pair of elements of the whole json and not only the first level
      */
-    T filterValues(final Predicate<? super JsPair> filter);
+    T filterValues(final Predicate<? super JsPrimitive> filter);
 
     /**
      Filters all the pairs of elements of this json, removing those that don't ifPredicateElse the predicate.
 
      @param filter the predicate which takes as the input every JsPair of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-     @see #filterValues(Predicate) how to filter the pairs of values of only the first level
      */
-    T filterAllValues(final Predicate<? super JsPair> filter);
+    T filterAllValues(final BiPredicate<? super JsPath, ? super JsPrimitive> filter);
+
+    /**
+     Filters all the pairs of elements of this json, removing those that don't ifPredicateElse the predicate.
+
+     @param filter the predicate which takes as the input every JsPair of this json
+     @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
+     */
+    T filterAllValues(final Predicate<? super JsPrimitive> filter);
+
 
     /**
      Filters the keys in the first level of this json, removing those that don't ifPredicateElse the predicate.
 
      @param filter the predicate which takes as the input every JsPair in the first level of this json
      @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
-     @see #filterAllKeys(Predicate) how to filter the keys of the whole json and not only the first level
+     @see #filterAllKeys(BiPredicate) how to filter the keys of the whole json and not only the first level
      */
-    T filterKeys(final Predicate<? super JsPair> filter);
+    T filterKeys(final Predicate<? super String> filter);
 
     /**
      Filters all the keys of this json, removing those that don't ifPredicateElse the predicate.
 
      @param filter the predicate which takes as the input every JsPair of this json
      @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
-     @see #filterKeys(Predicate) how to filter the keys of only the first level
      */
-    T filterAllKeys(final Predicate<? super JsPair> filter);
+    T filterAllKeys(final BiPredicate<? super JsPath, ? super JsValue> filter);
+
+
+    /**
+     Filters all the keys of this json, removing those that don't ifPredicateElse the predicate.
+
+     @param filter the predicate which takes as the input every JsPair of this json
+     @return same this instance if all the keys satisfy the predicate or a new filtered json of the same type T
+     */
+    T filterAllKeys(final Predicate<? super String> filter);
+
 
     /**
      Filters the pair of jsons in the first level of this json, removing those that don't ifPredicateElse
@@ -147,19 +165,24 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @param filter the predicate which takes as the input every JsPair in the first level of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-     @see #filterAllObjs(BiPredicate) how to filter the pair of jsons of the whole json and not only the first level
      */
-    T filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter
-                );
+    T filterObjs(final Predicate<? super JsObj> filter);
 
     /**
      Filters all the pair of jsons of this json, removing those that don't ifPredicateElse the predicate.
 
      @param filter the predicate which takes as the input every JsPair of this json
      @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
-     @see #filterObjs(BiPredicate) how to filter the pair of jsons of only the first level
      */
     T filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter);
+
+    /**
+     Filters all the pair of jsons of this json, removing those that don't ifPredicateElse the predicate.
+
+     @param filter the predicate which takes as the input every JsPair of this json
+     @return same this instance if all the pairs satisfy the predicate or a new filtered json of the same type T
+     */
+    T filterAllObjs(final Predicate<? super JsObj> filter);
 
     /**
      Returns the array located at the given path or null if it doesn't exist or it's not an array.
@@ -187,6 +210,10 @@ public interface Json<T extends Json<T>> extends JsValue {
 
     }
 
+    @Override
+    default JsPrimitive toJsPrimitive() {
+        throw UserError.isNotAJsPrimitive(this);
+    }
 
     /**
      Returns the number located at the given path as a big integer or null if it doesn't
@@ -233,7 +260,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default Instant getInstant(final JsPath path) {
         return JsInstant.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElse(null);
+                                          .orElse(null);
 
     }
 
@@ -343,16 +370,14 @@ public interface Json<T extends Json<T>> extends JsValue {
         return o;
     }
 
+
     /**
      Maps the values in the first level of this json.
 
      @param fn the mapping function
      @return a new mapped json of the same type T
-     @see #mapObjs(BiFunction) to map jsons
-     @see #mapKeys(Function) to map keys of json objects
-     @see #mapAllValues(Function) to map all the values and not only the first level
      */
-    T mapValues(final Function<? super JsPair, ? extends JsValue> fn);
+    T mapValues(final Function<? super JsPrimitive, ? extends JsValue> fn);
 
 
     /**
@@ -360,11 +385,16 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @param fn the mapping function
      @return a new mapped json of the same type T
-     @see #mapAllObjs(BiFunction) to map jsons
-     @see #mapAllKeys(Function) to map keys of json objects
-     @see #mapValues(Function) to map only the first level
      */
-    T mapAllValues(final Function<? super JsPair, ? extends JsValue> fn);
+    T mapAllValues(final BiFunction<? super JsPath, ? super JsPrimitive, ? extends JsValue> fn);
+
+    /**
+     Maps all the values of this json.
+
+     @param fn the mapping function
+     @return a new mapped json of the same type T
+     */
+    T mapAllValues(final Function<? super JsPrimitive, ? extends JsValue> fn);
 
 
     /**
@@ -372,11 +402,16 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @param fn the mapping function
      @return a new mapped json of the same type T
-     @see #mapValues(Function) to map values
-     @see #mapObjs(BiFunction) to map jsons
-     @see #mapAllKeys(Function) to map all the keys and not only the first level
      */
-    T mapKeys(final Function<? super JsPair, String> fn);
+    T mapKeys(final Function<? super String, String> fn);
+
+    /**
+     Maps all the keys of this json.
+
+     @param fn the mapping function
+     @return a new mapped json of the same type T
+     */
+    T mapAllKeys(final BiFunction<? super JsPath, ? super JsValue, String> fn);
 
 
     /**
@@ -384,11 +419,8 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @param fn the mapping function
      @return a new mapped json of the same type T
-     @see #mapAllValues(Function) to map values
-     @see #mapAllObjs(BiFunction) to map jsons
-     @see #mapKeys(Function) to map only the first level
      */
-    T mapAllKeys(final Function<? super JsPair, String> fn);
+    T mapAllKeys(final Function<? super String, String> fn);
 
 
     /**
@@ -396,24 +428,24 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @param fn the  mapping function
      @return a new mapped json of the same type T
-     @see #mapValues(Function) to map values
-     @see #mapKeys(Function) to map keys of json objects
-     @see #mapAllObjs(BiFunction) to map all the jsons and not only the first level
      */
-    T mapObjs(final BiFunction<? super JsPath, ? super JsObj, JsValue> fn);
-
+    T mapObjs(final Function<? super JsObj, JsValue> fn);
 
     /**
      Maps all the jsons of this json.
 
      @param fn the mapping function
      @return a new mapped json of the same type T
-     @see #mapAllValues(Function) to map values
-     @see #mapAllKeys(Function) to map keys of json objects
-     @see #mapObjs(BiFunction) to map only the first level
      */
     T mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, JsValue> fn);
 
+    /**
+     Maps all the jsons of this json.
+
+     @param fn the mapping function
+     @return a new mapped json of the same type T
+     */
+    T mapAllObjs(final Function<? super JsObj, JsValue> fn);
 
     /**
      Inserts the element at the path in this json, replacing any existing element and filling with padElement
@@ -422,14 +454,15 @@ public interface Json<T extends Json<T>> extends JsValue {
      The same instance is returned when the head of the path is a key and this is an array or the head
      of the path is an index and this is an object or the element is {@link JsNothing}
 
-     @param path    the JsPath object where the element will be inserted at
-     @param element the JsValue that will be inserted
+     @param path       the JsPath object where the element will be inserted at
+     @param element    the JsValue that will be inserted
      @param padElement the JsValue that will be inserted in arrays when padding is necessary
      @return the same instance or a new json of the same type T
      */
     T set(final JsPath path,
           final JsValue element,
           final JsValue padElement);
+
     /**
      Inserts the element at the path in this json, replacing any existing element and filling with
      {@link jsonvalues.JsNull} empty indexes in arrays when necessary.
@@ -443,8 +476,13 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default T set(final JsPath path,
                   final JsValue element) {
-        return set(path,element,JsNull.NULL);
+        return set(path,
+                   element,
+                   JsNull.NULL
+                  );
     }
+
+
 
     /**
      Performs a reduction on the values that satisfy the predicate in the first level of this json. The reduction is performed mapping
@@ -455,11 +493,11 @@ public interface Json<T extends Json<T>> extends JsValue {
      @param predicate the predicate that determines what JsValue will be mapped and reduced
      @param <R>       the type of the operands of the operator
      @return an {@link Optional} describing the of of the reduction
-     @see #reduceAll(BinaryOperator, Function, Predicate) to apply the reduction in all the Json and not only in the first level
+     @see #reduceAll(BinaryOperator, BiFunction, BiPredicate) to apply the reduction in all the Json and not only in the first level
      */
     <R> Optional<R> reduce(final BinaryOperator<R> op,
-                           final Function<? super JsPair, R> map,
-                           final Predicate<? super JsPair> predicate
+                           final Function<? super JsPrimitive, R> map,
+                           final Predicate<? super JsPrimitive> predicate
                           );
 
     /**
@@ -471,11 +509,26 @@ public interface Json<T extends Json<T>> extends JsValue {
      @param predicate the predicate that determines what JsValue will be mapped and reduced
      @param <R>       the type of the operands of the operator
      @return an {@link Optional} describing the result of the reduction
-     @see #reduce(BinaryOperator, Function, Predicate) to apply the reduction only in the first level
      */
     <R> Optional<R> reduceAll(final BinaryOperator<R> op,
-                              final Function<? super JsPair, R> map,
-                              final Predicate<? super JsPair> predicate
+                              final BiFunction<? super JsPath, ? super JsPrimitive, R> map,
+                              final BiPredicate<? super JsPath, ? super JsPrimitive> predicate
+                             );
+
+
+    /**
+     Performs a reduction on the values of this json that satisfy the predicate. The reduction is performed mapping
+     each value with the mapping function and then applying the operator
+
+     @param op        the operator upon two objects of type R
+     @param map       the mapping function which produces an object of type R from a JsValue
+     @param predicate the predicate that determines what JsValue will be mapped and reduced
+     @param <R>       the type of the operands of the operator
+     @return an {@link Optional} describing the result of the reduction
+     */
+    <R> Optional<R> reduceAll(final BinaryOperator<R> op,
+                              final Function<? super JsPrimitive, R> map,
+                              final Predicate<? super JsPrimitive> predicate
                              );
 
     /**
@@ -536,7 +589,7 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @param ouputstream the output stream
      */
-    default void serialize(final OutputStream ouputstream){
+    default void serialize(final OutputStream ouputstream) {
         INSTANCE.serialize(this,
                            requireNonNull(ouputstream)
                           );
@@ -548,7 +601,7 @@ public interface Json<T extends Json<T>> extends JsValue {
 
      @return this Json serialized into an array of bytes
      */
-    default byte[] serialize(){
+    default byte[] serialize() {
         return INSTANCE.serialize(this);
     }
 

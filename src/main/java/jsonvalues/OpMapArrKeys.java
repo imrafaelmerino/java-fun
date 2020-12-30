@@ -1,51 +1,63 @@
 package jsonvalues;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static jsonvalues.MatchExp.ifJsonElse;
-import static jsonvalues.Trampoline.more;
+final class OpMapArrKeys {
 
-final class OpMapArrKeys extends OpMapKeys<JsArray> {
-    OpMapArrKeys(final JsArray json) {
-        super(json);
-    }
 
-    @Override
-    Trampoline<JsArray> map(final Function<? super JsPair, String> fn,
-                            final JsPath startingPath
-                           ) {
-        throw InternalError.opNotSupportedForArrays();
-    }
-
-    @Override
-    Trampoline<JsArray> mapAll(final Function<? super JsPair, String> fn,
-                               final JsPath startingPath
-                              ) {
-        return json.ifEmptyElse(Trampoline.done(json),
-                                (head, tail) ->
-                                {
-                                    final JsPath headPath = startingPath.inc();
-                                    final Trampoline<JsArray> tailCall =
-                                            Trampoline.more(() -> new OpMapArrKeys(tail).mapAll(fn,
-                                                                                                headPath
-                                                                                               ));
-                                    return ifJsonElse(headObj ->
-                                                              more(() -> tailCall).flatMap(tailResult ->
-                                                                                                   new OpMapObjKeys(headObj).mapAll(fn,
-                                                                                                                                    headPath
-                                                                                                                                   )
-                                                                                                                            .map(tailResult::prepend)),
-                                                      headArr ->
-                                                              more(() -> tailCall).flatMap(tailResult ->
-                                                                                                   new OpMapArrKeys(headArr).mapAll(fn,
-                                                                                                                                    headPath.index(-1)
-                                                                                                                                   )
-                                                                                                                            .map(tailResult::prepend)),
-                                                      headElem ->
-                                                              more(() -> tailCall).map(tailResult -> tailResult.prepend(headElem))
-                                                     )
-                                            .apply(head);
-                                }
+    static JsArray mapAll(JsArray json,
+                          final BiFunction<? super JsPath, ? super JsValue, String> fn,
+                          final JsPath startingPath
+                         ) {
+        JsPath headPath = startingPath;
+        for (int i = 0; i < json.size(); i++) {
+            headPath = headPath.inc();
+            JsValue value = json.get(i);
+            if (value.isObj()) {
+                json = json.set(i,
+                                OpMapObjKeys.mapAll(value.toJsObj(),
+                                                    fn,
+                                                    headPath
+                                                   )
                                );
+            }
+            else if (value.isArray()) {
+                json = json.set(i,
+                                mapAll(value.toJsArray(),
+                                       fn,
+                                       headPath.index(-1)
+                                      )
+                               );
+            }
+
+
+        }
+        return json;
+
+    }
+
+    static JsArray mapAll(JsArray json,
+                          final Function<? super String, String> fn) {
+        for (int i = 0; i < json.size(); i++) {
+            JsValue value = json.get(i);
+            if (value.isObj()) {
+                json = json.set(i,
+                                OpMapObjKeys.mapAll(value.toJsObj(),
+                                                    fn
+                                                   )
+                               );
+            }
+            else if (value.isArray()) {
+                json = json.set(i,
+                                mapAll(value.toJsArray(),
+                                       fn
+                                      )
+                               );
+            }
+
+
+        }
+        return json;
     }
 }

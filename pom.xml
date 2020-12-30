@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <packaging>jar</packaging>
-    <version>8.4.0</version>
+    <version>9.0.0-RC1</version>
 
   <name>json-values</name>
     <description>json-values is a functional Java library to work with immutable jsons using persistent data structures.</description>
@@ -29,7 +29,7 @@
         <url>https://github.com/imrafaelmerino/json-values.git</url>
     </scm>
     <properties>
-        <JACKSON-VERSION>2.11.0</JACKSON-VERSION>
+        <JACKSON-VERSION>2.12.0</JACKSON-VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <PLUGIN_COMPILER_VERSION>3.8.0</PLUGIN_COMPILER_VERSION>
         <COMPILER_SOURCE_VERSION>8</COMPILER_SOURCE_VERSION>
@@ -42,8 +42,7 @@
         <MAVEN-JAVADOC-PLUGIN.VERSION>3.2.0</MAVEN-JAVADOC-PLUGIN.VERSION>
         <MAVEN-SUREFIRE-PLUGIN.VERSION>2.22.0</MAVEN-SUREFIRE-PLUGIN.VERSION>
         <MY-DSL-JSON.VERSION>0.1</MY-DSL-JSON.VERSION>
-        <DSL-JSON.VERSION>1.9.5</DSL-JSON.VERSION>
-
+        <DSL-JSON.VERSION>1.9.7</DSL-JSON.VERSION>
         <vavr.version>0.10.3</vavr.version>
     </properties>
     <dependencies>

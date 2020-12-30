@@ -2,9 +2,6 @@ package jsonvalues;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.Function;
-
 import static jsonvalues.JsArray.TYPE.*;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
@@ -12,7 +9,7 @@ import static jsonvalues.JsNull.NULL;
 public class TestsUnionAndIntersection {
 
     @Test
-    public void test_1_testUnion(){
+    public void test_1_testUnion() {
 
 
         JsObj a = JsObj.parse("{\"a\": 1, \"c\": [{\"d\": 1}]}");
@@ -51,7 +48,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_2_testUnion(){
+    public void test_2_testUnion() {
 
 
         JsObj a = JsObj.parse("{\"a\": [1, 2]}");
@@ -88,7 +85,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_3_testUnion(){
+    public void test_3_testUnion() {
 
 
         JsArray a = JsArray.parse("[\"1\", \"2\"]");
@@ -130,7 +127,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_4_testUnion(){
+    public void test_4_testUnion() {
 
 
         JsObj a = JsObj.parse("{\"a\": [1, 2, {\"b\": {\"b\": 1}}]}");
@@ -169,7 +166,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_5_testUnion(){
+    public void test_5_testUnion() {
 
 
         JsObj a = JsObj.parse("{\"a\":1, \"b\":[1,2,3], \"c\":[ {\"d\":1,\"e\":[1,2]}, {\"f\":2,\"g\":[\"a\",\"b\",\"c\"]} ]}");
@@ -208,7 +205,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_1_testIntersection(){
+    public void test_1_testIntersection() {
 
 
         JsObj a = JsObj.parse("{\"a\":1,\"b\":2}");
@@ -228,7 +225,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_2_testIntersection(){
+    public void test_2_testIntersection() {
 
 
         JsObj a = JsObj.parse("{\"b\":{\"a\":1,\"b\":2,\"c\":[{\"a\":1,\"b\":[1,2]},{\"b\":2},{\"c\":3}]}}");
@@ -249,9 +246,7 @@ public class TestsUnionAndIntersection {
 
 
     @Test
-    public void test_map_values_array(){
-        final Function<JsPair, JsValue> toLowerCaseFn = p -> JsStr.prism.modify.apply(String::toLowerCase)
-                                                                        .apply(p.value);
+    public void test_map_values_array() {
 
 
         JsArray array = JsArray.of(JsStr.of("A"),
@@ -259,7 +254,8 @@ public class TestsUnionAndIntersection {
                                    JsStr.of("B")
                                   );
 
-        final JsArray newArray = array.mapValues(toLowerCaseFn
+        final JsArray newArray = array.mapValues((i, val) -> JsStr.prism.modify.apply(String::toLowerCase)
+                                                                               .apply(val)
                                                 );
 
         Assertions.assertNotEquals(array,
@@ -289,7 +285,8 @@ public class TestsUnionAndIntersection {
                                             )
                                    );
 
-        final JsArray newArray1 = array1.mapAllValues(toLowerCaseFn);
+        final JsArray newArray1 = array1.mapAllValues((p, val) -> JsStr.prism.modify.apply(String::toLowerCase)
+                                                                                    .apply(val));
         Assertions.assertEquals(JsArray.parse("[\"a\",true,\"b\",null,{\"a\":\"a\",\"b\":\"b\",\"c\":[\"a\",\"b\",null]}]\n")
                 ,
                                 newArray1
@@ -300,8 +297,7 @@ public class TestsUnionAndIntersection {
 
     @Test
     public void test_map_values_obj() {
-        final Function<JsPair, JsValue> toLowerCaseFn = p -> JsStr.prism.modify.apply(String::toLowerCase)
-                                                                        .apply(p.value);
+
 
         JsObj obj = JsObj.of("a",
                              JsStr.of("A"),
@@ -309,7 +305,8 @@ public class TestsUnionAndIntersection {
                              JsStr.of("B")
                             );
 
-        final JsObj newObj = obj.mapValues(toLowerCaseFn);
+        final JsObj newObj = obj.mapValues( (p, val) -> JsStr.prism.modify.apply(String::toLowerCase)
+                                                                          .apply(val));
 
         Assertions.assertNotEquals(obj,
                                    newObj
@@ -325,7 +322,8 @@ public class TestsUnionAndIntersection {
                                         )
                              );
 
-        final JsObj newObj1 = obj1.mapAllValues(toLowerCaseFn);
+        final JsObj newObj1 = obj1.mapAllValues( (p, val) -> JsStr.prism.modify.apply(String::toLowerCase)
+                                                                               .apply(val));
 
         Assertions.assertNotEquals(obj1,
                                    newObj1
@@ -341,8 +339,7 @@ public class TestsUnionAndIntersection {
                              JsStr.of("B")
                             );
 
-        final JsObj newObj = obj.mapKeys(p -> p.path.last()
-                                                    .asKey().name.toUpperCase());
+        final JsObj newObj = obj.mapKeys((key, val) -> key.toUpperCase());
 
         Assertions.assertNotEquals(newObj,
                                    obj
@@ -367,8 +364,8 @@ public class TestsUnionAndIntersection {
                                         )
                              );
 
-        final JsObj newObj1 = obj1.mapAllKeys(p -> p.path.last()
-                                                         .asKey().name.toUpperCase());
+        final JsObj newObj1 = obj1.mapAllKeys((path, val) -> path.last()
+                                                                 .asKey().name.toUpperCase());
 
         Assertions.assertNotEquals(newObj1,
                                    obj1
@@ -379,7 +376,7 @@ public class TestsUnionAndIntersection {
 
 
     @Test
-    public void test_readme_union(){
+    public void test_readme_union() {
         JsObj a = JsObj.parse("{\"a\":1, \"c\": [{ \"d\":1 }] }");
         JsObj b = JsObj.parse("{\"b\":2, \"c\": [{ \"e\":2 }] }");
         JsObj c = JsObj.parse("{\"a\":1, \"b\":2, \"c\": [{ \"d\":1 }, { \"e\":2 }] }");
@@ -429,7 +426,7 @@ public class TestsUnionAndIntersection {
     }
 
     @Test
-    public void test_readme_intersection(){
+    public void test_readme_intersection() {
 
         JsObj a = JsObj.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"a\":1, \"b\":[1,2]}, {\"b\":2}, {\"c\":3}] } }");
         JsObj b = JsObj.parse("{ \"b\": {\"a\":1, \"b\":2, \"c\": [{\"a\":1, \"b\":[1]  }, {\"b\":2}] } }");

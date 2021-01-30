@@ -9,7 +9,7 @@
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/json-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/json-values)
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/9.0.0-RC3)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/9.0.0-RC3/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/9.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/9.0.0/jar)
 [![](https://jitpack.io/v/imrafaelmerino/json-values.svg)](https://jitpack.io/#imrafaelmerino/json-values)
 
 [![Gitter](https://badges.gitter.im/json-values/community.svg)](https://gitter.im/json-values/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
@@ -44,15 +44,22 @@ in Java 8, like functions, suppliers, streams, and collectors, making json manip
 leave the functions passed in as arguments with no implementation for brevity reasons. 
 
 ```java
-json.mapKeys(toSneakeCase)
+JsObj a = JsOJsObj.parse(json)
+JsObj b = JsOJsObj.parseYaml(yaml)
 
-json.mapValues(trim, ifStr)
+// first level        
+json.mapAKeys(toSneakeCase)
 
-json.filterKeys(key.startsWith("_field"))
+// traverses all the elements       
+json.mapAllKeys(toSneakeCase)
 
-json.filterValues(isNotNull)
+json.mapAllValues(trim, ifStr)
 
-json.reduce(plus, ifInt)
+json.filterAllKeys(key.startsWith("_field"))
+
+json.filterAllValues(isNotNull)
+
+json.reduceAll(plus, ifInt)
 
 //RFC 6901
 json.set(path("/a/b"), value)
@@ -171,7 +178,7 @@ Add the following dependency to your building tool:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>9.0.0-RC3</version>
+  <version>9.0.0</version>
 </dependency>
 ```
 

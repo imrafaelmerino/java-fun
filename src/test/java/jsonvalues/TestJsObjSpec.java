@@ -1,10 +1,7 @@
 package jsonvalues;
 
-<<<<<<< HEAD
+
 import com.dslplatform.json.JsParserException;
-=======
-import com.dslplatform.json.parsers.JsParserException;
->>>>>>> feat: 🎸 new method toPrettyString
 import jsonvalues.spec.Error;
 import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;

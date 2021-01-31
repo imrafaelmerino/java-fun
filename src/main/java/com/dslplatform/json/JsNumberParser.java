@@ -1,14 +1,7 @@
 package com.dslplatform.json;
 
-<<<<<<< HEAD:src/main/java/com/dslplatform/json/JsNumberParser.java
-=======
-import com.dslplatform.json.JsonReader;
-import com.dslplatform.json.MyNumberConverter;
-import com.dslplatform.json.ParsingException;
->>>>>>> feat: 🎸 new method toPrettyString:src/main/java/com/dslplatform/json/parsers/JsNumberParser.java
 import jsonvalues.*;
 import jsonvalues.spec.Error;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;

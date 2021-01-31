@@ -1,10 +1,5 @@
 package com.dslplatform.json;
 
-<<<<<<< HEAD:src/main/java/com/dslplatform/json/JsIntegralParser.java
-=======
-import com.dslplatform.json.JsonReader;
-import com.dslplatform.json.MyNumberConverter;
->>>>>>> feat: 🎸 new method toPrettyString:src/main/java/com/dslplatform/json/parsers/JsIntegralParser.java
 import jsonvalues.JsBigInt;
 import jsonvalues.spec.Error;
 

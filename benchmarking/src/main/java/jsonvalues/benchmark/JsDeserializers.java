@@ -7,23 +7,19 @@ import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.load.Dereferencing;
 import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
-import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import jsonvalues.JsObj;
 import jsonvalues.spec.JsObjParser;
+import org.leadpony.justify.api.JsonSchema;
 import org.leadpony.justify.api.JsonValidationService;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static jsonvalues.benchmark.Conf.*;
@@ -33,36 +29,59 @@ import static jsonvalues.benchmark.Conf.*;
 @State(Scope.Benchmark)
 public class JsDeserializers {
 
-    // jackson mapper
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    // json-values parser
-    private static final JsObjParser jsonParser = new JsObjParser(PERSON_SPEC);
 
-   // hibernate validator init
+    // hibernate validator init
     private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private static final Validator validator = validatorFactory.getValidator();
 
-    // justify init
+    // json-values parser from spec
+    private static final JsObjParser jsonParser = new JsObjParser(PERSON_SPEC);
+
+    // justify 3.1.0
+/*    private static JsonValidationService serviceJustify ;
+    private static JsonSchema schemaJustify;
+    static {
+        serviceJustify = JsonValidationService.newInstance();
+        schemaJustify = serviceJustify.readSchema(new StringReader(Conf.PERSON_JSON_SCHEMA));
+    }*/
+
+    // justify 2.1.0
     private static final JsonValidationService serviceJustify = JsonValidationService.newInstance();
-    private static final org.leadpony.justify.api.JsonSchema schemaJustify =
-            serviceJustify.readSchema(new StringReader(PERSON_jSON_SCHEMA));
+    private static final JsonSchema schemaJustify =
+            serviceJustify.readSchema(new StringReader(PERSON_JSON_SCHEMA));
+
 
     // json schema validator init
     private static final LoadingConfiguration cfg = LoadingConfiguration.newBuilder()
                                                                         .dereferencing(Dereferencing.INLINE)
                                                                         .freeze();
     private static final JsonSchemaFactory jsonSchemaFactory = JsonSchemaFactory.newBuilder()
-                                                                      .setLoadingConfiguration(cfg)
-                                                                      .freeze();
-    private static final JsonSchema schema;
+                                                                                .setLoadingConfiguration(cfg)
+                                                                                .freeze();
+    private static final com.github.fge.jsonschema.main.JsonSchema schema;
 
     static {
         try {
-            schema = jsonSchemaFactory.getJsonSchema(JsonLoader.fromString(PERSON_jSON_SCHEMA));
+            schema = jsonSchemaFactory.getJsonSchema(JsonLoader.fromString(PERSON_JSON_SCHEMA));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void main(String[] args) throws JsonProcessingException, ProcessingException {
+
+        jakarta.json.JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
+                                                                     schemaJustify,
+                                                                     System.out::println
+                                                                    );
+
+        jakarta.json.JsonObject obj = reader.readObject();
+
+        System.out.println(obj);
+
+
     }
 
     @Benchmark
@@ -71,18 +90,19 @@ public class JsDeserializers {
         bh.consume(schema.validate(json));
     }
 
+
     @Benchmark
     public void justify(Blackhole bh) {
-        JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
-                                                        schemaJustify,
-                                                        bh::consume
-                                                       );
-        JsonObject json = reader.readObject();
+        jakarta.json.JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
+                                                                     schemaJustify,
+                                                                     System.out::println
+                                                                    );
 
+        jakarta.json.JsonObject obj = reader.readObject();
         reader.close();
-
-        bh.consume(json);
+        bh.consume(obj);
     }
+
 
     @Benchmark
     public void jackson_node(Blackhole bh) throws IOException {
@@ -91,15 +111,18 @@ public class JsDeserializers {
 
     @Benchmark
     public void jackson_pojo(Blackhole bh) throws JsonProcessingException {
-        Person person = objectMapper.readValue(PERSON_JSON, Person.class);
+        Person person = objectMapper.readValue(PERSON_JSON,
+                                               Person.class
+                                              );
         bh.consume(person);
     }
 
     @Benchmark
     public void jackson_pojo_bean_validation(Blackhole bh) throws JsonProcessingException {
-        PersonWithAnnotations person = objectMapper.readValue(PERSON_JSON, PersonWithAnnotations.class);
-        Set<ConstraintViolation<PersonWithAnnotations>> validate = validator.validate(person);
-        bh.consume(validate.size() == 0);
+        PersonWithAnnotations person = objectMapper.readValue(PERSON_JSON,
+                                                              PersonWithAnnotations.class
+                                                             );
+        bh.consume(validator.validate(person));
     }
 
     @Benchmark

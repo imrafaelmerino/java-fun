@@ -1,7 +1,10 @@
 package jsonvalues;
 
 
-import com.sun.org.apache.bcel.internal.generic.ANEWARRAY;
+import jsonvalues.spec.JsArraySpec;
+import jsonvalues.spec.JsObjParser;
+import jsonvalues.spec.JsObjSpec;
+import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -1323,19 +1326,4 @@ public class TestJsArray {
     }
 
 
-    @Test
-    public void test_set_minus_one_index_points_last_element() {
-
-        JsArray array = JsArray.of(1,
-                                   2,
-                                   3
-                                  );
-
-        JsArray newArray = array.set(JsPath.fromIndex(-1),
-                                JsInt.of(4)
-                               );
-        Assertions.assertTrue(4 == newArray.getInt(3)
-                             );
-
-    }
 }

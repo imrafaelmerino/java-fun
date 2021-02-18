@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 java -Xms256m \
--jar releases/8.1.0/benchmark-8.1.0-open-8.jar \
--rff results/8.1.0/open/deserializer/open-r9-c8.json \
+-jar releases/9.0.2/benchmark-9.0.2-zulu-8.jar \
+-rff results/9.0.2/zulu/deserializer/zulu-r8-c8.json \
 -rf json \
 jsonvalues\.benchmark\.JsDeserializers
 
-java -Xms256m \
--jar releases/8.1.0/benchmark-8.1.0-open-8.jar \
--rff results/8.1.0/open/serializer/open-r9-c8.json \
--rf json \
-jsonvalues\.benchmark\.JsSerializers
-
-java -Xms256m \
--jar releases/8.1.0/benchmark-8.1.0-open-9.jar \
--rff results/8.1.0/open/deserializer/open-r9-c9.json \
--rf json \
-jsonvalues\.benchmark\.JsDeserializers
-
-java -Xms256m \
--jar releases/8.1.0/benchmark-8.1.0-open-9.jar \
--rff results/8.1.0/open/serializer/open-r9-c9.json \
--rf json \
-jsonvalues\.benchmark\.JsSerializers
+#java -Xms256m \
+#-jar releases/8.1.0/benchmark-8.1.0-open-8.jar \
+#-rff results/8.1.0/open/serializer/open-r9-c8.json \
+#-rf json \
+#jsonvalues\.benchmark\.JsSerializers
+#
+#java -Xms256m \
+#-jar releases/8.1.0/benchmark-8.1.0-open-9.jar \
+#-rff results/8.1.0/open/deserializer/open-r9-c9.json \
+#-rf json \
+#jsonvalues\.benchmark\.JsDeserializers
+#
+#java -Xms256m \
+#-jar releases/8.1.0/benchmark-8.1.0-open-9.jar \
+#-rff results/8.1.0/open/serializer/open-r9-c9.json \
+#-rf json \
+#jsonvalues\.benchmark\.JsSerializers
 
 #java -Xms256m \
 #-jar releases/8.1.0/benchmark-8.1.0-open-10.jar \

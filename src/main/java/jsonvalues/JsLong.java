@@ -73,7 +73,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong> {
 
     /**
      Indicates whether some other object is "equal to" this json long. Numbers of different types are
-     equals if the have the same value.
+     equals if they have the same value.
 
      @param that the reference object with which to compare.
      @return true if that is a JsNumber with the same value as this JsLong

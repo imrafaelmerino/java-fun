@@ -8,9 +8,7 @@
     <packaging>jar</packaging>
     <version>10.0.0</version>
     <name>json-values</name>
-    <description>json-values is a functional Java library to work with immutable Json using persistent data
-        structures.
-    </description>
+    <description>json-values is a functional Java library to work with immutable Json using persistent data structures.</description>
     <url>https://github.com/imrafaelmerino/json-values</url>
     <licenses>
         <license>

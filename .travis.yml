@@ -39,6 +39,6 @@ addons:
   sonarcloud:
     organization: imrafaelmerino
 script:
-  - mvn clean verify -DskipTests=true -Pcoverage -Dsonar.projectKey=imrafaelmerino_json-values
+  - mvn clean verify sonar:sonar -DskipTests=true -Pcoverage -Dsonar.projectKey=imrafaelmerino_json-values
 
 

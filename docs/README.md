@@ -4,6 +4,7 @@
 [![CircleCI](https://circleci.com/gh/imrafaelmerino/json-values/tree/master.svg?style=svg)](https://circleci.com/gh/imrafaelmerino/json-values/tree/master)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/10.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/10.0.0/jar)

@@ -1,18 +1,11 @@
 package jsonvalues;
 
 import com.dslplatform.json.JsParserException;
-import jsonvalues.gen.JsGen;
-import jsonvalues.gen.JsGens;
-import jsonvalues.gen.JsObjGen;
-import jsonvalues.gen.TestProperty;
-import jsonvalues.spec.JsArrayParser;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -43,7 +36,9 @@ public class TestJsObjParser {
     @Test
     public void test_parse_int_error() {
         JsObjSpec spec = JsObjSpec.lenient("a",
-                                           integer(i -> i > 0)
+                                           integer(i -> i > 0),
+                                           "b",
+                                           longInteger(i -> i > 0)
                                           );
 
         JsObjParser parser = new JsObjParser(spec);
@@ -51,7 +46,9 @@ public class TestJsObjParser {
 
         Assertions.assertThrows(JsParserException.class,
                                 () -> parser.parse(JsObj.of("a",
-                                                            JsInt.of(-1)
+                                                            JsInt.of(3),
+                                                            "b",
+                                                            JsLong.of(-1)
                                                            )
                                                         .toPrettyString())
                                );
@@ -134,8 +131,8 @@ public class TestJsObjParser {
     @Test
     public void test_parse_decimal_error() {
         JsObjSpec spec = JsObjSpec.lenient("a",
-                                           decimal(i -> i.divide(BigDecimal.TEN)
-                                                         .equals(new BigDecimal(1)))
+                                           decimal(i -> i.divide(BigDecimal.TEN).compareTo(new BigDecimal(1))
+                                                         == 0)
                                           );
 
         JsObjParser parser = new JsObjParser(spec);
@@ -975,13 +972,13 @@ public class TestJsObjParser {
     @Test
     public void array_of_number() {
         JsObjSpec spec = JsObjSpec.strict("a",
-                                          arrayOfNumber(a -> a.isDecimal()),
+                                          arrayOfNumber(JsValue::isDecimal),
                                           "b",
-                                          arrayOfNumber(a -> a.isDecimal()).nullable(),
+                                          arrayOfNumber(JsValue::isDecimal).nullable(),
                                           "c",
-                                          arrayOfNumber(a -> a.isIntegral()).optional(),
+                                          arrayOfNumber(JsValue::isIntegral).optional(),
                                           "e",
-                                          arrayOfNumber(a -> a.isDecimal()).optional()
+                                          arrayOfNumber(JsValue::isDecimal).optional()
                                          );
 
         JsObjParser parser = new JsObjParser(spec);
@@ -1068,7 +1065,7 @@ public class TestJsObjParser {
     @Test
     public void test_number_error() {
         JsObjSpec spec = JsObjSpec.strict("a",
-                                          JsSpecs.number(a -> a.isDouble())
+                                          JsSpecs.number(JsValue::isDouble)
                                          );
         JsObjParser parser = new JsObjParser(spec);
 
@@ -1082,75 +1079,75 @@ public class TestJsObjParser {
     }
 
 
-    @Test
-    public void test_bytes_parser() {
-
-        final JsObjSpec objSpec = JsObjSpec.lenient("a",
-                                                    JsSpecs.str.optional(),
-                                                    "b",
-                                                    integer,
-                                                    "c",
-                                                    decimal
-                                                   );
-        JsObjParser objParser = new JsObjParser(objSpec);
-
-        JsObjGen objGen = JsObjGen.of("a",
-                                      JsGens.str.optional(),
-                                      "b",
-                                      JsGens.integer,
-                                      "c",
-                                      JsGens.decimal
-                                     );
-
-
-        TestProperty.test(objGen,
-                            v -> objParser.parse(v.toString()
-                                                  .getBytes())
-                                          .equals(v)
-                ,
-                          v -> {
-                              System.out.println(v);
-                              Assertions.fail("Equals after parsing serialized");
-                          }
-
-                         );
-        TestProperty.test(objGen,
-                            v -> objParser.parse(new ByteArrayInputStream(v.toString()
-                                                                           .getBytes()))
-                                          .equals(v),
-                          v -> {
-                              System.out.println(v);
-                              Assertions.fail("Equals after parsing serialized");
-                          }
-                           );
-
-
-        JsGen<JsArray> arrayGen = JsGens.array(objGen,
-                                               10
-                                              );
-
-        JsArrayParser arrayParser = new JsArrayParser(JsSpecs.arrayOf(objSpec));
-
-        TestProperty.test(arrayGen,
-                            v -> arrayParser.parse(v.toString()
-                                                    .getBytes())
-                                            .equals(v),
-                          v -> {
-                              System.out.println(v);
-                              Assertions.fail("Equals after parsing serialized");
-                          }
-                           );
-        TestProperty.test(arrayGen,
-                            v -> arrayParser.parse(new ByteArrayInputStream(v.toString()
-                                                                             .getBytes()))
-                                            .equals(v),
-                          v -> {
-                              System.out.println(v);
-                              Assertions.fail("Equals after parsing serialized");
-                          }
-                           );
-
-    }
+//    @Test
+//    public void test_bytes_parser() {
+//
+//        final JsObjSpec objSpec = JsObjSpec.lenient("a",
+//                                                    JsSpecs.str.optional(),
+//                                                    "b",
+//                                                    integer,
+//                                                    "c",
+//                                                    decimal
+//                                                   );
+//        JsObjParser objParser = new JsObjParser(objSpec);
+//
+//        JsObjGen objGen = JsObjGen.of("a",
+//                                      JsGens.str.optional(),
+//                                      "b",
+//                                      JsGens.integer,
+//                                      "c",
+//                                      JsGens.decimal
+//                                     );
+//
+//
+//        TestProperty.test(objGen,
+//                            v -> objParser.parse(v.toString()
+//                                                  .getBytes())
+//                                          .equals(v)
+//                ,
+//                          v -> {
+//                              System.out.println(v);
+//                              Assertions.fail("Equals after parsing serialized");
+//                          }
+//
+//                         );
+//        TestProperty.test(objGen,
+//                            v -> objParser.parse(new ByteArrayInputStream(v.toString()
+//                                                                           .getBytes()))
+//                                          .equals(v),
+//                          v -> {
+//                              System.out.println(v);
+//                              Assertions.fail("Equals after parsing serialized");
+//                          }
+//                           );
+//
+//
+//        JsGen<JsArray> arrayGen = JsGens.array(objGen,
+//                                               10
+//                                              );
+//
+//        JsArrayParser arrayParser = new JsArrayParser(JsSpecs.arrayOf(objSpec));
+//
+//        TestProperty.test(arrayGen,
+//                            v -> arrayParser.parse(v.toString()
+//                                                    .getBytes())
+//                                            .equals(v),
+//                          v -> {
+//                              System.out.println(v);
+//                              Assertions.fail("Equals after parsing serialized");
+//                          }
+//                           );
+//        TestProperty.test(arrayGen,
+//                            v -> arrayParser.parse(new ByteArrayInputStream(v.toString()
+//                                                                             .getBytes()))
+//                                            .equals(v),
+//                          v -> {
+//                              System.out.println(v);
+//                              Assertions.fail("Equals after parsing serialized");
+//                          }
+//                           );
+//
+//    }
 
     @Test
     public void test_numbers() {
@@ -1190,51 +1187,6 @@ public class TestJsObjParser {
                                );
     }
 
-    @Test
-    public void test() {
-        JsObjSpec spec = JsObjSpec.strict("name",
-                                          str,
-                                          "surname",
-                                          str.optional(),
-                                          "age",
-                                          integer.optional(),
-                                          "address",
-                                          JsObjSpec.strict("street",
-                                                           str,
-                                                           "number",
-                                                           any(it -> it.isInt()),
-                                                           "city",
-                                                           str.nullable(),
-                                                           "coordinates",
-                                                           tuple(decimal,
-                                                                 decimal
-                                                                )
-                                                          )
-                                         );
-
-        JsObjParser parser = new JsObjParser(spec);
-
-        JsObj.of("name",
-                 JsStr.of("Rafael"),
-                 "surname",
-                 JsStr.of("Merino García"),
-                 "age",
-                 JsInt.of(3),
-                 "address",
-                 JsObj.of("street",
-                          JsStr.of("Elm Street"),
-                          "number",
-                          JsInt.of(12),
-                          "city",
-                          JsStr.of("Madrid"),
-                          "coordinates",
-                          JsArray.of(45.9,
-                                     18.6)
-                         )
-                );
-
-    }
-
 
     @Test
     public void testYamlToObj(){
@@ -1266,7 +1218,7 @@ public class TestJsObjParser {
         Assertions.assertEquals("0.0.0.0/0",
                                 obj.getStr(JsPath.path("/Resources/InstanceSecurityGroup/Properties/SecurityGroupIngress/0/CidrIp")));
 
-        Assertions.assertEquals(new Integer(22),
+        Assertions.assertEquals(Integer.valueOf(22),
                                 obj.getInt(JsPath.path("/Resources/InstanceSecurityGroup/Properties/SecurityGroupIngress/0/ToPort")));
     }
 
@@ -1299,7 +1251,7 @@ public class TestJsObjParser {
                                 arr.getStr(JsPath.path("/0/Resources/Ec2Instance/Properties/SecurityGroups/0")));
         Assertions.assertEquals("0.0.0.0/0",
                                 arr.getStr(JsPath.path("/0/Resources/InstanceSecurityGroup/Properties/SecurityGroupIngress/0/CidrIp")));
-        Assertions.assertEquals(new Integer(22),
+        Assertions.assertEquals(Integer.valueOf(22),
                                 arr.getInt(JsPath.path("/0/Resources/InstanceSecurityGroup/Properties/SecurityGroupIngress/0/ToPort")));
     }
 }

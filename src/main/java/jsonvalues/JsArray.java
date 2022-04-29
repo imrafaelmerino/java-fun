@@ -18,7 +18,6 @@ import java.util.function.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.dslplatform.json.MyDslJson.INSTANCE;
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
@@ -36,7 +35,7 @@ import static jsonvalues.MatchExp.ifNothingElse;
 /**
  * Represents a json array, which is an ordered list of elements.
  */
-public class JsArray implements Json<JsArray>, Iterable<JsValue> {
+public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public static final int TYPE_ID = 4;
     /**
      * lenses defined for a Json array
@@ -447,7 +446,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                     elem = NULL;
                     break;
                 default:
-                    throw InternalError.tokenNotExpected(token.name());
+                    throw JsValuesInternalError.tokenNotExpected(token.name());
             }
             root = root.append(elem);
         }
@@ -466,7 +465,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                                              array.size()
                                                  ).mapToObj(pair -> JsPair.of(path.index(pair),
                                                                               array.get(Index.of(pair))
-                                                 ))
+                                                  ))
                                                   .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                         pair.path
                                                                                        ),
@@ -474,7 +473,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                                                                                         pair.path
                                                                                        ),
                                                                                        e -> Stream.of(pair)
-                                                           )
+                                                                           )
                                                                            .apply(pair.value)
                                                   )
         );
@@ -501,7 +500,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                               b
                 );
             default:
-                throw InternalError.arrayOptionNotImplemented(ARRAY_AS.name());
+                throw JsValuesInternalError.arrayOptionNotImplemented(ARRAY_AS.name());
         }
 
     }
@@ -645,7 +644,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
         if (array.isEmpty()) return false;
         return IntStream.range(0,
                                size()
-        )
+                        )
                         .mapToObj(i -> get(Index.of(i)))
                         .allMatch(elem ->
                                   {
@@ -654,7 +653,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                       return true;
                                   }) && IntStream.range(0,
                                                         array.size()
-        )
+                                                 )
                                                  .mapToObj(i -> array.get(Index.of(i)))
                                                  .allMatch(this::containsValue);
     }
@@ -993,7 +992,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * Returns the number located at the given index as a big integer or the default value provided
      * if  it doesn't exist or it's not an integral number.
      *
-     * @param index the index
+     * @param index  the index
      * @param orElse the default value provided
      * @return the integral number located at the given index or null
      */
@@ -1464,7 +1463,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public Stream<JsPair> stream() {
         return IntStream.range(0,
                                size()
-        )
+                        )
                         .mapToObj(i ->
                                   {
                                       final JsPath path = JsPath.fromIndex(i);
@@ -1818,7 +1817,7 @@ public class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                        b
                 );
             default:
-                throw InternalError.arrayOptionNotImplemented(ARRAY_AS.name());
+                throw JsValuesInternalError.arrayOptionNotImplemented(ARRAY_AS.name());
         }
     }
 

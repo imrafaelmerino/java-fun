@@ -37,7 +37,7 @@ public class Lens<S, O> {
     public final Function<Predicate<O>, Function<S, Optional<O>>> find;
 
     /**
-     check if there is a target and it satisfies the predicate
+     check if there is a target, and it satisfies the predicate
      */
     public final Function<Predicate<O>, Predicate<S>> exists;
     /**
@@ -53,7 +53,7 @@ public class Lens<S, O> {
         this.modify = f -> json -> set.apply(f.apply(get.apply(json)))
                                       .apply(json);
         this.find = predicate -> s -> predicate.test(get.apply(s)) ?
-                                      Optional.of((get.apply(s))) :
+                                      Optional.of(get.apply(s)) :
                                       Optional.empty();
         this.exists = predicate -> s -> predicate.test(get.apply(s));
     }

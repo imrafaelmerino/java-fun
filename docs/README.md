@@ -134,35 +134,10 @@ var b = parser.parse(jsonStr);
 
 ```
 
-Defining a json generator:
-
-```java
-import static jsonvalues.gen.JsGens;
-
-var addressGen = JsObjGen.of("city", oneOf(cities),
-                             "country",oneOf(countries).optional().nullable(),
-                             "location", tuple(decimal,
-                                               decimal
-                                               )
-                            );
-var gen = JsObjGen.of("name", alphabetic,
-                      "age",  choose(18,100),
-                      "languages", arrayOf(str,10),
-                      "github", alphanumeric.optional(),
-                      "profession", oneOf(professions).nullable(),
-                      "address", addressGen
-                     );
-
-```
-
 It supports the standard Json types: string, number, null, object, array; There are five number specializations:
 int, long, double, decimal and biginteger. json-values adds support for instants and binary data. Instants 
 are serialized into its string representation according to ISO-8601; and the binary type is serialized into a 
 string encoded in base 64.
-
-I've written about json-values on my [blog](http://blog.imrafaelmerino.dev):
-* [The value of json values - Recursive data structures](http://blog.imrafaelmerino.dev/2020/06/the-value-of-json-values-recursive-data.html)
-* [The value of json values - Optics](https://blog.imrafaelmerino.dev/2020/06/the-value-of-json-values-optics.html)
 
 ## <a name="notwhatfor"><a/> When not to use it
 **json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
@@ -188,6 +163,26 @@ Add the following dependency to your building tool:
 After the development of json-values, I published two more related projects:
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
 * [vertx-effect](https://github.com/imrafaelmerino/vertx-effect) 
+* [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
+* [JIO](https://github.com/imrafaelmerino/JIO) Using JIO you can define Json generators to do Property Based Testing:
+
+```java
+import static jio.gen.json.JsObjGen;
+
+var addressGen = JsObjGen.of("city", oneOf(cities),
+                             "country",oneOf(countries).nullable(),
+                             "location", tuple(decimal,
+                                               decimal
+                                               )
+                            );
+var gen = JsObjGen.of("name", alphabetic,
+                      "age",  arbitrary(18,100),
+                      "languages", arrayOf(str,10),
+                      "github", alphanumeric,
+                      "profession", oneOf(professions).nullable(),
+                      "address", addressGen
+                     );
+```
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/), [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.

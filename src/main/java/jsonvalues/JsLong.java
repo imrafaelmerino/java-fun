@@ -125,7 +125,7 @@ public final class JsLong extends JsNumber implements Comparable<JsLong> {
     }
 
     /**
-     returns true if this long and the specified bigdecimal represent the same number
+     returns true if this long and the specified big-decimal represent the same number
 
      @param jsBigDec the specified JsBigDec
      @return true if both JsValue are the same value

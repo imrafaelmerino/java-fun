@@ -14,10 +14,6 @@ final class JsValuesInternalError extends RuntimeException {
                            ));
     }
 
-    private JsValuesInternalError(final Exception e) {
-        super(e);
-    }
-
     static JsValuesInternalError arrayOptionNotImplemented(final String option) {
         return new JsValuesInternalError(String.format("New option %s in enum JsArray.TYPE not implemented.",
                                                        option

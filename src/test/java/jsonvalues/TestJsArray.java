@@ -67,29 +67,6 @@ public class TestJsArray {
     }
 
     @Test
-    public void test_create_five_elements_json_array() {
-
-        JsArray arr = JsArray.of(JsStr.of("A"),
-                                 JsStr.of("B"),
-                                 JsStr.of("C"),
-                                 JsStr.of("D"),
-                                 JsStr.of("E")
-        );
-        JsArray arr1 = arr.set(-1,
-                               JsStr.of("F")
-        );
-
-        Assertions.assertNotEquals(arr,
-                                   arr1
-        );
-
-        Assertions.assertEquals(JsStr.of("F"),
-                                arr1.get(-1)
-        );
-
-    }
-
-    @Test
     public void test_create_four_elements_json_array() {
 
         JsArray arr = JsArray.of(JsLong.of(10),
@@ -127,7 +104,7 @@ public class TestJsArray {
                                                        JsInt.of(1)
                                          )
         );
-        JsArray newArr = arr.delete(-1);
+        JsArray newArr = arr.delete(arr.size()-1);
 
         Assertions.assertEquals(2,
                                 arr.size()
@@ -1107,9 +1084,6 @@ public class TestJsArray {
         Assertions.assertEquals(JsArray.empty(),
                                 a.getArray(7)
         );
-        Assertions.assertEquals(JsArray.empty(),
-                                a.getArray(-1)
-        );
     }
 
     @Test
@@ -1124,9 +1098,7 @@ public class TestJsArray {
         Assertions.assertEquals(now,
                                 array.getInstant(1)
         );
-        Assertions.assertEquals(now,
-                                array.getInstant(-1)
-        );
+
         Assertions.assertNull(array.getInstant(0));
 
     }
@@ -1143,8 +1115,6 @@ public class TestJsArray {
 
         Assertions.assertArrayEquals(bytes,
                                      array.getBinary(1));
-        Assertions.assertArrayEquals(bytes,
-                                     array.getBinary(-1));
 
         Assertions.assertNull(array.getBinary(0));
     }
@@ -1268,17 +1238,7 @@ public class TestJsArray {
         );
     }
 
-    @Test
-    public void test_minus_one_index_points_last_element() {
 
-        JsArray array = JsArray.of(1,
-                                   2,
-                                   3
-        );
-
-        Assertions.assertEquals(3,
-                                (int) array.getInt(-1));
-    }
 
 
 }

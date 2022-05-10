@@ -1,6 +1,8 @@
 package jsonvalues;
 
 
+import fun.optic.Lens;
+
 /**
  Represent a Lens which focus is the path of a json pair
  */

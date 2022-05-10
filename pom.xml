@@ -30,20 +30,27 @@
     <properties>
         <JACKSON-VERSION>2.13.2</JACKSON-VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <PLUGIN_COMPILER_VERSION>3.8.0</PLUGIN_COMPILER_VERSION>
-        <COMPILER_SOURCE_VERSION>1.8</COMPILER_SOURCE_VERSION>
-        <COMPILER_TARGET_VERSION>1.8</COMPILER_TARGET_VERSION>
-        <sonar.projectKey>json-values</sonar.projectKey>
-        <JACOCO-MAVEN-PLUGIN.VERSION>0.8.4</JACOCO-MAVEN-PLUGIN.VERSION>
-        <MAVEN-SOURCE-PLUGIN.VERSION>3.0.1</MAVEN-SOURCE-PLUGIN.VERSION>
+        <NEXUS-STAGING-MAVEN-PLUGIN.VERSION>1.6.12</NEXUS-STAGING-MAVEN-PLUGIN.VERSION>
         <MAVEN-GPG-PLUGIN.VERSION>1.6</MAVEN-GPG-PLUGIN.VERSION>
-        <NEXUS-STAGING-MAVEN-PLUGIN.VERSION>1.6.8</NEXUS-STAGING-MAVEN-PLUGIN.VERSION>
-        <MAVEN-JAVADOC-PLUGIN.VERSION>3.2.0</MAVEN-JAVADOC-PLUGIN.VERSION>
-        <MAVEN-SUREFIRE-PLUGIN.VERSION>2.22.0</MAVEN-SUREFIRE-PLUGIN.VERSION>
+        <MAVEN-SOURCE-PLUGIN.VERSION>3.0.1</MAVEN-SOURCE-PLUGIN.VERSION>
+        <JACOCO-MAVEN-PLUGIN.VERSION>0.8.8</JACOCO-MAVEN-PLUGIN.VERSION>
+        <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
+        <sonar.projectKey>json-values</sonar.projectKey>
+        <MAVEN-COMPILER-PLUGIN.VERSION>3.10.1</MAVEN-COMPILER-PLUGIN.VERSION>
+        <MAVEN-COMPILER-PLUGIN.SOURCE>17</MAVEN-COMPILER-PLUGIN.SOURCE>
+        <MAVEN-COMPILER-PLUGIN.TARGET>17</MAVEN-COMPILER-PLUGIN.TARGET>
+        <MAVEN-SUREFIRE-PLUGIN.VERSION>3.0.0-M6</MAVEN-SUREFIRE-PLUGIN.VERSION>
+        <MAVEN-JAR-PLUGIN.VERSION>3.2.2</MAVEN-JAR-PLUGIN.VERSION>
         <DSL-JSON.VERSION>1.9.9</DSL-JSON.VERSION>
         <VAVR.VERSION>0.10.4</VAVR.VERSION>
         <ERROR-PRONE.VERSION>2.13.1</ERROR-PRONE.VERSION>
         <JUNIT-JUPITER-API.VERSION>5.8.2</JUNIT-JUPITER-API.VERSION>
+        <JAVA-FUN.VERSION>0.3</JAVA-FUN.VERSION>
+        <ERROR-PRONE.VERSION>2.13.1</ERROR-PRONE.VERSION>
+        <MAVEN-JAVADOC-PLUGIN.VERSION>3.3.2</MAVEN-JAVADOC-PLUGIN.VERSION>
+        <SLF4J-API.VERSION>1.7.36</SLF4J-API.VERSION>
+        <ERROR-PRONE.VERSION>2.13.1</ERROR-PRONE.VERSION>
+
     </properties>
     <dependencies>
         <dependency>
@@ -66,6 +73,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.imrafaelmerino</groupId>
+            <artifactId>java-fun</artifactId>
+            <version>${JAVA-FUN.VERSION}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${JUNIT-JUPITER-API.VERSION}</version>
@@ -80,27 +93,47 @@
     <build>
         <plugins>
             <plugin>
+                <version>${MAVEN-COMPILER-PLUGIN.VERSION}</version>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${PLUGIN_COMPILER_VERSION}</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
-                    <source>${COMPILER_SOURCE_VERSION}</source>
-                    <target>${COMPILER_TARGET_VERSION}</target>
+                    <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
+                    <target>${MAVEN-COMPILER-PLUGIN.TARGET}</target>
                     <showWarnings>true</showWarnings>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
+                        <arg>--enable-preview</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>-Xplugin:ErrorProne</arg>
                     </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${ERROR-PRONE.VERSION}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
-
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
                 <configuration>
-                    <skipTests>false</skipTests>
-                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${MAVEN-JAR-PLUGIN.VERSION}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>jio</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
@@ -108,34 +141,14 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
                 <configuration>
-                    <source>8</source>
-                    <detectJavaApiLink>false</detectJavaApiLink>
+                    <source>17</source>
+                    <additionalOptions>--enable-preview</additionalOptions>
                 </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>javadoc</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <finalName>JAVADOC</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/assembly/javadoc.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <goals>
-                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -212,32 +225,6 @@
                                 <id>attach-sources</id>
                                 <goals>
                                     <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>coverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${JACOCO-MAVEN-PLUGIN.VERSION}</version>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <goals>
-                                    <goal>report</goal>
                                 </goals>
                             </execution>
                         </executions>

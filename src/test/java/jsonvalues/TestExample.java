@@ -1,6 +1,8 @@
 package jsonvalues;
 
 
+import fun.optic.Lens;
+import fun.optic.Option;
 import jsonvalues.spec.JsErrorPair;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;

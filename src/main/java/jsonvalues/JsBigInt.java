@@ -1,6 +1,8 @@
 package jsonvalues;
 
 
+import fun.optic.Prism;
+
 import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -15,16 +17,16 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
     public static final int TYPE_ID = 6;
     public static final Prism<JsValue, BigInteger> prism =
             new Prism<>(s ->
-                        {
-                            if (s.isLong())
-                                return Optional.of(BigInteger.valueOf(s.toJsLong().value));
-                            if (s.isInt())
-                                return Optional.of(BigInteger.valueOf(s.toJsInt().value));
-                            if (s.isBigInt())
-                                return Optional.of(s.toJsBigInt().value);
-                            return Optional.empty();
-                        },
-                        JsBigInt::of
+            {
+                if (s.isLong())
+                    return Optional.of(BigInteger.valueOf(s.toJsLong().value));
+                if (s.isInt())
+                    return Optional.of(BigInteger.valueOf(s.toJsInt().value));
+                if (s.isBigInt())
+                    return Optional.of(s.toJsBigInt().value);
+                return Optional.empty();
+            },
+                    JsBigInt::of
             );
     /**
      * the big integer value.
@@ -67,7 +69,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
 
         final Optional<Long> optLong = longValueExact();
         return optLong.map(aLong -> JsLong.of(aLong)
-                                          .hashCode()).orElseGet(value::hashCode);
+                .hashCode()).orElseGet(value::hashCode);
 
     }
 

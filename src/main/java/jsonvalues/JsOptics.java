@@ -1,5 +1,8 @@
 package jsonvalues;
 
+import fun.optic.Lens;
+import fun.optic.Option;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;

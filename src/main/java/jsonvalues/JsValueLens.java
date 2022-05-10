@@ -1,6 +1,8 @@
 package jsonvalues;
 
 
+import fun.optic.Lens;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -8,8 +10,6 @@ import static java.util.Objects.requireNonNull;
 
  @param <S> the type of the whole part, an array or an object */
 class JsValueLens<S extends Json<S>> extends Lens<S, JsValue> {
-
-
 
     JsValueLens(final JsPath path) {
         super(json -> requireNonNull(json).get(path),

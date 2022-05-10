@@ -1,5 +1,7 @@
 package jsonvalues;
 
+import fun.optic.Lens;
+
 import static java.util.Objects.requireNonNull;
 
 /**

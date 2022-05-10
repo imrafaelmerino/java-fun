@@ -62,7 +62,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default String toPrettyString(int indentLength) {
         return MyDslJson.INSTANCE.toPrettyString(this,
-                                                 indentLength);
+                indentLength);
 
     }
 
@@ -74,7 +74,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default String toPrettyString() {
         return MyDslJson.INSTANCE.toPrettyString(this,
-                                                 2);
+                2);
     }
 
 
@@ -111,12 +111,8 @@ public interface Json<T extends Json<T>> extends JsValue {
                            final TYPE ARRAY_AS
     ) {
         if (elem == null || getClass() != elem.getClass()) return false;
-        if (isObj()) return toJsObj().equals(elem.toJsObj(),
-                                             ARRAY_AS
-        );
-        if (isArray()) return toJsArray().equals(elem.toJsArray(),
-                                                 ARRAY_AS
-        );
+        if (isObj()) return toJsObj().equals(elem.toJsObj(), ARRAY_AS);
+        if (isArray()) return toJsArray().equals(elem.toJsArray(), ARRAY_AS);
         return false;
 
     }
@@ -209,7 +205,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default JsArray getArray(final JsPath path) {
         return JsArray.prism.getOptional.apply(get(requireNonNull(path)))
-                                        .orElse(null);
+                .orElse(null);
 
     }
 
@@ -223,7 +219,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default JsArray getArray(final JsPath path,
                              final Supplier<JsArray> orElse) {
         return JsArray.prism.getOptional.apply(get(requireNonNull(path)))
-                                        .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -236,7 +232,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default BigDecimal getBigDec(final JsPath path) {
         return JsBigDec.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElse(null);
+                .orElse(null);
 
     }
 
@@ -251,7 +247,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default BigDecimal getBigDec(final JsPath path,
                                  final Supplier<BigDecimal> orElse) {
         return JsBigDec.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -269,7 +265,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default BigInteger getBigInt(final JsPath path) {
         return JsBigInt.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElse(null);
+                .orElse(null);
 
     }
 
@@ -284,7 +280,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default BigInteger getBigInt(final JsPath path,
                                  final Supplier<BigInteger> orElse) {
         return JsBigInt.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -296,7 +292,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default Boolean getBool(final JsPath path) {
         return JsBool.prism.getOptional.apply(get(requireNonNull(path)))
-                                       .orElse(null);
+                .orElse(null);
 
     }
 
@@ -310,7 +306,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default Boolean getBool(final JsPath path,
                             final Supplier<Boolean> orElse) {
         return JsBool.prism.getOptional.apply(get(requireNonNull(path)))
-                                       .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -322,7 +318,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default byte[] getBinary(final JsPath path) {
         return JsBinary.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElse(null);
+                .orElse(null);
 
     }
 
@@ -336,7 +332,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default byte[] getBinary(final JsPath path,
                              final Supplier<byte[]> orElse) {
         return JsBinary.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -348,7 +344,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default Instant getInstant(final JsPath path) {
         return JsInstant.prism.getOptional.apply(get(requireNonNull(path)))
-                                          .orElse(null);
+                .orElse(null);
 
     }
 
@@ -362,7 +358,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default Instant getInstant(final JsPath path,
                                final Supplier<Instant> orElse) {
         return JsInstant.prism.getOptional.apply(get(requireNonNull(path)))
-                                          .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -377,7 +373,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default Double getDouble(final JsPath path) {
         return JsDouble.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElse(null);
+                .orElse(null);
 
     }
 
@@ -394,7 +390,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default Double getDouble(final JsPath path,
                              final Supplier<Double> orElse) {
         return JsDouble.prism.getOptional.apply(get(requireNonNull(path)))
-                                         .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -407,7 +403,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default Integer getInt(final JsPath path) {
         return JsInt.prism.getOptional.apply(get(requireNonNull(path)))
-                                      .orElse(null);
+                .orElse(null);
 
     }
 
@@ -422,7 +418,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default Integer getInt(final JsPath path,
                            final Supplier<Integer> orElse) {
         return JsInt.prism.getOptional.apply(get(requireNonNull(path)))
-                                      .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -435,7 +431,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default Long getLong(final JsPath path) {
         return JsLong.prism.getOptional.apply(get(requireNonNull(path)))
-                                       .orElse(null);
+                .orElse(null);
 
     }
 
@@ -451,7 +447,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default Long getLong(final JsPath path,
                          final Supplier<Long> orElse) {
         return JsLong.prism.getOptional.apply(get(requireNonNull(path)))
-                                       .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
 
     }
 
@@ -466,7 +462,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default JsObj getObj(final JsPath path,
                          final Supplier<JsObj> orElse) {
         return JsObj.prism.getOptional.apply(get(requireNonNull(path)))
-                                      .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
     }
 
     /**
@@ -478,7 +474,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default JsObj getObj(final JsPath path) {
         return JsObj.prism.getOptional.apply(get(requireNonNull(path)))
-                                      .orElse(null);
+                .orElse(null);
     }
 
     /**
@@ -490,7 +486,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default String getStr(final JsPath path) {
         return JsStr.prism.getOptional.apply(get(path))
-                                      .orElse(null);
+                .orElse(null);
     }
 
     /**
@@ -504,7 +500,7 @@ public interface Json<T extends Json<T>> extends JsValue {
     default String getStr(final JsPath path,
                           final Supplier<String> orElse) {
         return JsStr.prism.getOptional.apply(get(requireNonNull(path)))
-                                      .orElseGet(requireNonNull(orElse));
+                .orElseGet(requireNonNull(orElse));
     }
 
     /**
@@ -521,8 +517,8 @@ public interface Json<T extends Json<T>> extends JsValue {
     ) {
 
         return this.isEmpty() ?
-               requireNonNull(emptySupplier).get() :
-               requireNonNull(nonemptySupplier).get();
+                requireNonNull(emptySupplier).get() :
+                requireNonNull(nonemptySupplier).get();
     }
 
     /**
@@ -648,8 +644,8 @@ public interface Json<T extends Json<T>> extends JsValue {
     default T set(final JsPath path,
                   final JsValue element) {
         return set(path,
-                   element,
-                   JsNull.NULL
+                element,
+                JsNull.NULL
         );
     }
 
@@ -724,9 +720,9 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default int sizeAll() {
         return streamAll().mapToInt(p -> 1)
-                          .reduce(0,
-                                  Integer::sum
-                          );
+                .reduce(0,
+                        Integer::sum
+                );
     }
 
     /**
@@ -739,7 +735,7 @@ public interface Json<T extends Json<T>> extends JsValue {
 
     default long times(final JsValue e) {
         return stream().filter(p -> p.value.equals(requireNonNull(e)))
-                       .count();
+                .count();
     }
 
     Stream<JsValue> streamValues();
@@ -753,7 +749,7 @@ public interface Json<T extends Json<T>> extends JsValue {
 
     default long timesAll(final JsValue e) {
         return streamAll().filter(p -> p.value.equals(requireNonNull(e)))
-                          .count();
+                .count();
     }
 
     /**
@@ -763,7 +759,7 @@ public interface Json<T extends Json<T>> extends JsValue {
      */
     default void serialize(final OutputStream outputstream) {
         MyDslJson.INSTANCE.serialize(this,
-                                     requireNonNull(outputstream)
+                requireNonNull(outputstream)
         );
     }
 

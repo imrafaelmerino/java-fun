@@ -2364,11 +2364,11 @@ public final class JsObjGen implements Gen<JsObj> {
                               value
                 );
             }
-            if (isRemoveOptionals.get()) {
+            if (Boolean.TRUE.equals(isRemoveOptionals.get())) {
                 final List<String> r = optionalCombinations.get();
                 for (var s : r) obj = obj.delete(s);
             }
-            if (isRemoveNullables.get()) {
+            if (Boolean.TRUE.equals(isRemoveNullables.get())) {
                 final List<String> r = nullableCombinations.get();
                 for (var s : r)
                     obj = obj.set(s,

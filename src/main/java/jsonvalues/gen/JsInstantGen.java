@@ -4,8 +4,6 @@ package jsonvalues.gen;
 import fun.gen.InstantGen;
 import fun.gen.Gen;
 import jsonvalues.JsInstant;
-import jsonvalues.JsInstant;
-
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.function.Supplier;
@@ -16,8 +14,8 @@ import static java.util.Objects.requireNonNull;
 public final class JsInstantGen implements Gen<JsInstant> {
     private final Gen<Instant> gen;
 
-    public static Gen<JsInstant> biased = JsInstantGen.of(InstantGen.biased);
-    public static Gen<JsInstant> arbitrary = JsInstantGen.of(InstantGen.arbitrary);
+    public static final Gen<JsInstant> biased = JsInstantGen.of(InstantGen.biased);
+    public static final Gen<JsInstant> arbitrary = JsInstantGen.of(InstantGen.arbitrary);
     public static Gen<JsInstant> arbitrary(long min, long max) {
         return JsInstantGen.of(InstantGen.arbitrary(min, max));
     }

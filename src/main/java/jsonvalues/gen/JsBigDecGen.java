@@ -13,8 +13,8 @@ import static java.util.Objects.requireNonNull;
 
 public final class JsBigDecGen implements Gen<JsBigDec> {
 
-    public static Gen<JsBigDec> biased = JsBigDecGen.of(BigDecGen.biased);
-    public static Gen<JsBigDec> arbitrary = JsBigDecGen.of(BigDecGen.arbitrary);
+    public static final Gen<JsBigDec> biased = JsBigDecGen.of(BigDecGen.biased);
+    public static final Gen<JsBigDec> arbitrary = JsBigDecGen.of(BigDecGen.arbitrary);
 
     public static Gen<JsBigDec> arbitrary(final BigDecimal min, final BigDecimal max) {
         return JsBigDecGen.of(BigDecGen.arbitrary(min, max));

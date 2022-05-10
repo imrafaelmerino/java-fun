@@ -12,8 +12,8 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 public final class JsIntGen implements Gen<JsInt> {
-    public static Gen<JsInt> biased = JsIntGen.of(IntGen.biased);
-    public static Gen<JsInt> arbitrary = JsIntGen.of(IntGen.arbitrary);
+    public static final Gen<JsInt> biased = JsIntGen.of(IntGen.biased);
+    public static final Gen<JsInt> arbitrary = JsIntGen.of(IntGen.arbitrary);
 
     public static Gen<JsInt> arbitrary(int min, int max) {
         return JsIntGen.of(IntGen.arbitrary(min, max));

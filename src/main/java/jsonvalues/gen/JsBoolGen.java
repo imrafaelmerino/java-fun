@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 
 public final class JsBoolGen implements Gen<JsBool> {
 
-    public static Gen<JsBool> arbitrary = JsBoolGen.of(BoolGen.arbitrary);
+    public static final Gen<JsBool> arbitrary = JsBoolGen.of(BoolGen.arbitrary);
 
     private final Gen<Boolean> gen;
 

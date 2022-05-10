@@ -10,8 +10,8 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 public final class JsLongGen implements Gen<JsLong> {
-    public static Gen<JsLong> biased = JsLongGen.of(LongGen.biased);
-    public static Gen<JsLong> arbitrary = JsLongGen.of(LongGen.arbitrary);
+    public static final Gen<JsLong> biased = JsLongGen.of(LongGen.biased);
+    public static final Gen<JsLong> arbitrary = JsLongGen.of(LongGen.arbitrary);
     private final Gen<Long> gen;
 
     public static Gen<JsLong> arbitrary(long min, long max) {

@@ -12,9 +12,9 @@ import static java.util.Objects.requireNonNull;
 
 public final class JsConsGen<O extends JsValue> implements Gen<O> {
 
-    public static Gen<JsValue> NULL = new JsConsGen<>(JsNull.NULL);
-    public static Gen<JsBool> TRUE = new JsConsGen<>(JsBool.TRUE);
-    public static Gen<JsBool> FALSE = new JsConsGen<>(JsBool.FALSE);
+    public static final Gen<JsValue> NULL = new JsConsGen<>(JsNull.NULL);
+    public static final Gen<JsBool> TRUE = new JsConsGen<>(JsBool.TRUE);
+    public static final Gen<JsBool> FALSE = new JsConsGen<>(JsBool.FALSE);
 
     private final O value;
 

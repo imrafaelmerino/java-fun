@@ -13,8 +13,8 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 public final class JsDoubleGen implements Gen<JsDouble> {
-    public static Gen<JsDouble> biased = JsDoubleGen.of(DoubleGen.biased);
-    public static Gen<JsDouble> arbitrary = JsDoubleGen.of(DoubleGen.arbitrary);
+    public static final Gen<JsDouble> biased = JsDoubleGen.of(DoubleGen.biased);
+    public static final Gen<JsDouble> arbitrary = JsDoubleGen.of(DoubleGen.arbitrary);
 
     public static Gen<JsDouble> uniform(double min, double max) {
         return JsDoubleGen.of(DoubleGen.arbitrary(min, max));

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class TestJsSerializer {
 
@@ -25,7 +26,7 @@ public class TestJsSerializer {
 
         final ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
         obj.serialize(outputstream);
-        Assertions.assertEquals(obj,JsObj.parse(outputstream.toString()));
+        Assertions.assertEquals(obj,JsObj.parse(outputstream.toString(StandardCharsets.UTF_8)));
 
     }
 }

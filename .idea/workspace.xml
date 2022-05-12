@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d0206c4c-a76a-4540-8e04-81d29c890d8f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BigDecGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BigIntGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BoolGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BytesGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/CharGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/Combinators.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/DoubleGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/FloatGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/Gen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/InstantGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/IntGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/ListGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/LongGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/MapGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/PairGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/RecordGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/SetGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/SplitGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/StrGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/gen/TripleGen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/optic/Lens.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/optic/Option.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/optic/Prism.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/tuple/Pair.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fun/tuple/Triple.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/gen/TestRNG.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectId" id="28upaus2wDwGCp9i7Hf9riuU9WC" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/rmerino/Projects/java-fun&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/test" />
+      <recent name="$PROJECT_DIR$/src/main/java/fun/optic" />
+      <recent name="$PROJECT_DIR$/src/main/java/fun/gen" />
+      <recent name="$PROJECT_DIR$/src/main/java/fun/tuple" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/java" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.TestRNG">
+    <configuration name="TestRNG" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="java-fun" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="gen.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="gen" />
+      <option name="MAIN_CLASS_NAME" value="gen.TestRNG" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestRNG.biasedInstantInterval" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="java-fun" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="gen.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="gen" />
+      <option name="MAIN_CLASS_NAME" value="gen.TestRNG" />
+      <option name="METHOD_NAME" value="biasedInstantInterval" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestRNG.testBigInt" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="java-fun" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="gen.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="gen" />
+      <option name="MAIN_CLASS_NAME" value="gen.TestRNG" />
+      <option name="METHOD_NAME" value="testBigInt" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.TestRNG" />
+        <item itemvalue="JUnit.TestRNG.testBigInt" />
+        <item itemvalue="JUnit.TestRNG.biasedInstantInterval" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d0206c4c-a76a-4540-8e04-81d29c890d8f" name="Changes" comment="" />
+      <created>1652076394548</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1652076394548</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fun/gen/StrGen.java</url>
+          <line>34</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/fun/gen/StrGen.java</url>
+          <line>30</line>
+          <properties class="fun.gen.StrGen" method="biased">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

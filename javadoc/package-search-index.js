@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"fun.gen"},{"l":"fun.optic"},{"l":"fun.tuple"},{"l":"gen"}];updateSearchResults();

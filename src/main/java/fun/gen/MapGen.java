@@ -2,9 +2,8 @@ package fun.gen;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
+import java.util.Random;
 
 import static java.util.Objects.requireNonNull;
 
@@ -42,13 +41,13 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
     }
 
     @Override
-    public Supplier<Map<K, V>> apply(final RandomGenerator gen) {
-        Objects.requireNonNull(gen);
+    public Supplier<Map<K, V>> apply(final Random gen) {
+        requireNonNull(gen);
         final Supplier<K> keys = keyGen.apply(splitGen.apply(requireNonNull(gen)));
         final Supplier<V> values = valueGen.apply(splitGen.apply(gen));
         return () -> {
-            var map = new HashMap<K, V>();
-            var tries = 0;
+            HashMap<K, V> map = new HashMap<K, V>();
+            int tries = 0;
             do {
                 map.put(keys.get(),
                         values.get());

@@ -4,7 +4,6 @@ import fun.tuple.Pair;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -17,8 +16,8 @@ public final class Combinators {
     @SuppressWarnings("varargs")
     public static <T> Gen<T> oneOf(final T value,
                                    final T... others) {
-        Objects.requireNonNull(value);
-        Objects.requireNonNull(others);
+        requireNonNull(value);
+        requireNonNull(others);
         return r -> () ->
         {
             int n = r.nextInt(others.length + 1);
@@ -46,7 +45,7 @@ public final class Combinators {
             suppliers.add(requireNonNull(gen.apply(SplitGen.DEFAULT.apply(r))));
             suppliers.addAll(Arrays.stream(others)
                                    .map(it -> it.apply(SplitGen.DEFAULT.apply(r)))
-                                   .toList());
+                                   .collect(Collectors.toList()));
             final int bound = 1 + requireNonNull(others).length;
             return () -> suppliers.get(r.nextInt(bound))
                                   .get();
@@ -63,6 +62,7 @@ public final class Combinators {
      * @param freq   a frequency pair
      * @param others the rests of pairs
      * @return a json generator
+     * <A> the type of the values
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
@@ -70,8 +70,9 @@ public final class Combinators {
                                   final Pair<Integer, Gen<? extends A>>... others
     ) {
         List<Pair<Integer, Gen<? extends A>>> list =
-                Arrays.stream(others).collect(Collectors.toList());
-        list.add(freq);
+                Arrays.stream(requireNonNull(others))
+                      .collect(Collectors.toList());
+        list.add(requireNonNull(freq));
         return freqList(list);
 
     }
@@ -91,11 +92,11 @@ public final class Combinators {
     }
 
     private static <A> Supplier<A> freqSupplier(SplitGen split,
-                                                RandomGenerator seed,
+                                                Random seed,
                                                 List<Pair<Integer, Gen<? extends A>>> filtered) {
         int total = 0;
         TreeMap<Integer, Supplier<? extends A>> treeMap = new TreeMap<>();
-        for (var t : filtered) {
+        for (Pair<Integer, Gen<? extends A>> t : filtered) {
             total += t.first();
             treeMap.put(total,
                         t.second()
@@ -103,7 +104,7 @@ public final class Combinators {
         }
         Supplier<Integer> choose =
                 IntGen.arbitrary(1,
-                                 total + 1)
+                                 total)
                       .apply(split.apply(seed));
         return () -> treeMap.ceilingEntry(choose.get())
                             .getValue().get();
@@ -120,10 +121,11 @@ public final class Combinators {
         if (prob < 0) throw new IllegalArgumentException("prob < 0");
         if (prob > 100) throw new IllegalArgumentException("prob > 100");
         return IntGen.arbitrary(0,
-                                101).then(n -> {
-            if (n <= prob) return Gen.cons(null);
-            else return gen;
-        });
+                                100)
+                     .then(n -> n <= prob ?
+                                Gen.cons(null) :
+                                gen
+                     );
     }
 
     private static <I> void combinations(final List<I> input,
@@ -155,8 +157,8 @@ public final class Combinators {
                      combinations);
     }
 
-    private static <I> List<List<I>> combinations(final List<I> input,
-                                                  final int k) {
+    private static <I> List<List<I>> getCombinations(final List<I> input,
+                                                     final int k) {
         List<List<I>> result = new ArrayList<>();
         combinations(input,
                      0,
@@ -172,11 +174,12 @@ public final class Combinators {
         requireNonNull(input);
         if (k < 0) throw new IllegalArgumentException("k < 0");
         return seed -> {
-            if (input.isEmpty()) return List::of;
-            List<List<I>> combinations = combinations(input,
-                                                      k);
-            var indexGen = IntGen.arbitrary(0,
-                                            combinations.size()).apply(seed);
+            if (input.isEmpty()) return ArrayList::new;
+
+            List<List<I>> combinations = getCombinations(input,
+                                                         k);
+            Supplier<Integer> indexGen = IntGen.arbitrary(0,
+                                                          combinations.size() - 1).apply(seed);
             return () -> combinations.get(indexGen.get());
         };
     }
@@ -184,17 +187,29 @@ public final class Combinators {
     public static <I> Gen<List<I>> permutations(final List<I> input) {
         requireNonNull(input);
         return seed -> {
-            if (input.isEmpty()) return List::of;
-            List<List<I>> permutations = new ArrayList<>();
-            permutations.add(input);
-            for (int k = 1; k < input.size(); k++)
-                permutations.addAll(combinations(input,
-                                                 k));
-            var indexGen = IntGen.arbitrary(0,
-                                            permutations.size()).apply(seed);
+            if (input.isEmpty()) return ArrayList::new;
+            List<List<I>> permutations = getPermutations(input);
+            Supplier<Integer> indexGen = IntGen.arbitrary(0,
+                                                          permutations.size() - 1)
+                                               .apply(seed);
             return () -> permutations.get(indexGen.get());
         };
     }
 
+    private static <I> List<List<I>> getPermutations(List<I> input) {
+        List<List<I>> permutations = new ArrayList<>();
+        permutations.add(input);
+        for (int k = 1; k < input.size(); k++)
+            permutations.addAll(getCombinations(input,
+                                                k));
+        return permutations;
+    }
+
+
+    public static void main(String[] args) {
+        List<String> a = new ArrayList<>();
+        permutations(a).sample(10).forEach(System.out::println);
+
+    }
 
 }

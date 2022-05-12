@@ -6,9 +6,9 @@ import fun.tuple.Pair;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Objects.requireNonNull;
@@ -27,7 +27,7 @@ public final class InstantGen implements Gen<Instant> {
     }
 
     private static Gen<Instant> biased() {
-        var gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
+        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
 
         gens.add(new Pair<>(1,
                             Gen.cons(MAX_SECONDS)));
@@ -49,7 +49,7 @@ public final class InstantGen implements Gen<Instant> {
 
     public static Gen<Instant> biased(final long min,
                                       final long max) {
-        if (max <= min)
+        if (max < min)
             throw new IllegalArgumentException(max + " is greater than " + min);
         if (max > MAX_SECONDS)
             throw new IllegalArgumentException(max + " is greater than MAX_SECONDS " + MAX_SECONDS);
@@ -57,14 +57,12 @@ public final class InstantGen implements Gen<Instant> {
         if (min < MIN_SECONDS)
             throw new IllegalArgumentException(max + " is lower than MIN_SECONDS " + MIN_SECONDS);
 
-        var gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
-        if (min == MIN_SECONDS)
-            gens.add(new Pair<>(1,
-                                Gen.cons(MIN_SECONDS)));
-        if (min <= Integer.MAX_VALUE && max > Integer.MAX_VALUE)
+        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
+
+        if (min <= Integer.MAX_VALUE && max >= Integer.MAX_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((long) Integer.MAX_VALUE)));
-        if (min <= Integer.MIN_VALUE && max > Integer.MIN_VALUE)
+        if (min <= Integer.MIN_VALUE && max >= Integer.MIN_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((long) Integer.MIN_VALUE)));
         if (min < 0L && max > 0L)
@@ -73,7 +71,7 @@ public final class InstantGen implements Gen<Instant> {
         gens.add(new Pair<>(1,
                             Gen.cons(min)));
         gens.add(new Pair<>(1,
-                            Gen.cons(max - 1)));
+                            Gen.cons(max)));
         gens.add(new Pair<>(gens.size(),
                             LongGen.arbitrary(min,
                                               max)));
@@ -120,15 +118,17 @@ public final class InstantGen implements Gen<Instant> {
         if (min < MIN_SECONDS)
             throw new IllegalArgumentException(max + " is lower than MIN_SECONDS " + MIN_SECONDS);
 
-        return gen -> () -> Instant.ofEpochSecond(gen.nextLong(min,
-                                                               max));
+        return LongGen.arbitrary(min,
+                                 max).map(Instant::ofEpochMilli);
     }
 
     @Override
-    public Supplier<Instant> apply(final RandomGenerator gen) {
-        Objects.requireNonNull(gen);
-        return () -> Instant.ofEpochSecond(gen.nextLong(MIN_SECONDS,
-                                                        MAX_SECONDS + 1));
+    public Supplier<Instant> apply(final Random gen) {
+        requireNonNull(gen);
+
+        return LongGen.arbitrary(MIN_SECONDS,
+                                 MAX_SECONDS + 1)
+                      .map(Instant::ofEpochMilli).apply(gen);
     }
 
 }

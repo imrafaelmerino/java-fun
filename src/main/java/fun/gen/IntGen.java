@@ -4,9 +4,10 @@ package fun.gen;
 import fun.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,21 +25,19 @@ public final class IntGen implements Gen<Integer> {
 
     public static Gen<Integer> biased(int min,
                                       int max) {
-        if (max <= min) throw new IllegalArgumentException("max <= min");
-        var gens = new ArrayList<Pair<Integer, Gen<? extends Integer>>>();
-        if (min == Integer.MIN_VALUE)
-            gens.add(new Pair<>(1,
-                                Gen.cons(Integer.MIN_VALUE)));
-        if (max > Short.MAX_VALUE && min <= Short.MAX_VALUE)
+        if (max < min) throw new IllegalArgumentException("max < min");
+        List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
+
+        if (max > Short.MAX_VALUE && min < Short.MAX_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((int) Short.MAX_VALUE)));
-        if (max > Short.MIN_VALUE && min <= Short.MIN_VALUE)
+        if (max > Short.MIN_VALUE && min < Short.MIN_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((int) Short.MIN_VALUE)));
-        if (max > Byte.MAX_VALUE && min <= Byte.MAX_VALUE)
+        if (max > Byte.MAX_VALUE && min < Byte.MAX_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((int) Byte.MAX_VALUE)));
-        if (max > Byte.MIN_VALUE && min <= Byte.MIN_VALUE)
+        if (max > Byte.MIN_VALUE && min < Byte.MIN_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((int) Byte.MIN_VALUE)));
         if (max > 0 && min < 0)
@@ -49,25 +48,47 @@ public final class IntGen implements Gen<Integer> {
                             Gen.cons(min)));
 
         gens.add(new Pair<>(1,
-                            Gen.cons(max - 1)));
+                            Gen.cons(max)));
 
         gens.add(new Pair<>(gens.size(),
-                            arbitrary));
+                            arbitrary(min,
+                                      max)));
 
         return Combinators.freqList(gens);
     }
 
     public static Gen<Integer> arbitrary(int min,
                                          int max) {
-        if (max <= min) throw new IllegalArgumentException("max <= min");
+        if (max < min) throw new IllegalArgumentException("max < min");
 
-        return seed -> () -> seed.nextInt(min,
-                                          max);
+        return seed -> () -> {
+            int r = seed.nextInt();
+            // It's not case (1).
+            final int n = max - min + 1;
+            final int m = n - 1;
+            if ((n & m) == 0) {
+                // It is case (2): length of range is a power of 2.
+                r = (r & m) + min;
+            } else if (n > 0) {
+                // It is case (3): need to reject over-represented candidates.
+                for (int u = r >>> 1;
+                     u + m - (r = u % n) < 0;
+                     u = seed.nextInt() >>> 1)
+                    ;
+                r += min;
+            } else {
+                // It is case (4): length of range not representable as long.
+                while (r < min || r > max) {
+                    r = seed.nextInt();
+                }
+            }
+            return r;
+        };
     }
 
 
     private static Gen<Integer> biased() {
-        var gens = new ArrayList<Pair<Integer, Gen<? extends Integer>>>();
+        List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
 
         gens.add(new Pair<>(1,
                             Gen.cons(Integer.MAX_VALUE)));
@@ -97,9 +118,10 @@ public final class IntGen implements Gen<Integer> {
     }
 
     @Override
-    public Supplier<Integer> apply(final RandomGenerator gen) {
+    public Supplier<Integer> apply(final Random gen) {
         Objects.requireNonNull(gen);
         return requireNonNull(gen)::nextInt;
     }
+
 
 }

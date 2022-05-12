@@ -5,7 +5,7 @@ import fun.tuple.Triple;
 
 import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
+import java.util.Random;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,7 +16,6 @@ public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
 
     private final Gen<A> _1;
     private final Gen<B> _2;
-
     private final Gen<C> _3;
 
     private final SplitGen splitGen;
@@ -49,7 +48,7 @@ public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
     }
 
     @Override
-    public Supplier<Triple<A, B, C>> apply(final RandomGenerator seed) {
+    public Supplier<Triple<A, B, C>> apply(final Random seed) {
         Objects.requireNonNull(seed);
         final Supplier<A> a = _1.apply(splitGen.apply(seed));
         final Supplier<B> b = _2.apply(splitGen.apply(seed));

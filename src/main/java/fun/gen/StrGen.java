@@ -2,11 +2,8 @@ package fun.gen;
 
 import fun.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -15,57 +12,64 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public final class StrGen implements Gen<String> {
 
-    public static final Gen<String> digit =
-            CharGen.digit.map(String::valueOf);
+    public static final Gen<String> digit = CharGen.digit.map(String::valueOf);
     /**
      * Generates a letter from a-z
      */
-    public static final Gen<String> letter =
-            CharGen.letter.map(String::valueOf);
+    public static final Gen<String> letter = CharGen.letter.map(String::valueOf);
+
+    public static final Gen<String> alphabetic = CharGen.alphabetic.map(String::valueOf);
+
+    public static final Gen<String> alphanumeric = Combinators.oneOf(CharGen.alphabetic,
+                                                                     CharGen.digit).map(String::valueOf);
+
+
     private final int length;
 
     private StrGen(final int length) {
         this.length = length;
     }
 
-    public static Gen<String> biased(final int min,
-                                     final int max) {
-        if (min < 0) throw new IllegalArgumentException("min < 0");
-        if (max <= min) throw new IllegalArgumentException("max <= min");
-        var gens = new ArrayList<Pair<Integer, Gen<? extends String>>>();
+    public static Gen<String> biased(final int minLength,
+                                     final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+        List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
 
-        if (min == 0)
-            gens.add(new Pair<>(1,
-                                Gen.cons("")));
 
         gens.add(new Pair<>(1,
-                            new StrGen(min)));
+                            new StrGen(minLength)));
 
         gens.add(new Pair<>(1,
-                            new StrGen(max - 1)));
+                            Gen.cons(String.join("", Collections.nCopies(minLength, " ")))));
+
+        gens.add(new Pair<>(1,
+                            Gen.cons(String.join("", Collections.nCopies(maxLength, " ")))));
+
+        gens.add(new Pair<>(1,
+                            new StrGen(maxLength)));
 
         gens.add(new Pair<>(gens.size(),
-                            arbitrary(min,
-                                      max)));
+                            arbitrary(minLength,
+                                      maxLength)));
 
         return Combinators.freqList(gens);
     }
 
-    public static Gen<String> arbitrary(final int min,
-                                        final int max) {
-        if (min < 0) throw new IllegalArgumentException("min < 0");
-        if (max <= min) throw new IllegalArgumentException("max <= min");
-        return seed -> genStr(seed,
-                              IntGen.arbitrary(min,
-                                               max).apply(seed));
+    public static Gen<String> arbitrary(final int minLength,
+                                        final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+        return seed -> genStr(SplitGen.DEFAULT.apply(seed),
+                              IntGen.arbitrary(minLength,
+                                               maxLength)
+                                    .apply(SplitGen.DEFAULT.apply(seed)));
     }
 
-    private static Supplier<String> genStr(RandomGenerator seed,
+    private static Supplier<String> genStr(Random seed,
                                            Supplier<Integer> lengthGen) {
         return () -> {
-            int length = lengthGen.get();
-            if (length == 0) return "";
-            byte[] array = new byte[seed.nextInt(length)];
+            byte[] array = new byte[lengthGen.get()];
             seed.nextBytes(array);
             return new String(array,
                               UTF_8);
@@ -73,65 +77,90 @@ public final class StrGen implements Gen<String> {
     }
 
     /**
-     * Generates a seq of digits of the given length
+     * Generates a seq of digits of a length between the specified interval
      *
-     * @param length the length of the string
+     * @param minLength min length of the string
+     * @param maxLength max length of the string
      * @return a string generator
      */
-    public static Gen<String> digits(final int length) {
-        if (length <= 0) throw new IllegalArgumentException("length not greater than zero");
-        return ListGen.<String>arbitrary(length)
-                      .apply(digit)
-                      .map(arr -> String.join("",
-                                              arr));
-    }
-
-    public static Gen<String> letters(final int length) {
-        if (length <= 0) throw new IllegalArgumentException("length not greater than zero");
-        return ListGen.<String>arbitrary(length)
-                      .apply(letter)
-                      .map(arr -> String.join("",
-                                              arr));
+    public static Gen<String> digits(final int minLength,
+                                     final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+        return ListGen.<String>arbitrary(minLength,
+                                         maxLength)
+                      .apply(CharGen.digit.map(String::valueOf))
+                      .map(it -> String.join("",
+                                             it));
     }
 
     /**
-     * Generates an alphabetic string of the given length
+     * Generates a seq of letters of a length between the specified interval
      *
-     * @param length the length of the string
+     * @param minLength min length of the string
+     * @param maxLength max length of the string
      * @return a string generator
      */
-    public static Gen<String> alpha(final int length) {
-        if (length < 0) throw new IllegalArgumentException("length lower than zero");
-        return ListGen.<String>arbitrary(length)
-                      .apply(CharGen.alpha.map(String::valueOf))
+    public static Gen<String> letters(final int minLength,
+                                      final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+        return ListGen.<String>arbitrary(minLength,
+                                         maxLength)
+                      .apply(CharGen.letter.map(String::valueOf))
+                      .map(it -> String.join("",
+                                             it));
+    }
+
+    /**
+     * Generates a seq of alphabetic characters of a length between the specified interval
+     *
+     * @param minLength min length of the string
+     * @param maxLength max length of the string
+     * @return a string generator
+     */
+    public static Gen<String> alphabetic(final int minLength,
+                                         final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+
+        return ListGen.<String>arbitrary(minLength,
+                                         maxLength)
+                      .apply(alphabetic)
+                      .map(it -> String.join("",
+                                             it));
+    }
+
+
+    /**
+     * Generates a seq of alphanumeric characters of a length between the specified interval
+     *
+     * @param minLength min length of the string
+     * @param maxLength max length of the string
+     * @return a string generator
+     */
+    public static Gen<String> alphanumeric(final int minLength,
+                                           final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+
+        return ListGen.<String>arbitrary(minLength,
+                                         maxLength)
+                      .apply(alphanumeric)
                       .map(it -> String.join("",
                                              it));
 
     }
 
-    /**
-     * Generates an alphanumeric string of the given length
-     *
-     * @param length the length of the string
-     * @return a string generator
-     */
-    public static Gen<String> alphanumeric(final int length) {
-        if (length < 0) throw new IllegalArgumentException("length lower than zero");
-
-        return ListGen.arbitrary(length)
-                      .apply(Combinators.oneOf(CharGen.alpha,
-                                               CharGen.digit))
-                      .map(it -> it.stream()
-                                   .map(String::valueOf)
-                                   .collect(Collectors.joining(""))
-                      );
-    }
-
     @Override
-    public Supplier<String> apply(final RandomGenerator gen) {
+    public Supplier<String> apply(final Random gen) {
         Objects.requireNonNull(gen);
         return genStr(gen,
                       () -> length);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(String.join("", Collections.nCopies(2, " ")).length());
     }
 }
 

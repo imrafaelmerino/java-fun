@@ -1,8 +1,9 @@
 package fun.gen;
 
-import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
+import java.util.Random;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Represents a generator of booleans.
@@ -14,8 +15,8 @@ public final class BoolGen implements Gen<Boolean> {
     }
 
     @Override
-    public Supplier<Boolean> apply(final RandomGenerator gen) {
-        Objects.requireNonNull(gen);
+    public Supplier<Boolean> apply(final Random gen) {
+        requireNonNull(gen);
         return gen::nextBoolean;
     }
 }

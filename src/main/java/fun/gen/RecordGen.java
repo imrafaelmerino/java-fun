@@ -2,7 +2,7 @@ package fun.gen;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -2309,7 +2309,8 @@ public final class RecordGen implements Gen<Map<String, ?>> {
     }
 
     public RecordGen setNullables(final String... nullables) {
-        this.nullables = Arrays.stream(requireNonNull(nullables)).toList();
+        this.nullables = Arrays.stream(requireNonNull(nullables))
+                               .collect(Collectors.toList());
         return this;
     }
 
@@ -2319,14 +2320,15 @@ public final class RecordGen implements Gen<Map<String, ?>> {
     }
 
     public RecordGen setOptionals(final String... optional) {
-        this.optionals = Arrays.stream(requireNonNull(optional)).toList();
+        this.optionals = Arrays.stream(requireNonNull(optional))
+                               .collect(Collectors.toList());
         return this;
     }
 
     public RecordGen set(final String key,
                          final Gen<?> gen
     ) {
-        var b = new LinkedHashMap<String, Gen<?>>();
+        LinkedHashMap<String, Gen<?>> b = new LinkedHashMap<>(bindings);
         b.put(key,
               gen
         );
@@ -2335,17 +2337,16 @@ public final class RecordGen implements Gen<Map<String, ?>> {
 
 
     @Override
-    public Supplier<Map<String, ?>> apply(final RandomGenerator gen) {
+    public Supplier<Map<String, ?>> apply(final Random gen) {
         Objects.requireNonNull(gen);
 
         Map<String, Supplier<?>> map = new LinkedHashMap<>();
-        for (var pair : bindings.entrySet()) {
+        for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
             map.put(pair.getKey(),
                     pair.getValue().apply(split.apply(gen))
             );
-        }
 
-        Supplier<List<String>> optionalCombinations =
+        Supplier<List<String>> optionalPermutations =
                 Combinators.permutations(optionals)
                            .apply(split.apply(gen));
 
@@ -2354,9 +2355,10 @@ public final class RecordGen implements Gen<Map<String, ?>> {
                 () -> false :
                 BoolGen.arbitrary.apply(split.apply(gen));
 
-        Supplier<List<String>> nullableCombinations =
+        Supplier<List<String>> nullablePermutations =
                 Combinators.permutations(nullables)
                            .apply(split.apply(gen));
+
         Supplier<Boolean> isRemoveNullables =
                 nullables.isEmpty() ?
                 () -> false :
@@ -2364,19 +2366,19 @@ public final class RecordGen implements Gen<Map<String, ?>> {
         return () ->
         {
             Map<String, Object> result = new LinkedHashMap<>();
-            for (var pair : map.entrySet()) {
-                final Object value = pair.getValue().get();
+            for (Map.Entry<String, Supplier<?>> pair : map.entrySet()) {
+                Object value = pair.getValue().get();
                 result.put(pair.getKey(),
                            value
                 );
             }
             if (isRemoveOptionals.get()) {
-                final List<String> r = optionalCombinations.get();
-                for (var s : r) result.remove(s);
+                List<String> r = optionalPermutations.get();
+                for (String s : r) result.remove(s);
             }
             if (isRemoveNullables.get()) {
-                final List<String> r = nullableCombinations.get();
-                for (var s : r)
+                final List<String> r = nullablePermutations.get();
+                for (String s : r)
                     result.put(s,
                                null);
             }

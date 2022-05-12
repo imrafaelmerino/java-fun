@@ -3,9 +3,11 @@ package fun.gen;
 import fun.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * * Represents a generator of bytes.
@@ -19,36 +21,35 @@ public final class BytesGen implements Gen<byte[]> {
     }
 
 
-    public static Gen<byte[]> arbitrary(int min,
-                                        int max) {
-        if (max <= min) throw new IllegalArgumentException("max <= min");
+    public static Gen<byte[]> arbitrary(int minLength,
+                                        int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException("max < min");
         return seed -> genBytes(seed,
-                                IntGen.arbitrary(min,
-                                                 max).apply(seed));
+                                IntGen.arbitrary(minLength,
+                                                 maxLength)
+                                      .apply(seed));
     }
 
 
-    public static Gen<byte[]> biased(int min,
-                                     int max) {
-        if (min < 0) throw new IllegalArgumentException("min < 0");
-        if (max <= min) throw new IllegalArgumentException("max <= min");
+    public static Gen<byte[]> biased(int minLength,
+                                     int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("min < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("max < min");
 
-        var gens = new ArrayList<Pair<Integer, Gen<? extends byte[]>>>();
+        List<Pair<Integer, Gen<? extends byte[]>>> gens = new ArrayList<>();
         gens.add(new Pair<>(1,
-                            new BytesGen(min)));
+                            new BytesGen(minLength)));
         gens.add(new Pair<>(1,
-                            new BytesGen(max - 1)));
-        if (min == 0)
-            gens.add(new Pair<>(1,
-                                Gen.cons(() -> new byte[0])));
+                            new BytesGen(maxLength)));
+
         gens.add(new Pair<>(gens.size(),
-                            arbitrary(min,
-                                      max)));
+                            arbitrary(minLength,
+                                      maxLength)));
 
         return Combinators.freqList(gens);
     }
 
-    private static Supplier<byte[]> genBytes(RandomGenerator gen,
+    private static Supplier<byte[]> genBytes(Random gen,
                                              Supplier<Integer> size) {
         return () -> {
             byte[] bytes = new byte[size.get()];
@@ -58,8 +59,8 @@ public final class BytesGen implements Gen<byte[]> {
     }
 
     @Override
-    public Supplier<byte[]> apply(final RandomGenerator gen) {
-        Objects.requireNonNull(gen);
+    public Supplier<byte[]> apply(final Random gen) {
+        requireNonNull(gen);
         return genBytes(gen,
                         () -> length);
     }

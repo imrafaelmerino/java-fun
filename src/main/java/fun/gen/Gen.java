@@ -1,18 +1,17 @@
 package fun.gen;
 
 import java.util.Objects;
-import java.util.SplittableRandom;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
 @FunctionalInterface
-public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
+public interface Gen<O> extends Function<Random, Supplier<O>> {
 
     static <O> Gen<O> cons(final O value) {
         return seed -> () -> value;
@@ -24,7 +23,10 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
 
     default <P> Gen<P> map(final Function<O, P> fn) {
         Objects.requireNonNull(fn);
-        return seed -> () -> fn.apply(this.apply(seed).get());
+        return seed -> {
+            Supplier<O> gen = this.apply(seed);
+            return () -> fn.apply(gen.get());
+        };
     }
 
     default Gen<O> peek(final Consumer<O> consumer) {
@@ -73,17 +75,20 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
     ) {
         requireNonNull(predicate);
         if (tries < 0) throw new IllegalArgumentException("tries < 0");
-        return r -> () ->
-        {
-            requireNonNull(r);
-            for (int i = 0; i < tries; i++) {
-                O value = apply(r).get();
-                if (predicate.test(value))
-                    return value;
-            }
-            throw new RuntimeException(String.format("Couldn't satisfy such-that predicate after %s tries",
-                                                     tries
-            ));
+        return r -> {
+            Supplier<O> supplier = apply(r);
+            return () ->
+            {
+                requireNonNull(r);
+                for (int i = 0; i < tries; i++) {
+                    O value = supplier.get();
+                    if (predicate.test(value))
+                        return value;
+                }
+                throw new RuntimeException(String.format("Couldn't satisfy such-that predicate after %s tries",
+                                                         tries
+                ));
+            };
         };
     }
 
@@ -93,11 +98,11 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
      * @return a supplier of values
      */
     default Supplier<O> sample() {
-        return apply(new SplittableRandom());
+        return apply(new Random());
     }
 
     default Stream<O> sample(int n) {
-        return Stream.generate(apply(new SplittableRandom())).limit(n);
+        return Stream.generate(apply(new Random())).limit(n);
     }
 
     /**
@@ -106,7 +111,7 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
      * @param random the seed of the generator
      * @return a supplier of values
      */
-    default Supplier<O> sample(final RandomGenerator random) {
+    default Supplier<O> sample(final Random random) {
         return apply(requireNonNull(random));
     }
 

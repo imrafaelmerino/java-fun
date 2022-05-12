@@ -4,10 +4,9 @@ import fun.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,49 +27,43 @@ public final class ListGen<T> implements Gen<List<T>> {
         this.size = size;
     }
 
-    public static <T> Function<Gen<T>, Gen<List<T>>> arbitrary(int length) {
-        return gen -> new ListGen<>(gen,
-                                    length);
-    }
 
-    public static <T> Function<Gen<T>, Gen<List<T>>> biased(int min,
-                                                            int max) {
-        if (min < 0) throw new IllegalArgumentException("min < 0");
-        if (max <= min) throw new IllegalArgumentException("max <= min");
+    public static <T> Function<Gen<T>, Gen<List<T>>> biased(final int minLength,
+                                                            final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
         return gen -> {
             requireNonNull(gen);
-            var gens = new ArrayList<Pair<Integer, Gen<? extends List<T>>>>();
-            if (min == 0)
-                gens.add(new Pair<>(1,
-                                    Gen.cons(ArrayList::new)));
-            else
-                gens.add(new Pair<>(1,
-                                    new ListGen<>(gen,
-                                                  min)));
+            List<Pair<Integer, Gen<? extends List<T>>>> gens = new ArrayList<>();
+
             gens.add(new Pair<>(1,
                                 new ListGen<>(gen,
-                                              max - 1)));
+                                              minLength)));
+            gens.add(new Pair<>(1,
+                                new ListGen<>(gen,
+                                              maxLength)));
             gens.add(new Pair<>(gens.size(),
-                                ListGen.<T>arbitrary(min,
-                                                     max).apply(gen)));
+                                ListGen.<T>arbitrary(minLength,
+                                                     maxLength)
+                                       .apply(gen)));
             return Combinators.freqList(gens);
         };
 
     }
 
-    public static <T> Function<Gen<T>, Gen<List<T>>> arbitrary(int min,
-                                                               int max) {
-        if (min < 0) throw new IllegalArgumentException("min < 0");
-        if (max <= min) throw new IllegalArgumentException("max <= min");
+    public static <T> Function<Gen<T>, Gen<List<T>>> arbitrary(final int minLength,
+                                                               final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
         return gen -> {
             requireNonNull(gen);
             return seed -> {
-                var sizeSupplier =
-                        IntGen.arbitrary(min,
-                                         max)
+                Supplier<Integer> sizeSupplier =
+                        IntGen.arbitrary(minLength,
+                                         maxLength)
                               .apply(SplitGen.DEFAULT.apply(seed));
 
-                var elemSupplier = gen.apply(SplitGen.DEFAULT.apply(seed));
+                Supplier<T> elemSupplier = gen.apply(SplitGen.DEFAULT.apply(seed));
                 return listSupplier(sizeSupplier,
                                     elemSupplier);
             };
@@ -86,8 +79,8 @@ public final class ListGen<T> implements Gen<List<T>> {
     }
 
     @Override
-    public Supplier<List<T>> apply(RandomGenerator seed) {
-        Objects.requireNonNull(seed);
+    public Supplier<List<T>> apply(Random seed) {
+        requireNonNull(seed);
         return listSupplier(() -> size,
                             gen.apply(requireNonNull(seed)));
     }

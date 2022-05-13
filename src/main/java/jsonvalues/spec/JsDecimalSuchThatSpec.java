@@ -16,10 +16,10 @@ class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePred
     JsDecimalSuchThatSpec(final boolean required,
                           final boolean nullable,
                           final Function<BigDecimal, Optional<JsError>> predicate
-                         ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -48,7 +48,7 @@ class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePred
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofDecimalSuchThat(predicate,
                                                         nullable
-                                                       );
+        );
     }
 
     @Override
@@ -57,7 +57,7 @@ class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePred
                                                                            DECIMAL_EXPECTED,
                                                                            required,
                                                                            nullable
-                                                                        )
+                                                  )
                                                                  .apply(value);
 
         if (error.isPresent() || value.isNull()) return error;

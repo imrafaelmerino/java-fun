@@ -13,10 +13,10 @@ class JsArrayOfIntSpec extends AbstractPredicateSpec implements JsValuePredicate
 
     JsArrayOfIntSpec(final boolean required,
                      final boolean nullable
-                    ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -52,7 +52,7 @@ class JsArrayOfIntSpec extends AbstractPredicateSpec implements JsValuePredicate
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
 
     }

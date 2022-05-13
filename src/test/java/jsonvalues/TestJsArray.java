@@ -1,6 +1,7 @@
 package jsonvalues;
 
 
+import fun.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -67,29 +68,6 @@ public class TestJsArray {
     }
 
     @Test
-    public void test_create_five_elements_json_array() {
-
-        JsArray arr = JsArray.of(JsStr.of("A"),
-                                 JsStr.of("B"),
-                                 JsStr.of("C"),
-                                 JsStr.of("D"),
-                                 JsStr.of("E")
-        );
-        JsArray arr1 = arr.set(-1,
-                               JsStr.of("F")
-        );
-
-        Assertions.assertNotEquals(arr,
-                                   arr1
-        );
-
-        Assertions.assertEquals(JsStr.of("F"),
-                                arr1.get(-1)
-        );
-
-    }
-
-    @Test
     public void test_create_four_elements_json_array() {
 
         JsArray arr = JsArray.of(JsLong.of(10),
@@ -127,7 +105,7 @@ public class TestJsArray {
                                                        JsInt.of(1)
                                          )
         );
-        JsArray newArr = arr.delete(-1);
+        JsArray newArr = arr.delete(arr.size() - 1);
 
         Assertions.assertEquals(2,
                                 arr.size()
@@ -142,10 +120,10 @@ public class TestJsArray {
     @Test
     public void test_create_json_array_from_one_or_more_pairs() {
 
-        final JsArray arr = JsArray.of(JsPair.of(JsPath.fromIndex(0),
+        final JsArray arr = JsArray.of(new Pair<>(JsPath.fromIndex(0),
                                                  JsInt.of(1)
                                        ),
-                                       JsPair.of(JsPath.fromIndex(2),
+                                       new Pair<>(JsPath.fromIndex(2),
                                                  JsInt.of(3)
                                        )
         );
@@ -156,10 +134,10 @@ public class TestJsArray {
                                 arr
         );
 
-        final JsArray arr1 = JsArray.of(JsPair.of(path("/0/a"),
+        final JsArray arr1 = JsArray.of(new Pair<>(path("/0/a"),
                                                   JsInt.of(1)
                                         ),
-                                        JsPair.of(path("/2/b"),
+                                        new Pair<>(path("/2/b"),
                                                   JsInt.of(3)
                                         )
         );
@@ -784,8 +762,8 @@ public class TestJsArray {
     @Test
     public void test_operations() {
 
-        JsArray array = JsArray.of(JsPair.of(path("/0/b/0"),
-                                             JsInt.of(1)
+        JsArray array = JsArray.of(new Pair<>(path("/0/b/0"),
+                                              JsInt.of(1)
                                    )
         );
 
@@ -984,9 +962,9 @@ public class TestJsArray {
         JsArray c = b.mapAllKeys(toUpperCase);
 
         Assertions.assertTrue(c.streamAll()
-                               .filter(p -> p.path.last()
+                               .filter(p -> p.first().last()
                                                   .isKey())
-                               .map(it -> it.path.last()
+                               .map(it -> it.first().last()
                                                  .asKey().name)
                                .allMatch(key -> key.toUpperCase()
                                                    .equals(key)));
@@ -1034,9 +1012,9 @@ public class TestJsArray {
         });
 
         Assertions.assertTrue(c.streamAll()
-                               .filter(p -> p.path.last()
+                               .filter(p -> p.first().last()
                                                   .isKey())
-                               .map(it -> it.path.last()
+                               .map(it -> it.first().last()
                                                  .asKey().name)
                                .allMatch(key -> key.toUpperCase()
                                                    .equals(key)));
@@ -1070,45 +1048,34 @@ public class TestJsArray {
         Assertions.assertEquals(new BigInteger("100000000000000000000000000"),
                                 a.getBigInt(6)
         );
-        Assertions.assertNull(a.getBigInt(-1));
 
         Assertions.assertNull(a.getInt(1));
         Assertions.assertEquals(Integer.valueOf(1),
                                 a.getInt(0)
         );
-        Assertions.assertNull(a.getInt(-1));
 
         Assertions.assertNull(a.getLong(1));
         Assertions.assertEquals(Long.valueOf(Long.MAX_VALUE),
                                 a.getLong(2)
         );
-        Assertions.assertNull(a.getLong(-1));
 
         Assertions.assertNull(a.getBool(1));
         Assertions.assertEquals(Boolean.TRUE,
                                 a.getBool(3)
         );
-        Assertions.assertNull(a.getBool(-1));
 
         Assertions.assertNull(a.getStr(0));
         Assertions.assertEquals("a",
                                 a.getStr(1)
         );
-        Assertions.assertNull(a.getStr(-1));
-
         Assertions.assertNull(a.getObj(3));
         Assertions.assertEquals(JsObj.empty(),
                                 a.getObj(4)
         );
-        Assertions.assertNull(a.getObj(-1));
-
 
         Assertions.assertNull(a.getArray(0));
         Assertions.assertEquals(JsArray.empty(),
                                 a.getArray(7)
-        );
-        Assertions.assertEquals(JsArray.empty(),
-                                a.getArray(-1)
         );
     }
 
@@ -1124,9 +1091,7 @@ public class TestJsArray {
         Assertions.assertEquals(now,
                                 array.getInstant(1)
         );
-        Assertions.assertEquals(now,
-                                array.getInstant(-1)
-        );
+
         Assertions.assertNull(array.getInstant(0));
 
     }
@@ -1143,8 +1108,6 @@ public class TestJsArray {
 
         Assertions.assertArrayEquals(bytes,
                                      array.getBinary(1));
-        Assertions.assertArrayEquals(bytes,
-                                     array.getBinary(-1));
 
         Assertions.assertNull(array.getBinary(0));
     }
@@ -1266,18 +1229,6 @@ public class TestJsArray {
         Assertions.assertEquals(array,
                                 array.filterKeys((k, v) -> false)
         );
-    }
-
-    @Test
-    public void test_minus_one_index_points_last_element() {
-
-        JsArray array = JsArray.of(1,
-                                   2,
-                                   3
-        );
-
-        Assertions.assertEquals(3,
-                                (int) array.getInt(-1));
     }
 
 

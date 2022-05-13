@@ -39,8 +39,7 @@ class AnySpec implements JsValuePredicate {
 
         if (value.isNothing() && required)
             return Optional.of(new JsError(value,
-                                           ERROR_CODE.REQUIRED
-            ));
+                                           ERROR_CODE.REQUIRED));
         return Optional.empty();
 
     }

@@ -16,18 +16,18 @@ public final class MyDslJson<A> extends DslJson<A> {
     public static final MyDslJson<java.lang.Object> INSTANCE = new MyDslJson<>();
 
     static {
-        final JsValueSerializer               valueSerializer = new JsValueSerializer();
-        final JsonWriter.WriteObject<JsObj>   objSerializer   = new JsObjSerializer(valueSerializer);
+        final JsValueSerializer valueSerializer = new JsValueSerializer();
+        final JsonWriter.WriteObject<JsObj> objSerializer = new JsObjSerializer(valueSerializer);
         final JsonWriter.WriteObject<JsArray> arraySerializer = new JsArraySerializer(valueSerializer);
         valueSerializer.setArraySerializer(arraySerializer);
         valueSerializer.setObjectSerializer(objSerializer);
         INSTANCE.registerWriter(JsObj.class,
                                 objSerializer
-                               );
+        );
 
         INSTANCE.registerWriter(JsArray.class,
                                 arraySerializer
-                               );
+        );
     }
 
     private MyDslJson() {
@@ -35,7 +35,7 @@ public final class MyDslJson<A> extends DslJson<A> {
 
     public JsObj parseToJsObj(final byte[] bytes,
                               final JsSpecParser parser
-                             ) {
+    ) {
         JsonReader<?> reader = getReader(bytes);
         try {
             reader.getNextToken();
@@ -50,16 +50,16 @@ public final class MyDslJson<A> extends DslJson<A> {
     }
 
     public JsonReader<?> getReader(final byte[] bytes
-                                  ) {
+    ) {
         return localReader.get()
                           .process(bytes,
                                    bytes.length
-                                  );
+                          );
     }
 
     public JsArray deserializeToJsArray(final byte[] bytes,
                                         final JsSpecParser parser
-                                       ) {
+    ) {
         JsonReader<?> reader = getReader(bytes);
         try {
             reader.getNextToken();
@@ -75,7 +75,7 @@ public final class MyDslJson<A> extends DslJson<A> {
     public JsObj parseToJsObj(final InputStream is,
                               final JsSpecParser parser
 
-                             ) {
+    ) {
         JsonReader<?> reader = getReader(is);
         try {
             reader.getNextToken();
@@ -100,7 +100,7 @@ public final class MyDslJson<A> extends DslJson<A> {
 
     public JsArray deserializeToJsArray(final InputStream is,
                                         final JsSpecParser parser
-                                       ) {
+    ) {
         JsonReader<?> reader = getReader(is);
         try {
             reader.getNextToken();
@@ -118,7 +118,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             INSTANCE.serialize(json,
                                outputStream
-                              );
+            );
             outputStream.flush();
             return outputStream.toByteArray();
         } catch (IOException e) {
@@ -128,11 +128,11 @@ public final class MyDslJson<A> extends DslJson<A> {
 
     public void serialize(final Json<?> json,
                           final OutputStream outputstream
-                         ) {
+    ) {
         try {
             super.serialize(json,
                             requireNonNull(outputstream)
-                           );
+            );
         } catch (IOException e) {
             throw new SerializerException(e);
         }
@@ -150,7 +150,7 @@ public final class MyDslJson<A> extends DslJson<A> {
                                new MyPrettifyOutputStream(baos,
                                                           MyPrettifyOutputStream.IndentType.SPACES,
                                                           indentLength)
-                              );
+            );
             return baos.toString(StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw new SerializerException(e);

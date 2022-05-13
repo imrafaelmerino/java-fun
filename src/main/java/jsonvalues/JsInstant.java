@@ -1,5 +1,7 @@
 package jsonvalues;
 
+import fun.optic.Prism;
+
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -9,33 +11,19 @@ import java.util.function.Function;
 import static java.util.Objects.requireNonNull;
 
 /**
- Represents an immutable instant. An instant is not part of the Json specification. It is serialized into
- it's a string representation using ISO-8601 representation. A JsInstant and a JsStr are equals
- if both represent the same date.
- {@code
- Instant a = Instant.now();
- JsStr.of(a.toString()).equals(JsInstant.of(a)) // true
- }
+ * Represents an immutable instant. An instant is not part of the Json specification. It is serialized into
+ * it's a string representation using ISO-8601 representation. A JsInstant and a JsStr are equals
+ * if both represent the same date.
+ * {@code
+ * Instant a = Instant.now();
+ * JsStr.of(a.toString()).equals(JsInstant.of(a)) // true
+ * }
  */
-public final class JsInstant  extends JsPrimitive implements Comparable<JsInstant>{
+public final class JsInstant extends JsPrimitive implements Comparable<JsInstant> {
 
     public static final int TYPE_ID = 11;
-    public final Instant value;
-
-    public static JsInstant of(final Instant instant) {
-        return new JsInstant(Objects.requireNonNull(instant));
-    }
-
-    private JsInstant(final Instant value) {
-        this.value = value;
-    }
-
-    public JsInstant map(Function<Instant,Instant> fn){
-        return JsInstant.of(Objects.requireNonNull(fn).apply(value));
-    }
-
     /**
-     prism between the sum type JsValue and JsInstant
+     * prism between the sum type JsValue and JsInstant
      */
     public static final Prism<JsValue, Instant> prism =
             new Prism<>(s -> {
@@ -47,6 +35,19 @@ public final class JsInstant  extends JsPrimitive implements Comparable<JsInstan
             },
                         JsInstant::of
             );
+    public final Instant value;
+
+    private JsInstant(final Instant value) {
+        this.value = value;
+    }
+
+    public static JsInstant of(final Instant instant) {
+        return new JsInstant(Objects.requireNonNull(instant));
+    }
+
+    public JsInstant map(Function<Instant, Instant> fn) {
+        return JsInstant.of(Objects.requireNonNull(fn).apply(value));
+    }
 
     @Override
     public int id() {

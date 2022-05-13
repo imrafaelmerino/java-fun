@@ -4,6 +4,8 @@ import com.dslplatform.json.MyDslJson;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+import fun.optic.Prism;
+import fun.tuple.Pair;
 import io.vavr.collection.Vector;
 
 import java.io.IOException;
@@ -86,16 +88,19 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return an immutable JsArray
      * @throws UserError if an elem of a pair is mutable
      */
-    public static JsArray of(final JsPair pair,
-                             final JsPair... others
+    @SafeVarargs
+    public static JsArray of(final Pair<JsPath, JsValue> pair,
+                             final Pair<JsPath, JsValue>... others
     ) {
-        JsArray arr = JsArray.EMPTY.set(pair.path,
-                                        pair.value
-        );
-        for (JsPair p : others) {
+        Objects.requireNonNull(pair);
+        Objects.requireNonNull(others);
 
-            arr = arr.set(p.path,
-                          p.value
+        JsArray arr = JsArray.EMPTY.set(pair.first(),
+                                        pair.second());
+        for (Pair<JsPath, JsValue> p : others) {
+
+            arr = arr.set(p.first(),
+                          p.second()
             );
         }
         return arr;
@@ -162,21 +167,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                   e2,
                   e3
         ).append(e4);
-    }
-
-    /**
-     * Adds one or more elements, starting from the first, to the back of this array.
-     *
-     * @param e      the JsValue to be added to the back.
-     * @param others more optional JsValue to be added to the back
-     * @return a new JsArray
-     */
-    public JsArray append(final JsValue e,
-                          final JsValue... others
-    ) {
-        Vector<JsValue> acc = this.seq.append(requireNonNull(e));
-        for (JsValue other : requireNonNull(others)) acc = acc.append(requireNonNull(other));
-        return new JsArray(acc);
     }
 
     /**
@@ -452,29 +442,29 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         }
     }
 
-    static Stream<JsPair> streamOfArr(final JsArray array,
-                                      final JsPath path
+    static Stream<Pair<JsPath, JsValue>> streamOfArr(final JsArray array,
+                                                     final JsPath path
     ) {
 
 
         requireNonNull(path);
-        return requireNonNull(array).ifEmptyElse(() -> Stream.of(JsPair.of(path,
-                                                                           array
+        return requireNonNull(array).ifEmptyElse(() -> Stream.of(new Pair<>(path,
+                                                                            array
                                                  )),
                                                  () -> range(0,
                                                              array.size()
-                                                 ).mapToObj(pair -> JsPair.of(path.index(pair),
-                                                                              array.get(Index.of(pair))
+                                                 ).mapToObj(pair -> new Pair<>(path.index(pair),
+                                                                               array.get(Index.of(pair))
                                                   ))
                                                   .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
-                                                                                                        pair.path
+                                                                                                        pair.first()
                                                                                        ),
                                                                                        a -> streamOfArr(a,
-                                                                                                        pair.path
+                                                                                                        pair.first()
                                                                                        ),
                                                                                        e -> Stream.of(pair)
                                                                            )
-                                                                           .apply(pair.value)
+                                                                           .apply(pair.second())
                                                   )
         );
 
@@ -588,6 +578,21 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     /**
+     * Adds one or more elements, starting from the first, to the back of this array.
+     *
+     * @param e      the JsValue to be added to the back.
+     * @param others more optional JsValue to be added to the back
+     * @return a new JsArray
+     */
+    public JsArray append(final JsValue e,
+                          final JsValue... others
+    ) {
+        Vector<JsValue> acc = this.seq.append(requireNonNull(e));
+        for (JsValue other : requireNonNull(others)) acc = acc.append(requireNonNull(other));
+        return new JsArray(acc);
+    }
+
+    /**
      * Adds all the elements of the given array, starting from the head, to the back of this array.
      *
      * @param array the JsArray of elements to be added to the back
@@ -666,10 +671,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the integral number located at the given index or null
      */
     public Integer getInt(final int index) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsInt.prism.getOptional.apply(seq.last())
-                                          .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsInt.prism.getOptional.apply(seq.get(index))
@@ -687,10 +688,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Integer getInt(final int index,
                           final Supplier<Integer> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsInt.prism.getOptional.apply(seq.last())
-                                          .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsInt.prism.getOptional.apply(seq.get(index))
@@ -706,9 +703,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the long number located at the given index or null
      */
     public Long getLong(final int index) {
-
-        if (index == -1 && !seq.isEmpty()) return JsLong.prism.getOptional.apply(seq.last())
-                                                                          .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsLong.prism.getOptional.apply(seq.get(index))
@@ -726,10 +720,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Long getLong(final int index,
                         final Supplier<Long> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsLong.prism.getOptional.apply(seq.last())
-                                           .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsLong.prism.getOptional.apply(seq.get(index))
@@ -744,9 +734,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the string located at the given index or null
      */
     public String getStr(final int index) {
-
-        if (index == -1 && !seq.isEmpty()) return JsStr.prism.getOptional.apply(seq.last())
-                                                                         .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsStr.prism.getOptional.apply(seq.get(index))
@@ -765,10 +752,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public String getStr(final int index,
                          final Supplier<String> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsStr.prism.getOptional.apply(seq.last())
-                                          .orElseGet(requireNonNull(orElse));
         return (seq.isEmpty() || index < 0 || index > seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsStr.prism.getOptional.apply(seq.get(index))
@@ -784,9 +767,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return an instant
      */
     public Instant getInstant(final int index) {
-
-        if (index == -1 && !seq.isEmpty()) return JsInstant.prism.getOptional.apply(seq.last())
-                                                                             .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsInstant.prism.getOptional.apply(seq.get(index))
@@ -805,10 +785,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Instant getInstant(final int index,
                               final Supplier<Instant> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsInstant.prism.getOptional.apply(seq.last())
-                                              .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsInstant.prism.getOptional.apply(seq.get(index))
@@ -824,9 +800,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return an array of bytes
      */
     public byte[] getBinary(final int index) {
-
-        if (index == -1 && !seq.isEmpty()) return JsBinary.prism.getOptional.apply(seq.last())
-                                                                            .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsBinary.prism.getOptional.apply(seq.get(index))
@@ -844,10 +817,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public byte[] getBinary(final int index,
                             final Supplier<byte[]> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsBinary.prism.getOptional.apply(seq.last())
-                                             .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsBinary.prism.getOptional.apply(seq.get(index))
@@ -862,9 +831,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the boolean located at the given index or null
      */
     public Boolean getBool(final int index) {
-
-        if (index == -1 && !seq.isEmpty()) return JsBool.prism.getOptional.apply(seq.last())
-                                                                          .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsBool.prism.getOptional.apply(seq.get(index))
@@ -881,10 +847,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Boolean getBool(final int index,
                            final Supplier<Boolean> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsBool.prism.getOptional.apply(seq.last())
-                                           .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsBool.prism.getOptional.apply(seq.get(index))
@@ -903,9 +865,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the double number located at the given index or null
      */
     public Double getDouble(final int index) {
-
-        if (index == -1 && !seq.isEmpty()) return JsDouble.prism.getOptional.apply(seq.last())
-                                                                            .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsDouble.prism.getOptional.apply(seq.get(index))
@@ -925,10 +884,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Double getDouble(final int index,
                             Supplier<Double> orElse) {
-
-        if (index == -1 && !seq.isEmpty())
-            return JsDouble.prism.getOptional.apply(seq.last())
-                                             .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsDouble.prism.getOptional.apply(seq.get(index))
@@ -944,8 +899,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the decimal number located at the given index or null
      */
     public BigDecimal getBigDec(final int index) {
-        if (index == -1 && !seq.isEmpty()) return JsBigDec.prism.getOptional.apply(seq.last())
-                                                                            .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsBigDec.prism.getOptional.apply(seq.get(index))
@@ -962,9 +915,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public BigDecimal getBigDec(final int index,
                                 final Supplier<BigDecimal> orElse) {
-        if (index == -1 && !seq.isEmpty())
-            return JsBigDec.prism.getOptional.apply(seq.last())
-                                             .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsBigDec.prism.getOptional.apply(seq.get(index))
@@ -979,9 +929,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the integral number located at the given index or null
      */
     public BigInteger getBigInt(final int index) {
-        if (index == -1 && !seq.isEmpty())
-            return JsBigInt.prism.getOptional.apply(seq.last())
-                                             .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsBigInt.prism.getOptional.apply(seq.get(index))
@@ -998,9 +945,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public BigInteger getBigInt(final int index,
                                 final Supplier<BigInteger> orElse) {
-        if (index == -1 && !seq.isEmpty())
-            return JsBigInt.prism.getOptional.apply(seq.last())
-                                             .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsBigInt.prism.getOptional.apply(seq.get(index))
@@ -1014,8 +958,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the object located at the given index or null
      */
     public JsObj getObj(final int index) {
-        if (index == -1 && !seq.isEmpty()) return JsObj.prism.getOptional.apply(seq.last())
-                                                                         .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsObj.prism.getOptional.apply(seq.get(index))
@@ -1032,9 +974,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public JsObj getObj(final int index,
                         final Supplier<JsObj> orElse) {
-        if (index == -1 && !seq.isEmpty())
-            return JsObj.prism.getOptional.apply(seq.last())
-                                          .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsObj.prism.getOptional.apply(seq.get(index))
@@ -1048,9 +987,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return the array located at the given index or null
      */
     public JsArray getArray(final int index) {
-        if (index == -1 && !seq.isEmpty())
-            return JsArray.prism.getOptional.apply(seq.last())
-                                            .orElse(null);
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                null :
                JsArray.prism.getOptional.apply(seq.get(index))
@@ -1067,9 +1003,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public JsArray getArray(final int index,
                             final Supplier<JsArray> orElse) {
-        if (index == -1 && !seq.isEmpty())
-            return JsArray.prism.getOptional.apply(seq.last())
-                                            .orElseGet(requireNonNull(orElse));
         return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                requireNonNull(orElse).get() :
                JsArray.prism.getOptional.apply(seq.get(index))
@@ -1079,12 +1012,9 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     private JsValue get(final Position pos) {
         return requireNonNull(pos).match(key -> JsNothing.NOTHING,
                                          index ->
-                                         {
-                                             if (index == -1 && !this.seq.isEmpty()) return this.seq.last();
-                                             return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
-                                                    JsNothing.NOTHING :
-                                                    this.seq.get(index);
-                                         }
+                                                 (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+                                                 JsNothing.NOTHING :
+                                                 this.seq.get(index)
         );
     }
 
@@ -1428,12 +1358,10 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                           index ->
                           {
                               final int maxIndex = seq.size() - 1;
-                              if (index < -1 || index > maxIndex) return this;
+                              if (index < 0 || index > maxIndex) return this;
                               final JsPath tail = path.tail();
                               return tail.isEmpty() ?
-                                     new JsArray(index == -1 ?
-                                                 seq.removeAt(maxIndex) :
-                                                 seq.removeAt(index)) :
+                                     new JsArray(seq.removeAt(index)) :
                                      ifJsonElse(json -> new JsArray(seq.update(index,
                                                                                json.delete(tail)
                                                 )),
@@ -1453,22 +1381,22 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     @Override
-    public Stream<JsPair> streamAll() {
+    public Stream<Pair<JsPath, JsValue>> streamAll() {
         return streamOfArr(this,
                            JsPath.empty()
         );
     }
 
     @Override
-    public Stream<JsPair> stream() {
+    public Stream<Pair<JsPath, JsValue>> stream() {
         return IntStream.range(0,
                                size()
                         )
                         .mapToObj(i ->
                                   {
                                       final JsPath path = JsPath.fromIndex(i);
-                                      return JsPair.of(path,
-                                                       get(path)
+                                      return new Pair<>(path,
+                                                        get(path)
                                       );
                                   });
 
@@ -1502,7 +1430,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public JsValue get(final int i) {
         try {
-            if (i == -1 && !this.seq.isEmpty()) return this.seq.last();
             return seq.get(i);
         } catch (IndexOutOfBoundsException e) {
             return NOTHING;
@@ -1695,12 +1622,10 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     public JsArray delete(final int index) {
-        if (index < -1) throw new IllegalArgumentException("index must be >= -1");
+        if (index < -0) throw new IllegalArgumentException("index must be >= 0");
         final int maxIndex = seq.size() - 1;
         if (index > maxIndex) return this;
-        return new JsArray(index == -1 ?
-                           seq.removeAt(maxIndex) :
-                           seq.removeAt(index));
+        return new JsArray(seq.removeAt(index));
     }
 
     /**
@@ -1782,13 +1707,11 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         assert arr != null;
         assert e != null;
 
-        if (index == -1) return arr.append(e);
         if (index == arr.size()) return arr.append(e);
 
 
         if (index < arr.size()) return arr.update(index,
-                                                  e
-        );
+                                                  e);
         for (int j = arr.size(); j < index; j++) {
             arr = arr.append(pad);
         }

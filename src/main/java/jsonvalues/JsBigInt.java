@@ -1,6 +1,8 @@
 package jsonvalues;
 
 
+import fun.optic.Prism;
+
 import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -33,6 +35,16 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
 
     private JsBigInt(final BigInteger value) {
         this.value = value;
+    }
+
+    /**
+     * Static factory method to create a JsBigInt from BigInteger objects.
+     *
+     * @param n the big integer
+     * @return a new JsBigInt
+     */
+    public static JsBigInt of(BigInteger n) {
+        return new JsBigInt(requireNonNull(n));
     }
 
     @Override
@@ -178,16 +190,6 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      */
     public JsBigInt map(UnaryOperator<BigInteger> fn) {
         return JsBigInt.of(requireNonNull(fn).apply(value));
-    }
-
-    /**
-     * Static factory method to create a JsBigInt from BigInteger objects.
-     *
-     * @param n the big integer
-     * @return a new JsBigInt
-     */
-    public static JsBigInt of(BigInteger n) {
-        return new JsBigInt(requireNonNull(n));
     }
 
     /**

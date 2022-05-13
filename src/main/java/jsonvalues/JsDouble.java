@@ -1,5 +1,7 @@
 package jsonvalues;
 
+import fun.optic.Prism;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
@@ -20,16 +22,17 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
     /**
      * prism between the sum type JsValue and JsDouble
      */
-    public static final Prism<JsValue, Double> prism = new Prism<>(s ->
-                                                                   {
-                                                                       if (s.isDouble())
-                                                                           return Optional.of(s.toJsDouble().value);
-                                                                       if (s.isDecimal()) return s.toJsBigDec()
-                                                                                                  .doubleValueExact();
-                                                                       return Optional.empty();
-                                                                   },
-                                                                   JsDouble::of
-    );
+    public static final Prism<JsValue, Double> prism =
+            new Prism<>(s ->
+                        {
+                            if (s.isDouble())
+                                return Optional.of(s.toJsDouble().value);
+                            if (s.isDecimal()) return s.toJsBigDec()
+                                                       .doubleValueExact();
+                            return Optional.empty();
+                        },
+                        JsDouble::of
+            );
     /**
      * The double value.
      */
@@ -37,6 +40,16 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
 
     private JsDouble(final double value) {
         this.value = value;
+    }
+
+    /**
+     * Static factory method to create a JsDouble from a double primitive type.
+     *
+     * @param n the double primitive type
+     * @return a new JsDouble
+     */
+    public static JsDouble of(double n) {
+        return new JsDouble(n);
     }
 
     @Override
@@ -177,16 +190,6 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      */
     public JsDouble map(DoubleUnaryOperator fn) {
         return JsDouble.of(requireNonNull(fn).applyAsDouble(value));
-    }
-
-    /**
-     * Static factory method to create a JsDouble from a double primitive type.
-     *
-     * @param n the double primitive type
-     * @return a new JsDouble
-     */
-    public static JsDouble of(double n) {
-        return new JsDouble(n);
     }
 
     /**

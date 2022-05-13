@@ -7,7 +7,7 @@ abstract class AbstractPredicateSpec {
 
     public AbstractPredicateSpec(final boolean required,
                                  final boolean nullable
-                                ) {
+    ) {
         this.required = required;
         this.nullable = nullable;
     }

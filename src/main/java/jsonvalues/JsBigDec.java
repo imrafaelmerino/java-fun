@@ -1,6 +1,8 @@
 package jsonvalues;
 
 
+import fun.optic.Prism;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
@@ -12,32 +14,43 @@ import java.util.function.UnaryOperator;
 import static java.util.Objects.requireNonNull;
 
 /**
- Represents an immutable json number of type BigDecimal.
+ * Represents an immutable json number of type BigDecimal.
  */
 public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
 
     public static final int TYPE_ID = 8;
 
     /**
-     prism between the sum type JsValue and JsBigDec
+     * prism between the sum type JsValue and JsBigDec
      */
-    public static final Prism<JsValue, BigDecimal> prism = new Prism<>(s ->
-                                                                 {
-                                                                     if (s.isDouble())
-                                                                         return Optional.of(BigDecimal.valueOf(s.toJsDouble().value));
-                                                                     if (s.isBigDec())
-                                                                         return Optional.of(s.toJsBigDec().value);
-                                                                     return Optional.empty();
-                                                                 },
-                                                                 JsBigDec::of
-    );
+    public static final Prism<JsValue, BigDecimal> prism =
+            new Prism<>(s ->
+                        {
+                            if (s.isDouble())
+                                return Optional.of(BigDecimal.valueOf(s.toJsDouble().value));
+                            if (s.isBigDec())
+                                return Optional.of(s.toJsBigDec().value);
+                            return Optional.empty();
+                        },
+                        JsBigDec::of
+            );
     /**
-     The big decimal value
+     * The big decimal value
      */
     public final BigDecimal value;
 
     private JsBigDec(final BigDecimal value) {
         this.value = value;
+    }
+
+    /**
+     * Static factory method to create a JsBigDec from a BigDecimal object.
+     *
+     * @param n the big decimal
+     * @return a new JsBigDec
+     */
+    public static JsBigDec of(BigDecimal n) {
+        return new JsBigDec(requireNonNull(n));
     }
 
     @Override
@@ -51,9 +64,9 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Compares two {@code JsBigDec} objects numerically
-
-     @see JsBigDec#compareTo(JsBigDec)
+     * Compares two {@code JsBigDec} objects numerically
+     *
+     * @see JsBigDec#compareTo(JsBigDec)
      */
     @Override
     public int compareTo(final JsBigDec o) {
@@ -61,9 +74,9 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Returns the hashcode of this json big decimal
-
-     @return the hashcode of this JsBigDec
+     * Returns the hashcode of this json big decimal
+     *
+     * @return the hashcode of this JsBigDec
      */
     @Override
     public int hashCode() {
@@ -81,11 +94,11 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Indicates whether some other object is "equal to" this json big decimal. Numbers of different
-     types are equals if they have the same value.
-
-     @param that the reference object with which to compare.
-     @return true if that is a JsNumber with the same value as this
+     * Indicates whether some other object is "equal to" this json big decimal. Numbers of different
+     * types are equals if they have the same value.
+     *
+     * @param that the reference object with which to compare.
+     * @return true if that is a JsNumber with the same value as this
      */
     @Override
     public boolean equals(Object that) {
@@ -101,8 +114,8 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     @return a string representation of the big-decimal value
-     @see BigDecimal#toString() BigDecimal.toString
+     * @return a string representation of the big-decimal value
+     * @see BigDecimal#toString() BigDecimal.toString
      */
     @Override
     public String toString() {
@@ -110,10 +123,10 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     returns true if this big-decimal and the specified biginteger represent the same number
-
-     @param jsBigInt the specified JsBigInt
-     @return true if both JsValue are the same value
+     * returns true if this big-decimal and the specified biginteger represent the same number
+     *
+     * @param jsBigInt the specified JsBigInt
+     * @return true if both JsValue are the same value
      */
     boolean bigIntEquals(JsBigInt jsBigInt) {
         final Optional<BigInteger> optional = bigIntegerExact();
@@ -122,10 +135,10 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     returns true if this big-decimal and the specified integer represent the same number
-
-     @param jsInt the specified JsInt
-     @return true if both JsValue are the same value
+     * returns true if this big-decimal and the specified integer represent the same number
+     *
+     * @param jsInt the specified JsInt
+     * @return true if both JsValue are the same value
      */
     boolean intEquals(JsInt jsInt) {
         final OptionalInt optional = intValueExact();
@@ -133,10 +146,10 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     returns true if this big-decimal and the specified long represent the same number
-
-     @param jsLong the specified JsLong
-     @return true if both JsValue are the same value
+     * returns true if this big-decimal and the specified long represent the same number
+     *
+     * @param jsLong the specified JsLong
+     * @return true if both JsValue are the same value
      */
     boolean longEquals(JsLong jsLong) {
         final OptionalLong optional = longValueExact();
@@ -144,10 +157,10 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     returns true if this big-decimal and the specified double represent the same number
-
-     @param jsDouble the specified JsDouble
-     @return true if both JsValue are the same value
+     * returns true if this big-decimal and the specified double represent the same number
+     *
+     * @param jsDouble the specified JsDouble
+     * @return true if both JsValue are the same value
      */
     boolean doubleEquals(JsDouble jsDouble) {
 
@@ -157,9 +170,9 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Returns the value of this big-decimal; or an empty optional if the value overflows an {@code biginteger}.
-
-     @return this big-decimal as a biginteger wrapped in an OptionalInt
+     * Returns the value of this big-decimal; or an empty optional if the value overflows an {@code biginteger}.
+     *
+     * @return this big-decimal as a biginteger wrapped in an OptionalInt
      */
     Optional<BigInteger> bigIntegerExact() {
         try {
@@ -171,9 +184,9 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Returns the value of this big-decimal; or an empty optional if the value overflows an {@code int}.
-
-     @return this big-decimal as an int wrapped in an OptionalInt
+     * Returns the value of this big-decimal; or an empty optional if the value overflows an {@code int}.
+     *
+     * @return this big-decimal as an int wrapped in an OptionalInt
      */
     OptionalInt intValueExact() {
         try {
@@ -184,9 +197,9 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Returns the value of this big-decimal; or an empty optional if the value overflows an {@code long}.
-
-     @return this big-decimal as a long wrapped in an OptionalLong
+     * Returns the value of this big-decimal; or an empty optional if the value overflows an {@code long}.
+     *
+     * @return this big-decimal as a long wrapped in an OptionalLong
      */
     OptionalLong longValueExact() {
         try {
@@ -198,40 +211,30 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-     Maps this JsBigDec into another one
-
-     @param fn the mapping function
-     @return a new JsBigDec
+     * Maps this JsBigDec into another one
+     *
+     * @param fn the mapping function
+     * @return a new JsBigDec
      */
     public JsBigDec map(UnaryOperator<BigDecimal> fn) {
         return JsBigDec.of(requireNonNull(fn).apply(value));
     }
 
     /**
-     Static factory method to create a JsBigDec from a BigDecimal object.
-
-     @param n the big decimal
-     @return a new JsBigDec
-     */
-    public static JsBigDec of(BigDecimal n) {
-        return new JsBigDec(requireNonNull(n));
-    }
-
-    /**
-     Tests the value of this json big-decimal on a predicate
-
-     @param predicate the predicate
-     @return true if this big decimal satisfies the predicate
+     * Tests the value of this json big-decimal on a predicate
+     *
+     * @param predicate the predicate
+     * @return true if this big decimal satisfies the predicate
      */
     public boolean test(Predicate<BigDecimal> predicate) {
         return predicate.test(value);
     }
 
     /**
-     Returns the value of this big-decimal; or an empty optional if the value overflows an {@code double}.
-
-     @return this big-decimal as a double wrapped in an OptionalDouble
-     @see BigDecimal#doubleValue()
+     * Returns the value of this big-decimal; or an empty optional if the value overflows an {@code double}.
+     *
+     * @return this big-decimal as a double wrapped in an OptionalDouble
+     * @see BigDecimal#doubleValue()
      */
     Optional<Double> doubleValueExact() {
         final double number = this.value.doubleValue();

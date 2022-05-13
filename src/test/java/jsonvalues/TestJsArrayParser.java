@@ -114,10 +114,10 @@ public class TestJsArrayParser {
     @Test
     public void testArrayOfObject() {
         JsObjSpec spec = JsObjSpec.strict("a",
-                                          JsSpecs.arrayOf(JsObjSpec.strict("a",
-                                                                           str,
-                                                                           "b",
-                                                                           integer
+                                          JsSpecs.arrayOfObjSpec(JsObjSpec.strict("a",
+                                                                                  str,
+                                                                                  "b",
+                                                                                  integer
                                           ))
         );
 
@@ -135,10 +135,10 @@ public class TestJsArrayParser {
         );
 
         JsObjSpec specNullable = JsObjSpec.strict("a",
-                                                  JsSpecs.arrayOf(JsObjSpec.strict("a",
-                                                                                   str,
-                                                                                   "b",
-                                                                                   integer
+                                                  JsSpecs.arrayOfObjSpec(JsObjSpec.strict("a",
+                                                                                          str,
+                                                                                          "b",
+                                                                                          integer
                                                          ))
                                                          .nullable()
         );

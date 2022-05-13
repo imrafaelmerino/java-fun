@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.FALSE_EXPECTED;
 class JsFalseConstantSpec extends AbstractPredicateSpec implements JsValuePredicate {
     JsFalseConstantSpec(final boolean required,
                         final boolean nullable
-                       ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -47,7 +47,7 @@ class JsFalseConstantSpec extends AbstractPredicateSpec implements JsValuePredic
                                   FALSE_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
     }
 }

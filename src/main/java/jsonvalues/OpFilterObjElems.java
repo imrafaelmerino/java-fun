@@ -103,7 +103,7 @@ final class OpFilterObjElems {
             if (headElem.isPrimitive() && predicate.negate()
                                                    .test(headElem.toJsPrimitive()
                                                    )) {
-                    json = json.delete(next._1);
+                json = json.delete(next._1);
             }
 
         }

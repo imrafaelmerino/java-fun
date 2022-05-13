@@ -16,10 +16,10 @@ class JsArrayOfNumberSuchThatSpec extends AbstractPredicateSpec implements JsVal
     JsArrayOfNumberSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
                                 final boolean required,
                                 final boolean nullable
-                               ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.isArrayOfNumber = new JsArrayOfNumberSpec(required,
                                                        nullable
         );
@@ -52,7 +52,7 @@ class JsArrayOfNumberSuchThatSpec extends AbstractPredicateSpec implements JsVal
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfNumberSuchThat(predicate,
                                                               nullable
-                                                             );
+        );
     }
 
     @Override

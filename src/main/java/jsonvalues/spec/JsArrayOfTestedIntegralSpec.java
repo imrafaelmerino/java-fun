@@ -16,10 +16,10 @@ class JsArrayOfTestedIntegralSpec extends AbstractPredicateSpec implements JsVal
     JsArrayOfTestedIntegralSpec(final Function<BigInteger, Optional<JsError>> predicate,
                                 final boolean required,
                                 final boolean nullable
-                               ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -48,7 +48,7 @@ class JsArrayOfTestedIntegralSpec extends AbstractPredicateSpec implements JsVal
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfIntegralEachSuchThat(predicate,
                                                                     nullable
-                                                                   );
+        );
     }
 
     @Override
@@ -59,11 +59,11 @@ class JsArrayOfTestedIntegralSpec extends AbstractPredicateSpec implements JsVal
                                                     else return Optional.of(new JsError(v,
                                                                                         INTEGRAL_EXPECTED
                                                                             )
-                                                                           );
+                                                    );
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

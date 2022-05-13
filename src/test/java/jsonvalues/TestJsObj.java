@@ -1,5 +1,7 @@
 package jsonvalues;
 
+import fun.optic.Option;
+import fun.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -122,20 +124,20 @@ public class TestJsObj {
     @Test
     public void test_creates_object_from_pairs() {
 
-        JsObj obj = JsObj.of(JsPair.of(fromKey("a"),
-                                       JsInt.of(1)
+        JsObj obj = JsObj.of(new Pair<>(fromKey("a"),
+                                        JsInt.of(1)
                              ),
-                             JsPair.of(fromKey("b"),
-                                       JsInt.of(2)
+                             new Pair<>(fromKey("b"),
+                                        JsInt.of(2)
                              ),
-                             JsPair.of(fromKey("c"),
-                                       JsInt.of(3)
+                             new Pair<>(fromKey("c"),
+                                        JsInt.of(3)
                              ),
-                             JsPair.of(path("/d/0/0"),
-                                       JsInt.of(5)
+                             new Pair<>(path("/d/0/0"),
+                                        JsInt.of(5)
                              ),
-                             JsPair.of(path("/d/0/1"),
-                                       JsInt.of(6)
+                             new Pair<>(path("/d/0/1"),
+                                        JsInt.of(6)
                              )
         );
 
@@ -274,12 +276,11 @@ public class TestJsObj {
     @Test
     public void test_filter_elements_immutable() {
 
-        final JsObj obj = JsObj.parse("{\n"
-                                              + "  \"a\": 1,\n"
-                                              + "  \"b\": 2,\n"
-                                              + "  \"c\": [{\"d\": 3,\"e\": 4}, 5,6]\n"
-                                              +
-                                              "}");
+        final JsObj obj = JsObj.parse("{\n" +
+                                              "                                                \"a\": 1,\n" +
+                                              "                                                \"b\": 2,\n" +
+                                              "                                                \"c\": [{\"d\": 3,\"e\": 4}, 5,6]\n" +
+                                              "                                              }");
 
         final JsObj result = obj.filterValues((path, val) -> val.toJsInt().value % 2 == 0);
 
@@ -425,14 +426,14 @@ public class TestJsObj {
         final JsObj obj1 = obj.get()
                               .filterAllKeys(key -> !key.startsWith("b"));
         Assertions.assertFalse(obj1.streamAll()
-                                   .anyMatch(p -> p.path.last()
-                                                        .isKey(name -> name.startsWith("b"))));
+                                   .anyMatch(p -> p.first().last()
+                                                   .isKey(name -> name.startsWith("b"))));
 
         final JsObj obj2 = obj.get()
                               .filterKeys(key -> !key.startsWith("b"));
         Assertions.assertFalse(obj2.stream()
-                                   .anyMatch(p -> p.path.last()
-                                                        .isKey(name -> name.startsWith("b"))
+                                   .anyMatch(p -> p.first().last()
+                                                   .isKey(name -> name.startsWith("b"))
                                    ));
 
 
@@ -441,8 +442,8 @@ public class TestJsObj {
                                                   !key.startsWith("b")
                               );
         Assertions.assertFalse(obj3.stream()
-                                   .anyMatch(p -> p.path.last()
-                                                        .isKey(name -> name.startsWith("b"))
+                                   .anyMatch(p -> p.first().last()
+                                                   .isKey(name -> name.startsWith("b"))
                                    ));
 
 
@@ -491,8 +492,8 @@ public class TestJsObj {
                                              }
                               );
         Assertions.assertFalse(obj1.streamAll()
-                                   .anyMatch(p -> p.path.last()
-                                                        .isKey(name -> name.startsWith("b"))));
+                                   .anyMatch(p -> p.first().last()
+                                                   .isKey(name -> name.startsWith("b"))));
 
         final JsObj obj2 = obj.get()
                               .filterKeys((key, val) ->
@@ -505,8 +506,8 @@ public class TestJsObj {
                                           }
                               );
         Assertions.assertFalse(obj2.stream()
-                                   .anyMatch(p -> p.path.last()
-                                                        .isKey(name -> name.startsWith("b"))
+                                   .anyMatch(p -> p.first().last()
+                                                   .isKey(name -> name.startsWith("b"))
                                    ));
 
 
@@ -515,8 +516,8 @@ public class TestJsObj {
                                                   !key.startsWith("b")
                               );
         Assertions.assertFalse(obj3.stream()
-                                   .anyMatch(p -> p.path.last()
-                                                        .isKey(name -> name.startsWith("b"))
+                                   .anyMatch(p -> p.first().last()
+                                                   .isKey(name -> name.startsWith("b"))
                                    ));
 
 
@@ -780,8 +781,8 @@ public class TestJsObj {
         return mapped.streamAll()
                      .map(it ->
                           {
-                              final String name = it.path.last()
-                                                         .asKey().name;
+                              final String name = it.first().last()
+                                                    .asKey().name;
                               return name.contains(" ") || name.chars()
                                                                .mapToObj(Character::isLowerCase)
                                                                .findAny()
@@ -922,23 +923,23 @@ public class TestJsObj {
 
     @Test
     public void test_parse_into_immutable() {
-        JsObj obj = JsObj.of(JsPair.of(path("/a/b/0"),
-                                       NULL
+        JsObj obj = JsObj.of(new Pair<>(path("/a/b/0"),
+                                        NULL
                              ),
-                             JsPair.of(path("/a/b/1"),
-                                       TRUE
+                             new Pair<>(path("/a/b/1"),
+                                        TRUE
                              ),
-                             JsPair.of(path("/a/b/c"),
-                                       FALSE
+                             new Pair<>(path("/a/b/c"),
+                                        FALSE
                              ),
-                             JsPair.of(path("/a/b/c/d"),
-                                       JsInt.of(1)
+                             new Pair<>(path("/a/b/c/d"),
+                                        JsInt.of(1)
                              ),
-                             JsPair.of(path("/a/a/a/"),
-                                       JsStr.of("a")
+                             new Pair<>(path("/a/a/a/"),
+                                        JsStr.of("a")
                              ),
-                             JsPair.of(path("/a/b/0"),
-                                       JsBigDec.of(BigDecimal.ONE)
+                             new Pair<>(path("/a/b/0"),
+                                        JsBigDec.of(BigDecimal.ONE)
                              )
         );
 

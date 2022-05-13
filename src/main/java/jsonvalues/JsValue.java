@@ -12,20 +12,21 @@ import java.util.function.Predicate;
 import static java.util.Objects.requireNonNull;
 
 /**
- Represents a json element of any type. Every json type implements this interface. This interface
- implements two kind of methods:
- <ul>
- <li>Classificatory methods, which starts with the prefix <b>isXXX</b></li>
- <li>Accessory methods to convert the JsValue to the real implementation, which starts with the prefix asJsXXX</li>
- </ul>
+ * Represents a json element of any type. Every json type implements this interface. This interface
+ * implements two kind of methods:
+ * <ul>
+ * <li>Classificatory methods, which starts with the prefix <b>isXXX</b></li>
+ * <li>Accessory methods to convert the JsValue to the real implementation, which starts with the prefix asJsXXX</li>
+ * </ul>
  */
 public interface JsValue {
     int id();
 
     /**
-     Returns this JsValue as a JsBool
-     @return this JsValue as a JsBool
-     @throws UserError if this JsValue is not a JsBool
+     * Returns this JsValue as a JsBool
+     *
+     * @return this JsValue as a JsBool
+     * @throws UserError if this JsValue is not a JsBool
      */
     default JsBool toJsBool() {
         try {
@@ -39,10 +40,10 @@ public interface JsValue {
     JsPrimitive toJsPrimitive();
 
     /**
-     Returns true if this JsValue is a JsBinary or a JsString which value is an array of
-
-     @return true if this JsValue is a JsBinary or a JsString which value is an array of
-     bytes encoded in base64
+     * Returns true if this JsValue is a JsBinary or a JsString which value is an array of
+     *
+     * @return true if this JsValue is a JsBinary or a JsString which value is an array of
+     * bytes encoded in base64
      */
     default boolean isBinary() {
         return false;
@@ -51,6 +52,7 @@ public interface JsValue {
     /**
      * Returns true if this JsValue is a JsInstant or a JsString which value is a
      * date formatted in ISO-8601
+     *
      * @return true if this JsValue is a JsInstant or a JsString which value is a
      * date formatted in ISO-8601
      */
@@ -60,10 +62,10 @@ public interface JsValue {
 
 
     /**
-     Returns true if this elem is a JsInstant and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsInstant and satisfies the predicate
+     * Returns true if this elem is a JsInstant and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsInstant and satisfies the predicate
      */
     default boolean isInstant(Predicate<Instant> predicate) {
         return isInstant() && predicate.test(this.toJsInstant().value);
@@ -71,17 +73,18 @@ public interface JsValue {
 
     /**
      * Returns true if this JsValue is a JsBool
-     @return true if this JsValue is a JsBool
+     *
+     * @return true if this JsValue is a JsBool
      */
     default boolean isBool() {
         return false;
     }
 
     /**
-     returns true if this elem and the given have the same type
-
-     @param that the given elem
-     @return true if this JsValue and the given have the same type
+     * returns true if this elem and the given have the same type
+     *
+     * @param that the given elem
+     * @return true if this JsValue and the given have the same type
      */
     default boolean isSameType(final JsValue that) {
         return this.getClass() == requireNonNull(that).getClass();
@@ -89,7 +92,8 @@ public interface JsValue {
 
     /**
      * Returns true if this JsValue is a JsBool, and it's true
-     @return true if this JsValue is a JsBool, and it's true
+     *
+     * @return true if this JsValue is a JsBool, and it's true
      */
     default boolean isTrue() {
         return false;
@@ -97,17 +101,18 @@ public interface JsValue {
 
     /**
      * Returns true if this JsValue is a JsBool, and it's false
-     @return true if this JsValue is a JsBool, and it's false
+     *
+     * @return true if this JsValue is a JsBool, and it's false
      */
     default boolean isFalse() {
         return false;
     }
 
     /**
-     Returns true if this elem is a JsInt and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsInt and satisfies the predicate
+     * Returns true if this elem is a JsInt and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsInt and satisfies the predicate
      */
     default boolean isInt(IntPredicate predicate) {
         return isInt() && predicate.test(toJsInt().value);
@@ -115,7 +120,8 @@ public interface JsValue {
 
     /**
      * Returns true if this JsValue is a JsInt
-     @return true if this JsValue is a JsInt
+     *
+     * @return true if this JsValue is a JsInt
      */
     default boolean isInt() {
         return false;
@@ -123,8 +129,9 @@ public interface JsValue {
 
     /**
      * Returns this JsValue as a JsInt
-     @return this JsValue as a JsInt
-     @throws UserError if this JsValue is not a JsInt
+     *
+     * @return this JsValue as a JsInt
+     * @throws UserError if this JsValue is not a JsInt
      */
     default JsInt toJsInt() {
         try {
@@ -135,15 +142,16 @@ public interface JsValue {
     }
 
     /**
-     *   Returns this JsValue as a JsInstant
-     @return this JsValue as a JsInstant
-     @throws UserError if this JsValue is not a JsInt
+     * Returns this JsValue as a JsInstant
+     *
+     * @return this JsValue as a JsInstant
+     * @throws UserError if this JsValue is not a JsInt
      */
     default JsInstant toJsInstant() {
-        if(this instanceof JsInstant) return ((JsInstant) this);
-        if(this instanceof JsStr) {
+        if (this instanceof JsInstant) return ((JsInstant) this);
+        if (this instanceof JsStr) {
             Optional<Instant> instant = JsStr.instantPrism.getOptional.apply(((JsStr) this).value);
-            if(instant.isPresent()) return JsInstant.of(instant.get());
+            if (instant.isPresent()) return JsInstant.of(instant.get());
         }
 
         throw UserError.isNotAJsInstant(this);
@@ -152,42 +160,44 @@ public interface JsValue {
 
     /**
      * Returns  this JsValue as a JsBinary
-     @return this JsValue as a JsBinary
-     @throws UserError if this JsValue is not a JsBinary
+     *
+     * @return this JsValue as a JsBinary
+     * @throws UserError if this JsValue is not a JsBinary
      */
     default JsBinary toJsBinary() {
-            if(this instanceof JsBinary) return ((JsBinary) this);
-            if(this instanceof JsStr) {
-                Optional<byte[]> bytes = JsStr.base64Prism.getOptional.apply(((JsStr) this).value);
-                if(bytes.isPresent()) return JsBinary.of(bytes.get());
-            }
+        if (this instanceof JsBinary) return ((JsBinary) this);
+        if (this instanceof JsStr) {
+            Optional<byte[]> bytes = JsStr.base64Prism.getOptional.apply(((JsStr) this).value);
+            if (bytes.isPresent()) return JsBinary.of(bytes.get());
+        }
 
-            throw UserError.isNotAJsBinary(this);
+        throw UserError.isNotAJsBinary(this);
     }
 
     /**
-     Returns true if this elem is a JsDouble and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsDouble and satisfies the predicate
+     * Returns true if this elem is a JsDouble and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsDouble and satisfies the predicate
      */
     default boolean isDouble(DoublePredicate predicate) {
         return isDouble() && predicate.test(toJsDouble().value);
     }
 
     /**
-     Returns true if this JsValue is a JsDouble
-
-     @return true if this JsValue is a JsDouble
+     * Returns true if this JsValue is a JsDouble
+     *
+     * @return true if this JsValue is a JsDouble
      */
     default boolean isDouble() {
         return false;
     }
 
     /**
-     Returns this JsValue as a JsDouble
-     @return this JsValue as a JsDouble
-     @throws UserError if this JsValue is not a JsDouble
+     * Returns this JsValue as a JsDouble
+     *
+     * @return this JsValue as a JsDouble
+     * @throws UserError if this JsValue is not a JsDouble
      */
     default JsDouble toJsDouble() {
         try {
@@ -198,28 +208,29 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this elem is a JsBigDec and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsBigDec and satisfies the predicate
+     * Returns true if this elem is a JsBigDec and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsBigDec and satisfies the predicate
      */
     default boolean isBigDec(Predicate<BigDecimal> predicate) {
         return isBigDec() && predicate.test(toJsBigDec().value);
     }
 
     /**
-     Returns true if this JsValue is a JsBigDec
-
-     @return true if this JsValue is a JsBigDec
+     * Returns true if this JsValue is a JsBigDec
+     *
+     * @return true if this JsValue is a JsBigDec
      */
     default boolean isBigDec() {
         return false;
     }
 
     /**
-     Returns this JsValue as a JsBigDec
-     @return this JsValue as a JsBigDec
-     @throws UserError if this JsValue is not a JsBigDec or a JsDouble
+     * Returns this JsValue as a JsBigDec
+     *
+     * @return this JsValue as a JsBigDec
+     * @throws UserError if this JsValue is not a JsBigDec or a JsDouble
      */
     default JsBigDec toJsBigDec() {
         try {
@@ -231,27 +242,29 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this elem is a JsLong and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsLong and satisfies the predicate
+     * Returns true if this elem is a JsLong and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsLong and satisfies the predicate
      */
     default boolean isLong(LongPredicate predicate) {
         return isLong() && predicate.test(toJsLong().value);
     }
 
     /**
-     Returns this JsValue as a JsLong
-     @return true if this JsValue is a JsLong
+     * Returns this JsValue as a JsLong
+     *
+     * @return true if this JsValue is a JsLong
      */
     default boolean isLong() {
         return false;
     }
 
     /**
-     Returns this JsValue as a JsLong
-     @return this JsValue as a JsLong
-     @throws UserError if this JsValue is not a JsLong or a JsInt
+     * Returns this JsValue as a JsLong
+     *
+     * @return this JsValue as a JsLong
+     * @throws UserError if this JsValue is not a JsLong or a JsInt
      */
     default JsLong toJsLong() {
         try {
@@ -263,32 +276,36 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this JsValue is a not a Json (neither JsObj nor JsArray)
-     @return true if this JsValue is a not a Json (neither JsObj nor JsArray)
+     * Returns true if this JsValue is a not a Json (neither JsObj nor JsArray)
+     *
+     * @return true if this JsValue is a not a Json (neither JsObj nor JsArray)
      */
     default boolean isPrimitive() {
         return !isJson();
     }
 
     /**
-     Returns true if this JsValue is a Json (JsObj or JsArray)
-     @return true if this JsValue is a Json (JsObj or JsArray)
+     * Returns true if this JsValue is a Json (JsObj or JsArray)
+     *
+     * @return true if this JsValue is a Json (JsObj or JsArray)
      */
     default boolean isJson() {
         return isObj() || isArray();
     }
 
     /**
-     Returns true if this JsValue is a JsObj
-     @return true if this JsValue is a JsObj
+     * Returns true if this JsValue is a JsObj
+     *
+     * @return true if this JsValue is a JsObj
      */
     default boolean isObj() {
         return false;
     }
 
     /**
-     Returns true if this JsValue is a JsArray
-     @return true if this JsValue is a JsArray
+     * Returns true if this JsValue is a JsArray
+     *
+     * @return true if this JsValue is a JsArray
      */
 
     default boolean isArray() {
@@ -296,19 +313,20 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this elem is a Json and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a Json and satisfies the predicate
+     * Returns true if this elem is a Json and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a Json and satisfies the predicate
      */
     default boolean isJson(Predicate<Json<?>> predicate) {
         return isJson() && predicate.test(toJson());
     }
 
     /**
-     Returns this JsValue as a Json
-     @return this JsValue as a Json
-     @throws UserError if this JsValue is not a JsObj or a JsArray
+     * Returns this JsValue as a Json
+     *
+     * @return this JsValue as a Json
+     * @throws UserError if this JsValue is not a JsObj or a JsArray
      */
     //S1452: Json<?> has only two possible types: JsObj or JsArr,
     @SuppressWarnings("squid:S1452")
@@ -321,9 +339,10 @@ public interface JsValue {
     }
 
     /**
-     Returns this JsValue as a JsObj
-     @return this JsValue as a JsObj
-     @throws UserError if this JsValue is not a JsObj
+     * Returns this JsValue as a JsObj
+     *
+     * @return this JsValue as a JsObj
+     * @throws UserError if this JsValue is not a JsObj
      */
     default JsObj toJsObj() {
         try {
@@ -334,9 +353,10 @@ public interface JsValue {
     }
 
     /**
-     Returns this JsValue as a JsArray
-     @return this JsValue as a JsArray
-     @throws UserError if this JsValue is not a JsArray
+     * Returns this JsValue as a JsArray
+     *
+     * @return this JsValue as a JsArray
+     * @throws UserError if this JsValue is not a JsArray
      */
     default JsArray toJsArray() {
         try {
@@ -347,29 +367,30 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this elem is a JsObj and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsObj and satisfies the predicate
+     * Returns true if this elem is a JsObj and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsObj and satisfies the predicate
      */
     default boolean isObj(Predicate<JsObj> predicate) {
         return isObj() && predicate.test(toJsObj());
     }
 
     /**
-     Returns true if this elem is a JsArray and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsArray and satisfies the predicate
+     * Returns true if this elem is a JsArray and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsArray and satisfies the predicate
      */
     default boolean isArray(Predicate<JsArray> predicate) {
         return isArray() && predicate.test(toJsArray());
     }
 
     /**
-     Returns this JsValue as a JsStr
-     @return this JsValue as a JsStr
-     @throws UserError if this JsValue is not a JsStr
+     * Returns this JsValue as a JsStr
+     *
+     * @return this JsValue as a JsStr
+     * @throws UserError if this JsValue is not a JsStr
      */
     default JsNumber toJsNumber() {
         try {
@@ -380,27 +401,29 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this elem is a JsBigInt and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsBigInt and satisfies the predicate
+     * Returns true if this elem is a JsBigInt and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsBigInt and satisfies the predicate
      */
     default boolean isBigInt(Predicate<BigInteger> predicate) {
         return isBigInt() && predicate.test(toJsBigInt().value);
     }
 
     /**
-     Returns true if this JsValue is a JsBigInt
-     @return true if this JsValue is a JsBigInt
+     * Returns true if this JsValue is a JsBigInt
+     *
+     * @return true if this JsValue is a JsBigInt
      */
     default boolean isBigInt() {
         return false;
     }
 
     /**
-     Retruns this JsValue as a JsBigInt
-     @return this JsValue as a JsBigInt
-     @throws UserError if this JsValue is not a JsBigInt or JsLong or JsInt
+     * Retruns this JsValue as a JsBigInt
+     *
+     * @return this JsValue as a JsBigInt
+     * @throws UserError if this JsValue is not a JsBigInt or JsLong or JsInt
      */
     default JsBigInt toJsBigInt() {
         try {
@@ -414,27 +437,29 @@ public interface JsValue {
 
 
     /**
-     Returns true if this elem is a JsStr and satisfies the given predicate
-
-     @param predicate the given predicate
-     @return true if this JsValue is a JsStr and satisfies the predicate
+     * Returns true if this elem is a JsStr and satisfies the given predicate
+     *
+     * @param predicate the given predicate
+     * @return true if this JsValue is a JsStr and satisfies the predicate
      */
     default boolean isStr(Predicate<String> predicate) {
         return isStr() && predicate.test(toJsStr().value);
     }
 
     /**
-     Returns true if this JsValue is a JsStr
-     @return true if this JsValue is a JsStr
+     * Returns true if this JsValue is a JsStr
+     *
+     * @return true if this JsValue is a JsStr
      */
     default boolean isStr() {
         return false;
     }
 
     /**
-     Returns this JsValue as a JsStr
-     @return this JsValue as a JsStr
-     @throws UserError if this JsValue is not a JsStr
+     * Returns this JsValue as a JsStr
+     *
+     * @return this JsValue as a JsStr
+     * @throws UserError if this JsValue is not a JsStr
      */
     default JsStr toJsStr() {
         try {
@@ -445,79 +470,82 @@ public interface JsValue {
     }
 
     /**
-     Returns true if this element is an integral number (JsInt or JsLong or JsBigInt)
-     @return true if this element is an integral number (JsInt or JsLong or JsBigInt)
+     * Returns true if this element is an integral number (JsInt or JsLong or JsBigInt)
+     *
+     * @return true if this element is an integral number (JsInt or JsLong or JsBigInt)
      */
     default boolean isIntegral() {
         return isInt() || isLong() || isBigInt();
     }
 
     /**
-     Returns true if this element is an decimal number (JsDouble or JsBigDec)
-     @return true if this element is an decimal number (JsDouble or JsBigDec)
+     * Returns true if this element is an decimal number (JsDouble or JsBigDec)
+     *
+     * @return true if this element is an decimal number (JsDouble or JsBigDec)
      */
     default boolean isDecimal() {
         return isDouble() || isBigDec();
     }
 
     /**
-     Return true if this element is not null
-     @return true if this element is not null
+     * Return true if this element is not null
+     *
+     * @return true if this element is not null
      */
     default boolean isNotNull() {
         return !isNull();
     }
 
     /**
-     Returns true if this element is null
-
-     @return true if this element is null
+     * Returns true if this element is null
+     *
+     * @return true if this element is null
      */
     default boolean isNull() {
         return false;
     }
 
     /**
-     Returns true if this element is not JsNothing
-
-     @return true if this element is not JsNothing
+     * Returns true if this element is not JsNothing
+     *
+     * @return true if this element is not JsNothing
      */
     default boolean isNotNothing() {
         return !isNothing();
     }
 
     /**
-     Returns true if this element is JsNothing
-
-     @return true if this element is JsNothing
+     * Returns true if this element is JsNothing
+     *
+     * @return true if this element is JsNothing
      */
     default boolean isNothing() {
         return false;
     }
 
     /**
-     Returns true if this element is not a number
-
-     @return true if this element is not a number
+     * Returns true if this element is not a number
+     *
+     * @return true if this element is not a number
      */
     default boolean isNotNumber() {
         return !isNumber();
     }
 
     /**
-     Returns true if this element is a number
-
-     @return true if this element is a number
+     * Returns true if this element is a number
+     *
+     * @return true if this element is a number
      */
     default boolean isNumber() {
         return isInt() || isLong() || isBigInt() || isDouble() || isBigDec();
     }
 
     /**
-     returns the specified default value if null or the same this object
-
-     @param value the default value
-     @return a json value
+     * returns the specified default value if null or the same this object
+     *
+     * @param value the default value
+     * @return a json value
      */
     default JsValue ifNull(final JsValue value) {
         if (isNull()) return requireNonNull(value);
@@ -525,10 +553,10 @@ public interface JsValue {
     }
 
     /**
-     returns the specified default value if nothing or the same this object
-
-     @param value the default value
-     @return a json value
+     * returns the specified default value if nothing or the same this object
+     *
+     * @param value the default value
+     * @return a json value
      */
     default JsValue ifNothing(final JsValue value) {
         if (isNothing()) return requireNonNull(value);

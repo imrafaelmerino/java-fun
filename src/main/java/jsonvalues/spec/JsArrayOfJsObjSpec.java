@@ -22,7 +22,7 @@ public class JsArrayOfJsObjSpec implements JsSpec, JsArraySpec {
     JsArrayOfJsObjSpec(final boolean nullable,
                        final boolean required,
                        final JsObjSpec jsObjSpec
-                      ) {
+    ) {
         this.nullable = nullable;
         this.required = required;
         this.spec = jsObjSpec;
@@ -60,14 +60,14 @@ public class JsArrayOfJsObjSpec implements JsSpec, JsArraySpec {
                                                                                                 s.parser())),
                                                        nullable,
                                                        spec.strict
-                                                      );
+        );
 
     }
 
     @Override
     public Set<JsErrorPair> test(final JsPath parentPath,
                                  final JsValue value
-                                ) {
+    ) {
         Set<JsErrorPair> errors = new HashSet<>();
         if (value.isNull() && nullable) return errors;
         if (!value.isArray()) {
@@ -78,13 +78,13 @@ public class JsArrayOfJsObjSpec implements JsSpec, JsArraySpec {
         }
         return apply(parentPath.index(-1),
                      value.toJsArray()
-                    );
+        );
     }
 
 
     private Set<JsErrorPair> apply(final JsPath path,
                                    final JsArray array
-                                  ) {
+    ) {
         Set<JsErrorPair> result = new HashSet<>();
         if (array.isEmpty()) return result;
         final JsPath currentPath = path.inc();

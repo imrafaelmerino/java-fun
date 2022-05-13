@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 final class JsStrParser extends AbstractParser {
     @Override
-    JsStr value(final JsonReader<?> reader){
+    JsStr value(final JsonReader<?> reader) {
         try {
             return JsStr.of(StringConverter.deserialize(reader));
         } catch (IOException e) {
@@ -21,9 +21,9 @@ final class JsStrParser extends AbstractParser {
 
     JsStr valueSuchThat(final JsonReader<?> reader,
                         final Function<String, Optional<JsError>> fn
-                       ){
+    ) {
         try {
-            final String          value  = StringConverter.deserialize(reader);
+            final String value = StringConverter.deserialize(reader);
             final Optional<JsError> result = fn.apply(value);
             if (!result.isPresent()) return JsStr.of(value);
             throw reader.newParseError(result.toString());

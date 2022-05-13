@@ -18,15 +18,17 @@ abstract class JsArrayParser {
         this.parser = parser;
     }
 
-    JsValue nullOrArray(final JsonReader<?> reader){
+    JsValue nullOrArray(final JsonReader<?> reader) {
         try {
-            return reader.wasNull() ? JsNull.NULL : array(reader);
+            return reader.wasNull() ?
+                   JsNull.NULL :
+                   array(reader);
         } catch (ParsingException e) {
             throw new JsParserException(e.getMessage());
         }
     }
 
-    public JsArray array(final JsonReader<?> reader){
+    public JsArray array(final JsonReader<?> reader) {
         try {
             if (ifIsEmptyArray(reader)) return EMPTY;
             JsArray buffer = EMPTY.append(parser.value(reader));
@@ -41,7 +43,7 @@ abstract class JsArrayParser {
         }
     }
 
-    boolean ifIsEmptyArray(final JsonReader<?> reader){
+    boolean ifIsEmptyArray(final JsonReader<?> reader) {
         try {
             if (reader.last() != '[')
                 throw reader.newParseError("Expecting '[' for list start");
@@ -53,14 +55,15 @@ abstract class JsArrayParser {
     }
 
 
-
     public JsValue nullOrArraySuchThat(final JsonReader<?> reader,
                                        final Function<JsArray, Optional<JsError>> fn
-                                      ){
+    ) {
         try {
-            return reader.wasNull() ? JsNull.NULL : arraySuchThat(reader,
-                                                                  fn
-                                                                 );
+            return reader.wasNull() ?
+                   JsNull.NULL :
+                   arraySuchThat(reader,
+                                 fn
+                   );
         } catch (ParsingException e) {
             throw new JsParserException(e.getMessage());
         }
@@ -68,9 +71,9 @@ abstract class JsArrayParser {
 
     public JsArray arraySuchThat(final JsonReader<?> reader,
                                  final Function<JsArray, Optional<JsError>> fn
-                                ){
+    ) {
         try {
-            final JsArray         array  = array(reader);
+            final JsArray array = array(reader);
             final Optional<JsError> result = fn.apply(array);
             if (!result.isPresent()) return array;
             throw reader.newParseError(result.toString());

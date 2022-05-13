@@ -7,21 +7,22 @@ import java.util.function.Function;
 
 final class OpMapObjElems {
 
-    private OpMapObjElems(){}
+    private OpMapObjElems() {
+    }
 
 
     static JsObj map(JsObj json,
                      final BiFunction<? super String, ? super JsPrimitive, ? extends JsValue> fn
-                    ) {
+    ) {
         for (final Tuple2<String, JsValue> tuple : json) {
 
             if (tuple._2.isPrimitive()) {
                 JsValue headMapped = fn.apply(tuple._1,
                                               tuple._2.toJsPrimitive()
-                                             );
+                );
                 json = json.set(tuple._1,
                                 headMapped
-                               );
+                );
             }
         }
 
@@ -37,7 +38,7 @@ final class OpMapObjElems {
                 JsValue headMapped = fn.apply(tuple._2.toJsPrimitive());
                 json = json.set(tuple._1,
                                 headMapped
-                               );
+                );
             }
         }
 
@@ -49,33 +50,31 @@ final class OpMapObjElems {
     static JsObj mapAll(JsObj json,
                         final BiFunction<? super JsPath, ? super JsPrimitive, ? extends JsValue> fn,
                         final JsPath startingPath
-                       ) {
+    ) {
         for (final Tuple2<String, JsValue> tuple : json) {
             if (tuple._2.isObj()) {
                 json = json.set(tuple._1,
                                 mapAll(tuple._2.toJsObj(),
                                        fn,
                                        startingPath.key(tuple._1)
-                                      )
-                               );
-            }
-            else if (tuple._2.isArray()) {
+                                )
+                );
+            } else if (tuple._2.isArray()) {
                 json = json.set(tuple._1,
                                 OpMapArrElems.mapAll(tuple._2.toJsArray(),
                                                      fn,
                                                      startingPath.key(tuple._1)
-                                                    )
-                               );
-            }
-            else {
+                                )
+                );
+            } else {
                 final JsPath headPath = startingPath.key(tuple._1);
 
                 JsValue headMapped = fn.apply(headPath,
                                               tuple._2.toJsPrimitive()
-                                             );
+                );
                 json = json.set(tuple._1,
                                 headMapped
-                               );
+                );
             }
         }
 
@@ -91,22 +90,20 @@ final class OpMapObjElems {
                 json = json.set(tuple._1,
                                 mapAll(tuple._2.toJsObj(),
                                        fn
-                                      )
-                               );
-            }
-            else if (tuple._2.isArray()) {
+                                )
+                );
+            } else if (tuple._2.isArray()) {
                 json = json.set(tuple._1,
                                 OpMapArrElems.mapAll(tuple._2.toJsArray(),
                                                      fn
-                                                    )
-                               );
-            }
-            else {
+                                )
+                );
+            } else {
 
                 JsValue headMapped = fn.apply(tuple._2.toJsPrimitive());
                 json = json.set(tuple._1,
                                 headMapped
-                               );
+                );
             }
         }
 

@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 class JsArrayOfObjSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
     JsArrayOfObjSpec(final boolean required,
                      final boolean nullable
-                    ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -50,7 +50,7 @@ class JsArrayOfObjSpec extends AbstractPredicateSpec implements JsValuePredicate
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

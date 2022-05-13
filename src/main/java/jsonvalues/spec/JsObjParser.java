@@ -65,7 +65,7 @@ public final class JsObjParser {
      */
     public JsObj parse(InputStream inputstream) {
         return MyDslJson.INSTANCE.parseToJsObj(requireNonNull(inputstream),
-                                     parser
+                                               parser
         );
     }
 

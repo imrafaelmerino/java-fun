@@ -15,10 +15,10 @@ class JsArrayOfTestedLongSpec extends AbstractPredicateSpec implements JsValuePr
     JsArrayOfTestedLongSpec(final LongFunction<Optional<JsError>> predicate,
                             final boolean required,
                             final boolean nullable
-                           ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -47,7 +47,7 @@ class JsArrayOfTestedLongSpec extends AbstractPredicateSpec implements JsValuePr
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfLongEachSuchThat(predicate,
                                                                 nullable
-                                                               );
+        );
     }
 
     @Override
@@ -59,11 +59,11 @@ class JsArrayOfTestedLongSpec extends AbstractPredicateSpec implements JsValuePr
                                                     else return Optional.of(new JsError(v,
                                                                                         LONG_EXPECTED
                                                                             )
-                                                                           );
+                                                    );
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

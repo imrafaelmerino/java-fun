@@ -15,10 +15,10 @@ class JsLongSuchThatSpec extends AbstractPredicateSpec implements JsValuePredica
     JsLongSuchThatSpec(final boolean required,
                        final boolean nullable,
                        final LongFunction<Optional<JsError>> predicate
-                      ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -47,7 +47,7 @@ class JsLongSuchThatSpec extends AbstractPredicateSpec implements JsValuePredica
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofLongSuchThat(predicate,
                                                      nullable
-                                                    );
+        );
     }
 
     @Override
@@ -56,7 +56,7 @@ class JsLongSuchThatSpec extends AbstractPredicateSpec implements JsValuePredica
                                                                            LONG_EXPECTED,
                                                                            required,
                                                                            nullable
-                                                                        )
+                                                  )
                                                                  .apply(value);
 
         if (error.isPresent() || value.isNull()) return error;

@@ -3,12 +3,10 @@ package jsonvalues.gen;
 
 import fun.gen.BoolGen;
 import fun.gen.Gen;
-import fun.gen.IntGen;
 import jsonvalues.JsBool;
-import jsonvalues.JsInt;
 
+import java.util.Random;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +25,7 @@ public final class JsBoolGen implements Gen<JsBool> {
     }
 
     @Override
-    public Supplier<JsBool> apply(RandomGenerator seed) {
+    public Supplier<JsBool> apply(Random seed) {
         return gen.map(JsBool::of).apply(seed);
     }
 }

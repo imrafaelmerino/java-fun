@@ -36,6 +36,6 @@ public final class JsError {
     public int hashCode() {
         return Objects.hash(code,
                             value
-                           );
+        );
     }
 }

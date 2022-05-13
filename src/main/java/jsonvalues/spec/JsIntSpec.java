@@ -3,6 +3,7 @@ package jsonvalues.spec;
 import com.dslplatform.json.JsSpecParser;
 import com.dslplatform.json.JsSpecParsers;
 import jsonvalues.JsValue;
+
 import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
@@ -10,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
 class JsIntSpec extends AbstractPredicateSpec implements JsValuePredicate {
     JsIntSpec(final boolean required,
               final boolean nullable
-             ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -46,7 +47,7 @@ class JsIntSpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   INT_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

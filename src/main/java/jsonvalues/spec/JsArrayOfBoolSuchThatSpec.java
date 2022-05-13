@@ -17,10 +17,10 @@ class JsArrayOfBoolSuchThatSpec extends AbstractPredicateSpec implements JsValue
     JsArrayOfBoolSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
                               final boolean required,
                               final boolean nullable
-                             ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.isArrayOfBool = new JsArrayOfBoolSpec(required,
                                                    nullable
         );
@@ -53,7 +53,7 @@ class JsArrayOfBoolSuchThatSpec extends AbstractPredicateSpec implements JsValue
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfBoolSuchThat(predicate,
                                                             nullable
-                                                           );
+        );
     }
 
     @Override

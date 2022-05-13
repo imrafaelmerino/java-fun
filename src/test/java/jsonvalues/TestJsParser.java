@@ -42,8 +42,8 @@ public class TestJsParser {
                                                                     "i",
                                                                     array,
                                                                     "j",
-                                                                    arrayOf(JsObjSpec.lenient("a",
-                                                                                              str
+                                                                    arrayOfObjSpec(JsObjSpec.lenient("a",
+                                                                                                     str
                                                                     ))
         ));
 

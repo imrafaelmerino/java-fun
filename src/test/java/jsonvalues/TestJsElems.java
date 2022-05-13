@@ -2,6 +2,7 @@ package jsonvalues;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -14,12 +15,11 @@ public class TestJsElems {
                                        .isInstant());
 
         Assertions.assertTrue(JsInstant.of(Instant.now()
-                                          )
+                                       )
                                        .isInstant(i -> i.isBefore(Instant.now()
                                                                          .plusSeconds(1))));
 
     }
-
 
 
     @Test
@@ -52,34 +52,34 @@ public class TestJsElems {
     public void test_equals() {
         Assertions.assertEquals(JsBigDec.of(BigDecimal.valueOf(1.00)),
                                 JsBigDec.of(BigDecimal.ONE)
-                               );
+        );
         Assertions.assertEquals(JsBigDec.of(BigDecimal.valueOf(1.00))
                                         .hashCode(),
                                 JsBigDec.of(BigDecimal.ONE)
                                         .hashCode()
-                               );
+        );
 
         Assertions.assertEquals(JsLong.of(1L),
                                 JsBigDec.of(new BigDecimal(1))
-                               );
+        );
         Assertions.assertEquals(JsLong.of(1L),
                                 JsDouble.of(1.00)
-                               );
+        );
         Assertions.assertEquals(JsInt.of(1),
                                 JsDouble.of(1.00)
-                               );
+        );
 
         Assertions.assertEquals(JsInt.of(1)
                                      .hashCode(),
                                 JsDouble.of(1.00)
                                         .hashCode()
-                               );
+        );
 
         Assertions.assertEquals(JsBigInt.of(BigInteger.ONE)
                                         .hashCode(),
                                 JsDouble.of(1.00)
                                         .hashCode()
-                               );
+        );
 
         Assertions.assertEquals(JsDouble.of(100_000_000_000d)
                                         .hashCode(),
@@ -96,78 +96,78 @@ public class TestJsElems {
         Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)
                                            .toJson()
-                               );
+        );
         Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)
                                            .toJsStr()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsInt.of(1)
                                            .toJsObj()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsStr.of("1")
                                            .toJsInt()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsStr.of("1")
                                            .toJsBigInt()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsStr.of("1")
                                            .toJsBigDec()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsDouble.of(1d)
                                               .toJsInt()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsDouble.of(1d)
                                               .toJsStr()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsLong.of(1)
                                             .toJsStr()
-                               );
+        );
 
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .toJsStr()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .toJsArray()
-                               );
+        );
 
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .toJsDouble()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .toJsInt()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .toJsLong()
-                               );
+        );
 
         Assertions.assertThrows(UserError.class,
                                 () -> JsBigInt.of(BigInteger.ONE)
                                               .toJsBool()
-                               );
+        );
     }
 
     @Test
@@ -176,31 +176,31 @@ public class TestJsElems {
         Assertions.assertEquals(JsInt.of(10),
                                 JsInt.of(5)
                                      .map(i -> i * 2)
-                               );
+        );
         Assertions.assertEquals(JsBigInt.of(BigInteger.valueOf(2)),
                                 JsBigInt.of(BigInteger.ONE)
                                         .map(i -> i.add(BigInteger.ONE))
-                               );
+        );
         Assertions.assertEquals(JsBigDec.of(BigDecimal.valueOf(1.5d)),
                                 JsBigDec.of(BigDecimal.valueOf(1d))
                                         .map(i -> i.add(BigDecimal.valueOf(0.5d)))
-                               );
+        );
         Assertions.assertEquals(JsInt.of(10),
                                 JsInt.of(5)
                                      .map(i -> i * 2)
-                               );
+        );
         Assertions.assertEquals(JsStr.of("abcd"),
                                 JsStr.of("ABCD")
                                      .map(String::toLowerCase)
-                               );
+        );
         Assertions.assertEquals(JsLong.of(Long.MAX_VALUE - 2),
                                 JsLong.of(2)
                                       .map(i -> Long.MAX_VALUE - 2)
-                               );
+        );
         Assertions.assertEquals(JsDouble.of(0.5d),
                                 JsDouble.of(0.1d)
                                         .map(i -> i * 5)
-                               );
+        );
 
 
     }

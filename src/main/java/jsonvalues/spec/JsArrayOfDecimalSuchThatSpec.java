@@ -16,10 +16,10 @@ class JsArrayOfDecimalSuchThatSpec extends AbstractPredicateSpec implements JsVa
     JsArrayOfDecimalSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
                                  final boolean required,
                                  final boolean nullable
-                                ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.isArrayOfDecimal = new JsArrayOfDecimalSpec(required,
                                                          nullable
         );
@@ -52,7 +52,7 @@ class JsArrayOfDecimalSuchThatSpec extends AbstractPredicateSpec implements JsVa
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfDecimalSuchThat(predicate,
                                                                nullable
-                                                              );
+        );
     }
 
     @Override

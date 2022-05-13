@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
 class JsBooleanSpec extends AbstractPredicateSpec implements JsValuePredicate {
     JsBooleanSpec(final boolean required,
                   final boolean nullable
-                 ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -48,7 +48,7 @@ class JsBooleanSpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   BOOLEAN_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

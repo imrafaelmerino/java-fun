@@ -16,10 +16,10 @@ class JsArrayOfTestedDecimalSpec extends AbstractPredicateSpec implements JsValu
     JsArrayOfTestedDecimalSpec(final Function<BigDecimal, Optional<JsError>> predicate,
                                final boolean required,
                                final boolean nullable
-                              ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -48,7 +48,7 @@ class JsArrayOfTestedDecimalSpec extends AbstractPredicateSpec implements JsValu
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfDecimalEachSuchThat(predicate,
                                                                    nullable
-                                                                  );
+        );
     }
 
     @Override
@@ -60,11 +60,11 @@ class JsArrayOfTestedDecimalSpec extends AbstractPredicateSpec implements JsValu
                                                     else return Optional.of(new JsError(v,
                                                                                         DECIMAL_EXPECTED
                                                                             )
-                                                                           );
+                                                    );
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

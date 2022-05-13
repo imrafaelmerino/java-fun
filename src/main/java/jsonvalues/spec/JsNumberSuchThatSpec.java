@@ -16,10 +16,10 @@ class JsNumberSuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
     JsNumberSuchThatSpec(final boolean required,
                          final boolean nullable,
                          final Function<JsNumber, Optional<JsError>> predicate
-                        ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -48,7 +48,7 @@ class JsNumberSuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofNumberSuchThat(predicate,
                                                        nullable
-                                                      );
+        );
     }
 
     @Override
@@ -57,7 +57,7 @@ class JsNumberSuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
                                                                            NUMBER_EXPECTED,
                                                                            required,
                                                                            nullable
-                                                                        )
+                                                  )
                                                                  .apply(value);
 
         if (error.isPresent() || value.isNull()) return error;

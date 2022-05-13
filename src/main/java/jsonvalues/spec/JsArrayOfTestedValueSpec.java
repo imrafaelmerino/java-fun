@@ -13,10 +13,10 @@ class JsArrayOfTestedValueSpec extends AbstractPredicateSpec implements JsValueP
     JsArrayOfTestedValueSpec(final Function<JsValue, Optional<JsError>> predicate,
                              final boolean required,
                              final boolean nullable
-                            ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -45,7 +45,7 @@ class JsArrayOfTestedValueSpec extends AbstractPredicateSpec implements JsValueP
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfValueEachSuchThat(predicate,
                                                                  nullable
-                                                                );
+        );
     }
 
     @Override
@@ -53,7 +53,7 @@ class JsArrayOfTestedValueSpec extends AbstractPredicateSpec implements JsValueP
         return Functions.testArrayOfTestedValue(predicate,
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

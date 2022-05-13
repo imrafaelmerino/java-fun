@@ -11,16 +11,16 @@ final class JsObjSpecWithRequiredKeysParser extends JsObjSpecParser {
     JsObjSpecWithRequiredKeysParser(final Vector<String> required,
                                     final Map<String, JsSpecParser> parsers,
                                     final boolean strict
-                                   ) {
+    ) {
         super(strict,
               parsers);
         this.required = required;
     }
 
     @Override
-    JsObj value(final JsonReader<?> reader){
+    JsObj value(final JsonReader<?> reader) {
         try {
-            final JsObj            obj      = super.value(reader);
+            final JsObj obj = super.value(reader);
             for (String key : required) {
                 if (!obj.containsKey(key))
                     throw reader.newParseError("Required key not found: " + key);

@@ -2,6 +2,7 @@ package com.dslplatform.json;
 
 import jsonvalues.*;
 import jsonvalues.spec.JsError;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -11,9 +12,9 @@ final class JsNumberParser extends AbstractParser {
 
     JsNumber valueSuchThat(final JsonReader<?> reader,
                            final Function<JsNumber, Optional<JsError>> fn
-                          ){
+    ) {
         try {
-            final JsNumber        value  = value(reader);
+            final JsNumber value = value(reader);
             final Optional<JsError> result = fn.apply(value);
             if (!result.isPresent()) return value;
             throw reader.newParseError(result.toString());
@@ -25,7 +26,7 @@ final class JsNumberParser extends AbstractParser {
     }
 
     @Override
-    JsNumber value(final JsonReader<?> reader){
+    JsNumber value(final JsonReader<?> reader) {
         final Number number;
         try {
             number = MyNumberConverter.deserializeNumber(reader);
@@ -41,8 +42,7 @@ final class JsNumberParser extends AbstractParser {
             } catch (ArithmeticException e) {
                 return JsLong.of(n);
             }
-        }
-        else if (number instanceof BigDecimal)
+        } else if (number instanceof BigDecimal)
             return JsBigDec.of(((BigDecimal) number));
         throw new JsParserException("internal error: not considered " + number.getClass());
     }

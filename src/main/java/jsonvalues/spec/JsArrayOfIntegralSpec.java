@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
 class JsArrayOfIntegralSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
     JsArrayOfIntegralSpec(final boolean required,
                           final boolean nullable
-                         ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -53,7 +53,7 @@ class JsArrayOfIntegralSpec extends AbstractPredicateSpec implements JsValuePred
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

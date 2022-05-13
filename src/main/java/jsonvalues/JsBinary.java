@@ -20,7 +20,25 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsBinary extends JsPrimitive {
     public static final int TYPE_ID = 10;
+    /**
+     * prism between the sum type JsValue and JsBinary
+     */
+    public static final Prism<JsValue, byte[]> prism =
+            new Prism<>(s -> {
+                if (s.isBinary())
+                    return Optional.of(s.toJsBinary().value);
+                if (s.isStr()) {
+                    return JsStr.base64Prism.getOptional.apply(s.toJsStr().value);
+                }
+                return Optional.empty();
+            },
+                        JsBinary::of
+            );
     public final byte[] value;
+
+    private JsBinary(final byte[] value) {
+        this.value = value;
+    }
 
     /**
      * Creates a JsBinary from an array of bytes
@@ -42,26 +60,6 @@ public final class JsBinary extends JsPrimitive {
     public static JsBinary of(final String base64) {
         return new JsBinary(requireNonNull(Base64.getDecoder().decode(base64)));
     }
-
-    private JsBinary(final byte[] value) {
-        this.value = value;
-    }
-
-    /**
-     * prism between the sum type JsValue and JsBinary
-     */
-    public static final Prism<JsValue, byte[]> prism =
-            new Prism<>(s -> {
-                if (s.isBinary())
-                    return Optional.of(s.toJsBinary().value);
-                if (s.isStr()) {
-                    return JsStr.base64Prism.getOptional.apply(s.toJsStr().value);
-                }
-                return Optional.empty();
-            },
-                    JsBinary::of
-            );
-
 
     @Override
     public int id() {
@@ -89,8 +87,9 @@ public final class JsBinary extends JsPrimitive {
         if (o == null) return false;
         if (o instanceof JsValue) {
             return JsBinary.prism.getOptional.apply(((JsValue) o))
-                    .map(bytes -> Arrays.equals(bytes, value))
-                    .orElse(false);
+                                             .map(bytes -> Arrays.equals(bytes,
+                                                                         value))
+                                             .orElse(false);
         }
         return false;
     }

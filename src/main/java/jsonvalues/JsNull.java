@@ -2,12 +2,12 @@ package jsonvalues;
 
 
 /**
- Represents null, which a valid json value. It's a singleton, only the instance {@link jsonvalues.JsNull#NULL} exists.
+ * Represents null, which a valid json value. It's a singleton, only the instance {@link jsonvalues.JsNull#NULL} exists.
  */
 public final class JsNull extends JsPrimitive {
     public static final int TYPE_ID = 1;
     /**
-     The singleton null value.
+     * The singleton null value.
      */
     public static final JsNull NULL = new JsNull();
 
@@ -30,9 +30,9 @@ public final class JsNull extends JsPrimitive {
     }
 
     /**
-     Returns the hashcode of this json null
-
-     @return 1
+     * Returns the hashcode of this json null
+     *
+     * @return 1
      */
     @Override
     public int hashCode() {
@@ -40,10 +40,10 @@ public final class JsNull extends JsPrimitive {
     }
 
     /**
-     Returns true if that is the singleton {@link JsNull#NULL}.
-
-     @param that the reference object with which to compare.
-     @return true if that is {@link JsNull#NULL}
+     * Returns true if that is the singleton {@link JsNull#NULL}.
+     *
+     * @param that the reference object with which to compare.
+     * @return true if that is {@link JsNull#NULL}
      */
     @Override
     public boolean equals(final Object that) {
@@ -51,7 +51,7 @@ public final class JsNull extends JsPrimitive {
     }
 
     /**
-     @return "null"
+     * @return "null"
      */
     @Override
     public String toString() {

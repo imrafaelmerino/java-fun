@@ -22,9 +22,9 @@ final class JsDecimalParser extends AbstractParser {
 
     JsBigDec valueSuchThat(final JsonReader<?> reader,
                            final Function<BigDecimal, Optional<JsError>> fn
-                          ) {
+    ) {
         try {
-            final BigDecimal      value  = MyNumberConverter.deserializeDecimal(reader);
+            final BigDecimal value = MyNumberConverter.deserializeDecimal(reader);
             final Optional<JsError> result = fn.apply(value);
             if (!result.isPresent()) return JsBigDec.of(value);
             throw reader.newParseError(result.toString());

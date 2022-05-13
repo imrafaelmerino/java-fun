@@ -29,9 +29,9 @@ final class JsValueParser extends AbstractParser {
     JsValue valueSuchThat(final JsonReader<?> reader,
                           final Function<JsValue, Optional<JsError>> fn
 
-                         ){
+    ) {
         try {
-            final JsValue         value  = value(reader);
+            final JsValue value = value(reader);
             final Optional<JsError> result = fn.apply(value);
             if (!result.isPresent()) return value;
             throw reader.newParseError(result.toString());
@@ -43,21 +43,21 @@ final class JsValueParser extends AbstractParser {
     }
 
     @Override
-    JsValue value(final JsonReader<?> reader){
+    JsValue value(final JsonReader<?> reader) {
         try {
             switch (reader.last()) {
                 case 't':
                     if (!reader.wasTrue()) {
                         throw new JsParserException(reader.newParseErrorAt("Expecting 'true' for true constant",
                                                                            0
-                                                                          ));
+                        ));
                     }
                     return JsBool.TRUE;
                 case 'f':
                     if (!reader.wasFalse()) {
                         throw new JsParserException(reader.newParseErrorAt("Expecting 'false' for false constant",
                                                                            0
-                                                                          ));
+                        ));
                     }
                     return JsBool.FALSE;
                 case '"':

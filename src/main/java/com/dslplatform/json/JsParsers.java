@@ -22,6 +22,7 @@ class JsParsers {
     public final JsArrayOfObjParser arrayOfObjParser;
     public final JsArrayOfStringParser arrayOfStrParser;
     public final JsArrayOfBoolParser arrayOfBoolParser;
+
     private JsParsers() {
         instantParser = new JsInstantParser();
         intParser = new JsIntParser();

@@ -15,10 +15,10 @@ class JsArrayOfStrSuchThatSpec extends AbstractPredicateSpec implements JsValueP
     JsArrayOfStrSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
                              final boolean required,
                              final boolean nullable
-                            ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.isArrayOfString = new JsArrayOfStrSpec(required,
                                                     nullable
         );
@@ -50,7 +50,7 @@ class JsArrayOfStrSuchThatSpec extends AbstractPredicateSpec implements JsValueP
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfStrSuchThat(predicate,
                                                            nullable
-                                                          );
+        );
     }
 
     @Override

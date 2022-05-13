@@ -5,8 +5,8 @@ import jsonvalues.JsBool;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
 
+import java.util.Random;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +27,7 @@ public final class JsConsGen<O extends JsValue> implements Gen<O> {
     }
 
     @Override
-    public Supplier<O> apply(RandomGenerator generator) {
+    public Supplier<O> apply(Random generator) {
         return () -> value;
     }
 }

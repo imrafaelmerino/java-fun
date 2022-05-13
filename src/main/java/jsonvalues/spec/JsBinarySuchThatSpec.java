@@ -16,10 +16,10 @@ class JsBinarySuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
     JsBinarySuchThatSpec(final boolean required,
                          final boolean nullable,
                          final Function<byte[], Optional<JsError>> predicate
-                        ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -48,7 +48,7 @@ class JsBinarySuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofBinarySuchThat(predicate,
                                                        nullable
-                                                      );
+        );
     }
 
     @Override
@@ -57,7 +57,7 @@ class JsBinarySuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
                                                            BINARY_EXPECTED,
                                                            required,
                                                            nullable
-                                                        )
+                                                 )
                                                  .apply(value);
 
         if (error.isPresent() || value.isNull()) return error;

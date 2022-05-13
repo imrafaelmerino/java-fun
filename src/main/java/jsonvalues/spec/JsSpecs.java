@@ -16,9 +16,6 @@ import static jsonvalues.spec.ERROR_CODE.*;
 
 public final class JsSpecs {
 
-    private JsSpecs() {
-    }
-
     /**
      * spec that is conformed by any value
      */
@@ -89,14 +86,12 @@ public final class JsSpecs {
     public static final JsArraySpec array = new JsArrayOfValueSpec(true,
                                                                    false
     );
-
     /**
      * non-nullable array spec
      */
     public static final JsSpec binary = new JsBinarySpec(true,
                                                          false
     );
-
     /**
      * non-nullable array spec
      */
@@ -151,6 +146,8 @@ public final class JsSpecs {
     public static final JsArraySpec arrayOfObj = new JsArrayOfObjSpec(true,
                                                                       false
     );
+    private JsSpecs() {
+    }
 
     /**
      * A required and none nullable spec that specifies an array of objects that conform the given spec
@@ -158,7 +155,7 @@ public final class JsSpecs {
      * @param spec the given spec that every object in the array has to conform
      * @return a spec
      */
-    public static JsArraySpec arrayOf(final JsObjSpec spec) {
+    public static JsArraySpec arrayOfObjSpec(final JsObjSpec spec) {
         return new JsArrayOfJsObjSpec(false,
                                       true,
                                       requireNonNull(spec)

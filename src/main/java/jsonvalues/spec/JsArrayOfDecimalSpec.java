@@ -12,10 +12,10 @@ class JsArrayOfDecimalSpec extends AbstractPredicateSpec implements JsValuePredi
 
     JsArrayOfDecimalSpec(final boolean required,
                          final boolean nullable
-                        ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -51,7 +51,7 @@ class JsArrayOfDecimalSpec extends AbstractPredicateSpec implements JsValuePredi
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

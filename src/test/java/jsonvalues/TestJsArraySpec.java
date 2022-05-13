@@ -22,14 +22,14 @@ public class TestJsArraySpec {
 
         final JsArray array = JsArray.of(JsInt.of(1),
                                          JsStr.of("a")
-                                        );
-        final JsTupleSpec      spec  = JsSpecs.tuple(integer);
+        );
+        final JsTupleSpec spec = JsSpecs.tuple(integer);
         final Set<JsErrorPair> error = spec.test(array);
         assertErrorIs(error,
                       SPEC_MISSING,
                       JsStr.of("a"),
                       JsPath.fromIndex(1)
-                     );
+        );
     }
 
     @Test
@@ -38,18 +38,18 @@ public class TestJsArraySpec {
 
         JsTupleSpec spec = JsSpecs.tuple(any,
                                          any.optional()
-                                        );
+        );
 
         Assertions.assertTrue(spec.test(JsArray.of(JsNull.NULL))
                                   .isEmpty());
         Assertions.assertTrue(spec.test(JsArray.of(JsNull.NULL,
                                                    JsBool.TRUE
-                                                  ))
+                                  ))
                                   .isEmpty());
         Assertions.assertFalse(spec.test(JsArray.of(JsNull.NULL,
                                                     JsBool.TRUE,
                                                     JsBool.FALSE
-                                                   ))
+                                   ))
                                    .isEmpty());
     }
 
@@ -57,33 +57,33 @@ public class TestJsArraySpec {
     public void test_array_of_boolean_such_that() {
         final JsObjSpec spec = JsObjSpec.strict("a",
                                                 JsSpecs.arrayOfBoolSuchThat(a -> a.head() == JsBool.TRUE)
-                                               );
+        );
 
         Assertions.assertTrue(spec.test(JsObj.of("a",
                                                  JsArray.of(true,
                                                             false,
                                                             false
-                                                           )
-                                                ))
+                                                 )
+                                  ))
                                   .isEmpty()
-                             );
+        );
 
 
         Assertions.assertFalse(spec.test(JsObj.of("a",
                                                   JsArray.of(false,
                                                              false,
                                                              false
-                                                            )
-                                                 ))
+                                                  )
+                                   ))
                                    .isEmpty()
-                              );
+        );
 
         Assertions.assertFalse(spec.test(JsObj.of("a",
                                                   JsArray.of(true)
                                                          .append(JsLong.of(1))
-                                                 ))
+                                   ))
                                    .isEmpty()
-                              );
+        );
 
     }
 
@@ -93,18 +93,18 @@ public class TestJsArraySpec {
 
         JsTupleSpec spec = JsSpecs.tuple(any,
                                          any
-                                        );
+        );
 
         Assertions.assertTrue(spec.test(JsArray.of(JsBool.FALSE,
                                                    JsBool.TRUE
-                                                  ))
+                                  ))
                                   .isEmpty());
         Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE))
                                    .isEmpty());
         Assertions.assertFalse(spec.test(JsArray.of(JsBool.FALSE,
                                                     JsBool.TRUE,
                                                     JsBool.FALSE
-                                                   ))
+                                   ))
                                    .isEmpty());
     }
 
@@ -113,24 +113,24 @@ public class TestJsArraySpec {
     public void test_array_of_integral_spec() {
         JsObjSpec spec = JsObjSpec.strict("a",
                                           arrayOfIntegralSuchThat(a -> a.size() == 3)
-                                         );
+        );
 
         Assertions.assertTrue(spec.test(JsObj.of("a",
                                                  JsArray.of(JsInt.of(1),
                                                             JsLong.of(2),
                                                             JsBigInt.of(BigInteger.TEN)
-                                                           )
-                                                )
-                                       )
+                                                 )
+                                        )
+                                  )
                                   .isEmpty());
 
 
         Assertions.assertFalse(spec.test(JsObj.of("a",
                                                   JsArray.of(JsInt.of(1),
                                                              JsStr.of("a")
-                                                            )
-                                                 )
-                                        )
+                                                  )
+                                         )
+                                   )
                                    .isEmpty());
 
 
@@ -140,7 +140,7 @@ public class TestJsArraySpec {
     public void test_array_of_number_spec() {
         JsObjSpec spec = JsObjSpec.strict("a",
                                           arrayOfNumberSuchThat(a -> a.size() == 5)
-                                         );
+        );
 
         Assertions.assertTrue(spec.test(JsObj.of("a",
                                                  JsArray.of(JsInt.of(1),
@@ -148,18 +148,18 @@ public class TestJsArraySpec {
                                                             JsDouble.of(4.5),
                                                             JsBigInt.of(BigInteger.TEN),
                                                             JsBigDec.of(BigDecimal.TEN)
-                                                           )
-                                                )
-                                       )
+                                                 )
+                                        )
+                                  )
                                   .isEmpty());
 
 
         Assertions.assertFalse(spec.test(JsObj.of("a",
                                                   JsArray.of(JsInt.of(1),
                                                              JsStr.of("a")
-                                                            )
-                                                 )
-                                        )
+                                                  )
+                                         )
+                                   )
                                    .isEmpty());
 
 
@@ -169,24 +169,24 @@ public class TestJsArraySpec {
     public void test_array_of_object_spec() {
         JsObjSpec spec = JsObjSpec.strict("a",
                                           arrayOfObjSuchThat(a -> a.size() == 2)
-                                         );
+        );
 
         Assertions.assertTrue(spec.test(JsObj.of("a",
                                                  JsArray.of(JsObj.of("a",
                                                                      JsNull.NULL
-                                                                    ),
+                                                            ),
                                                             JsObj.empty()
-                                                           )
-                                                )
-                                       )
+                                                 )
+                                        )
+                                  )
                                   .isEmpty());
 
 
         Assertions.assertFalse(spec.test(JsObj.of("a",
                                                   JsArray.of(JsObj.empty()
-                                                            )
-                                                 )
-                                        )
+                                                  )
+                                         )
+                                   )
                                    .isEmpty());
 
 
@@ -215,13 +215,13 @@ public class TestJsArraySpec {
                                           "numbers",
                                           JsSpecs.arrayOfInt,
                                           "vegetables",
-                                          arrayOf(JsObjSpec.strict("veggieName",
-                                                                   str,
-                                                                   "veggieLike",
-                                                                   bool
-                                                                  )
-                                                 )
-                                         );
+                                          arrayOfObjSpec(JsObjSpec.strict("veggieName",
+                                                                          str,
+                                                                          "veggieLike",
+                                                                          bool
+                                                  )
+                                          )
+        );
 
         Assertions.assertTrue(spec.test(JsObj.parse(json_str))
                                   .isEmpty());
@@ -236,44 +236,44 @@ public class TestJsArraySpec {
                                 JsSpecs.tuple(arrayOfDec)
                                        .test(JsArray.of(JsArray.of(1,
                                                                    2
-                                                                  )))
+                                       )))
                                        .size()
-                               );
+        );
 
 
         Assertions.assertEquals(1,
                                 JsSpecs.tuple(arrayOfInt)
                                        .test(JsArray.of(JsArray.of("a",
                                                                    "b"
-                                                                  )))
+                                       )))
                                        .size()
-                               );
+        );
 
 
         Assertions.assertEquals(1,
                                 JsSpecs.tuple(arrayOfLong)
                                        .test(JsArray.of(JsArray.of("a",
                                                                    "b"
-                                                                  )))
+                                       )))
                                        .size()
-                               );
+        );
 
 
         Assertions.assertEquals(1,
                                 JsSpecs.tuple(arrayOfObj)
                                        .test(JsArray.of(JsArray.of("a",
                                                                    "b"
-                                                                  )))
+                                       )))
                                        .size()
-                               );
+        );
 
         Assertions.assertEquals(1,
                                 JsSpecs.tuple(arrayOfStr)
                                        .test(JsArray.of(JsArray.of(true,
                                                                    false
-                                                                  )))
+                                       )))
                                        .size()
-                               );
+        );
 
     }
 
@@ -283,20 +283,20 @@ public class TestJsArraySpec {
                                            str,
                                            "b",
                                            integer
-                                          );
+        );
         JsObjSpec objSpec = JsObjSpec.strict("a",
-                                             arrayOf(spec).nullable(),
+                                             arrayOfObjSpec(spec).nullable(),
                                              "b",
-                                             arrayOf(spec).nullable()
-                                                          .optional()
-                                            );
+                                             arrayOfObjSpec(spec).nullable()
+                                                                 .optional()
+        );
 
 
         Assertions.assertTrue(objSpec.test(JsObj.of("a",
                                                     JsNull.NULL
-                                                   ))
+                                     ))
                                      .isEmpty()
-                             );
+        );
 
 
     }

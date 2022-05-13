@@ -200,6 +200,15 @@ public final class JsPath implements Comparable<JsPath> {
     }
 
     /**
+     * @param token not empty string
+     * @return true if is a valid numeric position in a path
+     */
+    private static boolean isNumeric(final String token) {
+        return MINUS_ONE.equals(token) || token.chars()
+                                               .allMatch(Character::isDigit);
+    }
+
+    /**
      * creates a new JsPath appending the key to <code>this</code> JsPath.
      *
      * @param key the key name to be appended in raw, without encoding nor single-quoting like in {@link JsPath#path(String)} )}
@@ -207,15 +216,6 @@ public final class JsPath implements Comparable<JsPath> {
      */
     public JsPath key(final String key) {
         return new JsPath(positions.append(Key.of(requireNonNull(key))));
-    }
-
-    /**
-     * @param token not empty string
-     * @return true if is a valid numeric position in a path
-     */
-    private static boolean isNumeric(final String token) {
-        return MINUS_ONE.equals(token) || token.chars()
-                                               .allMatch(Character::isDigit);
     }
 
     /**

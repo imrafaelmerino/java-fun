@@ -1,26 +1,17 @@
 package jsonvalues.gen;
 
-<<<<<<< HEAD
-import fun.gen.Gen;
-=======
 import fun.gen.Combinators;
 import fun.gen.Gen;
 import fun.gen.IntGen;
 import fun.gen.SplitGen;
 import fun.tuple.Pair;
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
 import java.util.Objects;
-<<<<<<< HEAD
-import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
-=======
 import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
 import static java.util.Objects.requireNonNull;
 
@@ -39,26 +30,6 @@ public final class JsArrayGen implements Gen<JsArray> {
         this.gen = gen;
     }
 
-<<<<<<< HEAD
-    public static JsArrayGen of(final Gen<? extends JsValue> gen,
-                                final int size
-    ) {
-        return new JsArrayGen(size,
-                              gen
-        );
-    }
-
-
-    @Override
-    public Supplier<JsArray> apply(final RandomGenerator random) {
-        Objects.requireNonNull(random);
-        final Supplier<? extends JsValue> supplier =
-                gen.apply(requireNonNull(random));
-        return () ->
-        {
-            JsArray array = JsArray.empty();
-            for (int i = 0; i < size; i++) array = array.append(supplier.get());
-=======
     public static Gen<JsArray> of(final Gen<Iterable<? extends JsValue>> gen) {
         return gen.map(JsArray::ofIterable);
     }
@@ -130,13 +101,10 @@ public final class JsArrayGen implements Gen<JsArray> {
         {
             JsArray array = JsArray.empty();
             for (int i = 0; i < sizeSupplier.get(); i++) array = array.append(elemSupplier.get());
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
             return array;
         };
     }
 
-<<<<<<< HEAD
-=======
     @Override
     public Supplier<JsArray> apply(final Random random) {
         Objects.requireNonNull(random);
@@ -144,6 +112,5 @@ public final class JsArrayGen implements Gen<JsArray> {
                              () -> size);
     }
 
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
 }

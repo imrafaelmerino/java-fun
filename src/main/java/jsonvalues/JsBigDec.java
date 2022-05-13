@@ -25,16 +25,6 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
      */
     public static final Prism<JsValue, BigDecimal> prism =
             new Prism<>(s ->
-<<<<<<< HEAD
-            {
-                if (s.isDouble())
-                    return Optional.of(BigDecimal.valueOf(s.toJsDouble().value));
-                if (s.isBigDec())
-                    return Optional.of(s.toJsBigDec().value);
-                return Optional.empty();
-            },
-                    JsBigDec::of
-=======
                         {
                             if (s.isDouble())
                                 return Optional.of(BigDecimal.valueOf(s.toJsDouble().value));
@@ -43,7 +33,6 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
                             return Optional.empty();
                         },
                         JsBigDec::of
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
             );
     /**
      * The big decimal value
@@ -96,11 +85,11 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
 
         final OptionalLong optLong = longValueExact();
         if (optLong.isPresent()) return JsLong.of(optLong.getAsLong())
-                .hashCode();
+                                              .hashCode();
 
         final Optional<BigInteger> optBigInt = bigIntegerExact();
         return optBigInt.map(BigInteger::hashCode)
-                .orElseGet(value::hashCode);
+                        .orElseGet(value::hashCode);
 
     }
 
@@ -142,7 +131,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     boolean bigIntEquals(JsBigInt jsBigInt) {
         final Optional<BigInteger> optional = bigIntegerExact();
         return optional.isPresent() && optional.get()
-                .equals(requireNonNull(jsBigInt).value);
+                                               .equals(requireNonNull(jsBigInt).value);
     }
 
     /**
@@ -177,7 +166,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
 
         //errorProne warning BigDecimalEquals -> compareTo instead of equals so 2.0 = 2.000
         return BigDecimal.valueOf(requireNonNull(jsDouble).value)
-                .compareTo(value) == 0;
+                         .compareTo(value) == 0;
     }
 
     /**
@@ -232,19 +221,6 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
-<<<<<<< HEAD
-     * Static factory method to create a JsBigDec from a BigDecimal object.
-     *
-     * @param n the big decimal
-     * @return a new JsBigDec
-     */
-    public static JsBigDec of(BigDecimal n) {
-        return new JsBigDec(requireNonNull(n));
-    }
-
-    /**
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
      * Tests the value of this json big-decimal on a predicate
      *
      * @param predicate the predicate

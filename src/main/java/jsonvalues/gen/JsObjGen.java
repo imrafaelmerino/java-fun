@@ -10,11 +10,7 @@ import jsonvalues.JsValue;
 
 import java.util.*;
 import java.util.function.Supplier;
-<<<<<<< HEAD
-import java.util.random.RandomGenerator;
-=======
 import java.util.stream.Collectors;
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,30 +25,6 @@ public final class JsObjGen implements Gen<JsObj> {
     private List<String> optionals = new ArrayList<>();
     private List<String> nullables = new ArrayList<>();
 
-<<<<<<< HEAD
-    public JsObjGen setNullables(final List<String> nullables) {
-        this.nullables = requireNonNull(optionals);
-        return this;
-    }
-
-    public JsObjGen setNullables(final String... nullables) {
-        this.nullables = Arrays.stream(requireNonNull(nullables)).toList();
-        return this;
-    }
-
-    public JsObjGen setOptionals(final List<String> optionals) {
-        this.optionals = requireNonNull(optionals);
-        return this;
-    }
-
-    public JsObjGen setOptionals(final String... optional) {
-        this.optionals = Arrays.stream(requireNonNull(optional)).toList();
-        return this;
-    }
-
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     private JsObjGen(final String key,
                      final Gen<? extends JsValue> gen,
                      final String key1,
@@ -122,10 +94,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     private JsObjGen(final String key,
                      final Gen<? extends JsValue> gen,
                      final String key1,
@@ -199,10 +167,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     private JsObjGen(final String key,
                      final Gen<? extends JsValue> gen,
                      final String key1,
@@ -280,10 +244,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     private JsObjGen(final String key,
                      final Gen<? extends JsValue> gen,
                      final String key1,
@@ -997,10 +957,7 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     private JsObjGen(final String key,
                      final Gen<? extends JsValue> gen,
                      final String key1,
@@ -1014,10 +971,7 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     private JsObjGen(final String key,
                      final Gen<? extends JsValue> gen
     ) {
@@ -1062,10 +1016,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1086,10 +1036,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1114,10 +1060,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1146,10 +1088,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1182,10 +1120,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1223,10 +1157,6 @@ public final class JsObjGen implements Gen<JsObj> {
 
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1777,10 +1707,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     /**
      * static factory method to create a JsObGen of sixteen mappings
      *
@@ -2241,10 +2167,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     /**
      * static factory method to create a JsObGen of twenty mappings
      *
@@ -2375,8 +2297,6 @@ public final class JsObjGen implements Gen<JsObj> {
         );
     }
 
-<<<<<<< HEAD
-=======
     public JsObjGen setNullables(final List<String> nullables) {
         this.nullables = requireNonNull(optionals);
         return this;
@@ -2398,7 +2318,6 @@ public final class JsObjGen implements Gen<JsObj> {
                                .collect(Collectors.toList());
         return this;
     }
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
     public JsObjGen set(final String key,
                         final Gen<? extends JsValue> gen
@@ -2409,11 +2328,7 @@ public final class JsObjGen implements Gen<JsObj> {
     }
 
     @Override
-<<<<<<< HEAD
-    public Supplier<JsObj> apply(final RandomGenerator gen) {
-=======
     public Supplier<JsObj> apply(final Random gen) {
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
         Supplier<List<String>> optionalCombinations =
                 Combinators.permutations(optionals)
                            .apply(SplitGen.DEFAULT.apply(gen));
@@ -2426,10 +2341,7 @@ public final class JsObjGen implements Gen<JsObj> {
         Supplier<List<String>> nullableCombinations =
                 Combinators.permutations(nullables)
                            .apply(SplitGen.DEFAULT.apply(gen));
-<<<<<<< HEAD
-=======
 
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
         Supplier<Boolean> isRemoveNullables =
                 nullables.isEmpty() ?
                 () -> false :
@@ -2437,26 +2349,13 @@ public final class JsObjGen implements Gen<JsObj> {
         return () ->
         {
             JsObj obj = JsObj.empty();
-<<<<<<< HEAD
-            for (final var pair : bindings.entrySet()) {
-=======
             for (  Map.Entry<String, Gen<? extends JsValue>> pair : bindings.entrySet()) {
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
                 final JsValue value = pair.getValue().apply(gen)
                                           .get();
                 obj = obj.set(pair.getKey(),
                               value
                 );
             }
-<<<<<<< HEAD
-            if (isRemoveOptionals.get()) {
-                final List<String> r = optionalCombinations.get();
-                for (var s : r) obj = obj.delete(s);
-            }
-            if (isRemoveNullables.get()) {
-                final List<String> r = nullableCombinations.get();
-                for (var s : r)
-=======
             if (Boolean.TRUE.equals(isRemoveOptionals.get())) {
                 final List<String> r = optionalCombinations.get();
                 for (String s : r) obj = obj.delete(s);
@@ -2464,7 +2363,6 @@ public final class JsObjGen implements Gen<JsObj> {
             if (Boolean.TRUE.equals(isRemoveNullables.get())) {
                 final List<String> r = nullableCombinations.get();
                 for (String s : r)
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
                     obj = obj.set(s,
                                   JsNull.NULL);
             }

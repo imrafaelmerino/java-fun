@@ -1,10 +1,7 @@
 package jsonvalues;
 
 import fun.optic.Option;
-<<<<<<< HEAD
-=======
 import fun.tuple.Pair;
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

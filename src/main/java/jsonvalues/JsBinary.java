@@ -61,29 +61,6 @@ public final class JsBinary extends JsPrimitive {
         return new JsBinary(requireNonNull(Base64.getDecoder().decode(base64)));
     }
 
-<<<<<<< HEAD
-    private JsBinary(final byte[] value) {
-        this.value = value;
-    }
-
-    /**
-     * prism between the sum type JsValue and JsBinary
-     */
-    public static final Prism<JsValue, byte[]> prism =
-            new Prism<>(s -> {
-                if (s.isBinary())
-                    return Optional.of(s.toJsBinary().value);
-                if (s.isStr()) {
-                    return JsStr.base64Prism.getOptional.apply(s.toJsStr().value);
-                }
-                return Optional.empty();
-            },
-                    JsBinary::of
-            );
-
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     @Override
     public int id() {
         return TYPE_ID;
@@ -110,14 +87,9 @@ public final class JsBinary extends JsPrimitive {
         if (o == null) return false;
         if (o instanceof JsValue) {
             return JsBinary.prism.getOptional.apply(((JsValue) o))
-<<<<<<< HEAD
-                    .map(bytes -> Arrays.equals(bytes, value))
-                    .orElse(false);
-=======
                                              .map(bytes -> Arrays.equals(bytes,
                                                                          value))
                                              .orElse(false);
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
         }
         return false;
     }

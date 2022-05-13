@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import fun.optic.Prism;
-<<<<<<< HEAD
-=======
 import fun.tuple.Pair;
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 import io.vavr.Tuple2;
 import io.vavr.collection.LinkedHashMap;
 import io.vavr.collection.Map;

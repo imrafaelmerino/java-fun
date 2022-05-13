@@ -10,11 +10,7 @@ final class JsValuesInternalError extends RuntimeException {
     private JsValuesInternalError(final String message) {
         super(String.format("Create an issue in https://github.com/imrafaelmerino/values: %s.",
                             message
-<<<<<<< HEAD
-                           ));
-=======
         ));
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
     }
 
     static JsValuesInternalError arrayOptionNotImplemented(final String option) {

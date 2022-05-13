@@ -105,11 +105,7 @@ public class TestJsArray {
                                                        JsInt.of(1)
                                          )
         );
-<<<<<<< HEAD
-        JsArray newArr = arr.delete(arr.size()-1);
-=======
         JsArray newArr = arr.delete(arr.size() - 1);
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
         Assertions.assertEquals(2,
                                 arr.size()
@@ -1236,9 +1232,5 @@ public class TestJsArray {
     }
 
 <<<<<<< HEAD
-
-
-=======
->>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
 }

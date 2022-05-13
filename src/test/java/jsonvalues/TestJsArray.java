@@ -1231,6 +1231,5 @@ public class TestJsArray {
         );
     }
 
-<<<<<<< HEAD
 
 }

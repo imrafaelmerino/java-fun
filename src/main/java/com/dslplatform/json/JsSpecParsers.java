@@ -329,7 +329,7 @@ public class JsSpecParsers {
             if (value == JsNull.NULL) return value;
             else {
                 final Optional<JsError> opErr = testTypeAndSpec(JsValue::isStr,
-                                                              v -> v.toJsStr().value,
+                                                                v -> v.toJsStr().value,
                                                                 predicate,
                                                                 () -> new IllegalStateException("Internal error.JsStrDeserializer.nullOrValue didn't return neither null or a JsStr as expected.")
                 ).apply(value);
@@ -572,7 +572,7 @@ public class JsSpecParsers {
                         ).apply(value);
                 if (!opErr.isPresent()) return value;
                 else throw newParseException.apply(reader,
-                                             opErr.get());
+                                                   opErr.get());
 
             }
         };

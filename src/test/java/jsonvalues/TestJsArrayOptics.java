@@ -2,6 +2,10 @@ package jsonvalues;
 
 
 import fun.optic.Lens;
+<<<<<<< HEAD
+=======
+import fun.tuple.Pair;
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,59 +14,63 @@ import java.math.BigInteger;
 
 public class TestJsArrayOptics {
 
-   @Test
+    @Test
     public void testBigDecLenses() {
 
-       JsPath path = JsPath.path("/0/b/c");
-       JsArray a = JsArray.of(JsPair.of(path,
-                                    BigInteger.TEN
-                                   )
-                         );
+        JsPath path = JsPath.path("/0/b/c");
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsBigInt.of(BigInteger.TEN)
+                               )
+        );
 
-       Lens<JsArray, BigInteger> lens = JsArray.lens.integralNum(path);
+        Lens<JsArray, BigInteger> lens = JsArray.lens.integralNum(path);
 
-       Assertions.assertEquals( BigInteger.TEN,lens.get.apply(a));
-
-
-       JsArray b = lens.set.apply(BigInteger.ONE)
-                             .apply(a);
-
-       Assertions.assertEquals( BigInteger.ONE,lens.get.apply(b));
-
-       JsArray c = lens.modify.apply(i -> i.pow(2))
-                                .apply(a);
-
-       Assertions.assertEquals( BigInteger.valueOf(100),lens.get.apply(c));
+        Assertions.assertEquals(BigInteger.TEN,
+                                lens.get.apply(a));
 
 
+        JsArray b = lens.set.apply(BigInteger.ONE)
+                            .apply(a);
 
-   }
+        Assertions.assertEquals(BigInteger.ONE,
+                                lens.get.apply(b));
+
+        JsArray c = lens.modify.apply(i -> i.pow(2))
+                               .apply(a);
+
+        Assertions.assertEquals(BigInteger.valueOf(100),
+                                lens.get.apply(c));
+
+
+    }
 
 
     @Test
     public void testStrLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     "abc"
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsStr.of("abc")
+                               )
+        );
 
         Lens<JsArray, String> lens = JsArray.lens.str(path);
 
-        Assertions.assertEquals( "abc",lens.get.apply(a));
+        Assertions.assertEquals("abc",
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply("abcd")
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals( "abcd",lens.get.apply(b));
+        Assertions.assertEquals("abcd",
+                                lens.get.apply(b));
 
         JsArray c = lens.modify.apply(String::toUpperCase)
-                             .apply(a);
+                               .apply(a);
 
-        Assertions.assertEquals( "ABC",lens.get.apply(c));
-
+        Assertions.assertEquals("ABC",
+                                lens.get.apply(c));
 
 
     }
@@ -72,25 +80,28 @@ public class TestJsArrayOptics {
     public void testDoubleLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     1.5
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsDouble.of(1.5)
+                               )
+        );
 
         Lens<JsArray, Double> lens = JsArray.lens.doubleNum(path);
 
-        Assertions.assertEquals( Double.valueOf(1.5),lens.get.apply(a));
+        Assertions.assertEquals(Double.valueOf(1.5),
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(10.5)
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals( Double.valueOf(10.5),lens.get.apply(b));
+        Assertions.assertEquals(Double.valueOf(10.5),
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->i+1.0)
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> i + 1.0)
+                               .apply(b);
 
-        Assertions.assertEquals( Double.valueOf(11.5),lens.get.apply(c));
+        Assertions.assertEquals(Double.valueOf(11.5),
+                                lens.get.apply(c));
 
 
     }
@@ -99,26 +110,28 @@ public class TestJsArrayOptics {
     public void testLongLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     Long.MAX_VALUE
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsLong.of(Long.MAX_VALUE)
+                               )
+        );
 
         Lens<JsArray, Long> lens = JsArray.lens.longNum(path);
 
-        Assertions.assertEquals( Long.valueOf(Long.MAX_VALUE),lens.get.apply(a));
+        Assertions.assertEquals(Long.valueOf(Long.MAX_VALUE),
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(Long.MIN_VALUE)
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals( Long.valueOf(Long.MIN_VALUE),lens.get.apply(b));
+        Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE),
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->i+1)
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> i + 1)
+                               .apply(b);
 
-        Assertions.assertEquals( Long.valueOf(Long.MIN_VALUE+1),lens.get.apply(c));
-
+        Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE + 1),
+                                lens.get.apply(c));
 
 
     }
@@ -127,26 +140,28 @@ public class TestJsArrayOptics {
     public void testIntegerLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     Integer.MAX_VALUE
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsInt.of(Integer.MAX_VALUE)
+                               )
+        );
 
         Lens<JsArray, Integer> lens = JsArray.lens.intNum(path);
 
-        Assertions.assertEquals( Integer.valueOf(Integer.MAX_VALUE),lens.get.apply(a));
+        Assertions.assertEquals(Integer.valueOf(Integer.MAX_VALUE),
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(Integer.MIN_VALUE)
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals( Integer.valueOf(Integer.MIN_VALUE),lens.get.apply(b));
+        Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE),
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->i+1)
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> i + 1)
+                               .apply(b);
 
-        Assertions.assertEquals( Integer.valueOf(Integer.MIN_VALUE+1),lens.get.apply(c));
-
+        Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE + 1),
+                                lens.get.apply(c));
 
 
     }
@@ -155,26 +170,28 @@ public class TestJsArrayOptics {
     public void testDecimalLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                    JsBigDec.of(new BigDecimal("1.11"))
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsBigDec.of(new BigDecimal("1.11"))
+                               )
+        );
 
         Lens<JsArray, BigDecimal> lens = JsArray.lens.decimalNum(path);
 
-        Assertions.assertEquals(new BigDecimal("1.11") ,lens.get.apply(a));
+        Assertions.assertEquals(new BigDecimal("1.11"),
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(new BigDecimal("10.11"))
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals(new BigDecimal("10.11"),lens.get.apply(b));
+        Assertions.assertEquals(new BigDecimal("10.11"),
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->i.plus().add(BigDecimal.valueOf(10.0)))
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> i.plus().add(BigDecimal.valueOf(10.0)))
+                               .apply(b);
 
-        Assertions.assertEquals( new BigDecimal("20.11"),lens.get.apply(c));
-
+        Assertions.assertEquals(new BigDecimal("20.11"),
+                                lens.get.apply(c));
 
 
     }
@@ -184,26 +201,28 @@ public class TestJsArrayOptics {
     public void testBoolLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     JsBool.TRUE
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsBool.TRUE
+                               )
+        );
 
         Lens<JsArray, Boolean> lens = JsArray.lens.bool(path);
 
-        Assertions.assertEquals(true ,lens.get.apply(a));
+        Assertions.assertEquals(true,
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(false)
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals(false,lens.get.apply(b));
+        Assertions.assertEquals(false,
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->!i)
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> !i)
+                               .apply(b);
 
-        Assertions.assertEquals(true,lens.get.apply(c));
-
+        Assertions.assertEquals(true,
+                                lens.get.apply(c));
 
 
     }
@@ -213,31 +232,33 @@ public class TestJsArrayOptics {
     public void testObjLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     JsObj.empty()
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsObj.empty()
+                               )
+        );
 
         Lens<JsArray, JsObj> lens = JsArray.lens.obj(path);
 
-        Assertions.assertEquals(JsObj.empty() ,lens.get.apply(a));
+        Assertions.assertEquals(JsObj.empty(),
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(JsObj.of("a",
-                                          JsInt.of(1)))
-                          .apply(a);
+                                            JsInt.of(1)))
+                            .apply(a);
 
         Assertions.assertEquals(JsObj.of("a",
-                                         JsInt.of(1)),lens.get.apply(b));
+                                         JsInt.of(1)),
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->i.set("b",
-                                             JsStr.of("hi")))
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> i.set("b",
+                                                 JsStr.of("hi")))
+                               .apply(b);
 
         Assertions.assertEquals(JsObj.of("a",
                                          JsInt.of(1)).set("b",
-                                                          JsStr.of("hi")),lens.get.apply(c));
-
+                                                          JsStr.of("hi")),
+                                lens.get.apply(c));
 
 
     }
@@ -246,27 +267,29 @@ public class TestJsArrayOptics {
     public void testArrayLenses() {
 
         JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.of(JsPair.of(path,
-                                     JsArray.empty()
-                                    )
-                          );
+        JsArray a = JsArray.of(new Pair<>(path,
+                                          JsArray.empty()
+                               )
+        );
 
         Lens<JsArray, JsArray> lens = JsArray.lens.array(path);
 
-        Assertions.assertEquals(JsArray.empty() ,lens.get.apply(a));
+        Assertions.assertEquals(JsArray.empty(),
+                                lens.get.apply(a));
 
 
         JsArray b = lens.set.apply(JsArray.empty().append(JsInt.of(1)))
-                          .apply(a);
+                            .apply(a);
 
-        Assertions.assertEquals(JsArray.empty().append(JsInt.of(1)),lens.get.apply(b));
+        Assertions.assertEquals(JsArray.empty().append(JsInt.of(1)),
+                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i->i.append(JsInt.of(2)))
-                             .apply(b);
+        JsArray c = lens.modify.apply(i -> i.append(JsInt.of(2)))
+                               .apply(b);
 
         Assertions.assertEquals(JsArray.empty().append(JsInt.of(1),
-                                                       JsInt.of(2)),lens.get.apply(c));
-
+                                                       JsInt.of(2)),
+                                lens.get.apply(c));
 
 
     }

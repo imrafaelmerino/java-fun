@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.INSTANT_EXPECTED;
 class JsInstantSpec extends AbstractPredicateSpec implements JsValuePredicate {
     JsInstantSpec(final boolean required,
                   final boolean nullable
-                 ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -47,7 +47,7 @@ class JsInstantSpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   INSTANT_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

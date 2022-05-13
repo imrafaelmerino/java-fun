@@ -17,10 +17,10 @@ class JsStrSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicat
     JsStrSuchThatSpec(final boolean required,
                       final boolean nullable,
                       final Function<String, Optional<JsError>> predicate
-                     ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -49,7 +49,7 @@ class JsStrSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicat
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofStrSuchThat(predicate,
                                                     nullable
-                                                   );
+        );
     }
 
     @Override
@@ -58,7 +58,7 @@ class JsStrSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicat
                                                                            STRING_EXPECTED,
                                                                            required,
                                                                            nullable
-                                                                        )
+                                                  )
                                                                  .apply(value);
 
         if (error.isPresent() || value.isNull()) return error;

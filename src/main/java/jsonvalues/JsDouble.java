@@ -24,6 +24,7 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      */
     public static final Prism<JsValue, Double> prism =
             new Prism<>(s ->
+<<<<<<< HEAD
             {
                 if (s.isDouble())
                     return Optional.of(s.toJsDouble().value);
@@ -32,6 +33,16 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
                 return Optional.empty();
             },
                     JsDouble::of
+=======
+                        {
+                            if (s.isDouble())
+                                return Optional.of(s.toJsDouble().value);
+                            if (s.isDecimal()) return s.toJsBigDec()
+                                                       .doubleValueExact();
+                            return Optional.empty();
+                        },
+                        JsDouble::of
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
             );
     /**
      * The double value.
@@ -40,6 +51,16 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
 
     private JsDouble(final double value) {
         this.value = value;
+    }
+
+    /**
+     * Static factory method to create a JsDouble from a double primitive type.
+     *
+     * @param n the double primitive type
+     * @return a new JsDouble
+     */
+    public static JsDouble of(double n) {
+        return new JsDouble(n);
     }
 
     @Override
@@ -180,16 +201,6 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
      */
     public JsDouble map(DoubleUnaryOperator fn) {
         return JsDouble.of(requireNonNull(fn).applyAsDouble(value));
-    }
-
-    /**
-     * Static factory method to create a JsDouble from a double primitive type.
-     *
-     * @param n the double primitive type
-     * @return a new JsDouble
-     */
-    public static JsDouble of(double n) {
-        return new JsDouble(n);
     }
 
     /**

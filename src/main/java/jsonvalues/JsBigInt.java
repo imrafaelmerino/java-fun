@@ -37,6 +37,16 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
         this.value = value;
     }
 
+    /**
+     * Static factory method to create a JsBigInt from BigInteger objects.
+     *
+     * @param n the big integer
+     * @return a new JsBigInt
+     */
+    public static JsBigInt of(BigInteger n) {
+        return new JsBigInt(requireNonNull(n));
+    }
+
     @Override
     public int id() {
         return TYPE_ID;
@@ -180,16 +190,6 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      */
     public JsBigInt map(UnaryOperator<BigInteger> fn) {
         return JsBigInt.of(requireNonNull(fn).apply(value));
-    }
-
-    /**
-     * Static factory method to create a JsBigInt from BigInteger objects.
-     *
-     * @param n the big integer
-     * @return a new JsBigInt
-     */
-    public static JsBigInt of(BigInteger n) {
-        return new JsBigInt(requireNonNull(n));
     }
 
     /**

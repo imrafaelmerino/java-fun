@@ -5,6 +5,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import fun.optic.Prism;
+<<<<<<< HEAD
+=======
+import fun.tuple.Pair;
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 import io.vavr.collection.Vector;
 
 import java.io.IOException;
@@ -87,9 +91,11 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @return an immutable JsArray
      * @throws UserError if an elem of a pair is mutable
      */
-    public static JsArray of(final JsPair pair,
-                             final JsPair... others
+    @SafeVarargs
+    public static JsArray of(final Pair<JsPath, JsValue> pair,
+                             final Pair<JsPath, JsValue>... others
     ) {
+<<<<<<< HEAD
         JsArray arr = JsArray.EMPTY.set(pair.path,
                 pair.value
         );
@@ -97,6 +103,17 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
             arr = arr.set(p.path,
                     p.value
+=======
+        Objects.requireNonNull(pair);
+        Objects.requireNonNull(others);
+
+        JsArray arr = JsArray.EMPTY.set(pair.first(),
+                                        pair.second());
+        for (Pair<JsPath, JsValue> p : others) {
+
+            arr = arr.set(p.first(),
+                          p.second()
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
             );
         }
         return arr;
@@ -163,21 +180,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                 e2,
                 e3
         ).append(e4);
-    }
-
-    /**
-     * Adds one or more elements, starting from the first, to the back of this array.
-     *
-     * @param e      the JsValue to be added to the back.
-     * @param others more optional JsValue to be added to the back
-     * @return a new JsArray
-     */
-    public JsArray append(final JsValue e,
-                          final JsValue... others
-    ) {
-        Vector<JsValue> acc = this.seq.append(requireNonNull(e));
-        for (JsValue other : requireNonNull(others)) acc = acc.append(requireNonNull(other));
-        return new JsArray(acc);
     }
 
     /**
@@ -453,12 +455,13 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         }
     }
 
-    static Stream<JsPair> streamOfArr(final JsArray array,
-                                      final JsPath path
+    static Stream<Pair<JsPath, JsValue>> streamOfArr(final JsArray array,
+                                                     final JsPath path
     ) {
 
 
         requireNonNull(path);
+<<<<<<< HEAD
         return requireNonNull(array).ifEmptyElse(() -> Stream.of(JsPair.of(path,
                         array
                 )),
@@ -477,6 +480,26 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                         )
                                         .apply(pair.value)
                         )
+=======
+        return requireNonNull(array).ifEmptyElse(() -> Stream.of(new Pair<>(path,
+                                                                            array
+                                                 )),
+                                                 () -> range(0,
+                                                             array.size()
+                                                 ).mapToObj(pair -> new Pair<>(path.index(pair),
+                                                                               array.get(Index.of(pair))
+                                                  ))
+                                                  .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
+                                                                                                        pair.first()
+                                                                                       ),
+                                                                                       a -> streamOfArr(a,
+                                                                                                        pair.first()
+                                                                                       ),
+                                                                                       e -> Stream.of(pair)
+                                                                           )
+                                                                           .apply(pair.second())
+                                                  )
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
         );
 
 
@@ -586,6 +609,21 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         }
 
         return result;
+    }
+
+    /**
+     * Adds one or more elements, starting from the first, to the back of this array.
+     *
+     * @param e      the JsValue to be added to the back.
+     * @param others more optional JsValue to be added to the back
+     * @return a new JsArray
+     */
+    public JsArray append(final JsValue e,
+                          final JsValue... others
+    ) {
+        Vector<JsValue> acc = this.seq.append(requireNonNull(e));
+        for (JsValue other : requireNonNull(others)) acc = acc.append(requireNonNull(other));
+        return new JsArray(acc);
     }
 
     /**
@@ -1007,10 +1045,17 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     private JsValue get(final Position pos) {
         return requireNonNull(pos).match(key -> JsNothing.NOTHING,
+<<<<<<< HEAD
                 index ->
                         (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
                                 JsNothing.NOTHING :
                                 this.seq.get(index)
+=======
+                                         index ->
+                                                 (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+                                                 JsNothing.NOTHING :
+                                                 this.seq.get(index)
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
         );
     }
 
@@ -1350,6 +1395,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public JsArray delete(final JsPath path) {
         if (requireNonNull(path).isEmpty()) return this;
         return path.head()
+<<<<<<< HEAD
                 .match(head -> this,
                         index ->
                         {
@@ -1365,6 +1411,23 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                     )
                                             .apply(seq.get(index));
                         }
+=======
+                   .match(head -> this,
+                          index ->
+                          {
+                              final int maxIndex = seq.size() - 1;
+                              if (index < 0 || index > maxIndex) return this;
+                              final JsPath tail = path.tail();
+                              return tail.isEmpty() ?
+                                     new JsArray(seq.removeAt(index)) :
+                                     ifJsonElse(json -> new JsArray(seq.update(index,
+                                                                               json.delete(tail)
+                                                )),
+                                                e -> this
+                                     )
+                                             .apply(seq.get(index));
+                          }
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
                 );
 
@@ -1377,15 +1440,16 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     @Override
-    public Stream<JsPair> streamAll() {
+    public Stream<Pair<JsPath, JsValue>> streamAll() {
         return streamOfArr(this,
                 JsPath.empty()
         );
     }
 
     @Override
-    public Stream<JsPair> stream() {
+    public Stream<Pair<JsPath, JsValue>> stream() {
         return IntStream.range(0,
+<<<<<<< HEAD
                         size()
                 )
                 .mapToObj(i ->
@@ -1395,6 +1459,17 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                             get(path)
                     );
                 });
+=======
+                               size()
+                        )
+                        .mapToObj(i ->
+                                  {
+                                      final JsPath path = JsPath.fromIndex(i);
+                                      return new Pair<>(path,
+                                                        get(path)
+                                      );
+                                  });
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 
     }
 
@@ -1706,7 +1781,12 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         if (index == arr.size()) return arr.append(e);
 
 
+<<<<<<< HEAD
         if (index < arr.size()) return arr.update(index, e);
+=======
+        if (index < arr.size()) return arr.update(index,
+                                                  e);
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
         for (int j = arr.size(); j < index; j++) {
             arr = arr.append(pad);
         }

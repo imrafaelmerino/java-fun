@@ -25,6 +25,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
      */
     public static final Prism<JsValue, BigDecimal> prism =
             new Prism<>(s ->
+<<<<<<< HEAD
             {
                 if (s.isDouble())
                     return Optional.of(BigDecimal.valueOf(s.toJsDouble().value));
@@ -33,6 +34,16 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
                 return Optional.empty();
             },
                     JsBigDec::of
+=======
+                        {
+                            if (s.isDouble())
+                                return Optional.of(BigDecimal.valueOf(s.toJsDouble().value));
+                            if (s.isBigDec())
+                                return Optional.of(s.toJsBigDec().value);
+                            return Optional.empty();
+                        },
+                        JsBigDec::of
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
             );
     /**
      * The big decimal value
@@ -41,6 +52,16 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
 
     private JsBigDec(final BigDecimal value) {
         this.value = value;
+    }
+
+    /**
+     * Static factory method to create a JsBigDec from a BigDecimal object.
+     *
+     * @param n the big decimal
+     * @return a new JsBigDec
+     */
+    public static JsBigDec of(BigDecimal n) {
+        return new JsBigDec(requireNonNull(n));
     }
 
     @Override
@@ -211,6 +232,7 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
+<<<<<<< HEAD
      * Static factory method to create a JsBigDec from a BigDecimal object.
      *
      * @param n the big decimal
@@ -221,6 +243,8 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     }
 
     /**
+=======
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
      * Tests the value of this json big-decimal on a predicate
      *
      * @param predicate the predicate

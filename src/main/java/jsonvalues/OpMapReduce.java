@@ -8,7 +8,8 @@ import java.util.function.*;
 
 final class OpMapReduce {
 
-    private OpMapReduce(){}
+    private OpMapReduce() {
+    }
 
     static <T> Optional<T> reduceAllObj(final JsObj obj,
                                         final Predicate<? super JsPrimitive> predicate,
@@ -22,23 +23,21 @@ final class OpMapReduce {
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-            else if (head._2.isArray()) {
+                );
+            } else if (head._2.isArray()) {
                 acc = reduceAllArr(head._2.toJsArray(),
                                    predicate,
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-            else {
+                );
+            } else {
                 acc = reducer(head._2.toJsPrimitive(),
                               acc,
                               predicate,
                               map,
                               op
-                             );
+                );
             }
 
         }
@@ -57,25 +56,22 @@ final class OpMapReduce {
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-
-            else if (value.isArray()) {
+                );
+            } else if (value.isArray()) {
                 acc = reduceAllArr(value.toJsArray(),
                                    predicate,
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-            else {
+                );
+            } else {
                 acc = reducer(
                         value.toJsPrimitive(),
                         acc,
                         predicate,
                         map,
                         op
-                             );
+                );
             }
         }
         return acc;
@@ -94,7 +90,7 @@ final class OpMapReduce {
                               predicate,
                               map,
                               op
-                             );
+                );
             }
         }
         return acc;
@@ -111,8 +107,8 @@ final class OpMapReduce {
         final T mapped = map.apply(value);
         final Optional<T> t = acc.map(it -> op.apply(it,
                                                      mapped
-                                                    )
-                                     );
+                                      )
+        );
         if (t.isPresent()) return t;
         return Optional.ofNullable(mapped);
 
@@ -131,7 +127,7 @@ final class OpMapReduce {
                               predicate,
                               map,
                               op
-                             );
+                );
             }
         }
         return acc;
@@ -150,7 +146,7 @@ final class OpMapReduce {
                               predicate,
                               map,
                               op
-                             );
+                );
             }
         }
         return acc;
@@ -165,14 +161,14 @@ final class OpMapReduce {
                                            final BinaryOperator<T> op) {
         if (!predicate.test(key,
                             value
-                           )) return acc;
+        )) return acc;
         final T mapped = map.apply(key,
                                    value
-                                  );
+        );
         final Optional<T> t = acc.map(it -> op.apply(it,
                                                      mapped
-                                                    )
-                                     );
+                                      )
+        );
         if (t.isPresent()) return t;
         return Optional.ofNullable(mapped);
 
@@ -193,7 +189,7 @@ final class OpMapReduce {
                               predicate,
                               map,
                               op
-                             );
+                );
             }
         }
 
@@ -209,14 +205,14 @@ final class OpMapReduce {
 
         if (!predicate.test(i,
                             value
-                           )) return acc;
+        )) return acc;
         final T mapped = map.apply(i,
                                    value
-                                  );
+        );
         final Optional<T> t = acc.map(it -> op.apply(it,
                                                      mapped
-                                                    )
-                                     );
+                                      )
+        );
         if (t.isPresent()) return t;
         return Optional.ofNullable(mapped);
 
@@ -231,14 +227,14 @@ final class OpMapReduce {
 
         if (!predicate.test(path,
                             value
-                           )) return acc;
+        )) return acc;
         final T mapped = map.apply(path,
                                    value
-                                  );
+        );
         final Optional<T> t = acc.map(it -> op.apply(it,
                                                      mapped
-                                                    )
-                                     );
+                                      )
+        );
         if (t.isPresent()) return t;
         return Optional.ofNullable(mapped);
     }
@@ -259,25 +255,23 @@ final class OpMapReduce {
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-            else if (head._2.isArray()) {
+                );
+            } else if (head._2.isArray()) {
                 acc = reduceAllArr(head._2.toJsArray(),
                                    startingPath.index(-1),
                                    predicate,
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-            else {
+                );
+            } else {
                 acc = reducer(headPath,
                               head._2.toJsPrimitive(),
                               acc,
                               predicate,
                               map,
                               op
-                             );
+                );
             }
         }
         return acc;
@@ -300,26 +294,23 @@ final class OpMapReduce {
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-
-            else if (value.isArray()) {
+                );
+            } else if (value.isArray()) {
                 acc = reduceAllArr(value.toJsArray(),
                                    headPath,
                                    predicate,
                                    map,
                                    op,
                                    acc
-                                  );
-            }
-            else {
+                );
+            } else {
                 acc = reducer(headPath,
                               value.toJsPrimitive(),
                               acc,
                               predicate,
                               map,
                               op
-                             );
+                );
             }
         }
         return acc;

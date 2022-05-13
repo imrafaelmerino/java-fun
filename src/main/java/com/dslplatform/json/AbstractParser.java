@@ -7,15 +7,17 @@ import jsonvalues.JsValue;
 abstract class AbstractParser {
     static final JsObj EMPTY_OBJ = JsObj.empty();
 
-    JsValue nullOrValue(final JsonReader<?> reader){
+    JsValue nullOrValue(final JsonReader<?> reader) {
         try {
-            return reader.wasNull() ? JsNull.NULL : value(reader);
+            return reader.wasNull() ?
+                   JsNull.NULL :
+                   value(reader);
         } catch (ParsingException e) {
             throw new JsParserException(e.getMessage());
         }
     }
 
-    abstract JsValue value(final JsonReader<?> reader) ;
+    abstract JsValue value(final JsonReader<?> reader);
 
 
 }

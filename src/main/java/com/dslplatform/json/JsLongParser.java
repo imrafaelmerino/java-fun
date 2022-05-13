@@ -2,6 +2,7 @@ package com.dslplatform.json;
 
 import jsonvalues.JsLong;
 import jsonvalues.spec.JsError;
+
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.LongFunction;
@@ -19,9 +20,9 @@ final class JsLongParser extends AbstractParser {
 
     JsLong valueSuchThat(final JsonReader<?> reader,
                          final LongFunction<Optional<JsError>> fn
-                        ) {
+    ) {
         try {
-            final long            value  = MyNumberConverter.deserializeLong(reader);
+            final long value = MyNumberConverter.deserializeLong(reader);
             final Optional<JsError> result = fn.apply(value);
             if (!result.isPresent()) return JsLong.of(value);
             throw reader.newParseError(result.toString());

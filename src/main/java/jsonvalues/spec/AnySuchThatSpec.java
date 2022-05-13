@@ -14,7 +14,7 @@ class AnySuchThatSpec implements JsValuePredicate {
 
     AnySuchThatSpec(final boolean required,
                     final Function<JsValue, Optional<JsError>> predicate
-                   ) {
+    ) {
         this.required = required;
         this.predicate = predicate;
     }

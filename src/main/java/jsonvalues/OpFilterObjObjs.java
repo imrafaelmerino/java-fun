@@ -15,10 +15,8 @@ final class OpFilterObjObjs {
 
     ) {
         for (final Tuple2<String, JsValue> next : json) {
-            if (next._2.isObj() && predicate.negate()
-                                            .test(next._1,
-                                                  next._2.toJsObj()
-                                            )) {
+            if (next._2.isObj() && predicate.negate().test(next._1,
+                                                           next._2.toJsObj())) {
                 json = json.delete(next._1);
 
             }
@@ -28,32 +26,25 @@ final class OpFilterObjObjs {
 
     static JsObj filterAll(JsObj json,
                            final JsPath startingPath,
-                           final BiPredicate<? super JsPath, ? super JsObj> predicate
-    ) {
+                           final BiPredicate<? super JsPath, ? super JsObj> predicate) {
         for (final Tuple2<String, JsValue> next : json) {
             if (next._2.isObj()) {
                 JsPath path = startingPath.key(next._1);
-                if (predicate.negate()
-                             .test(path,
-                                   next._2.toJsObj()
-                             )) {
+                if (predicate.negate().test(path,
+                                            next._2.toJsObj())) {
                     json = json.delete(next._1);
                 } else {
                     json = json.set(next._1,
                                     filterAll(next._2.toJsObj(),
                                               path,
-                                              predicate
-                                    )
-                    );
+                                              predicate));
                 }
             } else if (next._2.isArray()) {
                 JsPath path = startingPath.key(next._1);
                 json = json.set(next._1,
                                 OpFilterArrObjs.filterAll(next._2.toJsArray(),
                                                           path,
-                                                          predicate
-                                )
-                );
+                                                          predicate));
             }
         }
         return json;
@@ -62,9 +53,7 @@ final class OpFilterObjObjs {
     static JsObj filter(JsObj json,
                         final Predicate<? super JsObj> predicate) {
         for (final Tuple2<String, JsValue> next : json) {
-            if (next._2.isObj() && predicate.negate()
-                                            .test(next._2.toJsObj()
-                                            )) {
+            if (next._2.isObj() && predicate.negate().test(next._2.toJsObj())) {
                 json = json.delete(next._1);
             }
         }
@@ -75,23 +64,17 @@ final class OpFilterObjObjs {
                            final Predicate<? super JsObj> predicate) {
         for (final Tuple2<String, JsValue> next : json) {
             if (next._2.isObj()) {
-                if (predicate.negate()
-                             .test(next._2.toJsObj()
-                             )) {
+                if (predicate.negate().test(next._2.toJsObj())) {
                     json = json.delete(next._1);
                 } else {
                     json = json.set(next._1,
                                     filterAll(next._2.toJsObj(),
-                                              predicate
-                                    )
-                    );
+                                              predicate));
                 }
             } else if (next._2.isArray()) {
                 json = json.set(next._1,
                                 OpFilterArrObjs.filterAll(next._2.toJsArray(),
-                                                          predicate
-                                )
-                );
+                                                          predicate));
             }
         }
         return json;

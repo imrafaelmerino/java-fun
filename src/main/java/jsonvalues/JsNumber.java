@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import java.io.IOException;
 
 /**
- Represents an immutable json number. It's a marker interface for the types {@link JsInt}, {@link JsLong}, {@link JsDouble}, {@link JsBigInt} and {@link JsBigDec}
+ * Represents an immutable json number. It's a marker interface for the types {@link JsInt}, {@link JsLong}, {@link JsDouble}, {@link JsBigInt} and {@link JsBigDec}
  */
 public abstract class JsNumber extends JsPrimitive {
     static JsNumber of(JsonParser parser) throws IOException {

@@ -20,11 +20,13 @@ final class JsArrayOfValueParser extends JsArrayParser {
 
     JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
                                     final Function<JsValue, Optional<JsError>> fn
-                                   ){
+    ) {
         try {
-            return reader.wasNull() ? JsNull.NULL : arrayEachSuchThat(reader,
-                                                                      fn
-                                                                     );
+            return reader.wasNull() ?
+                   JsNull.NULL :
+                   arrayEachSuchThat(reader,
+                                     fn
+                   );
         } catch (ParsingException e) {
             throw new JsParserException(e.getMessage());
 
@@ -34,17 +36,17 @@ final class JsArrayOfValueParser extends JsArrayParser {
 
     JsArray arrayEachSuchThat(final JsonReader<?> reader,
                               final Function<JsValue, Optional<JsError>> fn
-                             ){
+    ) {
         try {
             if (ifIsEmptyArray(reader)) return EMPTY;
             JsArray buffer = EMPTY.append(parser.valueSuchThat(reader,
                                                                fn
-                                                              ));
+            ));
             while (reader.getNextToken() == ',') {
                 reader.getNextToken();
                 buffer = buffer.append(parser.valueSuchThat(reader,
                                                             fn
-                                                           ));
+                ));
             }
             reader.checkArrayEnd();
             return buffer;

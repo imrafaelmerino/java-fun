@@ -8,12 +8,12 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 /**
- represents the index of a value in a json array.
+ * represents the index of a value in a json array.
  */
 public final class Index implements Position {
 
     /**
-     prism between the sum type Position and Index
+     * prism between the sum type Position and Index
      */
     public static final Prism<Position, Integer> prism = new Prism<>(
             pos -> pos.isIndex() ?
@@ -23,7 +23,7 @@ public final class Index implements Position {
     );
 
     /**
-     The index number.
+     * The index number.
      */
     public final int n;
 
@@ -32,26 +32,25 @@ public final class Index implements Position {
     }
 
     /**
-     Returns a new instance witch represents the given index in an array. The special index -1
-     points to the last element of an array.
-
-     @param index the given position
-     @return an Index object
-     @throws IndexOutOfBoundsException if the index is less than -1
+     * Returns a new instance witch represents the given index in an array.
+     *
+     * @param index the given position
+     * @return an Index object
+     * @throws IndexOutOfBoundsException if the index is less than -1
      */
     public static Index of(final int index) {
-        if (index < -1) throw new IndexOutOfBoundsException(String.format("%s is not between [-1,U+221E)",
-                                                                          index
-                                                                         ));
+        if (index < -1)
+            throw new IndexOutOfBoundsException(String.format("%s is not between [0,U+221E)",
+                                                              index));
         return new Index(index);
     }
 
     /**
-     Compares this index with another given position. If the given position is an index, both are
-     compared numerically, if it's a key, both are compared lexicographically.
-
-     @param o the given position
-     @return 0 if they are equal, +1 if this is greater, -1 otherwise
+     * Compares this index with another given position. If the given position is an index, both are
+     * compared numerically, if it's a key, both are compared lexicographically.
+     *
+     * @param o the given position
+     * @return 0 if they are equal, +1 if this is greater, -1 otherwise
      */
     @Override
     public int compareTo(final Position o) {
@@ -59,14 +58,14 @@ public final class Index implements Position {
                 .isIndex())
             return Integer.compare(n,
                                    o.asIndex().n
-                                  );
+            );
         return toString().compareTo(o.asKey().name);
     }
 
     /**
-     throws an UserError exception.
-
-     @throws UserError an Index can't be cast into a Key
+     * throws an UserError exception.
+     *
+     * @throws UserError an Index can't be cast into a Key
      */
     @Override
     public Key asKey() {
@@ -74,9 +73,9 @@ public final class Index implements Position {
     }
 
     /**
-     Returns this index.
-
-     @return this object
+     * Returns this index.
+     *
+     * @return this object
      */
     @Override
     public Index asIndex() {
@@ -84,9 +83,9 @@ public final class Index implements Position {
     }
 
     /**
-     Returns true.
-
-     @return true
+     * Returns true.
+     *
+     * @return true
      */
     @Override
     public boolean isIndex() {
@@ -94,9 +93,9 @@ public final class Index implements Position {
     }
 
     /**
-     Returns false.
-
-     @return false
+     * Returns false.
+     *
+     * @return false
      */
     @Override
     public boolean isKey() {
@@ -104,9 +103,9 @@ public final class Index implements Position {
     }
 
     /**
-     Returns the hashcode of this index.
-
-     @return the index value
+     * Returns the hashcode of this index.
+     *
+     * @return the index value
      */
     @Override
     public int hashCode() {
@@ -114,10 +113,10 @@ public final class Index implements Position {
     }
 
     /**
-     Returns true if that is an index and both have the same value.
-
-     @param that other object
-     @return true if both objects are indexes representing the same position
+     * Returns true if that is an index and both have the same value.
+     *
+     * @param that other object
+     * @return true if both objects are indexes representing the same position
      */
     @Override
     public boolean equals(final Object that) {
@@ -128,9 +127,9 @@ public final class Index implements Position {
     }
 
     /**
-     Returns the value of the index as a string.
-
-     @return the value of the index as a string
+     * Returns the value of the index as a string.
+     *
+     * @return the value of the index as a string
      */
     @Override
     public String toString() {

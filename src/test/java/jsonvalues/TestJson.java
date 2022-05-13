@@ -85,11 +85,12 @@ public class TestJson {
                                           "c",
                                           JsObj.empty()
                                  ),
-                                 "j", JsInstant.of(now)
+                                 "j",
+                                 JsInstant.of(now)
         );
 
         Assertions.assertEquals(now,
-                                 a.getInstant(JsPath.path("/j")));
+                                a.getInstant(JsPath.path("/j")));
 
         Assertions.assertEquals(1,
                                 (int) a.getInt(JsPath.path("/a")));

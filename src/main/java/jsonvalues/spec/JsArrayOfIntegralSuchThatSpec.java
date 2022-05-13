@@ -15,10 +15,10 @@ class JsArrayOfIntegralSuchThatSpec extends AbstractPredicateSpec implements JsV
     JsArrayOfIntegralSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
                                   final boolean required,
                                   final boolean nullable
-                                 ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.isArrayOfIntegral = new JsArrayOfIntegralSpec(required,
                                                            nullable
         );
@@ -51,7 +51,7 @@ class JsArrayOfIntegralSuchThatSpec extends AbstractPredicateSpec implements JsV
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfIntegralSuchThat(predicate,
                                                                 nullable
-                                                               );
+        );
     }
 
     @Override

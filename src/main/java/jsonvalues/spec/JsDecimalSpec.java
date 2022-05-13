@@ -12,10 +12,10 @@ class JsDecimalSpec extends AbstractPredicateSpec implements JsValuePredicate {
 
     JsDecimalSpec(final boolean required,
                   final boolean nullable
-                 ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -48,7 +48,7 @@ class JsDecimalSpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   DECIMAL_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

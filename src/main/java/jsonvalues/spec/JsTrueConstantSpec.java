@@ -12,10 +12,10 @@ class JsTrueConstantSpec extends AbstractPredicateSpec implements JsValuePredica
 
     JsTrueConstantSpec(final boolean required,
                        final boolean nullable
-                      ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -48,7 +48,7 @@ class JsTrueConstantSpec extends AbstractPredicateSpec implements JsValuePredica
                                   TRUE_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
     }
 }

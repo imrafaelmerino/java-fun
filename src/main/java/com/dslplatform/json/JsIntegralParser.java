@@ -23,7 +23,7 @@ final class JsIntegralParser extends AbstractParser {
 
     JsBigInt valueSuchThat(final JsonReader<?> reader,
                            final Function<BigInteger, Optional<JsError>> fn
-                          ) {
+    ) {
         try {
             final BigInteger value = MyNumberConverter.deserializeDecimal(reader)
                                                       .toBigIntegerExact();

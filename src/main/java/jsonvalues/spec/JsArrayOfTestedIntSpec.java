@@ -15,10 +15,10 @@ class JsArrayOfTestedIntSpec extends AbstractPredicateSpec implements JsValuePre
     JsArrayOfTestedIntSpec(final IntFunction<Optional<JsError>> predicate,
                            final boolean required,
                            final boolean nullable
-                          ) {
+    ) {
         super(required,
               nullable
-             );
+        );
         this.predicate = predicate;
     }
 
@@ -47,7 +47,7 @@ class JsArrayOfTestedIntSpec extends AbstractPredicateSpec implements JsValuePre
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfIntEachSuchThat(predicate,
                                                                nullable
-                                                              );
+        );
     }
 
     @Override
@@ -59,11 +59,11 @@ class JsArrayOfTestedIntSpec extends AbstractPredicateSpec implements JsValuePre
                                                     else return Optional.of(new JsError(v,
                                                                                         INT_EXPECTED
                                                                             )
-                                                                           );
+                                                    );
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

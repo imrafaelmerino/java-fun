@@ -3,6 +3,10 @@ package jsonvalues;
 
 import fun.optic.Lens;
 import fun.optic.Option;
+<<<<<<< HEAD
+=======
+import fun.tuple.Pair;
+>>>>>>> d43bc88ce46e08079b32242491e8d64ef7d72723
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +20,8 @@ public class TestJsObjOptics {
     public void testBigDecLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     BigInteger.TEN
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsBigInt.of(BigInteger.TEN)
                            )
         );
 
@@ -70,8 +74,8 @@ public class TestJsObjOptics {
     public void testStrLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     "abc"
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsStr.of("abc")
                            )
         );
 
@@ -101,8 +105,8 @@ public class TestJsObjOptics {
     public void testDoubleLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     1.5
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsDouble.of(1.5)
                            )
         );
 
@@ -131,8 +135,8 @@ public class TestJsObjOptics {
     public void testLongLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     Long.MAX_VALUE
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsLong.of(Long.MAX_VALUE)
                            )
         );
 
@@ -161,8 +165,8 @@ public class TestJsObjOptics {
     public void testIntegerLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     Integer.MAX_VALUE
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsInt.of(Integer.MAX_VALUE)
                            )
         );
 
@@ -191,8 +195,8 @@ public class TestJsObjOptics {
     public void testDecimalLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     JsBigDec.of(new BigDecimal("1.11"))
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsBigDec.of(new BigDecimal("1.11"))
                            )
         );
 
@@ -223,8 +227,8 @@ public class TestJsObjOptics {
     public void testBoolLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     JsBool.TRUE
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsBool.TRUE
                            )
         );
 
@@ -254,8 +258,8 @@ public class TestJsObjOptics {
     public void testObjLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     JsObj.empty()
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsObj.empty()
                            )
         );
 
@@ -295,8 +299,8 @@ public class TestJsObjOptics {
     public void testArrayLenses() {
 
         JsPath path = JsPath.path("/a/b/c");
-        JsObj a = JsObj.of(JsPair.of(path,
-                                     JsArray.empty()
+        JsObj a = JsObj.of(new Pair<>(path,
+                                      JsArray.empty()
                            )
         );
 
@@ -474,7 +478,7 @@ public class TestJsObjOptics {
         Assertions.assertEquals(optionalDec.get.apply(JsObj.empty()
                                                            .set("b",
                                                                 JsObj.of("c",
-                                                                          JsStr.of("hi"))
+                                                                         JsStr.of("hi"))
                                                            )),
                                 Optional.empty()
         );
@@ -482,7 +486,9 @@ public class TestJsObjOptics {
         JsObj s = JsObj.empty()
                        .set("a",
                             JsBigDec.of(BigDecimal.valueOf(1.5))
-                       ).set("b",JsObj.of("c",JsBigDec.of(BigDecimal.valueOf(0.5))));
+                       ).set("b",
+                             JsObj.of("c",
+                                      JsBigDec.of(BigDecimal.valueOf(0.5))));
         Assertions.assertEquals(Optional.of(BigDecimal.valueOf(1.5)),
                                 optionalInt.get.apply(s)
         );

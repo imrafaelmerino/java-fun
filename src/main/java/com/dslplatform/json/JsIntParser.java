@@ -9,7 +9,7 @@ import java.util.function.IntFunction;
 
 final class JsIntParser extends AbstractParser {
     @Override
-    JsInt value(final JsonReader<?> reader){
+    JsInt value(final JsonReader<?> reader) {
         try {
             return JsInt.of(MyNumberConverter.deserializeInt(reader));
         } catch (IOException e) {
@@ -19,9 +19,9 @@ final class JsIntParser extends AbstractParser {
 
     JsInt valueSuchThat(final JsonReader<?> reader,
                         final IntFunction<Optional<JsError>> fn
-                       ){
+    ) {
         try {
-            final int             value  = MyNumberConverter.deserializeInt(reader);
+            final int value = MyNumberConverter.deserializeInt(reader);
             final Optional<JsError> result = fn.apply(value);
             if (!result.isPresent()) return JsInt.of(value);
             throw reader.newParseError(result.toString());

@@ -13,16 +13,18 @@ import java.util.function.UnaryOperator;
 import static java.util.Objects.requireNonNull;
 
 /**
- Represents an immutable json string.
+ * Represents an immutable json string.
  */
-public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
+public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
 
     public static final int TYPE_ID = 2;
     /**
-     prism between the sum type JsValue and JsStr
+     * prism between the sum type JsValue and JsStr
      */
     public static final Prism<JsValue, String> prism =
-            new Prism<>(s -> s.isStr() ? Optional.of(s.toJsStr().value) : Optional.empty(),
+            new Prism<>(s -> s.isStr() ?
+                             Optional.of(s.toJsStr().value) :
+                             Optional.empty(),
                         JsStr::of
             );
 
@@ -35,7 +37,7 @@ public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
                     return Optional.empty();
                 }
             },
-                       bytes -> Base64.getEncoder().encodeToString(bytes)
+                        bytes -> Base64.getEncoder().encodeToString(bytes)
             );
 
     public static final Prism<String, Instant> instantPrism =
@@ -50,12 +52,22 @@ public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
             );
 
     /**
-     The string value.
+     * The string value.
      */
     public final String value;
 
     private JsStr(String value) {
         this.value = value;
+    }
+
+    /**
+     * Static factory method to create a JsStr from a string.
+     *
+     * @param str the string
+     * @return a new JsStr
+     */
+    public static JsStr of(String str) {
+        return new JsStr(requireNonNull(str));
     }
 
     @Override
@@ -74,9 +86,9 @@ public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
     }
 
     /**
-     Compares two {@code JsStr} objects lexicographically.
-
-     @see String#compareTo(String)
+     * Compares two {@code JsStr} objects lexicographically.
+     *
+     * @see String#compareTo(String)
      */
     @Override
     public int compareTo(final JsStr o) {
@@ -84,20 +96,19 @@ public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
     }
 
     /**
-     Tests this JsStr on a predicate.
-
-     @param predicate the predicate
-     @return true if this string satisfies the predicate
+     * Tests this JsStr on a predicate.
+     *
+     * @param predicate the predicate
+     * @return true if this string satisfies the predicate
      */
     public boolean test(Predicate<String> predicate) {
         return requireNonNull(predicate).test(value);
     }
 
-
     /**
-     Returns the hashcode of this json string.
-
-     @return hashcode of this JsStr
+     * Returns the hashcode of this json string.
+     *
+     * @return hashcode of this JsStr
      */
     @Override
     public int hashCode() {
@@ -105,34 +116,32 @@ public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
     }
 
     /**
-     Indicates whether some other object is "equal to" this json string.
-
-     @param that the reference object with which to compare.
-     @return true if <code>that</code> is a JsStr with the same value as <code>this</code> JsStr
+     * Indicates whether some other object is "equal to" this json string.
+     *
+     * @param that the reference object with which to compare.
+     * @return true if <code>that</code> is a JsStr with the same value as <code>this</code> JsStr
      */
     @Override
     public boolean equals(final Object that) {
         if (this == that) return true;
-        if (that == null ) return false;
-        if(that instanceof JsStr) {
+        if (that == null) return false;
+        if (that instanceof JsStr) {
             final JsStr thatStr = (JsStr) that;
             return Objects.equals(value,
                                   thatStr.value
-                                 );
-        }
-        else if(that instanceof JsInstant){
+            );
+        } else if (that instanceof JsInstant) {
             return JsStr.instantPrism.reverseGet.apply(((JsInstant) that).value).equals(value);
-        }
-        else if(that instanceof JsBinary){
+        } else if (that instanceof JsBinary) {
             return JsStr.base64Prism.reverseGet.apply(((JsBinary) that).value).equals(value);
         }
         return false;
     }
 
     /**
-     Returns the string representation of this json string which is its value quoted.
-
-     @return the value quoted.
+     * Returns the string representation of this json string which is its value quoted.
+     *
+     * @return the value quoted.
      */
     @Override
     public String toString() {
@@ -140,23 +149,13 @@ public final class JsStr extends JsPrimitive implements  Comparable<JsStr> {
     }
 
     /**
-     Maps this JsStr into another one.
-
-     @param fn the mapping function
-     @return a new JsStr
+     * Maps this JsStr into another one.
+     *
+     * @param fn the mapping function
+     * @return a new JsStr
      */
     public JsStr map(final UnaryOperator<String> fn) {
         return JsStr.of(requireNonNull(fn).apply(value));
-    }
-
-    /**
-     Static factory method to create a JsStr from a string.
-
-     @param str the string
-     @return a new JsStr
-     */
-    public static JsStr of(String str) {
-        return new JsStr(requireNonNull(str));
     }
 
     @Override

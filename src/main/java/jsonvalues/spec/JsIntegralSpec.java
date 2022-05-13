@@ -12,10 +12,10 @@ class JsIntegralSpec extends AbstractPredicateSpec implements JsValuePredicate {
 
     JsIntegralSpec(final boolean required,
                    final boolean nullable
-                  ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -48,7 +48,7 @@ class JsIntegralSpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   INTEGRAL_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

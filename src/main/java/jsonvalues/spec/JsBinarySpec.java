@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.BINARY_EXPECTED;
 class JsBinarySpec extends AbstractPredicateSpec implements JsValuePredicate {
     JsBinarySpec(final boolean required,
                  final boolean nullable
-                ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -47,7 +47,7 @@ class JsBinarySpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   BINARY_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.LONG_EXPECTED;
 class JsArrayOfLongSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
     JsArrayOfLongSpec(final boolean required,
                       final boolean nullable
-                     ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -50,7 +50,7 @@ class JsArrayOfLongSpec extends AbstractPredicateSpec implements JsValuePredicat
                                                 },
                                                 required,
                                                 nullable
-                                               )
+                        )
                         .apply(value);
     }
 }

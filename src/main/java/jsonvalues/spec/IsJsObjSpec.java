@@ -11,10 +11,10 @@ import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 class IsJsObjSpec extends AbstractPredicateSpec implements JsValuePredicate {
     IsJsObjSpec(final boolean required,
                 final boolean nullable
-               ) {
+    ) {
         super(required,
               nullable
-             );
+        );
     }
 
     @Override
@@ -47,7 +47,7 @@ class IsJsObjSpec extends AbstractPredicateSpec implements JsValuePredicate {
                                   OBJ_EXPECTED,
                                   required,
                                   nullable
-                                 )
+                        )
                         .apply(value);
 
     }

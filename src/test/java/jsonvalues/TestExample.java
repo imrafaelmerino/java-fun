@@ -38,9 +38,9 @@ public class TestExample {
                                                            "coordinates",
                                                            JsSpecs.tuple(JsSpecs.decimal,
                                                                          JsSpecs.decimal
-                                                                        )
-                                                          )
-                                         );
+                                                           )
+                                          )
+        );
 
         JsObj person = JsObj.of("name",
                                 JsStr.of("Rafael"),
@@ -50,7 +50,7 @@ public class TestExample {
                                 JsArray.of("Java",
                                            "Clojure",
                                            "Scala"
-                                          ),
+                                ),
                                 "age",
                                 JsInt.of(37),
                                 "address",
@@ -63,9 +63,9 @@ public class TestExample {
                                          "coordinates",
                                          JsArray.of(45.9,
                                                     18.6
-                                                   )
-                                        )
-                               );
+                                         )
+                                )
+        );
 
         JsObjParser parser = new JsObjParser(spec);
 
@@ -75,16 +75,16 @@ public class TestExample {
 
         Assertions.assertEquals(person,
                                 parser.parse(person.toPrettyString())
-                               );
+        );
 
 
         Lens<JsObj, String> nameLens = JsObj.lens.str("name");
 
         Option<JsObj, String> surnameOpt = JsObj.optional.str("surname");
 
-        Option<JsObj, Integer> ageOpt     = JsObj.optional.intNum("age");
-        Lens<JsObj, String>    streetLens = JsObj.lens.str(JsPath.path("/address/street"));
-        Lens<JsObj, JsValue>   cityLens   = JsObj.lens.value(JsPath.path("/address/city"));
+        Option<JsObj, Integer> ageOpt = JsObj.optional.intNum("age");
+        Lens<JsObj, String> streetLens = JsObj.lens.str(JsPath.path("/address/street"));
+        Lens<JsObj, JsValue> cityLens = JsObj.lens.value(JsPath.path("/address/city"));
 
         Lens<JsObj, JsArray> languagesLens = JsObj.lens.array("languages");
 
@@ -119,14 +119,14 @@ public class TestExample {
         Assertions.assertEquals(ageOpt.get.apply(newPerson),
                                 ageOpt.get.apply(person)
                                           .map(i -> i + 1)
-                               );
+        );
 
 
         Assertions.assertEquals(nameLens.get.apply(newPerson),
                                 "RAFAEL");
         Assertions.assertEquals(surnameOpt.get.apply(newPerson),
                                 Optional.of("MERINO GARCÍA")
-                               );
+        );
 
 
         Assertions.assertEquals(latitudeLens.get.apply(newPerson),
@@ -136,19 +136,18 @@ public class TestExample {
 
         Assertions.assertEquals(cityLens.get.apply(newPerson),
                                 JsStr.of("Madrid")
-                               );
+        );
 
 
         Assertions.assertEquals(streetLens.get.apply(newPerson),
                                 "Las cruces"
-                               );
+        );
 
 
         Assertions.assertEquals(numberLens.get.apply(newPerson),
                                 JsStr.of("034CF")
-                               );
+        );
     }
-
 
 
 }

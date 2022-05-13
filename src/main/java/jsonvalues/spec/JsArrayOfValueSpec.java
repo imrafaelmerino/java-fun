@@ -11,10 +11,10 @@ class JsArrayOfValueSpec extends AbstractPredicateSpec implements JsValuePredica
 
     JsArrayOfValueSpec(final boolean required,
                        final boolean nullable
-                      ) {
+    ) {
         super(required,
               nullable
-             );
+        );
 
     }
 
@@ -46,7 +46,7 @@ class JsArrayOfValueSpec extends AbstractPredicateSpec implements JsValuePredica
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArray(required,
                                    nullable
-                                  )
+                        )
                         .apply(value);
     }
 }

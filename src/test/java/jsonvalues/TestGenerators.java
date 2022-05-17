@@ -1,12 +1,10 @@
 package jsonvalues;
 
 
-import fun.gen.Combinators;
-import fun.gen.Gen;
-import fun.gen.IntGen;
-import fun.gen.SetGen;
+import fun.gen.*;
 import fun.tuple.Pair;
 import jsonvalues.gen.*;
+import jsonvalues.spec.JsErrorPair;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +14,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static jsonvalues.spec.JsSpecs.*;
@@ -66,7 +65,10 @@ public class TestGenerators {
                                          JsTupleGen.of(JsIntGen.arbitrary,
                                                        JsStrGen.alphanumeric(0,
                                                                              10)
-                                         )
+                                         ),
+                                         "e",
+                                         JsBigIntGen.of(BigIntGen.arbitrary(1,
+                                                                            2))
         );
 
         JsObjSpec spec = JsObjSpec.strict("a",
@@ -78,11 +80,16 @@ public class TestGenerators {
                                           "d",
                                           tuple(integer,
                                                 str(s -> s.length() <= 10)
-                                          )
+                                          ),
+                                          "e",
+                                          integral
         );
 
         Assertions.assertTrue(
-                gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())
+                gen.sample(1000)
+                   .allMatch(it -> spec.test(it)
+                                       .isEmpty()
+                   )
         );
 
     }
@@ -90,8 +97,9 @@ public class TestGenerators {
     @Test
     public void test_nested_gen() {
         JsObjGen gen = JsObjGen.of("a",
-                                   JsArrayGen.arbitrary(5).apply(JsStrGen.alphanumeric(0,
-                                                                                       10)),
+                                   JsArrayGen.arbitrary(5)
+                                             .apply(JsStrGen.alphanumeric(0,
+                                                                          10)),
                                    "b",
                                    JsTupleGen.of(JsStrGen.biased(0,
                                                                  10),

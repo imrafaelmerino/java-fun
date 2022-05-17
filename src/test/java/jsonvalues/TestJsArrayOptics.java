@@ -224,6 +224,40 @@ public class TestJsArrayOptics {
 
     }
 
+    @Test
+    public void testComposeArr() {
+
+        JsArray arr = JsArray.of(JsArray.of(JsArray.of("a",
+                                                       "b"),
+                                            JsArray.of("c",
+                                                       "d")
+                                 )
+        );
+
+
+        Lens<JsArray, JsArray> firstArr = JsArray.lens.array(0);
+        Lens<JsArray, String> a = firstArr.compose(firstArr)
+                                          .compose(JsArray.lens.str(0));
+
+        Assertions.assertEquals("a",
+                                a.get.apply(arr));
+
+        Assertions.assertEquals("hi",
+                                a.get.apply(a.set.apply("hi").apply(arr)));
+
+        JsArray newArr = a.modify.apply(String::toUpperCase).apply(arr);
+        Assertions.assertEquals("A",
+                                a.get.apply(newArr));
+
+        Assertions.assertEquals("a",
+                                firstArr.compose(JsArray.lens
+                                                         .str(JsPath.path("/0/0")))
+                                        .get.apply(arr)
+        );
+
+
+    }
+
 
     @Test
     public void testObjLenses() {
@@ -290,4 +324,6 @@ public class TestJsArrayOptics {
 
 
     }
+
+
 }

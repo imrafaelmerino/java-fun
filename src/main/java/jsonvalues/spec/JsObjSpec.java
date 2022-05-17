@@ -4139,10 +4139,10 @@ public final class JsObjSpec implements JsSpec {
     public JsSpecParser parser() {
         Map<String, JsSpecParser> parsers = HashMap.empty();
         Vector<String> requiredKeys = Vector.empty();
-        for (final String key : bindings.keySet()) {
+        for (String key : bindings.keySet()) {
 
-            final JsSpec spec = bindings.get(key)
-                                        .get();
+            JsSpec spec = bindings.get(key)
+                                  .get();
             if (spec.isRequired()) requiredKeys = requiredKeys.append(key);
             parsers = parsers.put(key,
                                   spec.parser()
@@ -4211,15 +4211,19 @@ public final class JsObjSpec implements JsSpec {
             ));
 
         }
-        final Seq<String> requiredFields = parentObjSpec.bindings.filter((key, spec) -> spec.isRequired())
-                                                                 .map(p -> p._1);
+        final Seq<String> requiredFields =
+                parentObjSpec
+                        .bindings
+                        .filter((key, spec) -> spec.isRequired())
+                        .map(p -> p._1);
         for (final String requiredField : requiredFields) {
-            if (!json.containsKey(requiredField)) errors.add(JsErrorPair.of(parent.key(requiredField),
-                                                                            new JsError(JsNothing.NOTHING,
-                                                                                        REQUIRED
-                                                                            )
-                                                             )
-            );
+            if (!json.containsKey(requiredField))
+                errors.add(JsErrorPair.of(parent.key(requiredField),
+                                          new JsError(JsNothing.NOTHING,
+                                                      REQUIRED
+                                          )
+                           )
+                );
         }
 
 

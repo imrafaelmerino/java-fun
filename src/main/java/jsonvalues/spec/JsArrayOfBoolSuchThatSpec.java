@@ -15,52 +15,33 @@ class JsArrayOfBoolSuchThatSpec extends AbstractPredicateSpec implements JsValue
     private final JsArrayOfBoolSpec isArrayOfBool;
 
     JsArrayOfBoolSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
-                              final boolean required,
                               final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
-        this.isArrayOfBool = new JsArrayOfBoolSpec(required,
-                                                   nullable
-        );
+        super(nullable);
+        this.isArrayOfBool = new JsArrayOfBoolSpec(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfBoolSuchThatSpec(predicate,
-                                             required,
-                                             true
-        );
+                                             true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfBoolSuchThatSpec(predicate,
-                                             false,
-                                             nullable
-        );
-
-    }
 
     @Override
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfBoolSuchThat(predicate,
-                                                            nullable
-        );
+                                                            nullable);
     }
 
     @Override
     public Optional<JsError> test(final JsValue value) {
         final Optional<JsError> result = isArrayOfBool.test(value);
-        if (result.isPresent() || value.isNull()) return result;
-        return predicate.apply(value.toJsArray());
+        return result.isPresent() || value.isNull() ?
+               result :
+               predicate.apply(value.toJsArray());
 
     }
 }

@@ -37,12 +37,13 @@ public class TestGenerators {
         );
 
         JsObjSpec spec = JsObjSpec.strict("a",
-                                          arrayOfStrSuchThat(a -> a.size() <= 10).optional()
-                                                                                 .nullable(),
+                                          arrayOfStrSuchThat(a -> a.size() <= 10)
+                                                  .nullable(),
                                           "b",
                                           arrayOfIntSuchThat(a -> a.size() <= 10).nullable()
-                                                                                 .optional()
-        );
+
+        ).setOptionals("a",
+                       "b");
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())
@@ -140,12 +141,12 @@ public class TestGenerators {
                                           "d",
                                           bool,
                                           "e",
-                                          str.optional(),
+                                          str,
                                           "f",
                                           any(v -> v.isStr() || v.isIntegral()),
                                           "g",
                                           str(b -> b.equals("a"))
-        );
+        ).setOptionals("e");
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())
@@ -219,7 +220,7 @@ public class TestGenerators {
                                              "o");
 
         JsObjSpec spec = JsObjSpec.lenient("a",
-                                           str.optional().nullable(),
+                                           str.nullable(),
                                            "b",
                                            integer,
                                            "c",
@@ -231,7 +232,7 @@ public class TestGenerators {
                                            "f",
                                            integral,
                                            "g",
-                                           decimal.optional().nullable(),
+                                           decimal.nullable(),
                                            "h",
                                            bool,
                                            "i",
@@ -247,10 +248,13 @@ public class TestGenerators {
                                            "n",
                                            str(s -> s.length() == 1),
                                            "o",
-                                           JsSpecs.binary.optional(),
+                                           JsSpecs.binary,
                                            "p",
-                                           JsSpecs.instant.optional()
-        );
+                                           JsSpecs.instant
+        ).setOptionals("a",
+                       "g",
+                       "o",
+                       "p");
 
         Assertions.assertTrue(
                 gen.sample(1000)
@@ -274,9 +278,9 @@ public class TestGenerators {
         JsObjSpec spec = JsObjSpec.strict("a",
                                           str,
                                           "b",
-                                          integer.optional()
-                                                 .nullable()
-        );
+                                          integer
+                                                  .nullable()
+        ).setOptionals("b");
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())

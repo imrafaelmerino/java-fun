@@ -14,33 +14,16 @@ class JsArrayOfTestedDecimalSpec extends AbstractPredicateSpec implements JsValu
     final Function<BigDecimal, Optional<JsError>> predicate;
 
     JsArrayOfTestedDecimalSpec(final Function<BigDecimal, Optional<JsError>> predicate,
-                               final boolean required,
                                final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfTestedDecimalSpec(predicate,
-                                              required,
                                               true
-        );
-    }
-
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfTestedDecimalSpec(predicate,
-                                              false,
-                                              nullable
         );
     }
 
@@ -54,15 +37,12 @@ class JsArrayOfTestedDecimalSpec extends AbstractPredicateSpec implements JsValu
     @Override
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isDouble() || v.isBigDec())
-                                                        return predicate.apply(v.toJsBigDec().value);
-                                                    else return Optional.of(new JsError(v,
-                                                                                        DECIMAL_EXPECTED
-                                                                            )
-                                                    );
-                                                },
-                                                required,
+                                                        v.isDouble() || v.isBigDec() ?
+                                                        predicate.apply(v.toJsBigDec().value) :
+                                                        Optional.of(new JsError(v,
+                                                                                DECIMAL_EXPECTED
+                                                                    )
+                                                        ),
                                                 nullable
                         )
                         .apply(value);

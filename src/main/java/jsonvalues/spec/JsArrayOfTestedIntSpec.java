@@ -13,35 +13,20 @@ class JsArrayOfTestedIntSpec extends AbstractPredicateSpec implements JsValuePre
     final IntFunction<Optional<JsError>> predicate;
 
     JsArrayOfTestedIntSpec(final IntFunction<Optional<JsError>> predicate,
-                           final boolean required,
                            final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfTestedIntSpec(predicate,
-                                          required,
                                           true
         );
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfTestedIntSpec(predicate,
-                                          false,
-                                          nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -54,14 +39,13 @@ class JsArrayOfTestedIntSpec extends AbstractPredicateSpec implements JsValuePre
     public Optional<JsError> test(final JsValue value) {
 
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isInt()) return predicate.apply(v.toJsInt().value);
-                                                    else return Optional.of(new JsError(v,
-                                                                                        INT_EXPECTED
-                                                                            )
-                                                    );
-                                                },
-                                                required,
+                                                        v.isInt() ?
+                                                        predicate.apply(v.toJsInt().value) :
+                                                        Optional.of(new JsError(v,
+                                                                                INT_EXPECTED
+                                                                    )
+                                                        )
+                                ,
                                                 nullable
                         )
                         .apply(value);

@@ -13,36 +13,21 @@ import static jsonvalues.spec.ERROR_CODE.NUMBER_EXPECTED;
 class JsNumberSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
     final Function<JsNumber, Optional<JsError>> predicate;
 
-    JsNumberSuchThatSpec(final boolean required,
-                         final boolean nullable,
+    JsNumberSuchThatSpec(final boolean nullable,
                          final Function<JsNumber, Optional<JsError>> predicate
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsNumberSuchThatSpec(required,
-                                        true,
+        return new JsNumberSuchThatSpec(true,
                                         predicate
         );
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsNumberSuchThatSpec(false,
-                                        nullable,
-                                        predicate
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -53,14 +38,14 @@ class JsNumberSuchThatSpec extends AbstractPredicateSpec implements JsValuePredi
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        final Optional<JsError> error = jsonvalues.spec.Functions.testElem(JsValue::isNumber,
-                                                                           NUMBER_EXPECTED,
-                                                                           required,
-                                                                           nullable
-                                                  )
-                                                                 .apply(value);
+        final Optional<JsError> error = Functions.testElem(JsValue::isNumber,
+                                                           NUMBER_EXPECTED,
+                                                           nullable
+                                                 )
+                                                 .apply(value);
 
-        if (error.isPresent() || value.isNull()) return error;
-        return predicate.apply(value.toJsNumber());
+        return error.isPresent() || value.isNull() ?
+               error :
+               predicate.apply(value.toJsNumber());
     }
 }

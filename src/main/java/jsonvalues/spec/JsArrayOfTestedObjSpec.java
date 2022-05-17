@@ -14,33 +14,16 @@ class JsArrayOfTestedObjSpec extends AbstractPredicateSpec implements JsValuePre
     final Function<JsObj, Optional<JsError>> predicate;
 
     JsArrayOfTestedObjSpec(final Function<JsObj, Optional<JsError>> predicate,
-                           final boolean required,
                            final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfTestedObjSpec(predicate,
-                                          required,
                                           true
-        );
-    }
-
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfTestedObjSpec(predicate,
-                                          false,
-                                          nullable
         );
     }
 
@@ -54,14 +37,12 @@ class JsArrayOfTestedObjSpec extends AbstractPredicateSpec implements JsValuePre
     @Override
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isObj()) return predicate.apply(v.toJsObj());
-                                                    else return Optional.of(new JsError(v,
-                                                                                        OBJ_EXPECTED
-                                                                            )
-                                                    );
-                                                },
-                                                required,
+                                                        v.isObj() ?
+                                                        predicate.apply(v.toJsObj()) :
+                                                        Optional.of(new JsError(v,
+                                                                                OBJ_EXPECTED
+                                                                    )
+                                                        ),
                                                 nullable
                         )
                         .apply(value);

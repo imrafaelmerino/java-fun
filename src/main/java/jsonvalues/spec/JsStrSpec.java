@@ -9,32 +9,16 @@ import java.util.Optional;
 import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
 
 class JsStrSpec extends AbstractPredicateSpec implements JsValuePredicate {
-    JsStrSpec(final boolean required,
-              final boolean nullable
-    ) {
-        super(required,
-              nullable
-        );
+    JsStrSpec(final boolean nullable) {
+        super(nullable);
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsStrSpec(required,
-                             true
-        );
+        return new JsStrSpec(true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsStrSpec(false,
-                             nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -45,7 +29,6 @@ class JsStrSpec extends AbstractPredicateSpec implements JsValuePredicate {
     public Optional<JsError> test(final JsValue value) {
         return Functions.testElem(JsValue::isStr,
                                   STRING_EXPECTED,
-                                  required,
                                   nullable
                         )
                         .apply(value);

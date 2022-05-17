@@ -13,36 +13,21 @@ import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
     final Function<BigDecimal, Optional<JsError>> predicate;
 
-    JsDecimalSuchThatSpec(final boolean required,
-                          final boolean nullable,
+    JsDecimalSuchThatSpec(final boolean nullable,
                           final Function<BigDecimal, Optional<JsError>> predicate
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsDecimalSuchThatSpec(required,
-                                         true,
+        return new JsDecimalSuchThatSpec(true,
                                          predicate
         );
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsDecimalSuchThatSpec(false,
-                                         nullable,
-                                         predicate
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -53,14 +38,14 @@ class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePred
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        final Optional<JsError> error = jsonvalues.spec.Functions.testElem(JsValue::isDecimal,
-                                                                           DECIMAL_EXPECTED,
-                                                                           required,
-                                                                           nullable
-                                                  )
-                                                                 .apply(value);
+        final Optional<JsError> error = Functions.testElem(JsValue::isDecimal,
+                                                           DECIMAL_EXPECTED,
+                                                           nullable
+                                                 )
+                                                 .apply(value);
 
-        if (error.isPresent() || value.isNull()) return error;
-        return predicate.apply(value.toJsBigDec().value);
+        return error.isPresent() || value.isNull() ?
+               error :
+               predicate.apply(value.toJsBigDec().value);
     }
 }

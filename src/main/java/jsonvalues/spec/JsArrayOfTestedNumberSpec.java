@@ -14,33 +14,16 @@ class JsArrayOfTestedNumberSpec extends AbstractPredicateSpec implements JsValue
     private final Function<JsNumber, Optional<JsError>> predicate;
 
     JsArrayOfTestedNumberSpec(final Function<JsNumber, Optional<JsError>> predicate,
-                              final boolean required,
                               final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfTestedNumberSpec(predicate,
-                                             required,
                                              true
-        );
-    }
-
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfTestedNumberSpec(predicate,
-                                             false,
-                                             nullable
         );
     }
 
@@ -54,14 +37,12 @@ class JsArrayOfTestedNumberSpec extends AbstractPredicateSpec implements JsValue
     @Override
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isNumber()) return predicate.apply(v.toJsNumber());
-                                                    else return Optional.of(new JsError(v,
-                                                                                        NUMBER_EXPECTED
-                                                                            )
-                                                    );
-                                                },
-                                                required,
+                                                        v.isNumber() ?
+                                                        predicate.apply(v.toJsNumber()) :
+                                                        Optional.of(new JsError(v,
+                                                                                NUMBER_EXPECTED
+                                                                    )
+                                                        ),
                                                 nullable
                         )
                         .apply(value);

@@ -9,33 +9,16 @@ import java.util.Optional;
 
 class JsArrayOfValueSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
 
-    JsArrayOfValueSpec(final boolean required,
-                       final boolean nullable
-    ) {
-        super(required,
-              nullable
-        );
-
+    JsArrayOfValueSpec(final boolean nullable) {
+        super(nullable);
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsArrayOfValueSpec(required,
-                                      true
-        );
+        return new JsArrayOfValueSpec(true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfValueSpec(false,
-                                      nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -44,9 +27,7 @@ class JsArrayOfValueSpec extends AbstractPredicateSpec implements JsValuePredica
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        return Functions.testArray(required,
-                                   nullable
-                        )
+        return Functions.testArray(nullable)
                         .apply(value);
     }
 }

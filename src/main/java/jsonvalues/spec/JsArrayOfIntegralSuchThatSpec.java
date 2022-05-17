@@ -13,51 +13,31 @@ class JsArrayOfIntegralSuchThatSpec extends AbstractPredicateSpec implements JsV
     private final JsArrayOfIntegralSpec isArrayOfIntegral;
 
     JsArrayOfIntegralSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
-                                  final boolean required,
                                   final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
-        this.isArrayOfIntegral = new JsArrayOfIntegralSpec(required,
-                                                           nullable
-        );
+        super(nullable);
+        this.isArrayOfIntegral = new JsArrayOfIntegralSpec(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfIntegralSuchThatSpec(predicate,
-                                                 required,
-                                                 true
-        );
-    }
-
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfIntegralSuchThatSpec(predicate,
-                                                 false,
-                                                 nullable
-        );
-
+                                                 true);
     }
 
     @Override
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfIntegralSuchThat(predicate,
-                                                                nullable
-        );
+                                                                nullable);
     }
 
     @Override
     public Optional<JsError> test(final JsValue value) {
         final Optional<JsError> result = isArrayOfIntegral.test(value);
-        if (result.isPresent() || value.isNull()) return result;
-        return predicate.apply(value.toJsArray());
+        return result.isPresent() || value.isNull() ?
+               result :
+               predicate.apply(value.toJsArray());
     }
 }

@@ -13,36 +13,17 @@ class JsArrayOfStrSuchThatSpec extends AbstractPredicateSpec implements JsValueP
     private final JsArrayOfStrSpec isArrayOfString;
 
     JsArrayOfStrSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
-                             final boolean required,
                              final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
-        this.isArrayOfString = new JsArrayOfStrSpec(required,
-                                                    nullable
-        );
+        super(nullable);
+        this.isArrayOfString = new JsArrayOfStrSpec(nullable);
         this.predicate = predicate;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfStrSuchThatSpec(predicate,
-                                            required,
                                             true
-        );
-    }
-
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfStrSuchThatSpec(predicate,
-                                            false,
-                                            nullable
         );
     }
 
@@ -56,7 +37,8 @@ class JsArrayOfStrSuchThatSpec extends AbstractPredicateSpec implements JsValueP
     @Override
     public Optional<JsError> test(final JsValue value) {
         final Optional<JsError> result = isArrayOfString.test(value);
-        if (result.isPresent() || value.isNull()) return result;
-        return predicate.apply(value.toJsArray());
+        return result.isPresent() || value.isNull() ?
+               result :
+               predicate.apply(value.toJsArray());
     }
 }

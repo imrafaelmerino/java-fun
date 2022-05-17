@@ -12,36 +12,22 @@ import static jsonvalues.spec.ERROR_CODE.LONG_EXPECTED;
 class JsLongSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
     final LongFunction<Optional<JsError>> predicate;
 
-    JsLongSuchThatSpec(final boolean required,
-                       final boolean nullable,
+    JsLongSuchThatSpec(final boolean nullable,
                        final LongFunction<Optional<JsError>> predicate
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsLongSuchThatSpec(required,
-                                      true,
-                                      predicate
+        return new JsLongSuchThatSpec(
+                true,
+                predicate
         );
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsLongSuchThatSpec(false,
-                                      nullable,
-                                      predicate
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -52,14 +38,14 @@ class JsLongSuchThatSpec extends AbstractPredicateSpec implements JsValuePredica
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        final Optional<JsError> error = jsonvalues.spec.Functions.testElem(JsValue::isLong,
-                                                                           LONG_EXPECTED,
-                                                                           required,
-                                                                           nullable
-                                                  )
-                                                                 .apply(value);
+        final Optional<JsError> error = Functions.testElem(JsValue::isLong,
+                                                           LONG_EXPECTED,
+                                                           nullable
+                                                 )
+                                                 .apply(value);
 
-        if (error.isPresent() || value.isNull()) return error;
-        return predicate.apply(value.toJsLong().value);
+        return error.isPresent() || value.isNull() ?
+               error :
+               predicate.apply(value.toJsLong().value);
     }
 }

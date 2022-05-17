@@ -10,32 +10,16 @@ import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 
 class JsArrayOfDecimalSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
 
-    JsArrayOfDecimalSpec(final boolean required,
-                         final boolean nullable
-    ) {
-        super(required,
-              nullable
-        );
+    JsArrayOfDecimalSpec(final boolean nullable) {
+        super(nullable);
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsArrayOfDecimalSpec(required,
-                                        true
-        );
+        return new JsArrayOfDecimalSpec(true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfDecimalSpec(false,
-                                        nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -44,12 +28,10 @@ class JsArrayOfDecimalSpec extends AbstractPredicateSpec implements JsValuePredi
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        return Functions.testArrayOfTestedValue(v -> {
-                                                    if (v.isDecimal()) return Optional.empty();
-                                                    else return Optional.of(new JsError(v,
-                                                                                        DECIMAL_EXPECTED));
-                                                },
-                                                required,
+        return Functions.testArrayOfTestedValue(v -> v.isDecimal() ?
+                                                     Optional.empty() :
+                                                     Optional.of(new JsError(v,
+                                                                             DECIMAL_EXPECTED)),
                                                 nullable
                         )
                         .apply(value);

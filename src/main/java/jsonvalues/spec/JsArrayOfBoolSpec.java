@@ -9,32 +9,15 @@ import java.util.Optional;
 import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
 
 class JsArrayOfBoolSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
-    JsArrayOfBoolSpec(final boolean required,
-                      final boolean nullable
-    ) {
-        super(required,
-              nullable
-        );
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
+    JsArrayOfBoolSpec(final boolean nullable) {
+        super(nullable);
     }
 
     @Override
     public JsSpec nullable() {
-        return new JsArrayOfBoolSpec(required,
-                                     true
-        );
+        return new JsArrayOfBoolSpec(true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfBoolSpec(false,
-                                     nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -43,14 +26,11 @@ class JsArrayOfBoolSpec extends AbstractPredicateSpec implements JsValuePredicat
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        return Functions.testArrayOfTestedValue(v -> {
-                                                    if (v.isBool()) return Optional.empty();
-                                                    else return Optional.of(new JsError(v,
-                                                                                        BOOLEAN_EXPECTED));
-                                                },
-                                                required,
-                                                nullable
-                        )
+        return Functions.testArrayOfTestedValue(v -> v.isBool() ?
+                                                     Optional.empty() :
+                                                     Optional.of(new JsError(v,
+                                                                             BOOLEAN_EXPECTED)),
+                                                nullable)
                         .apply(value);
     }
 }

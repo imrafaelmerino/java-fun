@@ -14,34 +14,16 @@ class JsArrayOfTestedIntegralSpec extends AbstractPredicateSpec implements JsVal
     private final Function<BigInteger, Optional<JsError>> predicate;
 
     JsArrayOfTestedIntegralSpec(final Function<BigInteger, Optional<JsError>> predicate,
-                                final boolean required,
                                 final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfTestedIntegralSpec(predicate,
-                                               required,
-                                               true
-        );
-    }
-
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfTestedIntegralSpec(predicate,
-                                               false,
-                                               nullable
-        );
+                                               true);
     }
 
     @Override
@@ -54,14 +36,12 @@ class JsArrayOfTestedIntegralSpec extends AbstractPredicateSpec implements JsVal
     @Override
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isIntegral()) return predicate.apply(v.toJsBigInt().value);
-                                                    else return Optional.of(new JsError(v,
-                                                                                        INTEGRAL_EXPECTED
-                                                                            )
-                                                    );
-                                                },
-                                                required,
+                                                        v.isIntegral() ?
+                                                        predicate.apply(v.toJsBigInt().value) :
+                                                        Optional.of(new JsError(v,
+                                                                                INTEGRAL_EXPECTED
+                                                                    )
+                                                        ),
                                                 nullable
                         )
                         .apply(value);

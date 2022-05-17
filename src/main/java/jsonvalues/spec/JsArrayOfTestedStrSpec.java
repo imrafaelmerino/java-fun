@@ -13,35 +13,19 @@ class JsArrayOfTestedStrSpec extends AbstractPredicateSpec implements JsValuePre
     final Function<String, Optional<JsError>> predicate;
 
     JsArrayOfTestedStrSpec(final Function<String, Optional<JsError>> predicate,
-                           final boolean required,
                            final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
+        super(nullable);
         this.predicate = predicate;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfTestedStrSpec(predicate,
-                                          required,
                                           true
         );
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfTestedStrSpec(predicate,
-                                          false,
-                                          nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -53,14 +37,12 @@ class JsArrayOfTestedStrSpec extends AbstractPredicateSpec implements JsValuePre
     @Override
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isStr()) return predicate.apply(v.toJsStr().value);
-                                                    else return Optional.of(new JsError(v,
-                                                                                        STRING_EXPECTED
-                                                                            )
-                                                    );
-                                                },
-                                                required,
+                                                        v.isStr() ?
+                                                        predicate.apply(v.toJsStr().value) :
+                                                        Optional.of(new JsError(v,
+                                                                                STRING_EXPECTED
+                                                                    )
+                                                        ),
                                                 nullable
                         )
                         .apply(value);

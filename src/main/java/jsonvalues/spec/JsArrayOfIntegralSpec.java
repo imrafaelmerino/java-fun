@@ -9,33 +9,16 @@ import java.util.Optional;
 import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
 
 class JsArrayOfIntegralSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
-    JsArrayOfIntegralSpec(final boolean required,
-                          final boolean nullable
-    ) {
-        super(required,
-              nullable
-        );
+    JsArrayOfIntegralSpec(final boolean nullable) {
+        super(nullable);
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsArrayOfIntegralSpec(required,
-                                         true
-        );
+        return new JsArrayOfIntegralSpec(true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfIntegralSpec(false,
-                                         nullable
-        );
-
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -45,13 +28,11 @@ class JsArrayOfIntegralSpec extends AbstractPredicateSpec implements JsValuePred
     @Override
     public Optional<JsError> test(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
-                                                {
-                                                    if (v.isIntegral()) return Optional.empty();
-                                                    else return Optional.of(new JsError(v,
-                                                                                        INTEGRAL_EXPECTED
-                                                    ));
-                                                },
-                                                required,
+                                                        v.isIntegral() ?
+                                                        Optional.empty() :
+                                                        Optional.of(new JsError(v,
+                                                                                INTEGRAL_EXPECTED
+                                                        )),
                                                 nullable
                         )
                         .apply(value);

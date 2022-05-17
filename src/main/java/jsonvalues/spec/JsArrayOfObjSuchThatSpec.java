@@ -13,50 +13,32 @@ class JsArrayOfObjSuchThatSpec extends AbstractPredicateSpec implements JsValueP
     private final JsArrayOfObjSpec isArrayOfObj;
 
     JsArrayOfObjSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
-                             final boolean required,
                              final boolean nullable
     ) {
-        super(required,
-              nullable
-        );
-        this.isArrayOfObj = new JsArrayOfObjSpec(required,
-                                                 nullable
-        );
+        super(nullable);
+        this.isArrayOfObj = new JsArrayOfObjSpec(nullable);
         this.predicate = predicate;
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfObjSuchThatSpec(predicate,
-                                            required,
-                                            true
-        );
+                                            true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfObjSuchThatSpec(predicate,
-                                            false,
-                                            nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofArrayOfObjSuchThat(predicate,
-                                                           nullable
-        );
+                                                           nullable);
     }
 
     @Override
     public Optional<JsError> test(final JsValue value) {
         final Optional<JsError> result = isArrayOfObj.test(value);
-        if (result.isPresent() || value.isNull()) return result;
-        return predicate.apply(value.toJsArray());
+        return result.isPresent() || value.isNull() ?
+               result :
+               predicate.apply(value.toJsArray());
     }
 }

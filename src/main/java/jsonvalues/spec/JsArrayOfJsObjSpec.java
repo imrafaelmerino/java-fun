@@ -2,62 +2,50 @@ package jsonvalues.spec;
 
 import com.dslplatform.json.JsSpecParser;
 import com.dslplatform.json.JsSpecParsers;
-import io.vavr.Tuple2;
 import jsonvalues.JsArray;
 import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
 
 public class JsArrayOfJsObjSpec implements JsSpec, JsArraySpec {
 
     private final boolean nullable;
-    private final boolean required;
     private final JsObjSpec spec;
 
 
     JsArrayOfJsObjSpec(final boolean nullable,
-                       final boolean required,
                        final JsObjSpec jsObjSpec
     ) {
         this.nullable = nullable;
-        this.required = required;
         this.spec = jsObjSpec;
-
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
         return new JsArrayOfJsObjSpec(true,
-                                      required,
                                       spec
         );
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfJsObjSpec(nullable,
-                                      false,
-                                      spec
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
 
-        return JsSpecParsers.INSTANCE.ofArrayOfObjSpec(spec.bindings.filter((k, s) -> s.isRequired())
-                                                                    .map(it -> it._1)
-                                                                    .toVector(),
-                                                       spec.bindings.map((k, s) -> new Tuple2<>(k,
-                                                                                                s.parser())),
+        List<String> requiredFields = spec.bindings.keySet().
+                                                   stream().filter(k -> !spec.getOptionalFields().contains(k))
+                                                   .collect(Collectors.toList());
+        Map<String, JsSpecParser> map = spec.bindings.entrySet().stream()
+                                                     .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(),
+                                                                                             e.getValue().parser()))
+                                                     .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey,
+                                                                               AbstractMap.SimpleEntry::getValue));
+        return JsSpecParsers.INSTANCE.ofArrayOfObjSpec(requiredFields,
+                                                       map,
                                                        nullable,
                                                        spec.strict
         );

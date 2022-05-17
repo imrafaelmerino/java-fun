@@ -7,7 +7,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static jsonvalues.spec.ERROR_CODE.*;
+import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
+import static jsonvalues.spec.ERROR_CODE.NULL;
 
 class Functions {
 
@@ -16,87 +17,56 @@ class Functions {
 
     static Function<JsValue, Optional<JsError>> testElem(final Predicate<JsValue> elemCondition,
                                                          final ERROR_CODE errorCode,
-                                                         final boolean required,
-                                                         final boolean nullable
-    ) {
+                                                         final boolean nullable) {
 
-        return value ->
-        {
-            final Optional<JsError> error = testFlags(required,
-                                                      nullable
-            ).apply(value);
+        return value -> {
+            final Optional<JsError> error = testFlags(nullable).apply(value);
             if (error.isPresent() || value.isNull()) return error;
-            if (!elemCondition.test(value)) return Optional.of(new JsError(value,
-                                                                           errorCode
-                                                               )
-            );
-            return Optional.empty();
+            return elemCondition.test(value) ?
+                   Optional.empty() :
+                   Optional.of(new JsError(value,
+                                           errorCode));
         };
     }
 
-    private static Function<JsValue, Optional<JsError>> testFlags(boolean required,
-                                                                  boolean nullable
-    ) {
-        return value ->
-        {
-            if (value.isNothing() && required) return Optional.of(new JsError(value,
-                                                                              REQUIRED
-                                                                  )
-            );
-            if (value.isNull() && !nullable) return Optional.of(new JsError(value,
-                                                                            NULL
-                                                                )
-            );
-            return Optional.empty();
-        };
+    private static Function<JsValue, Optional<JsError>> testFlags(boolean nullable) {
+        return value -> value.isNull() && !nullable ?
+                        Optional.of(new JsError(value,
+                                                NULL)) :
+                        Optional.empty();
     }
 
-    static Function<JsValue, Optional<JsError>> testArrayOfTestedValue(final Function<JsValue, Optional<JsError>> elemCondition,
-                                                                       final boolean required,
-                                                                       final boolean nullable
-    ) {
+    static Function<JsValue, Optional<JsError>> testArrayOfTestedValue(Function<JsValue, Optional<JsError>> elemCondition,
+                                                                       boolean nullable) {
 
-        return testArrayPredicate(required,
-                                  nullable,
-                                  array ->
-                                  {
+        return testArrayPredicate(nullable,
+                                  array -> {
                                       for (final JsValue next : array) {
                                           final Optional<JsError> result = elemCondition.apply(next);
                                           if (result.isPresent()) return result;
                                       }
                                       return Optional.empty();
-                                  }
-        );
+                                  });
     }
 
-    private static Function<JsValue, Optional<JsError>> testArrayPredicate(final boolean required,
-                                                                           final boolean nullable,
-                                                                           final Function<JsArray, Optional<JsError>> validation
-    ) {
-        return value ->
-        {
-            final Optional<JsError> errors = testArray(required,
-                                                       nullable
-            ).apply(value);
-            if (errors.isPresent() || value.isNull()) return errors;
-            return validation.apply(value.toJsArray());
+    private static Function<JsValue, Optional<JsError>> testArrayPredicate(boolean nullable,
+                                                                           Function<JsArray, Optional<JsError>> validation) {
+        return value -> {
+            Optional<JsError> errors = testArray(nullable).apply(value);
+            return errors.isPresent() || value.isNull() ?
+                   errors :
+                   validation.apply(value.toJsArray());
         };
     }
 
-    static Function<JsValue, Optional<JsError>> testArray(boolean required,
-                                                          boolean nullable
-    ) {
-        return value ->
-        {
-            final Optional<JsError> error = testFlags(required,
-                                                      nullable
-            ).apply(value);
+    static Function<JsValue, Optional<JsError>> testArray(boolean nullable) {
+        return value -> {
+            Optional<JsError> error = testFlags(nullable).apply(value);
             if (error.isPresent()) return error;
             return value.isNull() || value.isArray() ?
                    Optional.empty() :
                    Optional.of(new JsError(value,
-                                           ARRAY_EXPECTED
-                   ));
+                                           ARRAY_EXPECTED));
         };
 
     }

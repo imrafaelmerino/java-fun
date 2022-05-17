@@ -9,32 +9,16 @@ import java.util.Optional;
 import static jsonvalues.spec.ERROR_CODE.NUMBER_EXPECTED;
 
 class JsArrayOfNumberSpec extends AbstractPredicateSpec implements JsValuePredicate, JsArraySpec {
-    JsArrayOfNumberSpec(final boolean required,
-                        final boolean nullable
-    ) {
-        super(required,
-              nullable
-        );
+    JsArrayOfNumberSpec(final boolean nullable) {
+        super(nullable);
     }
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
 
     @Override
     public JsSpec nullable() {
-        return new JsArrayOfNumberSpec(required,
-                                       true
-        );
+        return new JsArrayOfNumberSpec(true);
     }
 
-    @Override
-    public JsSpec optional() {
-        return new JsArrayOfNumberSpec(false,
-                                       nullable
-        );
-    }
 
     @Override
     public JsSpecParser parser() {
@@ -43,12 +27,10 @@ class JsArrayOfNumberSpec extends AbstractPredicateSpec implements JsValuePredic
 
     @Override
     public Optional<JsError> test(final JsValue value) {
-        return Functions.testArrayOfTestedValue(v -> {
-                                                    if (v.isNumber()) return Optional.empty();
-                                                    else return Optional.of(new JsError(v,
-                                                                                        NUMBER_EXPECTED));
-                                                },
-                                                required,
+        return Functions.testArrayOfTestedValue(v -> v.isNumber() ?
+                                                     Optional.empty() :
+                                                     Optional.of(new JsError(v,
+                                                                             NUMBER_EXPECTED)),
                                                 nullable
                         )
                         .apply(value);

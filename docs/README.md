@@ -5,6 +5,11 @@
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/10.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/10.0.0/jar)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
+
+*“Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it.
+And to make matters worse: complexity sells better.”*
+Edsger Wybe Dijkstra
+
 - [Introduction](#introduction)
 - [What to use _json-values_ for and when to use it](#whatfor)
 - [When not to use it](#notwhatfor)
@@ -13,9 +18,7 @@
 - [Related projects](#rp)
 - [Release process](#release)
 
-*“Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it.
-And to make matters worse: complexity sells better.”*
-Edsger Wybe Dijkstra
+
 
 ## <a name="introduction"><a/> Introduction
 
@@ -23,8 +26,7 @@ Welcome to **json-values**, the first-ever Json library in _Java_ implemented wi
 
 One of the most essential aspects of functional programming is immutable data structures, better known as values.
 Updating these structures using the copy-on-write approach is inefficient, and this is why persistent
-data structures were created. On the other hand, JSON is a lightweight, text-based, language-independent data
-interchange format. It's become so popular due to its simplicity.
+data structures were created. 
 
 There are many libraries out there to work with JSON in the JVM ecosystem; however, none of them use persistent data
 structures. In most cases, those libraries parse a string or array of bytes into an object. The thing is, why do that?
@@ -47,11 +49,11 @@ or strings back and forth is not efficient, especially when copy-on-write is the
 * Generating Json to do Property-Based-Testing is child's play with json-values.
 * Generation specifications to validate Json and parse strings or bytes is a piece of cake.
 * Simplicity matters, and I'd argue that **json-values** is simple.
-* As a developer, I'm convinced that code should win arguments, so let me enumerate some examples, where I
-  leave the functions passed in as arguments with no implementation for brevity reasons.
+* As a developer, I'm convinced that code should win arguments, so let me enumerate some examples.
+
+First things first. Let's define a Json
 
 ```json
-
 {
     "name": "Rafael",
     "surname": "Merino",
@@ -74,148 +76,169 @@ or strings back and forth is not efficient, especially when copy-on-write is the
     ]
 }
 
+```
+
+and coding it using the factory methods provided by json-values
+
+```java      
+import jsonvalues.*;  
+
+JsObj.of("name", JsStr.of("Rafael"),
+         "surname", JsStr.of("Merino"),
+         "phoneNumber", JsStr.of("6666666"),
+         "registrationDate", JsInstant.of(Instant.parse("2019-01-21T05:47:26.853Z")),
+         "addresses", JsArray.of(JsObj.of("coordinates", JsArray.of(39.8581, -4.02263),
+                                          "city", JsStr.of("Toledo"),
+                                          "zipCode", JsString.of("45920"),
+                                          "tags", JsArray.of("workAddress")
+                                         ),
+                                 JsObj.of("coordinates", JsArray.of(39.8581, -4.02263),
+                                          "city", JsStr.of("Madrid"),
+                                          "zipCode", JsString.of("28029"),
+                                          "tags", JsArray.of("homeAddress", "amazon")
+                                         )
+                                )
+         );
 
 ```
 
-```java        
+As you can see, the final structure is very similar to the original Json, what makes
+really easy to write out any imaginable Json just putting its keys and its
+associated values. You can create up to 20-field Json objects using this approach. 
+For bigger Jsons you can use the *set* method
 
-        JsObj.of("name",
-                 JsStr.of("Rafael"),
-                 "surname",
-                 JsStr.of("Merino"),
-                 "phoneNumber",
-                 JsStr.of("6666666"),
-                 "registrationDate",
-                 JsInstant.of(Instant.parse("2019-01-21T05:47:26.853Z")),
-                 "addresses", JsArray.of(JsObj.of("coordinates", JsArray.of(39.8581, -4.02263),
-                                                   "city", JsStr.of("Toledo"),
-                                                   "zipCode", JsString.of("45920"),
-                                                   "tags",JsArray.of("workAddress")
-                                                 ),
-                                         JsObj.of("coordinates", JsArray.of(39.8581, -4.02263),
-                                                  "city", JsStr.of("Madrid"),
-                                                  "zipCode", JsString.of("28029"),
-                                                  "tags",JsArray.of("homeAddress")
-                                                 )
-                                        )
-                );
+```java  
 
+JsObj.empty()
+     .set("name", JsStr.of("Rafael"));
 
 ```
 
-
-
-
+It's dime a dozen to have to validate Json. Why don't use
+a similar approach? I mean, after all, a Json spec looks like a
+Json, a set of keys and their specifications... Let's do it!
 
 ```java   
+import jsonvalues.spec.JsObjSpec;
+import static jsonvalues.spec.JsSpecs.*;
 
-        JsObjSpec.strict("name", JsSpecs.str,
-                         "surname", JsSpecs.str,
-                         "phoneNumber", JsSpecs.str,
-                         "registrationDate",JsSpecs.instant,
-                         "addresses",JsSpecs.arrayOfObjSpec(JsObjSpec.strict("coordinates",JsSpecs.tuple(JsSpecs.decimal,
-                                                                                                         JsSpecs.decimal),
-                                                                             "city",JsSpecs.str,
-                                                                             "tags", JsSpecs.arrayOfStr,
-                                                                             "zipCode", JsSpecs.str
-                                                                            )
-                                                           )
-                        );
+JsObjSpec.strict("name", str(),
+                 "surname", str(),
+                 "phoneNumber", str(),
+                 "registrationDate", instant(),
+                 "addresses", arrayOfObjSpec(JsObjSpec.strict("coordinates", tuple(decimal(),
+                                                                                   decimal()
+                                                                                  ),
+                                                              "city", str(),
+                                                              "tags", arrayOfStr(),
+                                                              "zipCode", str()
+                                                              )
+                                            )
+                );
 
 ```
+
+And we can pass in predicates to be more specific about the
+possible values any field can have
 
 ```java    
 
-       BiFunction<Integer, Integer, Predicate<String>> lengthBetween =
-                (min, max) -> string -> string.length() <= max && string.length() >= min;
+BiFunction<Integer, Integer, Predicate<String>> lengthBetween =
+       (min, max) -> string -> string.length() <= max && 
+                               string.length() >= min;
 
 
-        BiFunction<Instant, Instant, Predicate<Instant>> instantBetween =
-                (min, max) -> instant -> min.isBefore(instant) && max.isAfter(instant);
+BiFunction<Instant, Instant, Predicate<Instant>> instantBetween =
+      (min, max) -> instant -> min.isBefore(instant) && 
+                               max.isAfter(instant);
 
-        BiFunction<Long, Long, Predicate<BigDecimal>> decBetween =
-                (min, max) -> n -> BigDecimal.valueOf(min).compareTo(n) < 0 && BigDecimal.valueOf(max).compareTo(n) > 0;
+BiFunction<Long, Long, Predicate<BigDecimal>> decBetween =
+      (min, max) -> n -> BigDecimal.valueOf(min).compareTo(n) < 0 && 
+                         BigDecimal.valueOf(max).compareTo(n) > 0;
   
 ```
 
 ```java    
 
-        int MAX_NAME_LENGTH = 10;
-        int MAX_SURNAME_LENGTH = 10;
-        int MAX_PHONE_LENGTH = 10;
-        int MAX_CITY_LENGTH = 20;
-        int MAX_TAG_LENGTH = 20;
-        int MAX_ZIPCODE_LENGTH = 30;
+int MAX_NAME_LENGTH = 10;
+int MAX_SURNAME_LENGTH = 10;
+int MAX_PHONE_LENGTH = 10;
+int MAX_CITY_LENGTH = 20;
+int MAX_TAG_LENGTH = 20;
+int MAX_ZIPCODE_LENGTH = 30;
         
-        Predicate<String> nameSpec = lengthBetween.apply(0, MAX_NAME_LENGTH);
+Predicate<String> nameSpec = lengthBetween.apply(0, MAX_NAME_LENGTH);
        
-        Predicate<String> surnameSpec = lengthBetween.apply(0, MAX_SURNAME_LENGTH);
+Predicate<String> surnameSpec = lengthBetween.apply(0, MAX_SURNAME_LENGTH);
         
-        Predicate<String> phoneSpec = lengthBetween.apply(0, MAX_PHONE_LENGTH);
+Predicate<String> phoneSpec = lengthBetween.apply(0, MAX_PHONE_LENGTH);
         
-        Predicate<Instant> registrationDateSpec = instantBetween.apply(Instant.EPOCH, Instant.MAX);
+Predicate<Instant> registrationDateSpec = instantBetween.apply(Instant.EPOCH, Instant.MAX);
 
-        Predicate<BigDecimal> latitudeSpec = decBetween.apply(-90L, 90L);
+Predicate<BigDecimal> latitudeSpec = decBetween.apply(-90L, 90L);
 
-        Predicate<BigDecimal> longitudeSpec = decBetween.apply(-180L, 180L);
+Predicate<BigDecimal> longitudeSpec = decBetween.apply(-180L, 180L);
 
-        Predicate<String> citySpec = lengthBetween.apply(0, MAX_CITY_LENGTH);
+Predicate<String> citySpec = lengthBetween.apply(0, MAX_CITY_LENGTH);
         
-        Predicate<String> tagSpec = lengthBetween.apply(0, MAX_TAG_LENGTH);
+Predicate<String> tagSpec = lengthBetween.apply(0, MAX_TAG_LENGTH);
        
-        Predicate<String> zipCodeSpec = lengthBetween.apply(0, MAX_ZIPCODE_LENGTH);
+Predicate<String> zipCodeSpec = lengthBetween.apply(0, MAX_ZIPCODE_LENGTH);
         
 
 ```
 
 ```java    
 
-        JsObjSpec.strict("name", JsSpecs.str(nameSpec),
-                         "surname", JsSpecs.str(surnameSpec),
-                         "phoneNumber", JsSpecs.str(phoneSpec),
-                         "registrationDate", JsSpecs.instant(registrationDateSpec),
-                         "addresses", 
-                         JsSpecs.arrayOfObjSpec(JsObjSpec.strict("coordinates",
-                                                                 JsSpecs.tuple(JsSpecs.decimal(latitudeSpec),
-                                                                               JsSpecs.decimal(longitudeSpec)),
-                                                                 "city", JsSpecs.str(citySpec),
-                                                                 "tags", JsSpecs.arrayOfStr(tagSpec),
-                                                                 "zipCode", JsSpecs.str(zipCodeSpec)
-                                                                )
-                                               )
-                        );
-
+JsObjSpec.strict("name", str(nameSpec),
+                 "surname", str(surnameSpec),
+                 "phoneNumber", str(phoneSpec),
+                 "registrationDate", instant(registrationDateSpec),
+                 "addresses", arrayOfObjSpec(JsObjSpec.strict("coordinates",
+                                                               tuple(decimal(latitudeSpec),
+                                                                     decimal(longitudeSpec)
+                                                                     ),
+                                                               "city", str(citySpec),
+                                                               "tags", arrayOfStr(tagSpec),
+                                                               "zipCode", str(zipCodeSpec)
+                                                              )
+                                             )
+                );
 
 ```
 
-
+And what about generating a Json? You are right! We can use the
+same approach! The same data structure made up of keys and their
+associated generators. I hope you weren't considering piling up
+annotations. Rumor has it that some guy got a StackOverflowException!
 
 
 ```java      
 
 
-        JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH + 1),
-                    "surname", JsStrGen.biased(0, MAX_NAME_SURNAME + 1),
-                    "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH + 1),
-                    "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
-                    "addresses", JsArrayGen.biased(0,1)
-                                           .apply(JsObjGen.of("coordinates", JsTupleGen.of(JsBigDecGen.biased(-90,90),
-                                                                                           JsBigDecGen.biased(-180,180)
-                                                                                          ),
-                                                              "city", JsStrGen.biased(0,100),
-                                                              "tags", JsArrayGen.biased(0,100)
-                                                                                .apply(JsStrGen.biased(0,20)),
-                                                              "zipCode", JsStrGen.biased(0,10)
-                                                             )
-                                                          .setOptionals("tags","zipCode","city")
-                                                  )
-                   )
-                .setOptionals("surname","phoneNumber","addresses");
+JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH + 1),
+            "surname", JsStrGen.biased(0, MAX_NAME_SURNAME + 1),
+            "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH + 1),
+            "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
+            "addresses", JsArrayGen.biased(0,1)
+                                   .apply(JsObjGen.of("coordinates", JsTupleGen.of(JsBigDecGen.biased(-90,90),
+                                                                                   JsBigDecGen.biased(-180,180)
+                                                                                  ),
+                                                      "city", JsStrGen.biased(0,100),
+                                                      "tags", JsArrayGen.biased(0,100)
+                                                                        .apply(JsStrGen.biased(0,20)),
+                                                      "zipCode", JsStrGen.biased(0,10)
+                                                      )
+                                                   .setOptionals("tags","zipCode","city")
+                                          )
+            )
+        .setOptionals("surname","phoneNumber","addresses");
 
 ```
 
+```java 
 //FILTERING
-
+todo
 
 
 JsObj json = JsObj.parse(string)

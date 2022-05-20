@@ -5,47 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d0206c4c-a76a-4540-8e04-81d29c890d8f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestBigDecGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestBigIntGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestBoolGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestBytesGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestCharGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestCombinators.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestDoubleGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestFloatGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestFun.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestInstantGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestIntGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestListGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestMapGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestPairGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestRecordGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestStrGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestTripleGen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/fun/optic/TestLenses.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jio-recording.jfr" beforeDir="false" afterPath="$PROJECT_DIR$/jio-recording.jfr" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/BigDecGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BigDecGen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/BigIntGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BigIntGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/BoolGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BoolGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/BytesGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/BytesGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/CharGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/CharGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/Combinators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/Combinators.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/DoubleGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/DoubleGen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/FloatGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/FloatGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/Gen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/Gen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/InstantGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/InstantGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/IntGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/IntGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/ListGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/ListGen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/LongGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/LongGen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/MapGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/MapGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/PairGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/PairGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/RecordGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/RecordGen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/SetGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/SetGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/StrGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/StrGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fun/tuple/Triple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/tuple/Triple.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/gen/TestRNG.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fun/gen/TripleGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/gen/TripleGen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fun/optic/Prism.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/optic/Prism.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fun/tuple/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fun/tuple/Pair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/fun/gen/TestBigDecGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestBigDecGen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/fun/gen/TestBigIntGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestBigIntGen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/fun/gen/TestInstantGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestInstantGen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/fun/gen/TestMapGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestMapGen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/fun/gen/TestPairGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestPairGen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/fun/gen/TestTripleGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/fun/gen/TestTripleGen.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +42,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="v2-candidate" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -113,7 +89,7 @@
       <recent name="gen" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.StrGen">
+  <component name="RunManager" selected="JUnit.fun in java-fun">
     <configuration name="StrGen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fun.gen.StrGen" />
       <module name="java-fun" />
@@ -217,11 +193,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.StrGen" />
         <item itemvalue="JUnit.TestLenses.testPair" />
+        <item itemvalue="JUnit.TestFloatGen.biasedFloatInterval" />
         <item itemvalue="JUnit.TestBytesGen.testBiased" />
         <item itemvalue="JUnit.TestBytesGen.testArbitrary" />
-        <item itemvalue="JUnit.TestFloatGen.biasedFloatInterval" />
+        <item itemvalue="Application.StrGen" />
       </list>
     </recent_temporary>
   </component>
@@ -283,7 +259,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/fun/gen/StrGen.java</url>
           <line>32</line>
-          <properties class="fun.gen.StrGen" method="biased">
+          <properties class="fun.gen.StrGen">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -293,7 +269,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/java_fun$fun_in_java_fun.ic" NAME="fun in java-fun Coverage Results" MODIFIED="1652728776732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/java_fun$fun_in_java_fun.ic" NAME="fun in java-fun Coverage Results" MODIFIED="1652820440543" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>fun.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/java_fun$TestRNG.ic" NAME="TestRNG Coverage Results" MODIFIED="1652692892771" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

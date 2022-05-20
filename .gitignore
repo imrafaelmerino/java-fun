@@ -17,3 +17,4 @@ docs/javadoc
 docs/coverage-report
 settings.xml
 deploy.sh
+.idea/**

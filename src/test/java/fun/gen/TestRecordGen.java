@@ -19,98 +19,98 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       10),
                                      "b",
-                                     StrGen.letter);
+                                     StrGen.letter());
 
         RecordGen three = RecordGen.of("a",
-                                       IntGen.arbitrary,
+                                       IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letter,
+                                       StrGen.letter(),
                                        "c",
                                        BoolGen.arbitrary);
 
         RecordGen four = RecordGen.of("a",
-                                      IntGen.arbitrary,
+                                      IntGen.arbitrary(),
                                       "b",
-                                      StrGen.letter,
+                                      StrGen.letter(),
                                       "c",
                                       BoolGen.arbitrary,
                                       "d",
-                                      LongGen.arbitrary);
+                                      LongGen.arbitrary());
 
         RecordGen five = RecordGen.of("a",
-                                      IntGen.arbitrary,
+                                      IntGen.arbitrary(),
                                       "b",
-                                      StrGen.letter,
+                                      StrGen.letter(),
                                       "c",
                                       BoolGen.arbitrary,
                                       "d",
-                                      LongGen.arbitrary,
+                                      LongGen.arbitrary(),
                                       "e",
-                                      FloatGen.arbitrary);
+                                      FloatGen.arbitrary());
 
         RecordGen six = RecordGen.of("a",
-                                     IntGen.arbitrary,
+                                     IntGen.arbitrary(),
                                      "b",
-                                     StrGen.letter,
+                                     StrGen.letter(),
                                      "c",
                                      BoolGen.arbitrary,
                                      "d",
-                                     LongGen.arbitrary,
+                                     LongGen.arbitrary(),
                                      "e",
-                                     FloatGen.arbitrary,
+                                     FloatGen.arbitrary(),
                                      "f",
-                                     DoubleGen.arbitrary);
+                                     DoubleGen.arbitrary());
         RecordGen seven = RecordGen.of("a",
-                                       IntGen.arbitrary,
+                                       IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letter,
+                                       StrGen.letter(),
                                        "c",
                                        BoolGen.arbitrary,
                                        "d",
-                                       LongGen.arbitrary,
+                                       LongGen.arbitrary(),
                                        "e",
-                                       FloatGen.arbitrary,
+                                       FloatGen.arbitrary(),
                                        "f",
-                                       DoubleGen.arbitrary,
+                                       DoubleGen.arbitrary(),
                                        "g",
                                        BytesGen.arbitrary(0,
                                                           1024));
         RecordGen eight = RecordGen.of("a",
-                                       IntGen.arbitrary,
+                                       IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letter,
+                                       StrGen.letter(),
                                        "c",
                                        BoolGen.arbitrary,
                                        "d",
-                                       LongGen.arbitrary,
+                                       LongGen.arbitrary(),
                                        "e",
-                                       FloatGen.arbitrary,
+                                       FloatGen.arbitrary(),
                                        "f",
-                                       DoubleGen.arbitrary,
+                                       DoubleGen.arbitrary(),
                                        "g",
                                        BytesGen.arbitrary(0,
                                                           1024),
                                        "h",
-                                       ListGen.<BigDecimal>arbitrary(0,10).apply(BigDecGen.arbitrary));
+                                       ListGen.<BigDecimal>arbitrary(0,10).apply(BigDecGen.arbitrary()));
 
 
         RecordGen nine = RecordGen.of("a",
-                                       IntGen.arbitrary,
+                                       IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letter,
+                                       StrGen.letter(),
                                        "c",
                                        BoolGen.arbitrary,
                                        "d",
-                                       LongGen.arbitrary,
+                                       LongGen.arbitrary(),
                                        "e",
-                                       FloatGen.arbitrary,
+                                       FloatGen.arbitrary(),
                                        "f",
-                                       DoubleGen.arbitrary,
+                                       DoubleGen.arbitrary(),
                                        "g",
                                        BytesGen.arbitrary(0,
                                                           1024),
                                        "h",
-                                       ListGen.<BigDecimal>arbitrary(0,10).apply(BigDecGen.arbitrary)
+                                       ListGen.<BigDecimal>arbitrary(0,10).apply(BigDecGen.arbitrary())
                                       );
 
     }
@@ -123,7 +123,7 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       10),
                                      "b",
-                                     StrGen.letter,
+                                     StrGen.letter(),
                                      "c",
                                      BoolGen.arbitrary);
 
@@ -145,7 +145,7 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       40000),
                                      "b",
-                                     StrGen.letter,
+                                     StrGen.letter(),
                                      "c",
                                      IntGen.arbitrary(0,
                                                       40000));
@@ -204,7 +204,7 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       40000),
                                      "b",
-                                     StrGen.letter,
+                                     StrGen.letter(),
                                      "c",
                                      IntGen.arbitrary(0,
                                                       800000));

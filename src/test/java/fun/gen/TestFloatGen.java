@@ -12,7 +12,7 @@ public class TestFloatGen {
     public void biasedDouble() {
 
         Map<Float, Long> counts = TestFun.generate(100000,
-                                                   FloatGen.biased);
+                                                   FloatGen.biased());
 
         List<Float> problematic = TestFun.list(
                 (float) Integer.MAX_VALUE,

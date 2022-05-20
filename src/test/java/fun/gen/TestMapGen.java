@@ -1,8 +1,6 @@
 package fun.gen;
 
-import fun.gen.IntGen;
-import fun.gen.MapGen;
-import fun.gen.StrGen;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

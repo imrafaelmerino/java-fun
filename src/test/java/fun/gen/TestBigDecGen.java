@@ -31,8 +31,6 @@ public class TestBigDecGen {
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
                                                          problematic,
                                                          0.05);
-
-
     }
 
 
@@ -40,7 +38,7 @@ public class TestBigDecGen {
     public void biasedLong() {
 
         Map<BigDecimal, Long> counts = TestFun.generate(100000,
-                                                        BigDecGen.biased);
+                                                        BigDecGen.biased());
 
         List<BigDecimal> problematic = TestFun.list(BigDecimal.valueOf(Long.MAX_VALUE),
                                                     BigDecimal.valueOf(Long.MAX_VALUE),

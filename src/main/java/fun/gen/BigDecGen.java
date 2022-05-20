@@ -17,11 +17,15 @@ import static java.util.Objects.requireNonNull;
  */
 public final class BigDecGen implements Gen<BigDecimal> {
 
-    public static final Gen<BigDecimal> arbitrary = new BigDecGen();
-    public static final Gen<BigDecimal> biased = biased();
+    private static final Gen<BigDecimal> arbitrary = new BigDecGen();
 
     private BigDecGen() {
     }
+
+    public static Gen<BigDecimal> arbitrary() {
+        return arbitrary;
+    }
+
 
     public static Gen<BigDecimal> biased(final BigDecimal min,
                                          final BigDecimal max) {
@@ -102,7 +106,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
         };
     }
 
-    private static Gen<BigDecimal> biased() {
+    public static Gen<BigDecimal> biased() {
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         gens.add(new Pair<>(1,
                             Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));

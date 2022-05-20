@@ -94,14 +94,14 @@ public class TestStrGen {
     public void testStringGen() {
 
         Map<String, Long> countsLetter = TestFun.generate(1000000,
-                                                          StrGen.letter);
+                                                          StrGen.letter());
 
         Map<String, Long> countsDigit = TestFun.generate(1000000,
-                                                         StrGen.digit);
+                                                         StrGen.digit());
 
 
         Map<String, Long> countAlpha = TestFun.generate(10000000,
-                                                        StrGen.alphabetic);
+                                                        StrGen.alphabetic());
 
 
         TestFun.assertGeneratedValuesHaveSameProbability(countsLetter,

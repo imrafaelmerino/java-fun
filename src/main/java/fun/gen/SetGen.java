@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 public final class SetGen<T> implements Gen<Set<T>> {
     private final Gen<T> gen;
     private final int size;
-
     private final int maxTries;
 
     public SetGen(final Gen<T> gen,

@@ -11,7 +11,7 @@ public class TestIntGen {
     public void biasedInt() {
 
         Map<Integer, Long> counts = TestFun.generate(100000,
-                                                     IntGen.biased);
+                                                     IntGen.biased());
 
         List<Integer> problematic = TestFun.list(Integer.MAX_VALUE,
                                                  Integer.MIN_VALUE,

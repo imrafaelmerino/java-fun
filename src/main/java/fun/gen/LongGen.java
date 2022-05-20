@@ -2,6 +2,7 @@ package fun.gen;
 
 
 import fun.tuple.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,16 +15,20 @@ import static java.util.Objects.requireNonNull;
  */
 public final class LongGen implements Gen<Long> {
 
-    public static final Gen<Long> arbitrary = new LongGen();
-    public static final Gen<Long> biased = biased();
+    private static final Gen<Long> arbitrary = new LongGen();
 
-    private LongGen() {}
+    private LongGen() {
+    }
+
+    public static Gen<Long> arbitrary() {
+        return arbitrary;
+    }
 
     public static Gen<Long> biased(final long min,
                                    final long max) {
         if (max < min) throw new IllegalArgumentException("max < min");
 
-        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
+        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(new Pair<>(1,
                                 Gen.cons((long) Integer.MAX_VALUE)));
@@ -53,7 +58,8 @@ public final class LongGen implements Gen<Long> {
                             Gen.cons(max)));
 
         gens.add(new Pair<>(gens.size(),
-                            arbitrary(min,max)));
+                            arbitrary(min,
+                                      max)));
 
         return Combinators.freqList(gens);
     }
@@ -93,8 +99,8 @@ public final class LongGen implements Gen<Long> {
     }
 
 
-    private static Gen<Long> biased() {
-        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
+    public static Gen<Long> biased() {
+        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 
         gens.add(new Pair<>(1,
                             Gen.cons(Long.MAX_VALUE)));

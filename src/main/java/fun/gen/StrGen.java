@@ -12,22 +12,34 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public final class StrGen implements Gen<String> {
 
-    public static final Gen<String> digit = CharGen.digit.map(String::valueOf);
+    private static final Gen<String> digit = CharGen.digit.map(String::valueOf);
     /**
      * Generates a letter from a-z
      */
-    public static final Gen<String> letter = CharGen.letter.map(String::valueOf);
-
-    public static final Gen<String> alphabetic = CharGen.alphabetic.map(String::valueOf);
-
-    public static final Gen<String> alphanumeric = Combinators.oneOf(CharGen.alphabetic,
-                                                                     CharGen.digit).map(String::valueOf);
-
-
+    private static final Gen<String> letter = CharGen.letter.map(String::valueOf);
+    private static final Gen<String> alphabetic = CharGen.alphabetic.map(String::valueOf);
+    private static final Gen<String> alphanumeric = Combinators.oneOf(CharGen.alphabetic,
+                                                                      CharGen.digit).map(String::valueOf);
     private final int length;
 
     private StrGen(final int length) {
         this.length = length;
+    }
+
+    public static Gen<String> digit() {
+        return digit;
+    }
+
+    public static Gen<String> letter() {
+        return letter;
+    }
+
+    public static Gen<String> alphabetic() {
+        return alphabetic;
+    }
+
+    public static Gen<String> alphanumeric() {
+        return alphanumeric;
     }
 
     public static Gen<String> biased(final int minLength,
@@ -41,10 +53,14 @@ public final class StrGen implements Gen<String> {
                             new StrGen(minLength)));
 
         gens.add(new Pair<>(1,
-                            Gen.cons(String.join("", Collections.nCopies(minLength, " ")))));
+                            Gen.cons(String.join("",
+                                                 Collections.nCopies(minLength,
+                                                                     " ")))));
 
         gens.add(new Pair<>(1,
-                            Gen.cons(String.join("", Collections.nCopies(maxLength, " ")))));
+                            Gen.cons(String.join("",
+                                                 Collections.nCopies(maxLength,
+                                                                     " ")))));
 
         gens.add(new Pair<>(1,
                             new StrGen(maxLength)));
@@ -152,15 +168,17 @@ public final class StrGen implements Gen<String> {
 
     }
 
+    public static void main(String[] args) {
+        System.out.println(String.join("",
+                                       Collections.nCopies(2,
+                                                           " ")).length());
+    }
+
     @Override
     public Supplier<String> apply(final Random gen) {
         Objects.requireNonNull(gen);
         return genStr(gen,
                       () -> length);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(String.join("", Collections.nCopies(2, " ")).length());
     }
 }
 

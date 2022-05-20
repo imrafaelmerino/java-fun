@@ -12,7 +12,7 @@ public class TestDoubleGen {
     public void biasedDouble() {
 
         Map<Double, Long> counts = TestFun.generate(100000,
-                                                    DoubleGen.biased);
+                                                    DoubleGen.biased());
 
         List<Double> problematic = TestFun.list((double) Integer.MAX_VALUE,
                                                 (double) Integer.MIN_VALUE,

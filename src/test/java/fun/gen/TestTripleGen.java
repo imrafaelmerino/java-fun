@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class TestTripleGen {
 
-
     @Test
     public void testPair() {
 

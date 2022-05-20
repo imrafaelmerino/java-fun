@@ -10,15 +10,11 @@ import java.util.stream.Stream;
 
 public class TestInstantGen {
 
-
-
-
-
     @Test
     public void biasedInstant() {
 
         Map<Instant, Long> counts = TestFun.generate(100000,
-                                                     InstantGen.biased);
+                                                     InstantGen.biased());
 
         List<Instant> problematic = Stream.of(0L,
                                               Instant.MAX.getEpochSecond(),

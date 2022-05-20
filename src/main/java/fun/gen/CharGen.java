@@ -9,7 +9,11 @@ import static java.util.Objects.requireNonNull;
  * Represents a generator of characters.
  */
 public final class CharGen implements Gen<Character> {
-    public static final Gen<Character> arbitrary = new CharGen();
+    private static final Gen<Character> arbitrary = new CharGen();
+
+    public static Gen<Character> arbitrary() {
+        return arbitrary;
+    }
 
     /**
      * Generates a letter from a-z

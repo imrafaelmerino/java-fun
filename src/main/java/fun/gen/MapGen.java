@@ -46,7 +46,7 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
         final Supplier<K> keys = keyGen.apply(splitGen.apply(requireNonNull(gen)));
         final Supplier<V> values = valueGen.apply(splitGen.apply(gen));
         return () -> {
-            HashMap<K, V> map = new HashMap<K, V>();
+            HashMap<K, V> map = new HashMap<>();
             int tries = 0;
             do {
                 map.put(keys.get(),

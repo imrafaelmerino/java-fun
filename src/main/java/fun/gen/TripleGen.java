@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
  * represent a generator of triples.
  */
 public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
-
     private final Gen<A> _1;
     private final Gen<B> _2;
     private final Gen<C> _3;

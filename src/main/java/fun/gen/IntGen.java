@@ -16,9 +16,10 @@ import static java.util.Objects.requireNonNull;
  */
 public final class IntGen implements Gen<Integer> {
 
-    public static final Gen<Integer> arbitrary = new IntGen();
-    public static final Gen<Integer> biased = biased();
-
+    private static final Gen<Integer> arbitrary = new IntGen();
+    public static Gen<Integer> arbitrary() {
+        return arbitrary;
+    }
 
     private IntGen() {
     }
@@ -87,7 +88,7 @@ public final class IntGen implements Gen<Integer> {
     }
 
 
-    private static Gen<Integer> biased() {
+    public static Gen<Integer> biased() {
         List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
 
         gens.add(new Pair<>(1,

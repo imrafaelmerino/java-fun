@@ -18,15 +18,17 @@ import static java.util.Objects.requireNonNull;
  */
 public final class InstantGen implements Gen<Instant> {
 
-    public static final Gen<Instant> arbitrary = new InstantGen();
+    private static final Gen<Instant> arbitrary = new InstantGen();
     private static final long MAX_SECONDS = Instant.MAX.getEpochSecond();
     private static final long MIN_SECONDS = Instant.MIN.getEpochSecond();
-    public static final Gen<Instant> biased = biased();
-
     private InstantGen() {
     }
 
-    private static Gen<Instant> biased() {
+    public static Gen<Instant> arbitrary() {
+        return arbitrary;
+    }
+
+    public static Gen<Instant> biased() {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
 
         gens.add(new Pair<>(1,

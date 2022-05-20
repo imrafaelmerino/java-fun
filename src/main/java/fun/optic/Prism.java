@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  - getOptional: S -> Optional<T>
  - reverseGet : T -> S
  }
- Typically a Prism encodes the relation between a Sum or CoProduct type and one of its element.
+ Typically, a Prism encodes the relation between a Sum or CoProduct type and one of its element.
 
  @param <S> the source of a prism
  @param <T> the target of a prism */

@@ -39,9 +39,7 @@ public class TestBigIntGen {
 
         Assertions.assertTrue(IntStream.range(0,
                                               7)
-                                       .allMatch(it-> {
-                                           return counts.containsKey(BigInteger.valueOf(it));
-                                       }));
+                                       .allMatch(it -> counts.containsKey(BigInteger.valueOf(it))));
     }
 
 

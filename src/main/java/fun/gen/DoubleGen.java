@@ -13,9 +13,10 @@ import static java.util.Objects.requireNonNull;
  * Represents a generator of doubles.
  */
 public final class DoubleGen implements Gen<Double> {
-    public static final Gen<Double> arbitrary = new DoubleGen();
-    public static final Gen<Double> biased = biased();
-
+    private static final Gen<Double> arbitrary = new DoubleGen();
+    public static Gen<Double> arbitrary() {
+        return arbitrary;
+    }
 
     private DoubleGen() {
     }
@@ -23,7 +24,7 @@ public final class DoubleGen implements Gen<Double> {
     public static Gen<Double> biased(final double min,
                                      final double max) {
         if (max < min) throw new IllegalArgumentException("max < min");
-        List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<Pair<Integer, Gen<? extends Double>>>();
+        List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
 
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(new Pair<>(1,
@@ -75,8 +76,8 @@ public final class DoubleGen implements Gen<Double> {
     }
 
 
-    private static Gen<Double> biased() {
-        List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<Pair<Integer, Gen<? extends Double>>>();
+    public static Gen<Double> biased() {
+        List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
         gens.add(new Pair<>(1,
                             Gen.cons(Double.MIN_VALUE)));
         gens.add(new Pair<>(1,

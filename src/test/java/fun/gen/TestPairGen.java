@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class TestPairGen {
 
-
     @Test
     public void testPair() {
 

@@ -38,7 +38,7 @@ public class TestLongGen {
     public void biasedLong() {
 
         Map<Long, Long> counts = TestFun.generate(100000,
-                                                  LongGen.biased);
+                                                  LongGen.biased());
 
         List<Long> problematic = TestFun.list(Long.MAX_VALUE,
                                               Long.MAX_VALUE,

@@ -13,9 +13,10 @@ import static java.util.Objects.requireNonNull;
  * Represents a generator of floats.
  */
 public final class FloatGen implements Gen<Float> {
-    public static final Gen<Float> arbitrary = new FloatGen();
-    public static final Gen<Float> biased = biased();
-
+    private static final Gen<Float> arbitrary = new FloatGen();
+    public static Gen<Float> arbitrary() {
+        return arbitrary;
+    }
 
     private FloatGen() {
     }
@@ -23,7 +24,7 @@ public final class FloatGen implements Gen<Float> {
     public static Gen<Float> biased(final float min,
                                     final float max) {
         if (max < min) throw new IllegalArgumentException("max < min");
-        List<Pair<Integer, Gen<? extends Float>>> gens = new ArrayList<Pair<Integer, Gen<? extends Float>>>();
+        List<Pair<Integer, Gen<? extends Float>>> gens = new ArrayList<>();
 
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(new Pair<>(1,
@@ -75,8 +76,8 @@ public final class FloatGen implements Gen<Float> {
         };
     }
 
-    private static Gen<Float> biased() {
-        List<Pair<Integer, Gen<? extends Float>>> gens = new ArrayList<Pair<Integer, Gen<? extends Float>>>();
+    public static Gen<Float> biased() {
+        List<Pair<Integer, Gen<? extends Float>>> gens = new ArrayList<>();
         gens.add(new Pair<>(1,
                             Gen.cons((float) Integer.MIN_VALUE)));
         gens.add(new Pair<>(1,

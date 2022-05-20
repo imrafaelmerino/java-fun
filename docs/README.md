@@ -221,18 +221,19 @@ JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH + 1),
             "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH + 1),
             "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
             "addresses", JsArrayGen.biased(0,1)
-                                   .apply(JsObjGen.of("coordinates", JsTupleGen.of(JsBigDecGen.biased(-90,90),
-                                                                                   JsBigDecGen.biased(-180,180)
-                                                                                  ),
+                                   .apply(JsObjGen.of("coordinates", 
+                                                      JsTupleGen.of(JsBigDecGen.biased(-90,90),
+                                                                    JsBigDecGen.biased(-180,180)
+                                                                   ),
                                                       "city", JsStrGen.biased(0,100),
                                                       "tags", JsArrayGen.biased(0,100)
                                                                         .apply(JsStrGen.biased(0,20)),
                                                       "zipCode", JsStrGen.biased(0,10)
-                                                      )
+                                                     )
                                                    .setOptionals("tags","zipCode","city")
                                           )
             )
-        .setOptionals("surname","phoneNumber","addresses");
+        .setOptionals("surname", "phoneNumber", "addresses");
 
 ```
 

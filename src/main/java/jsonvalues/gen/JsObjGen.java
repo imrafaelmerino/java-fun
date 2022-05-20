@@ -20,986 +20,50 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsObjGen implements Gen<JsObj> {
 
-    private final Map<String, Gen<? extends JsValue>> bindings = new LinkedHashMap<>();
+    private final Map<String, Gen<? extends JsValue>> bindings;
 
-    private List<String> optionals = new ArrayList<>();
-    private List<String> nullables = new ArrayList<>();
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13,
-                     final String key14,
-                     final Gen<? extends JsValue> gen14,
-                     final String key15,
-                     final Gen<? extends JsValue> gen15
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12,
-             key13,
-             gen13,
-             key14,
-             gen14
-        );
-        bindings.put(key15,
-                     gen15
-        );
-    }
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13,
-                     final String key14,
-                     final Gen<? extends JsValue> gen14,
-                     final String key15,
-                     final Gen<? extends JsValue> gen15,
-                     final String key16,
-                     final Gen<? extends JsValue> gen16
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12,
-             key13,
-             gen13,
-             key14,
-             gen14,
-             key15,
-             gen15
-        );
-        bindings.put(key16,
-                     gen16
-        );
-    }
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13,
-                     final String key14,
-                     final Gen<? extends JsValue> gen14,
-                     final String key15,
-                     final Gen<? extends JsValue> gen15,
-                     final String key16,
-                     final Gen<? extends JsValue> gen16,
-                     final String key17,
-                     final Gen<? extends JsValue> gen17
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12,
-             key13,
-             gen13,
-             key14,
-             gen14,
-             key15,
-             gen15,
-             key16,
-             gen16
-        );
-        bindings.put(key17,
-                     gen17
-        );
-    }
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13,
-                     final String key14,
-                     final Gen<? extends JsValue> gen14,
-                     final String key15,
-                     final Gen<? extends JsValue> gen15,
-                     final String key16,
-                     final Gen<? extends JsValue> gen16,
-                     final String key17,
-                     final Gen<? extends JsValue> gen17,
-                     final String key18,
-                     final Gen<? extends JsValue> gen18
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12,
-             key13,
-             gen13,
-             key14,
-             gen14,
-             key15,
-             gen15,
-             key16,
-             gen16,
-             key17,
-             gen17
-        );
-        bindings.put(key18,
-                     gen18
-        );
-    }
-    @SuppressWarnings("squid:S00107")
+    private final List<String> optionals;
+    private final List<String> nullables;
 
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13,
-                     final String key14,
-                     final Gen<? extends JsValue> gen14,
-                     final String key15,
-                     final Gen<? extends JsValue> gen15,
-                     final String key16,
-                     final Gen<? extends JsValue> gen16,
-                     final String key17,
-                     final Gen<? extends JsValue> gen17,
-                     final String key18,
-                     final Gen<? extends JsValue> gen18,
-                     final String key19,
-                     final Gen<? extends JsValue> gen19
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12,
-             key13,
-             gen13,
-             key14,
-             gen14,
-             key15,
-             gen15,
-             key16,
-             gen16,
-             key17,
-             gen17,
-             key18,
-             gen18
-        );
-        bindings.put(key19,
-                     gen19
-        );
-    }
-    @SuppressWarnings("squid:S00107")
-
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13,
-                     final String key14,
-                     final Gen<? extends JsValue> gen14
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12,
-             key13,
-             gen13
-        );
-        bindings.put(key14,
-                     gen14
-        );
-    }
-    @SuppressWarnings("squid:S00107")
-
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12,
-                     final String key13,
-                     final Gen<? extends JsValue> gen13
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11,
-             key12,
-             gen12
-        );
-        bindings.put(key13,
-                     gen13
-        );
-    }
-    @SuppressWarnings("squid:S00107")
-
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11,
-                     final String key12,
-                     final Gen<? extends JsValue> gen12
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10,
-             key11,
-             gen11
-        );
-        bindings.put(key12,
-                     gen12
-        );
+    private JsObjGen(Map<String, Gen<? extends JsValue>> bindings,
+                     List<String> optionals,
+                     List<String> nullables) {
+        this.optionals = optionals;
+        this.nullables = nullables;
+        this.bindings = bindings;
     }
 
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10,
-                     final String key11,
-                     final Gen<? extends JsValue> gen11
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9,
-             key10,
-             gen10
-        );
-        bindings.put(key11,
-                     gen11
-        );
+    private JsObjGen(Map<String, Gen<? extends JsValue>> bindings) {
+        this.optionals = new ArrayList<>();
+        this.nullables = new ArrayList<>();
+        this.bindings = bindings;
     }
 
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9,
-                     final String key10,
-                     final Gen<? extends JsValue> gen10
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8,
-             key9,
-             gen9
-        );
-        bindings.put(key10,
-                     gen10
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8,
-                     final String key9,
-                     final Gen<? extends JsValue> gen9
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7,
-             key8,
-             gen8
-        );
-        bindings.put(key9,
-                     gen9
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7,
-                     final String key8,
-                     final Gen<? extends JsValue> gen8
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6,
-             key7,
-             gen7
-        );
-        bindings.put(key8,
-                     gen8
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6,
-                     final String key7,
-                     final Gen<? extends JsValue> gen7
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5,
-             key6,
-             gen6
-        );
-        bindings.put(key7,
-                     gen7
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5,
-                     final String key6,
-                     final Gen<? extends JsValue> gen6
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4,
-             key5,
-             gen5
-        );
-        bindings.put(key6,
-                     gen6
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4,
-                     final String key5,
-                     final Gen<? extends JsValue> gen5
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3,
-             key4,
-             gen4
-        );
-        bindings.put(key5,
-                     gen5
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3,
-                     final String key4,
-                     final Gen<? extends JsValue> gen4
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2,
-             key3,
-             gen3
-        );
-        bindings.put(key4,
-                     gen4
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2,
-                     final String key3,
-                     final Gen<? extends JsValue> gen3
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1,
-             key2,
-             gen2
-        );
-        bindings.put(key3,
-                     gen3
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1,
-                     final String key2,
-                     final Gen<? extends JsValue> gen2
-    ) {
-        this(key,
-             gen,
-             key1,
-             gen1
-        );
-        bindings.put(key2,
-                     gen2
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen,
-                     final String key1,
-                     final Gen<? extends JsValue> gen1
-    ) {
-        this(key,
-             gen
-        );
-        bindings.put(key1,
-                     gen1
-        );
-    }
-
-
-    private JsObjGen(final String key,
-                     final Gen<? extends JsValue> gen
-    ) {
-        bindings.put(key,
-                     gen
-        );
-    }
 
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen
     ) {
-        return new JsObjGen(key,
-                            gen
-        );
+
+        Map<String, Gen<? extends JsValue>> map = new HashMap<>();
+        map.put(requireNonNull(key),
+                requireNonNull(gen));
+        return new JsObjGen(map);
+
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
                               final Gen<? extends JsValue> gen1
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1
-        );
+        return JsObjGen.of(key,
+                           gen).set(key1,
+                                    gen1);
+
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1007,15 +71,14 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key2,
                               final Gen<? extends JsValue> gen2
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2
-        );
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1).set(key2,
+                                     gen2);
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1025,17 +88,16 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key3,
                               final Gen<? extends JsValue> gen3
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3
-        );
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1,
+                           key2,
+                           gen2).set(key3,
+                                     gen3);
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1047,19 +109,18 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key4,
                               final Gen<? extends JsValue> gen4
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4
-        );
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3).set(key4,
+                                     gen4);
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1073,21 +134,20 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key5,
                               final Gen<? extends JsValue> gen5
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5
-        );
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4).set(key5,
+                                     gen5);
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1103,23 +163,22 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key6,
                               final Gen<? extends JsValue> gen6
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6
-        );
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5).set(key6,
+                                     gen6);
     }
 
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key,
                               final Gen<? extends JsValue> gen,
                               final String key1,
@@ -1137,24 +196,21 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key7,
                               final Gen<? extends JsValue> gen7
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7
-        );
-
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6).set(key7,
+                                     gen7);
     }
 
     public static JsObjGen of(final String key,
@@ -1176,25 +232,23 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key8,
                               final Gen<? extends JsValue> gen8
     ) {
-        return new JsObjGen(key,
-                            gen,
-                            key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8
-        );
+        return JsObjGen.of(key,
+                           gen,
+                           key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7).set(key8,
+                                     gen8);
     }
 
     /**
@@ -1222,7 +276,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen10 the mapping associated to the eleventh key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1244,27 +298,25 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key10,
                               final Gen<? extends JsValue> gen10
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9).set(key10,
+                                     gen10);
     }
 
     /**
@@ -1294,7 +346,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen11 the mapping associated to the eleventh key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1318,29 +370,27 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key11,
                               final Gen<? extends JsValue> gen11
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10).set(key11,
+                                      gen11);
     }
 
     /**
@@ -1372,7 +422,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen12 the mapping associated to the twelfth key,
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1398,31 +448,29 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key12,
                               final Gen<? extends JsValue> gen12
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11).set(key12,
+                                      gen12);
     }
 
     /**
@@ -1456,7 +504,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen13 the mapping associated to the thirteenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1484,33 +532,31 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key13,
                               final Gen<? extends JsValue> gen13
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12).set(key13,
+                                      gen13);
     }
 
     /**
@@ -1546,7 +592,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen14 the mapping associated to the fourteenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1576,35 +622,33 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key14,
                               final Gen<? extends JsValue> gen14
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13).set(key14,
+                                      gen14);
     }
 
     /**
@@ -1642,7 +686,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen15 the mapping associated to the fifteenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1674,37 +718,35 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key15,
                               final Gen<? extends JsValue> gen15
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14,
-                            key15,
-                            gen15
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13,
+                           key14,
+                           gen14).set(key15,
+                                      gen15);
     }
 
     /**
@@ -1744,7 +786,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen16 the mapping associated to the sixteenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1778,39 +820,37 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key16,
                               final Gen<? extends JsValue> gen16
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14,
-                            key15,
-                            gen15,
-                            key16,
-                            gen16
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13,
+                           key14,
+                           gen14,
+                           key15,
+                           gen15).set(key16,
+                                      gen16);
     }
 
     /**
@@ -1852,7 +892,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen17 the mapping associated to the seventeenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -1888,41 +928,39 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key17,
                               final Gen<? extends JsValue> gen17
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14,
-                            key15,
-                            gen15,
-                            key16,
-                            gen16,
-                            key17,
-                            gen17
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13,
+                           key14,
+                           gen14,
+                           key15,
+                           gen15,
+                           key16,
+                           gen16).set(key17,
+                                      gen17);
     }
 
     /**
@@ -1966,7 +1004,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen18 the mapping associated to the eighteenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -2004,43 +1042,41 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key18,
                               final Gen<? extends JsValue> gen18
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14,
-                            key15,
-                            gen15,
-                            key16,
-                            gen16,
-                            key17,
-                            gen17,
-                            key18,
-                            gen18
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13,
+                           key14,
+                           gen14,
+                           key15,
+                           gen15,
+                           key16,
+                           gen16,
+                           key17,
+                           gen17).set(key18,
+                                      gen18);
     }
 
     /**
@@ -2086,7 +1122,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen19 the mapping associated to the nineteenth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -2126,45 +1162,43 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key19,
                               final Gen<? extends JsValue> gen19
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14,
-                            key15,
-                            gen15,
-                            key16,
-                            gen16,
-                            key17,
-                            gen17,
-                            key18,
-                            gen18,
-                            key19,
-                            gen19
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13,
+                           key14,
+                           gen14,
+                           key15,
+                           gen15,
+                           key16,
+                           gen16,
+                           key17,
+                           gen17,
+                           key18,
+                           gen18).set(key19,
+                                      gen19);
     }
 
     /**
@@ -2212,7 +1246,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param gen20 the mapping associated to the twentieth key
      * @return a JsObjGen
      */
-
+    @SuppressWarnings("squid:S00107")
     public static JsObjGen of(final String key1,
                               final Gen<? extends JsValue> gen1,
                               final String key2,
@@ -2254,77 +1288,93 @@ public final class JsObjGen implements Gen<JsObj> {
                               final String key20,
                               final Gen<? extends JsValue> gen20
     ) {
-        return new JsObjGen(key1,
-                            gen1,
-                            key2,
-                            gen2,
-                            key3,
-                            gen3,
-                            key4,
-                            gen4,
-                            key5,
-                            gen5,
-                            key6,
-                            gen6,
-                            key7,
-                            gen7,
-                            key8,
-                            gen8,
-                            key9,
-                            gen9,
-                            key10,
-                            gen10,
-                            key11,
-                            gen11,
-                            key12,
-                            gen12,
-                            key13,
-                            gen13,
-                            key14,
-                            gen14,
-                            key15,
-                            gen15,
-                            key16,
-                            gen16,
-                            key17,
-                            gen17,
-                            key18,
-                            gen18,
-                            key19,
-                            gen19,
-                            key20,
-                            gen20
-        );
+        return JsObjGen.of(key1,
+                           gen1,
+                           key2,
+                           gen2,
+                           key3,
+                           gen3,
+                           key4,
+                           gen4,
+                           key5,
+                           gen5,
+                           key6,
+                           gen6,
+                           key7,
+                           gen7,
+                           key8,
+                           gen8,
+                           key9,
+                           gen9,
+                           key10,
+                           gen10,
+                           key11,
+                           gen11,
+                           key12,
+                           gen12,
+                           key13,
+                           gen13,
+                           key14,
+                           gen14,
+                           key15,
+                           gen15,
+                           key16,
+                           gen16,
+                           key17,
+                           gen17,
+                           key18,
+                           gen18,
+                           key19,
+                           gen19).set(key20,
+                                      gen20);
     }
 
     public JsObjGen setNullables(final List<String> nullables) {
-        this.nullables = requireNonNull(optionals);
-        return this;
+        return new JsObjGen(bindings,
+                            optionals,
+                            requireNonNull(nullables)
+        );
     }
 
     public JsObjGen setNullables(final String... nullables) {
-        this.nullables = Arrays.stream(requireNonNull(nullables))
-                               .collect(Collectors.toList());
-        return this;
+        return setNullables(Arrays.stream(requireNonNull(nullables))
+                                  .collect(Collectors.toList()));
     }
 
+    /**
+     * @param optionals
+     * @return
+     */
     public JsObjGen setOptionals(final List<String> optionals) {
-        this.optionals = requireNonNull(optionals);
-        return this;
+        return new JsObjGen(bindings,
+                            requireNonNull(optionals),
+                            nullables);
     }
 
+    /**
+     * @param optional
+     * @return
+     */
     public JsObjGen setOptionals(final String... optional) {
-        this.optionals = Arrays.stream(requireNonNull(optional))
-                               .collect(Collectors.toList());
-        return this;
+        return setOptionals(Arrays.stream(requireNonNull(optional))
+                                  .collect(Collectors.toList()));
     }
 
+    /**
+     * @param key
+     * @param gen
+     * @return
+     */
     public JsObjGen set(final String key,
                         final Gen<? extends JsValue> gen
     ) {
-        bindings.put(key,
-                     gen);
-        return this;
+        LinkedHashMap<String, Gen<? extends JsValue>> map = new LinkedHashMap<>(bindings);
+        map.put(requireNonNull(key),
+                requireNonNull(gen));
+        return new JsObjGen(map,
+                            optionals,
+                            nullables);
+
     }
 
     @Override
@@ -2349,7 +1399,7 @@ public final class JsObjGen implements Gen<JsObj> {
         return () ->
         {
             JsObj obj = JsObj.empty();
-            for (  Map.Entry<String, Gen<? extends JsValue>> pair : bindings.entrySet()) {
+            for (Map.Entry<String, Gen<? extends JsValue>> pair : bindings.entrySet()) {
                 final JsValue value = pair.getValue().apply(gen)
                                           .get();
                 obj = obj.set(pair.getKey(),

@@ -10,12 +10,12 @@ import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
 
-class JsIntegralSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
+class JsIntegralSuchThatSpec extends AbstractNullableSpec implements JsValuePredicate {
 
     final Function<BigInteger, Optional<JsError>> predicate;
 
-    JsIntegralSuchThatSpec(final boolean nullable,
-                           final Function<BigInteger, Optional<JsError>> predicate
+    JsIntegralSuchThatSpec(final Function<BigInteger, Optional<JsError>> predicate,
+                           final boolean nullable
     ) {
         super(nullable);
         this.predicate = predicate;
@@ -25,8 +25,8 @@ class JsIntegralSuchThatSpec extends AbstractPredicateSpec implements JsValuePre
     @Override
     public JsSpec nullable() {
         return new JsIntegralSuchThatSpec(
-                true,
-                predicate
+                predicate,
+                true
         );
     }
 

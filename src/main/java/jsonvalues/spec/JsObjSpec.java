@@ -20,9 +20,10 @@ import static jsonvalues.spec.ERROR_CODE.*;
 public final class JsObjSpec implements JsSpec {
 
     final boolean strict;
+    final Map<String, JsSpecParser> parsers;
     private final boolean nullable;
-    private final List<String> optionalFields = new ArrayList<>();
-    Map<String, JsSpec> bindings = new LinkedHashMap<>();
+    Map<String, JsSpec> bindings;
+    private List<String> requiredFields;
 
     private JsObjSpec(final Map<String, JsSpec> bindings,
                       boolean nullable,
@@ -31,1030 +32,13 @@ public final class JsObjSpec implements JsSpec {
         this.bindings = bindings;
         this.nullable = nullable;
         this.strict = strict;
+        this.requiredFields = new ArrayList<>(bindings.keySet());
+        this.parsers = new LinkedHashMap<>();
+        for (Map.Entry<String, JsSpec> entry : bindings.entrySet())
+            parsers.put(entry.getKey(),
+                        entry.getValue().parser());
     }
 
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final String key15,
-            final JsSpec spec15,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                strict
-        );
-        bindings.put(key15,
-                     spec15
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final String key15,
-            final JsSpec spec15,
-            final String key16,
-            final JsSpec spec16,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                strict
-        );
-        bindings.put(key16,
-                     spec16
-        );
-    }
-
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final String key15,
-            final JsSpec spec15,
-            final String key16,
-            final JsSpec spec16,
-            final String key17,
-            final JsSpec spec17,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                strict
-        );
-        bindings.put(key17,
-                     spec17
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final String key15,
-            final JsSpec spec15,
-            final String key16,
-            final JsSpec spec16,
-            final String key17,
-            final JsSpec spec17,
-            final String key18,
-            final JsSpec spec18,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                strict
-        );
-        bindings.put(key18,
-                     spec18
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final String key15,
-            final JsSpec spec15,
-            final String key16,
-            final JsSpec spec16,
-            final String key17,
-            final JsSpec spec17,
-            final String key18,
-            final JsSpec spec18,
-            final String key19,
-            final JsSpec spec19,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                strict
-        );
-        bindings.put(key19,
-                     spec19
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final String key15,
-            final JsSpec spec15,
-            final String key16,
-            final JsSpec spec16,
-            final String key17,
-            final JsSpec spec17,
-            final String key18,
-            final JsSpec spec18,
-            final String key19,
-            final JsSpec spec19,
-            final String key20,
-            final JsSpec spec20,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                key19,
-                spec19,
-                strict
-        );
-        bindings.put(key20,
-                     spec20
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final String key14,
-            final JsSpec spec14,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                strict
-        );
-        bindings.put(key14,
-                     spec14
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final String key13,
-            final JsSpec spec13,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                strict
-        );
-        bindings.put(key13,
-                     spec13
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            final String key1,
-            final JsSpec spec1,
-            final String key2,
-            final JsSpec spec2,
-            final String key3,
-            final JsSpec spec3,
-            final String key4,
-            final JsSpec spec4,
-            final String key5,
-            final JsSpec spec5,
-            final String key6,
-            final JsSpec spec6,
-            final String key7,
-            final JsSpec spec7,
-            final String key8,
-            final JsSpec spec8,
-            final String key9,
-            final JsSpec spec9,
-            final String key10,
-            final JsSpec spec10,
-            final String key11,
-            final JsSpec spec11,
-            final String key12,
-            final JsSpec spec12,
-            final boolean strict
-    ) {
-        this(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                strict
-        );
-        bindings.put(key12,
-                     spec12
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(final String key,
-                      final JsSpec spec,
-                      final String key1,
-                      final JsSpec spec1,
-                      final String key2,
-                      final JsSpec spec2,
-                      final String key3,
-                      final JsSpec spec3,
-                      final String key4,
-                      final JsSpec spec4,
-                      final String key5,
-                      final JsSpec spec5,
-                      final String key6,
-                      final JsSpec spec6,
-                      final String key7,
-                      final JsSpec spec7,
-                      final String key8,
-                      final JsSpec spec8,
-                      final String key9,
-                      final JsSpec spec9,
-                      final String key10,
-                      final JsSpec spec10,
-                      final boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             key4,
-             spec4,
-             key5,
-             spec5,
-             key6,
-             spec6,
-             key7,
-             spec7,
-             key8,
-             spec8,
-             key9,
-             spec9,
-             strict
-        );
-        bindings.put(key10,
-                     spec10
-        );
-    }
-
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(String key,
-                      JsSpec spec,
-                      String key1,
-                      JsSpec spec1,
-                      String key2,
-                      JsSpec spec2,
-                      String key3,
-                      JsSpec spec3,
-                      String key4,
-                      JsSpec spec4,
-                      String key5,
-                      JsSpec spec5,
-                      String key6,
-                      JsSpec spec6,
-                      String key7,
-                      JsSpec spec7,
-                      String key8,
-                      JsSpec spec8,
-                      String key9,
-                      JsSpec spec9,
-                      boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             key4,
-             spec4,
-             key5,
-             spec5,
-             key6,
-             spec6,
-             key7,
-             spec7,
-             key8,
-             spec8,
-             strict
-        );
-        bindings.put(key9,
-                     spec9
-        );
-
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(String key,
-                      JsSpec spec,
-                      String key1,
-                      JsSpec spec1,
-                      String key2,
-                      JsSpec spec2,
-                      String key3,
-                      JsSpec spec3,
-                      String key4,
-                      JsSpec spec4,
-                      String key5,
-                      JsSpec spec5,
-                      String key6,
-                      JsSpec spec6,
-                      String key7,
-                      JsSpec spec7,
-                      String key8,
-                      JsSpec spec8,
-                      boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             key4,
-             spec4,
-             key5,
-             spec5,
-             key6,
-             spec6,
-             key7,
-             spec7,
-             strict
-        );
-        bindings.put(key8,
-                     spec8
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(String key,
-                      JsSpec spec,
-                      String key1,
-                      JsSpec spec1,
-                      String key2,
-                      JsSpec spec2,
-                      String key3,
-                      JsSpec spec3,
-                      String key4,
-                      JsSpec spec4,
-                      String key5,
-                      JsSpec spec5,
-                      String key6,
-                      JsSpec spec6,
-                      String key7,
-                      JsSpec spec7,
-                      boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             key4,
-             spec4,
-             key5,
-             spec5,
-             key6,
-             spec6,
-             strict
-        );
-        bindings.put(key7,
-                     spec7
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(String key,
-                      JsSpec spec,
-                      String key1,
-                      JsSpec spec1,
-                      String key2,
-                      JsSpec spec2,
-                      String key3,
-                      JsSpec spec3,
-                      String key4,
-                      JsSpec spec4,
-                      String key5,
-                      JsSpec spec5,
-                      String key6,
-                      JsSpec spec6,
-                      boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             key4,
-             spec4,
-             key5,
-             spec5,
-             strict
-        );
-        bindings.put(key6,
-                     spec6
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(String key,
-                      JsSpec spec,
-                      String key1,
-                      JsSpec spec1,
-                      String key2,
-                      JsSpec spec2,
-                      String key3,
-                      JsSpec spec3,
-                      String key4,
-                      JsSpec spec4,
-                      String key5,
-                      JsSpec spec5,
-                      boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             key4,
-             spec4,
-             strict
-        );
-        bindings.put(key5,
-                     spec5
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(String key,
-                      JsSpec spec,
-                      String key1,
-                      JsSpec spec1,
-                      String key2,
-                      JsSpec spec2,
-                      String key3,
-                      JsSpec spec3,
-                      String key4,
-                      JsSpec spec4,
-                      boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             key3,
-             spec3,
-             strict
-        );
-        bindings.put(key4,
-                     spec4
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(final String key,
-                      final JsSpec spec,
-                      final String key1,
-                      final JsSpec spec1,
-                      final String key2,
-                      final JsSpec spec2,
-                      final String key3,
-                      final JsSpec spec3,
-                      final boolean strict
-    ) {
-        this(key,
-             spec,
-             key1,
-             spec1,
-             key2,
-             spec2,
-             strict
-        );
-        bindings.put(key3,
-                     spec3
-        );
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private JsObjSpec(
-            String key,
-            JsSpec spec,
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            boolean strict
-    ) {
-        this(
-                key,
-                spec,
-                key1,
-                spec1,
-                strict
-        );
-        bindings.put(key2,
-                     spec2
-        );
-    }
-
-    private JsObjSpec(final String key,
-                      final JsSpec spec,
-                      final String key1,
-                      final JsSpec spec1,
-                      final boolean strict
-    ) {
-        this(key,
-             spec,
-             strict,
-             false
-        );
-        bindings.put(key1,
-                     spec1
-        );
-    }
-
-    private JsObjSpec(final String key,
-                      final JsSpec spec,
-                      final boolean strict,
-                      final boolean nullable
-    ) {
-        bindings.put(key,
-                     spec
-        );
-        this.strict = strict;
-        this.nullable = nullable;
-    }
 
     /**
      * static factory method to create a strict JsObjSpec of one mappings. Strict means that different
@@ -1067,10 +51,12 @@ public final class JsObjSpec implements JsSpec {
     public static JsObjSpec strict(final String key,
                                    final JsSpec spec
     ) {
-        return new JsObjSpec(key,
-                             spec,
-                             true,
-                             false
+        Map<String, JsSpec> bindings = new LinkedHashMap<>();
+        bindings.put(requireNonNull(key),
+                     requireNonNull(spec));
+        return new JsObjSpec(bindings,
+                             false,
+                             true
         );
     }
 
@@ -1085,8 +71,11 @@ public final class JsObjSpec implements JsSpec {
     public static JsObjSpec lenient(final String key,
                                     final JsSpec spec
     ) {
-        return new JsObjSpec(key,
-                             spec,
+
+        Map<String, JsSpec> bindings = new LinkedHashMap<>();
+        bindings.put(requireNonNull(key),
+                     requireNonNull(spec));
+        return new JsObjSpec(bindings,
                              false,
                              false
         );
@@ -1107,12 +96,11 @@ public final class JsObjSpec implements JsSpec {
                                    final String key2,
                                    final JsSpec spec2
     ) {
-        return new JsObjSpec(key1,
-                             spec1,
-                             key2,
-                             spec2,
-                             true
-        );
+
+        return strict(key1,
+                      spec1).set(requireNonNull(key2),
+                                 requireNonNull(spec2));
+
     }
 
     /**
@@ -1130,12 +118,10 @@ public final class JsObjSpec implements JsSpec {
                                     final String key2,
                                     final JsSpec spec2
     ) {
-        return new JsObjSpec(key1,
-                             spec1,
-                             key2,
-                             spec2,
-                             false
-        );
+        return lenient(key1,
+                       spec1).set(requireNonNull(key2),
+                                  requireNonNull(spec2));
+
     }
 
     /**
@@ -1158,14 +144,12 @@ public final class JsObjSpec implements JsSpec {
                                    final String key3,
                                    final JsSpec spec3
     ) {
-        return new JsObjSpec(key1,
-                             spec1,
-                             key2,
-                             spec2,
-                             key3,
-                             spec3,
-                             true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2).set(requireNonNull(key3),
+                                 requireNonNull(spec3));
+
     }
 
     /**
@@ -1189,15 +173,11 @@ public final class JsObjSpec implements JsSpec {
             final String key3,
             final JsSpec spec3
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2).set(requireNonNull(key3),
+                                  requireNonNull(spec3));
     }
 
     /**
@@ -1225,17 +205,13 @@ public final class JsObjSpec implements JsSpec {
             final String key4,
             final JsSpec spec4
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3).set(requireNonNull(key4),
+                                 requireNonNull(spec4));
     }
 
     /**
@@ -1263,17 +239,13 @@ public final class JsObjSpec implements JsSpec {
             final String key4,
             final JsSpec spec4
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3).set(requireNonNull(key4),
+                                  requireNonNull(spec4));
     }
 
     /**
@@ -1305,19 +277,15 @@ public final class JsObjSpec implements JsSpec {
             final String key5,
             final JsSpec spec5
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4).set(requireNonNull(key5),
+                                 requireNonNull(spec5));
     }
 
     /**
@@ -1349,19 +317,15 @@ public final class JsObjSpec implements JsSpec {
             String key5,
             JsSpec spec5
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                true
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4).set(requireNonNull(key5),
+                                  requireNonNull(spec5));
     }
 
     /**
@@ -1397,21 +361,18 @@ public final class JsObjSpec implements JsSpec {
             String key6,
             JsSpec spec6
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5).set(requireNonNull(key6),
+                                 requireNonNull(spec6));
+
     }
 
     /**
@@ -1447,21 +408,17 @@ public final class JsObjSpec implements JsSpec {
             String key6,
             JsSpec spec6
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5).set(requireNonNull(key6),
+                                  requireNonNull(spec6));
     }
 
     /**
@@ -1501,23 +458,19 @@ public final class JsObjSpec implements JsSpec {
             String key7,
             JsSpec spec7
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6).set(requireNonNull(key7),
+                                 requireNonNull(spec7));
     }
 
     /**
@@ -1557,23 +510,19 @@ public final class JsObjSpec implements JsSpec {
             String key7,
             JsSpec spec7
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6).set(requireNonNull(key7),
+                                  requireNonNull(spec7));
     }
 
     /**
@@ -1617,25 +566,22 @@ public final class JsObjSpec implements JsSpec {
             String key8,
             JsSpec spec8
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7).set(requireNonNull(key8),
+                                 requireNonNull(spec8));
+
     }
 
     /**
@@ -1679,25 +625,21 @@ public final class JsObjSpec implements JsSpec {
             String key8,
             JsSpec spec8
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7).set(requireNonNull(key8),
+                                  requireNonNull(spec8));
     }
 
     /**
@@ -1745,27 +687,23 @@ public final class JsObjSpec implements JsSpec {
             String key9,
             JsSpec spec9
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8).set(requireNonNull(key9),
+                                 requireNonNull(spec9));
     }
 
     /**
@@ -1813,27 +751,23 @@ public final class JsObjSpec implements JsSpec {
             String key9,
             JsSpec spec9
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8).set(requireNonNull(key9),
+                                  requireNonNull(spec9));
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1859,29 +793,25 @@ public final class JsObjSpec implements JsSpec {
             String key10,
             JsSpec spec10
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9).set(requireNonNull(key10),
+                                 requireNonNull(spec10));
     }
 
     /**
@@ -1933,29 +863,25 @@ public final class JsObjSpec implements JsSpec {
             String key10,
             JsSpec spec10
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9).set(requireNonNull(key10),
+                                  requireNonNull(spec10));
     }
 
     /**
@@ -2011,31 +937,27 @@ public final class JsObjSpec implements JsSpec {
             String key11,
             JsSpec spec11
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10).set(requireNonNull(key11),
+                                  requireNonNull(spec11));
     }
 
     /**
@@ -2091,31 +1013,27 @@ public final class JsObjSpec implements JsSpec {
             String key11,
             JsSpec spec11
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10).set(requireNonNull(key11),
+                                   requireNonNull(spec11));
     }
 
     /**
@@ -2175,33 +1093,29 @@ public final class JsObjSpec implements JsSpec {
             final String key12,
             final JsSpec spec12
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11).set(requireNonNull(key12),
+                                  requireNonNull(spec12));
     }
 
     /**
@@ -2261,33 +1175,29 @@ public final class JsObjSpec implements JsSpec {
             final String key12,
             final JsSpec spec12
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11).set(requireNonNull(key12),
+                                   requireNonNull(spec12));
     }
 
     /**
@@ -2351,35 +1261,31 @@ public final class JsObjSpec implements JsSpec {
             final String key13,
             final JsSpec spec13
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12).set(requireNonNull(key13),
+                                   requireNonNull(spec13));
     }
 
     /**
@@ -2447,37 +1353,33 @@ public final class JsObjSpec implements JsSpec {
             final String key14,
             final JsSpec spec14
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13).set(requireNonNull(key14),
+                                   requireNonNull(spec14));
     }
 
     /**
@@ -2545,37 +1447,33 @@ public final class JsObjSpec implements JsSpec {
             final String key14,
             final JsSpec spec14
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13).set(requireNonNull(key14),
+                                  requireNonNull(spec14));
     }
 
     /**
@@ -2647,39 +1545,35 @@ public final class JsObjSpec implements JsSpec {
             final String key15,
             final JsSpec spec15
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13,
+                       key14,
+                       spec14).set(requireNonNull(key15),
+                                   requireNonNull(spec15));
     }
 
     /**
@@ -2751,39 +1645,35 @@ public final class JsObjSpec implements JsSpec {
             final String key15,
             final JsSpec spec15
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13,
+                      key14,
+                      spec14).set(requireNonNull(key15),
+                                  requireNonNull(spec15));
     }
 
     /**
@@ -2859,41 +1749,37 @@ public final class JsObjSpec implements JsSpec {
             final String key16,
             final JsSpec spec16
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13,
+                      key14,
+                      spec14,
+                      key15,
+                      spec15).set(requireNonNull(key16),
+                                  requireNonNull(spec16));
     }
 
     /**
@@ -2969,41 +1855,37 @@ public final class JsObjSpec implements JsSpec {
             final String key16,
             final JsSpec spec16
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13,
+                       key14,
+                       spec14,
+                       key15,
+                       spec15).set(requireNonNull(key16),
+                                   requireNonNull(spec16));
     }
 
     /**
@@ -3083,43 +1965,40 @@ public final class JsObjSpec implements JsSpec {
             final String key17,
             final JsSpec spec17
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13,
+                      key14,
+                      spec14,
+                      key15,
+                      spec15,
+                      key16,
+                      spec16
+        ).set(requireNonNull(key17),
+              requireNonNull(spec17));
     }
 
     /**
@@ -3199,43 +2078,40 @@ public final class JsObjSpec implements JsSpec {
             final String key17,
             final JsSpec spec17
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13,
+                       key14,
+                       spec14,
+                       key15,
+                       spec15,
+                       key16,
+                       spec16
+        ).set(requireNonNull(key17),
+              requireNonNull(spec17));
     }
 
     /**
@@ -3319,45 +2195,42 @@ public final class JsObjSpec implements JsSpec {
             final String key18,
             final JsSpec spec18
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13,
+                      key14,
+                      spec14,
+                      key15,
+                      spec15,
+                      key16,
+                      spec16,
+                      key17,
+                      spec17
+        ).set(requireNonNull(key18),
+              requireNonNull(spec18));
     }
 
     /**
@@ -3441,45 +2314,43 @@ public final class JsObjSpec implements JsSpec {
             final String key18,
             final JsSpec spec18
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13,
+                       key14,
+                       spec14,
+                       key15,
+                       spec15,
+                       key16,
+                       spec16,
+                       key17,
+                       spec17
+        ).set(requireNonNull(key18),
+              requireNonNull(spec18));
+
     }
 
     /**
@@ -3567,47 +2438,46 @@ public final class JsObjSpec implements JsSpec {
             final String key19,
             final JsSpec spec19
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                key19,
-                spec19,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13,
+                      key14,
+                      spec14,
+                      key15,
+                      spec15,
+                      key16,
+                      spec16,
+                      key17,
+                      spec17,
+                      key18,
+                      spec18
+        ).set(requireNonNull(key19),
+              requireNonNull(spec19));
+
+
     }
 
     /**
@@ -3695,47 +2565,44 @@ public final class JsObjSpec implements JsSpec {
             final String key19,
             final JsSpec spec19
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                key19,
-                spec19,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13,
+                       key14,
+                       spec14,
+                       key15,
+                       spec15,
+                       key16,
+                       spec16,
+                       key17,
+                       spec17,
+                       key18,
+                       spec18
+        ).set(requireNonNull(key19),
+              requireNonNull(spec19));
     }
 
     /**
@@ -3827,49 +2694,46 @@ public final class JsObjSpec implements JsSpec {
             final String key20,
             final JsSpec spec20
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                key19,
-                spec19,
-                key20,
-                spec20,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12,
+                      key13,
+                      spec13,
+                      key14,
+                      spec14,
+                      key15,
+                      spec15,
+                      key16,
+                      spec16,
+                      key17,
+                      spec17,
+                      key18,
+                      spec18,
+                      key19,
+                      spec19
+        ).set(requireNonNull(key20),
+              requireNonNull(spec20));
     }
 
     /**
@@ -3961,49 +2825,46 @@ public final class JsObjSpec implements JsSpec {
             final String key20,
             final JsSpec spec20
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                key14,
-                spec14,
-                key15,
-                spec15,
-                key16,
-                spec16,
-                key17,
-                spec17,
-                key18,
-                spec18,
-                key19,
-                spec19,
-                key20,
-                spec20,
-                false
-        );
+        return lenient(key1,
+                       spec1,
+                       key2,
+                       spec2,
+                       key3,
+                       spec3,
+                       key4,
+                       spec4,
+                       key5,
+                       spec5,
+                       key6,
+                       spec6,
+                       key7,
+                       spec7,
+                       key8,
+                       spec8,
+                       key9,
+                       spec9,
+                       key10,
+                       spec10,
+                       key11,
+                       spec11,
+                       key12,
+                       spec12,
+                       key13,
+                       spec13,
+                       key14,
+                       spec14,
+                       key15,
+                       spec15,
+                       key16,
+                       spec16,
+                       key17,
+                       spec17,
+                       key18,
+                       spec18,
+                       key19,
+                       spec19
+        ).set(requireNonNull(key20),
+              requireNonNull(spec20));
     }
 
     /**
@@ -4067,39 +2928,36 @@ public final class JsObjSpec implements JsSpec {
             final String key13,
             final JsSpec spec13
     ) {
-        return new JsObjSpec(
-                key1,
-                spec1,
-                key2,
-                spec2,
-                key3,
-                spec3,
-                key4,
-                spec4,
-                key5,
-                spec5,
-                key6,
-                spec6,
-                key7,
-                spec7,
-                key8,
-                spec8,
-                key9,
-                spec9,
-                key10,
-                spec10,
-                key11,
-                spec11,
-                key12,
-                spec12,
-                key13,
-                spec13,
-                true
-        );
+        return strict(key1,
+                      spec1,
+                      key2,
+                      spec2,
+                      key3,
+                      spec3,
+                      key4,
+                      spec4,
+                      key5,
+                      spec5,
+                      key6,
+                      spec6,
+                      key7,
+                      spec7,
+                      key8,
+                      spec8,
+                      key9,
+                      spec9,
+                      key10,
+                      spec10,
+                      key11,
+                      spec11,
+                      key12,
+                      spec12
+        ).set(requireNonNull(key13),
+              requireNonNull(spec13));
     }
 
-    List<String> getOptionalFields() {
-        return optionalFields;
+    public List<String> getRequiredFields() {
+        return requiredFields;
     }
 
     public JsObjSpec setOptionals(final String field,
@@ -4107,19 +2965,27 @@ public final class JsObjSpec implements JsSpec {
         JsObjSpec spec = new JsObjSpec(bindings,
                                        nullable,
                                        strict);
-        spec.optionalFields
-                .add(requireNonNull(field));
-        spec.optionalFields
+        List<String> optionalFields = new ArrayList<>();
+        optionalFields.add(field);
+        optionalFields
                 .addAll(Arrays.stream(requireNonNull(fields))
                               .collect(Collectors.toList()));
+        spec.requiredFields = getRequiredFields(spec.bindings.keySet(),
+                                                optionalFields);
         return spec;
+    }
+
+    private List<String> getRequiredFields(Set<String> fields,
+                                           List<String> optionals) {
+        return fields.stream().filter(key -> !optionals.contains(key)).collect(Collectors.toList());
     }
 
     public JsObjSpec setOptionals(final List<String> optionals) {
         JsObjSpec spec = new JsObjSpec(bindings,
                                        nullable,
                                        strict);
-        spec.optionalFields.addAll(requireNonNull(optionals));
+        spec.requiredFields = getRequiredFields(spec.bindings.keySet(),
+                                                optionals);
         return spec;
 
     }
@@ -4135,18 +3001,7 @@ public final class JsObjSpec implements JsSpec {
 
     @Override
     public JsSpecParser parser() {
-        Map<String, JsSpecParser> parsers = new LinkedHashMap<>();
-        List<String> requiredKeys = new ArrayList<>();
-        for (Map.Entry<String, JsSpec> entry : bindings.entrySet()) {
-            String key = entry.getKey();
-            if (!optionalFields.contains(key)) requiredKeys.add(key);
-            parsers.put(key,
-                        entry.getValue().parser()
-            );
-        }
-
-
-        return JsSpecParsers.INSTANCE.ofObjSpec(requiredKeys,
+        return JsSpecParsers.INSTANCE.ofObjSpec(requiredFields,
                                                 parsers,
                                                 nullable,
                                                 strict
@@ -4204,11 +3059,7 @@ public final class JsObjSpec implements JsSpec {
                                            value));
 
         }
-        final List<String> requiredFields =
-                parentObjSpec
-                        .bindings
-                        .keySet().stream().filter(key -> !optionalFields.contains(key))
-                        .collect(Collectors.toList());
+
         for (final String requiredField : requiredFields) {
             if (!json.containsKey(requiredField))
                 errors.add(JsErrorPair.of(parent.key(requiredField),

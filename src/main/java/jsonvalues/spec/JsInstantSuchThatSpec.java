@@ -10,12 +10,12 @@ import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.INSTANT_EXPECTED;
 
-class JsInstantSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
+class JsInstantSuchThatSpec extends AbstractNullableSpec implements JsValuePredicate {
 
     final Function<Instant, Optional<JsError>> predicate;
 
-    JsInstantSuchThatSpec(final boolean nullable,
-                          final Function<Instant, Optional<JsError>> predicate
+    JsInstantSuchThatSpec(final Function<Instant, Optional<JsError>> predicate,
+                          final boolean nullable
     ) {
         super(nullable);
         this.predicate = predicate;
@@ -24,8 +24,8 @@ class JsInstantSuchThatSpec extends AbstractPredicateSpec implements JsValuePred
 
     @Override
     public JsSpec nullable() {
-        return new JsInstantSuchThatSpec(true,
-                                         predicate
+        return new JsInstantSuchThatSpec(predicate,
+                                         true
         );
     }
 

@@ -10,11 +10,11 @@ import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 
-class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
+class JsDecimalSuchThatSpec extends AbstractNullableSpec implements JsValuePredicate {
     final Function<BigDecimal, Optional<JsError>> predicate;
 
-    JsDecimalSuchThatSpec(final boolean nullable,
-                          final Function<BigDecimal, Optional<JsError>> predicate
+    JsDecimalSuchThatSpec(final Function<BigDecimal, Optional<JsError>> predicate,
+                          final boolean nullable
     ) {
         super(nullable);
         this.predicate = predicate;
@@ -23,8 +23,8 @@ class JsDecimalSuchThatSpec extends AbstractPredicateSpec implements JsValuePred
 
     @Override
     public JsSpec nullable() {
-        return new JsDecimalSuchThatSpec(true,
-                                         predicate
+        return new JsDecimalSuchThatSpec(predicate,
+                                         true
         );
     }
 

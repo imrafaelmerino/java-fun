@@ -10,12 +10,12 @@ import java.util.function.Function;
 
 import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
 
-class JsObjSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicate {
+class JsObjSuchThatSpec extends AbstractNullableSpec implements JsValuePredicate {
 
     final Function<JsObj, Optional<JsError>> predicate;
 
-    JsObjSuchThatSpec(final boolean nullable,
-                      final Function<JsObj, Optional<JsError>> predicate
+    JsObjSuchThatSpec(final Function<JsObj, Optional<JsError>> predicate,
+                      final boolean nullable
     ) {
         super(nullable);
         this.predicate = predicate;
@@ -24,8 +24,8 @@ class JsObjSuchThatSpec extends AbstractPredicateSpec implements JsValuePredicat
 
     @Override
     public JsSpec nullable() {
-        return new JsObjSuchThatSpec(true,
-                                     predicate
+        return new JsObjSuchThatSpec(predicate,
+                                     true
         );
     }
 

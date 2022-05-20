@@ -98,14 +98,14 @@ JsObj.of("name", JsStr.of("Rafael"),
                                           "tags", JsArray.of("homeAddress", "amazon")
                                          )
                                 )
-         );
+        );
 
 ```
 
 As you can see, the final structure is very similar to the original Json, what makes
-really easy to write out any imaginable Json just putting its keys and its
+really easy to write out any imaginable Json just putting its keys and their
 associated values. You can create up to 20-field Json objects using this approach. 
-For bigger Jsons you can use the *set* method
+For bigger Jsons exits the *set* method
 
 ```java  
 
@@ -139,7 +139,7 @@ JsObjSpec.strict("name", str(),
 ```
 
 And we can pass in predicates to be more specific about the
-possible values any field can have
+possible values a field can have
 
 ```java    
 
@@ -197,18 +197,20 @@ JsObjSpec.strict("name", str(nameSpec),
                  "addresses", arrayOfObjSpec(JsObjSpec.strict("coordinates",
                                                                tuple(decimal(latitudeSpec),
                                                                      decimal(longitudeSpec)
-                                                                     ),
+                                                                    ),
                                                                "city", str(citySpec),
                                                                "tags", arrayOfStr(tagSpec),
                                                                "zipCode", str(zipCodeSpec)
                                                               )
+                                                      .setOptionals("tags", "zipCode", "city")
                                              )
-                );
+                )
+        .setOptionals("surname", "phoneNumber", "addresses");
 
 ```
 
 And what about generating a Json? You are right! We can use the
-same approach! The same data structure made up of keys and their
+same data structure made up of keys and their
 associated generators. I hope you weren't considering piling up
 annotations. Rumor has it that some guy got a StackOverflowException!
 
@@ -230,7 +232,7 @@ JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH + 1),
                                                                         .apply(JsStrGen.biased(0,20)),
                                                       "zipCode", JsStrGen.biased(0,10)
                                                      )
-                                                   .setOptionals("tags","zipCode","city")
+                                                   .setOptionals("tags", "zipCode", "city")
                                           )
             )
         .setOptionals("surname", "phoneNumber", "addresses");

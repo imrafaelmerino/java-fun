@@ -22,25 +22,25 @@ Edsger Wybe Dijkstra
 
 ## <a name="introduction"><a/> Introduction
 
-Welcome to **json-values**, the first-ever Json library in _Java_ implemented with 
+Welcome to **json-values**, the first-ever Json library in _Java_ implemented with
 persistent data structures.
 
-One of the most essential aspects of functional programming is immutable data structures, 
+One of the most essential aspects of functional programming is immutable data structures,
 better known in FP jargon as values.
-It's a fact that, when possible, working with values leads to code with fewer bugs, is more 
-readable, and is easier to maintain. Item 17 of Effective Java states that we must minimize 
-mutability. Still, sometimes it's at the cost of losing performance because the copy-on-write 
-approach is very inefficient for significant data structures. Here is where persistent data 
+It's a fact that, when possible, working with values leads to code with fewer bugs, is more
+readable, and is easier to maintain. Item 17 of Effective Java states that we must minimize
+mutability. Still, sometimes it's at the cost of losing performance because the copy-on-write
+approach is very inefficient for significant data structures. Here is where persistent data
 structures come into play.
 
-Most functional languages, like Haskell, Clojure, and Scala, implement persistent data 
-structures natively. Java doesn't. The best alternative I've found in the JVM ecosystem 
-is the persistent collections provided by the library vavr. It provides a well-designed 
+Most functional languages, like Haskell, Clojure, and Scala, implement persistent data
+structures natively. Java doesn't. The best alternative I've found in the JVM ecosystem
+is the persistent collections provided by the library vavr. It provides a well-designed
 API and has a good performance.
 
-The standard Java programmer finds it strange to work without objects and all the machinery 
-of frameworks and annotations. FP is all about functions and values; that's it. I will try 
-to cast some light on how we can manipulate JSON with json-values following a purely 
+The standard Java programmer finds it strange to work without objects and all the machinery
+of frameworks and annotations. FP is all about functions and values; that's it. I will try
+to cast some light on how we can manipulate JSON with json-values following a purely
 functional approach. First things first, let's create a JSON object:
 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
@@ -68,12 +68,11 @@ First things first. Let's define a Json
     "phoneNumber": 6666666,
     "registrationDate": "2019-01-21T05:47:26.853Z",
     "addresses": [
-         {
+        {
             "coordinates": [39.8581, -4.02263],
             "city": "Toledo",
-            "zipCode": "45920", 
-            "tags": ["homeAddress"] ,
-             
+            "zipCode": "45920",
+            "tags": ["homeAddress"]
         },
         {
             "coordinates": [39.8581, -4.02263],
@@ -90,7 +89,6 @@ and coding it using the factory methods provided by json-values
 
 ```java      
 import jsonvalues.*;  
-
 
 JsObj person = 
     JsObj.of("name", JsStr.of("Rafael"),
@@ -109,18 +107,18 @@ JsObj person =
                                              )
                                     )
             );
-
 ```
 
-As you can see, its definition is like raw JSON. It’s a recursive data structure. 
-You can nest as many JSON objects as you want. Think of any imaginable JSON, and 
+
+As you can see, its definition is like raw JSON. It’s a recursive data structure.
+You can nest as many JSON objects as you want. Think of any imaginable JSON, and
 you can write it in no time.
 
-But what about validating JSON? We can define the JSON schema following precisely 
+But what about validating JSON? We can define the JSON schema following precisely
 the same approach:
 
-
 ```java   
+
 import jsonvalues.spec.JsObjSpec;
 import static jsonvalues.spec.JsSpecs.*;
 
@@ -142,9 +140,9 @@ JsObjSpec personSpec =
 
 ```
 
-I’d argue that it is very expressive, concise, and straightforward. I call it json-spec. 
-I named it after a Clojure library named spec. Writing specs feels like writing JSON. 
-Strict specs don't allow keys that are not specified, whereas lenient ones do. The real 
+I’d argue that it is very expressive, concise, and straightforward. I call it json-spec.
+I named it after a Clojure library named spec. Writing specs feels like writing JSON.
+Strict specs don't allow keys that are not specified, whereas lenient ones do. The real
 power is that you can create specs from predicates and compose them:
 
 ```java    
@@ -152,7 +150,6 @@ power is that you can create specs from predicates and compose them:
 BiFunction<Integer, Integer, Predicate<String>> lengthBetween =
        (min, max) -> string -> string.length() <= max && 
                                string.length() >= min;
-
 
 BiFunction<Instant, Instant, Predicate<Instant>> instantBetween =
       (min, max) -> instant -> min.isBefore(instant) && 
@@ -225,11 +222,11 @@ JsObjSpec personSpec =
 
 ```
 
-As you can see, the spec's structure remains the same, and it’s child’s play to define 
+As you can see, the spec's structure remains the same, and it’s child’s play to define
 optional and nullable fields.
 
-Another exciting thing we can do with specs is parsing strings or bytes. Instead of parsing 
-the whole JSON and then validating it, we can verify the JSON schema while parsing it and 
+Another exciting thing we can do with specs is parsing strings or bytes. Instead of parsing
+the whole JSON and then validating it, we can verify the JSON schema while parsing it and
 stop the process as soon as an error happens. After all, failing fast is important as well!
 
 ```java      
@@ -237,13 +234,12 @@ JsObjParser personParser = new JsObjParser(personSpec);
 
 String string = "...";
 
-
 JsObj person = personParser.parse(string);
 
 ```
 
-Another critical aspect of software development is data generation. It’s an essential aspect 
-of property-based testing, a technique for the random testing of program properties very well 
+Another critical aspect of software development is data generation. It’s an essential aspect
+of property-based testing, a technique for the random testing of program properties very well
 known in FP. Computers are way better than humans at generating random data. You'll catch more
 bugs testing your code against a lot of inputs instead of just one. Writing generators, like
 specs, is as simple as writing JSON:
@@ -256,9 +252,10 @@ JsObjGen personGen =
                 "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH),
                 "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
                 "addresses", JsArrayGen.biased(0,1)
-                                       .apply(JsObjGen.of("coordinates", JsTupleGen.of(JsBigDecGen.biased(LAT_MIN, LAT_MAX),
-                                                                                       JsBigDecGen.biased(LON_MIN, LON_MAX)
-                                                                                      ),
+                                       .apply(JsObjGen.of("coordinates", 
+                                                          JsTupleGen.of(JsBigDecGen.biased(LAT_MIN, LAT_MAX),
+                                                                        JsBigDecGen.biased(LON_MIN, LON_MAX)
+                                                                       ),
                                                           "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
                                                           "tags", JsArrayGen.biased(0,MAX_ADDRESSES_SIZE)
                                                                             .apply(JsStrGen.biased(0, MAX_TAG_LENGTH)),
@@ -273,8 +270,9 @@ JsObjGen personGen =
 
 ```
 
+
 Most generators have two static factory methods: _biased_ and _arbitrary_. The former returns
-a uniform distribution, whereas the latest generates with a high probability potential 
+a uniform distribution, whereas the latest generates with a high probability potential
 problematic values that tend to cause bugs in our code. Find below some distributions:
 
 ```java    
@@ -318,69 +316,6 @@ a.union(b, JsArray.TYPE.MULTISET)
 a.intersection(b)
 ```
 
-I'd argue that it's straightforward, expressive, and concise. And that plus the fact that it's a persistent
-data structure shows very well the essence of **json-values**.
-
-That was just a little taste! Data generation and validation are significant in software.
-If you think about it, the definition, validation, and generation of a JSON could be
-implemented using the same data structure; after all, the three of them are just bindings with different
-elements: values, generators, or specifications. Let's check out some examples.
-
-Defining a json object:
-
-```java
-var person=JsObj.of("name",JsStr.of("Rafael"),
-        "age",JsInt.of(37),
-        "languages",JsArray.of("Haskell","Scala","Java","Clojure")
-        "github",JsStr.of("imrafaelmerino"),
-        "profession",JsStr.of("frustrated consultant"),
-        "address",JsObj.of("city",JsStr.of("Madrid"),
-        "location",JsArray.of(40.566,87.987),
-        "country",JsStr.of("ES")
-        )
-        );
-
-```
-
-Defining a json spec; strict means: keys different from the specified are not allowed:
-
-```java
-import static jsonvalues.spec.JsSpecs;
-
-var addressSpec=JsObjSpec.lenient("city",str,
-        "country",str.optional().nullable()
-        "location",tuple(decimal,
-        decimal
-        )
-        );
-
-        var spec=JsObjSpec.strict("name",str,
-        "age",integer(n->n>15&&n<100),
-        "languages",arrayOfStr,
-        "github",str.optional(),
-        "profession",str.nullable(),
-        "address",addressSpec
-        );
-
-// if the object doesn't conform the spec, the errors and their locations are returned in a set
-
-        Set<JsErrorPair> errors=spec.test(person);
-
-```
-
-We can use a spec to parse a string! As soon as an error is found, the parsing ends.
-
-```java
-
-byte[]jsonBytes=...;
-        String jsonStr=...;
-
-        var parser=new JsObjParser(spec);
-
-        var a=parser.parse(jsonBytes);
-        var b=parser.parse(jsonStr);
-
-```
 
 It supports the standard Json types: string, number, null, object, array; There are five number specializations:
 int, long, double, decimal and biginteger. json-values adds support for instants and binary data. Instants
@@ -422,25 +357,9 @@ After the development of json-values, I published two more related projects:
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
 * [vertx-effect](https://github.com/imrafaelmerino/vertx-effect)
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
-* [JIO](https://github.com/imrafaelmerino/JIO) Using JIO you can define Json generators to do Property Based Testing:
+* [JIO](https://github.com/imrafaelmerino/JIO)
 
-```java
-import static jio.gen.json.JsObjGen;
-
-var addressGen=JsObjGen.of("city",oneOf(cities),
-        "country",oneOf(countries).nullable(),
-        "location",tuple(decimal,
-        decimal
-        )
-        );
-        var gen=JsObjGen.of("name",alphabetic,
-        "age",arbitrary(18,100),
-        "languages",arrayOf(str,10),
-        "github",alphanumeric,
-        "profession",oneOf(professions).nullable(),
-        "address",addressGen
-        );
-```
+`
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/)
 , [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into

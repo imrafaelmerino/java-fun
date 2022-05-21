@@ -247,26 +247,24 @@ specs, is as simple as writing JSON:
 ```java      
 
 JsObjGen personGen =
-    JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH),
-                "surname", JsStrGen.biased(0, MAX_NAME_LENGTH),
-                "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH),
-                "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
-                "addresses", JsArrayGen.biased(0,1)
-                                       .apply(JsObjGen.of("coordinates", 
-                                                          JsTupleGen.of(JsBigDecGen.biased(LAT_MIN, LAT_MAX),
-                                                                        JsBigDecGen.biased(LON_MIN, LON_MAX)
-                                                                       ),
-                                                          "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
-                                                          "tags", JsArrayGen.biased(0,MAX_ADDRESSES_SIZE)
-                                                                            .apply(JsStrGen.biased(0, MAX_TAG_LENGTH)),
-                                                          "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
-                                                          )
-                                                       .setOptionals("tags", "zipCode", "city"),
-                                              MIN_ADDRESSES_SIZE                       
-                                              MAX_ADDRESSES_SIZE         
-                                              )
-                )
-            .setOptionals("surname", "phoneNumber", "addresses");
+  JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH),
+              "surname", JsStrGen.biased(0, MAX_NAME_LENGTH),
+              "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH),
+              "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
+              "addresses", JsArrayGen.biased(MIN_ADDRESSES_SIZE, MAX_ADDRESSES_SIZE)
+                                     .apply(JsObjGen.of("coordinates", 
+                                                        JsTupleGen.of(JsBigDecGen.biased(LAT_MIN, LAT_MAX),
+                                                                      JsBigDecGen.biased(LON_MIN, LON_MAX)
+                                                                     ),
+                                                        "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
+                                                        "tags", JsArrayGen.biased(0,MAX_ADDRESSES_SIZE)
+                                                                          .apply(JsStrGen.biased(0, MAX_TAG_LENGTH)),
+                                                        "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
+                                                        )
+                                                     .setOptionals("tags", "zipCode", "city")
+                                            )
+              )
+           .setOptionals("surname", "phoneNumber", "addresses");
 
 ```
 
@@ -278,7 +276,7 @@ problematic values that tend to cause bugs in our code. Find below some distribu
 ```java    
 
 
-
+TODO
 
 
 ``` 
@@ -359,7 +357,6 @@ After the development of json-values, I published two more related projects:
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
 * [JIO](https://github.com/imrafaelmerino/JIO)
 
-`
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/)
 , [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into

@@ -41,7 +41,7 @@ API and has a good performance.
 The standard Java programmer finds it strange to work without objects and all the machinery
 of frameworks and annotations. FP is all about functions and values; that's it. I will try
 to cast some light on how we can manipulate JSON with json-values following a purely
-functional approach. First things first, let's create a JSON object:
+functional approach.
 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 

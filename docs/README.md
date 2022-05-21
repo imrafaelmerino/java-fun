@@ -175,6 +175,7 @@ int LON_MIN = -180;
 int LON_MAX = 180;
 int MIN_ADDRESSES_SIZE = 1;
 int MAX_ADDRESSES_SIZE = 100;
+int MAX_TAGS_SIZE = 10;
 
         
 Predicate<String> nameSpec = lengthBetween.apply(0, MAX_NAME_LENGTH);
@@ -258,7 +259,7 @@ JsObjGen personGen =
                                                                      ),
                                                         "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
                                                         "tags", JsArrayGen.biased(0,MAX_ADDRESSES_SIZE)
-                                                                          .apply(JsStrGen.biased(0, MAX_TAG_LENGTH)),
+                                                                          .apply(JsStrGen.biased(0, MAX_TAGS_SIZE)),
                                                         "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
                                                         )
                                                      .setOptionals("tags", "zipCode", "city")

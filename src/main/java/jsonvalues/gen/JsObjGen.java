@@ -1057,7 +1057,7 @@ public final class JsObjGen implements Gen<JsObj> {
         Supplier<Boolean> isRemoveOptionals =
                 optionals.isEmpty() ?
                 () -> false :
-                BoolGen.arbitrary.apply(SplitGen.DEFAULT.apply(seed));
+                BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(seed));
 
         Supplier<List<String>> nullableCombinations =
                 Combinators.permutations(nullables)
@@ -1066,7 +1066,7 @@ public final class JsObjGen implements Gen<JsObj> {
         Supplier<Boolean> isRemoveNullables =
                 nullables.isEmpty() ?
                 () -> false :
-                BoolGen.arbitrary.apply(SplitGen.DEFAULT.apply(seed));
+                BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(seed));
         return () ->
         {
             JsObj obj = JsObj.empty();

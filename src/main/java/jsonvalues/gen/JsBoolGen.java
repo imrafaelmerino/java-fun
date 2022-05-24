@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsBoolGen implements Gen<JsBool> {
 
-    private static final Gen<JsBool> arbitrary = new JsBoolGen(BoolGen.arbitrary);
+    private static final Gen<JsBool> arbitrary = new JsBoolGen(BoolGen.arbitrary());
     private final Gen<Boolean> gen;
 
     /**

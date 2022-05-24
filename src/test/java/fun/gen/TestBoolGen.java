@@ -13,7 +13,7 @@ public class TestBoolGen {
     public void testBooleanGen() {
 
         Map<Boolean, Long> counts = TestFun.generate(100000,
-                                                     BoolGen.arbitrary);
+                                                     BoolGen.arbitrary());
 
         List<Boolean> values = TestFun.list(true,
                                             false);

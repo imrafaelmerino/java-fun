@@ -103,9 +103,9 @@ public final class StrGen implements Gen<String> {
                                      final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
-        return ListGen.<String>arbitrary(minLength,
-                                         maxLength)
-                      .apply(CharGen.digit.map(String::valueOf))
+        return ListGen.arbitrary(CharGen.digit.map(String::valueOf),
+                                 minLength,
+                                 maxLength)
                       .map(it -> String.join("",
                                              it));
     }
@@ -121,9 +121,9 @@ public final class StrGen implements Gen<String> {
                                       final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
-        return ListGen.<String>arbitrary(minLength,
-                                         maxLength)
-                      .apply(CharGen.letter.map(String::valueOf))
+        return ListGen.arbitrary(CharGen.letter.map(String::valueOf),
+                                 minLength,
+                                 maxLength)
                       .map(it -> String.join("",
                                              it));
     }
@@ -140,9 +140,9 @@ public final class StrGen implements Gen<String> {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
 
-        return ListGen.<String>arbitrary(minLength,
-                                         maxLength)
-                      .apply(alphabetic)
+        return ListGen.arbitrary(alphabetic,
+                                 minLength,
+                                 maxLength)
                       .map(it -> String.join("",
                                              it));
     }
@@ -160,9 +160,9 @@ public final class StrGen implements Gen<String> {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
 
-        return ListGen.<String>arbitrary(minLength,
-                                         maxLength)
-                      .apply(alphanumeric)
+        return ListGen.arbitrary(alphanumeric,
+                                 minLength,
+                                 maxLength)
                       .map(it -> String.join("",
                                              it));
 

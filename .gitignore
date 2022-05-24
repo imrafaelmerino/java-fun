@@ -18,3 +18,4 @@ docs/coverage-report
 settings.xml
 deploy.sh
 .idea/**
+.idea/workspace.xml

@@ -1,6 +1,10 @@
 package fun.gen;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -11,6 +15,7 @@ import static java.util.Objects.requireNonNull;
  * represent a generator of records.
  */
 public final class RecordGen implements Gen<Map<String, ?>> {
+
 
     private final SplitGen split = SplitGen.DEFAULT;
     private List<String> optionals = new ArrayList<>();
@@ -165,6 +170,7 @@ public final class RecordGen implements Gen<Map<String, ?>> {
         );
     }
 
+
     @SuppressWarnings("squid:S00107")
     private RecordGen(final String key,
                       final Gen<?> gen,
@@ -242,7 +248,6 @@ public final class RecordGen implements Gen<Map<String, ?>> {
                      gen17
         );
     }
-
 
     @SuppressWarnings("squid:S00107")
     private RecordGen(final String key,
@@ -325,7 +330,6 @@ public final class RecordGen implements Gen<Map<String, ?>> {
                      gen18
         );
     }
-
 
     @SuppressWarnings("squid:S00107")
     private RecordGen(final String key,
@@ -893,6 +897,7 @@ public final class RecordGen implements Gen<Map<String, ?>> {
         );
     }
 
+
     @SuppressWarnings("squid:S00107")
     private RecordGen(final String key,
                       final Gen<?> gen,
@@ -918,6 +923,7 @@ public final class RecordGen implements Gen<Map<String, ?>> {
                      gen4
         );
     }
+
 
     @SuppressWarnings("squid:S00107")
     private RecordGen(final String key,
@@ -972,12 +978,339 @@ public final class RecordGen implements Gen<Map<String, ?>> {
         );
     }
 
+    private RecordGen(){}
+
     private RecordGen(final String key,
                       final Gen<?> gen
     ) {
         bindings.put(key,
                      gen
         );
+
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, String> getStr(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof String) return ((String) value);
+            throw new RecordTypeNotExpected("String",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Character> getChar(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Character) return ((Character) value);
+            throw new RecordTypeNotExpected("Character",
+                                            value.getClass(),
+                                            key);
+        };
+
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Integer> getInt(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Integer) return ((Integer) value);
+            throw new RecordTypeNotExpected("Integer",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, BigInteger> getBigInt(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof BigInteger) return ((BigInteger) value);
+            throw new RecordTypeNotExpected("BigInteger",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<BigInteger>> getOptBigInt(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+            if (value instanceof BigInteger) return Optional.of(((BigInteger) value));
+            throw new RecordTypeNotExpected("BigInteger",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<Character>> getOptChar(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+            if (value instanceof Character) return Optional.of(((Character) value));
+            throw new RecordTypeNotExpected("Character",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, byte[]> getBytes(final String key) {
+        return bytes -> {
+            Object value = bytes.get(key);
+            if (value instanceof byte[]) return ((byte[]) value);
+            throw new RecordTypeNotExpected("byte[]",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<byte[]>> getOptBytes(final String key) {
+        return bytes -> {
+            Object value = bytes.get(key);
+            if (value == null) return Optional.empty();
+            if (value instanceof byte[]) return Optional.of(((byte[]) value));
+            throw new RecordTypeNotExpected("byte[]",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Long> getLong(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Long) return ((Long) value);
+            throw new RecordTypeNotExpected("Long",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<Long>> getOptLong(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof Long) return Optional.of(((Long) value));
+            throw new RecordTypeNotExpected("Long",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<String>> getOptStr(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof String) return Optional.of(((String) value));
+            throw new RecordTypeNotExpected("String",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<Integer>> getOptInt(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof Integer) return Optional.of(((Integer) value));
+            throw new RecordTypeNotExpected("Integer",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, BigDecimal> getDecimal(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof BigDecimal) return ((BigDecimal) value);
+            throw new RecordTypeNotExpected("BigDecimal",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<BigDecimal>> getOptDecimal(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+            if (value instanceof BigDecimal) return Optional.of(((BigDecimal) value));
+            throw new RecordTypeNotExpected("BigDecimal",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <O> Function<Map<String, ?>, List<O>> getList(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof List)
+                return ((List) value);
+
+            throw new RecordTypeNotExpected("List",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static <O> Function<Map<String, ?>, Optional<List<O>>> getOptList(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof List) return Optional.of(((List) value));
+
+            throw new RecordTypeNotExpected("List",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static <O> Function<Map<String, ?>, Set<O>> getSet(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Set) return ((Set) value);
+
+            throw new RecordTypeNotExpected("Set",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static <O> Function<Map<String, ?>, Optional<Set<O>>> getOptSet(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof Set) return Optional.of(((Set) value));
+
+            throw new RecordTypeNotExpected("Set",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static <O> Function<Map<String, ?>, Map<String, O>> getMap(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Map) return ((Map) value);
+            throw new RecordTypeNotExpected("Map",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static <O> Function<Map<String, ?>, Optional<Map<String, O>>> getOptMap(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof Map) return Optional.of(((Map) value));
+            throw new RecordTypeNotExpected("Map",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Instant> getInstant(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Instant) return ((Instant) value);
+            throw new RecordTypeNotExpected("Instant",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<Instant>> getOptInstant(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof Instant) return Optional.of(((Instant) value));
+            throw new RecordTypeNotExpected("Instant",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Double> getDouble(final String key) {
+        return map -> {
+            Object value = map.get(key);
+            if (value instanceof Double) return ((Double) value);
+            throw new RecordTypeNotExpected("Double",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<Double>> getOptDouble(final String key) {
+        return map -> {
+            Object value = map.get(key);
+            if (value == null) return Optional.empty();
+            if (value instanceof Double) return Optional.of(((Double) value));
+            throw new RecordTypeNotExpected("Double",
+                                            value.getClass(),
+                                            key);
+        };
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Boolean> getBool(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value instanceof Boolean) return ((Boolean) value);
+            throw new RecordTypeNotExpected("Boolean",
+                                            value.getClass(),
+                                            key);
+        };
+
+    }
+    @SuppressWarnings("unchecked")
+
+    public static Function<Map<String, ?>, Optional<Boolean>> getOptBool(final String key) {
+        return record -> {
+            Object value = record.get(key);
+            if (value == null) return Optional.empty();
+
+            if (value instanceof Boolean) return Optional.of(((Boolean) value));
+            throw new RecordTypeNotExpected("Boolean",
+                                            value.getClass(),
+                                            key);
+        };
+
+    }
+
+    public static RecordGen of(
+    ) {
+        return new RecordGen();
     }
 
     public static RecordGen of(final String key,
@@ -2353,7 +2686,7 @@ public final class RecordGen implements Gen<Map<String, ?>> {
         Supplier<Boolean> isRemoveOptionals =
                 optionals.isEmpty() ?
                 () -> false :
-                BoolGen.arbitrary.apply(split.apply(gen));
+                BoolGen.arbitrary().apply(split.apply(gen));
 
         Supplier<List<String>> nullablePermutations =
                 Combinators.permutations(nullables)
@@ -2362,7 +2695,7 @@ public final class RecordGen implements Gen<Map<String, ?>> {
         Supplier<Boolean> isRemoveNullables =
                 nullables.isEmpty() ?
                 () -> false :
-                BoolGen.arbitrary.apply(split.apply(gen));
+                BoolGen.arbitrary().apply(split.apply(gen));
         return () ->
         {
             Map<String, Object> result = new LinkedHashMap<>();

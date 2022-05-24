@@ -35,7 +35,7 @@ public class TestBigDecGen {
 
 
     @Test
-    public void biasedLong() {
+    public void biasedBigDecimal() {
 
         Map<BigDecimal, Long> counts = TestFun.generate(100000,
                                                         BigDecGen.biased());

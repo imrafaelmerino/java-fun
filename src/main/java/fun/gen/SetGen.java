@@ -17,7 +17,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
 
     public SetGen(final Gen<T> gen,
                   final int size,
-                  int maxTries) {
+                  final int maxTries) {
         if (size < 0) throw new IllegalArgumentException("size < 0");
         this.gen = requireNonNull(gen);
         this.size = size;

@@ -13,10 +13,10 @@ public class TestListGen {
     public void arbitrary() {
 
 
-        Gen<List<String>> gen = ListGen.<String>arbitrary(0,
-                                                          3)
-                                       .apply(StrGen.letters(0,
-                                                             10));
+        Gen<List<String>> gen = ListGen.arbitrary(StrGen.letters(0,
+                                                                 10),
+                                                  0,
+                                                  3);
 
         Assertions.assertTrue(gen.sample(10000)
                                  .allMatch(it -> it.size() < 4));
@@ -35,23 +35,22 @@ public class TestListGen {
     @Test
     public void biased() {
 
-        Gen<List<String>> gen = ListGen.<String>biased(0,
-                                                       3)
-                                       .apply(StrGen.letters(0,
-                                                             10));
+        Gen<List<String>> gen = ListGen.biased(StrGen.letters(0,
+                                                              10),
+                                               0,
+                                               3);
 
-        Assertions.assertTrue(gen.sample(10000)
+        int TIMES = 10000;
+        Assertions.assertTrue(gen.sample(TIMES)
                                  .allMatch(it -> it.size() < 4));
 
-        Map<Integer, Long> count = TestFun.generate(100000,
+        Map<Integer, Long> count = TestFun.generate(TIMES,
                                                     gen.map(List::size));
 
-        TestFun.isInMargin(100000 / 3,
-                           0.1).test(count.get(0));
-        TestFun.isInMargin(100000 / 3,
-                           0.1).test(count.get(3));
-        TestFun.isInMargin(100000 / 3,
-                           0.1).test(count.get(1) + count.get(2));
+        Assertions.assertTrue(TestFun.isInMargin(count.get(3),
+                                                 0.1).test(count.get(0)));
+        Assertions.assertTrue(TestFun.isInMargin(count.get(1),
+                                                 0.1).test(count.get(2)));
 
 
     }

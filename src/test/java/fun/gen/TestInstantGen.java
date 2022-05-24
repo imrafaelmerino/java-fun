@@ -21,7 +21,8 @@ public class TestInstantGen {
                                               Instant.MIN.getEpochSecond(),
                                               (long) Integer.MAX_VALUE,
                                               (long) Integer.MIN_VALUE,
-                                              0L).map(Instant::ofEpochMilli)
+                                              0L)
+                                          .map(Instant::ofEpochMilli)
                                           .collect(Collectors.toList());
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,

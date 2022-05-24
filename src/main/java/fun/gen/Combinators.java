@@ -62,7 +62,7 @@ public final class Combinators {
      * @param freq   a frequency pair
      * @param others the rests of pairs
      * @return a json generator
-     * <A> the type of the values
+     * @param <A> the type of the values
      */
     @SafeVarargs
     @SuppressWarnings("varargs")

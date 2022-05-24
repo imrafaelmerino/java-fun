@@ -108,7 +108,7 @@ JsObj person =
                                               "zipCode", JsStr.of("45920"),
                                               "tags", JsArray.of("workAddress")
                                              ),
-                                     JsObj.of("coordinates", JsArray.of(39.8581, -4.02263),
+                                     JsObj.of("coordinates", JsArray.of(40.4168, 3.7038),
                                               "city", JsStr.of("Madrid"),
                                               "zipCode", JsStr.of("28029"),
                                               "tags", JsArray.of("homeAddress", "amazon")
@@ -125,9 +125,8 @@ But what about validating JSON? We can define the JSON schema following precisel
 the same approach:
 
 ```java   
-
-import jsonvalues.spec.JsObjSpec;
 import static jsonvalues.spec.JsSpecs.*;
+import jsonvalues.spec.JsObjSpec;
 
 JsObjSpec personSpec =
     JsObjSpec.strict("name", str(),
@@ -152,9 +151,9 @@ I named it after a Clojure library named [spec](https://clojure.org/guides/spec)
 specs feels like writing JSON. Strict specs don't allow keys that are not specified, whereas 
 lenient ones do. The real power is that you can create specs from predicates and compose them:
 
-```java    
+```java   
+import static jsonvalues.spec.JsSpecs.*;    
 import jsonvalues.spec.JsObjSpec;
-import static jsonvalues.spec.JsSpecs.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.function.*;
@@ -177,13 +176,13 @@ int MAX_PHONE_LENGTH = 10;
 int MAX_CITY_LENGTH = 20;
 int MAX_TAG_LENGTH = 20;
 int MAX_ZIPCODE_LENGTH = 30;
-long LAT_MIN = -90;
-long LAT_MAX = 90;
-long LON_MIN = -180;
-long LON_MAX = 180;
 int MIN_ADDRESSES_SIZE = 1;
 int MAX_ADDRESSES_SIZE = 100;
 int MAX_TAGS_SIZE = 10;
+long LAT_MIN = -90;
+long LAT_MAX = 90;
+long LON_MIN = -180;
+long LON_MAX = 180;    
 
        
 Predicate<String> nameSpec = lengthBetween.apply(0, MAX_NAME_LENGTH);
@@ -215,7 +214,7 @@ JsObjSpec personSpec =
                                                                          decimal(longitudeSpec)
                                                                          ),
                                                                    "city", str(citySpec),
-                                                                   "tags", arrayOfStr(tagSpec,0,MAX_TAG_LENGTH,
+                                                                   "tags", arrayOfStr(tagSpec,
                                                                                       0,
                                                                                       MAX_TAGS_SIZE
                                                                                       ),

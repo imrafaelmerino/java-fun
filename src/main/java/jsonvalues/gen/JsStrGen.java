@@ -30,7 +30,6 @@ import static java.util.Objects.requireNonNull;
  *      Gen<JsStr> jsStrGen = gen.map(JsStr::of)
  *      }
  *  </pre>
- *  <p>
  */
 public final class JsStrGen implements Gen<JsStr> {
 

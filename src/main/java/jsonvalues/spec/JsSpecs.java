@@ -53,6 +53,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of numbers spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfNumber() {
         return arrayOfNumber;
@@ -60,6 +61,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of decimal numbers spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfDec() {
         return arrayOfDec;
@@ -67,6 +69,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of integral numbers spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfIntegral() {
         return arrayOfIntegral;
@@ -75,6 +78,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of objects spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfObj() {
         return arrayOfObj;
@@ -82,6 +86,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of booleans spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfBool() {
         return arrayOfBool;
@@ -89,6 +94,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array spec
+     * @return a spec
      */
     public static JsSpec instant() {
         return instant;
@@ -96,6 +102,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of long numbers spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfLong() {
         return arrayOfLong;
@@ -103,6 +110,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of integer numbers spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfInt() {
         return arrayOfInt;
@@ -110,6 +118,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array of strings spec
+     * @return a spec
      */
     public static JsArraySpec arrayOfStr() {
         return arrayOfStr;
@@ -117,6 +126,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array spec
+     * @return a spec
      */
     public static JsSpec binary() {
         return binary;
@@ -124,6 +134,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable integral number
+     * @return a spec
      */
     public static JsSpec integral() {
         return integral;
@@ -132,6 +143,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable long number
+     * @return a spec
      */
     public static JsSpec longInteger() {
         return longInteger;
@@ -139,6 +151,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable boolean
+     * @return a spec
      */
     public static JsSpec bool() {
         return bool;
@@ -146,6 +159,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable decimal number
+     * @return a spec
      */
     public static JsSpec decimal() {
         return decimal;
@@ -153,6 +167,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable integer number
+     * @return a spec
      */
     public static JsSpec integer() {
         return integer;
@@ -160,6 +175,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable json object spec
+     * @return a spec
      */
     public static JsSpec obj() {
         return obj;
@@ -167,6 +183,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable array spec
+     * @return a spec
      */
     public static JsArraySpec array() {
         return array;
@@ -174,6 +191,7 @@ public final class JsSpecs {
 
     /**
      * spec that is conformed by any value
+     * @return a spec
      */
     public static JsSpec any() {
         return any;
@@ -181,6 +199,7 @@ public final class JsSpecs {
 
     /**
      * non-nullable string
+     * @return a spec
      */
     public static JsSpec str() {
         return str;
@@ -188,114 +207,115 @@ public final class JsSpecs {
 
     /**
      * non-nullable number
+     * @return a spec
      */
     public static JsSpec number() {
         return number;
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfInt(int min,
-                                         int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfInt(int minLength,
+                                         int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfIntSpec(false,
-                                    min,
-                                    max);
+                                    minLength,
+                                    maxLength);
     }
 
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfIntegral(int min,
-                                              int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfIntegral(int minLength,
+                                              int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfIntegralSpec(false,
-                                         min,
-                                         max);
+                                         minLength,
+                                         maxLength);
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfNumber(int min,
-                                            int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfNumber(int minLength,
+                                            int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfNumberSpec(false,
-                                       min,
-                                       max);
+                                       minLength,
+                                       maxLength);
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfObj(int min,
-                                         int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfObj(int minLength,
+                                         int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfObjSpec(false,
-                                    min,
-                                    max);
+                                    minLength,
+                                    maxLength);
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfDec(int min,
-                                         int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfDec(int minLength,
+                                         int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfDecimalSpec(false,
-                                        min,
-                                        max);
+                                        minLength,
+                                        maxLength);
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfBool(int min,
-                                          int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfBool(int minLength,
+                                          int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfBoolSpec(false,
-                                     min,
-                                     max);
+                                     minLength,
+                                     maxLength);
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfStr(int min,
-                                         int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfStr(int minLength,
+                                         int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfStrSpec(false,
-                                    min,
-                                    max);
+                                    minLength,
+                                    maxLength);
     }
 
     /**
-     * @param min minimum length of the array  (inclusive)
-     * @param max maximum length of the array  (inclusive)
+     * @param minLength minimum length of the array  (inclusive)
+     * @param maxLength maximum length of the array  (inclusive)
      * @return a spec
      */
-    public static JsArraySpec arrayOfLong(int min,
-                                          int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+    public static JsArraySpec arrayOfLong(int minLength,
+                                          int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfLongSpec(false,
-                                     min,
-                                     max);
+                                     minLength,
+                                     maxLength);
     }
 
     /**
@@ -313,18 +333,18 @@ public final class JsSpecs {
      * A required and none nullable spec that specifies an array of objects that conform the given spec
      *
      * @param spec the given spec that every object in the array has to conform
-     * @param min  minimum length of the array  (inclusive)
-     * @param max  maximum length of the array  (inclusive)
+     * @param minLength  minimum length of the array  (inclusive)
+     * @param maxLength  maximum length of the array  (inclusive)
      * @return a spec
      */
     public static JsArraySpec arrayOfObjSpec(final JsObjSpec spec,
-                                             int min,
-                                             int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                             int minLength,
+                                             int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
         return new JsArrayOfJsObjSpec(false,
                                       requireNonNull(spec),
-                                      min,
-                                      max);
+                                      minLength,
+                                      maxLength);
     }
 
     /**
@@ -333,7 +353,7 @@ public final class JsSpecs {
      * @param value the constant
      * @return a spec
      */
-    public static JsSpec cons(JsValue value) {
+    public static JsSpec cons(final JsValue value) {
         return new AnySuchThatSpec(v -> requireNonNull(value).equals(v) ?
                                         Optional.empty() :
                                         Optional.of(new JsError(v,
@@ -407,20 +427,22 @@ public final class JsSpecs {
      * the given predicate
      *
      * @param predicate the predicate each decimal number of the array is tested on
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
      * @return an array spec
      */
     public static JsArraySpec arrayOfDec(final Predicate<BigDecimal> predicate,
-                                         final int min,
-                                         final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                         final int minLength,
+                                         final int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedDecimalSpec(s -> requireNonNull(predicate).test(s) ?
                                                    Optional.empty() :
                                                    Optional.of(new JsError(JsBigDec.of(s),
                                                                            DECIMAL_CONDITION)),
                                               false,
-                                              min,
-                                              max);
+                                              minLength,
+                                              maxLength);
     }
 
     /**
@@ -457,20 +479,22 @@ public final class JsSpecs {
      * the given predicate
      *
      * @param predicate the predicate each integral number of the array is tested on
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
      * @return an array spec
      */
     public static JsArraySpec arrayOfIntegral(final Predicate<BigInteger> predicate,
-                                              final int min,
-                                              final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                              final int minLength,
+                                              final int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedIntegralSpec(s -> requireNonNull(predicate).test(s) ?
                                                     Optional.empty() :
                                                     Optional.of(new JsError(JsBigInt.of(s),
                                                                             INTEGRAL_CONDITION)),
                                                false,
-                                               min,
-                                               max);
+                                               minLength,
+                                               maxLength);
     }
 
     /**
@@ -507,20 +531,23 @@ public final class JsSpecs {
      * the given predicate
      *
      * @param predicate the predicate each number of the array is tested on
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
      * @return an array spec
      */
     public static JsArraySpec arrayOfNumber(final Predicate<JsNumber> predicate,
-                                            final int min,
-                                            final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                            final int minLength,
+                                            final int maxLength
+    ) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedNumberSpec(s -> requireNonNull(predicate).test(s) ?
                                                   Optional.empty() :
                                                   Optional.of(new JsError(s,
                                                                           ERROR_CODE.NUMBER_CONDITION)),
                                              false,
-                                             min,
-                                             max);
+                                             minLength,
+                                             maxLength);
     }
 
     /**
@@ -558,20 +585,22 @@ public final class JsSpecs {
      * the given predicate
      *
      * @param predicate the predicate each object of the array is tested on
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
      * @return an array spec
      */
     public static JsArraySpec arrayOfObj(final Predicate<JsObj> predicate,
-                                         final int min,
-                                         final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                         final int minLength,
+                                         final int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedObjSpec(s -> requireNonNull(predicate).test(s) ?
                                                Optional.empty() :
                                                Optional.of(new JsError(s,
                                                                        OBJ_CONDITION)),
                                           false,
-                                          min,
-                                          max);
+                                          minLength,
+                                          maxLength);
 
     }
 
@@ -652,20 +681,23 @@ public final class JsSpecs {
      * non-nullable array of long numbers, where each element of the array satisfies the given predicate
      *
      * @param predicate the predicate each long number of the array is tested on
-     * @return an array spec
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
+     * @return an array
+     * spec
      */
     public static JsArraySpec arrayOfLong(final LongPredicate predicate,
-                                          final int min,
-                                          final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                          final int minLength,
+                                          final int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedLongSpec(s -> requireNonNull(predicate).test(s) ?
                                                 Optional.empty() :
                                                 Optional.of(new JsError(JsLong.of(s),
                                                                         LONG_CONDITION)),
                                            false,
-                                           min,
-                                           max);
+                                           minLength,
+                                           maxLength);
     }
 
     /**
@@ -744,20 +776,22 @@ public final class JsSpecs {
      * non-nullable array of strings, where each element of the array satisfies the given predicate
      *
      * @param predicate the predicate each string of the array is tested on
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
      * @return an array spec
      */
     public static JsArraySpec arrayOfStr(final Predicate<String> predicate,
-                                         final int min,
-                                         final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                         final int minLength,
+                                         final int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedStrSpec(s -> requireNonNull(predicate).test(s) ?
                                                Optional.empty() :
                                                Optional.of(new JsError(JsStr.of(s),
                                                                        STRING_CONDITION)),
                                           false,
-                                          min,
-                                          max);
+                                          minLength,
+                                          maxLength);
     }
 
     /**
@@ -865,20 +899,22 @@ public final class JsSpecs {
      * non-nullable array of integer numbers, where each element of the array satisfies the given predicate
      *
      * @param predicate the predicate each integer number of the array is tested on
+     * @param minLength the minimum size of the array (inclusive)
+     * @param maxLength the maximum size of the array (inclusive)
      * @return an array spec
      */
     public static JsArraySpec arrayOfInt(final IntPredicate predicate,
-                                         final int min,
-                                         final int max) {
-        if (max < min) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
+                                         final int minLength,
+                                         final int maxLength) {
+        if (maxLength < minLength) throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
 
         return new JsArrayOfTestedIntSpec(s -> requireNonNull(predicate).test(s) ?
                                                Optional.empty() :
                                                Optional.of(new JsError(JsInt.of(s),
                                                                        INT_CONDITION)),
                                           false,
-                                          min,
-                                          max);
+                                          minLength,
+                                          maxLength);
 
     }
 

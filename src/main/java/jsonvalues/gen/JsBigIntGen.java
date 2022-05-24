@@ -12,24 +12,43 @@ import static java.util.Objects.requireNonNull;
 
 /**
  *
+ * Represents a JsBigInt generator. It can be created using the static factory methods
+ * <code>biased</code> and <code>arbitrary</code> or, if none of the previous suit your
+ * needs, from a big integer generator and the function map:
+ *
+ * <pre>{@code
+ *      import fun.gen.Gen;
+ *      import jsonvalues.JsBigInt;
+ *
+ *      Gen<BigInteger> bigIntGen = seed -> () -> {...};
+ *      Gen<JsBigInt> jsBigIntGen = gen.map(JsBigInt::of)
+ *      }
+ *  </pre>
+ *  <p>
+ * Arbitrary generators produces uniformed distributions of values.
+ * Biased generators produces, with higher probability, potential problematic values that
+ * usually cause more bugs.
+ *
  */
 public final class JsBigIntGen implements Gen<JsBigInt> {
     private final Gen<BigInteger> gen;
 
-    public JsBigIntGen(Gen<BigInteger> gen) {
+    /**
+     * Creates a JsBigInt generator from a specified big integer generator
+     *
+     * @param gen the big integer generator
+     */
+    private JsBigIntGen(final Gen<BigInteger> gen) {
         this.gen = requireNonNull(gen);
     }
 
-    public static Gen<JsBigInt> arbitrary(int min,
-                                          int max) {
-        return new JsBigIntGen(BigIntGen.arbitrary(min,
-                                                   max));
+    public static Gen<JsBigInt> arbitrary(int minBits,
+                                          int maxBits) {
+        return new JsBigIntGen(BigIntGen.arbitrary(minBits,
+                                                   maxBits));
     }
 
-    /**
-     * @param maxBits
-     * @return
-     */
+
     public static Gen<JsBigInt> biased(int minBits,
                                        int maxBits) {
         return new JsBigIntGen(BigIntGen.biased(minBits,
@@ -37,13 +56,14 @@ public final class JsBigIntGen implements Gen<JsBigInt> {
     }
 
     /**
-     * @param seed the function argument
-     * @return
+     * Returns a supplier from the specified seed that generates a new JsBigInt each time it's called
+     * @param seed the generator seed
+     * @return a JsBigInt supplier
      */
     @Override
-    public Supplier<JsBigInt> apply(Random seed) {
+    public Supplier<JsBigInt> apply(final Random seed) {
         return gen.map(JsBigInt::of)
-                  .apply(seed);
+                  .apply(requireNonNull(seed));
     }
 
 }

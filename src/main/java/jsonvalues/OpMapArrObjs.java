@@ -8,7 +8,7 @@ final class OpMapArrObjs {
     }
 
     static JsArray map(JsArray json,
-                       final BiFunction<? super Integer, ? super JsObj, JsValue> fn
+                       final BiFunction<? super Integer, ? super JsObj, ? extends JsValue> fn
     ) {
 
         for (int i = json.size() - 1; i >= 0; i--) {
@@ -26,7 +26,7 @@ final class OpMapArrObjs {
     }
 
     static JsArray mapAll(JsArray json,
-                          final BiFunction<? super JsPath, ? super JsObj, JsValue> fn,
+                          final BiFunction<? super JsPath, ? super JsObj, ? extends JsValue> fn,
                           final JsPath startingPath) {
 
         for (int i = json.size() - 1; i >= 0; i--) {
@@ -60,10 +60,9 @@ final class OpMapArrObjs {
     }
 
     static JsArray map(JsArray json,
-                       final Function<? super JsObj, JsValue> fn) {
+                       final Function<? super JsObj, ? extends JsValue> fn) {
 
         for (int i = json.size() - 1; i >= 0; i--) {
-
             JsValue value = json.get(i);
             if (value.isObj()) {
 
@@ -76,7 +75,7 @@ final class OpMapArrObjs {
     }
 
     static JsArray mapAll(JsArray json,
-                          final Function<? super JsObj, JsValue> fn) {
+                          final Function<? super JsObj, ? extends JsValue> fn) {
         for (int i = json.size() - 1; i >= 0; i--) {
 
             JsValue value = json.get(i);

@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 
 /**
  *
+ * Represents a JsBool generator
+ *
  */
 public final class JsBoolGen implements Gen<JsBool> {
 
@@ -19,29 +21,30 @@ public final class JsBoolGen implements Gen<JsBool> {
     private final Gen<Boolean> gen;
 
     /**
-     *
-     * @param gen
+     * Creates a JsBool generator from a specified boolean generator
+     * @param gen the boolean generator
      */
-    public JsBoolGen(Gen<Boolean> gen) {
+    private JsBoolGen(final Gen<Boolean> gen) {
         this.gen = requireNonNull(gen);
     }
 
     /**
-     *
-     * @return
+     * Returns a generator produces uniformed distributions of JsBool
+     * @return a JsBool generator
      */
     public static Gen<JsBool> arbitrary() {
         return arbitrary;
     }
 
     /**
-     *
-     * @param seed the function argument
-     * @return
+     * Returns a supplier from the specified seed that generates a new JsBool each time it's called
+     * @param seed the generator seed
+     * @return a JsBool supplier
      */
     @Override
-    public Supplier<JsBool> apply(Random seed) {
-        return gen.map(JsBool::of).apply(seed);
+    public Supplier<JsBool> apply(final Random seed) {
+        return gen.map(JsBool::of)
+                  .apply(requireNonNull(seed));
     }
 }
 

@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- *
+ * Represents a tuple generator that is modeled with a JsArray generator.
+ * Each generator of the tuple is created from a new seed that is calculated
+ * passing the original one to the {@link SplitGen#DEFAULT split generator }.
  */
 public final class JsTupleGen implements Gen<JsArray> {
     private final List<Gen<? extends JsValue>> gens = new ArrayList<>();
@@ -31,10 +33,11 @@ public final class JsTupleGen implements Gen<JsArray> {
     }
 
     /**
-     *
-     * @param gen
-     * @param others
-     * @return
+     * Returns a tuple generator. The tuple is modeled with a JsArray. Each element generator
+     * is independent of each other, being created from a different seed
+     * @param gen the head element generator
+     * @param others the rest of generators
+     * @return a JsArray generator
      */
 
     @SafeVarargs
@@ -46,16 +49,17 @@ public final class JsTupleGen implements Gen<JsArray> {
     }
 
     /**
-     *
-     * @param random the function argument
-     * @return
+     * Returns a supplier from the specified seed that generates a new tuple, modeled with a JsArray,
+     * each time it's called
+     * @param seed the generator seed
+     * @return a tuple supplier
      */
     @Override
-    public Supplier<JsArray> apply(final Random random) {
-        requireNonNull(random);
+    public Supplier<JsArray> apply(final Random seed) {
+        requireNonNull(seed);
         List<Supplier<? extends JsValue>> suppliers =
                 gens.stream()
-                    .map(it -> it.apply(SplitGen.DEFAULT.apply(random)))
+                    .map(it -> it.apply(SplitGen.DEFAULT.apply(seed)))
                     .collect(Collectors.toList());
         return () ->
         {

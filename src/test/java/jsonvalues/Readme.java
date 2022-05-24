@@ -1,5 +1,8 @@
 package jsonvalues;
 
+import fun.gen.Combinators;
+import fun.gen.Gen;
+import fun.tuple.Pair;
 import jsonvalues.gen.*;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
@@ -125,9 +128,9 @@ public class Readme {
                                                                  JsSpecs.arrayOfStr(tagSpec),
                                                                  "zipCode",
                                                                  JsSpecs.str(zipCodeSpec)
-                                                                )
-                                               )
-                        );
+                                                )
+                         )
+        );
 
 
         JsObjGen.of("name",
@@ -143,34 +146,37 @@ public class Readme {
                     JsInstantGen.biased(0,
                                         Instant.MAX.getEpochSecond()),
                     "addresses",
-                    JsArrayGen.biased(0,
+                    JsArrayGen.biased(JsObjGen.of("coordinates",
+                                                  JsTupleGen.of(JsBigDecGen.biased(-90,
+                                                                                   90),
+                                                                JsBigDecGen.biased(-180,
+                                                                                   180)
+                                                  ),
+                                                  "city",
+                                                  JsStrGen.biased(0,
+                                                                  100),
+                                                  "tags",
+                                                  JsArrayGen.biased(JsStrGen.biased(0,
+                                                                                    20),
+                                                                    0,
+                                                                    100)
+                                                      ,
+                                                  "zipCode",
+                                                  JsStrGen.biased(0,
+                                                                  10)
+                                              )
+                                              .setOptionals("tags",
+                                                            "zipCode",
+                                                            "city"),
+                                      0,
                                       1)
-                              .apply(JsObjGen.of("coordinates",
-                                                 JsTupleGen.of(JsBigDecGen.biased(-90,
-                                                                                  90),
-                                                               JsBigDecGen.biased(-180,
-                                                                                  180)
-                                                 ),
-                                                 "city",
-                                                 JsStrGen.biased(0,
-                                                                 100),
-                                                 "tags",
-                                                 JsArrayGen.biased(0,
-                                                                   100)
-                                                           .apply(JsStrGen.biased(0,
-                                                                                  20)),
-                                                 "zipCode",
-                                                 JsStrGen.biased(0,
-                                                                 10)
-                                             )
-                                             .setOptionals("tags",
-                                                           "zipCode",
-                                                           "city")
-                              )
+
                 )
                 .setOptionals("surname",
                               "phoneNumber",
                               "addresses");
+
+
 
 
     }

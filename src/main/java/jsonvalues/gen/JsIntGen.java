@@ -8,7 +8,26 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 /**
+ *
+ * Represents a JsInstant generator. It can be created using the static factory methods
+ * <code>biased</code> and <code>arbitrary</code> or, if none of the previous suit your
+ * needs, from an integer generator and the function map:
+ *
+ * <pre>{@code
+ *      import fun.gen.Gen;
+ *      import jsonvalues.JsInt;
+ *
+ *      Gen<Integer> intGen = seed -> () -> {...};
+ *      Gen<JsInteger> jsIntGen = gen.map(JsInt::of)
+ *      }
+ *  </pre>
+ *  <p>
+ * Arbitrary generators produces uniformed distributions of values.
+ * Biased generators produces, with higher probability, potential problematic values that
+ * usually cause more bugs.
  *
  */
 public final class JsIntGen implements Gen<JsInt> {
@@ -17,34 +36,50 @@ public final class JsIntGen implements Gen<JsInt> {
     private final Gen<Integer> gen;
 
     /**
+     * Creates a JsInt generator from a specified integer generator
      *
-     * @param gen
+     * @param gen the integer generator
      */
-    public JsIntGen(Gen<Integer> gen) {
+    private JsIntGen(Gen<Integer> gen) {
         this.gen = Objects.requireNonNull(gen);
     }
 
     /**
+     * returns a biased generators that produces, with higher probability, potential problematic values
+     * that usually cause more bugs. These values are:
      *
-     * @return
+     * <pre>
+     * - {@link Integer#MIN_VALUE}
+     * - {@link Short#MIN_VALUE}
+     * - {@link Byte#MIN_VALUE}
+     * - 0
+     * - {@link Integer#MAX_VALUE}
+     * - {@link Short#MAX_VALUE}
+     * - {@link Byte#MAX_VALUE}
+     * </pre>
+     *
+     *
+     * @return a biased JsInt generator
      */
     public static Gen<JsInt> biased() {
         return biased;
     }
 
     /**
-     *
-     * @return
+     * Returns a generator that produces values uniformly distributed
+     * @return a JsInt generator
      */
     public static Gen<JsInt> arbitrary() {
         return arbitrary;
     }
 
     /**
+     * Returns a generator that produces values uniformly distributed over a specified interval
      *
-     * @param min
-     * @param max
-     * @return
+     * @param min lower bound of the interval (inclusive)
+     * @param max upper bound of the interval (inclusive)
+     *
+     * @return a biased JsInt generator
      */
     public static Gen<JsInt> arbitrary(int min,
                                        int max) {
@@ -52,11 +87,32 @@ public final class JsIntGen implements Gen<JsInt> {
                                              max));
     }
 
+
     /**
+     * returns a biased generators that produces, with higher probability, potential problematic values
+     * that usually cause more bugs. These values are:
      *
-     * @param min
-     * @param max
-     * @return
+     * <pre>
+     * - the lower bound of the interval
+     * - the upper bound of the interval
+     * </pre>
+     *
+     * and the following numbers provided that they are between the specified interval:
+     *
+     * <pre>
+     * - {@link Integer#MIN_VALUE}
+     * - {@link Short#MIN_VALUE}
+     * - {@link Byte#MIN_VALUE}
+     * - 0
+     * - {@link Integer#MAX_VALUE}
+     * - {@link Short#MAX_VALUE}
+     * - {@link Byte#MAX_VALUE}
+     * </pre>
+     *
+     * @param min lower bound of the interval (inclusive)
+     * @param max upper bound of the interval (inclusive)
+     *
+     * @return a biased JsInt generator
      */
     public static Gen<JsInt> biased(int min,
                                     int max) {
@@ -65,12 +121,13 @@ public final class JsIntGen implements Gen<JsInt> {
     }
 
     /**
-     *
-     * @param seed the function argument
-     * @return
+     * Returns a supplier from the specified seed that generates a new JsInt each time it's called
+     * @param seed the generator seed
+     * @return a JsInt supplier
      */
     @Override
-    public Supplier<JsInt> apply(Random seed) {
-        return gen.map(JsInt::of).apply(seed);
+    public Supplier<JsInt> apply(final Random seed) {
+        return gen.map(JsInt::of)
+                  .apply(requireNonNull(seed));
     }
 }

@@ -29,14 +29,14 @@ public class TestGenerators {
         final Gen<JsObj> gen = JsObjGen.of("a",
                                            IntGen.arbitrary(0,
                                                             10)
-                                                 .then(n -> JsArrayGen.arbitrary(n)
-                                                                      .apply(JsStrGen.alphanumeric(0,
-                                                                                                   10))),
+                                                 .then(n -> JsArrayGen.arbitrary(JsStrGen.alphanumeric(0,
+                                                                                                       10),
+                                                                                 n)),
                                            "b",
                                            IntGen.arbitrary(0,
                                                             10
-                                           ).then(n -> JsArrayGen.arbitrary(n)
-                                                                 .apply(JsIntGen.arbitrary())
+                                           ).then(n -> JsArrayGen.arbitrary(JsIntGen.arbitrary(),
+                                                                            n)
                                            )
         );
 
@@ -102,9 +102,9 @@ public class TestGenerators {
     @Test
     public void test_nested_gen() {
         JsObjGen gen = JsObjGen.of("a",
-                                   JsArrayGen.arbitrary(5)
-                                             .apply(JsStrGen.alphanumeric(0,
-                                                                          10)),
+                                   JsArrayGen.arbitrary(JsStrGen.alphanumeric(0,
+                                                                              10),
+                                                        5),
                                    "b",
                                    JsTupleGen.of(JsStrGen.biased(0,
                                                                  10),
@@ -128,7 +128,7 @@ public class TestGenerators {
                                                      JsIntGen.arbitrary()
                                    ),
                                    "g",
-                                   JsConsGen.cons(JsStr.of("a"))
+                                   Gen.cons(JsStr.of("a"))
         );
 
         JsObjSpec spec = JsObjSpec.strict("a",
@@ -183,7 +183,7 @@ public class TestGenerators {
                                    "g",
                                    JsBigDecGen.arbitrary(),
                                    "h",
-                                   JsConsGen.cons(JsBool.TRUE),
+                                   Gen.cons(JsBool.TRUE),
                                    "i",
                                    Combinators.oneOf(JsStrGen.arbitrary(0,
                                                                         100),
@@ -312,7 +312,7 @@ public class TestGenerators {
 
     @Test
     public void testSuchThat() {
-        final Gen<JsInt> negative = new JsIntGen(IntGen.arbitrary().suchThat(i -> i < 0));
+        final Gen<JsInt> negative = IntGen.arbitrary().suchThat(i -> i < 0).map(JsInt::of);
 
         final Supplier<JsInt> supplier = negative.sample(new Random());
 
@@ -326,7 +326,7 @@ public class TestGenerators {
     @Test
     public void testDigits() {
 
-        final Gen<JsArray> gen = JsArrayGen.arbitrary(10).apply(JsStrGen.digit());
+        final Gen<JsArray> gen = JsArrayGen.arbitrary(JsStrGen.digit(),10);
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> it.size() == 10)

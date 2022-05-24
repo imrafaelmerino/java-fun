@@ -2,7 +2,7 @@
 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/10.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/10.0.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/11.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/11.0.0/jar)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
 
@@ -383,8 +383,6 @@ and transform them into any possible value.
 You can access the full path of every mapped value using the following overloaded 
 methods:
 
-
-
 ```java  
 
 JsObj mapAllKeys( BiFunction<JsPath, JsValue, String> map) 
@@ -420,7 +418,7 @@ Add the following dependency to your building tool:
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
-    <version>10.0.0</version>
+    <version>11.0.0</version>
 </dependency>
 ```
 
@@ -437,8 +435,8 @@ After the development of json-values, I published two more related projects:
 * [JIO](https://github.com/imrafaelmerino/JIO)
 
 
-json-values uses the persistent data structures from [vavr](https://www.vavr.io/)
-, [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
+json-values uses the persistent data structures from [vavr](https://www.vavr.io/), 
+[Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
 
 ## <a name="release"><a/> Release process

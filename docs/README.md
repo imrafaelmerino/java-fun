@@ -66,7 +66,7 @@ encoded in base 64.
 ## <a name="examples"><a/> Examples
 
 As a developer, I'm convinced that code should win arguments, so let's get down to business.
-First things first. Let's define a Json
+First things first. Let's create the following JSON
 
 ```json
 {
@@ -92,7 +92,7 @@ First things first. Let's define a Json
 
 ```
 
-and create it using the static factory methods provided by json-values
+using the static factory methods provided by json-values
 
 ```java      
 import jsonvalues.*;
@@ -127,6 +127,7 @@ the same approach:
 ```java   
 import static jsonvalues.spec.JsSpecs.*;
 import jsonvalues.spec.JsObjSpec;
+import jsonvalues.spec.JsErrorPair;
 
 JsObjSpec personSpec =
     JsObjSpec.strict("name", str(),
@@ -143,7 +144,15 @@ JsObjSpec personSpec =
                                                                   )
                                                 )
                     );
+    
+Set<JsErrorPair> errors = personSepc.test(person);   
 
+Function<JsErrorPair, String> toStr = 
+    pair -> pair.error.value + " @ "+ pair.path + " doesn't conform spec: " + pair.error.code;   
+
+errors.forEach(pair -> System.out.println(toStr.apply(pair)));
+    
+    
 ```
 
 I’d argue that it is very expressive, concise, and straightforward. I call it json-spec.
@@ -209,24 +218,25 @@ JsObjSpec personSpec =
                      "surname", str(surnameSpec),
                      "phoneNumber", str(phoneSpec).nullable(),
                      "registrationDate", instant(registrationDateSpec),
-                     "addresses", arrayOfObjSpec(JsObjSpec.lenient("coordinates",
-                                                                   tuple(decimal(latitudeSpec),
-                                                                         decimal(longitudeSpec)
-                                                                         ),
-                                                                   "city", str(citySpec),
-                                                                   "tags", arrayOfStr(tagSpec,
-                                                                                      0,
-                                                                                      MAX_TAGS_SIZE
-                                                                                      ),
-                                                                   "zipCode", str(zipCodeSpec)
-                                                                  )
-                                                          .setOptionals("tags", "zipCode", "city"),
-                                                 MIN_ADDRESSES_SIZE,
-                                                 MAX_ADDRESSES_SIZE                
-                                                 )
-                    )
-             .setOptionals("surname", "phoneNumber", "addresses");      
-
+                     "addresses", 
+                     arrayOfObjSpec(JsObjSpec.lenient("coordinates",
+                                                      tuple(decimal(latitudeSpec),
+                                                            decimal(longitudeSpec)
+                                                           ),
+                                                      "city", str(citySpec),
+                                                      "tags", arrayOfStr(tagSpec,
+                                                                         0,
+                                                                         MAX_TAGS_SIZE
+                                                                        ),
+                                                      "zipCode", str(zipCodeSpec)
+                                                     )
+                                             .setOptionals("tags", "zipCode", "city"),
+                                    MIN_ADDRESSES_SIZE,
+                                    MAX_ADDRESSES_SIZE                
+                                    )
+                     )
+             .setOptionals("surname", "phoneNumber", "addresses");   
+    
 ```
 
 As you can see, the spec's structure remains the same, and it’s child’s play to define
@@ -237,11 +247,23 @@ the whole Json and then validating it, we can verify the schema while parsing it
 stop the process as soon as an error happens. After all, failing fast is important as well!
 
 ```java      
+import com.dslplatform.json.JsParserException;
+import jsonvalues.spec.JsObjParser;    
+
 JsObjParser personParser = new JsObjParser(personSpec);
 
 String string = "...";
+    
+try{
 
-JsObj person = personParser.parse(string);
+    JsObj person = personParser.parse(string);
+    
+   }
+catch(JsParserException e){
+    
+    System.out.println("Error parsing person JSON: " + e.getMessage())
+    
+}    
 
 ```
 
@@ -258,21 +280,24 @@ JsObjGen personGen =
               "surname", JsStrGen.biased(0, MAX_NAME_LENGTH),
               "phoneNumber", JsStrGen.biased(0,MAX_PHONE_LENGTH),
               "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
-              "addresses", JsArrayGen.biased(JsObjGen.of("coordinates", 
-                                                         JsTupleGen.of(JsBigDecGen.biased(LAT_MIN, LAT_MAX),
-                                                                       JsBigDecGen.biased(LON_MIN, LON_MAX)
-                                                                      ),
-                                                        "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
-                                                        "tags", JsArrayGen.biased(JsStrGen.biased(0, MAX_TAG_LENGTH),
-                                                                                  0,
-                                                                                  MAX_TAGS_SIZE
-                                                                                  ),
-                                                        "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
-                                                        )
-                                                     .setOptionals("tags", "zipCode", "city"),
-                                             MIN_ADDRESSES_SIZE, 
-                                             MAX_ADDRESSES_SIZE        
+              "addresses", 
+              JsArrayGen.biased(JsObjGen.of("coordinates", 
+                                            JsTupleGen.of(JsBigDecGen.biased(LAT_MIN, LAT_MAX),
+                                                          JsBigDecGen.biased(LON_MIN, LON_MAX)
+                                                         ),
+                                            "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
+                                            "tags", JsArrayGen.biased(JsStrGen.biased(0, 
+                                                                                      MAX_TAG_LENGTH
+                                                                                     ),
+                                                                      0,
+                                                                      MAX_TAGS_SIZE
+                                                                     ),
+                                            "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
                                             )
+                                         .setOptionals("tags", "zipCode", "city"),
+                                MIN_ADDRESSES_SIZE, 
+                                MAX_ADDRESSES_SIZE        
+                                )
               )
            .setOptionals("surname", "phoneNumber", "addresses");
 
@@ -285,49 +310,68 @@ potential problematic values that tend to cause bugs in our code. For example:
 
 * Integer generator
 
-```java    
-JsIntGen.biased()
+```java 
+    
+import fun.gen.Gen;    
+    
+Gen<JsStr> gen = JsIntGen.biased();
+
 ``` 
-It produces with higher probability the values Integer.MAX_VALUE, Integer.MIN_VALUE, 
-Short.MAX_VALUE, Short.MIN_VALUE, Byte.MAX_VALUE, Byte.MIN_VALUE and zero
+It produces with higher probability the values:
+    
+-  Integer.MAX_VALUE
+-  Integer.MIN_VALUE
+-  Short.MAX_VALUE
+-  Short.MIN_VALUE 
+-  Byte.MAX_VALUE 
+-  Byte.MIN_VALUE 
+-  0
 
-
+We can specify an interval
+    
 ```java    
-JsIntGen.biased(min,max)
+
+Gen<JsStr> gen = JsIntGen.biased(min, max)
+
 ``` 
 
-It produces with higher probability the bounds of the interval min and max, and all the 
-above values that are between the specified interval.
+that produces with higher probability the bounds of the interval *min* and *max*, and all the 
+previoues values from the unbounded generator that fall between the interval.
 
 * Long generator
 
 ```java    
-JsLongGen.biased()
-JsLongGen.biased(min, max)
+    
+Gen<JsLong> unbounded = JsLongGen.biased();
+
+Gen<JsLong> bounded = JsLongGen.biased(min, max);
+    
 ``` 
 
-Same values as the integer generator plus Long.MAX_VALUE and Long.MIN_VALUE
+Same values as the integer generators plus *Long.MAX_VALUE* and *Long.MIN_VALUE*
 
 * String generator
 
 ```java    
-JsStrGen.biased(min, max)
+    
+Geb<JsStr> gen = JsStrGen.biased(min, max);
+    
 ``` 
-produces with higher probability the blank string of length min and max
+produces with higher probability the blank string of length *min* and *max*
 
 If the predefined static factory methods doesn't suit your needs, you
-can always create a new generator using the primitive type constructors 
-and  the function map or using some combinator:
+can always create a new generator from the more general primitive types generators
+and the function map or just using some combinator:
 
 ```java  
 import fun.gen.Gen;
 import fun.gen.Combinators;
 import jsonvalues.gen.JsCons;
 
+//notice it's a String generator
+Gen<String> gen = seed -> () -> seed.nextInt() % 2 == 0 ? "even" : "odd";
 
-Gen<String> mygenetaror = seed -> () -> seed.nextInt() % 2 == 0 ? "even" : "odd";
-
-Gen<JsStr> parity = mygenetaror.map(JsStr::of);
+Gen<JsStr> parity = gen.map(JsStr::of);
 
 //using the oneOf combinator
 
@@ -338,7 +382,8 @@ Gen<JsStr> parity = Combinators.oneOf("even",
                                                           
 ```
 
-You can combine two generator and specify the odd weight assigned to each one
+You can combine any number of generators and set the probability of selecting each of them
+for the next value generation:    
 
 ```java 
 // 20% alphaumeric strings and 80% digits

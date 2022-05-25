@@ -327,7 +327,7 @@ It produces with higher probability the values:
 -  Byte.MIN_VALUE 
 -  0
 
-We can specify an interval
+We can specify a bounded interval:
     
 ```java    
 

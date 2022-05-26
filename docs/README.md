@@ -147,11 +147,6 @@ A _JsPath_ represents a location of a specific value within a JSON. It's a seque
 either a _Key_ or an _Index_.
 
 ```java   
-import jsonvalues.JsPath;
-import jsonvalues.Key;
-import jsonvalues.Index;
-import jsonvalues.Position;
-
 //RFC 6901
 
 JsPath path =  JsPath.path("/a/b/0");
@@ -268,8 +263,6 @@ Let's create the following JSON
 
 ```java     
  
-import jsonvalues.*;
-
 JsObj person = 
     JsObj.of("name", JsStr.of("Rafael"),
              "surname", JsStr.of("Merino"),
@@ -298,8 +291,6 @@ Instead of keys and a nested structure, it's possible to create a JSON object
 from their paths, which turns out to be really convenient as well:
 
 ```java   
-
-import static jsonvalues.JsPath.path;
      
 JsObj person = 
         JsObj.of(path("/name"), JsStr.of("Rafael"),
@@ -626,10 +617,6 @@ the same approach as defining JSON:
 
 ```java   
 
-import static jsonvalues.spec.JsSpecs.*;
-import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsErrorPair;
-
 JsObjSpec personSpec =
     JsObjSpec.strict("name", str(),
                      "surname", str(),
@@ -661,12 +648,6 @@ specs feels like writing JSON. Strict specs don't allow keys that are not specif
 lenient ones do. The real power is that you can create specs from predicates and compose them:
 
 ```java   
-
-import static jsonvalues.spec.JsSpecs.*;    
-import jsonvalues.spec.JsObjSpec;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.function.*;
 
 BiFunction<Integer, Integer, Predicate<String>> lengthBetween =
        (min, max) -> string -> string.length() <= max && 
@@ -749,9 +730,6 @@ stop the process as soon as an error happens. **After all, failing fast is impor
 
 ```java     
  
-import com.dslplatform.json.JsParserException;
-import jsonvalues.spec.JsObjParser;    
-
 JsObjParser personParser = new JsObjParser(personSpec);
 
 String string = "{...}";
@@ -816,9 +794,7 @@ potential problematic values that tend to cause bugs in our code. For example:
 * Integer generator
 
 ```java 
-    
-import fun.gen.Gen;    
-    
+        
 Gen<JsStr> gen = JsIntGen.biased();
 
 ``` 
@@ -869,10 +845,6 @@ can always create a new generator from the more general primitive types generato
 and the function map or just using some combinator:
 
 ```java  
-
-import fun.gen.Gen;
-import fun.gen.Combinators;
-import jsonvalues.gen.JsCons;
 
 //notice it's a String generator
 Gen<String> gen = seed -> () -> seed.nextInt() % 2 == 0 ? "even" : "odd";
@@ -1062,8 +1034,6 @@ Find below an example creating some lenses with json-values:
 
 ```java   
 
-import fun.optic.Lens;
-
 Lens<JsObj,JsValue> nameLens = JsObj.lens.value("name");
 
 Lens<JsObj,JsValue> latitudeLens = JsObj.lens.value(path("/address/coordinates/0"));
@@ -1106,8 +1076,6 @@ produce a new name from the old one.
 Let's check out a practical example.
 
 ```java   
-
-import fun.optic.Lens;
 
 Lens<JsObj, JsValue> nameLens = JsObj.lens.value("name");
 
@@ -1231,12 +1199,6 @@ step using lenses and prisms.
 
 ``` java
 
-import static jsonvalues.JsPath.path;
-import fun.optic.Lens;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-
 Lens<JsObj, JsValue> nameLens = JsObj.lens.value("name");
 
 Lens<JsObj, JsValue> ageOpt = JsObj.lens.value("age");
@@ -1294,10 +1256,6 @@ Summing up:
 Let's rewrite the modifyPerson defining lenses with more specific types instead of JsValue. We validate the person Json with a spec before applying the function, which makes the operation safe.
 
 ```java   
-
-import fun.optic.Option;
-import fun.optic.Lens;
-import jsonvalues.spec.JsObjSpec;
 
 JsObjSpec addressSpec = 
     JsObjSpec.lenient("street",str(),

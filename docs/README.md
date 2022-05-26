@@ -198,7 +198,6 @@ Let's create the following JSON
 ```java     
  
 import jsonvalues.*;
-import java.time.Instant;
 
 JsObj person = 
     JsObj.of("name", JsStr.of("Rafael"),
@@ -336,8 +335,8 @@ JsArray a = JsArray.empty().append(JsInt.of(1))
 JsArray b = JsArray.empty().append(JsInt.of(3))
                            .prepend(JsInt.of(2));
 
-Assertions.equals(JsArray.of(0,1,2,3), a.appendAll(b));
-Assertions.equals(JsArray.of(2,3,0,1), a.prependAll(b));
+Assertions.assertEquals(JsArray.of(0,1,2,3), a.appendAll(b));
+Assertions.assertEquals(JsArray.of(2,3,0,1), a.prependAll(b));
 
 ```
 
@@ -409,7 +408,7 @@ JsObj.empty().set(path("/food/fruits/0"),
 
 // pads with null by default
 JsObj.empty().set(path("/food/fruits/2"), 
-                  JsStr.of("apple"))
+                  JsStr.of("apple"));
 
 {
   "food": {
@@ -423,8 +422,8 @@ JsObj.empty().set(path("/food/fruits/2"),
 
 // padding with empty string
 JsObj obj = JsObj.empty().set(path("/food/fruits/2"), 
-                            JsStr.of("apple"), 
-                            JsStr.of(""))
+                              JsStr.of("apple"), 
+                              JsStr.of(""));
 
 {
   "food": {
@@ -684,7 +683,7 @@ import jsonvalues.spec.JsObjParser;
 
 JsObjParser personParser = new JsObjParser(personSpec);
 
-String string = "...";
+String string = "{...}";
     
 try{
 
@@ -717,16 +716,16 @@ Gen<JsArray> addressGen =
                                   "city", JsStrGen.biased(0, MAX_CITY_LENGTH),
                                   "tags", JsArrayGen.biased(JsStrGen.biased(0, 
                                                                             MAX_TAG_LENGTH
-                                                                           ),
+                                                                            ),
                                                             0,
                                                             MAX_TAGS_SIZE
-                                                           ),
+                                                            ),
                                   "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
                                   )
-                               .setOptionals("tags", "zipCode", "city"),
-                       MIN_ADDRESSES_SIZE, 
-                       MAX_ADDRESSES_SIZE        
-                       );
+                              .setOptionals("tags", "zipCode", "city"),
+                      MIN_ADDRESSES_SIZE, 
+                      MAX_ADDRESSES_SIZE        
+                      );
 Gen<JsObj> personGen =
   JsObjGen.of("name", JsStrGen.biased(0, MAX_NAME_LENGTH),
               "surname", JsStrGen.biased(0, MAX_NAME_LENGTH),
@@ -734,7 +733,7 @@ Gen<JsObj> personGen =
               "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
               "addresses", addressGen           
               )
-           .setOptionals("surname", "phoneNumber", "addresses");
+          .setOptionals("surname", "phoneNumber", "addresses");
 
 ```
 

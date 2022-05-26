@@ -130,8 +130,7 @@ functional approach.
 * You need to deal with Jsons, and you want to program following a functional style, **using just functions and values**,
   but you can't benefit from all the advantage that immutability brings to your code because **Java doesn't provide
   [Persistent Data Structures](https://en.wikipedia.org/wiki/Persistent_data_structure)**.
-* For those architectures that work with JSON end-to-end, it's extremely safe and efficient to have a persistent Json.
-* Think of actors sending JSON messages one to each other for example.
+* For those architectures that work with JSON end-to-end, it's extremely safe and efficient to have a persistent Json. Think of actors sending JSON messages one to each other for example.
 * You manipulate JSON all the time, and you'd like to do it with less ceremony. **json-values** is declarative and
   takes advantage of a lot of concepts from FP to define a powerful API.
 * Generating JSON to do Property-Based-Testing is child's play with json-values.
@@ -141,8 +140,6 @@ functional approach.
 
 
 ## <a name="how-to"><a/> How-To
-As a developer, I'm convinced that code should win arguments, so let's get down to business and
-do some coding.
 
 ### <a name="jspath"><a/>JsPath
 

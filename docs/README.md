@@ -266,9 +266,9 @@ Remember that a JSON is immutable, so the set method returns a brand new JSON.
 ```java   
 
 JsObj person = 
-        JsObj.empty().set(path("/name"), JsStr.of("Rafael"))
-                     .set(path("/surname"), JsStr.of("Merino"))
-                     .set(path("/phoneNumber"), JsStr.of("6666666"));
+        JsObj.empty().set("name", JsStr.of("Rafael"))
+                     .set("surname", JsStr.of("Merino"))
+                     .set("phoneNumber", JsStr.of("6666666"));
 
 ```
 

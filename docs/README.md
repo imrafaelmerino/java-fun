@@ -10,7 +10,7 @@
 And to make matters worse: complexity sells better._”
 **Edsger Wybe Dijkstra**
 
-
+- [Code wins arguments](#cwa)
 - [Introduction](#introduction)
 - [What to use _json-values_ for and when to use it](#whatfor)
 - [When not to use it](#notwhatfor)
@@ -29,12 +29,85 @@ And to make matters worse: complexity sells better._”
 - [Installation](#installation)
 - [Related projects](#rp)
 
+## <a name="cwa"><a/> Code wins arguments
+
+JSON creation
+
+```java 
+
+JsObj.of("name",JsStr.of("Rafael"),
+         "languages", JsArray.of("Java", "Scala", "Kotlin"),
+         "age", JsInt.of(1),
+         "address", JsObj.of("street", JsStr.of("Elm Street"),
+                             "coordinates", JsArray.of(3.32, 40.4)
+                            )
+        );
+
+```
+
+JSON validation
+
+```java 
+
+JsObjSpec.strict("name", str(),
+                 "languages", arrayOfStr(),
+                 "age", integer(),
+                 "address", JsObjSpec.lenient("street",str(),
+                                              "coordinates", tuple(decimal(),
+                                                                   decimal())
+                                             )
+                 )
+          .setOptionals("address");
+    
+```   
+
+JSON generation
+
+```java 
+          
+JsObjGen.of("name", JsStrGen.biased(0,100),
+            "languages", JsArrayGen.biased(JsStrGen.digit(),0,10),
+            "age", JsIntGen.biased(0,100),
+            "address", JsObjGen.of("street", JsStrGen.alphanumeric(0,200),
+                                   "coordinates", JsTupleGen.of(JsBigDecGen.biased(),
+                                                                JsBigDecGen.biased())
+                                  )
+            )
+        .setOptionals("address");          
+
+```
+
+JSON manipulation
+
+```java 
+          
+JsObj updated = 
+    ageLens.modify.apply(n -> n + 1)
+           .andThen(nameLens.modify.apply(String::trim))
+           .andThen(cityOpt.set.apply("Paris"))
+           .andThen(latLens.modify.apply(lat -> -lat))
+           .andThen(lanLens.modify.apply(a -> a.append(JsStr.of("Clojure"))))
+           .apply(person); 
+           
+
+Function<String,String> toSneakCase =  key -> ...;
+
+updated.mapAllKeys(toSneakCase)
+       .mapAllValues(JsStr.prism.modify.apply(String::trim))  //cleaning up strings!
+       .filterAllValues(JsValue::isNotNull);
+           
+           
+```
+
+and much more... keep reading!
+
+
 ## <a name="introduction"><a/> Introduction
 
 Welcome to **json-values**, the first-ever JSON library in _Java_ implemented with
 persistent data structures.
 
-One of the most essential aspects of functional programming is immutable data structures,
+One of the most essential aspects of FP is immutable data structures,
 better known in FP jargon as values.
 It's a fact that, when possible, working with values leads to code with fewer bugs, is more
 readable, and is easier to maintain. Item 17 of Effective Java states that we must minimize
@@ -60,11 +133,12 @@ functional approach.
 * For those architectures that work with JSON end-to-end, it's extremely safe and efficient to have a persistent Json.
 * Think of actors sending JSON messages one to each other for example.
 * You manipulate JSON all the time, and you'd like to do it with less ceremony. **json-values** is declarative and
-  takes advantage of a lot of concepts from functional programming to define a powerful API.
+  takes advantage of a lot of concepts from FP to define a powerful API.
 * Generating JSON to do Property-Based-Testing is child's play with json-values.
 * Generating specifications to validate JSON and parse strings or bytes very efficiently is a piece of cake.
 * Simplicity matters, and I'd argue that **json-values** is simple.
 * As _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
+
 
 ## <a name="how-to"><a/> How-To
 As a developer, I'm convinced that code should win arguments, so let's get down to business and

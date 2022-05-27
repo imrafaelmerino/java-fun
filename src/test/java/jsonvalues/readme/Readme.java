@@ -303,9 +303,7 @@ public class Readme {
 
     static void optic(){
 
-        Option<JsObj, String> nameOpt = JsObj.lens.value("name").compose(JsStr.prism);
-
-        Option<JsObj, Integer> ageOpt = JsObj.lens.value("age").compose(JsInt.prism);
+        JsPath.path("/a/")
 
     }
 

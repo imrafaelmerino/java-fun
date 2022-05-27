@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
  * obj = {"a":{"0":{"0":true} //valid result according to the rfc
  * {@code <script>}
  * - By the API, using the methods {@link JsPath#fromKey(String)} and {@link JsPath#fromIndex(int)} to create
- * a JsPath an then the methods {@link JsPath#index(int)} and {@link JsPath#key(String)} to append keys or indexes:
+ * a JsPath and then the methods {@link JsPath#index(int)} and {@link JsPath#key(String)} to append keys or indexes:
  * {@code <script>}
  * JsPath a = JsPath.fromKey("a").index(0).key("b") =  /a/0/b
  * JsPath b = JsPath.fromIndex(0).key("a").index(0) =  /0/a/0
@@ -133,10 +133,8 @@ public final class JsPath implements Comparable<JsPath> {
         if (path.equals("/")) return fromKey("");
         if (!path.startsWith("#/") && !path.startsWith("/")) throw UserError.pathMalformed(path);
         if (path.startsWith("#")) return parse(mapTokenToPosition(t -> escape.andThen(decode)
-                                                                             .apply(t))
-        ).apply(path.substring(2));
-        return parse(mapTokenToPosition(escape)
-        ).apply(path.substring(1));
+                                                                             .apply(t))).apply(path.substring(2));
+        return parse(mapTokenToPosition(escape)).apply(path.substring(1));
     }
 
     /**

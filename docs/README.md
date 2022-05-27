@@ -131,11 +131,11 @@ functional approach.
   but you can't benefit from all the advantage that immutability brings to your code because **Java doesn't provide
   [Persistent Data Structures](https://en.wikipedia.org/wiki/Persistent_data_structure)**.
 * For those architectures that work with JSON end-to-end, it's extremely safe and efficient to have a persistent Json. Think of actors sending JSON messages one to each other for example.
-* You manipulate JSON all the time, and you'd like to do it with less ceremony. **json-values** is declarative and
+* You manipulate JSON all the time, and you'd like to do it with less ceremony. json-values is declarative and
   takes advantage of a lot of concepts from FP to define a powerful API.
 * Generating JSON to do Property-Based-Testing is child's play with json-values.
 * Generating specifications to validate JSON and parse strings or bytes very efficiently is a piece of cake.
-* Simplicity matters, and I'd argue that **json-values** is simple.
+* Simplicity matters, and I'd argue that json-values is simple.
 * As _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
 
 
@@ -143,11 +143,13 @@ functional approach.
 
 ### <a name="jspath"><a/>JsPath
 
-A _JsPath_ represents a location of a specific value within a JSON. It's a sequence of _Position_, being a position
-either a _Key_ or an _Index_.
+The type _JsPath_ represents a location of a specific value within a JSON. It's a sequence of _Position_, being a position
+either a _Key_ or an _Index_. Exists two different ways to create a path:
+
+- Parsing a path-like string using the static factory method _JsPath.path_, where the path follows 
+the Json Pointer specification [RFC 6901](http://tools.ietf.org/html/rfc6901)
 
 ```java   
-//RFC 6901
 
 JsPath path =  JsPath.path("/a/b/0");
 
@@ -166,49 +168,75 @@ Assertions.assertEquals(tail.head(),
 Assertions.assertEquals(tail.last(),
                         Index.of(0)
                        );
-                       
-//alternative to RFC 6901 to create a JsPath, 
-//using the API instead of parsing a string
+```
 
-JsPath path =  JsPath.fromKey("a").key("b").index(0);
+- Using the static factory methods JsPath.fromKey or JsPath.fromIndex to create
+a one-position path and then the methods index or key to append more keys or indexes:
 
+```java   
+
+JsPath.fromKey("a").key("b").index(0);
+
+```
+
+or
+
+```java   
+
+JsPath.empty().key("a").key("b").index(0);
 
 ```
 
 
 ### <a name="jsvalue"><a/>JsValue
 
-Every element in a Json is a _JsValue_. There is a specific type for each value described
-in [json.org](https://www.json.org): string, number, null, object and array.
-There are five number specializations: int, long, double, decimal and biginteger.
+Every element in a Json is a subtype of _JsValue_. There is a specific type for each value described
+in [json.org](https://www.json.org): 
 
-json-values adds support for instants and binary data. Instants are serialized into its
-string representation according to ISO-8601; and the binary type is serialized into a
-string encoded in base 64.
+- String 
+- Number 
+- Null
+- JSON object  
+- JSON array
+- 
+There are five number specializations: 
+
+- Integer 
+- Long 
+- Double 
+- BigDecimal
+- BigInteger
+
+json-values adds support for two more types:
+
+- Instant
+- Binary or array of bytes (byte[])
+
+Instants are serialized into its string representation according to ISO-8601; 
+and the binary type is serialized into a string encoded in base 64.
 
 When it comes to the _equals_ method, json-values is data oriented, I mean, two JSON
-are equals if they represent the same piece of information. Let's put an example:
+are equals if they represent the same piece of information. For example, in
+the following example, xs and ys are created using different primitive types 
+and the keys follow a different order. 
 
 ```java  
 
-JsObj json = JsObj.of("a", JsInt.of(1000),
-                      "b", JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
-                      "c", JsInstant.of("2022-05-25T14:27:37.353Z"),
-                      "d", JsStr.of("aGkh")
-                     );
+JsObj xs = JsObj.of("a", JsInt.of(1000),
+                    "b", JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
+                    "c", JsInstant.of("2022-05-25T14:27:37.353Z"),
+                    "d", JsStr.of("aGkh")
+                    );
 
-JsObj json1 = JsObj.of("b", JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
-                       "a", JsLong.of(1000L),
-                       "c", JsStr.of("2022-05-25T14:27:37.353Z"),
-                       "d", JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8))
-                      );  
+JsObj ys = JsObj.of("b", JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
+                    "a", JsLong.of(1000L),
+                    "d", JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
+                    "c", JsStr.of("2022-05-25T14:27:37.353Z")
+                    );  
 
-Assertions.assertEquals(json, json1);    
-Assertions.assertEquals(json.hashcode(), json1.hashcode());                        
-                    
 ```
 
-Since both JSON represents the same piece of information:
+Nevertheless, since both JSON represents the same piece of information:
 
 ```json   
 
@@ -222,6 +250,13 @@ Since both JSON represents the same piece of information:
 ```
 
 it makes sense that both of them are equals, and therefore they have the same hashcode.
+
+````java  
+
+Assertions.assertEquals(xs, ys);    
+Assertions.assertEquals(xs.hashcode(), ys.hashcode());   
+
+````
 
 ### <a name="creatingjson"><a/>Creating JSON
 
@@ -1365,7 +1400,7 @@ I strongly recommend watching the talk "Beyond Scala Lenses."
 
 ## <a name="notwhatfor"><a/> When not to use it
 
-**json-values** fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
+json-values fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
 Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters
 or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart
 Halloway** is a

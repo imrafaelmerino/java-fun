@@ -217,9 +217,9 @@ Instants are serialized into its string representation according to ISO-8601;
 and the binary type is serialized into a string encoded in base 64.
 
 When it comes to the _equals_ method, json-values is data oriented, I mean, two JSON
-are equals if they represent the same piece of information. For example, in
-the following example, xs and ys are created using different primitive types 
-and the keys follow a different order. 
+are equals if they represent the same piece of information. For example,
+the following JSONs xs and ys have values with different primitive types 
+and the keys don't follow the same order. 
 
 ```java  
 

@@ -481,8 +481,7 @@ Assertions.assertEquals(JsNothing.NOTHING,
                         
 ```
 
-As was pointed out in the first post of this series, FP has to do with honesty.
-Establishing laws makes it easier to reason about the code we write.
+FP has to do with honesty. Establishing laws makes it easier to reason about the code we write.
 By the way, the set method always returns a brand-new json.
 If you remember well, Jsons are immutable and implemented with persistent data
 structures in json-values.

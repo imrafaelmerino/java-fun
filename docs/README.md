@@ -170,8 +170,8 @@ Assertions.assertEquals(tail.last(),
                        );
 ```
 
-- Using the static factory methods JsPath.fromKey or JsPath.fromIndex to create
-a one-position path and then the methods index or key to append more keys or indexes:
+- Using the static factory methods _JsPath.fromKey_ or _JsPath.fromIndex_ to create
+a one-position path and then the methods _index_ or _key_ to append more keys or indexes:
 
 ```java   
 
@@ -198,7 +198,7 @@ in [json.org](https://www.json.org):
 - Null
 - JSON object  
 - JSON array
-- 
+
 There are five number specializations: 
 
 - Integer 

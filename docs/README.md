@@ -82,15 +82,16 @@ JSON manipulation
 ```java 
           
 JsObj updated = 
-    ageLens.modify.apply(n -> n + 1)
+    ageLens.modify
+           .apply(n -> n + 1)
            .andThen(nameLens.modify.apply(String::trim))
            .andThen(cityOpt.set.apply("Paris"))
-           .andThen(latLens.modify.apply(lat -> -lat))
-           .andThen(lanLens.modify.apply(a -> a.append(JsStr.of("Clojure"))))
+           .andThen(latitudeLens.modify.apply(lat -> -lat))
+           .andThen(languagesLens.modify.apply(lan -> lan.append(JsStr.of("Clojure"))))
            .apply(person); 
            
 
-Function<String,String> toSneakCase =  key -> ...;
+Function<String,String> toSneakCase =  key -> {...};
 
 updated.mapAllKeys(toSneakCase)
        .mapAllValues(JsStr.prism.modify.apply(String::trim))  //cleaning up strings!

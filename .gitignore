@@ -19,3 +19,5 @@ settings.xml
 deploy.sh
 .idea/**
 .idea/workspace.xml
+jio-recording.jfr
+java-fun.iml

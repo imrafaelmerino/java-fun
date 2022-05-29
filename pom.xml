@@ -105,7 +105,6 @@
         <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
         <configuration>
             <source>8</source>
-            <classifier>jdk8-javadoc</classifier>
         </configuration>
         <executions>
           <execution>

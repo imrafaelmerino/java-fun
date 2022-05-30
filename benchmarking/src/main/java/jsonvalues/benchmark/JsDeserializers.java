@@ -75,13 +75,16 @@ public class JsDeserializers {
         jakarta.json.JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
                                                                      schemaJustify,
                                                                      System.out::println
-                                                                    );
+        );
 
-        jakarta.json.JsonObject obj = reader.readObject();
-
-        System.out.println(obj);
+        System.out.println(reader.readObject());
 
 
+        System.out.println(schema.validate(objectMapper.readTree(PERSON_JSON)).isSuccess());
+        PersonWithAnnotations person = objectMapper.readValue(PERSON_JSON,
+                                                              PersonWithAnnotations.class
+        );
+        System.out.println(validator.validate(person).isEmpty());
     }
 
     @Benchmark
@@ -96,7 +99,7 @@ public class JsDeserializers {
         jakarta.json.JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
                                                                      schemaJustify,
                                                                      System.out::println
-                                                                    );
+        );
 
         jakarta.json.JsonObject obj = reader.readObject();
         reader.close();
@@ -113,7 +116,7 @@ public class JsDeserializers {
     public void jackson_pojo(Blackhole bh) throws JsonProcessingException {
         Person person = objectMapper.readValue(PERSON_JSON,
                                                Person.class
-                                              );
+        );
         bh.consume(person);
     }
 
@@ -121,7 +124,7 @@ public class JsDeserializers {
     public void jackson_pojo_bean_validation(Blackhole bh) throws JsonProcessingException {
         PersonWithAnnotations person = objectMapper.readValue(PERSON_JSON,
                                                               PersonWithAnnotations.class
-                                                             );
+        );
         bh.consume(validator.validate(person));
     }
 

@@ -22,44 +22,42 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.concurrent.TimeUnit;
 
-import static jsonvalues.benchmark.Conf.*;
+import static jsonvalues.benchmark.Fun.*;
 
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)
 @State(Scope.Benchmark)
 public class JsDeserializers {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private static final ObjectMapper objectMapper =
+            new ObjectMapper();
 
     // hibernate validator init
-    private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static final Validator validator = validatorFactory.getValidator();
+    private static final ValidatorFactory validatorFactory =
+            Validation.buildDefaultValidatorFactory();
+    private static final Validator validator =
+            validatorFactory.getValidator();
 
     // json-values parser from spec
-    private static final JsObjParser jsonParser = new JsObjParser(PERSON_SPEC);
+    private static final JsObjParser jsonParser =
+            new JsObjParser(PERSON_SPEC);
 
-    // justify 3.1.0
-/*    private static JsonValidationService serviceJustify ;
-    private static JsonSchema schemaJustify;
-    static {
-        serviceJustify = JsonValidationService.newInstance();
-        schemaJustify = serviceJustify.readSchema(new StringReader(Conf.PERSON_JSON_SCHEMA));
-    }*/
-
-    // justify 2.1.0
-    private static final JsonValidationService serviceJustify = JsonValidationService.newInstance();
+    // justify
+    private static final JsonValidationService serviceJustify =
+            JsonValidationService.newInstance();
     private static final JsonSchema schemaJustify =
             serviceJustify.readSchema(new StringReader(PERSON_JSON_SCHEMA));
 
 
     // json schema validator init
-    private static final LoadingConfiguration cfg = LoadingConfiguration.newBuilder()
-                                                                        .dereferencing(Dereferencing.INLINE)
-                                                                        .freeze();
-    private static final JsonSchemaFactory jsonSchemaFactory = JsonSchemaFactory.newBuilder()
-                                                                                .setLoadingConfiguration(cfg)
-                                                                                .freeze();
+    private static final LoadingConfiguration cfg =
+            LoadingConfiguration.newBuilder()
+                                .dereferencing(Dereferencing.INLINE)
+                                .freeze();
+    private static final JsonSchemaFactory jsonSchemaFactory =
+            JsonSchemaFactory.newBuilder()
+                             .setLoadingConfiguration(cfg)
+                             .freeze();
     private static final com.github.fge.jsonschema.main.JsonSchema schema;
 
     static {
@@ -68,23 +66,6 @@ public class JsDeserializers {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static void main(String[] args) throws JsonProcessingException, ProcessingException {
-
-        jakarta.json.JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
-                                                                     schemaJustify,
-                                                                     System.out::println
-        );
-
-        System.out.println(reader.readObject());
-
-
-        System.out.println(schema.validate(objectMapper.readTree(PERSON_JSON)).isSuccess());
-        PersonWithAnnotations person = objectMapper.readValue(PERSON_JSON,
-                                                              PersonWithAnnotations.class
-        );
-        System.out.println(validator.validate(person).isEmpty());
     }
 
     @Benchmark
@@ -96,10 +77,10 @@ public class JsDeserializers {
 
     @Benchmark
     public void justify(Blackhole bh) {
-        jakarta.json.JsonReader reader = serviceJustify.createReader(new StringReader(PERSON_JSON),
-                                                                     schemaJustify,
-                                                                     System.out::println
-        );
+        jakarta.json.JsonReader reader =
+                serviceJustify.createReader(new StringReader(PERSON_JSON),
+                                            schemaJustify,
+                                            System.out::println);
 
         jakarta.json.JsonObject obj = reader.readObject();
         reader.close();
@@ -122,15 +103,20 @@ public class JsDeserializers {
 
     @Benchmark
     public void jackson_pojo_bean_validation(Blackhole bh) throws JsonProcessingException {
-        PersonWithAnnotations person = objectMapper.readValue(PERSON_JSON,
-                                                              PersonWithAnnotations.class
-        );
+        PersonWithAnnotations person =
+                objectMapper.readValue(PERSON_JSON,
+                                       PersonWithAnnotations.class
+                );
         bh.consume(validator.validate(person));
     }
 
     @Benchmark
     public void json_values(Blackhole bh) {
         bh.consume(JsObj.parse(PERSON_JSON));
+    }
+
+    public void json_values_and_spec(Blackhole bh) {
+        bh.consume(PERSON_SPEC.test(JsObj.parse(PERSON_JSON)));
     }
 
     @Benchmark

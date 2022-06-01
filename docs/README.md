@@ -77,30 +77,48 @@ JsObjGen.of("name", JsStrGen.biased(0,100),
 
 ```
 
-JSON manipulation
+JSON manipulation with optics:
 
 ```java 
-          
-JsObj updated = 
+
+//let's create a function from lens and optionals
+
+Function<JsObj,JsObj> modify = 
     ageLens.modify
            .apply(n -> n + 1)
            .andThen(nameLens.modify.apply(String::trim))
            .andThen(cityOpt.set.apply("Paris"))
            .andThen(latitudeLens.modify.apply(lat -> -lat))
-           .andThen(languagesLens.modify.apply(lan -> lan.append(JsStr.of("Clojure"))))
-           .apply(person); 
+           .andThen(languagesLens.modify.apply(lan -> lan.append(JsStr.of("Clojure"))));
            
 
-Function<String,String> toSneakCase =  key -> {...};
+          
+JsObj updated = modify.apply(person); 
 
-updated.mapAllKeys(toSneakCase)
-       .mapAllValues(JsStr.prism.modify.apply(String::trim))  //cleaning up strings!
-       .filterAllValues(JsValue::isNotNull);
-           
-           
 ```
 
-and much more... keep reading!
+Filter and map was never so easy! 
+
+```java 
+          
+Function<String,String> toSneakCase =  key -> {...};
+
+json.mapAllKeys(toSneakCase)
+    .mapAllValues(JsStr.prism.modify.apply(String::trim))
+    .filterAllValues(JsValue::isNotNull);
+                    
+```
+
+Performance. Did you see that !?
+
+I've picked some json-schema implementations from https://json-schema.org/implementations.html
+and parse and validate a random JSON from a string. Find below the results of the
+benchmark using [jmh](https://openjdk.java.net/projects/code-tools/jmh/)
+
+<img src="./performance_parsing_json.png" alt="parsing string comparison"/>
+
+You can find more details in the
+class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsDeserializers.java)
 
 
 ## <a name="introduction"><a/> Introduction
@@ -852,7 +870,7 @@ Gen<JsStr> gen = JsIntGen.biased(min, max)
 ``` 
 
 that produces with higher probability the bounds of the interval *min* and *max*, and all the
-previoues values from the unbounded generator that fall between the interval.
+previous values from the unbounded generator that fall between the interval.
 
 * Long generator
 
@@ -909,6 +927,33 @@ Gen<JsValue> gen = Combinators.freq(new Pair<>(3, JsLongGen.biased()),
                                     new Pair<>(7, JsIntGen.biased()));                                
 
 ```
+
+In our previous example, the person generator has three optional fields 
+(surname, phoneNumber, addresses), whereas de address generator has another
+three fields (tags, zipCode, city). The total number of possibilities is
+
+2^3 *  2^3 = 64
+
+json-values returns every possible combination with the same probability.
+Imagine ten fields instead of just three (2^10 * 2^10 = 1_048_576). Are you
+going to test each case manually?!
+
+On the other hand, imagine you want to create a generator will all the optional
+fields present. It's really easy with the method _suchThat_. It takes a predicate
+and discard the generated values that don't fulfill the condition:
+
+
+```java 
+
+Gen<JsObj> newPersonGen = 
+        personGen.suchThat(p -> 
+                               p.get("addresses").isNotNothing() && 
+                               p.get("phoneNumber").isNotNothing() && 
+                               p.get("surname").isNotNothing() 
+                          );
+
+```
+
 
 
 Go to the javadoc to get more details about every generator. json-values

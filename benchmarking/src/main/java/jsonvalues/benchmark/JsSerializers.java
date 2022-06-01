@@ -11,7 +11,7 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.infra.Blackhole;
 import java.util.concurrent.TimeUnit;
 
-import static jsonvalues.benchmark.Conf.PERSON_JSON;
+import static jsonvalues.benchmark.Fun.PERSON_JSON;
 
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)

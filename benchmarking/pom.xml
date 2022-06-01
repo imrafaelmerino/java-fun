@@ -19,14 +19,11 @@
         <JUSTIFY.VERSION>3.1.0</JUSTIFY.VERSION>
         <VALIDATION-API.VERSION>2.0.1.Final</VALIDATION-API.VERSION>
         <HIBERNATE-VALIDATOR-ANNOTATION-PROCESSOR.VERSION>7.0.1.Final</HIBERNATE-VALIDATOR-ANNOTATION-PROCESSOR.VERSION>
-        <HIBERNATE-VALIDATOR.VERSION>7.0.1.Final</HIBERNATE-VALIDATOR.VERSION>
+        <HIBERNATE-VALIDATOR.VERSION>7.0.4.Final</HIBERNATE-VALIDATOR.VERSION>
+        <JAVAX.EL.VERSION>3.0.1-b11</JAVAX.EL.VERSION>
+        <JAVAX.JSON.VERSION>1.1.4</JAVAX.JSON.VERSION>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>jakarta.json.bind</groupId>
-            <artifactId>jakarta.json.bind-api</artifactId>
-            <version>3.0.0</version>
-        </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.json</artifactId>
@@ -40,37 +37,18 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>5.2.5.Final</version>
+            <version>6.2.3.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.1.4</version>
-        </dependency>
+
         <dependency>
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${JSON-SCHEMA-VALIDATOR.VERSION}</version>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>${VALIDATION-API.VERSION}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>7.0.1.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-            <version>${HIBERNATE-VALIDATOR.VERSION}</version>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>3.0.1-b11</version>
+            <version>${JAVAX.EL.VERSION}</version>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
@@ -82,11 +60,7 @@
             <artifactId>jmh-generator-annprocess</artifactId>
             <version>${JMH-VERSION}</version>
         </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>${JAVAX-ANNOTATION-VERSION}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

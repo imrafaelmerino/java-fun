@@ -13,7 +13,7 @@ public class TestOptionals {
             new Option<>(p -> p.first() instanceof String ?
                               Optional.ofNullable(((String) p.first())) :
                               Optional.empty(),
-                         str -> p -> new Pair<>(str,
+                         str -> p -> Pair.of(str,
                                                 p.second()));
 
     @Test
@@ -23,12 +23,12 @@ public class TestOptionals {
                 pairFirstStr.modify.apply(String::toUpperCase);
 
         Assertions.assertEquals("HI",
-                                fn.apply(new Pair<>("hi",
+                                fn.apply(Pair.of("hi",
                                                     "bye"))
                                   .first());
 
         Assertions.assertEquals(1,
-                                fn.apply(new Pair<>(1,
+                                fn.apply(Pair.of(1,
                                                     "bye"))
                                   .first());
     }
@@ -41,49 +41,49 @@ public class TestOptionals {
                 new Option<>(p -> p.first() instanceof Pair ?
                                   Optional.of(((Pair) p.first())) :
                                   Optional.empty(),
-                             first -> p -> new Pair<>(first,
+                             first -> p -> Pair.of(first,
                                                       p.second()));
 
         Option<Pair<?, ?>, Pair<?, ?>> compose = pairFirst.compose(pairFirst);
 
 
-        Assertions.assertFalse(compose.get.apply(new Pair<>(1,
+        Assertions.assertFalse(compose.get.apply(Pair.of(1,
                                                             1)).isPresent());
 
-        Assertions.assertFalse(compose.get.apply(new Pair<>(new Pair<>(1,
+        Assertions.assertFalse(compose.get.apply(Pair.of(Pair.of(1,
                                                                        1),
                                                             1)).isPresent());
 
-        Assertions.assertTrue(compose.get.apply(new Pair<>(new Pair<>(new Pair<>(1,
+        Assertions.assertTrue(compose.get.apply(Pair.of(Pair.of(Pair.of(1,
                                                                                  1),
                                                                       1),
                                                            1)).isPresent());
 
-        Assertions.assertEquals(new Pair<>(1,
+        Assertions.assertEquals(Pair.of(1,
                                            1),
-                                compose.get.apply(new Pair<>(new Pair<>(new Pair<>(1,
+                                compose.get.apply(Pair.of(Pair.of(Pair.of(1,
                                                                                    1),
                                                                         1),
                                                              1)).get());
 
         Function<Pair<?, ?>, Pair<?, ?>> turn =
                 compose.modify
-                        .apply(p -> new Pair<>(p.second(),
+                        .apply(p -> Pair.of(p.second(),
                                                p.first()));
 
-        Assertions.assertEquals(new Pair<>(new Pair<>(new Pair<>(2,
+        Assertions.assertEquals(Pair.of(Pair.of(Pair.of(2,
                                                                  1),
                                                       1),
                                            1),
-                                turn.apply(new Pair<>(new Pair<>(new Pair<>(1,
+                                turn.apply(Pair.of(Pair.of(Pair.of(1,
                                                                             2),
                                                                  1),
                                                       1)));
 
-        Assertions.assertEquals(new Pair<>(new Pair<>("hi",
+        Assertions.assertEquals(Pair.of(Pair.of("hi",
                                                       1),
                                            1),
-                                turn.apply(new Pair<>(new Pair<>("hi",
+                                turn.apply(Pair.of(Pair.of("hi",
                                                                  1),
                                                       1)));
 

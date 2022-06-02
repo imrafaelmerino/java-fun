@@ -49,23 +49,23 @@ public final class StrGen implements Gen<String> {
         List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
 
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             new StrGen(minLength)));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(String.join("",
                                                  Collections.nCopies(minLength,
                                                                      " ")))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(String.join("",
                                                  Collections.nCopies(maxLength,
                                                                      " ")))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             new StrGen(maxLength)));
 
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             arbitrary(minLength,
                                       maxLength)));
 

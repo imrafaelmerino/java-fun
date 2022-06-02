@@ -43,7 +43,7 @@ public final class PairGen<A, B> implements Gen<Pair<A, B>> {
         requireNonNull(seed);
         final Supplier<A> a = _1.apply(splitGen.apply(seed));
         final Supplier<B> b = _2.apply(splitGen.apply(seed));
-        return () -> new Pair<>(a.get(),
+        return () -> Pair.of(a.get(),
                                 b.get());
     }
 }

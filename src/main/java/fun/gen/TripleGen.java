@@ -4,8 +4,8 @@ package fun.gen;
 import fun.tuple.Triple;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -52,8 +52,8 @@ public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
         final Supplier<A> a = _1.apply(splitGen.apply(seed));
         final Supplier<B> b = _2.apply(splitGen.apply(seed));
         final Supplier<C> c = _3.apply(splitGen.apply(seed));
-        return () -> new Triple<>(a.get(),
-                                  b.get(),
-                                  c.get());
+        return () -> Triple.of(a.get(),
+                               b.get(),
+                               c.get());
     }
 }

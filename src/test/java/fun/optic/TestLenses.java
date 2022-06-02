@@ -10,44 +10,44 @@ public class TestLenses {
 
     Lens<Pair<String, Integer>, String> first =
             new Lens<>(Pair::first,
-                       str -> pair -> new Pair<>(str,
+                       str -> pair -> Pair.of(str,
                                                  pair.second())
             );
 
 
     Lens<Pair<String, Integer>, Integer> second =
             new Lens<>(Pair::second,
-                       integer -> pair -> new Pair<>(pair.first(),
+                       integer -> pair -> Pair.of(pair.first(),
                                                      integer)
             );
 
     @Test
     public void testPair() {
 
-        Pair<String, Integer> pair = new Pair<>("hi",
+        Pair<String, Integer> pair = Pair.of("hi",
                                                 1);
 
         Assertions.assertEquals(first.get.apply(pair),
                                 "hi");
 
         Assertions.assertEquals(first.set.apply("bye").apply(pair),
-                                new Pair<>("bye",
+                                Pair.of("bye",
                                            1));
 
         Assertions.assertEquals(first.modify.apply(String::toUpperCase)
                                             .apply(pair),
-                                new Pair<>("HI",
+                                Pair.of("HI",
                                            1));
 
         Assertions.assertEquals("abc",
                                 first.find.apply(it -> it.startsWith("a"))
-                                          .apply(new Pair<>("abc",
+                                          .apply(Pair.of("abc",
                                                             3))
                                           .get());
 
         Assertions.assertEquals(Optional.empty(),
                                 first.find.apply(it -> it.startsWith("a"))
-                                          .apply(new Pair<>("bc",
+                                          .apply(Pair.of("bc",
                                                             3)));
 
         Assertions.assertEquals(second.get.apply(pair),
@@ -55,12 +55,12 @@ public class TestLenses {
 
         Assertions.assertEquals(second.set.apply(2)
                                           .apply(pair),
-                                new Pair<>("hi",
+                                Pair.of("hi",
                                            2));
 
         Assertions.assertEquals(second.modify.apply(a -> a * 10)
                                              .apply(pair),
-                                new Pair<>("hi",
+                                Pair.of("hi",
                                            10));
 
         //prism
@@ -77,18 +77,18 @@ public class TestLenses {
 
         Option<Pair<String, Integer>, Integer> firstNumber = first.compose(number);
 
-        Assertions.assertEquals(firstNumber.get.apply(new Pair<>("1",
+        Assertions.assertEquals(firstNumber.get.apply(Pair.of("1",
                                                                  10)),
                                 Optional.of(1));
 
-        Assertions.assertEquals(firstNumber.get.apply(new Pair<>("a",
+        Assertions.assertEquals(firstNumber.get.apply(Pair.of("a",
                                                                  10)),
                                 Optional.empty());
 
-        Assertions.assertEquals(new Pair<>("4",
+        Assertions.assertEquals(Pair.of("4",
                                            10),
                                 firstNumber.set.apply(4)
-                                               .apply(new Pair<>("",
+                                               .apply(Pair.of("",
                                                                  10))
         );
 
@@ -99,14 +99,14 @@ public class TestLenses {
 
         Lens<Pair<String, Integer>, String> first =
                 new Lens<>(Pair::first,
-                           str -> pair -> new Pair<>(str,
+                           str -> pair -> Pair.of(str,
                                                      pair.second())
                 );
 
 
         Lens<Pair<Pair<String, Integer>, Integer>, Pair<String, Integer>> firstPair =
                 new Lens<>(Pair::first,
-                           newFirst -> pair -> new Pair<>(newFirst,
+                           newFirst -> pair -> Pair.of(newFirst,
                                                           pair.second())
                 );
 
@@ -114,26 +114,26 @@ public class TestLenses {
                 firstPair.compose(first);
 
         Assertions.assertEquals("a",
-                                compose.get.apply(new Pair<>(new Pair<>("a",
+                                compose.get.apply(Pair.of(Pair.of("a",
                                                                         2),
                                                              1)));
-        Assertions.assertEquals(new Pair<>(new Pair<>("A",
+        Assertions.assertEquals(Pair.of(Pair.of("A",
                                                       2),
                                            1),
-                                compose.modify.apply(String::toUpperCase).apply(new Pair<>(new Pair<>("a",
+                                compose.modify.apply(String::toUpperCase).apply(Pair.of(Pair.of("a",
                                                                                                       2),
                                                                                            1)));
 
         Assertions.assertEquals("a",
-                                compose.get.apply(new Pair<>(new Pair<>("a",
+                                compose.get.apply(Pair.of(Pair.of("a",
                                                                         2),
                                                              1)));
 
-        Assertions.assertEquals(new Pair<>(new Pair<>("b",
+        Assertions.assertEquals(Pair.of(Pair.of("b",
                                                       2),
                                            1),
                                 compose.set.apply("b")
-                                           .apply(new Pair<>(new Pair<>("a",
+                                           .apply(Pair.of(Pair.of("a",
                                                                         2),
                                                              1)));
     }

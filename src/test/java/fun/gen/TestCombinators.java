@@ -13,15 +13,15 @@ public class TestCombinators {
     @Test
     public void freqCombinator() {
 
-        Gen<Integer> gen = Combinators.freq(new Pair<>(1,
+        Gen<Integer> gen = Combinators.freq(Pair.of(1,
                                                        Gen.cons(1)),
-                                            new Pair<>(1,
+                                            Pair.of(1,
                                                        Gen.cons(2)),
-                                            new Pair<>(1,
+                                            Pair.of(1,
                                                        Gen.cons(3)),
-                                            new Pair<>(1,
+                                            Pair.of(1,
                                                        Gen.cons(4)),
-                                            new Pair<>(1,
+                                            Pair.of(1,
                                                        Gen.cons(5)));
 
         Map<Integer, Long> counts = TestFun.generate(100000,

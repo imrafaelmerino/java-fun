@@ -17,10 +17,6 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
         return seed -> () -> value;
     }
 
-    static <O> Gen<O> cons(final Supplier<O> supplier) {
-        return seed -> supplier;
-    }
-
     default <P> Gen<P> map(final Function<O, P> fn) {
         Objects.requireNonNull(fn);
         return seed -> {
@@ -38,9 +34,9 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
 
     default <P> Gen<P> then(final Function<O, ? extends Gen<P>> fn) {
         Objects.requireNonNull(fn);
-        return gen -> fn.apply(this.apply(SplitGen.DEFAULT.apply(gen))
-                                   .get())
-                        .apply(SplitGen.DEFAULT.apply(gen));
+        return seed -> fn.apply(this.apply(SplitGen.DEFAULT.apply(seed))
+                                    .get())
+                         .apply(SplitGen.DEFAULT.apply(seed));
     }
 
     /**
@@ -97,8 +93,8 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
      *
      * @return a supplier of values
      */
-    default Supplier<O> sample() {
-        return apply(new Random());
+    default Stream<O> sample() {
+        return Stream.generate(apply(new Random()));
     }
 
     default Stream<O> sample(int n) {

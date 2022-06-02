@@ -2,8 +2,8 @@ package fun.gen;
 
 import fun.tuple.Pair;
 
-import java.util.function.Supplier;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,7 +14,6 @@ public final class PairGen<A, B> implements Gen<Pair<A, B>> {
 
     private final Gen<A> _1;
     private final Gen<B> _2;
-
     private final SplitGen splitGen;
 
     private PairGen(final Gen<A> _1,
@@ -31,6 +30,7 @@ public final class PairGen<A, B> implements Gen<Pair<A, B>> {
         this._2 = requireNonNull(_2);
         this.splitGen = requireNonNull(splitGen);
     }
+
 
     public static <A, B> Gen<Pair<A, B>> of(final Gen<A> _1,
                                             final Gen<B> _2) {

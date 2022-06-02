@@ -3,11 +3,8 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class TestRecordGen {
@@ -18,11 +15,17 @@ public class TestRecordGen {
         RecordGen one = RecordGen.of("a",
                                      IntGen.arbitrary(0,
                                                       10));
+
+        Assertions.assertTrue(one.sample(100).allMatch(it -> it.map.size() == 1));
+
         RecordGen two = RecordGen.of("a",
                                      IntGen.arbitrary(0,
                                                       10),
                                      "b",
                                      StrGen.letter());
+
+        Assertions.assertTrue(two.sample(100).allMatch(it -> it.map.size() == 2));
+
 
         RecordGen three = RecordGen.of("a",
                                        IntGen.arbitrary(),
@@ -30,6 +33,9 @@ public class TestRecordGen {
                                        StrGen.letter(),
                                        "c",
                                        BoolGen.arbitrary());
+
+        Assertions.assertTrue(three.sample(100).allMatch(it -> it.map.size() == 3));
+
 
         RecordGen four = RecordGen.of("a",
                                       IntGen.arbitrary(),
@@ -39,6 +45,9 @@ public class TestRecordGen {
                                       BoolGen.arbitrary(),
                                       "d",
                                       LongGen.arbitrary());
+
+        Assertions.assertTrue(four.sample(100).allMatch(it -> it.map.size() == 4));
+
 
         RecordGen five = RecordGen.of("a",
                                       IntGen.arbitrary(),
@@ -50,6 +59,9 @@ public class TestRecordGen {
                                       LongGen.arbitrary(),
                                       "e",
                                       DoubleGen.arbitrary());
+
+        Assertions.assertTrue(five.sample(100).allMatch(it -> it.map.size() == 5));
+
 
         RecordGen six = RecordGen.of("a",
                                      IntGen.arbitrary(),
@@ -63,6 +75,9 @@ public class TestRecordGen {
                                      DoubleGen.arbitrary(),
                                      "f",
                                      DoubleGen.arbitrary());
+
+        Assertions.assertTrue(six.sample(100).allMatch(it -> it.map.size() == 6));
+
         RecordGen seven = RecordGen.of("a",
                                        IntGen.arbitrary(),
                                        "b",
@@ -78,6 +93,9 @@ public class TestRecordGen {
                                        "g",
                                        BytesGen.arbitrary(0,
                                                           1024));
+
+        Assertions.assertTrue(seven.sample(100).allMatch(it -> it.map.size() == 7));
+
         RecordGen eight = RecordGen.of("a",
                                        IntGen.arbitrary(),
                                        "b",
@@ -98,6 +116,8 @@ public class TestRecordGen {
                                                          0,
                                                          10));
 
+        Assertions.assertTrue(eight.sample(100).allMatch(it -> it.map.size() == 8));
+
 
         RecordGen nine = RecordGen.of("a",
                                       IntGen.arbitrary(),
@@ -117,8 +137,411 @@ public class TestRecordGen {
                                       "h",
                                       ListGen.arbitrary(BigDecGen.arbitrary(),
                                                         0,
-                                                        10));
+                                                        10),
+                                      "i",
+                                      BoolGen.arbitrary()
+        );
 
+
+        Assertions.assertTrue(nine.sample(100).allMatch(it -> it.map.size() == 9));
+
+        RecordGen ten = RecordGen.of("a",
+                                     IntGen.arbitrary(),
+                                     "b",
+                                     StrGen.letter(),
+                                     "c",
+                                     BoolGen.arbitrary(),
+                                     "d",
+                                     LongGen.arbitrary(),
+                                     "e",
+                                     DoubleGen.arbitrary(),
+                                     "f",
+                                     DoubleGen.arbitrary(),
+                                     "g",
+                                     BytesGen.arbitrary(0,
+                                                        1024),
+                                     "h",
+                                     ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                       0,
+                                                       10),
+                                     "i",
+                                     BoolGen.arbitrary(),
+                                     "j",
+                                     IntGen.biased()
+        );
+        Assertions.assertTrue(ten.sample(100).allMatch(it -> it.map.size() == 10));
+
+        RecordGen eleven = RecordGen.of("a",
+                                        IntGen.arbitrary(),
+                                        "b",
+                                        StrGen.letter(),
+                                        "c",
+                                        BoolGen.arbitrary(),
+                                        "d",
+                                        LongGen.arbitrary(),
+                                        "e",
+                                        DoubleGen.arbitrary(),
+                                        "f",
+                                        DoubleGen.arbitrary(),
+                                        "g",
+                                        BytesGen.arbitrary(0,
+                                                           1024),
+                                        "h",
+                                        ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                          0,
+                                                          10),
+                                        "i",
+                                        BoolGen.arbitrary(),
+                                        "j",
+                                        IntGen.biased(),
+                                        "k",
+                                        IntGen.biased()
+        );
+        Assertions.assertTrue(eleven.sample(100).allMatch(it -> it.map.size() == 11));
+
+        RecordGen twelve = RecordGen.of("a",
+                                        IntGen.arbitrary(),
+                                        "b",
+                                        StrGen.letter(),
+                                        "c",
+                                        BoolGen.arbitrary(),
+                                        "d",
+                                        LongGen.arbitrary(),
+                                        "e",
+                                        DoubleGen.arbitrary(),
+                                        "f",
+                                        DoubleGen.arbitrary(),
+                                        "g",
+                                        BytesGen.arbitrary(0,
+                                                           1024),
+                                        "h",
+                                        ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                          0,
+                                                          10),
+                                        "i",
+                                        BoolGen.arbitrary(),
+                                        "j",
+                                        IntGen.biased(),
+                                        "k",
+                                        IntGen.biased(),
+                                        "l",
+                                        LongGen.biased()
+        );
+        Assertions.assertTrue(twelve.sample(100).allMatch(it -> it.map.size() == 12));
+
+        RecordGen thirteen = RecordGen.of("a",
+                                          IntGen.arbitrary(),
+                                          "b",
+                                          StrGen.letter(),
+                                          "c",
+                                          BoolGen.arbitrary(),
+                                          "d",
+                                          LongGen.arbitrary(),
+                                          "e",
+                                          DoubleGen.arbitrary(),
+                                          "f",
+                                          DoubleGen.arbitrary(),
+                                          "g",
+                                          BytesGen.arbitrary(0,
+                                                             1024),
+                                          "h",
+                                          ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                            0,
+                                                            10),
+                                          "i",
+                                          BoolGen.arbitrary(),
+                                          "j",
+                                          IntGen.biased(),
+                                          "k",
+                                          IntGen.biased(),
+                                          "l",
+                                          LongGen.biased(),
+                                          "m",
+                                          BigIntGen.arbitrary(10)
+        );
+        Assertions.assertTrue(thirteen.sample(100).allMatch(it -> it.map.size() == 13));
+
+        RecordGen fourteen = RecordGen.of("a",
+                                          IntGen.arbitrary(),
+                                          "b",
+                                          StrGen.letter(),
+                                          "c",
+                                          BoolGen.arbitrary(),
+                                          "d",
+                                          LongGen.arbitrary(),
+                                          "e",
+                                          DoubleGen.arbitrary(),
+                                          "f",
+                                          DoubleGen.arbitrary(),
+                                          "g",
+                                          BytesGen.arbitrary(0,
+                                                             1024),
+                                          "h",
+                                          ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                            0,
+                                                            10),
+                                          "i",
+                                          BoolGen.arbitrary(),
+                                          "j",
+                                          IntGen.biased(),
+                                          "k",
+                                          IntGen.biased(),
+                                          "l",
+                                          LongGen.biased(),
+                                          "m",
+                                          BigIntGen.arbitrary(10),
+                                          "n",
+                                          BigDecGen.biased()
+        );
+        Assertions.assertTrue(fourteen.sample(100).allMatch(it -> it.map.size() == 14));
+
+        RecordGen fifteen = RecordGen.of("a",
+                                         IntGen.arbitrary(),
+                                         "b",
+                                         StrGen.letter(),
+                                         "c",
+                                         BoolGen.arbitrary(),
+                                         "d",
+                                         LongGen.arbitrary(),
+                                         "e",
+                                         DoubleGen.arbitrary(),
+                                         "f",
+                                         DoubleGen.arbitrary(),
+                                         "g",
+                                         BytesGen.arbitrary(0,
+                                                            1024),
+                                         "h",
+                                         ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                           0,
+                                                           10),
+                                         "i",
+                                         BoolGen.arbitrary(),
+                                         "j",
+                                         IntGen.biased(),
+                                         "k",
+                                         IntGen.biased(),
+                                         "l",
+                                         LongGen.biased(),
+                                         "m",
+                                         BigIntGen.arbitrary(10),
+                                         "n",
+                                         BigDecGen.biased(),
+                                         "o",
+                                         BigDecGen.arbitrary()
+        );
+        Assertions.assertTrue(fifteen.sample(100).allMatch(it -> it.map.size() == 15));
+
+        RecordGen sixteen = RecordGen.of("a",
+                                         IntGen.arbitrary(),
+                                         "b",
+                                         StrGen.letter(),
+                                         "c",
+                                         BoolGen.arbitrary(),
+                                         "d",
+                                         LongGen.arbitrary(),
+                                         "e",
+                                         DoubleGen.arbitrary(),
+                                         "f",
+                                         DoubleGen.arbitrary(),
+                                         "g",
+                                         BytesGen.arbitrary(0,
+                                                            1024),
+                                         "h",
+                                         ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                           0,
+                                                           10),
+                                         "i",
+                                         BoolGen.arbitrary(),
+                                         "j",
+                                         IntGen.biased(),
+                                         "k",
+                                         IntGen.biased(),
+                                         "l",
+                                         LongGen.biased(),
+                                         "m",
+                                         BigIntGen.arbitrary(10),
+                                         "n",
+                                         BigDecGen.biased(),
+                                         "o",
+                                         BigDecGen.arbitrary(),
+                                         "p",
+                                         CharGen.arbitrary()
+        );
+        Assertions.assertTrue(sixteen.sample(100).allMatch(it -> it.map.size() == 16));
+
+        RecordGen seventeen = RecordGen.of("a",
+                                           IntGen.arbitrary(),
+                                           "b",
+                                           StrGen.letter(),
+                                           "c",
+                                           BoolGen.arbitrary(),
+                                           "d",
+                                           LongGen.arbitrary(),
+                                           "e",
+                                           DoubleGen.arbitrary(),
+                                           "f",
+                                           DoubleGen.arbitrary(),
+                                           "g",
+                                           BytesGen.arbitrary(0,
+                                                              1024),
+                                           "h",
+                                           ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                             0,
+                                                             10),
+                                           "i",
+                                           BoolGen.arbitrary(),
+                                           "j",
+                                           IntGen.biased(),
+                                           "k",
+                                           IntGen.biased(),
+                                           "l",
+                                           LongGen.biased(),
+                                           "m",
+                                           BigIntGen.arbitrary(10),
+                                           "n",
+                                           BigDecGen.biased(),
+                                           "o",
+                                           BigDecGen.arbitrary(),
+                                           "p",
+                                           CharGen.arbitrary(),
+                                           "q",
+                                           DoubleGen.biased()
+        );
+        Assertions.assertTrue(seventeen.sample(100).allMatch(it -> it.map.size() == 17));
+
+        RecordGen eighteen = RecordGen.of("a",
+                                          IntGen.arbitrary(),
+                                          "b",
+                                          StrGen.letter(),
+                                          "c",
+                                          BoolGen.arbitrary(),
+                                          "d",
+                                          LongGen.arbitrary(),
+                                          "e",
+                                          DoubleGen.arbitrary(),
+                                          "f",
+                                          DoubleGen.arbitrary(),
+                                          "g",
+                                          BytesGen.arbitrary(0,
+                                                             1024),
+                                          "h",
+                                          ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                            0,
+                                                            10),
+                                          "i",
+                                          BoolGen.arbitrary(),
+                                          "j",
+                                          IntGen.biased(),
+                                          "k",
+                                          IntGen.biased(),
+                                          "l",
+                                          LongGen.biased(),
+                                          "m",
+                                          BigIntGen.arbitrary(10),
+                                          "n",
+                                          BigDecGen.biased(),
+                                          "o",
+                                          BigDecGen.arbitrary(),
+                                          "p",
+                                          CharGen.arbitrary(),
+                                          "q",
+                                          DoubleGen.biased(),
+                                          "r",
+                                          DoubleGen.arbitrary()
+        );
+        Assertions.assertTrue(eighteen.sample(100).allMatch(it -> it.map.size() == 18));
+
+
+        RecordGen nineteen = RecordGen.of("a",
+                                          IntGen.arbitrary(),
+                                          "b",
+                                          StrGen.letter(),
+                                          "c",
+                                          BoolGen.arbitrary(),
+                                          "d",
+                                          LongGen.arbitrary(),
+                                          "e",
+                                          DoubleGen.arbitrary(),
+                                          "f",
+                                          DoubleGen.arbitrary(),
+                                          "g",
+                                          BytesGen.arbitrary(0,
+                                                             1024),
+                                          "h",
+                                          ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                            0,
+                                                            10),
+                                          "i",
+                                          BoolGen.arbitrary(),
+                                          "j",
+                                          IntGen.biased(),
+                                          "k",
+                                          IntGen.biased(),
+                                          "l",
+                                          LongGen.biased(),
+                                          "m",
+                                          BigIntGen.arbitrary(10),
+                                          "n",
+                                          BigDecGen.biased(),
+                                          "o",
+                                          BigDecGen.arbitrary(),
+                                          "p",
+                                          CharGen.arbitrary(),
+                                          "q",
+                                          DoubleGen.biased(),
+                                          "r",
+                                          DoubleGen.arbitrary(),
+                                          "s",
+                                          InstantGen.biased()
+        );
+        Assertions.assertTrue(nineteen.sample(100).allMatch(it -> it.map.size() == 19));
+
+        RecordGen twenty = RecordGen.of("a",
+                                        IntGen.arbitrary(),
+                                        "b",
+                                        StrGen.letter(),
+                                        "c",
+                                        BoolGen.arbitrary(),
+                                        "d",
+                                        LongGen.arbitrary(),
+                                        "e",
+                                        DoubleGen.arbitrary(),
+                                        "f",
+                                        DoubleGen.arbitrary(),
+                                        "g",
+                                        BytesGen.arbitrary(0,
+                                                           1024),
+                                        "h",
+                                        ListGen.arbitrary(BigDecGen.arbitrary(),
+                                                          0,
+                                                          10),
+                                        "i",
+                                        BoolGen.arbitrary(),
+                                        "j",
+                                        IntGen.biased(),
+                                        "k",
+                                        IntGen.biased(),
+                                        "l",
+                                        LongGen.biased(),
+                                        "m",
+                                        BigIntGen.arbitrary(10),
+                                        "n",
+                                        BigDecGen.biased(),
+                                        "o",
+                                        BigDecGen.arbitrary(),
+                                        "p",
+                                        CharGen.arbitrary(),
+                                        "q",
+                                        DoubleGen.biased(),
+                                        "r",
+                                        DoubleGen.arbitrary(),
+                                        "s",
+                                        InstantGen.biased(),
+                                        "t",
+                                        InstantGen.arbitrary(1000000,
+                                                             1000000000)
+        );
+        Assertions.assertTrue(twenty.sample(100).allMatch(it -> it.map.size() == 20));
     }
 
 
@@ -134,8 +557,8 @@ public class TestRecordGen {
                                      BoolGen.arbitrary());
 
 
-        Map<Map<String, ?>, Long> counts = TestFun.generate(1000000,
-                                                            gen);
+        Map<Record, Long> counts = TestFun.generate(1000000,
+                                                    gen);
 
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
@@ -156,22 +579,19 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       40000));
 
-        Map<Map<String, ?>, Long> map =
+        Map<Record, Long> map =
                 TestFun.generate(20000,
                                  gen.setOptionals("a",
                                                   "b"));
-        System.out.println(map.size());
         long allKeys =
                 TestFun.countKeys(map,
-                                  key -> key.containsKey("a") && key.containsKey("b"));
+                                  record -> record.map.containsKey("a") && record.map.containsKey("b"));
 
-        System.out.println(allKeys);
 
         long someKeyRemoved =
                 TestFun.countKeys(map,
-                                  key -> !key.containsKey("a") || !key.containsKey("b"));
+                                  record -> !record.map.containsKey("a") || !record.map.containsKey("b"));
 
-        System.out.println(someKeyRemoved);
 
         //50%
         Predicate<Long> inMargin = TestFun.isInMargin(map.size() / 2,
@@ -183,19 +603,23 @@ public class TestRecordGen {
 
         long aRemoved =
                 TestFun.countKeys(map,
-                                  key -> !key.containsKey("a") && key.containsKey("b"));
+                                  record -> !record.map.containsKey("a")
+                                          && record.map.containsKey("b"));
 
         long bRemoved =
                 TestFun.countKeys(map,
-                                  key -> !key.containsKey("b") && key.containsKey("a"));
+                                  record -> !record.map.containsKey("b")
+                                          && record.map.containsKey("a"));
 
 
         long allRemoved =
                 TestFun.countKeys(map,
-                                  key -> !key.containsKey("b") && key.containsKey("a"));
+                                  record -> !record.map.containsKey("b")
+                                          && record.map.containsKey("a"));
 
         Predicate<Long> x = TestFun.isInMargin(someKeyRemoved / 3,
                                                0.1);
+
         Assertions.assertTrue(x.test(aRemoved));
         Assertions.assertTrue(x.test(bRemoved));
         Assertions.assertTrue(x.test(allRemoved));
@@ -215,22 +639,18 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       800000));
 
-        Map<Map<String, ?>, Long> map = TestFun.generate(400000,
-                                                         gen.setNullables("a",
-                                                                          "b"));
+        Map<Record, Long> map = TestFun.generate(400000,
+                                                 gen.setNullables("a",
+                                                                  "b"));
         long noneNull =
                 TestFun.countKeys(map,
-                                  key -> key.get("a") != null && key.get("b") != null);
-
-        System.out.println(noneNull);
-        System.out.println(map.size());
+                                  record -> record.map.get("a") != null && record.map.get("b") != null);
 
 
         long someNull =
                 TestFun.countKeys(map,
-                                  key -> key.get("a") == null || key.get("b") == null);
+                                  record -> record.map.get("a") == null || record.map.get("b") == null);
 
-        System.out.println(someNull);
 
         //50%
         Predicate<Long> inMargin = TestFun.isInMargin(map.size() / 2,
@@ -242,17 +662,17 @@ public class TestRecordGen {
 
         long aNull =
                 TestFun.countKeys(map,
-                                  key -> key.containsKey("a") && key.get("a") == null && key.get("b") != null);
+                                  record -> record.map.containsKey("a") && record.map.get("a") == null && record.map.get("b") != null);
 
         long bNull = TestFun.countKeys(map,
-                                       key -> key.get("a") != null && key.containsKey("b") && key.get("b") == null);
+                                       record -> record.map.get("a") != null && record.map.containsKey("b") && record.map.get("b") == null);
 
 
         long allNull = TestFun.countKeys(map,
-                                         key -> key.containsKey("a")
-                                                 && key.get("a") == null
-                                                 && key.containsKey("b")
-                                                 && key.get("b") == null);
+                                         record -> record.map.containsKey("a")
+                                                 && record.map.get("a") == null
+                                                 && record.map.containsKey("b")
+                                                 && record.map.get("b") == null);
 
         Predicate<Long> x = TestFun.isInMargin(someNull / 3,
                                                0.05);
@@ -263,152 +683,94 @@ public class TestRecordGen {
 
     }
 
-    @Test
-    public void testGetMethods() {
-
-        RecordGen gen = RecordGen.of("a",
-                                     BigIntGen.arbitrary(3),
-                                     "b",
-                                     CharGen.arbitrary(),
-                                     "c",
-                                     InstantGen.arbitrary(),
-                                     "d",
-                                     StrGen.alphanumeric(),
-                                     "e",
-                                     BoolGen.arbitrary(),
-                                     "f",
-                                     IntGen.biased(),
-                                     "g",
-                                     LongGen.arbitrary(),
-                                     "h",
-                                     BigDecGen.arbitrary(),
-                                     "i",
-                                     DoubleGen.arbitrary(),
-                                     "j",
-                                     ListGen.arbitrary(IntGen.arbitrary(),
-                                                       1,
-                                                       10
-                                     ),
-                                     "k",
-                                     new SetGen<>(StrGen.letter(),5)
-
-        );
-
-        Function<Map<String, ?>, BigInteger> getA =
-                RecordGen.getBigInt("a");
-
-        Function<Map<String, ?>, Character> getB =
-                RecordGen.getChar("b");
-
-        Function<Map<String, ?>, Instant> getC =
-                RecordGen.getInstant("c");
-
-        Function<Map<String, ?>, String> getD =
-                RecordGen.getStr("d");
-
-        Function<Map<String, ?>, Boolean> getE =
-                RecordGen.getBool("e");
-
-        Function<Map<String, ?>, Integer> getF =
-                RecordGen.getInt("f");
-
-        Function<Map<String, ?>, Long> getG =
-                RecordGen.getLong("g");
-
-        Function<Map<String, ?>, BigDecimal> getH =
-                RecordGen.getDecimal("h");
-
-        Function<Map<String, ?>, Double> getI =
-                RecordGen.getDouble("i");
-
-        Function<Map<String, ?>, List<Integer>> getJ =
-                RecordGen.getList("j");
-
-        Function<Map<String, ?>, Set<String>> getK =
-                RecordGen.getSet("k");
-
-
-        Assertions.assertTrue(gen.sample(1000)
-                                 .allMatch(record -> getA.apply(record).getClass().equals(BigInteger.class)
-                                         && getB.apply(record).getClass().equals(Character.class)
-                                         && getC.apply(record).getClass().equals(Instant.class)
-                                         && getD.apply(record).getClass().equals(String.class)
-                                         && getE.apply(record).getClass().equals(Boolean.class)
-                                         && getF.apply(record).getClass().equals(Integer.class)
-                                         && getG.apply(record).getClass().equals(Long.class)
-                                         && getH.apply(record).getClass().equals(BigDecimal.class)
-                                         && getI.apply(record).getClass().equals(Double.class)
-                                         && getJ.apply(record) instanceof List
-                                         && getK.apply(record) instanceof Set
-
-                                 )
-        );
-
-        Assertions.assertTrue(gen.sample(100).allMatch(record -> {
-            List<Integer> integers = getJ.apply(record);
-            return integers.stream().allMatch(Objects::nonNull);
-        }));
-
-
-    }
 
     @Test
-    public void testGetPptMethods() {
+    public void testGetRecordData() {
 
-        RecordGen gen = RecordGen.of();
+        Assertions.assertTrue(RecordGen.of("a",
+                                           IntGen.biased())
+                                       .sample(100)
+                                       .allMatch(it -> it.getInt("a").isPresent()));
 
-        Function<Map<String, ?>, Optional<BigInteger>> getA =
-                RecordGen.getOptBigInt("a");
-
-        Function<Map<String, ?>, Optional<Character>> getB =
-                RecordGen.getOptChar("b");
-
-        Function<Map<String, ?>, Optional<Instant>> getC =
-                RecordGen.getOptInstant("c");
-
-        Function<Map<String, ?>, Optional<String>> getD =
-                RecordGen.getOptStr("d");
-
-        Function<Map<String, ?>, Optional<Boolean>> getE =
-                RecordGen.getOptBool("e");
-
-        Function<Map<String, ?>, Optional<Integer>> getF =
-                RecordGen.getOptInt("f");
-
-        Function<Map<String, ?>, Optional<Long>> getG =
-                RecordGen.getOptLong("g");
-
-        Function<Map<String, ?>, Optional<BigDecimal>> getH =
-                RecordGen.getOptDecimal("h");
-
-        Function<Map<String, ?>, Optional<Double>> getI =
-                RecordGen.getOptDouble("i");
-
-        Function<Map<String, ?>, Optional<List<Object>>> getJ =
-                RecordGen.getOptList("j");
-
-        Function<Map<String, ?>, Optional<Set<Object>>> getK =
-                RecordGen.getOptSet("k");
+        Assertions.assertTrue(RecordGen.of("a",
+                                           LongGen.biased())
+                                       .sample(100)
+                                       .allMatch(it -> it.getLong("a").isPresent()));
 
 
-        Assertions.assertTrue(gen.sample(1000)
-                                 .allMatch(record -> !getA.apply(record).isPresent()
-                                         && !getB.apply(record).isPresent()
-                                         && !getC.apply(record).isPresent()
-                                         && !getD.apply(record).isPresent()
-                                         && !getE.apply(record).isPresent()
-                                         && !getF.apply(record).isPresent()
-                                         && !getG.apply(record).isPresent()
-                                         && !getH.apply(record).isPresent()
-                                         && !getI.apply(record).isPresent()
-                                         && !getJ.apply(record).isPresent()
-                                         && !getK.apply(record).isPresent()
+        Assertions.assertTrue(RecordGen.of("a",
+                                           BigIntGen.biased(0,
+                                                            10))
+                                       .sample(100)
+                                       .allMatch(it -> it.getBigInt("a").isPresent()));
 
-                                 )
-        );
+        Assertions.assertTrue(RecordGen.of("a",
+                                           BigDecGen.arbitrary())
+                                       .sample(100)
+                                       .allMatch(it -> it.getDecimal("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           DoubleGen.arbitrary())
+                                       .sample(100)
+                                       .allMatch(it -> it.getDouble("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           StrGen.biased(1,
+                                                         100))
+                                       .sample(100)
+                                       .allMatch(it -> it.getStr("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           CharGen.alphabetic)
+                                       .sample(100)
+                                       .allMatch(it -> it.getChar("a").isPresent()));
 
 
+        Assertions.assertTrue(RecordGen.of("a",
+                                           ListGen.biased(IntGen.arbitrary(),
+                                                          1,
+                                                          100))
+                                       .sample(100)
+                                       .allMatch(it -> it.getList("a").isPresent()));
 
+        Assertions.assertTrue(RecordGen.of("a",
+                                           InstantGen.arbitrary())
+                                       .sample(100)
+                                       .allMatch(it -> it.getInstant("a").isPresent()));
 
+        Assertions.assertTrue(RecordGen.of("a",
+                                           BoolGen.arbitrary())
+                                       .sample(100)
+                                       .allMatch(it -> it.getBool("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           BytesGen.arbitrary(1,
+                                                              10))
+                                       .sample(100)
+                                       .allMatch(it -> it.getBytes("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           new SetGen<>(IntGen.arbitrary(),
+                                                        10))
+                                       .sample(100)
+                                       .allMatch(it -> it.getSet("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           BytesGen.arbitrary(1,
+                                                              10))
+                                       .sample(100)
+                                       .allMatch(it -> it.getBytes("a").isPresent()));
+
+        Assertions.assertTrue(RecordGen.of("a",
+                                           new MapGen<>(StrGen.alphanumeric(1,
+                                                                            10),
+                                                        IntGen.arbitrary(),
+                                                        100))
+                                       .sample(100)
+                                       .allMatch(it -> {
+                                           Optional<Map<String, Integer>> a = it.getMap("a");
+                                           return a.isPresent();
+                                       }));
     }
+
 }

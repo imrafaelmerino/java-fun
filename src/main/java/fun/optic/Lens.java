@@ -1,5 +1,7 @@
 package fun.optic;
 
+import fun.tuple.Pair;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -22,7 +24,7 @@ import static java.util.Objects.requireNonNull;
  * @param <S> the source of a lens
  * @param <O> the target of a lens
  */
-public class Lens<S, O> {
+public final class Lens<S, O> {
 
     /**
      * function to view the part
@@ -92,12 +94,11 @@ public class Lens<S, O> {
                 b -> s -> {
                     O o = this.get.apply(requireNonNull(s));
                     if (o == null) return s;
-                    O newO = other.set.apply(requireNonNull(b))
-                            .apply(o);
-                    return this.set.apply(newO)
-                            .apply(s);
+                    O newO = other.set.apply(requireNonNull(b)).apply(o);
+                    return this.set.apply(newO).apply(s);
                 }
         );
     }
+
 
 }

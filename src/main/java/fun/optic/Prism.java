@@ -53,7 +53,7 @@ public final class Prism<S, T> {
     public final Function<Predicate<T>, Function<S, Optional<T>>> find;
 
     /**
-     check if there is a target and it satisfies the predicate
+     check if there is a target, and it satisfies the predicate
      */
     public final Function<Predicate<T>, Predicate<S>> exists;
 

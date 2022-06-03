@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @param <S> the source of an optional
  * @param <T> the target of an optional
  */
-public final class Option<S, T> {
+public class Option<S, T> {
     /**
      * get the target of an Optional or nothing if there is no target
      */

@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
  * @param <S> the source of a lens
  * @param <O> the target of a lens
  */
-public final class Lens<S, O> {
+public  class Lens<S, O> {
 
     /**
      * function to view the part

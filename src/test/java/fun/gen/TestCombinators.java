@@ -102,8 +102,7 @@ public class TestCombinators {
                                                          Arrays.asList("a",
                                                                        "b",
                                                                        "c"));
-        Assertions.assertTrue(gen.sample()
-                                 .limit(1000)
+        Assertions.assertTrue(gen.sample(100)
                                  .noneMatch(it -> it.get(0).endsWith(it.get(1))));
 
         Map<String, Long> count = TestFun.generate(100000,

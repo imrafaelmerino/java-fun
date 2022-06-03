@@ -2,8 +2,8 @@ package com.dslplatform.json;
 
 import jsonvalues.JsObj;
 
-import java.io.IOException;
 import java.util.Map;
+import java.util.function.Predicate;
 
 class JsObjSpecParser extends AbstractJsObjParser {
     private static final JsValueParser valueParser = JsParsers.PARSERS.valueParser;
@@ -11,11 +11,15 @@ class JsObjSpecParser extends AbstractJsObjParser {
     protected final boolean strict;
     private final Map<String, JsSpecParser> parsers;
 
+    protected Predicate<JsObj> predicate;
+
     JsObjSpecParser(boolean strict,
-                    final Map<String, JsSpecParser> parsers
+                    Map<String, JsSpecParser> parsers,
+                    Predicate<JsObj> predicate
     ) {
         this.strict = strict;
         this.parsers = parsers;
+        this.predicate = predicate;
     }
 
     @Override
@@ -49,8 +53,12 @@ class JsObjSpecParser extends AbstractJsObjParser {
             if (nextToken != '}')
                 throw reader.newParseError(ParserErrors.EXPECTING_FOR_MAP_END,
                                            reader.getCurrentIndex());
+
+            if(predicate!=null && !predicate.test(obj))
+                throw reader.newParseError(ParserErrors.OBJ_CONDITION,
+                                           reader.getCurrentIndex());
             return obj;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
         }
     }

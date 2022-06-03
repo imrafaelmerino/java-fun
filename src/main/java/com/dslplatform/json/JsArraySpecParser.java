@@ -3,8 +3,6 @@ package com.dslplatform.json;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
-
-import java.io.IOException;
 import java.util.List;
 
 public final class JsArraySpecParser {
@@ -44,7 +42,7 @@ public final class JsArraySpecParser {
             }
             reader.checkArrayEnd();
             return buffer;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
         }
     }

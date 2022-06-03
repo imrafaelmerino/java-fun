@@ -2,6 +2,7 @@ package jsonvalues.spec;
 
 import com.dslplatform.json.JsSpecParser;
 import com.dslplatform.json.JsSpecParsers;
+import fun.tuple.Pair;
 import io.vavr.Tuple2;
 import jsonvalues.JsNothing;
 import jsonvalues.JsObj;
@@ -9,6 +10,7 @@ import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -22,24 +24,26 @@ public final class JsObjSpec implements JsSpec {
     final boolean strict;
     final Map<String, JsSpecParser> parsers;
     private final boolean nullable;
+    private final List<String> requiredFields;
     Map<String, JsSpec> bindings;
-    private List<String> requiredFields;
+    Predicate<JsObj> predicate;
 
     private JsObjSpec(final Map<String, JsSpec> bindings,
                       boolean nullable,
-                      boolean strict
+                      boolean strict,
+                      Predicate<JsObj> predicate,
+                      List<String> requiredFields
     ) {
         this.bindings = bindings;
         this.nullable = nullable;
         this.strict = strict;
-        this.requiredFields = new ArrayList<>(bindings.keySet());
+        this.predicate = predicate;
+        this.requiredFields = requiredFields;
         this.parsers = new LinkedHashMap<>();
         for (Map.Entry<String, JsSpec> entry : bindings.entrySet())
             parsers.put(entry.getKey(),
                         entry.getValue().parser());
     }
-
-
 
     public static JsObjSpec strict(final String key,
                                    final JsSpec spec
@@ -49,10 +53,11 @@ public final class JsObjSpec implements JsSpec {
                      requireNonNull(spec));
         return new JsObjSpec(bindings,
                              false,
-                             true
+                             true,
+                             null,
+                             new ArrayList<>(bindings.keySet())
         );
     }
-
 
     public static JsObjSpec lenient(final String key,
                                     final JsSpec spec
@@ -63,10 +68,11 @@ public final class JsObjSpec implements JsSpec {
                      requireNonNull(spec));
         return new JsObjSpec(bindings,
                              false,
-                             false
+                             false,
+                             null,
+                             new ArrayList<>(bindings.keySet())
         );
     }
-
 
     public static JsObjSpec strict(final String key1,
                                    final JsSpec spec1,
@@ -79,7 +85,6 @@ public final class JsObjSpec implements JsSpec {
                                  requireNonNull(spec2));
 
     }
-
 
     public static JsObjSpec lenient(final String key1,
                                     final JsSpec spec1,
@@ -108,7 +113,6 @@ public final class JsObjSpec implements JsSpec {
 
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             final String key1,
@@ -124,7 +128,6 @@ public final class JsObjSpec implements JsSpec {
                        spec2).set(requireNonNull(key3),
                                   requireNonNull(spec3));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -146,7 +149,6 @@ public final class JsObjSpec implements JsSpec {
                                  requireNonNull(spec4));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             final String key1,
@@ -166,7 +168,6 @@ public final class JsObjSpec implements JsSpec {
                        spec3).set(requireNonNull(key4),
                                   requireNonNull(spec4));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -192,7 +193,6 @@ public final class JsObjSpec implements JsSpec {
                                  requireNonNull(spec5));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             String key1,
@@ -216,7 +216,6 @@ public final class JsObjSpec implements JsSpec {
                        spec4).set(requireNonNull(key5),
                                   requireNonNull(spec5));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -247,7 +246,6 @@ public final class JsObjSpec implements JsSpec {
 
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             String key1,
@@ -275,7 +273,6 @@ public final class JsObjSpec implements JsSpec {
                        spec5).set(requireNonNull(key6),
                                   requireNonNull(spec6));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -309,7 +306,6 @@ public final class JsObjSpec implements JsSpec {
                                  requireNonNull(spec7));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             String key1,
@@ -341,7 +337,6 @@ public final class JsObjSpec implements JsSpec {
                        spec6).set(requireNonNull(key7),
                                   requireNonNull(spec7));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -380,7 +375,6 @@ public final class JsObjSpec implements JsSpec {
 
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             String key1,
@@ -416,7 +410,6 @@ public final class JsObjSpec implements JsSpec {
                        spec7).set(requireNonNull(key8),
                                   requireNonNull(spec8));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -457,7 +450,6 @@ public final class JsObjSpec implements JsSpec {
                       spec8).set(requireNonNull(key9),
                                  requireNonNull(spec9));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
@@ -543,7 +535,6 @@ public final class JsObjSpec implements JsSpec {
                                  requireNonNull(spec10));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             String key1,
@@ -587,7 +578,6 @@ public final class JsObjSpec implements JsSpec {
                        spec9).set(requireNonNull(key10),
                                   requireNonNull(spec10));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -637,7 +627,6 @@ public final class JsObjSpec implements JsSpec {
                                   requireNonNull(spec11));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             String key1,
@@ -685,7 +674,6 @@ public final class JsObjSpec implements JsSpec {
                        spec10).set(requireNonNull(key11),
                                    requireNonNull(spec11));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -739,7 +727,6 @@ public final class JsObjSpec implements JsSpec {
                                   requireNonNull(spec12));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             final String key1,
@@ -791,7 +778,6 @@ public final class JsObjSpec implements JsSpec {
                        spec11).set(requireNonNull(key12),
                                    requireNonNull(spec12));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
@@ -848,7 +834,6 @@ public final class JsObjSpec implements JsSpec {
                        spec12).set(requireNonNull(key13),
                                    requireNonNull(spec13));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
@@ -910,7 +895,6 @@ public final class JsObjSpec implements JsSpec {
                                    requireNonNull(spec14));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
             final String key1,
@@ -970,7 +954,6 @@ public final class JsObjSpec implements JsSpec {
                       spec13).set(requireNonNull(key14),
                                   requireNonNull(spec14));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
@@ -1036,7 +1019,6 @@ public final class JsObjSpec implements JsSpec {
                                    requireNonNull(spec15));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
             final String key1,
@@ -1100,7 +1082,6 @@ public final class JsObjSpec implements JsSpec {
                       spec14).set(requireNonNull(key15),
                                   requireNonNull(spec15));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -1170,7 +1151,6 @@ public final class JsObjSpec implements JsSpec {
                                   requireNonNull(spec16));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             final String key1,
@@ -1238,7 +1218,6 @@ public final class JsObjSpec implements JsSpec {
                        spec15).set(requireNonNull(key16),
                                    requireNonNull(spec16));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -1386,7 +1365,6 @@ public final class JsObjSpec implements JsSpec {
               requireNonNull(spec17));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
             final String key1,
@@ -1463,7 +1441,6 @@ public final class JsObjSpec implements JsSpec {
         ).set(requireNonNull(key18),
               requireNonNull(spec18));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
@@ -1542,7 +1519,6 @@ public final class JsObjSpec implements JsSpec {
               requireNonNull(spec18));
 
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -1627,7 +1603,6 @@ public final class JsObjSpec implements JsSpec {
 
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             final String key1,
@@ -1708,7 +1683,6 @@ public final class JsObjSpec implements JsSpec {
         ).set(requireNonNull(key19),
               requireNonNull(spec19));
     }
-
 
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
@@ -1795,7 +1769,6 @@ public final class JsObjSpec implements JsSpec {
               requireNonNull(spec20));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec lenient(
             final String key1,
@@ -1881,7 +1854,6 @@ public final class JsObjSpec implements JsSpec {
               requireNonNull(spec20));
     }
 
-
     @SuppressWarnings("squid:S00107")
     public static JsObjSpec strict(
             final String key1,
@@ -1939,37 +1911,56 @@ public final class JsObjSpec implements JsSpec {
               requireNonNull(spec13));
     }
 
+    public JsObjSpec suchThat(final Predicate<JsObj> predicate) {
+        return new JsObjSpec(bindings,
+                             nullable,
+                             strict,
+                             predicate,
+                             requiredFields);
+    }
+
     public List<String> getRequiredFields() {
         return requiredFields;
     }
 
+    public JsObjSpec setAllOptionals() {
+        return new JsObjSpec(bindings,
+                             nullable,
+                             strict,
+                             predicate,
+                             new ArrayList<>(bindings.keySet()));
+    }
+
     public JsObjSpec setOptionals(final String field,
                                   final String... fields) {
-        JsObjSpec spec = new JsObjSpec(bindings,
-                                       nullable,
-                                       strict);
+
         List<String> optionalFields = new ArrayList<>();
         optionalFields.add(field);
         optionalFields
                 .addAll(Arrays.stream(requireNonNull(fields))
                               .collect(Collectors.toList()));
-        spec.requiredFields = getRequiredFields(spec.bindings.keySet(),
-                                                optionalFields);
-        return spec;
+        return new JsObjSpec(bindings,
+                             nullable,
+                             strict,
+                             predicate,
+                             getRequiredFields(bindings.keySet(),
+                                               optionalFields));
     }
 
     private List<String> getRequiredFields(Set<String> fields,
                                            List<String> optionals) {
-        return fields.stream().filter(key -> !optionals.contains(key)).collect(Collectors.toList());
+        return fields.stream()
+                     .filter(key -> !optionals.contains(key))
+                     .collect(Collectors.toList());
     }
 
     public JsObjSpec setOptionals(final List<String> optionals) {
-        JsObjSpec spec = new JsObjSpec(bindings,
-                                       nullable,
-                                       strict);
-        spec.requiredFields = getRequiredFields(spec.bindings.keySet(),
-                                                optionals);
-        return spec;
+        return new JsObjSpec(bindings,
+                             nullable,
+                             strict,
+                             predicate,
+                             getRequiredFields(bindings.keySet(),
+                                               optionals));
 
     }
 
@@ -1977,7 +1968,9 @@ public final class JsObjSpec implements JsSpec {
     public JsObjSpec nullable() {
         return new JsObjSpec(bindings,
                              true,
-                             strict
+                             strict,
+                             predicate,
+                             requiredFields
         );
     }
 
@@ -1986,14 +1979,15 @@ public final class JsObjSpec implements JsSpec {
     public JsSpecParser parser() {
         return JsSpecParsers.INSTANCE.ofObjSpec(requiredFields,
                                                 parsers,
+                                                predicate,
                                                 nullable,
                                                 strict
         );
     }
 
     @Override
-    public Set<JsErrorPair> test(final JsPath parentPath,
-                                 final JsValue value
+    public Set<SpecError> test(final JsPath parentPath,
+                               final JsValue value
     ) {
         return test(parentPath,
                     this,
@@ -2002,24 +1996,24 @@ public final class JsObjSpec implements JsSpec {
         );
     }
 
-    public Set<JsErrorPair> test(final JsObj obj) {
+    public Set<SpecError> test(final JsObj obj) {
         return test(JsPath.empty(),
                     obj
         );
     }
 
-    private Set<JsErrorPair> test(final JsPath parent,
-                                  final JsObjSpec parentObjSpec,
-                                  final Set<JsErrorPair> errors,
-                                  final JsValue parentValue
+    private Set<SpecError> test(final JsPath parent,
+                                final JsObjSpec parentObjSpec,
+                                final Set<SpecError> errors,
+                                final JsValue parentValue
     ) {
 
         if (parentValue.isNull() && nullable) return errors;
         if (!parentValue.isObj()) {
-            errors.add(JsErrorPair.of(parent,
-                                      new JsError(parentValue,
-                                                  OBJ_EXPECTED
-                                      )
+            errors.add(SpecError.of(parent,
+                                    Pair.of(parentValue,
+                                            OBJ_EXPECTED
+                                    )
             ));
             return errors;
         }
@@ -2032,10 +2026,10 @@ public final class JsObjSpec implements JsSpec {
             final JsSpec spec = parentObjSpec.bindings.get(key);
             if (spec == null) {
                 if (parentObjSpec.strict) {
-                    errors.add(JsErrorPair.of(currentPath,
-                                              new JsError(value,
-                                                          SPEC_MISSING
-                                              )
+                    errors.add(SpecError.of(currentPath,
+                                            Pair.of(value,
+                                                    SPEC_MISSING
+                                            )
                     ));
                 }
             } else errors.addAll(spec.test(currentPath,
@@ -2045,13 +2039,18 @@ public final class JsObjSpec implements JsSpec {
 
         for (final String requiredField : requiredFields) {
             if (!json.containsKey(requiredField))
-                errors.add(JsErrorPair.of(parent.key(requiredField),
-                                          new JsError(JsNothing.NOTHING,
-                                                      REQUIRED
-                                          )
+                errors.add(SpecError.of(parent.key(requiredField),
+                                        Pair.of(JsNothing.NOTHING,
+                                                REQUIRED
+                                        )
                            )
                 );
         }
+
+        if (predicate != null && !predicate.test(json))
+            errors.add(SpecError.of(JsPath.empty(),
+                                    Pair.of(json,
+                                            OBJ_CONDITION)));
 
 
         return errors;
@@ -2066,13 +2065,15 @@ public final class JsObjSpec implements JsSpec {
      */
     public JsObjSpec set(final String key,
                          final JsSpec spec) {
-        LinkedHashMap<String, JsSpec> newBindings = new LinkedHashMap<>(bindings);
+        LinkedHashMap<String, JsSpec> newBindings = new LinkedHashMap<>(this.bindings);
         newBindings.put(requireNonNull(key),
                         requireNonNull(spec)
         );
         return new JsObjSpec(newBindings,
                              this.nullable,
-                             this.strict
-        );
+                             this.strict,
+                             this.predicate,
+                             new ArrayList<>(newBindings.keySet()));
+
     }
 }

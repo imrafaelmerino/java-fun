@@ -5,7 +5,6 @@ import jsonvalues.JsObj;
 import jsonvalues.Json;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -44,7 +43,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             reader.getNextToken();
             return parser.parse(reader)
                          .toJsObj();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
 
         } finally {
@@ -68,7 +67,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             reader.getNextToken();
             return parser.parse(reader)
                          .toJsArray();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
         } finally {
             reader.reset();
@@ -84,7 +83,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             reader.getNextToken();
             return parser.parse(reader)
                          .toJsObj();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
         } finally {
             reader.reset();
@@ -95,7 +94,7 @@ public final class MyDslJson<A> extends DslJson<A> {
         try {
             return localReader.get()
                               .process(is);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
 
         }
@@ -109,7 +108,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             reader.getNextToken();
             return parser.parse(reader)
                          .toJsArray();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
         } finally {
             reader.reset();
@@ -117,14 +116,14 @@ public final class MyDslJson<A> extends DslJson<A> {
     }
 
     public byte[] serialize(final Json<?> json) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             INSTANCE.serialize(json,
                                outputStream
             );
             outputStream.flush();
             return outputStream.toByteArray();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new SerializerException(e);
         }
     }
@@ -136,7 +135,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             super.serialize(json,
                             requireNonNull(outputstream)
             );
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new SerializerException(e);
         }
 
@@ -155,7 +154,7 @@ public final class MyDslJson<A> extends DslJson<A> {
                                                           indentLength)
             );
             return baos.toString(StandardCharsets.UTF_8.name());
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new SerializerException(e);
         }
     }

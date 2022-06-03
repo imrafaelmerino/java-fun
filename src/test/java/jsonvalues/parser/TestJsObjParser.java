@@ -2,11 +2,9 @@ package jsonvalues.parser;
 
 import com.dslplatform.json.JsParserException;
 import fun.gen.BytesGen;
+import fun.gen.Gen;
 import jsonvalues.*;
-import jsonvalues.gen.JsBigDecGen;
-import jsonvalues.gen.JsIntGen;
-import jsonvalues.gen.JsObjGen;
-import jsonvalues.gen.JsStrGen;
+import jsonvalues.gen.*;
 import jsonvalues.spec.JsObjParser;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
@@ -85,7 +83,7 @@ public class TestJsObjParser {
     @Test
     public void test_parse_integral_error() {
         JsObjSpec spec = JsObjSpec.lenient("a",
-                                           integral(i -> i.longValueExact() > 0)
+                                           bigInteger(i -> i.longValueExact() > 0)
         );
 
         JsObjParser parser = new JsObjParser(spec);
@@ -173,7 +171,7 @@ public class TestJsObjParser {
                                                 "g",
                                                 decimal(),
                                                 "h",
-                                                integral(),
+                                                bigInteger(),
                                                 "i",
                                                 JsObjSpec.strict("a",
                                                                  number(),
@@ -270,7 +268,7 @@ public class TestJsObjParser {
                                                 "e",
                                                 arrayOfNumber(),
                                                 "f",
-                                                arrayOfIntegral(),
+                                                arrayOfBigInt(),
                                                 "g",
                                                 arrayOfLong(),
                                                 "h",
@@ -355,8 +353,7 @@ public class TestJsObjParser {
         );
 
         Assertions.assertEquals(obj,
-                                new JsObjParser(spec).parse(obj
-                                                                    .toPrettyString())
+                                new JsObjParser(spec).parse(obj.toPrettyString())
         );
 
     }
@@ -380,7 +377,7 @@ public class TestJsObjParser {
                                                 "g",
                                                 decimal(d -> d.doubleValue() > 0.0),
                                                 "h",
-                                                integral(i -> i.longValueExact() % 2 == 0),
+                                                bigInteger(i -> i.longValueExact() % 2 == 0),
                                                 "i",
                                                 JsObjSpec.strict("a",
                                                                  number(),
@@ -479,7 +476,7 @@ public class TestJsObjParser {
                                                 "g",
                                                 decimal().nullable(),
                                                 "h",
-                                                integral()
+                                                bigInteger()
                                                         .nullable(),
                                                 "i",
                                                 tuple(arrayOfInt().nullable(),
@@ -744,17 +741,17 @@ public class TestJsObjParser {
     public void test_integral_spec() {
 
         JsObjSpec isint = JsObjSpec.strict("a",
-                                           integral(i -> i.longValueExact() > 0).nullable(),
+                                           bigInteger(i -> i.longValueExact() > 0).nullable(),
                                            "b",
-                                           integral(i -> i.longValueExact() > 0).nullable(),
+                                           bigInteger(i -> i.longValueExact() > 0).nullable(),
                                            "c",
-                                           integral(i -> i.longValueExact() > 0),
+                                           bigInteger(i -> i.longValueExact() > 0),
                                            "d",
-                                           integral(i -> i.longValueExact() < 0).nullable(),
+                                           bigInteger(i -> i.longValueExact() < 0).nullable(),
                                            "e",
-                                           integral(i -> i.longValueExact() % 2 == 1).nullable(),
+                                           bigInteger(i -> i.longValueExact() % 2 == 1).nullable(),
                                            "f",
-                                           integral(i -> i.longValueExact() % 2 == 0).nullable()
+                                           bigInteger(i -> i.longValueExact() % 2 == 0).nullable()
         ).setOptionals("b",
                        "e");
 
@@ -1006,13 +1003,13 @@ public class TestJsObjParser {
     @Test
     public void array_of_number_with_predicate() {
         JsObjSpec spec = JsObjSpec.strict("a",
-                                          arrayOfIntegral(a -> a.longValueExact() > 0),
+                                          arrayOfBigInt(a -> a.longValueExact() > 0),
                                           "b",
-                                          arrayOfIntegral(a -> a.longValueExact() < 0).nullable(),
+                                          arrayOfBigInt(a -> a.longValueExact() < 0).nullable(),
                                           "c",
-                                          arrayOfIntegral(a -> a.longValueExact() % 2 == 0),
+                                          arrayOfBigInt(a -> a.longValueExact() % 2 == 0),
                                           "e",
-                                          arrayOfIntegral(a -> a.longValueExact() % 3 == 0)
+                                          arrayOfBigInt(a -> a.longValueExact() % 3 == 0)
         ).setOptionals("c",
                        "e");
 
@@ -1261,4 +1258,72 @@ public class TestJsObjParser {
         Assertions.assertEquals(Integer.valueOf(22),
                                 arr.getInt(JsPath.path("/0/Resources/InstanceSecurityGroup/Properties/SecurityGroupIngress/0/ToPort")));
     }
+
+
+    @Test
+    public void testSuchThatSpecParser() {
+
+        JsObjSpec baseSpec = JsObjSpec.strict("a",
+                                              str(),
+                                              "b",
+                                              integer(),
+                                              "c",
+                                              str(),
+                                              "d",
+                                              integer(),
+                                              "e",
+                                              longInteger()
+        );
+
+        JsObjGen baseGen = JsObjGen.of("a",
+                                       JsStrGen.alphabetic(),
+                                       "b",
+                                       JsIntGen.arbitrary(),
+                                       "c",
+                                       JsStrGen.alphabetic(),
+                                       "d",
+                                       JsIntGen.arbitrary(),
+                                       "e",
+                                       JsLongGen.arbitrary()
+        );
+        Gen<JsObj> gen =
+                baseGen
+                        .setOptionals("a",
+                                      "b",
+                                      "c",
+                                      "d")
+                        .suchThat(o -> dependencies(o));
+
+        JsObjSpec spec =
+                baseSpec
+                        .setOptionals("a",
+                                      "b",
+                                      "c",
+                                      "d")
+                        .suchThat(o -> dependencies(o));
+
+        JsObjParser parser = new JsObjParser(spec);
+
+        Assertions.assertTrue(gen.sample(10000)
+                                 .allMatch(o -> spec.test(parser.parse(o.toString())).isEmpty()));
+
+        Assertions.assertTrue(baseGen.suchThat(spec,100).sample(10000)
+                                     .allMatch(o -> spec.test(parser.parse(o.toString())).isEmpty()));
+
+        JsObjSpec spec1 = baseSpec.setAllOptionals().suchThat(o -> dependencies(o));
+        JsObjParser parser1 = new JsObjParser(spec1);
+        Assertions.assertTrue(baseGen.setAllOptional().suchThat(spec1).sample(10000).allMatch(o ->
+                                                                                                      spec1.test(parser1.parse(o.toString())).isEmpty()
+        ));
+
+
+    }
+
+
+    private boolean dependencies(JsObj o) {
+        if (o.containsKey("a") && !o.containsKey("c")) return false;
+        if (o.containsKey("b") && !o.containsKey("d")) return false;
+        return true;
+    }
+
 }

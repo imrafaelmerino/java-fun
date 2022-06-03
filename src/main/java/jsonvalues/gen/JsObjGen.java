@@ -1,9 +1,13 @@
 package jsonvalues.gen;
 
-import fun.gen.*;
+import fun.gen.BoolGen;
+import fun.gen.Combinators;
+import fun.gen.Gen;
+import fun.gen.SplitGen;
 import jsonvalues.JsNull;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
+import jsonvalues.spec.JsObjSpec;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -13,18 +17,17 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- *
  * Represents a JsObj generator. It can be created using the static factory methods
  * <code>of</code> or inserting new key-generator pairs to an existing JsObj generator
  * with the method {@link JsObjGen#set(String, Gen)}. Each generator of the Json is
  * created from a new seed that is calculated passing the original one to the
  * {@link SplitGen#DEFAULT split generator }
- *
+ * <p>
  * There are factory methods to create generators of up to 20-key Json objects.
- *
+ * <p>
  * Optional and nullable keys are specified with the
  * methods <code>setOptionals</code> and <code>setNullable</code>.
- *
+ * <p>
  * Given the following optional fields a,b and c, all the possible permutations
  * (2^n = 8) are generated with the same probability:
  * <pre>
@@ -37,9 +40,8 @@ import static java.util.Objects.requireNonNull;
  *  - c missing
  *  - none of the missing
  * </pre>
- *
+ * <p>
  * The same applies for nullable fields.
- *
  */
 public final class JsObjGen implements Gen<JsObj> {
 
@@ -61,9 +63,10 @@ public final class JsObjGen implements Gen<JsObj> {
         this.nullables = new ArrayList<>();
         this.bindings = bindings;
     }
-    public static JsObjGen of(){
+
+    public static JsObjGen of() {
         Map<String, Gen<? extends JsValue>> map = new HashMap<>();
-        return  new JsObjGen(map);
+        return new JsObjGen(map);
     }
 
     public static JsObjGen of(final String key,
@@ -1001,6 +1004,17 @@ public final class JsObjGen implements Gen<JsObj> {
 
     /**
      * Returns a brand new JsObj generator with the same key-generators pairs that this instance and
+     * all keys nullable. The value associated to a nullable key may or not be null
+     * @return a new generator
+     */
+    public JsObjGen setAllNullable() {
+        return new JsObjGen(bindings,
+                            optionals,
+                            new ArrayList<>(bindings.keySet()));
+    }
+
+    /**
+     * Returns a brand new JsObj generator with the same key-generators pairs that this instance and
      * the specified optional keys. An optional key may or not appear in the Json objects generated
      *
      * @param optionals the optional keys
@@ -1009,6 +1023,18 @@ public final class JsObjGen implements Gen<JsObj> {
     public JsObjGen setOptionals(final List<String> optionals) {
         return new JsObjGen(bindings,
                             requireNonNull(optionals),
+                            nullables);
+    }
+
+    /**
+     * Returns a brand new JsObj generator with the same key-generators pairs that this instance and
+     * all keys optimal. An optional key may or not appear in the Json objects generated
+     *
+     * @return a brand new JsObj generator
+     */
+    public JsObjGen setAllOptional() {
+        return new JsObjGen(bindings,
+                            new ArrayList<>(bindings.keySet()),
                             nullables);
     }
 
@@ -1027,6 +1053,7 @@ public final class JsObjGen implements Gen<JsObj> {
     /**
      * Returns a brand new JsObj generator with the same key-generators pairs that this instance
      * plus the specified by the params key and gen
+     *
      * @param key the new key
      * @param gen the generator associated to the new key
      * @return a brand new JsObj generator
@@ -1042,8 +1069,10 @@ public final class JsObjGen implements Gen<JsObj> {
                             nullables);
 
     }
+
     /**
      * Returns a supplier from the specified seed that generates a new JsObj each time it's called
+     *
      * @param seed the generator seed
      * @return a JsObj supplier
      */
@@ -1089,6 +1118,77 @@ public final class JsObjGen implements Gen<JsObj> {
             }
             return obj;
         };
+    }
+
+
+    /**
+     * Creates a generator that generates values from this gen that satisfy the specified
+     * spec. Care is needed to ensure there is a high chance that will satisfy
+     * the spec. By default, it will try 1000 times. If no value conforms the spec
+     * after this number of iterations, a runtime exception will be thrown.
+     *
+     * @param spec the spec that will satisfy the generated values
+     * @return a new JsObj generator
+     * @throws RuntimeException if a value is not generated after 1000 tries
+     */
+    public Gen<JsObj> suchThat(final JsObjSpec spec) {
+        return suchThat(obj -> requireNonNull(spec).test(obj)
+                                                   .isEmpty()
+        );
+    }
+
+    /**
+     * Creates a generator that generates values from this gen that satisfy  the specified
+     * spec. Care is needed to ensure there is a high chance that will satisfy
+     * the spec. It will try the specified number of tries. If no value passes this predicate
+     * after this number of iterations, a runtime exception will be thrown.
+     *
+     * @param spec  the spec that will satisfy the generated values
+     * @param tries the max number of iterations to generate a value that satisfies the spec
+     * @return a new JsObj generator
+     * @throws RuntimeException if a value is not generated after the specified number of tries
+     */
+    public Gen<JsObj> suchThat(final JsObjSpec spec,
+                               int tries) {
+        return suchThat(obj -> requireNonNull(spec).test(obj)
+                                                   .isEmpty(),
+                        tries
+        );
+    }
+
+    /**
+     * Creates a generator that generates values from this gen that doesn't satisfy the specified
+     * spec. Care is needed to ensure there is a high chance that won't satisfy
+     * the spec. By default, it will try 1000 times. If all values conform the spec after
+     * this number of iterations, a runtime exception will be thrown.
+     *
+     * @param spec the spec that won't satisfy the generated values
+     * @return a new JsObj generator
+     * @throws RuntimeException if a value is not generated after 1000 tries
+     */
+    public Gen<JsObj> suchThatNo(final JsObjSpec spec) {
+        return suchThat(obj -> !requireNonNull(spec).test(obj)
+                                                    .isEmpty()
+        );
+    }
+
+    /**
+     * Creates a generator that generates values from this gen that doesn't satisfy the specified
+     * spec. Care is needed to ensure there is a high chance that won't satisfy
+     * the spec. It will try the specified number of tries. If all values conform the spec after
+     * this number of iterations, a runtime exception will be thrown.
+     *
+     * @param spec the spec that won't satisfy the generated values
+     * @param tries max number of tries
+     * @return a new JsObj generator
+     * @throws RuntimeException if a value is not generated after the specified number of tries
+     */
+    public Gen<JsObj> suchThatNo(final JsObjSpec spec,
+                                 final int tries) {
+        return suchThat(obj -> !requireNonNull(spec).test(obj)
+                                                    .isEmpty(),
+                        tries
+        );
     }
 
 }

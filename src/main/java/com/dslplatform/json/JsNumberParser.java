@@ -1,9 +1,8 @@
 package com.dslplatform.json;
 
+import fun.tuple.Pair;
 import jsonvalues.*;
-import jsonvalues.spec.JsError;
-
-import java.io.IOException;
+import jsonvalues.spec.ERROR_CODE;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
@@ -11,11 +10,11 @@ import java.util.function.Function;
 final class JsNumberParser extends AbstractParser {
 
     JsNumber valueSuchThat(final JsonReader<?> reader,
-                           final Function<JsNumber, Optional<JsError>> fn
+                           final Function<JsNumber, Optional<Pair<JsValue, ERROR_CODE>>> fn
     ) {
         try {
             final JsNumber value = value(reader);
-            final Optional<JsError> result = fn.apply(value);
+            final Optional<Pair<JsValue,ERROR_CODE>> result = fn.apply(value);
             if (!result.isPresent()) return value;
             throw reader.newParseError(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
                                        reader.getCurrentIndex());
@@ -31,7 +30,7 @@ final class JsNumberParser extends AbstractParser {
         final Number number;
         try {
             number = MyNumberConverter.deserializeNumber(reader);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JsParserException(e.getMessage());
 
         }

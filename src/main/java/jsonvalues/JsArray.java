@@ -345,7 +345,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
             if (START_ARRAY != keyEvent) throw MalformedJson.expectedArray(str);
             return new JsArray(parse(parser
             ));
-        } catch (IOException e) {
+        } catch (Exception e) {
 
             throw new MalformedJson(e.getMessage());
         }
@@ -366,7 +366,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
             if (START_ARRAY != keyEvent) throw MalformedJson.expectedArray(str);
             return new JsArray(parse(parser
             ));
-        } catch (IOException e) {
+        } catch (Exception e) {
 
             throw new MalformedJson(e.getMessage());
         }
@@ -420,12 +420,12 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
 
         requireNonNull(path);
-        return requireNonNull(array).ifEmptyElse(() -> Stream.of(new Pair<>(path,
+        return requireNonNull(array).ifEmptyElse(() -> Stream.of(Pair.of(path,
                                                                             array
                                                  )),
                                                  () -> range(0,
                                                              array.size()
-                                                 ).mapToObj(pair -> new Pair<>(path.index(pair),
+                                                 ).mapToObj(pair -> Pair.of(path.index(pair),
                                                                                array.get(Index.of(pair))
                                                   ))
                                                   .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
@@ -1345,7 +1345,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                         .mapToObj(i ->
                                   {
                                       JsPath path = JsPath.fromIndex(i);
-                                      return new Pair<>(path,
+                                      return Pair.of(path,
                                                         get(path)
                                       );
                                   });

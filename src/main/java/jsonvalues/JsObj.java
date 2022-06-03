@@ -2000,7 +2000,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
             JsonToken keyEvent = parser.nextToken();
             if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
             return new JsObj(JsObj.parse(parser));
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MalformedJson(e.getMessage());
         }
     }
@@ -2018,7 +2018,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
             JsonToken keyEvent = parser.nextToken();
             if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
             return new JsObj(JsObj.parse(parser));
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MalformedJson(e.getMessage());
         }
     }
@@ -2072,12 +2072,12 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     ) {
 
         requireNonNull(path);
-        return requireNonNull(obj).ifEmptyElse(() -> Stream.of(new Pair<>(path,
+        return requireNonNull(obj).ifEmptyElse(() -> Stream.of(Pair.of(path,
                                                                           obj
                                                )),
                                                () -> obj.keySet()
                                                         .stream()
-                                                        .map(key -> new Pair<>(path.key(key),
+                                                        .map(key -> Pair.of(path.key(key),
                                                                                get(obj,
                                                                                    Key.of(key)
                                                                                )
@@ -2444,7 +2444,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                    .map(f ->
                         {
                             final JsPath key = JsPath.fromKey(f);
-                            return new Pair<>(key,
+                            return Pair.of(key,
                                               this.get(key)
                             );
                         }

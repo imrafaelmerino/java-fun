@@ -34,7 +34,7 @@ public final class ListGen<T> implements Gen<List<T>> {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
         requireNonNull(gen);
-        List<Pair<Integer, Gen<List<T>>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends List<T>>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
                             new ListGen<>(gen,

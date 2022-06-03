@@ -27,7 +27,7 @@ public final class IntGen implements Gen<Integer> {
     public static Gen<Integer> biased(int min,
                                       int max) {
         if (max < min) throw new IllegalArgumentException("max < min");
-        List<Pair<Integer, Gen<Integer>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
 
         if (max > Short.MAX_VALUE && min < Short.MAX_VALUE)
             gens.add(Pair.of(1,
@@ -89,7 +89,7 @@ public final class IntGen implements Gen<Integer> {
 
 
     public static Gen<Integer> biased() {
-        List<Pair<Integer, Gen<Integer>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
                             Gen.cons(Integer.MAX_VALUE)));

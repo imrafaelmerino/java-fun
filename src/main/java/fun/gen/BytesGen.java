@@ -36,7 +36,7 @@ public final class BytesGen implements Gen<byte[]> {
         if (minLength < 0) throw new IllegalArgumentException("min < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("max < min");
 
-        List<Pair<Integer, Gen<byte[]>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends byte[]>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
                             new BytesGen(minLength)));
         gens.add(Pair.of(1,

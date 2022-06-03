@@ -53,7 +53,7 @@ public final class BigIntGen implements Gen<BigInteger> {
         BigInteger min = BigInteger.valueOf(2).pow(minBits).min(BigInteger.ONE);
         BigInteger max = BigInteger.valueOf(2).pow(maxBits).min(BigInteger.ONE);
 
-        List<Pair<Integer, Gen<BigInteger>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
         if (max.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) >= 0 && min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0)
             gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Long.MAX_VALUE))));

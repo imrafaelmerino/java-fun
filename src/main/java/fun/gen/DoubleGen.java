@@ -25,7 +25,7 @@ public final class DoubleGen implements Gen<Double> {
     public static Gen<Double> biased(final double min,
                                      final double max) {
         if (max < min) throw new IllegalArgumentException("max < min");
-        List<Pair<Integer, Gen<Double>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
 
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(Pair.of(1,
@@ -78,7 +78,7 @@ public final class DoubleGen implements Gen<Double> {
 
 
     public static Gen<Double> biased() {
-        List<Pair<Integer, Gen<Double>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
                          Gen.cons(Double.MIN_VALUE)));
         gens.add(Pair.of(1,

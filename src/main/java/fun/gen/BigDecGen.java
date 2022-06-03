@@ -32,7 +32,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
         requireNonNull(min);
         requireNonNull(max);
         if (min.compareTo(max) > 0) throw new IllegalArgumentException("max <= min");
-        List<Pair<Integer, Gen<BigDecimal>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         if (max.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) >= 0
                 && min.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) <= 0)
             gens.add(Pair.of(1,
@@ -107,7 +107,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
     }
 
     public static Gen<BigDecimal> biased() {
-        List<Pair<Integer, Gen<BigDecimal>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
 

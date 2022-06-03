@@ -22,3 +22,4 @@ deploy.sh
 jio-recording.jfr
 java-fun.iml
 sonar.sh
+codecov

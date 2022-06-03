@@ -28,7 +28,7 @@ public final class LongGen implements Gen<Long> {
                                    final long max) {
         if (max < min) throw new IllegalArgumentException("max < min");
 
-        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<Long>>> gens = new ArrayList<>();
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(Pair.of(1,
                                 Gen.cons((long) Integer.MAX_VALUE)));
@@ -100,7 +100,7 @@ public final class LongGen implements Gen<Long> {
 
 
     public static Gen<Long> biased() {
-        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<Long>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
                             Gen.cons(Long.MAX_VALUE)));

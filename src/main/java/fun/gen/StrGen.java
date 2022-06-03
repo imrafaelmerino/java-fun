@@ -46,7 +46,7 @@ public final class StrGen implements Gen<String> {
                                      final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
-        List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
+        List<Pair<Integer, Gen<String>>> gens = new ArrayList<>();
 
 
         gens.add(Pair.of(1,

@@ -35,57 +35,57 @@ public final class BigDecGen implements Gen<BigDecimal> {
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         if (max.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) >= 0
                 && min.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) <= 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) >= 0
                 && min.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) <= 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
 
 
         if (max.compareTo(BigDecimal.valueOf(Short.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Short.MAX_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Short.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Short.MIN_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Byte.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Byte.MAX_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Byte.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Byte.MIN_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.ZERO) > 0
                 && min.compareTo(BigDecimal.ZERO) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigDecimal.ZERO)));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(min)));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(max)));
 
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             arbitrary(min,
                                       max)));
 
@@ -108,35 +108,35 @@ public final class BigDecGen implements Gen<BigDecimal> {
 
     public static Gen<BigDecimal> biased() {
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
 
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(BigDecimal.valueOf(0))));
 
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             arbitrary));
 
         return Combinators.freqList(gens);

@@ -6,7 +6,7 @@
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>java-fun</artifactId>
   <packaging>jar</packaging>
-  <version>0.9</version>
+  <version>1.0.0</version>
   <name>java8-fun</name>
   <description>Some patterns and idioms from Functional Programming implemented in Java</description>
   <url>https://github.com/imrafaelmerino/java-fun</url>
@@ -41,6 +41,10 @@
     <MONGO-VALUES-VERSION>0.6</MONGO-VALUES-VERSION>
     <MAVEN-JAVADOC-PLUGIN.VERSION>3.3.2</MAVEN-JAVADOC-PLUGIN.VERSION>
     <SLF4J-API.VERSION>1.7.36</SLF4J-API.VERSION>
+    <sonar.organization>imrafaelmerino</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.projectKey>imrafaelmerino_java-fun</sonar.projectKey>
+
   </properties>
   <dependencies>
     <dependency>
@@ -99,6 +103,26 @@
               </execution>
           </executions>
       </plugin>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.4</version>
+            <executions>
+                <execution>
+                    <id>test</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>

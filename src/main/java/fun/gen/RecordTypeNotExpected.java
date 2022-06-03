@@ -1,6 +1,6 @@
 package fun.gen;
 
-public class RecordTypeNotExpected extends RuntimeException{
+public final class RecordTypeNotExpected extends RuntimeException{
     private static final long serialVersionUID = 1L;
 
     private static final String TEMPLATE =

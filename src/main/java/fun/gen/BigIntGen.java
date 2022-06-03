@@ -55,49 +55,49 @@ public final class BigIntGen implements Gen<BigInteger> {
 
         List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
         if (max.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) >= 0 && min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Long.MAX_VALUE))));
 
         if (max.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) >= 0 && min.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) <= 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Long.MIN_VALUE))));
 
         if (max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE))));
 
         if (max.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Integer.MIN_VALUE))));
 
 
         if (max.compareTo(BigInteger.valueOf(Short.MAX_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Short.MAX_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Short.MAX_VALUE))));
 
         if (max.compareTo(BigInteger.valueOf(Short.MIN_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Short.MIN_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Short.MIN_VALUE))));
 
         if (max.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Byte.MAX_VALUE))));
 
         if (max.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.valueOf(Byte.MIN_VALUE))));
 
         if (max.compareTo(BigInteger.ZERO) > 0 && min.compareTo(BigInteger.ZERO) < 0)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(BigInteger.ZERO)));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(min)));
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(max)));
 
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             arbitrary(minBits,
                                       maxBits)));
 

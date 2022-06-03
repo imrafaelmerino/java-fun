@@ -36,13 +36,13 @@ public final class ListGen<T> implements Gen<List<T>> {
         requireNonNull(gen);
         List<Pair<Integer, Gen<? extends List<T>>>> gens = new ArrayList<>();
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             new ListGen<>(gen,
                                           minLength)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             new ListGen<>(gen,
                                           maxLength)));
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             ListGen.arbitrary(gen,
                                               minLength,
                                               maxLength)));

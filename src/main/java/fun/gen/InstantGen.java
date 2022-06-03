@@ -31,17 +31,17 @@ public final class InstantGen implements Gen<Instant> {
     public static Gen<Instant> biased() {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
 
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(MAX_SECONDS)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(MIN_SECONDS)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons((long) Integer.MAX_VALUE)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons((long) Integer.MIN_VALUE)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(0L)));
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             LongGen.arbitrary(MIN_SECONDS,
                                               MAX_SECONDS)));
 
@@ -62,19 +62,19 @@ public final class InstantGen implements Gen<Instant> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
 
         if (min <= Integer.MAX_VALUE && max >= Integer.MAX_VALUE)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons((long) Integer.MAX_VALUE)));
         if (min <= Integer.MIN_VALUE && max >= Integer.MIN_VALUE)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons((long) Integer.MIN_VALUE)));
         if (min < 0L && max > 0L)
-            gens.add(new Pair<>(1,
+            gens.add(Pair.of(1,
                                 Gen.cons(0L)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(min)));
-        gens.add(new Pair<>(1,
+        gens.add(Pair.of(1,
                             Gen.cons(max)));
-        gens.add(new Pair<>(gens.size(),
+        gens.add(Pair.of(gens.size(),
                             LongGen.arbitrary(min,
                                               max)));
 

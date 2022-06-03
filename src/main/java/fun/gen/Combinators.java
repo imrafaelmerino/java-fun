@@ -61,8 +61,8 @@ public final class Combinators {
      *
      * @param freq   a frequency pair
      * @param others the rests of pairs
+     * @param <A>    the type of the values
      * @return a json generator
-     * @param <A> the type of the values
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
@@ -112,7 +112,7 @@ public final class Combinators {
 
     public static <O> Gen<O> nullable(final Gen<O> gen) {
         return nullable(gen,
-                        5);
+                        50);
     }
 
     public static <O> Gen<O> nullable(final Gen<O> gen,
@@ -120,12 +120,21 @@ public final class Combinators {
         requireNonNull(gen);
         if (prob < 0) throw new IllegalArgumentException("prob < 0");
         if (prob > 100) throw new IllegalArgumentException("prob > 100");
-        return IntGen.arbitrary(0,
-                                100)
-                     .then(n -> n <= prob ?
-                                Gen.cons(null) :
-                                gen
-                     );
+        return seed -> {
+            Supplier<Integer> n =
+                    IntGen.arbitrary(0,
+                                     100)
+                          .apply(SplitGen.DEFAULT.apply(seed));
+
+
+            Supplier<O> supplier =
+                    gen.apply(SplitGen.DEFAULT.apply(seed));
+
+            return () -> n.get() <= prob ?
+                         null :
+                         supplier.get();
+        };
+
     }
 
     private static <I> void combinations(final List<I> input,
@@ -205,11 +214,5 @@ public final class Combinators {
         return permutations;
     }
 
-
-    public static void main(String[] args) {
-        List<String> a = new ArrayList<>();
-        permutations(a).sample(10).forEach(System.out::println);
-
-    }
 
 }

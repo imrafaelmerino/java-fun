@@ -21,3 +21,4 @@ deploy.sh
 .idea/workspace.xml
 jio-recording.jfr
 java-fun.iml
+sonar.sh

@@ -1479,8 +1479,6 @@ After the development of json-values, I published two more related projects:
 
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
-* [JIO](https://github.com/imrafaelmerino/JIO)
-
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/),
 [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into

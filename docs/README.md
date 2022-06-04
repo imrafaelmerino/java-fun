@@ -1478,7 +1478,6 @@ Steinbeck
 After the development of json-values, I published two more related projects:
 
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
-* [vertx-effect](https://github.com/imrafaelmerino/vertx-effect)
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
 * [JIO](https://github.com/imrafaelmerino/JIO)
 

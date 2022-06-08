@@ -14,13 +14,14 @@
     - [Lenses](#lenses) 
     - [Optionals](#optionals)
     - [Prism](#prism)
+- [Requirements](#req)
 - [Installation](#inst)
 - [Related projects](#rp)
 
 ## <a name="goal"><a/> Goal
 
 The goal of java-fun is to implement some important FP patterns in Java. It
-avoids to transliterate these patterns from other languages, aiming that any standard
+doesn't transliterate these patterns from other languages, aiming that any standard
 Java programmer finds easy to adopt them and understand the essence of these concepts
 ,not getting lost in unfamiliar types and conventions.
 
@@ -54,9 +55,12 @@ way. With java-fun, it's child's play!
 
 ### <a name="prism"><a/> Prism
 
-## <a name="inst"><a/> Installation
+## <a name="req"><a/> Requirements
 
 Requires Java 8 or greater
+
+
+## <a name="inst"><a/> Installation
 
 ```xml
 
@@ -72,5 +76,5 @@ Requires Java 8 or greater
 ## <a name="rp"><a/> Related projects
 
 [json-values](https://github.com/imrafaelmerino/json-values) has defined a JSON generator
-and 
+and some optics to manipulate JSON using this library.
 

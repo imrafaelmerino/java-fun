@@ -372,7 +372,7 @@ JsObj person =
 
 JsObj a = JsObj.parse("{...}");
 
-JsObj b = JsObj.parseYaml("{....}");
+JsObj b = JsObj.parseYaml("  ");
 
 ```
 

@@ -47,27 +47,32 @@ public final class StrGen implements Gen<String> {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
         List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
+        if (minLength == maxLength && minLength == 0) return Gen.cons("");
+
+        if (minLength == 0) {
+            gens.add(Pair.of(1,
+                             Gen.cons("")));
+        } else {
+            gens.add(Pair.of(1,
+                             new StrGen(minLength)));
+
+            gens.add(Pair.of(1,
+                             Gen.cons(blank(minLength))));
+        }
 
 
-        gens.add(Pair.of(1,
-                            new StrGen(minLength)));
+        if (minLength != maxLength) {
 
-        gens.add(Pair.of(1,
-                            Gen.cons(String.join("",
-                                                 Collections.nCopies(minLength,
-                                                                     " ")))));
+            gens.add(Pair.of(1,
+                             Gen.cons(blank(maxLength))));
 
-        gens.add(Pair.of(1,
-                            Gen.cons(String.join("",
-                                                 Collections.nCopies(maxLength,
-                                                                     " ")))));
-
-        gens.add(Pair.of(1,
-                            new StrGen(maxLength)));
+            gens.add(Pair.of(1,
+                             new StrGen(maxLength)));
+        }
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(minLength,
-                                      maxLength)));
+                         arbitrary(minLength,
+                                   maxLength)));
 
         return Combinators.freqList(gens);
     }
@@ -147,7 +152,6 @@ public final class StrGen implements Gen<String> {
                                              it));
     }
 
-
     /**
      * Generates a seq of alphanumeric characters of a length between the specified interval
      *
@@ -168,10 +172,12 @@ public final class StrGen implements Gen<String> {
 
     }
 
-    public static void main(String[] args) {
-        System.out.println(String.join("",
-                                       Collections.nCopies(2,
-                                                           " ")).length());
+    private static String blank(int length) {
+        if (length <= 0) throw new IllegalArgumentException("length <= 0");
+        return String.join("",
+                           Collections.nCopies(length,
+                                               " "));
+
     }
 
     @Override

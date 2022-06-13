@@ -42,7 +42,8 @@ public class TestStrGen {
         Assertions.assertTrue(count.get(3) > count.get(2));
 
         Assertions.assertTrue(TestFun.isInMargin(count.get(0),
-                                                 0.1).test(count.get(3)));
+                                                 0.1)
+                                     .test(count.get(3)));
 
 
     }

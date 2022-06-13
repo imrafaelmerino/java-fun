@@ -1,9 +1,9 @@
 package fun.gen;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.Random;
 
 import static java.util.Objects.requireNonNull;
 

@@ -52,8 +52,9 @@ public final class DoubleGen implements Gen<Double> {
         gens.add(Pair.of(1,
                          Gen.cons(min)));
 
-        gens.add(Pair.of(1,
-                         Gen.cons(max)));
+        if (max != min)
+            gens.add(Pair.of(1,
+                             Gen.cons(max)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary(min,

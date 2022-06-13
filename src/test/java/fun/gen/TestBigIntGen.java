@@ -11,35 +11,47 @@ import java.util.stream.IntStream;
 
 public class TestBigIntGen {
 
-    @Test
-    public void testBigInt() {
-        int bits = 5;
-
-        Map<BigInteger, Long> counts = TestFun.generate(100000,
-                                                        BigIntGen.arbitrary(bits,
-                                                                            bits + 1));
-
-        List<BigInteger> values = IntStream.range(0,
-                                                  1 << bits).mapToObj(BigInteger::valueOf).collect(Collectors.toList());
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         values,
-                                                         0.1);
-
-
-    }
 
     @Test
     public void arbitraryBigInt() {
         Map<BigInteger, Long> counts = TestFun.generate(100000,
-                                                        BigIntGen.arbitrary(1,
-                                                                            3));
+                                                        BigIntGen.arbitrary(3));
 
 
         Assertions.assertTrue(IntStream.range(0,
                                               7)
                                        .allMatch(it -> counts.containsKey(BigInteger.valueOf(it))));
+    }
+
+
+    @Test
+    public void biasedBigIntInterval() {
+
+        Map<BigInteger, Long> counts =
+                TestFun.generate(1000000,
+                                 BigIntGen.biased(1000));
+
+
+        List<BigInteger> problematic = TestFun.list(
+                BigInteger.valueOf(Long.MAX_VALUE),
+                BigInteger.valueOf(Integer.MAX_VALUE),
+                BigInteger.valueOf(Short.MAX_VALUE),
+                BigInteger.valueOf(Byte.MAX_VALUE),
+                BigInteger.ZERO);
+
+        System.out.println(counts.get(BigInteger.ZERO));
+        System.out.println(counts.get(BigInteger.valueOf(Byte.MAX_VALUE)));
+        System.out.println(counts.get(BigInteger.valueOf(Short.MAX_VALUE)));
+        System.out.println(counts.get(BigInteger.valueOf(Integer.MAX_VALUE)));
+        System.out.println(counts.get(BigInteger.valueOf(Long.MAX_VALUE)));
+
+
+
+
+
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         problematic,
+                                                         0.1);
     }
 
 

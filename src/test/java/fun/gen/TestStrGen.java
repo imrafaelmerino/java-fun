@@ -13,8 +13,8 @@ public class TestStrGen {
 
         Map<Integer, Long> count = TestFun.generate(10000000,
                                                     StrGen.arbitrary(0,
-                                                             3)
-                                                  .map(String::length)
+                                                                     3)
+                                                          .map(String::length)
         );
         TestFun.assertGeneratedValuesHaveSameProbability(count,
                                                          count.keySet(),
@@ -30,20 +30,21 @@ public class TestStrGen {
                                     .allMatch(String::isEmpty));
 
         Assertions.assertTrue(StrGen.biased(0,
-                                            1).sample(1000)
+                                            2).sample(1000)
                                     .allMatch(it -> it.length() < 3));
 
         Map<Integer, Long> count = TestFun.generate(10000000,
-                                                    StrGen.biased(0, 3).map(String::length));
+                                                    StrGen.biased(0,
+                                                                  3).map(String::length));
+
+        System.out.println(count);
 
         Assertions.assertTrue(count.get(0) > count.get(1));
         Assertions.assertTrue(count.get(0) > count.get(2));
         Assertions.assertTrue(count.get(3) > count.get(1));
         Assertions.assertTrue(count.get(3) > count.get(2));
 
-        Assertions.assertTrue(TestFun.isInMargin(count.get(0),
-                                                 0.1).test(count.get(3)));
-
+        System.out.println(count);
 
     }
 
@@ -87,7 +88,20 @@ public class TestStrGen {
         Assertions.assertTrue(StrGen.letters(0,
                                              2)
                                     .sample(100000)
-                                    .allMatch(it -> it.isEmpty() || it.chars().allMatch(Character::isLetter)));
+                                    .allMatch(it -> it.isEmpty() || (it.length() < 3 && it.chars().allMatch(Character::isLetter))));
+    }
+
+    @Test
+    public void ascii() {
+        Assertions.assertTrue(StrGen.ascii(0,
+                                           2)
+                                    .sample(100000)
+                                    .allMatch(it -> it.isEmpty() ||
+                                            (it.length() < 3 &&
+                                                    it.chars()
+                                                      .allMatch(ch ->
+                                                                        ch <= ((int) '\u007f') &&
+                                                                                ch >= ((int) '\u0000')))));
     }
 
     @Test
@@ -99,10 +113,16 @@ public class TestStrGen {
         Map<String, Long> countsDigit = TestFun.generate(1000000,
                                                          StrGen.digit());
 
+        Map<String, Long> countsAscii = TestFun.generate(1000000,
+                                                         StrGen.ascii());
+
 
         Map<String, Long> countAlpha = TestFun.generate(10000000,
                                                         StrGen.alphabetic());
 
+        TestFun.assertGeneratedValuesHaveSameProbability(countsAscii,
+                                                         countsAscii.keySet(),
+                                                         0.1);
 
         TestFun.assertGeneratedValuesHaveSameProbability(countsLetter,
                                                          countsLetter.keySet(),

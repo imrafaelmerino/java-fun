@@ -37,15 +37,15 @@ public final class ListGen<T> implements Gen<List<T>> {
         List<Pair<Integer, Gen<? extends List<T>>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                            new ListGen<>(gen,
-                                          minLength)));
+                         new ListGen<>(gen,
+                                       minLength)));
         gens.add(Pair.of(1,
-                            new ListGen<>(gen,
-                                          maxLength)));
+                         new ListGen<>(gen,
+                                       maxLength)));
         gens.add(Pair.of(gens.size(),
-                            ListGen.arbitrary(gen,
-                                              minLength,
-                                              maxLength)));
+                         ListGen.arbitrary(gen,
+                                           minLength,
+                                           maxLength)));
         return Combinators.freqList(gens);
 
 

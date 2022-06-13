@@ -6,7 +6,7 @@
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>java-fun</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.1</version>
+  <version>0.9.3</version>
   <name>java8-fun</name>
   <description>Some patterns and idioms from Functional Programming implemented in Java</description>
   <url>https://github.com/imrafaelmerino/java-fun</url>
@@ -76,6 +76,8 @@
         <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
 
       </plugin>
+
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>

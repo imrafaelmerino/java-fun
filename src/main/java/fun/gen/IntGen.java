@@ -17,11 +17,12 @@ import static java.util.Objects.requireNonNull;
 public final class IntGen implements Gen<Integer> {
 
     private static final Gen<Integer> arbitrary = new IntGen();
-    public static Gen<Integer> arbitrary() {
-        return arbitrary;
-    }
 
     private IntGen() {
+    }
+
+    public static Gen<Integer> arbitrary() {
+        return arbitrary;
     }
 
     public static Gen<Integer> biased(int min,
@@ -31,29 +32,29 @@ public final class IntGen implements Gen<Integer> {
 
         if (max > Short.MAX_VALUE && min < Short.MAX_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((int) Short.MAX_VALUE)));
+                             Gen.cons((int) Short.MAX_VALUE)));
         if (max > Short.MIN_VALUE && min < Short.MIN_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((int) Short.MIN_VALUE)));
+                             Gen.cons((int) Short.MIN_VALUE)));
         if (max > Byte.MAX_VALUE && min < Byte.MAX_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((int) Byte.MAX_VALUE)));
+                             Gen.cons((int) Byte.MAX_VALUE)));
         if (max > Byte.MIN_VALUE && min < Byte.MIN_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((int) Byte.MIN_VALUE)));
+                             Gen.cons((int) Byte.MIN_VALUE)));
         if (max > 0 && min < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(0)));
+                             Gen.cons(0)));
 
         gens.add(Pair.of(1,
-                            Gen.cons(min)));
-
-        gens.add(Pair.of(1,
-                            Gen.cons(max)));
+                         Gen.cons(min)));
+        if (max != min)
+            gens.add(Pair.of(1,
+                             Gen.cons(max)));
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(min,
-                                      max)));
+                         arbitrary(min,
+                                   max)));
 
         return Combinators.freqList(gens);
     }
@@ -92,28 +93,28 @@ public final class IntGen implements Gen<Integer> {
         List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                            Gen.cons(Integer.MAX_VALUE)));
+                         Gen.cons(Integer.MAX_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons(Integer.MIN_VALUE)));
+                         Gen.cons(Integer.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons((int) Short.MAX_VALUE)));
+                         Gen.cons((int) Short.MAX_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons((int) Short.MIN_VALUE)));
+                         Gen.cons((int) Short.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons((int) Byte.MAX_VALUE)));
+                         Gen.cons((int) Byte.MAX_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons((int) Byte.MIN_VALUE)));
+                         Gen.cons((int) Byte.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons(0)));
+                         Gen.cons(0)));
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary));
+                         arbitrary));
 
         return Combinators.freqList(gens);
     }

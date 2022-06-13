@@ -4,13 +4,14 @@ import fun.tuple.Pair;
 
 import java.util.*;
 import java.util.function.Supplier;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.stream.Collectors;
 
 /**
  * represent a generator of strings.
  */
 public final class StrGen implements Gen<String> {
+
+    private static final Gen<String> ascii = CharGen.ascii.map(String::valueOf);
 
     private static final Gen<String> digit = CharGen.digit.map(String::valueOf);
     /**
@@ -30,6 +31,10 @@ public final class StrGen implements Gen<String> {
         return digit;
     }
 
+    public static Gen<String> ascii() {
+        return ascii;
+    }
+
     public static Gen<String> letter() {
         return letter;
     }
@@ -47,27 +52,32 @@ public final class StrGen implements Gen<String> {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
         List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
+        if (minLength == maxLength && minLength == 0) return Gen.cons("");
+
+        if (minLength == 0) {
+            gens.add(Pair.of(1,
+                             Gen.cons("")));
+        } else {
+            gens.add(Pair.of(1,
+                             new StrGen(minLength)));
+
+            gens.add(Pair.of(1,
+                             Gen.cons(blank(minLength))));
+        }
 
 
-        gens.add(Pair.of(1,
-                            new StrGen(minLength)));
+        if (minLength != maxLength) {
 
-        gens.add(Pair.of(1,
-                            Gen.cons(String.join("",
-                                                 Collections.nCopies(minLength,
-                                                                     " ")))));
+            gens.add(Pair.of(1,
+                             Gen.cons(blank(maxLength))));
 
-        gens.add(Pair.of(1,
-                            Gen.cons(String.join("",
-                                                 Collections.nCopies(maxLength,
-                                                                     " ")))));
-
-        gens.add(Pair.of(1,
-                            new StrGen(maxLength)));
+            gens.add(Pair.of(1,
+                             new StrGen(maxLength)));
+        }
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(minLength,
-                                      maxLength)));
+                         arbitrary(minLength,
+                                   maxLength)));
 
         return Combinators.freqList(gens);
     }
@@ -84,12 +94,36 @@ public final class StrGen implements Gen<String> {
 
     private static Supplier<String> genStr(Random seed,
                                            Supplier<Integer> lengthGen) {
+
         return () -> {
-            byte[] array = new byte[lengthGen.get()];
-            seed.nextBytes(array);
-            return new String(array,
-                              UTF_8);
+            int l = lengthGen.get();
+            List<Character> arbitrary =
+                    ListGen.arbitrary(CharGen.arbitrary(),
+                                      l,
+                                      l)
+                           .apply(seed).get();
+            return chars2String(arbitrary);
         };
+
+
+    }
+    private static Supplier<String> genStr(Random seed,
+                                           Integer length) {
+        Supplier<List<Character>> chars =
+                ListGen.arbitrary(CharGen.arbitrary(),
+                                  length,
+                                  length)
+                       .apply(seed);
+        return () -> chars2String(chars.get());
+
+    }
+
+
+    private static String chars2String(List<Character> arbitrary) {
+        return arbitrary
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.joining());
     }
 
     /**
@@ -109,6 +143,25 @@ public final class StrGen implements Gen<String> {
                       .map(it -> String.join("",
                                              it));
     }
+
+    /**
+     * Generates a seq of digits of a length between the specified interval
+     *
+     * @param minLength min length of the string
+     * @param maxLength max length of the string
+     * @return a string generator
+     */
+    public static Gen<String> ascii(final int minLength,
+                                    final int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+        return ListGen.arbitrary(CharGen.ascii.map(String::valueOf),
+                                 minLength,
+                                 maxLength)
+                      .map(it -> String.join("",
+                                             it));
+    }
+
 
     /**
      * Generates a seq of letters of a length between the specified interval
@@ -147,7 +200,6 @@ public final class StrGen implements Gen<String> {
                                              it));
     }
 
-
     /**
      * Generates a seq of alphanumeric characters of a length between the specified interval
      *
@@ -168,17 +220,19 @@ public final class StrGen implements Gen<String> {
 
     }
 
-    public static void main(String[] args) {
-        System.out.println(String.join("",
-                                       Collections.nCopies(2,
-                                                           " ")).length());
+    private static String blank(int length) {
+        if (length <= 0) throw new IllegalArgumentException("length <= 0");
+        return String.join("",
+                           Collections.nCopies(length,
+                                               " "));
+
     }
 
     @Override
     public Supplier<String> apply(final Random gen) {
         Objects.requireNonNull(gen);
         return genStr(gen,
-                      () -> length);
+                      length);
     }
 }
 

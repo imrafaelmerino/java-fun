@@ -19,87 +19,52 @@ public final class BigIntGen implements Gen<BigInteger> {
         this.nBits = nBits;
     }
 
+
+    /**
+     * Constructs a randomly generated BigInteger, uniformly distributed over the range 0 to (2numBits - 1), inclusive.
+     * Note that this generator always generates  non-negative big integers
+     * @param bits  maximum bitLength of the new BigInteger
+     * @return a big integer generator
+     */
     public static Gen<BigInteger> arbitrary(int bits) {
         return new BigIntGen(bits);
-    }
-
-    public static Gen<BigInteger> arbitrary(int minBits,
-                                            int maxBits) {
-        if (maxBits < minBits) throw new IllegalArgumentException("maxBits < minBits");
-        return seed -> {
-
-            Supplier<Integer> bitsSupplier = IntGen.arbitrary(minBits,
-                                                              maxBits)
-                                                   .apply(SplitGen.DEFAULT.apply(requireNonNull(seed)));
-
-            Random bitsSeed = SplitGen.DEFAULT.apply(seed);
-            @SuppressWarnings("serial") Random rnd = new Random() {
-                @Override
-                protected int next(int bits) {
-                    return bitsSeed.nextInt(bits);
-                }
-            };
-
-            return () -> new BigInteger(bitsSupplier.get(),
-                                        rnd);
-
-        };
 
     }
 
-    public static Gen<BigInteger> biased(int minBits,
-                                         int maxBits) {
-        if (maxBits < minBits) throw new IllegalArgumentException("maxBits < minBits");
-        BigInteger min = BigInteger.valueOf(2).pow(minBits).min(BigInteger.ONE);
-        BigInteger max = BigInteger.valueOf(2).pow(maxBits).min(BigInteger.ONE);
+    public static Gen<BigInteger> biased(int bits) {
+
+        BigInteger max = BigInteger.valueOf(2)
+                                   .pow(bits);
 
         List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
-        if (max.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) >= 0 && min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0)
+        if (max.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Long.MAX_VALUE))));
+                             Gen.cons(BigInteger.valueOf(Long.MAX_VALUE))));
 
-        if (max.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) >= 0 && min.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) <= 0)
+        if (max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Long.MIN_VALUE))));
+                             Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE))));
 
-        if (max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0)
+        if (max.compareTo(BigInteger.valueOf(Short.MAX_VALUE)) > 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE))));
-
-        if (max.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
-            gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Integer.MIN_VALUE))));
+                             Gen.cons(BigInteger.valueOf(Short.MAX_VALUE))));
 
 
-        if (max.compareTo(BigInteger.valueOf(Short.MAX_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Short.MAX_VALUE)) < 0)
+        if (max.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) > 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Short.MAX_VALUE))));
+                             Gen.cons(BigInteger.valueOf(Byte.MAX_VALUE))));
 
-        if (max.compareTo(BigInteger.valueOf(Short.MIN_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Short.MIN_VALUE)) < 0)
-            gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Short.MIN_VALUE))));
-
-        if (max.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) < 0)
-            gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Byte.MAX_VALUE))));
-
-        if (max.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) > 0 && min.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) < 0)
-            gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.valueOf(Byte.MIN_VALUE))));
-
-        if (max.compareTo(BigInteger.ZERO) > 0 && min.compareTo(BigInteger.ZERO) < 0)
-            gens.add(Pair.of(1,
-                                Gen.cons(BigInteger.ZERO)));
 
         gens.add(Pair.of(1,
-                            Gen.cons(min)));
+                         Gen.cons(BigInteger.ZERO)));
+
 
         gens.add(Pair.of(1,
-                            Gen.cons(max)));
+                         Gen.cons(max)));
+
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(minBits,
-                                      maxBits)));
+                         arbitrary(bits)));
 
         return Combinators.freqList(gens);
 

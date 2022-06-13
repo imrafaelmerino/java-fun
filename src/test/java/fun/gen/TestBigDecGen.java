@@ -14,12 +14,13 @@ public class TestBigDecGen {
 
         Map<BigDecimal, Long> counts =
                 TestFun.generate(100000,
-                                 BigDecGen.biased(BigDecimal.valueOf(-100000000000000000L),
-                                                  BigDecimal.valueOf(100000000000000000L)));
+                                 BigDecGen.biased(BigDecimal.valueOf(Long.MIN_VALUE),
+                                                  BigDecimal.valueOf(Long.MAX_VALUE)));
+
 
         List<BigDecimal> problematic = TestFun.list(
-                BigDecimal.valueOf(100000000000000000L),
-                BigDecimal.valueOf(-100000000000000000L),
+                BigDecimal.valueOf(Long.MAX_VALUE),
+                BigDecimal.valueOf(Long.MIN_VALUE),
                 BigDecimal.valueOf(Integer.MAX_VALUE),
                 BigDecimal.valueOf(Short.MAX_VALUE),
                 BigDecimal.valueOf(Byte.MAX_VALUE),
@@ -30,7 +31,7 @@ public class TestBigDecGen {
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
                                                          problematic,
-                                                         0.05);
+                                                         0.1);
     }
 
 

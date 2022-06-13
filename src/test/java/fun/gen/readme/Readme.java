@@ -67,7 +67,8 @@ public class Readme {
 
         Gen<User> invalidUserGen = userGen.suchThat(isValid.negate());
 
-        validUserGen.sample(100).forEach(System.out::println);
+        validUserGen.sample(100)
+                    .forEach(System.out::println);
 
 
     }

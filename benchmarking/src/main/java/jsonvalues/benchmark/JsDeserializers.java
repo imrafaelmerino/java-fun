@@ -115,26 +115,26 @@ public class JsDeserializers {
         bh.consume(obj);
     }
 
-    @Benchmark
+    //@Benchmark
     public void jackson_node(Blackhole bh) throws IOException {
         bh.consume(objectMapper.readTree(PERSON_JSON));
     }
 
-    @Benchmark
+    //@Benchmark
     public void jackson_pojo(Blackhole bh) throws JsonProcessingException {
         bh.consume(objectMapper.readValue(PERSON_JSON,
                                           Person.class
         ));
     }
 
-    @Benchmark
+   // @Benchmark
     public void jackson_pojo_bean_validation(Blackhole bh) throws JsonProcessingException {
         bh.consume(validator.validate(objectMapper.readValue(PERSON_JSON,
                                                              PersonWithAnnotations.class
         )));
     }
 
-    @Benchmark
+    //@Benchmark
     public void json_values(Blackhole bh) {
         bh.consume(JsObj.parse(PERSON_JSON));
     }
@@ -145,7 +145,7 @@ public class JsDeserializers {
     }
 
     @Benchmark
-    public void json_spec_parser(Blackhole bh) {
+    public void json_values_spec_parser(Blackhole bh) {
         bh.consume(jsonParser.parse(PERSON_JSON));
     }
 

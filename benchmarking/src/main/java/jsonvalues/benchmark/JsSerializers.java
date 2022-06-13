@@ -20,13 +20,13 @@ public class JsSerializers {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final JsObj json;
     private static final JsonNode node;
-    private static final Person person;
+    private static final Person object;
 
     static {
         try {
             json = JsObj.parse(PERSON_JSON);
             node = objectMapper.readTree(PERSON_JSON);
-            person = objectMapper.readValue(PERSON_JSON,Person.class);
+            object = objectMapper.readValue(PERSON_JSON, Person.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -41,7 +41,7 @@ public class JsSerializers {
 
     @Benchmark
     public void jackson_pojo(Blackhole bh) throws JsonProcessingException {
-        byte[] bytes = objectMapper.writeValueAsBytes(person);
+        byte[] bytes = objectMapper.writeValueAsBytes(object);
         bh.consume(bytes);
     }
 

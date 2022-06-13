@@ -5,6 +5,8 @@ import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
 import jsonvalues.spec.ERROR_CODE;
+
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,62 +20,71 @@ abstract class JsArrayParser {
         this.parser = parser;
     }
 
+
     JsValue nullOrArray(final JsonReader<?> reader) {
-        try {
-            return reader.wasNull() ?
-                   JsNull.NULL :
-                   array(reader);
-        } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
-        }
+        return isNull(reader) ?
+               JsNull.NULL :
+               array(reader);
+
     }
 
     JsValue nullOrArray(final JsonReader<?> reader,
                         int min,
                         int max) {
-        try {
-            return reader.wasNull() ?
-                   JsNull.NULL :
-                   array(reader,
-                         min,
-                         max);
-        } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
-        }
+
+        return isNull(reader) ?
+               JsNull.NULL :
+               array(reader,
+                     min,
+                     max);
     }
 
     public JsArray array(final JsonReader<?> reader,
                          int min,
                          int max) {
         try {
-            if (ifIsEmptyArray(reader)) {
-                if (min > 0) throw reader.newParseError(ParserErrors.EMPTY_ARRAY.apply(min),
-                                                        reader.getCurrentIndex());
-                return EMPTY;
-            }
+            if (checkIfEmpty(isEmptyArray(reader),
+                             min,
+                             reader.getCurrentIndex())) return EMPTY;
             JsArray buffer = EMPTY.append(parser.value(reader));
             while (reader.getNextToken() == ',') {
                 reader.getNextToken();
                 buffer = buffer.append(parser.value(reader));
-                if (buffer.size() > max)
-                    throw reader.newParseError(ParserErrors.TOO_LONG_ARRAY.apply(min),
-                                               reader.getCurrentIndex()
-                    );
+                checkSize(buffer.size() > max,
+                          ParserErrors.TOO_LONG_ARRAY.apply(max),
+                          reader.getCurrentIndex());
+
             }
-            if (buffer.size() < min)
-                throw reader.newParseError(ParserErrors.TOO_SHORT_ARRAY.apply(min),
-                                           reader.getCurrentIndex());
+            checkSize(buffer.size() < min,
+                      ParserErrors.TOO_SHORT_ARRAY.apply(min),
+                      reader.getCurrentIndex());
 
             reader.checkArrayEnd();
             return buffer;
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
         }
+    }
+
+    private boolean checkIfEmpty(boolean reader,
+                                 int min,
+                                 int reader1) {
+        if (reader) {
+            checkSize(min > 0,
+                      ParserErrors.EMPTY_ARRAY.apply(min),
+                      reader1);
+            return true;
+        }
+        return false;
     }
 
     public JsArray array(final JsonReader<?> reader) {
         try {
-            if (ifIsEmptyArray(reader)) return EMPTY;
+            if (isEmptyArray(reader)) return EMPTY;
             JsArray buffer = EMPTY.append(parser.value(reader));
             while (reader.getNextToken() == ',') {
                 reader.getNextToken();
@@ -81,52 +92,62 @@ abstract class JsArrayParser {
             }
             reader.checkArrayEnd();
             return buffer;
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
         }
     }
 
-    boolean ifIsEmptyArray(final JsonReader<?> reader) {
+    boolean isEmptyArray(final JsonReader<?> reader) {
         try {
-            if (reader.last() != '[')
-                throw reader.newParseError(ParserErrors.EXPECTING_FOR_LIST_START,
-                                           reader.getCurrentIndex());
+            checkSize(reader.last() != '[',
+                      ParserErrors.EXPECTING_FOR_LIST_START,
+                      reader.getCurrentIndex());
             reader.getNextToken();
             return reader.last() == ']';
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
         }
     }
-
 
     public JsValue nullOrArraySuchThat(final JsonReader<?> reader,
                                        final Function<JsArray, Optional<Pair<JsValue, ERROR_CODE>>> fn
     ) {
+
+        return isNull(reader) ?
+               JsNull.NULL :
+               arraySuchThat(reader,
+                             fn
+               );
+
+    }
+
+    private boolean isNull(JsonReader<?> reader) {
         try {
-            return reader.wasNull() ?
-                   JsNull.NULL :
-                   arraySuchThat(reader,
-                                 fn
-                   );
+            return reader.wasNull();
+
         } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 
     public JsArray arraySuchThat(final JsonReader<?> reader,
                                  final Function<JsArray, Optional<Pair<JsValue, ERROR_CODE>>> fn
     ) {
-        try {
-            final JsArray array = array(reader);
-            final Optional<Pair<JsValue, ERROR_CODE>> result = fn.apply(array);
-            if (!result.isPresent()) return array;
-            throw reader.newParseError(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
-                                       reader.getCurrentIndex());
-        } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
 
-        }
-
+        final JsArray array = array(reader);
+        final Optional<Pair<JsValue, ERROR_CODE>> result = fn.apply(array);
+        if (!result.isPresent()) return array;
+        throw new JsParserException(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
+                                    reader.getCurrentIndex());
     }
 
     JsArray arrayEachSuchThat(final JsonReader<?> reader,
@@ -135,30 +156,40 @@ abstract class JsArrayParser {
                               final int max
     ) {
         try {
-            if (ifIsEmptyArray(reader)) {
-                if (min > 0) throw reader.newParseError(ParserErrors.EMPTY_ARRAY.apply(min),
-                                                        reader.getCurrentIndex());
-                return EMPTY;
-            }
+            if (checkIfEmpty(isEmptyArray(reader),
+                             min,
+                             reader.getCurrentIndex())) return EMPTY;
 
             JsArray buffer = EMPTY.append(f.get());
             while (reader.getNextToken() == ',') {
                 reader.getNextToken();
                 buffer = buffer.append(f.get());
-                if (buffer.size() > max)
-                    throw reader.newParseError(ParserErrors.TOO_LONG_ARRAY.apply(min),
-                                               reader.getCurrentIndex()
-                    );
+                checkSize(buffer.size() > max,
+                          ParserErrors.TOO_LONG_ARRAY.apply(max),
+                          reader.getCurrentIndex());
             }
-            if (buffer.size() < min)
-                throw reader.newParseError(ParserErrors.TOO_SHORT_ARRAY.apply(min),
-                                           reader.getCurrentIndex());
+            checkSize(buffer.size() < min,
+                      ParserErrors.TOO_SHORT_ARRAY.apply(min),
+                      reader.getCurrentIndex());
+
             reader.checkArrayEnd();
             return buffer;
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
 
         }
+    }
+
+    private void checkSize(boolean buffer,
+                           String TOO_LONG_ARRAY,
+                           int reader) {
+        if (buffer)
+            throw new JsParserException(TOO_LONG_ARRAY,
+                                        reader);
     }
 
     JsValue nullOrArrayEachSuchThat(final JsonReader<?> reader,
@@ -166,17 +197,13 @@ abstract class JsArrayParser {
                                     final int min,
                                     final int max
     ) {
-        try {
-            return reader.wasNull() ?
-                   JsNull.NULL :
-                   arrayEachSuchThat(reader,
-                                     fn,
-                                     min,
-                                     max);
-        } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
 
-        }
+        return isNull(reader) ?
+               JsNull.NULL :
+               arrayEachSuchThat(reader,
+                                 fn,
+                                 min,
+                                 max);
     }
 
 

@@ -3,6 +3,8 @@ package com.dslplatform.json;
 import jsonvalues.JsArray;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
+
+import java.io.IOException;
 import java.util.List;
 
 public final class JsArraySpecParser {
@@ -18,15 +20,16 @@ public final class JsArraySpecParser {
                    JsNull.NULL :
                    array(reader);
         } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 
 
     public JsArray array(final JsonReader<?> reader) {
         try {
-            if (reader.last() != '[') throw reader.newParseError(ParserErrors.EXPECTING_FOR_LIST_START,
-                                                                 reader.getCurrentIndex());
+            if (reader.last() != '[') throw new JsParserException(ParserErrors.EXPECTING_FOR_LIST_START,
+                                                                  reader.getCurrentIndex());
             reader.getNextToken();
             if (reader.last() == ']') return JsArray.empty();
             JsArray buffer = JsArray.empty();
@@ -42,8 +45,12 @@ public final class JsArraySpecParser {
             }
             reader.checkArrayEnd();
             return buffer;
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
         }
     }
 

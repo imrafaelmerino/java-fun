@@ -13,8 +13,12 @@ final class JsInstantParser extends AbstractParser {
     JsInstant value(final JsonReader<?> reader) {
         try {
             return JsInstant.of(Instant.from(ISO_INSTANT.parse(reader.readString())));
-        } catch (IOException | DateTimeParseException e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException | DateTimeParseException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
         }
 
     }

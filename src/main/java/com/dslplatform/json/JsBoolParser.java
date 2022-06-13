@@ -4,6 +4,7 @@ import jsonvalues.JsBool;
 import jsonvalues.JsNull;
 import jsonvalues.JsValue;
 
+
 final class JsBoolParser extends AbstractParser {
 
     @Override
@@ -11,12 +12,12 @@ final class JsBoolParser extends AbstractParser {
         try {
             if (reader.wasTrue()) return JsBool.TRUE;
             if (reader.wasFalse()) return JsBool.FALSE;
-            throw reader.newParseErrorAt(ParserErrors.BOOL_EXPECTED,
-                                         reader.getCurrentIndex()
+            throw new JsParserException(ParserErrors.BOOL_EXPECTED,
+                                        reader.getCurrentIndex()
             );
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
-
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 
@@ -25,21 +26,21 @@ final class JsBoolParser extends AbstractParser {
             return reader.wasNull() ?
                    JsNull.NULL :
                    True(reader);
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
-
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 
     JsBool True(final JsonReader<?> reader) {
         try {
             if (reader.wasTrue()) return JsBool.TRUE;
-            throw reader.newParseErrorAt(ParserErrors.TRUE_EXPECTED,
-                                         reader.getCurrentIndex()
+            throw new JsParserException(ParserErrors.TRUE_EXPECTED,
+                                        reader.getCurrentIndex()
             );
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
-
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 
@@ -48,21 +49,21 @@ final class JsBoolParser extends AbstractParser {
             return reader.wasNull() ?
                    JsNull.NULL :
                    False(reader);
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
-
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 
     public JsBool False(final JsonReader<?> reader) {
         try {
             if (reader.wasFalse()) return JsBool.FALSE;
-            throw reader.newParseErrorAt(ParserErrors.FALSE_EXPECTED,
-                                         reader.getCurrentIndex()
+            throw new JsParserException(ParserErrors.FALSE_EXPECTED,
+                                        reader.getCurrentIndex()
             );
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
-
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
         }
     }
 

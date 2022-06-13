@@ -5,6 +5,7 @@ import jsonvalues.JsObj;
 import jsonvalues.JsValue;
 import jsonvalues.spec.ERROR_CODE;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -19,17 +20,11 @@ final class JsObjParser extends AbstractJsObjParser {
     JsObj valueSuchThat(final JsonReader<?> reader,
                         final Function<JsObj, Optional<Pair<JsValue, ERROR_CODE>>> fn
     ) {
-        try {
-            final JsObj value = value(reader);
-            final Optional<Pair<JsValue, ERROR_CODE>> result = fn.apply(value);
-            if (!result.isPresent()) return value;
-            throw reader.newParseError(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
-                                       reader.getCurrentIndex());
-        } catch (ParsingException e) {
-            throw new JsParserException(e.getMessage());
-
-        }
-
+        final JsObj value = value(reader);
+        final Optional<Pair<JsValue, ERROR_CODE>> result = fn.apply(value);
+        if (!result.isPresent()) return value;
+        throw new JsParserException(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
+                                    reader.getCurrentIndex());
     }
 
     @Override
@@ -49,11 +44,15 @@ final class JsObjParser extends AbstractJsObjParser {
                               valueDeserializer.value(reader));
             }
             if (nextToken != '}')
-                throw reader.newParseError(ParserErrors.EXPECTING_FOR_MAP_END,
-                                           reader.getCurrentIndex());
+                throw new JsParserException(ParserErrors.EXPECTING_FOR_MAP_END,
+                                            reader.getCurrentIndex());
             return map;
-        } catch (Exception e) {
-            throw new JsParserException(e.getMessage());
+        } catch (ParsingException e) {
+            throw new JsParserException(e.getMessage(),
+                                        reader.getCurrentIndex());
+        } catch (IOException e) {
+            throw new JsParserException(e,
+                                        reader.getCurrentIndex());
 
         }
     }

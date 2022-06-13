@@ -101,7 +101,7 @@ abstract class JsArrayParser {
         }
     }
 
-    boolean isEmptyArray(final JsonReader<?> reader) {
+    private boolean isEmptyArray(final JsonReader<?> reader) {
         try {
             checkSize(reader.last() != '[',
                       ParserErrors.EXPECTING_FOR_LIST_START,
@@ -184,11 +184,11 @@ abstract class JsArrayParser {
         }
     }
 
-    private void checkSize(boolean buffer,
-                           String TOO_LONG_ARRAY,
+    private void checkSize(boolean error,
+                           String message,
                            int reader) {
-        if (buffer)
-            throw new JsParserException(TOO_LONG_ARRAY,
+        if (error)
+            throw new JsParserException(message,
                                         reader);
     }
 

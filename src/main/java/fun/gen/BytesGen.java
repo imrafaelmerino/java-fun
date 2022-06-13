@@ -38,13 +38,14 @@ public final class BytesGen implements Gen<byte[]> {
 
         List<Pair<Integer, Gen<? extends byte[]>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
-                            new BytesGen(minLength)));
-        gens.add(Pair.of(1,
-                            new BytesGen(maxLength)));
+                         new BytesGen(minLength)));
+        if (maxLength != minLength)
+            gens.add(Pair.of(1,
+                             new BytesGen(maxLength)));
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(minLength,
-                                      maxLength)));
+                         arbitrary(minLength,
+                                   maxLength)));
 
         return Combinators.freqList(gens);
     }

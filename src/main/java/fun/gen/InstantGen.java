@@ -21,6 +21,7 @@ public final class InstantGen implements Gen<Instant> {
     private static final Gen<Instant> arbitrary = new InstantGen();
     private static final long MAX_SECONDS = Instant.MAX.getEpochSecond();
     private static final long MIN_SECONDS = Instant.MIN.getEpochSecond();
+
     private InstantGen() {
     }
 
@@ -32,18 +33,18 @@ public final class InstantGen implements Gen<Instant> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
 
         gens.add(Pair.of(1,
-                            Gen.cons(MAX_SECONDS)));
+                         Gen.cons(MAX_SECONDS)));
         gens.add(Pair.of(1,
-                            Gen.cons(MIN_SECONDS)));
+                         Gen.cons(MIN_SECONDS)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Integer.MAX_VALUE)));
+                         Gen.cons((long) Integer.MAX_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Integer.MIN_VALUE)));
+                         Gen.cons((long) Integer.MIN_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons(0L)));
+                         Gen.cons(0L)));
         gens.add(Pair.of(gens.size(),
-                            LongGen.arbitrary(MIN_SECONDS,
-                                              MAX_SECONDS)));
+                         LongGen.arbitrary(MIN_SECONDS,
+                                           MAX_SECONDS)));
 
         return Combinators.freqList(gens).map(Instant::ofEpochMilli);
 
@@ -63,20 +64,22 @@ public final class InstantGen implements Gen<Instant> {
 
         if (min <= Integer.MAX_VALUE && max >= Integer.MAX_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Integer.MAX_VALUE)));
+                             Gen.cons((long) Integer.MAX_VALUE)));
         if (min <= Integer.MIN_VALUE && max >= Integer.MIN_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Integer.MIN_VALUE)));
+                             Gen.cons((long) Integer.MIN_VALUE)));
         if (min < 0L && max > 0L)
             gens.add(Pair.of(1,
-                                Gen.cons(0L)));
+                             Gen.cons(0L)));
         gens.add(Pair.of(1,
-                            Gen.cons(min)));
-        gens.add(Pair.of(1,
-                            Gen.cons(max)));
+                         Gen.cons(min)));
+        if (max != min)
+
+            gens.add(Pair.of(1,
+                             Gen.cons(max)));
         gens.add(Pair.of(gens.size(),
-                            LongGen.arbitrary(min,
-                                              max)));
+                         LongGen.arbitrary(min,
+                                           max)));
 
         return Combinators.freqList(gens).map(Instant::ofEpochMilli);
 
@@ -112,7 +115,7 @@ public final class InstantGen implements Gen<Instant> {
      */
     public static Gen<Instant> arbitrary(final long min,
                                          final long max) {
-        if (max <= min)
+        if (max < min)
             throw new IllegalArgumentException(max + " is greater than " + min);
         if (max > MAX_SECONDS)
             throw new IllegalArgumentException(max + " is greater than MAX_SECONDS " + MAX_SECONDS);

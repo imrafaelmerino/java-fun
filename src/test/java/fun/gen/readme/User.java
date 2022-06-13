@@ -1,6 +1,5 @@
 package fun.gen.readme;
 
-import java.util.Set;
 
 public class User {
 

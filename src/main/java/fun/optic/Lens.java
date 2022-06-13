@@ -100,5 +100,16 @@ public  class Lens<S, O> {
         );
     }
 
+    public <B> Option<S,B> compose(final Option<O,B> option){
+
+        return new Option<>(s -> option.get.apply(get.apply(s)),
+                            b -> s -> {
+                                O c = get.apply(s);
+                                if(c==null)return s;
+                                O d = option.set.apply(b).apply(c);
+                                return set.apply(d).apply(s);
+                            });
+    }
+
 
 }

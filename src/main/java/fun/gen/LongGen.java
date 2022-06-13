@@ -31,35 +31,35 @@ public final class LongGen implements Gen<Long> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Integer.MAX_VALUE)));
+                             Gen.cons((long) Integer.MAX_VALUE)));
         if (max > Integer.MIN_VALUE && min < Integer.MIN_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Integer.MIN_VALUE)));
+                             Gen.cons((long) Integer.MIN_VALUE)));
         if (max > Short.MAX_VALUE && min < Short.MAX_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Short.MAX_VALUE)));
+                             Gen.cons((long) Short.MAX_VALUE)));
         if (max > Short.MIN_VALUE && min < Short.MIN_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Short.MIN_VALUE)));
+                             Gen.cons((long) Short.MIN_VALUE)));
         if (max > Byte.MAX_VALUE && min < Byte.MAX_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Byte.MAX_VALUE)));
+                             Gen.cons((long) Byte.MAX_VALUE)));
         if (max > Byte.MIN_VALUE && min < Byte.MIN_VALUE)
             gens.add(Pair.of(1,
-                                Gen.cons((long) Byte.MIN_VALUE)));
+                             Gen.cons((long) Byte.MIN_VALUE)));
         if (max > 0 && min < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(0L)));
+                             Gen.cons(0L)));
 
         gens.add(Pair.of(1,
-                            Gen.cons(min)));
-
-        gens.add(Pair.of(1,
-                            Gen.cons(max)));
+                         Gen.cons(min)));
+        if (max != min)
+            gens.add(Pair.of(1,
+                             Gen.cons(max)));
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(min,
-                                      max)));
+                         arbitrary(min,
+                                   max)));
 
         return Combinators.freqList(gens);
     }
@@ -103,27 +103,27 @@ public final class LongGen implements Gen<Long> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                            Gen.cons(Long.MAX_VALUE)));
+                         Gen.cons(Long.MAX_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons(Long.MIN_VALUE)));
+                         Gen.cons(Long.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                            Gen.cons((long) Integer.MAX_VALUE)));
+                         Gen.cons((long) Integer.MAX_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Integer.MIN_VALUE)));
+                         Gen.cons((long) Integer.MIN_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Short.MAX_VALUE)));
+                         Gen.cons((long) Short.MAX_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Short.MIN_VALUE)));
+                         Gen.cons((long) Short.MIN_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Byte.MAX_VALUE)));
+                         Gen.cons((long) Byte.MAX_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons((long) Byte.MIN_VALUE)));
+                         Gen.cons((long) Byte.MIN_VALUE)));
         gens.add(Pair.of(1,
-                            Gen.cons(0L)));
+                         Gen.cons(0L)));
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary));
+                         arbitrary));
 
         return Combinators.freqList(gens);
     }

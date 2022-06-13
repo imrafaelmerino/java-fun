@@ -33,61 +33,64 @@ public final class BigDecGen implements Gen<BigDecimal> {
         requireNonNull(max);
         if (min.compareTo(max) > 0) throw new IllegalArgumentException("max <= min");
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
-        if (max.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) >= 0
-                && min.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) <= 0)
+        if (max.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) > 0
+                && min.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) < 0
+        )
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
 
-        if (max.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) >= 0
-                && min.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) <= 0)
+        if (max.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) > 0
+                && min.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
 
 
         if (max.compareTo(BigDecimal.valueOf(Short.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Short.MAX_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Short.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Short.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Byte.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Byte.MAX_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Byte.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Byte.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
+                             Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.ZERO) > 0
                 && min.compareTo(BigDecimal.ZERO) < 0)
             gens.add(Pair.of(1,
-                                Gen.cons(BigDecimal.ZERO)));
+                             Gen.cons(BigDecimal.ZERO)));
 
         gens.add(Pair.of(1,
-                            Gen.cons(min)));
+                         Gen.cons(min)));
 
-        gens.add(Pair.of(1,
-                            Gen.cons(max)));
+        if (!max.equals(min))
+            gens.add(Pair.of(1,
+                             Gen.cons(max)));
+
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary(min,
-                                      max)));
+                         arbitrary(min,
+                                   max)));
 
         return Combinators.freqList(gens);
     }
@@ -109,35 +112,35 @@ public final class BigDecGen implements Gen<BigDecimal> {
     public static Gen<BigDecimal> biased() {
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
 
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
+                         Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                            Gen.cons(BigDecimal.valueOf(0))));
+                         Gen.cons(BigDecimal.valueOf(0))));
 
         gens.add(Pair.of(gens.size(),
-                            arbitrary));
+                         arbitrary));
 
         return Combinators.freqList(gens);
     }

@@ -129,7 +129,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
      * <p>
      * Note that this function is a dev helper and is not meant to be used
      * to build other generators.
-     *
+     * @param n the number of elements
      * @return a finite stream of values
      */
     default Stream<O> sample(int n) {

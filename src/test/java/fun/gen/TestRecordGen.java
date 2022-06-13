@@ -699,31 +699,35 @@ public class TestRecordGen {
 
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           BigIntGen.biased(0,
-                                                            10))
+                                           BigIntGen.biased(10))
                                        .sample(100)
-                                       .allMatch(it -> it.getBigInt("a").isPresent()));
+                                       .allMatch(it -> it.getBigInt("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            BigDecGen.arbitrary())
                                        .sample(100)
-                                       .allMatch(it -> it.getDecimal("a").isPresent()));
+                                       .allMatch(it -> it.getDecimal("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            DoubleGen.arbitrary())
                                        .sample(100)
-                                       .allMatch(it -> it.getDouble("a").isPresent()));
+                                       .allMatch(it -> it.getDouble("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            StrGen.biased(1,
                                                          100))
                                        .sample(100)
-                                       .allMatch(it -> it.getStr("a").isPresent()));
+                                       .allMatch(it -> it.getStr("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            CharGen.alphabetic)
                                        .sample(100)
-                                       .allMatch(it -> it.getChar("a").isPresent()));
+                                       .allMatch(it -> it.getChar("a")
+                                                         .isPresent()));
 
 
         Assertions.assertTrue(RecordGen.of("a",
@@ -731,35 +735,41 @@ public class TestRecordGen {
                                                           1,
                                                           100))
                                        .sample(100)
-                                       .allMatch(it -> it.getList("a").isPresent()));
+                                       .allMatch(it -> it.getList("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            InstantGen.arbitrary())
                                        .sample(100)
-                                       .allMatch(it -> it.getInstant("a").isPresent()));
+                                       .allMatch(it -> it.getInstant("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            BoolGen.arbitrary())
                                        .sample(100)
-                                       .allMatch(it -> it.getBool("a").isPresent()));
+                                       .allMatch(it -> it.getBool("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            BytesGen.arbitrary(1,
                                                               10))
                                        .sample(100)
-                                       .allMatch(it -> it.getBytes("a").isPresent()));
+                                       .allMatch(it -> it.getBytes("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            new SetGen<>(IntGen.arbitrary(),
                                                         10))
                                        .sample(100)
-                                       .allMatch(it -> it.getSet("a").isPresent()));
+                                       .allMatch(it -> it.getSet("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            BytesGen.arbitrary(1,
                                                               10))
                                        .sample(100)
-                                       .allMatch(it -> it.getBytes("a").isPresent()));
+                                       .allMatch(it -> it.getBytes("a")
+                                                         .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
                                            new MapGen<>(StrGen.alphanumeric(1,

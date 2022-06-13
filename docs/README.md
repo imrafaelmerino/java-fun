@@ -155,7 +155,7 @@ Requires Java 8 or greater
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <classifier>jdk8</classifier>
 </dependency>
 

@@ -21,13 +21,6 @@ abstract class JsArrayParser {
     }
 
 
-    JsValue nullOrArray(final JsonReader<?> reader) {
-        return isNull(reader) ?
-               JsNull.NULL :
-               array(reader);
-
-    }
-
     JsValue nullOrArray(final JsonReader<?> reader,
                         int min,
                         int max) {

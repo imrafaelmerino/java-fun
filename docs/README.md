@@ -31,7 +31,7 @@ And to make matters worse: complexity sells better._”
 
 ## <a name="cwa"><a/> Code wins arguments
 
-JSON creation
+**JSON creation**
 
 ```java 
 
@@ -45,7 +45,7 @@ JsObj.of("name",JsStr.of("Rafael"),
 
 ```
 
-JSON validation
+**JSON validation**
 
 ```java 
 
@@ -62,7 +62,7 @@ JsObjSpec spec =
     
 ```   
 
-JSON generation
+**JSON generation**
 
 ```java 
           
@@ -87,7 +87,7 @@ Gen<JsObj> invalidDataGen = gen.suchThatNo(spec);
 The biased generators generate, with higher probability, values that are proven
 to cause more bugs in our code (zero, blank strings ...)
 
-JSON manipulation with optics:
+**JSON manipulation free of NullPointerException with optics:**
 
 ```java 
 
@@ -106,8 +106,19 @@ Function<JsObj,JsObj> modify =
 JsObj updated = modify.apply(person); 
 
 ```
+No if-else conditions, no null checks, and I'd say it's pretty expressive and concise.
+As you may notice, each field has an associated optic defined:
 
-Filter and map was never so easy! 
+- age -> ageLens
+- name -> nameLens
+- city -> cityOpt
+- latitude  -> latitudeLens 
+etc
+
+and we just create functions, like _modify_ in the previous example, 
+putting optics together (composition is key to handle complexity).
+
+**Filter and map was never so easy!** 
 
 ```java 
           
@@ -973,11 +984,8 @@ generators are built on top of the generators of java-fun.
 
 ### <a name="optics"><a/>Optics
 
-It’s ubiquitous to have to navigate through recursive data structures like Json objects
-and arrays to find, insert, and modify data. It’s a cumbersome and error-prone task
-(a NullPointerException is always lurking around) that requires a defensive style of
-programming with much boilerplate code. The more nested the structure is, the worse.
-FP uses optics to cope with these limitations.
+json-values uses the optics defined in the library [java-fun](https://github.com/imrafaelmerino/java-fun). Take a look at its readme
+to get a better understanding.
 
 I'm going to follow a top-down approach and show an example of a function crafted with optics.
 
@@ -991,61 +999,12 @@ Function<JsObj, JsObj> modifyPerson =
              .andThen(addLanguage.apply("Lisp"));
              
 ```
+
 No if-else conditions, no null checks, and I'd say it's pretty expressive and concise.
 You'll end up with such simple, readable, and maintainable code working with json-values
 and optics.
-Before getting into more details about optics and their implementation in json-values,
-I'm going to explain ADTs.
 
-A type is nothing else than a name for a set of values. Not like objects, they don't have any behavior. We can operate with types. Given the types A and B and their domains:
-
-```code
-
-A = { "a", "b" }
-B = { 1, 2, 3 }
-
-```
-
-It's possible to create new types out of them. We can pair A and B and get a tuple of two elements:
-
-```code
-
-T = ( A, B )
-T = [ ("a", 1), ("a", 2), ("a", 3), ("b", 1), ("b", 2), ("b", 3) ]
-
-```
-
-The order matter; (B, A) would be a different type. Tuples are product-types ( 2 x 3 possible values).
-
-We can group A and B in fields and get a record:
-
-```code
-
-R = { f: A,  f1: B }
-R = [
-{ f:"a", f1:1}, { f:"a", f1:2}, { f:"a", f1:3}, { f:"b", f1:1},
-{ f:"b", f1:2}, { f:"b", f1:3}
-]
-
-```
-
-The order of the fields doesn't matter. Records are other class of product-types (2 x 3 possible values).
-Java added records in release 14. Thank god!
-
-We can sum A and B and get a sum-type:
-
-```code
-
-S = A | B
-S= [ "a", "b", 1, 2, 3 ]
-
-```
-
-It has  2 + 3 possible values. A sum-type is a type that can be one of the multiple possible options.
-In other words, S is either A or B.
-
-We can consider a JsObj a record and a JsArray a tuple. It's possible to generalize and model both of
-them as records of paths and their associated values:
+It's possible to model JSON as records of paths and their associated values:
 
 ```code
 
@@ -1054,16 +1013,8 @@ Json = { path: JsValue, path1: JsValue, path2: JsValue, ... }
 ```
 
 Paths represent the full location of an element in a Json. They have the type JsPath.
-On the other hand, JsValue is a sum-type that represents any json element:
+On the other hand, JsValue is a sum-type that represents any JSON element.
 
-```code
-
-JsValue = JsNumber | JsStr | JsBool | JsObj | JsArray | JsNull |
-          JsInstant | JsBinary | JsNothing
-
-JsNumber = JsInt | JsLong | JsBigInt | JsDouble | JsDec
-
-```
 
 Considering the following Json:
 
@@ -1100,29 +1051,8 @@ It can be modeled as the following record:
 As you may notice, *  represents all the paths not defined for that Json, and JsNothing is their
 associated value.
 
-Summing up:
 
-- Product types and sum-types are two essential classes of ADT.
-- JsValue is a sum-type.
-- JsPath represents the location of an element in a Json.
-- A Json can be seen as a record of paths and their bindings.
-
-In FP, optics are used to work with ADTs. There are different kinds of optics.
-Lenses and Optionals work great with product-types. Prisms help us work with sum-types.
-Optics allow us to separate concerns.
-
-It's important to distinguish the following concepts:
-
-- The action. An action is a function that executes some operation over the focus of a path.
-- The most important actions are get, set and, modify.
-- The path. The path indicates which data to focus on and where to find it within the structure. In our case, a JsPath.
-- The structure. The structure is the hunk of data that we want to work with. The path selects data from within the structure,
-  and that data will be passed to the action. In our case, the structure could be any Json, either a JsObj or a JsArray.
-- The focus. The smaller piece of the structure indicated by the path. The focus will be passed to the action. In our case, the focus is the sum-type JsValue.
-  We'll see that we can work with primitive types as well.
-
-A Lens zooms in a piece of data within a larger structure. A Lens must never fail to get or modify its focus.
-Find below an example creating some lenses with json-values:
+Find below some examples creating some lenses with json-values:
 
 ```java   
 
@@ -1131,45 +1061,6 @@ Lens<JsObj,JsValue> nameLens = JsObj.lens.value("name");
 Lens<JsObj,JsValue> latitudeLens = JsObj.lens.value(path("/address/coordinates/0"));
 
 Lens<JsObj,JsValue> longitudeLens = JsObj.lens.value(path("/address/coordinates/1"));
-
-```
-
-To create a Lens, we just need the location of the focus we want to work with.
-A Lens type takes two parameters S, the whole structure, and F, the focus:
-
-```code  
-
-lens :: Lens<S, F>
-S = JsObj | JsArray
-F = JsValue | primitive types
-
-```
-
-Later on, we'll see under what conditions we can work with lenses where the
-focus is a primitive type like a string or an integer instead of a JsValue.
-
-Let's discuss the type of the most important actions of a lens:
-
-```code
-
-get :: Function<JsObj, JsValue>
-set :: Function<JsValue, Function<JsObj, JsObj>>
-modify :: Function<Function<JsValue, JsValue>, Function<JsObj, JsObj>>
-
-```
-
-Imagine the focus is the name of a person. The get action is a function that
-takes a person and returns their name. The set action is a function that takes
-a new name and returns a function that, given a person, it produces a new one
-with the new name.
-The modify action is like set, but instead of a name, it takes a function to
-produce a new name from the old one.
-
-Let's check out a practical example.
-
-```java   
-
-Lens<JsObj, JsValue> nameLens = JsObj.lens.value("name");
 
 JsStr name = JsStr.of("Rafael");
 
@@ -1191,26 +1082,7 @@ Assertions.assertEquals(JsStr.of("RAFAEL"),
 I’ve implemented the toUpper function in a very imperative fashion. We’ll see
 in just a moment how to do the same thing with a Prism.
 
-Do notice that it’s at the very end when we passed in the person Json into the
-functions.
-In OOP, it would be just the opposite, the starting point would be a person
-object, and then we would get or set a value with a getter or setter. In FP,
-we describe actions; then, we may compose them, and it’s at the last moment
-when we specify the inputs and execute them.
-
-A Lens must respect the getSet law, which states that if you get a value and
-set it back in, the result is a value identical to the original one. A side
-effect of this law is that set must only update the value it points to,
-nothing else. On the other hand, the setGet law states that if you set a value,
-you always get the same value. This law guarantees that set is updating a value
-inside the container. Laws are relevant in FP. They help us reason about our
-code more clearly.
-
-
-Let's change gears and talk about Prisms. If you think of a Prism does to light,
-it happens the same with the sum-type JsValue. We have several subtypes to
-consider, and we want to focus on a specific one. Every type in json-value has
-a Prism. Find below some of them:
+Every type in json-value has a Prism. Find below some of them:
 
 ```code  
 
@@ -1222,29 +1094,6 @@ JsObj.prism   :: Prism<JsValue, JsObj>
 JsArray.prism :: Prism<JsValue, JsArray>
 
 ```
-
-Considering the Prism defined for the JsStr  type, let's take a look at the
-most important actions and their signatures:
-
-```code  
-
-getOptional :: Function<JsValue, Optional<String>>
-
-modify :: Function<Function<String, String>, Function<JsValue, JsValue>>
-
-modifyOpt :: Function<Function<String, String>, Function<JsValue, Optional<JsValue>>>
-
-```
-
-The getOptional function takes a JsValue, and if it's not a JsStr, it returns an _Optional.empty_.
-If it's a JsStr, it returns its value wrapped in an Optional. Nothing exceptional, isn't it?
-
-The modify function  is handy. I use it all the time. It takes a function to map strings
-and returns a function from JsValue to JsValue. If the input value is a JsStr, it applies
-the map function on it and returns it. If it is not a JsStr, we can not use the map function,
-and the input is returned as it was. Do notice that we don't care about the success of the
-operation. If we do, we can use the modifyOpt action.  It's the same, but when de map
-function can not be applied, an empty Optional is returned.
 
 Let's put some examples:
 
@@ -1286,8 +1135,8 @@ Assertions.assertEquals(Optional.empty(),
 
 ``` 
 
-And finally, let's go back to the modifyPerson we defined previously and implement it step by
-step using lenses and prisms.
+And finally, let's go back to the modifyPerson we defined previously and implement it 
+step by step using lenses and prisms.
 
 ``` java
 
@@ -1345,7 +1194,8 @@ Summing up:
   It's called Option and not Optional to not mix it up with java.util.Optional
 - Defining a Lens<JsObj, JsValue> is valid always. It requires Prisms to manipulate the focus.
 
-Let's rewrite the modifyPerson defining lenses with more specific types instead of JsValue. We validate the person Json with a spec before applying the function, which makes the operation safe.
+Let's rewrite the modifyPerson defining lenses with more specific types instead of JsValue. 
+We validate the person Json with a spec before applying the function, which makes the operation safe.
 
 ```java   
 

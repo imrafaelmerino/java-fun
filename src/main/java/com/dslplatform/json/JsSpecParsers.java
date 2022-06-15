@@ -131,7 +131,7 @@ public final class JsSpecParsers {
                             testTypeAndSpec(JsValue::isObj,
                                             JsValue::toJsObj,
                                             predicate,
-                                            () -> new IllegalStateException("Internal error.JsObjDeserializer.nullOrValue didn't return wither null or a JsObj as expected.")
+                                            () -> new IllegalStateException("Internal error. JsObjDeserializer.nullOrValue didn't return wither null or a JsObj as expected.")
                             ).apply(value);
                     if (!opErr.isPresent()) return value;
                     else throw newParseException.apply(reader,
@@ -688,7 +688,7 @@ public final class JsSpecParsers {
                         testTypeAndSpec(JsValue::isLong,
                                         v -> v.toJsLong().value,
                                         predicate::apply,
-                                        () -> new IllegalStateException("Internal error.JsLongDeserializer.nullOrValue didn't return neither null or a JsLong as expected.")
+                                        () -> new IllegalStateException("Internal error. JsLongDeserializer.nullOrValue didn't return neither null or a JsLong as expected.")
                         ).apply(value);
                 if (!optErr.isPresent()) return value;
                 else throw newParseException.apply(reader,
@@ -766,7 +766,7 @@ public final class JsSpecParsers {
                         testTypeAndSpec(v -> value.isBinary(),
                                         v -> v.toJsBinary().value,
                                         predicate,
-                                        () -> new IllegalStateException("JsBinaryDeserializer.nullOrValue didn't return neither null or a byte[] as expected.")
+                                        () -> new IllegalStateException("Internal error. JsBinaryDeserializer.nullOrValue didn't return neither null or a byte[] as expected.")
                         ).apply(value);
 
                 if (!opErr.isPresent()) return value;
@@ -807,7 +807,7 @@ public final class JsSpecParsers {
                         testTypeAndSpec(v -> value.isInt(),
                                         v -> v.toJsInt().value,
                                         predicate::apply,
-                                        () -> new IllegalStateException("JsIntDeserializer.nullOrValue didn't return neither null or a Int as expected.")
+                                        () -> new IllegalStateException("Internal error. JsIntDeserializer.nullOrValue didn't return neither null or a Int as expected.")
                         ).apply(value);
                 if (!opErr.isPresent()) return value;
                 else throw newParseException.apply(reader,
@@ -838,7 +838,6 @@ public final class JsSpecParsers {
     public JsSpecParser ofInstantSuchThat(Function<Instant, Optional<Pair<JsValue, ERROR_CODE>>> predicate,
                                           boolean nullable
     ) {
-
         if (nullable) return reader ->
         {
             JsValue value = PARSERS.instantParser.nullOrValue(reader);
@@ -848,7 +847,7 @@ public final class JsSpecParsers {
                         testTypeAndSpec(v -> value.isInstant(),
                                         v -> v.toJsInstant().value,
                                         predicate,
-                                        () -> new IllegalStateException("JsInstantDeserializer.nullOrValue didn't return neither null or an instant as expected.")
+                                        () -> new IllegalStateException("Internal error. JsInstantDeserializer.nullOrValue didn't return neither null or an instant as expected.")
                         ).apply(value);
                 if (!opErr.isPresent()) return value;
                 else throw newParseException.apply(reader,

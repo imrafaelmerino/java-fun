@@ -63,13 +63,13 @@ abstract class JsArrayParser {
         }
     }
 
-    private boolean checkIfEmpty(boolean reader,
+    private boolean checkIfEmpty(boolean error,
                                  int min,
-                                 int reader1) {
-        if (reader) {
+                                 int reader) {
+        if (error) {
             checkSize(min > 0,
                       ParserErrors.EMPTY_ARRAY.apply(min),
-                      reader1);
+                      reader);
             return true;
         }
         return false;

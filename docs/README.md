@@ -86,9 +86,9 @@ Let's create a User generator:
 
  Gen<String> nameGen = StrGen.alphabetic(0, 100);
 
- Gen<User> userGen = RecordGen.of(LOGIN_FIELD, "login",
-                                  PASSWORD_FIELD, "password",
-                                  NAME_FIELD, "name")
+ Gen<User> userGen = RecordGen.of("login", loginGen,
+                                  "name", nameGen,
+                                  "password", passwordGen)
                               .setAllOptionals()
                               .map(record ->
                                              new User(record.getStr("login").orElse(null),

@@ -491,15 +491,6 @@ Person newPerson = setCoordiantes.apply(new Coordinates(14.5,45.78)).apply(perso
 The takeaway is declarative and expressive the function modifyPerson is in
 the above example. Besides, it's utterly safe without writing any null check.
 
-
-
-## <a name="notwhatfor"><a/> When not to use it
-
-json-values fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
-Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters
-or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart
-Halloway** is a
-great talk that elaborates ironically on this point.
 ### <a name="lenses"><a/> Lenses
 
 ### <a name="optionals"><a/> Optionals

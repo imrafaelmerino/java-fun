@@ -11,11 +11,7 @@
     - [Combinators](#com)
     - [Objects Generators](#og)
     - [Useful and common patterns](#ucp)
-
 - [Optics](#optics)
-    - [Lenses](#lenses) 
-    - [Optionals](#optionals)
-    - [Prism](#prism)
 - [Requirements](#req)
 - [Installation](#inst)
 - [Related projects](#rp)
@@ -118,7 +114,7 @@ generators of valid and invalid data:
   
 
 ```
-## <a name="optics"><a/> Optics
+## <a name="optics"><a/> Optics: Lenses, Optionals and Prism
 
 It’s ubiquitous to have to navigate through recursive data structures like records
 and tuples to find, insert, and modify data. It’s a cumbersome and error-prone task
@@ -488,12 +484,6 @@ Person newPerson = setCoordiantes.apply(new Coordinates(14.5,45.78))
 
 
 ```  
-
-### <a name="lenses"><a/> Lenses
-
-### <a name="optionals"><a/> Optionals
-
-### <a name="prism"><a/> Prism
 
 ## <a name="req"><a/> Requirements
 

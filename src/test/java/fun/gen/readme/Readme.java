@@ -4,7 +4,11 @@ import fun.gen.Combinators;
 import fun.gen.Gen;
 import fun.gen.RecordGen;
 import fun.gen.StrGen;
+import fun.optic.Option;
+import fun.optic.Prism;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 
@@ -46,9 +50,12 @@ public class Readme {
                 );
 
 
-        Gen<User> userGen = RecordGen.of(LOGIN_FIELD, loginGen,
-                                         PASSWORD_FIELD, passwordGen,
-                                         NAME_FIELD, nameGen)
+        Gen<User> userGen = RecordGen.of(LOGIN_FIELD,
+                                         loginGen,
+                                         PASSWORD_FIELD,
+                                         passwordGen,
+                                         NAME_FIELD,
+                                         nameGen)
                                      .setAllOptionals()
                                      .map(record ->
                                                   new User(record.getStr(LOGIN_FIELD).orElse(null),
@@ -71,7 +78,31 @@ public class Readme {
                     .forEach(System.out::println);
 
 
+        Prism<Exception, RuntimeException> prism =
+                new Prism<>(e -> {
+                    if (e instanceof RuntimeException) return Optional.of(((RuntimeException) e));
+                    return Optional.empty();
+                },
+                            r -> r);
+
+        Prism<String, Integer> intPrism =
+                new Prism<>(str -> {
+                    try {
+                        return Optional.of(Integer.parseInt(str));
+                    } catch (NumberFormatException e) {
+                        return Optional.empty();
+                    }
+                },
+                            integer -> Integer.toString(integer)
+                );
+
+
+
+
+
     }
+
+
 
 
 }

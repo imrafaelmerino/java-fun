@@ -51,7 +51,8 @@ way. With java-fun, it's child's play!
 ### <a name="ucc"><a/> Useful and common cases
 
 
-You can generate any object from your model just using the _RecordGen_ and the function map
+You can generate any object from your model just using the _RecordGen_ and the function map.
+Consider the class User, which could be a Record:
 
 ```java 
 
@@ -75,45 +76,24 @@ public class User {
 
 ```
 
+Let's create a User generator:
+
 ```java   
 
- private static final String LOGIN_FIELD = "login";
- private static final String PASSWORD_FIELD = "password";
- private static final String NAME_FIELD = "name";
- private static final int MAX_LOGIN_GEN_LENGTH = 100;
- private static final int MAX_PASSWORD_GEN_LENGTH = 100;
- private static final int MAX_NAME_GEN_LENGTH = 100;
+ Gen<String> loginGen = StrGen.alphabetic(0, 100);
 
- Gen<String> loginGen =
-                Combinators.oneOf(StrGen.alphabetic(0,
-                                                    MAX_LOGIN_GEN_LENGTH),
-                                  StrGen.biased(0,
-                                                MAX_LOGIN_GEN_LENGTH)
-                );
+ Gen<String> passwordGen = StrGen.biased(0, 100);
 
- Gen<String> passwordGen =
-                Combinators.oneOf(StrGen.alphabetic(0,
-                                                    MAX_PASSWORD_GEN_LENGTH),
-                                  StrGen.biased(0,
-                                                MAX_PASSWORD_GEN_LENGTH)
-                );
+ Gen<String> nameGen = StrGen.alphabetic(0, 100);
 
- Gen<String> nameGen =
-                Combinators.oneOf(StrGen.alphabetic(0,
-                                                    MAX_NAME_GEN_LENGTH),
-                                  StrGen.biased(0,
-                                                MAX_NAME_GEN_LENGTH)
-                );
-
-
- Gen<User> userGen = RecordGen.of(LOGIN_FIELD, loginGen,
-                                  PASSWORD_FIELD, passwordGen,
-                                  NAME_FIELD, nameGen)
+ Gen<User> userGen = RecordGen.of(LOGIN_FIELD, "login",
+                                  PASSWORD_FIELD, "password",
+                                  NAME_FIELD, "name")
                               .setAllOptionals()
                               .map(record ->
-                                             new User(record.getStr(LOGIN_FIELD).orElse(null),
-                                                      record.getStr(NAME_FIELD).orElse(null),
-                                                      record.getStr(PASSWORD_FIELD).orElse(null))
+                                             new User(record.getStr("login").orElse(null),
+                                                      record.getStr("name").orElse(null),
+                                                      record.getStr("password").orElse(null))
                                   );
 
 ```
@@ -137,6 +117,378 @@ public class User {
 ```
 ## <a name="optics"><a/> Optics
 
+It’s ubiquitous to have to navigate through recursive data structures like records
+and tuples to find, insert, and modify data. It’s a cumbersome and error-prone task
+(a NullPointerException is always lurking around) that requires a defensive style of
+programming with much boilerplate code. The more nested the structure is, the worse.
+The imperative style uses getters and setters with the mentioned inconveniences, 
+whereas FP uses optics to cope with these limitations,. 
+
+Before getting into more details about optics and their implementation in java-fun,
+I'm going to explain ADTs (Algebraic Data Types).
+
+A type is nothing else than a name for a set of values. Not like objects, they don't have 
+any behavior. We can operate with types. Given the types A and B and their domains:
+
+```code
+
+A = { "a", "b" }
+B = { 1, 2, 3 }
+
+```
+
+It's possible to create new types out of them. We can pair A and B and get a tuple 
+of two elements:
+
+```code
+
+T = ( A, B )
+T = [ ("a", 1), ("a", 2), ("a", 3), ("b", 1), ("b", 2), ("b", 3) ]
+
+```
+
+The order matter; (B, A) would be a different type. Tuples are product-types ( 2 x 3 possible values).
+
+We can group A and B in fields and get a record:
+
+```code
+
+R = { f: A,  f1: B }
+R = [
+{ f:"a", f1:1}, { f:"a", f1:2}, { f:"a", f1:3}, { f:"b", f1:1},
+{ f:"b", f1:2}, { f:"b", f1:3}
+]
+
+```
+
+The order of the fields doesn't matter. Records are other class of product-types (2 x 3 possible values).
+Java added records in release 14. Thank god!
+
+We can sum A and B and get a sum-type:
+
+```code
+
+S = A | B
+S= [ "a", "b", 1, 2, 3 ]
+
+```
+
+It has  2 + 3 possible values. A sum-type is a type that can be one of the multiple possible options.
+In other words, S is either A or B.
+
+In FP, optics are used to work with ADTs. There are different kinds of optics.
+**Lenses** and **Optionals** work great with product-types. **Prisms** help us work with sum-types.
+Optics allow us to separate concerns.
+
+It's important to distinguish the following concepts:
+
+- The action. An action is a function that executes some operation over the focus of a path.
+- The most important actions are get, set and, modify.
+- The path. The path indicates which data to focus on and where to find it within the structure.
+- The structure. The structure is the hunk of data that we want to work with. The path selects data from within the structure,
+  and that data will be passed to the action. 
+- The focus. The smaller piece of the structure indicated by the path. The focus will be passed to the action.
+
+A Lens zooms in a piece of data within a larger structure. **A Lens must never fail to get or modify its focus.**
+On the other hand, an Optional (dont confuse with Java Optional class), is another optic just like a lens, but the focus may not exist
+
+We'll use the following records to put some examples:
+
+```java     
+
+public record Person(String name, Address address, Integer ranking) {
+
+    public Person {
+        if(name==null || name.isBlank()) throw new IllegalArgumentException("name empty");
+  
+        if(address == null) throw new IllegalArgumentException("address empty");
+    }
+
+}
+
+public record Address(Coordinates coordinates, String description) {
+
+    public Address {
+        if(coordinates == null && description == null)  throw new IllegalArgumentException("invalid address");
+    }
+
+}
+
+public record Coordinates(double latitude, double longitude) {
+
+    public Coordinates {
+        if(longitude < -180 || longitude > 180) throw new IllegalArgumentException("180 => longitude >= -180");
+        
+        if(latitude < -90 || latitude > 90) throw new IllegalArgumentException("90 => latitude >= -90");
+    }
+}
+
+
+
+```
+
+Let's create some optics with json-fun:
+
+```java   
+   // Person is the whole structure
+   // Address is the focus, an it's a mandatory field
+   Lens<Person, Address> addressLens =
+         new Lens<>(Person::address,
+                    address -> person -> new Person(person.name(),
+                                                    address,
+                                                    person.birthDate()));
+
+      
+   // Person is the whole structure
+   // The String representing the name is the focus, and it's a required field
+   Lens<Person, String> nameLens =
+         new Lens<>(Person::name,
+                    name -> person -> new Person(name,
+                                                 person.address(),
+                                                 person.birthDate()));
+   
+   // Person is the whole structure
+   // Integer is the focus, and it's not required                                            
+   Option<Person, Integer> rankingOpt =
+         new Option<>(person -> Optional.ofNullable(person.ranking()),
+                      ranking -> person -> new Person(person.name(),
+                                                      person.address(),
+                                                      ranking));
+```
+
+As you can see, to create a Lens or and Optional you just need to define the _get_ and _set_ actions.
+In lenses the get action returns the focus, whereas in optionals it returns the focus wrapped in a
+Java Optional since it may not exist. In java-fun the Optional optic is called Option, to not mix it up
+with the Java Optional.
+
+And what about the modify action? It's created internally from get and set! 
+An important takeaway is how cumbersome to modify records is. They are immutable
+data structures and every modification means to create a new instance. This is other
+advantage that optics help you to cope with.
+
+
+Let's discuss the type of the most important actions of a lens and an optional, where S is the
+type of the whole structure and F the type of the focus:
+
+```code
+
+get :: Function<S, F>            // for lenses
+get :: Function<S, Optional<F>>  // for optionals
+set :: Function<F, Function<S, S>>
+modify :: Function<Function<F, F>, Function<S, S>>
+
+```
+
+Imagine the focus is the name of the person. The get action is a function that
+takes a person and returns their name. The set action is a function that takes
+a new name and returns a function that, given a person, it produces a new one
+with the new name. The modify action is like set, but instead of a name, it takes 
+a function to produce a new name from the old one. 
+
+
+Let's check out a practical example.
+
+```java   
+
+Person joe = new Person("Joe",address,null)
+
+Person joeArmstrong = nameLens.set.apply("Joe Armstrong").apply(pedro);
+
+// records are immutable
+Assertions.assertEquals("Joe",
+                        nameLens.get.apply(joe));
+                        
+Assertions.assertEquals("Joe Armstrong",
+                        nameLens.get.apply(joeArmstrong));                        
+
+Function<String, String> toUpper = String::toUpperCase;
+
+Person joeUpper = nameLens.modify.apply(toUpper).apply(joe);
+
+Assertions.assertEquals("JOE",
+                        nameLens.get.apply(updated));
+                        
+//let's increment the ranking by one
+
+//since ranking is null, the same person is returned       
+Assertions.assertEquals(joe, rankingOpt.modify.apply(ranking -> ranking + 1).apply(joe))       
+
+Person joeRanked = rankingOpt.set(1).apply(joe);
+
+Assertions.assertEquals(1, joeRanked.ranking())       
+
+//since ranking is 1, the function is applied and a new preson is created
+Person joeRankedUpdated = rankingOpt.modify.apply(ranking -> ranking * 10).apply(joeRanked);
+
+Assertions.assertEquals(10, joeRankedUpdated.ranking())       
+               
+```
+
+Do notice that it’s at the very end when we passed in the person into the
+functions. In OOP, it would be just the opposite, the starting point would 
+be a person object, and then we would get or set a value with a getter or setter. In FP,
+we describe actions; then, we may compose them, and it’s at the last moment
+when we specify the inputs and execute them.
+
+A Lens must respect the getSet law, which states that if you get a value and
+set it back in, the result is a value identical to the original one. A side
+effect of this law is that set must only update the value it points to,
+nothing else. On the other hand, the setGet law states that if you set a value,
+you always get the same value. This law guarantees that set is updating a value
+inside the container. Laws are relevant in FP. They help us reason about our
+code more clearly.
+
+
+Let's change gears and talk about Prisms. If you think of a Prism does to light,
+it happens the same with any sum-type. We have several subtypes to
+consider, and we want to focus on a specific one.  Let's create a Prism
+
+```code  
+
+  Prism<Exception, RuntimeException> prism =
+                  new Prism<>(e -> {
+                      if (e instanceof RuntimeException) return Optional.of(((RuntimeException) e));
+                      return Optional.empty();
+                  },
+                              r -> r);
+                            
+```      
+
+You need to create two functions. The first one, how to go from the type Exception to the specific
+subtype RuntimeException, and the second one, the other way around (since a RuntimeException is a 
+Exception, just return it).
+
+But you can create Prism to extract a subset of values with a specific property from a more generic set. 
+For example, let's create a Prism to get all string that are integer numbers:
+
+```code         
+
+   Prism<String, Integer> intPrism =
+                new Prism<>(str -> {
+                     try {
+                        return Optional.of(Integer.parseInt(str));
+                        } 
+                     catch (NumberFormatException e) {
+                        return Optional.empty();
+                     }
+                    },
+                            integer -> Integer.toString(integer)
+                );
+```
+
+As you can see the first function goes from String to Integer,and it can fail, since there are a lot of strings
+that are not numbers. And the second one goes from Integer to String and of course, it never fails 
+(every number has a string representation)
+
+Considering the above Prism, let's take a look at the most important actions and their signatures:
+
+```code  
+
+getOptional :: Function<String, Optional<Integer>>
+
+modify :: Function<Function<Integer, Integer>, Function<String, String>>
+
+modifyOpt :: Function<Function<Integer, Integer>, Function<String, Optional<String>>>
+
+```
+
+The getOptional function takes a String, and if it's not a number, it returns an _Optional.empty_.
+If it's a number, it returns its value wrapped in an Optional. Nothing exceptional, isn't it?
+
+The modify function is handy. I use it all the time. It takes a function to map numbers
+and returns a function from String to String. If the input value is a number, it applies
+the map function on it and returns it as a String. If it is not a number, we can not use 
+the map function, and the input is returned as it was. Do notice that we don't care about 
+the success of the operation. If we do, we can use the modifyOpt action.  It's the same, 
+but when de map function can not be applied, an empty Optional is returned.
+
+Let's put some examples with the intPrism defined above:
+
+```java 
+
+Assertions.assertEquals(Optional.of("10"),
+                        intPrism.getOptional.apply("10"));
+
+// apple is not a string, empty is returned
+Assertions.assertEquals(Optional.empty(),
+                        intPrism.getOptional.apply("apple"));
+
+Assertions.assertEquals("10",
+                        intPris.mmodify.apply(a -> a * 10)
+                                      .apply("1"));
+
+// apple is not a string, the same value is returned
+Assertions.assertEquals("apple",
+                        intPrism.modify.apply(a -> a * 10)
+                                       .apply("apple"));
+
+``` 
+
+You can compose lenses, optional and prism. For example:
+
+``` java
+
+   Option<Address, Coordinates> coordinatesOpt =
+         new Option<>(address -> Optional.ofNullable(address.coordinates()),
+                      coordiantes -> address -> new Address(coordinates,
+                                                            address.description(),
+                                                            )
+                     );
+            
+   Lens<Coordinate, Double> longitudeOpt =
+         new Option<>(Coordinates::longitude,
+                      coordinates -> lon -> new Coordinates(long,
+                                                            coordinates.latitude()
+                                                            )
+                     );
+            
+                        
+   Lens<Coordinate, Double> latitudeOpt =
+         new Option<>(Coordinates::latitude,
+                      coordinates -> lat -> new Coordinates(coordiantes.longitude(),
+                                                            lat
+                                                            )
+                     );
+            
+   // let's apply composition!
+ 
+   Option<Person,Double> personLatitudeOpt = 
+                addressLens.compose(coordinatesOpt)
+                           .compose(latitudeLens);    
+
+   Option<Person,Double> personLongitudeOpt = 
+                addressLens.compose(coordinatesOpt)
+                           .compose(longitude);                        
+            
+            
+```    
+
+Composition is key to handle complexity. Imagine you have to create a function to set the latitude
+and longitude of a person:
+
+```  java
+
+Function<Coordinates,Function<Person,Person>> setCoordinates = 
+        c -> personLatitudeOpt.set.apply(c.latitude())
+                              .andThen(personLongitudeOpt.set.apply(c.longitude()))
+                               
+Person newPerson = setCoordiantes.apply(new Coordinates(14.5,45.78)).apply(person);                          
+
+
+```  
+
+The takeaway is declarative and expressive the function modifyPerson is in
+the above example. Besides, it's utterly safe without writing any null check.
+
+
+
+## <a name="notwhatfor"><a/> When not to use it
+
+json-values fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
+Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters
+or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart
+Halloway** is a
+great talk that elaborates ironically on this point.
 ### <a name="lenses"><a/> Lenses
 
 ### <a name="optionals"><a/> Optionals

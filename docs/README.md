@@ -50,7 +50,7 @@ way. With java-fun, it's child's play!
 ### <a name="og"><a/> Objects Generators
 
 You can generate any object from your model just using the _RecordGen_ and the function map.
-Consider the class User, which could be a Record:
+Consider the class User:
 
 ```java 
 
@@ -73,6 +73,8 @@ public class User {
 }
 
 ```
+
+Let's define a User generator:
 
 
 ```java   
@@ -123,7 +125,7 @@ and tuples to find, insert, and modify data. It’s a cumbersome and error-prone
 (a NullPointerException is always lurking around) that requires a defensive style of
 programming with much boilerplate code. The more nested the structure is, the worse.
 The imperative style uses getters and setters with the mentioned inconveniences, 
-whereas FP uses optics to cope with these limitations,. 
+whereas Functional Programming uses optics to cope with these limitations,. 
 
 Before getting into more details about optics and their implementation in java-fun,
 I'm going to explain ADTs (Algebraic Data Types).
@@ -178,20 +180,20 @@ It has  2 + 3 possible values. A sum-type is a type that can be one of the multi
 In other words, S is either A or B.
 
 In FP, optics are used to work with ADTs. There are different kinds of optics.
-**Lenses** and **Optionals** work great with product-types. **Prisms** help us work with sum-types.
+**Lenses** and **Optionals**(don't confuse with Java Optional class) work great with product-types. **Prisms** help us work with sum-types.
 Optics allow us to separate concerns.
 
 It's important to distinguish the following concepts:
 
 - The action. An action is a function that executes some operation over the focus of a path.
-- The most important actions are get, set and, modify.
+The most important actions are _get_, _set_ and, _modify_.
 - The path. The path indicates which data to focus on and where to find it within the structure.
 - The structure. The structure is the hunk of data that we want to work with. The path selects data from within the structure,
   and that data will be passed to the action. 
 - The focus. The smaller piece of the structure indicated by the path. The focus will be passed to the action.
 
 A Lens zooms in a piece of data within a larger structure. **A Lens must never fail to get or modify its focus.**
-On the other hand, an Optional (dont confuse with Java Optional class), is another optic just like a lens, but the focus may not exist
+On the other hand, an Optional, is another optic just like a lens, but the focus may not exist
 
 We'll use the following records to put some examples:
 
@@ -215,7 +217,7 @@ public record Address(Coordinates coordinates, String description) {
 
 }
 
-public record Coordinates(double latitude, double longitude) {
+public record Coordinates(double longitude, double latitude) {
 
     public Coordinates {
         if(longitude < -180 || longitude > 180) throw new IllegalArgumentException("180 => longitude >= -180");
@@ -232,7 +234,8 @@ Let's create some optics with json-fun:
 
 ```java   
    // Person is the whole structure
-   // Address is the focus, an it's a mandatory field
+   // Address is the focus, an it's a required field according to Person constructor
+   
    Lens<Person, Address> addressLens =
          new Lens<>(Person::address,
                     address -> person -> new Person(person.name(),
@@ -241,7 +244,8 @@ Let's create some optics with json-fun:
 
       
    // Person is the whole structure
-   // The String representing the name is the focus, and it's a required field
+   // The String representing the name is the focus, and it's also a required field
+   
    Lens<Person, String> nameLens =
          new Lens<>(Person::name,
                     name -> person -> new Person(name,
@@ -249,7 +253,9 @@ Let's create some optics with json-fun:
                                                  person.birthDate()));
    
    // Person is the whole structure
-   // Integer is the focus, and it's not required                                            
+   // The Integer representing the ranking is the focus, and it's not required
+   // we use an optional instead of a lens                                           
+   
    Option<Person, Integer> rankingOpt =
          new Option<>(person -> Optional.ofNullable(person.ranking()),
                       ranking -> person -> new Person(person.name(),
@@ -259,17 +265,18 @@ Let's create some optics with json-fun:
 
 As you can see, to create a Lens or and Optional you just need to define the _get_ and _set_ actions.
 In lenses the get action returns the focus, whereas in optionals it returns the focus wrapped in a
-Java Optional since it may not exist. In java-fun the Optional optic is called Option, to not mix it up
-with the Java Optional.
+Java Optional since it may not exist. In java-fun the optional optic is called Option.
 
-And what about the modify action? It's created internally from get and set! 
-An important takeaway is how cumbersome to modify records is. They are immutable
-data structures and every modification means to create a new instance. This is other
-advantage that optics help you to cope with.
+And what about the modify action? It's created internally from _get_ and _set_! 
+
+Defining the _set_ action you may notice how cumbersome to create records is. 
+They are immutable data structures and every modification means to create a new instance. 
+And it's even more cumbersome when we have nested records. We'll see how composing optics 
+can help us with this.
 
 
-Let's discuss the type of the most important actions of a lens and an optional, where S is the
-type of the whole structure and F the type of the focus:
+Let's discuss the type of the most important actions of a lens and an optional, 
+where S is the type of the whole structure and F the type of the focus:
 
 ```code
 
@@ -291,7 +298,7 @@ Let's check out a practical example.
 
 ```java   
 
-Person joe = new Person("Joe",address,null)
+Person joe = new Person("Joe",address,null);
 
 Person joeArmstrong = nameLens.set.apply("Joe Armstrong").apply(joe);
 
@@ -312,16 +319,19 @@ Assertions.assertEquals("JOE",
 //let's increment the ranking by one
 
 //since ranking is null, the same person is returned       
-Assertions.assertEquals(joe, rankingOpt.modify.apply(ranking -> ranking + 1).apply(joe))       
+Assertions.assertEquals(joe, 
+                        rankingOpt.modify.apply(ranking -> ranking + 1).apply(joe))       
 
 Person joeRanked = rankingOpt.set(1).apply(joe);
 
-Assertions.assertEquals(1, joeRanked.ranking())       
+Assertions.assertEquals(1, 
+                        joeRanked.ranking())       
 
-//since ranking is 1, the function is applied and a new preson is created
+//since ranking is 1, the function is applied and a new person is created
 Person joeRankedUpdated = rankingOpt.modify.apply(ranking -> ranking * 10).apply(joeRanked);
 
-Assertions.assertEquals(10, joeRankedUpdated.ranking())       
+Assertions.assertEquals(10, 
+                        joeRankedUpdated.ranking())       
                
 ```
 
@@ -436,7 +446,7 @@ You can compose lenses, optional and prism. For example:
                                                             )
                      );
             
-   Lens<Coordinate, Double> longitudeOpt =
+   Lens<Coordinate, Double> longitudeLens =
          new Option<>(Coordinates::longitude,
                       coordinates -> lon -> new Coordinates(long,
                                                             coordinates.latitude()
@@ -444,7 +454,7 @@ You can compose lenses, optional and prism. For example:
                      );
             
                         
-   Lens<Coordinate, Double> latitudeOpt =
+   Lens<Coordinate, Double> latitudeLens =
          new Option<>(Coordinates::latitude,
                       coordinates -> lat -> new Coordinates(coordiantes.longitude(),
                                                             lat
@@ -459,7 +469,7 @@ You can compose lenses, optional and prism. For example:
 
    Option<Person,Double> personLongitudeOpt = 
                 addressLens.compose(coordinatesOpt)
-                           .compose(longitude);                        
+                           .compose(longitudeLens);                        
             
             
 ```    

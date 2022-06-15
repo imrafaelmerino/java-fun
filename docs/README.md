@@ -483,13 +483,11 @@ Function<Coordinates,Function<Person,Person>> setCoordinates =
         c -> personLatitudeOpt.set.apply(c.latitude())
                               .andThen(personLongitudeOpt.set.apply(c.longitude()))
                                
-Person newPerson = setCoordiantes.apply(new Coordinates(14.5,45.78)).apply(person);                          
+Person newPerson = setCoordiantes.apply(new Coordinates(14.5,45.78))
+                                 .apply(person);                          
 
 
 ```  
-
-The takeaway is declarative and expressive the function modifyPerson is in
-the above example. Besides, it's utterly safe without writing any null check.
 
 ### <a name="lenses"><a/> Lenses
 

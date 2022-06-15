@@ -292,7 +292,7 @@ Let's check out a practical example.
 
 Person joe = new Person("Joe",address,null)
 
-Person joeArmstrong = nameLens.set.apply("Joe Armstrong").apply(pedro);
+Person joeArmstrong = nameLens.set.apply("Joe Armstrong").apply(joe);
 
 // records are immutable
 Assertions.assertEquals("Joe",

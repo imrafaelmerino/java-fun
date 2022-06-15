@@ -10,6 +10,7 @@
     - [Tuples and Record Generators](#trg)
     - [Combinators](#com)
     - [Objects Generators](#og)
+    - [Useful and common patterns](#ucp)
 
 - [Optics](#optics)
     - [Lenses](#lenses) 
@@ -48,9 +49,6 @@ way. With java-fun, it's child's play!
 
 ### <a name="og"><a/> Objects Generators
 
-### <a name="ucc"><a/> Useful and common cases
-
-
 You can generate any object from your model just using the _RecordGen_ and the function map.
 Consider the class User, which could be a Record:
 
@@ -76,7 +74,6 @@ public class User {
 
 ```
 
-Let's create a User generator:
 
 ```java   
 
@@ -97,7 +94,11 @@ Let's create a User generator:
                                   );
 
 ```
-## <a name="ucc"><a/> Useful and common cases
+### <a name="ucp"><a/> Useful and common patterns
+
+The function suchThat takes a predicate and returns a new generator that produces
+only values that satisfy the condition. For example, let's use this idea to create
+generators of valid and invalid data:    
 
 ```java   
 

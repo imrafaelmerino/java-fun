@@ -1069,8 +1069,8 @@ JsObj person = nameLens.set.apply(name).apply(JsObj.empty());
 Assertions.assertEquals(name,
                         nameLens.get.apply(person));
 
-Function<JsValue, JsValue> toUpper = 
-   value -> value.isStr() ? value.toJsStr().map(String::toUpperCase) : value;
+Function<JsValue, JsValue> toUpper = JsStr.prism.modify.apply(String::toUpperCase);
+
 
 JsObj newPerson = nameLens.modify.apply(toUpper).apply(person);
 
@@ -1078,9 +1078,6 @@ Assertions.assertEquals(JsStr.of("RAFAEL"),
                         nameLens.get.apply(newPerson));
                         
 ```
-
-I’ve implemented the toUpper function in a very imperative fashion. We’ll see
-in just a moment how to do the same thing with a Prism.
 
 Every type in json-value has a Prism. Find below some of them:
 
@@ -1339,6 +1336,7 @@ After the development of json-values, I published two more related projects:
 
 * The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
+* [java-fun](https://github.com/imrafaelmerino/java-fun) json-values uses the generators and optics from java-fun
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/),
 [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into

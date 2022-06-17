@@ -302,10 +302,7 @@ Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
 - Set generator
 
 
-
-
- 
-  ```  java
+```  java
  
 public SetGen(Gen<T> gen,
               int size,
@@ -313,7 +310,6 @@ public SetGen(Gen<T> gen,
               )
 
  
-
 ```
 
 - Map generator

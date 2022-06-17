@@ -101,13 +101,66 @@ Gen<String> :: StrGen.ascii(int minLength, int maxLength)
 
 ```  java
 
+Gen<Integer> :: IntGen.biased()
+
 ```
+
+Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
+Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE and Integer.MIN_VALUE
+
+
+```  java
+
+Gen<Integer> :: IntGen.biased(int min, int max)
+
+```
+
+Bounded biased produces with higher probability the bounds  min and max, and
+all the mentioned values produced by the unbounded biased that fall into the interval 
+
+The arbitrary integer generators produces any integer with a uniform distribution.
+
+```  java
+
+Gen<Integer> :: IntGen.arbitrary()
+
+Gen<Integer> :: IntGen.arbitrary(int min, int max)
+
+```
+
 
 - Long generator
 
- ```  java
+```  java
+
+Gen<Long> :: LongGen.biased()
 
 ```
+
+Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
+Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE
+and Long.MAX_VALUE
+
+
+```  java
+
+Gen<Long> :: LongGen.biased(long min, long max)
+
+```
+
+Bounded biased produces with higher probability the bounds  min and max, and
+all the mentioned values produced by the unbounded biased that fall into the interval.
+
+The arbitrary long generators produces any long with a uniform distribution.
+
+```  java
+
+Gen<Integer> :: LongGen.arbitrary()
+
+Gen<Integer> :: LongGen.arbitrary(long min, long max)
+
+```
+
 - Double generator
 
  ```  java

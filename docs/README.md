@@ -36,10 +36,34 @@ way. With java-fun, it's child's play!
   and composable.
 
 ## <a name="prg"><a/> Pseudo Random Generators
+pseudorandom number generators are important in practice for their speed in number 
+generation and their reproducibility. These properties, when it comes to testing,
+are very significant.
+
+I modeled PRG with the following type Gen:
+
+``` java
+import fun.gen.Gen;
+import java.util.Random;
+
+public interface Gen<O> extends Function<Random, Supplier<O>>{}
+
+```
+
+A Gen is a function that takes a Random (the seed) and returns a lazy computation of a type O.
+Laziness is key in order to be able to compose generators easily.
+
+There are two crucial static factory methods to create generators:
+
+- arbitrary, that produces a uniform distribution of values
+- biased, that generates values that are proven to cause more bugs in our code with a higher
+probability than regular values. This is vital to do Property Based Testing.
+
+You can create any generator just implementing the interface Gen. Nevertheless there are a lot
+predefined generators you can use. Let's go over them
+
 
 ### <a name="ptg"><a/> Primitive Types Generators
-
-### <a name="prg"><a/> Pseudo Random Generators
 
 ### <a name="cg"><a/> Collection Generators
 

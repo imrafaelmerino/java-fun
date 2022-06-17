@@ -282,18 +282,49 @@ produces true or false with the same probability
 - List generator
 
  ```  java
+ 
+Gen<List<T>> :: ListGen.biased(Gen<T> gen,
+                               int minLength,
+                               int maxLength
+                               )
+
+```
+
+ ```  java
+ 
+Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
+                                  int minLength,
+                                  int maxLength
+                                 )
 
 ```
 
 - Set generator
 
- ```  java
+
+
+
+ 
+  ```  java
+ 
+public SetGen(Gen<T> gen,
+              int size,
+              int maxTries
+              )
+
+ 
 
 ```
 
 - Map generator
 
  ```  java
+
+public MapGen(Gen<K> keyGen,
+              Gen<V> valueGen,
+              int size,
+              int maxTries
+              )
 
 ```
 
@@ -303,19 +334,41 @@ produces true or false with the same probability
 
  ```  java
 
+Gen<Pair<A, B>> ::  PairGen.of(Gen<A> _1,
+                               Gen<B> _2
+                              )
+
 ```
 
 - Triple generator
 
  ```  java
+ 
+Gen<Triple<A, B, C>> ::  TripleGen.of(Gen<A> _1,
+                                      Gen<B> _2,
+                                      Gen<C> _3
+                                     ) 
 
 ```
 
 - Record generator
 
+A record is just a group of field names and their associated values. This is a record
+generator in java-fun
+
  ```  java
+import fun.gen.Record 
+ 
+Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1,20),
+                                  age, IntGen.biased(0,150),
+                                  birthdate, InstantGen.arbitrary() )
 
 ```
+
+The class fun.gen.Record it's just a Map<String,?> to hold the generated data and
+syntactic sugar to get the value of any field without doing any type conversion.
+Record generators are extremely useful to create any object generator using the 
+function map. Find [here](#og) an example.
 
 
 ### <a name="com"><a/> Combinators
@@ -323,12 +376,35 @@ produces true or false with the same probability
 - OneOf 
 
  ```  java
+ 
+Gen<A> :: Combinators.oneOf(Gen<? extends A> gen,
+                            Gen<? extends A>... others)
+                            
+
+```
+
+ ```  java
+ 
+Gen<A> :: Combinators.oneOf(List<A> values)                            
+                         
+
+```
+
+ ```  java
+ 
+Gen<A> :: Combinators.oneOf(A value,
+                            A... others)                           
+                         
 
 ```
 
 - Freq
 
  ```  java
+ 
+Gen<A> ::  Combinators.freq(Pair<Integer, Gen<? extends A>> freq,
+                            Pair<Integer, Gen<? extends A>>... others
+                            )
 
 ```
 
@@ -336,17 +412,31 @@ produces true or false with the same probability
 
  ```  java
 
+Gen<A> :: Combinators.nullable(Gen<A> gen) 
+
+```
+
+ ```  java
+
+Gen<A> :: Combinators.nullable(Gen<A> gen,
+                               int prob) 
+
 ```
 
 - Combinations
 
  ```  java
+ 
+Gen<List<A>> ::  Combinators.combinations(int k,
+                                          List<I> input) 
 
 ```
 
 - Permutations
 
  ```  java
+ 
+Gen<List<A>> ::  Combinators.permutations(List<A> input) 
 
 ```
 

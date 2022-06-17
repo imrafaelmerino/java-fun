@@ -18,10 +18,11 @@
 
 ## <a name="goal"><a/> Goal
 
-The goal of java-fun is to implement some important FP patterns in Java. It
-doesn't transliterate these patterns from other languages, aiming that any 
-standard Java programmer finds easy to adopt them and understand the essence 
-of these concepts, not getting lost in unfamiliar types and conventions.
+The goal of java-fun is to implement in Java some important patterns 
+from Functional Programming. It doesn't transliterate these patterns 
+from other languages, aiming that any standard Java programmer finds 
+easy to adopt them and understand the essence of these concepts, not 
+getting lost in unfamiliar types and conventions.
 
 The most important concepts implemented so far are:
 

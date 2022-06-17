@@ -65,7 +65,36 @@ there are a lot predefined generators you can use. Let's go over them
 - String generator
 
  ```  java
+ 
+Gen<String> :: StrGen.biased(int minLength, int maxLength)
+              
+```
 
+Biased produces with higher probability the empty string if minLength is zero, blank strings,
+and strings of length minLength and maxLength (the bounds of the interval).
+
+ ```  java
+ 
+Gen<String> :: StrGen.arbitrary(int minLength, int maxLength)
+              
+```
+
+Arbitrary produces any string with a length uniformly distributed over the interval [minLength, maxLength]
+
+Other arbitrary string generators:
+
+ ```  java
+ 
+Gen<String> :: StrGen.alphanumeric(int minLength, int maxLength)
+
+Gen<String> :: StrGen.alphabetic(int minLength, int maxLength)
+
+Gen<String> :: StrGen.letters(int minLength, int maxLength)
+
+Gen<String> :: StrGen.digits(int minLength, int maxLength)
+
+Gen<String> :: StrGen.ascii(int minLength, int maxLength)
+              
 ```
 
 - Integer generator

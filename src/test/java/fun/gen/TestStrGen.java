@@ -108,17 +108,17 @@ public class TestStrGen {
     public void testStringGen() {
 
         Map<String, Long> countsLetter = TestFun.generate(1000000,
-                                                          StrGen.letter());
+                                                          StrGen.letters(1,1));
 
         Map<String, Long> countsDigit = TestFun.generate(1000000,
-                                                         StrGen.digit());
+                                                         StrGen.digits(1,1));
 
         Map<String, Long> countsAscii = TestFun.generate(1000000,
-                                                         StrGen.ascii());
+                                                         StrGen.ascii(1,1));
 
 
         Map<String, Long> countAlpha = TestFun.generate(10000000,
-                                                        StrGen.alphabetic());
+                                                        StrGen.alphabetic(1,1));
 
         TestFun.assertGeneratedValuesHaveSameProbability(countsAscii,
                                                          countsAscii.keySet(),

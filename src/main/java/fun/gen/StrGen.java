@@ -14,9 +14,7 @@ public final class StrGen implements Gen<String> {
     private static final Gen<String> ascii = CharGen.ascii.map(String::valueOf);
 
     private static final Gen<String> digit = CharGen.digit.map(String::valueOf);
-    /**
-     * Generates a letter from a-z
-     */
+
     private static final Gen<String> letter = CharGen.letter.map(String::valueOf);
     private static final Gen<String> alphabetic = CharGen.alphabetic.map(String::valueOf);
     private static final Gen<String> alphanumeric = Combinators.oneOf(CharGen.alphabetic,
@@ -27,30 +25,14 @@ public final class StrGen implements Gen<String> {
         this.length = length;
     }
 
-    public static Gen<String> digit() {
-        return digit;
-    }
 
-    public static Gen<String> ascii() {
-        return ascii;
-    }
-
-    public static Gen<String> letter() {
-        return letter;
-    }
-
-    public static Gen<String> alphabetic() {
-        return alphabetic;
-    }
-
-    public static Gen<String> alphanumeric() {
-        return alphanumeric;
-    }
 
     public static Gen<String> biased(final int minLength,
                                      final int maxLength) {
-        if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
-        if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
+        if (minLength < 0)
+            throw new IllegalArgumentException("minLength < 0");
+        if (maxLength < minLength)
+            throw new IllegalArgumentException("maxLength < minLength");
         List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
         if (minLength == maxLength && minLength == 0) return Gen.cons("");
 
@@ -137,7 +119,7 @@ public final class StrGen implements Gen<String> {
                                      final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
-        return ListGen.arbitrary(CharGen.digit.map(String::valueOf),
+        return ListGen.arbitrary(digit,
                                  minLength,
                                  maxLength)
                       .map(it -> String.join("",
@@ -155,7 +137,7 @@ public final class StrGen implements Gen<String> {
                                     final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
-        return ListGen.arbitrary(CharGen.ascii.map(String::valueOf),
+        return ListGen.arbitrary(ascii,
                                  minLength,
                                  maxLength)
                       .map(it -> String.join("",
@@ -174,7 +156,7 @@ public final class StrGen implements Gen<String> {
                                       final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
-        return ListGen.arbitrary(CharGen.letter.map(String::valueOf),
+        return ListGen.arbitrary(letter,
                                  minLength,
                                  maxLength)
                       .map(it -> String.join("",

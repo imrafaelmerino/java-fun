@@ -12,11 +12,11 @@ public class TesGen {
 
         RecordGen gen =
                 RecordGen.of("a",
-                             StrGen.alphanumeric(),
+                             StrGen.alphanumeric(1,1),
                              "b",
-                             StrGen.alphanumeric(),
+                             StrGen.alphanumeric(1,1),
                              "c",
-                             StrGen.alphanumeric())
+                             StrGen.alphanumeric(1,1))
                          .setAllOptionals();
 
 

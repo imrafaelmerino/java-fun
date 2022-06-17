@@ -19,22 +19,22 @@
 ## <a name="goal"><a/> Goal
 
 The goal of java-fun is to implement some important FP patterns in Java. It
-doesn't transliterate these patterns from other languages, aiming that any standard
-Java programmer finds easy to adopt them and understand the essence of these concepts, 
-not getting lost in unfamiliar types and conventions.
+doesn't transliterate these patterns from other languages, aiming that any 
+standard Java programmer finds easy to adopt them and understand the essence 
+of these concepts, not getting lost in unfamiliar types and conventions.
 
 The most important concepts implemented so far are:
 
-- **Pseudo Random Generators**. The best way to do testing is by far Property-Based-Testing.
-And to do it well you need a good set of generators and to be able to compose them in any imaginable
-way. With java-fun, it's child's play!
-- **Optics**. Functional programmers use optics instead of getters and setters. They are more safe
-  and composable.
+- **Pseudo Random Generators**. The best way to do testing is by far 
+Property-Based-Testing. And to do it well you need a good set of generators and 
+to be able to compose them in any imaginable way. With java-fun, it's child's play!
+- **Optics**. Functional programmers use optics instead of getters and setters. 
+They are more safe and composable.
 
 ## <a name="prg"><a/> Pseudo Random Generators
-Pseudorandom number generators (PRN) are important in practice for their speed in number 
-generation and their reproducibility. These properties, when it comes to testing,
-are very significant.
+Pseudorandom number generators (PRN) are important in practice for their speed 
+in number generation and their reproducibility. These properties, when it comes 
+to testing, are very significant.
 
 A PRG is modeled with the following type Gen:
 
@@ -46,17 +46,19 @@ public interface Gen<O> extends Function<Random, Supplier<O>>{}
 
 ```
 
-A Gen is a function that takes a seed of type Random and returns a lazy computation of a type O.
-Laziness is key in order to be able to compose generators easily.
+A Gen is a function that takes a seed of type Random and returns a lazy 
+computation of a type O. Laziness is key in order to be able to compose 
+generators easily.
 
 There are two crucial static factory methods to create generators:
 
 - **arbitrary**, that produces a uniform distribution of values
-- **biased**, that generates values that are proven to cause more bugs in our code with a higher
-probability than regular values. This is vital to do Property Based Testing.
+- **biased**, that generates values that are proven to cause more bugs 
+in our code with a higher probability than regular values. This is vital 
+to do Property Based Testing.
 
-You can create any generator just implementing the interface Gen. Nevertheless there are a lot
-predefined generators you can use. Let's go over them
+You can create any generator just implementing the interface Gen. Nevertheless 
+there are a lot predefined generators you can use. Let's go over them
 
 
 ### <a name="ptg"><a/> Primitive Types Generators
@@ -196,8 +198,8 @@ predefined generators you can use. Let's go over them
 
 ### <a name="og"><a/> Objects Generators
 
-You can generate any object from your model just using the _RecordGen_ and the function map.
-Consider the class User:
+You can generate any object from your model just using the _RecordGen_ and 
+the function map. Consider the class User:
 
 ```java 
 
@@ -245,9 +247,9 @@ Let's define a User generator:
 ```
 ### <a name="ucp"><a/> Useful and common patterns
 
-The function suchThat takes a predicate and returns a new generator that produces
-only values that satisfy the condition. For example, let's use this idea to create
-generators of valid and invalid data:    
+The function suchThat takes a predicate and returns a new generator that 
+produces only values that satisfy the condition. For example, let's use 
+this idea to create generators of valid and invalid data:    
 
 ```java   
 
@@ -267,18 +269,20 @@ generators of valid and invalid data:
 ```
 ## <a name="optics"><a/> Optics: Lenses, Optionals and Prism
 
-It’s ubiquitous to have to navigate through recursive data structures like records
-and tuples to find, insert, and modify data. It’s a cumbersome and error-prone task
-(a NullPointerException is always lurking around) that requires a defensive style of
-programming with much boilerplate code. The more nested the structure is, the worse.
-The imperative style uses getters and setters with the mentioned inconveniences, 
-whereas Functional Programming uses optics to cope with these limitations,. 
+It’s ubiquitous to have to navigate through recursive data structures 
+like records and tuples to find, insert, and modify data. It’s a 
+cumbersome and error-prone task (a NullPointerException is always lurking 
+around) that requires a defensive style of programming with much boilerplate 
+code. The more nested the structure is, the worse. The imperative style 
+uses getters and setters with the mentioned inconveniences, whereas 
+Functional Programming uses optics to cope with these limitations,. 
 
-Before getting into more details about optics and their implementation in java-fun,
-I'm going to explain ADTs (Algebraic Data Types).
+Before getting into more details about optics and their implementation 
+in **java-fun**, I'm going to explain ADTs (Algebraic Data Types).
 
-A type is nothing else than a name for a set of values. Not like objects, they don't have 
-any behavior. We can operate with types. Given the types A and B and their domains:
+A type is nothing else than a name for a set of values. Not like objects, 
+they don't have any behavior. We can operate with types. Given the types 
+A and B and their domains:
 
 ```code
 
@@ -287,8 +291,8 @@ B = { 1, 2, 3 }
 
 ```
 
-It's possible to create new types out of them. We can pair A and B and get a tuple 
-of two elements:
+It's possible to create new types out of them. We can pair A and B and 
+get a tuple of two elements:
 
 ```code
 
@@ -297,7 +301,8 @@ T = [ ("a", 1), ("a", 2), ("a", 3), ("b", 1), ("b", 2), ("b", 3) ]
 
 ```
 
-The order matter; (B, A) would be a different type. Tuples are product-types ( 2 x 3 possible values).
+The order matter; (B, A) would be a different type. Tuples are product-types 
+( 2 x 3 possible values).
 
 We can group A and B in fields and get a record:
 
@@ -311,8 +316,8 @@ R = [
 
 ```
 
-The order of the fields doesn't matter. Records are other class of product-types (2 x 3 possible values).
-Java added records in release 14. Thank god!
+The order of the fields doesn't matter. Records are other class of product-types 
+(2 x 3 possible values). Java added records in release 14. Thank god!
 
 We can sum A and B and get a sum-type:
 
@@ -323,24 +328,29 @@ S= [ "a", "b", 1, 2, 3 ]
 
 ```
 
-It has  2 + 3 possible values. A sum-type is a type that can be one of the multiple possible options.
-In other words, S is either A or B.
+It has  2 + 3 possible values. A sum-type is a type that can be one of the 
+multiple possible options. In other words, S is either A or B.
 
 In FP, optics are used to work with ADTs. There are different kinds of optics.
-**Lenses** and **Optionals**(don't confuse with Java Optional class) work great with product-types. **Prisms** help us work with sum-types.
-Optics allow us to separate concerns.
+**Lenses** and **Optionals**(don't confuse with Java Optional class) work 
+great with product-types. **Prisms** help us work with sum-types. Optics allow 
+us to separate concerns.
 
 It's important to distinguish the following concepts:
 
-- The action. An action is a function that executes some operation over the focus of a path.
-The most important actions are _get_, _set_ and, _modify_.
-- The path. The path indicates which data to focus on and where to find it within the structure.
-- The structure. The structure is the hunk of data that we want to work with. The path selects data from within the structure,
-  and that data will be passed to the action. 
-- The focus. The smaller piece of the structure indicated by the path. The focus will be passed to the action.
+- The action. An action is a function that executes some operation over the 
+focus of a path. The most important actions are _get_, _set_ and, _modify_.
+- The path. The path indicates which data to focus on and where to find it within 
+the structure.
+- The structure. The structure is the hunk of data that we want to work with. 
+The path selects data from within the structure, and that data will be passed 
+to the action. 
+- The focus. The smaller piece of the structure indicated by the path. The focus 
+will be passed to the action.
 
-A Lens zooms in a piece of data within a larger structure. **A Lens must never fail to get or modify its focus.**
-On the other hand, an Optional, is another optic just like a lens, but the focus may not exist
+A Lens zooms in a piece of data within a larger structure. **A Lens must never 
+fail to get or modify its focus.** Optional is another optic just like a lens, 
+**but the focus may not exist**.  
 
 We'll use the following records to put some examples:
 
@@ -349,9 +359,11 @@ We'll use the following records to put some examples:
 public record Person(String name, Address address, Integer ranking) {
 
     public Person {
-        if(name==null || name.isBlank()) throw new IllegalArgumentException("name empty");
+        if(name==null || name.isBlank()) 
+            throw new IllegalArgumentException("name empty");
   
-        if(address == null) throw new IllegalArgumentException("address empty");
+        if(address == null) 
+            throw new IllegalArgumentException("address empty");
     }
 
 }
@@ -359,7 +371,8 @@ public record Person(String name, Address address, Integer ranking) {
 public record Address(Coordinates coordinates, String description) {
 
     public Address {
-        if(coordinates == null && description == null)  throw new IllegalArgumentException("invalid address");
+        if(coordinates == null && description == null)  
+            throw new IllegalArgumentException("invalid address");
     }
 
 }
@@ -367,9 +380,11 @@ public record Address(Coordinates coordinates, String description) {
 public record Coordinates(double longitude, double latitude) {
 
     public Coordinates {
-        if(longitude < -180 || longitude > 180) throw new IllegalArgumentException("180 => longitude >= -180");
+        if(longitude < -180 || longitude > 180) 
+            throw new IllegalArgumentException("180 => longitude >= -180");
         
-        if(latitude < -90 || latitude > 90) throw new IllegalArgumentException("90 => latitude >= -90");
+        if(latitude < -90 || latitude > 90) 
+            throw new IllegalArgumentException("90 => latitude >= -90");
     }
 }
 
@@ -410,16 +425,17 @@ Let's create some optics with json-fun:
                                                       ranking));
 ```
 
-As you can see, to create a Lens or and Optional you just need to define the _get_ and _set_ actions.
-In lenses the get action returns the focus, whereas in optionals it returns the focus wrapped in a
-Java Optional since it may not exist. In java-fun the optional optic is called Option.
+As you can see, to create a Lens or and Optional you just need to define the 
+_get_ and _set_ actions. In lenses the get action returns the focus, whereas 
+in optionals it returns the focus wrapped in a Java Optional since it may not 
+exist. In java-fun the optional optic is called Option.
 
 And what about the modify action? It's created internally from _get_ and _set_! 
 
 Defining the _set_ action you may notice how cumbersome to create records is. 
-They are immutable data structures and every modification means to create a new instance. 
-And it's even more cumbersome when we have nested records. We'll see how composing optics 
-can help us with this.
+They are immutable data structures and every modification means to create a 
+new instance. And it's even more cumbersome when we have nested records. We'll 
+see how composing optics can help us with this.
 
 
 Let's discuss the type of the most important actions of a lens and an optional, 
@@ -437,8 +453,8 @@ modify :: Function<Function<F, F>, Function<S, S>>
 Imagine the focus is the name of the person. The get action is a function that
 takes a person and returns their name. The set action is a function that takes
 a new name and returns a function that, given a person, it produces a new one
-with the new name. The modify action is like set, but instead of a name, it takes 
-a function to produce a new name from the old one. 
+with the new name. The modify action is like set, but instead of a name, it 
+takes a function to produce a new name from the old one. 
 
 
 Let's check out a practical example.
@@ -484,9 +500,9 @@ Assertions.assertEquals(10,
 
 Do notice that it’s at the very end when we passed in the person into the
 functions. In OOP, it would be just the opposite, the starting point would 
-be a person object, and then we would get or set a value with a getter or setter. In FP,
-we describe actions; then, we may compose them, and it’s at the last moment
-when we specify the inputs and execute them.
+be a person object, and then we would get or set a value with a getter or 
+setter. In FP, we describe actions; then, we may compose them, and it’s at 
+the last moment when we specify the inputs and execute them.
 
 A Lens must respect the getSet law, which states that if you get a value and
 set it back in, the result is a value identical to the original one. A side
@@ -512,12 +528,13 @@ consider, and we want to focus on a specific one.  Let's create a Prism
                             
 ```      
 
-You need to create two functions. The first one, how to go from the type Exception to the specific
-subtype RuntimeException, and the second one, the other way around (since a RuntimeException is a 
-Exception, just return it).
+You need to create two functions. The first one, how to go from the type 
+Exception to the specific subtype RuntimeException, and the second one, 
+the other way around (since a RuntimeException is aN Exception, just return it).
 
-But you can create Prism to extract a subset of values with a specific property from a more generic set. 
-For example, let's create a Prism to get all string that are integer numbers:
+But you can create Prism to extract a subset of values with a specific property 
+from a more generic set. For example, let's create a Prism to get all string that 
+are integer numbers:
 
 ```code         
 
@@ -534,11 +551,13 @@ For example, let's create a Prism to get all string that are integer numbers:
                 );
 ```
 
-As you can see the first function goes from String to Integer,and it can fail, since there are a lot of strings
-that are not numbers. And the second one goes from Integer to String and of course, it never fails 
-(every number has a string representation)
+As you can see the first function goes from String to Integer,and it can fail, 
+since there are a lot of strings that are not numbers. And the second one goes 
+from Integer to String and of course, it never fails (every number has a string 
+representation)
 
-Considering the above Prism, let's take a look at the most important actions and their signatures:
+Considering the above Prism, let's take a look at the most important actions and 
+their signatures:
 
 ```code  
 
@@ -550,15 +569,17 @@ modifyOpt :: Function<Function<Integer, Integer>, Function<String, Optional<Stri
 
 ```
 
-The getOptional function takes a String, and if it's not a number, it returns an _Optional.empty_.
-If it's a number, it returns its value wrapped in an Optional. Nothing exceptional, isn't it?
+The getOptional function takes a String, and if it's not a number, it returns an 
+_Optional.empty_. If it's a number, it returns its value wrapped in an Optional. 
+Nothing exceptional, isn't it?
 
-The modify function is handy. I use it all the time. It takes a function to map numbers
-and returns a function from String to String. If the input value is a number, it applies
-the map function on it and returns it as a String. If it is not a number, we can not use 
-the map function, and the input is returned as it was. Do notice that we don't care about 
-the success of the operation. If we do, we can use the modifyOpt action.  It's the same, 
-but when de map function can not be applied, an empty Optional is returned.
+The modify function is handy. I use it all the time. It takes a function to map 
+numbers and returns a function from String to String. If the input value is a 
+number, it applies the map function on it and returns it as a String. If it is 
+not a number, we can not use the map function, and the input is returned as it was. 
+Do notice that we don't care about the success of the operation. If we do, we can 
+use the modifyOpt action.  It's the same, but when de map function can not be 
+applied, an empty Optional is returned.
 
 Let's put some examples with the intPrism defined above:
 
@@ -621,8 +642,8 @@ You can compose lenses, optional and prism. For example:
             
 ```    
 
-Composition is key to handle complexity. Imagine you have to create a function to set the latitude
-and longitude of a person:
+Composition is key to handle complexity. Imagine you have to create a function 
+to set the latitude and longitude of a person:
 
 ```  java
 

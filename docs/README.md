@@ -20,8 +20,8 @@
 
 The goal of java-fun is to implement some important FP patterns in Java. It
 doesn't transliterate these patterns from other languages, aiming that any standard
-Java programmer finds easy to adopt them and understand the essence of these concepts
-,not getting lost in unfamiliar types and conventions.
+Java programmer finds easy to adopt them and understand the essence of these concepts, 
+not getting lost in unfamiliar types and conventions.
 
 The most important concepts implemented so far are:
 
@@ -32,11 +32,11 @@ way. With java-fun, it's child's play!
   and composable.
 
 ## <a name="prg"><a/> Pseudo Random Generators
-pseudorandom number generators are important in practice for their speed in number 
+Pseudorandom number generators (PRN) are important in practice for their speed in number 
 generation and their reproducibility. These properties, when it comes to testing,
 are very significant.
 
-I modeled PRG with the following type Gen:
+A PRG is modeled with the following type Gen:
 
 ``` java
 import fun.gen.Gen;

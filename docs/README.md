@@ -53,9 +53,9 @@ generators easily.
 There are two crucial static factory methods to create generators:
 
 - **arbitrary**, that produces a uniform distribution of values
-- **biased**, that generates values that are proven to cause more bugs 
-in our code with a higher probability than regular values. This is vital 
-to do Property Based Testing.
+- **biased**, that generates with a higher probability values that are 
+proven to cause more bugs in our code. This is vital to do Property Based 
+Testing and ultimately, which is more important, to find bugs.
 
 You can create any generator just implementing the interface Gen. Nevertheless 
 there are a lot predefined generators you can use. Let's go over them

@@ -724,7 +724,7 @@ public class TestRecordGen {
                                                          .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           CharGen.alphabetic)
+                                           CharGen.alphabetic())
                                        .sample(100)
                                        .allMatch(it -> it.getChar("a")
                                                          .isPresent()));

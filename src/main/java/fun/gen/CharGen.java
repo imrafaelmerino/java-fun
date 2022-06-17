@@ -10,23 +10,29 @@ import static java.util.Objects.requireNonNull;
  */
 public final class CharGen implements Gen<Character> {
 
-    public static final Gen<Character> ascii =
+    private static final Gen<Character> ascii =
             IntGen.arbitrary(('\u0000'),
                              ('\u007f'))
                   .map(it -> ((char) it.intValue()));
 
 
-    /**
-     * Generates a letter from a-z
-     */
-    public static final Gen<Character> letter =
+    public static  Gen<Character> ascii(){
+        return ascii;
+    }
+
+
+    private static final Gen<Character> letter =
             IntGen.arbitrary(0,
                              25)
                   .map(i -> ((char) ('a' + i)));
     /**
-     * Generates character from 65-122
+     * Generates a letter from a-z
      */
-    public static final Gen<Character> digit =
+    public static  Gen<Character> letter(){
+        return letter;
+    }
+
+    private static final Gen<Character> digit =
             Combinators.oneOf(
                     '0',
                     '1',
@@ -38,12 +44,22 @@ public final class CharGen implements Gen<Character> {
                     '7',
                     '8',
                     '9');
-    public static final Gen<Character> alphabetic =
+    /**
+     * Generates character from 65-122
+     */
+    public static  Gen<Character> digit(){
+        return digit;
+    }
+    private static final Gen<Character> alphabetic =
             Combinators.oneOf(IntGen.arbitrary(65,
                                                90),
                               IntGen.arbitrary(97,
                                                122))
                        .map(i -> (char) i.intValue());
+
+    public static  Gen<Character> alphabetic(){
+        return alphabetic;
+    }
     private static final Gen<Character> arbitrary = new CharGen();
 
     private CharGen() {

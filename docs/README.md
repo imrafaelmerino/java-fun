@@ -164,39 +164,110 @@ Gen<Integer> :: LongGen.arbitrary(long min, long max)
 
 - Double generator
 
- ```  java
+Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
+Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE
+,Long.MAX_VALUE, Double.MIN_VALUE and Double.MAX_VALUE
+
+
+```  java
+
+Gen<Double> :: DoubleGen.biased(double min, double max)
+
+```
+
+Bounded biased produces with higher probability the bounds min and max, and
+all the mentioned values produced by the unbounded biased that fall into the interval.
+
+The arbitrary double generators produces any long with a uniform distribution.
+
+```  java
+
+Gen<Double> :: DoubleGen.arbitrary()
+
+Gen<Double> :: DoubleGen.arbitrary(double min, double max)
 
 ```
 
 - Big Integer generator
 
  ```  java
+ 
+Gen<BigInteger> :: BigInteger.biased(int bits)
+
+Gen<BigInteger> :: BigInteger.arbitrary(int bits)
+
 
 ```
 
 - Big Decimal generator
 
- ```  java
+Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
+Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE
+,Long.MAX_VALUE, Double.MIN_VALUE and Double.MAX_VALUE
+
+
+```  java
+
+Gen<BigDecimal> :: BigDecGen.biased(BigDecimal min, BigDecimal max)
+
+```
+
+Bounded biased produces with higher probability the bounds min and max, and
+all the mentioned values produced by the unbounded biased that fall into the interval.
+
+The arbitrary double generators produces any long with a uniform distribution.
+
+```  java
+
+Gen<BigDecimal> :: BigDecGen.arbitrary()
+
+Gen<BigDecimal> :: BigDecGen.arbitrary(BigDecimal min, BigDecimal max)
 
 ```
 
 - Bytes generator
 
  ```  java
+ 
+Gen<byte[]> :: BytesGen.biased(int minLength, int maxLength)
+ 
+Gen<byte[]> :: BytesGen.arbitrary(int minLength, int maxLength)
+
 
 ```
 
 - Character generator
 
- ```  java
+ 
+ 
+  ```  java
+  
+Gen<Character> :: CharGen.arbitrary()  
+
+Gen<Character> :: CharGen.arbitrary(char min, char max)  
+ 
+Gen<Character> :: CharGen.alphanumeric()
+
+Gen<Character> :: CharGen.alphabetic()
+
+Gen<Character> :: CharGen.letter()
+
+Gen<Character> :: CharGen.digit()
+
+Gen<Character> :: CharGen.ascii()
+              
 
 ```
 
 - Boolean generator
 
  ```  java
+ 
+ Gen<Boolean> :: GenBool.arbitrary()
 
 ```
+
+produces true or false with the same probability
 
 - Instant generator
 

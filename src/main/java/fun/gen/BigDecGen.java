@@ -100,7 +100,8 @@ public final class BigDecGen implements Gen<BigDecimal> {
 
         requireNonNull(min);
         requireNonNull(max);
-        if (min.compareTo(max) > 0) throw new IllegalArgumentException("max <= min");
+        if (min.compareTo(max) > 0)
+            throw new IllegalArgumentException("max <= min");
         return seed -> () -> {
             BigDecimal random = min.add(BigDecimal.valueOf(seed.nextDouble())
                                                   .multiply(max.subtract(min)));

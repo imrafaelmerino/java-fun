@@ -26,7 +26,6 @@ public final class DoubleGen implements Gen<Double> {
                                      final double max) {
         if (max < min) throw new IllegalArgumentException("max < min");
         List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
-
         if (max > Integer.MAX_VALUE && min < Integer.MAX_VALUE)
             gens.add(Pair.of(1,
                              Gen.cons((double) Integer.MAX_VALUE)));

@@ -11,13 +11,13 @@ public class TestCharGen {
     public void testCharGen() {
 
         Map<Character, Long> countsLetters = TestFun.generate(100000,
-                                                              CharGen.letter);
+                                                              CharGen.letter());
 
         Map<Character, Long> countsDigits = TestFun.generate(100000,
-                                                             CharGen.digit);
+                                                             CharGen.digit());
 
         Map<Character, Long> countAlpha = TestFun.generate(1000000,
-                                                           CharGen.alphabetic);
+                                                           CharGen.alphabetic());
 
         TestFun.assertGeneratedValuesHaveSameProbability(countsLetters,
                                                          countsLetters.keySet(),

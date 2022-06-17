@@ -240,7 +240,7 @@ Gen<byte[]> :: BytesGen.arbitrary(int minLength, int maxLength)
 
  
  
-  ```  java
+```  java
   
 Gen<Character> :: CharGen.arbitrary()  
 

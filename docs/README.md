@@ -46,13 +46,13 @@ public interface Gen<O> extends Function<Random, Supplier<O>>{}
 
 ```
 
-A Gen is a function that takes a Random (the seed) and returns a lazy computation of a type O.
+A Gen is a function that takes a seed of type Random and returns a lazy computation of a type O.
 Laziness is key in order to be able to compose generators easily.
 
 There are two crucial static factory methods to create generators:
 
-- arbitrary, that produces a uniform distribution of values
-- biased, that generates values that are proven to cause more bugs in our code with a higher
+- **arbitrary**, that produces a uniform distribution of values
+- **biased**, that generates values that are proven to cause more bugs in our code with a higher
 probability than regular values. This is vital to do Property Based Testing.
 
 You can create any generator just implementing the interface Gen. Nevertheless there are a lot
@@ -60,12 +60,139 @@ predefined generators you can use. Let's go over them
 
 
 ### <a name="ptg"><a/> Primitive Types Generators
+- String generator
+
+ ```  java
+
+```
+
+- Integer generator
+
+```  java
+
+```
+
+- Long generator
+
+ ```  java
+
+```
+- Double generator
+
+ ```  java
+
+```
+
+- Big Integer generator
+
+ ```  java
+
+```
+
+- Big Decimal generator
+
+ ```  java
+
+```
+
+- Bytes generator
+
+ ```  java
+
+```
+
+- Character generator
+
+ ```  java
+
+```
+
+- Boolean generator
+
+ ```  java
+
+```
+
+- Instant generator
+
+ ```  java
+
+```
+
+
 
 ### <a name="cg"><a/> Collection Generators
 
+- List generator
+
+ ```  java
+
+```
+
+- Set generator
+
+ ```  java
+
+```
+
+- Map generator
+
+ ```  java
+
+```
+
 ### <a name="trg"><a/> Tuples and Record Generators
 
+- Pair generator
+
+ ```  java
+
+```
+
+- Triple generator
+
+ ```  java
+
+```
+
+- Record generator
+
+ ```  java
+
+```
+
+
 ### <a name="com"><a/> Combinators
+
+- OneOf 
+
+ ```  java
+
+```
+
+- Freq
+
+ ```  java
+
+```
+
+- Nullable
+
+ ```  java
+
+```
+
+- Combinations
+
+ ```  java
+
+```
+
+- Permutations
+
+ ```  java
+
+```
 
 ### <a name="og"><a/> Objects Generators
 

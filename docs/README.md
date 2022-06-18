@@ -48,7 +48,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>>{}
 ```
 
 A Gen is a function that takes a seed of type Random and returns a lazy 
-computation of a type O. Laziness is key in order to be able to compose 
+computation of type O. Laziness is key in order to be able to compose 
 generators easily.
 
 There are two crucial static factory methods to create generators:

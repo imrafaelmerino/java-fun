@@ -116,7 +116,7 @@ Gen<Integer> :: IntGen.biased(int min, int max)
 
 ```
 
-Bounded biased produces with higher probability the bounds  min and max, and
+Bounded biased produces with higher probability min and max, and
 all the mentioned values produced by the unbounded biased that fall into the interval 
 
 The arbitrary integer generators produces any integer with a uniform distribution.
@@ -371,6 +371,7 @@ function map. Find [here](#og) an example.
 
 - OneOf 
 
+
  ```  java
  
 Gen<A> :: Combinators.oneOf(Gen<? extends A> gen,
@@ -379,12 +380,20 @@ Gen<A> :: Combinators.oneOf(Gen<? extends A> gen,
 
 ```
 
+oneOf combinator chooses each generation a generator from the list passed in as parameters.
+All the generators have the same probability to be picked, and are independent, i.e. they
+generate value with a different seed.
+
+Instead of a list of generators, you can pass in a list of values
+
  ```  java
  
 Gen<A> :: Combinators.oneOf(List<A> values)                            
                          
 
 ```
+
+or, using varargs
 
  ```  java
  
@@ -396,6 +405,9 @@ Gen<A> :: Combinators.oneOf(A value,
 
 - Freq
 
+Freq combinator is like oneOf, but you can assign a different weight to each generator to control
+the probability they are chosen with
+
  ```  java
  
 Gen<A> ::  Combinators.freq(Pair<Integer, Gen<? extends A>> freq,
@@ -404,7 +416,22 @@ Gen<A> ::  Combinators.freq(Pair<Integer, Gen<? extends A>> freq,
 
 ```
 
+For example, let's generate strings with a 75% prob. and booleans with a 25%:
+
+ ```  java
+ 
+ Combinators.freq(Pair.of(3, StrGen.biased(0,10)),
+                  Pair.of(1, BoolGen.arbitrary())
+                 )  
+ 
+ ```
+
+
 - Nullable
+
+Sometimes, you want to generate null, especially if you are interested in catching bugs. Remember that
+NullPointerException is probably the most seen exception in Java! The nullable combinator produces null
+50% of the generations.
 
  ```  java
 
@@ -412,12 +439,19 @@ Gen<A> :: Combinators.nullable(Gen<A> gen)
 
 ```
 
+You can control the probability null is generated with.
+
+
  ```  java
+
+//generates null % specified by prob
 
 Gen<A> :: Combinators.nullable(Gen<A> gen,
                                int prob) 
 
 ```
+
+
 
 - Combinations
 

@@ -429,8 +429,8 @@ generator in java-fun
 import fun.gen.Record 
  
 Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1,20),
-                                  age, IntGen.biased(0,150),
-                                  birthdate, InstantGen.arbitrary() )
+                                   age, IntGen.biased(0,150),
+                                   birthdate, InstantGen.arbitrary() )
 
 ```
 

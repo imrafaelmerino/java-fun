@@ -404,7 +404,7 @@ public MapGen(Gen<K> keyGen,
  ```  java
 
 Gen<Pair<A, B>> ::  PairGen.of(Gen<A> _1,
-                               Gen<B> _2
+                                Gen<B> _2
                               )
 
 ```
@@ -414,8 +414,8 @@ Gen<Pair<A, B>> ::  PairGen.of(Gen<A> _1,
  ```  java
  
 Gen<Triple<A, B, C>> ::  TripleGen.of(Gen<A> _1,
-                                      Gen<B> _2,
-                                      Gen<C> _3
+                                       Gen<B> _2,
+                                       Gen<C> _3
                                      ) 
 
 ```

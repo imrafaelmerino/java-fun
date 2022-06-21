@@ -4,7 +4,7 @@
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/0.9.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/0.9.3/jar)
 
 - [Goal](#goal)
-- [PRG: Pseudo Random Generators](#prg)
+- [Pseudo Random Generators (PRG)](#prg)
     - [Primitive Types Generators](#ptg)
     - [Collection Generators](#cg)
     - [Tuples and Record Generators](#trg)

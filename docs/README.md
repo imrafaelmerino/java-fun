@@ -30,7 +30,8 @@ The most important concepts implemented so far are:
 Property-Based-Testing. And to do it well you need a good set of generators and 
 to be able to compose them in any imaginable way. With java-fun, it's child's play!
 - **Optics**. Functional programmers use optics instead of getters and setters. 
-They are more safe and composable.
+They are more safe and composable. Using optics properly, you'll never see
+again a NullPointerException!
 
 ## <a name="prg"><a/> Pseudo Random Generators
 Pseudorandom number generators (PRN) are important in practice for their speed 
@@ -447,7 +448,7 @@ function map. Find [here](#og) an example.
  ```  java
  
 Gen<A> :: Combinators.oneOf(Gen<? extends A> gen,
-                            Gen<? extends A>... others)
+                             Gen<? extends A>... others)
                             
 
 ```
@@ -470,7 +471,7 @@ or, using varargs
  ```  java
  
 Gen<A> :: Combinators.oneOf(A value,
-                            A... others)                           
+                             A... others)                           
                          
 
 ```
@@ -483,7 +484,7 @@ the probability they are chosen with
  ```  java
  
 Gen<A> ::  Combinators.freq(Pair<Integer, Gen<? extends A>> freq,
-                            Pair<Integer, Gen<? extends A>>... others
+                             Pair<Integer, Gen<? extends A>>... others
                             )
 
 ```

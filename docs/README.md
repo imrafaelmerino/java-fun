@@ -357,8 +357,8 @@ produces true or false with the same probability
  ```  java
  
 Gen<List<T>> :: ListGen.biased(Gen<T> gen,
-                               int minLength,
-                               int maxLength
+                                int minLength,
+                                int maxLength
                                )
 
 ```
@@ -366,8 +366,8 @@ Gen<List<T>> :: ListGen.biased(Gen<T> gen,
  ```  java
  
 Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
-                                  int minLength,
-                                  int maxLength
+                                   int minLength,
+                                   int maxLength
                                  )
 
 ```

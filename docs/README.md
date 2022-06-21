@@ -520,7 +520,7 @@ You can control the probability null is generated with.
 //generates null % specified by prob
 
 Gen<A> :: Combinators.nullable(Gen<A> gen,
-                               int prob) 
+                                int prob) 
 
 ```
 
@@ -531,7 +531,7 @@ Gen<A> :: Combinators.nullable(Gen<A> gen,
  ```  java
  
 Gen<List<A>> ::  Combinators.combinations(int k,
-                                          List<I> input) 
+                                           List<I> input) 
 
 ```
 

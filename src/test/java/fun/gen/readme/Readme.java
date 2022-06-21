@@ -97,10 +97,17 @@ public class Readme {
                 );
 
 
+        Gen<String> gen =  StrGen.biased(0,3);
 
+        gen.sample(10).forEach(x -> {
+            System.out.println(x.length());
+            System.out.println(x);
+        });
 
 
     }
+
+
 
 
 

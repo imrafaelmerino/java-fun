@@ -53,26 +53,42 @@ generators easily.
 
 There are two crucial static factory methods to create generators:
 
-- **arbitrary**, that produces a uniform distribution of values
+- **arbitrary**, that produces a uniform distribution of values.
 - **biased**, that generates with a higher probability values that are 
 proven to cause more bugs in our code. This is vital to do Property Based 
-Testing and ultimately, which is more important, to find bugs.
+Testing.
 
-You can create any generator just implementing the interface Gen. Nevertheless 
-there are a lot predefined generators you can use. Let's go over them
+You can create any generator just implementing the interface _Gen_. Nevertheless 
+there are a lot predefined generators you can use. Let's go over them.
 
 
 ### <a name="ptg"><a/> Primitive Types Generators
 - String generator
 
+The bounded-string-biased generator produces with higher probability the empty string, 
+if _minLength_ is zero, blank strings, and strings of length _minLength_ and _maxLength_:
+
  ```  java
  
 Gen<String> :: StrGen.biased(int minLength, int maxLength)
-              
+ 
 ```
 
-Biased produces with higher probability the empty string if minLength is zero, blank strings,
-and strings of length minLength and maxLength (the bounds of the interval).
+For example:
+
+``` java
+
+Gen<String> gen =  StrGen.biased(0,3);
+
+gen.sample(10).forEach(System.out::println);
+
+```
+
+would print out strings like "", "   " or any string made up of valid printable unicode characters.
+
+The bounded-string-arbitrary generator produces any string of length **uniformly distributed** over 
+the interval [minLength, maxLength]. Not like the biased generator, all the values are generated 
+with the same probability.
 
  ```  java
  
@@ -80,9 +96,8 @@ Gen<String> :: StrGen.arbitrary(int minLength, int maxLength)
               
 ```
 
-Arbitrary produces any string with a length uniformly distributed over the interval [minLength, maxLength]
 
-Other arbitrary string generators:
+Other bounded-string-arbitrary generators are:
 
  ```  java
  
@@ -98,7 +113,11 @@ Gen<String> :: StrGen.ascii(int minLength, int maxLength)
               
 ```
 
+
 - Integer generator
+
+The unbounded-integer-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_, 
+_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_ and _Integer.MIN_VALUE_:
 
 ```  java
 
@@ -106,9 +125,8 @@ Gen<Integer> :: IntGen.biased()
 
 ```
 
-Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
-Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE and Integer.MIN_VALUE
-
+The bounded-integer-biased generator produces with higher probability _min_ and _max_, and
+all the above-mentioned values that fall into the interval (min, max):
 
 ```  java
 
@@ -116,14 +134,21 @@ Gen<Integer> :: IntGen.biased(int min, int max)
 
 ```
 
-Bounded biased produces with higher probability min and max, and
-all the mentioned values produced by the unbounded biased that fall into the interval 
 
-The arbitrary integer generators produces any integer with a uniform distribution.
+The unbounded-integer-arbitrary generator produces any integer number with the same 
+probability (uniform distribution):
 
 ```  java
 
 Gen<Integer> :: IntGen.arbitrary()
+
+```
+
+whereas the bounded-integer-arbitrary generator produces any integer number between min and max (inclusive)
+with the same probability (uniform distribution):
+
+
+```  java
 
 Gen<Integer> :: IntGen.arbitrary(int min, int max)
 
@@ -132,16 +157,18 @@ Gen<Integer> :: IntGen.arbitrary(int min, int max)
 
 - Long generator
 
+The unbounded-long-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_,
+_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_, _Integer.MIN_VALUE_,
+_Long.MIN_VALUE_ and _Long.MAX_VALUE_:
+
 ```  java
 
 Gen<Long> :: LongGen.biased()
 
 ```
 
-Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
-Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE
-and Long.MAX_VALUE
-
+The bounded-long-biased generator produces with higher probability _min_ and _max_, and
+all the above-mentioned values that fall into the interval (min, max):
 
 ```  java
 
@@ -149,25 +176,40 @@ Gen<Long> :: LongGen.biased(long min, long max)
 
 ```
 
-Bounded biased produces with higher probability the bounds  min and max, and
-all the mentioned values produced by the unbounded biased that fall into the interval.
 
-The arbitrary long generators produces any long with a uniform distribution.
+The unbounded-long-arbitrary generator produces any integer number with the same
+probability (uniform distribution):
 
 ```  java
 
-Gen<Integer> :: LongGen.arbitrary()
+Gen<Long> :: LongGen.arbitrary()
 
-Gen<Integer> :: LongGen.arbitrary(long min, long max)
+```
+
+whereas the bounded-long-arbitrary generator produces any integer number between min and max (inclusive)
+with the same probability (uniform distribution):
+
+
+```  java
+
+Gen<Long> :: LongGen.arbitrary(long min, long max)
 
 ```
 
 - Double generator
 
-Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
-Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE
-,Long.MAX_VALUE, Double.MIN_VALUE and Double.MAX_VALUE
+The unbounded-double-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_,
+_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_, _Integer.MIN_VALUE_,
+_Long.MIN_VALUE_, _Long.MAX_VALUE_, _Double.MIN_VALUE_ and _Double.MAX_VALUE_:
 
+```  java
+
+Gen<Double> :: DoubleGen.biased()
+
+```
+
+The bounded-double-biased generator produces with higher probability _min_ and _max_, and
+all the above-mentioned values that fall into the interval (min, max):
 
 ```  java
 
@@ -175,36 +217,60 @@ Gen<Double> :: DoubleGen.biased(double min, double max)
 
 ```
 
-Bounded biased produces with higher probability the bounds min and max, and
-all the mentioned values produced by the unbounded biased that fall into the interval.
 
-The arbitrary double generators produces any long with a uniform distribution.
+The unbounded-double-arbitrary generator produces any integer number with the same
+probability (uniform distribution):
 
 ```  java
 
 Gen<Double> :: DoubleGen.arbitrary()
 
+```
+
+whereas the bounded-double-arbitrary generator produces any integer number between min and max (inclusive)
+with the same probability (uniform distribution):
+
+
+```  java
+
 Gen<Double> :: DoubleGen.arbitrary(double min, double max)
 
 ```
 
+
 - Big Integer generator
+
+Big integer generators accept the maximum number of bits as a parameter. They 
+always produce positive numbers.
+
+The arbitrary generator generates big integers uniformly distributed between 0 
+and 2^bits - 1. The biased generator produces with higher probability zero and,
+if the maximum number of bit is big enough, Byte.MAX_VALUE, Short.MAX_VALUE,
+Integer.MAX_VALUE and Long.MAX_VALUE:
 
  ```  java
  
-Gen<BigInteger> :: BigInteger.biased(int bits)
+Gen<BigInteger> :: BigIntGen.biased(int bits)
 
-Gen<BigInteger> :: BigInteger.arbitrary(int bits)
-
+Gen<BigInteger> :: BigIntGen.arbitrary(int bits)
 
 ```
 
+
 - Big Decimal generator
 
-Biased produces with higher probability the values zero, Byte.MAX_VALUE, Byte.MIN_VALUE,
-Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MIN_VALUE
-,Long.MAX_VALUE, Double.MIN_VALUE and Double.MAX_VALUE
+The unbounded-decimal-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_,
+_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_, _Integer.MIN_VALUE_,
+_Long.MIN_VALUE_, _Long.MAX_VALUE_, _Double.MIN_VALUE_ and _Double.MAX_VALUE_:
 
+```  java
+
+Gen<BigDecimal> :: BigDecGen.biased()
+
+```
+
+The bounded-decimal-biased generator produces with higher probability _min_ and _max_, and
+all the above-mentioned values that fall into the interval (min, max):
 
 ```  java
 
@@ -212,14 +278,21 @@ Gen<BigDecimal> :: BigDecGen.biased(BigDecimal min, BigDecimal max)
 
 ```
 
-Bounded biased produces with higher probability the bounds min and max, and
-all the mentioned values produced by the unbounded biased that fall into the interval.
 
-The arbitrary double generators produces any long with a uniform distribution.
+The unbounded-decimal-arbitrary generator produces any integer number with the same
+probability (uniform distribution):
 
 ```  java
 
 Gen<BigDecimal> :: BigDecGen.arbitrary()
+
+```
+
+whereas the bounded-decimal-arbitrary generator produces any integer number between min and max (inclusive)
+with the same probability (uniform distribution):
+
+
+```  java
 
 Gen<BigDecimal> :: BigDecGen.arbitrary(BigDecimal min, BigDecimal max)
 
@@ -238,8 +311,7 @@ Gen<byte[]> :: BytesGen.arbitrary(int minLength, int maxLength)
 
 - Character generator
 
- 
- 
+
 ```  java
   
 Gen<Character> :: CharGen.arbitrary()  

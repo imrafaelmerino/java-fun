@@ -3,8 +3,7 @@ package fun.gen;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,7 +21,7 @@ public class TestInstantGen {
                                               (long) Integer.MAX_VALUE,
                                               (long) Integer.MIN_VALUE,
                                               0L)
-                                          .map(Instant::ofEpochMilli)
+                                          .map(Instant::ofEpochSecond)
                                           .collect(Collectors.toList());
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
@@ -45,13 +44,26 @@ public class TestInstantGen {
                                               (long) Integer.MAX_VALUE,
                                               (long) Integer.MIN_VALUE,
                                               0L)
-                                          .map(Instant::ofEpochMilli)
+                                          .map(Instant::ofEpochSecond)
                                           .collect(Collectors.toList());
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
                                                          problematic,
                                                          0.05);
 
+
+    }
+
+    public static void main(String[] args) {
+        Gen<Set<String>> permutations = Combinators.subsets(new HashSet<>(Arrays.asList("a",
+                                                                           "b",
+                                                                           "c")));
+
+        Set<Set<String>> r = new HashSet<>();
+
+        permutations.sample(10000).forEach(r::add);
+
+        System.out.println(r);
 
     }
 }

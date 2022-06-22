@@ -56,7 +56,7 @@ public class Readme {
                                          passwordGen,
                                          NAME_FIELD,
                                          nameGen)
-                                     .setAllOptionals()
+                                     .setAllOptional()
                                      .map(record ->
                                                   new User(record.getStr(LOGIN_FIELD).orElse(null),
                                                            record.getStr(NAME_FIELD).orElse(null),

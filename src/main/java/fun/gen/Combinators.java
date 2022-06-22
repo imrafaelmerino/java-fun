@@ -140,36 +140,36 @@ public final class Combinators {
     private static <I> void combinations(final List<I> input,
                                          final int i,
                                          final int k,
-                                         final List<List<I>> combination,
-                                         final List<I> combinations) {
+                                         final List<Set<I>> result,
+                                         final List<I> combination) {
         if (input.size() == 0) return;
 
         if (k == 0) {
-            combination.add(new ArrayList<>(combinations));
+            result.add(new HashSet<>(combination));
             return;
         }
 
         if (i == input.size()) return;
 
-        combinations.add(input.get(i));
+        combination.add(input.get(i));
         combinations(input,
                      i + 1,
                      k - 1,
-                     combination,
-                     combinations);
+                     result,
+                     combination);
 
-        combinations.remove(combinations.size() - 1);
+        combination.remove(combination.size() - 1);
         combinations(input,
                      i + 1,
                      k,
-                     combination,
-                     combinations);
+                     result,
+                     combination);
     }
 
-    private static <I> List<List<I>> getCombinations(final List<I> input,
-                                                     final int k) {
-        List<List<I>> result = new ArrayList<>();
-        combinations(input,
+    private static <I> List<Set<I>> getCombinations(final Set<I> input,
+                                                    final int k) {
+        List<Set<I>> result = new ArrayList<>();
+        combinations(new ArrayList<>(input),
                      0,
                      k,
                      result,
@@ -178,40 +178,40 @@ public final class Combinators {
     }
 
 
-    public static <I> Gen<List<I>> combinations(final int k,
-                                                final List<I> input) {
+    public static <I> Gen<Set<I>> combinations(final int k,
+                                               final Set<I> input) {
         requireNonNull(input);
         if (k < 0) throw new IllegalArgumentException("k < 0");
         return seed -> {
-            if (input.isEmpty()) return ArrayList::new;
+            if (input.isEmpty()) return HashSet::new;
 
-            List<List<I>> combinations = getCombinations(input,
-                                                         k);
+            List<Set<I>> combinations = getCombinations(input,
+                                                        k);
             Supplier<Integer> indexGen = IntGen.arbitrary(0,
                                                           combinations.size() - 1).apply(seed);
             return () -> combinations.get(indexGen.get());
         };
     }
 
-    public static <I> Gen<List<I>> permutations(final List<I> input) {
+    public static <I> Gen<Set<I>> subsets(final Set<I> input) {
         requireNonNull(input);
         return seed -> {
-            if (input.isEmpty()) return ArrayList::new;
-            List<List<I>> permutations = getPermutations(input);
+            if (input.isEmpty()) return HashSet::new;
+            List<Set<I>> subsets = getSubsets(input);
             Supplier<Integer> indexGen = IntGen.arbitrary(0,
-                                                          permutations.size() - 1)
+                                                          subsets.size() - 1)
                                                .apply(seed);
-            return () -> permutations.get(indexGen.get());
+            return () -> subsets.get(indexGen.get());
         };
     }
 
-    private static <I> List<List<I>> getPermutations(List<I> input) {
-        List<List<I>> permutations = new ArrayList<>();
-        permutations.add(input);
+    private static <I> List<Set<I>> getSubsets(Set<I> input) {
+        List<Set<I>> subsets = new ArrayList<>();
+        subsets.add(input);
         for (int k = 1; k < input.size(); k++)
-            permutations.addAll(getCombinations(input,
-                                                k));
-        return permutations;
+            subsets.addAll(getCombinations(input,
+                                           k));
+        return subsets;
     }
 
 

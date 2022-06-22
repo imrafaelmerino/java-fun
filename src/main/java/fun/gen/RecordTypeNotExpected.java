@@ -5,7 +5,7 @@ public final class RecordTypeNotExpected extends RuntimeException{
 
     private static final String TEMPLATE =
             "The type you expect of the value associated to the key %s is %s, however the " +
-            "real type is %s. Consider using other lens or the generator is producing wrong values";
+            "real type is %s. Consider using other getXXX method or the generator is producing not-expected values";
     public RecordTypeNotExpected(String message) {
         super(message);
     }

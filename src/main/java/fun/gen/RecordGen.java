@@ -15,8 +15,8 @@ public final class RecordGen implements Gen<Record> {
 
 
     private final SplitGen split = SplitGen.DEFAULT;
-    private List<String> optionals = new ArrayList<>();
-    private List<String> nullables = new ArrayList<>();
+    private Set<String> optionals = new HashSet<>();
+    private Set<String> nullables = new HashSet<>();
     private Map<String, Gen<?>> bindings = new LinkedHashMap<>();
 
     private RecordGen(final Map<String, Gen<?>> bindings) {
@@ -2313,30 +2313,35 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    public RecordGen setNullables(final List<String> nullables) {
-        this.nullables = requireNonNull(optionals);
+    public RecordGen setNullables(final Collection<String> nullables) {
+        this.nullables = new HashSet<>(requireNonNull(nullables));
+        return this;
+    }
+
+    public RecordGen setAllNullable() {
+        this.nullables = bindings.keySet();
         return this;
     }
 
     public RecordGen setNullables(final String... nullables) {
         this.nullables = Arrays.stream(requireNonNull(nullables))
-                               .collect(Collectors.toList());
+                               .collect(Collectors.toSet());
         return this;
     }
 
-    public RecordGen setOptionals(final List<String> optionals) {
-        this.optionals = requireNonNull(optionals);
+    public RecordGen setOptionals(final Collection<String> optionals) {
+        this.optionals = new HashSet<>(requireNonNull(optionals));
         return this;
     }
 
     public RecordGen setOptionals(final String... optional) {
         this.optionals = Arrays.stream(requireNonNull(optional))
-                               .collect(Collectors.toList());
+                               .collect(Collectors.toSet());
         return this;
     }
 
-    public RecordGen setAllOptionals() {
-        this.optionals = new ArrayList<>(bindings.keySet());
+    public RecordGen setAllOptional() {
+        this.optionals = bindings.keySet();
         return this;
     }
 
@@ -2361,8 +2366,8 @@ public final class RecordGen implements Gen<Record> {
                     pair.getValue().apply(split.apply(gen))
             );
 
-        Supplier<List<String>> optionalPermutations =
-                Combinators.permutations(optionals)
+        Supplier<Set<String>> optionalPermutations =
+                Combinators.subsets(optionals)
                            .apply(split.apply(gen));
 
         Supplier<Boolean> isRemoveOptionals =
@@ -2370,11 +2375,11 @@ public final class RecordGen implements Gen<Record> {
                 () -> false :
                 BoolGen.arbitrary().apply(split.apply(gen));
 
-        Supplier<List<String>> nullablePermutations =
-                Combinators.permutations(nullables)
+        Supplier<Set<String>> nullablePermutations =
+                Combinators.subsets(nullables)
                            .apply(split.apply(gen));
 
-        Supplier<Boolean> isRemoveNullables =
+        Supplier<Boolean> isSetNullables =
                 nullables.isEmpty() ?
                 () -> false :
                 BoolGen.arbitrary().apply(split.apply(gen));
@@ -2388,11 +2393,11 @@ public final class RecordGen implements Gen<Record> {
                 );
             }
             if (isRemoveOptionals.get()) {
-                List<String> r = optionalPermutations.get();
+                Set<String> r = optionalPermutations.get();
                 for (String s : r) result.remove(s);
             }
-            if (isRemoveNullables.get()) {
-                final List<String> r = nullablePermutations.get();
+            if (isSetNullables.get()) {
+                Set<String> r = nullablePermutations.get();
                 for (String s : r)
                     result.put(s,
                                null);

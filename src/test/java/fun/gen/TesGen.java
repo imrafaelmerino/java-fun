@@ -17,7 +17,7 @@ public class TesGen {
                              StrGen.alphanumeric(1,1),
                              "c",
                              StrGen.alphanumeric(1,1))
-                         .setAllOptionals();
+                         .setAllOptional();
 
 
         Assertions.assertTrue(gen.suchThat(it ->

@@ -46,7 +46,7 @@ public final class InstantGen implements Gen<Instant> {
                          LongGen.arbitrary(MIN_SECONDS,
                                            MAX_SECONDS)));
 
-        return Combinators.freqList(gens).map(Instant::ofEpochMilli);
+        return Combinators.freqList(gens).map(Instant::ofEpochSecond);
 
     }
 
@@ -81,7 +81,7 @@ public final class InstantGen implements Gen<Instant> {
                          LongGen.arbitrary(min,
                                            max)));
 
-        return Combinators.freqList(gens).map(Instant::ofEpochMilli);
+        return Combinators.freqList(gens).map(Instant::ofEpochSecond);
 
     }
 
@@ -124,7 +124,7 @@ public final class InstantGen implements Gen<Instant> {
             throw new IllegalArgumentException(max + " is lower than MIN_SECONDS " + MIN_SECONDS);
 
         return LongGen.arbitrary(min,
-                                 max).map(Instant::ofEpochMilli);
+                                 max).map(Instant::ofEpochSecond);
     }
 
     @Override
@@ -133,7 +133,7 @@ public final class InstantGen implements Gen<Instant> {
 
         return LongGen.arbitrary(MIN_SECONDS,
                                  MAX_SECONDS + 1)
-                      .map(Instant::ofEpochMilli).apply(gen);
+                      .map(Instant::ofEpochSecond).apply(gen);
     }
 
 }

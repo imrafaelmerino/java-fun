@@ -396,8 +396,8 @@ Gen<Instant> :: InstantGen.arbitrary(int min, int max)
  ```  java
  
 Gen<List<T>> :: ListGen.biased(Gen<T> gen,
-                               int minLength,
-                               int maxLength
+                                int minLength,
+                                int maxLength
                                )
 
 ```
@@ -405,8 +405,8 @@ Gen<List<T>> :: ListGen.biased(Gen<T> gen,
  ```  java
  
 Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
-                                  int minLength,
-                                  int maxLength
+                                   int minLength,
+                                   int maxLength
                                  )
 
 ```
@@ -449,7 +449,7 @@ Gen<Map<K,V>> ::  MapGen<K,V>.of(Gen<K> keyGen,
  ```  java
 
 Gen<Pair<A, B>> ::  PairGen.of(Gen<A> _1,
-                               Gen<B> _2
+                                Gen<B> _2
                               )
 
 ```
@@ -459,8 +459,8 @@ Gen<Pair<A, B>> ::  PairGen.of(Gen<A> _1,
  ```  java
  
 Gen<Triple<A, B, C>> ::  TripleGen.of(Gen<A> _1,
-                                      Gen<B> _2,
-                                      Gen<C> _3
+                                       Gen<B> _2,
+                                       Gen<C> _3
                                      ) 
 
 ```
@@ -475,8 +475,8 @@ generator in java-fun
 import fun.gen.Record 
  
 Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1,20),
-                                  age, IntGen.biased(0,150),
-                                  birthdate, InstantGen.arbitrary() )
+                                   age, IntGen.biased(0,150),
+                                   birthdate, InstantGen.arbitrary() )
 
 ```
 
@@ -566,7 +566,7 @@ You can control the probability null is generated with.
 //generates null % specified by prob
 
 Gen<A> :: Combinators.nullable(Gen<A> gen,
-                               int prob) 
+                                int prob) 
 
 ```
 
@@ -580,6 +580,7 @@ Given a list with n elements, there are n!/k!(n - k)! combinations of k elements
  
 Gen<Set<A>> ::  Combinators.combinations(int k,
                                           Set<I> input) 
+
 
 ```
 

@@ -2,8 +2,8 @@ package fun.gen;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,12 +18,12 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
 
     private final SplitGen splitGen;
 
-    public MapGen(final Gen<K> keyGen,
-                  final Gen<V> valueGen,
-                  final int size,
-                  final int maxTries) {
+    private MapGen(final Gen<K> keyGen,
+                   final Gen<V> valueGen,
+                   final int size,
+                   final int maxTries) {
         if (size < 0) throw new IllegalArgumentException("size < 0");
-        if (maxTries < 0) throw new IllegalArgumentException("maxTries < 0");
+        if (maxTries < size) throw new IllegalArgumentException("maxTries < size");
         this.keyGen = requireNonNull(keyGen);
         this.valueGen = requireNonNull(valueGen);
         this.size = size;
@@ -31,13 +31,21 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
         this.splitGen = SplitGen.DEFAULT;
     }
 
-    public MapGen(final Gen<K> keyGen,
-                  final Gen<V> valueGen,
-                  final int size) {
-        this(keyGen,
-             valueGen,
-             size,
-             size * 100);
+
+    public static <K, V> MapGen<K, V> of(final Gen<K> keyGen,
+                                         final Gen<V> valueGen,
+                                         final int size) {
+        return new MapGen<>(keyGen,
+                            valueGen,
+                            size,
+                            size * 100);
+    }
+
+    public MapGen<K, V> setMaxTries(final int tries) {
+        return new MapGen<>(keyGen,
+                            valueGen,
+                            size,
+                            tries);
     }
 
     @Override

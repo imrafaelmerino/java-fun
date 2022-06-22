@@ -15,20 +15,28 @@ public final class SetGen<T> implements Gen<Set<T>> {
     private final int size;
     private final int maxTries;
 
-    public SetGen(final Gen<T> gen,
-                  final int size,
-                  final int maxTries) {
+    private SetGen(final Gen<T> gen,
+                   final int size,
+                   final int maxTries) {
         if (size < 0) throw new IllegalArgumentException("size < 0");
+        if (maxTries < size) throw new IllegalArgumentException("maxTries < size");
         this.gen = requireNonNull(gen);
         this.size = size;
         this.maxTries = maxTries;
     }
 
-    public SetGen(final Gen<T> gen,
-                  final int size) {
-        this(gen,
-             size,
-             size * 10);
+
+    public static <T> SetGen<T> of(final Gen<T> gen,
+                                   final int size) {
+        return new SetGen<>(gen,
+                            size,
+                            size * 10);
+    }
+
+    public SetGen<T> setMaxTries(final int tries) {
+        return new SetGen<>(gen,
+                            size,
+                            tries);
     }
 
 

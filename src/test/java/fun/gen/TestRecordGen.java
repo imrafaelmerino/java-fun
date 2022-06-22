@@ -3,6 +3,8 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -22,7 +24,8 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       10),
                                      "b",
-                                     StrGen.letters(1,1));
+                                     StrGen.letters(1,
+                                                    1));
 
         Assertions.assertTrue(two.sample(100).allMatch(it -> it.map.size() == 2));
 
@@ -30,7 +33,8 @@ public class TestRecordGen {
         RecordGen three = RecordGen.of("a",
                                        IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letters(1,1),
+                                       StrGen.letters(1,
+                                                      1),
                                        "c",
                                        BoolGen.arbitrary());
 
@@ -40,7 +44,8 @@ public class TestRecordGen {
         RecordGen four = RecordGen.of("a",
                                       IntGen.arbitrary(),
                                       "b",
-                                      StrGen.letters(1,1),
+                                      StrGen.letters(1,
+                                                     1),
                                       "c",
                                       BoolGen.arbitrary(),
                                       "d",
@@ -52,7 +57,8 @@ public class TestRecordGen {
         RecordGen five = RecordGen.of("a",
                                       IntGen.arbitrary(),
                                       "b",
-                                      StrGen.letters(1,1),
+                                      StrGen.letters(1,
+                                                     1),
                                       "c",
                                       BoolGen.arbitrary(),
                                       "d",
@@ -66,7 +72,8 @@ public class TestRecordGen {
         RecordGen six = RecordGen.of("a",
                                      IntGen.arbitrary(),
                                      "b",
-                                     StrGen.letters(1,1),
+                                     StrGen.letters(1,
+                                                    1),
                                      "c",
                                      BoolGen.arbitrary(),
                                      "d",
@@ -81,7 +88,8 @@ public class TestRecordGen {
         RecordGen seven = RecordGen.of("a",
                                        IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letters(1,1),
+                                       StrGen.letters(1,
+                                                      1),
                                        "c",
                                        BoolGen.arbitrary(),
                                        "d",
@@ -99,7 +107,8 @@ public class TestRecordGen {
         RecordGen eight = RecordGen.of("a",
                                        IntGen.arbitrary(),
                                        "b",
-                                       StrGen.letters(1,1),
+                                       StrGen.letters(1,
+                                                      1),
                                        "c",
                                        BoolGen.arbitrary(),
                                        "d",
@@ -122,7 +131,8 @@ public class TestRecordGen {
         RecordGen nine = RecordGen.of("a",
                                       IntGen.arbitrary(),
                                       "b",
-                                      StrGen.letters(1,1),
+                                      StrGen.letters(1,
+                                                     1),
                                       "c",
                                       BoolGen.arbitrary(),
                                       "d",
@@ -148,7 +158,8 @@ public class TestRecordGen {
         RecordGen ten = RecordGen.of("a",
                                      IntGen.arbitrary(),
                                      "b",
-                                     StrGen.letters(1,1),
+                                     StrGen.letters(1,
+                                                    1),
                                      "c",
                                      BoolGen.arbitrary(),
                                      "d",
@@ -174,7 +185,8 @@ public class TestRecordGen {
         RecordGen eleven = RecordGen.of("a",
                                         IntGen.arbitrary(),
                                         "b",
-                                        StrGen.letters(1,1),
+                                        StrGen.letters(1,
+                                                       1),
                                         "c",
                                         BoolGen.arbitrary(),
                                         "d",
@@ -202,7 +214,8 @@ public class TestRecordGen {
         RecordGen twelve = RecordGen.of("a",
                                         IntGen.arbitrary(),
                                         "b",
-                                        StrGen.letters(1,1),
+                                        StrGen.letters(1,
+                                                       1),
                                         "c",
                                         BoolGen.arbitrary(),
                                         "d",
@@ -232,7 +245,8 @@ public class TestRecordGen {
         RecordGen thirteen = RecordGen.of("a",
                                           IntGen.arbitrary(),
                                           "b",
-                                          StrGen.letters(1,1),
+                                          StrGen.letters(1,
+                                                         1),
                                           "c",
                                           BoolGen.arbitrary(),
                                           "d",
@@ -264,7 +278,8 @@ public class TestRecordGen {
         RecordGen fourteen = RecordGen.of("a",
                                           IntGen.arbitrary(),
                                           "b",
-                                          StrGen.letters(1,1),
+                                          StrGen.letters(1,
+                                                         1),
                                           "c",
                                           BoolGen.arbitrary(),
                                           "d",
@@ -298,7 +313,8 @@ public class TestRecordGen {
         RecordGen fifteen = RecordGen.of("a",
                                          IntGen.arbitrary(),
                                          "b",
-                                         StrGen.letters(1,1),
+                                         StrGen.letters(1,
+                                                        1),
                                          "c",
                                          BoolGen.arbitrary(),
                                          "d",
@@ -334,7 +350,8 @@ public class TestRecordGen {
         RecordGen sixteen = RecordGen.of("a",
                                          IntGen.arbitrary(),
                                          "b",
-                                         StrGen.letters(1,1),
+                                         StrGen.letters(1,
+                                                        1),
                                          "c",
                                          BoolGen.arbitrary(),
                                          "d",
@@ -372,7 +389,8 @@ public class TestRecordGen {
         RecordGen seventeen = RecordGen.of("a",
                                            IntGen.arbitrary(),
                                            "b",
-                                           StrGen.letters(1,1),
+                                           StrGen.letters(1,
+                                                          1),
                                            "c",
                                            BoolGen.arbitrary(),
                                            "d",
@@ -412,7 +430,8 @@ public class TestRecordGen {
         RecordGen eighteen = RecordGen.of("a",
                                           IntGen.arbitrary(),
                                           "b",
-                                          StrGen.letters(1,1),
+                                          StrGen.letters(1,
+                                                         1),
                                           "c",
                                           BoolGen.arbitrary(),
                                           "d",
@@ -455,7 +474,8 @@ public class TestRecordGen {
         RecordGen nineteen = RecordGen.of("a",
                                           IntGen.arbitrary(),
                                           "b",
-                                          StrGen.letters(1,1),
+                                          StrGen.letters(1,
+                                                         1),
                                           "c",
                                           BoolGen.arbitrary(),
                                           "d",
@@ -499,7 +519,8 @@ public class TestRecordGen {
         RecordGen twenty = RecordGen.of("a",
                                         IntGen.arbitrary(),
                                         "b",
-                                        StrGen.letters(1,1),
+                                        StrGen.letters(1,
+                                                       1),
                                         "c",
                                         BoolGen.arbitrary(),
                                         "d",
@@ -552,12 +573,13 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       10),
                                      "b",
-                                     StrGen.letters(1,1),
+                                     StrGen.letters(1,
+                                                    1),
                                      "c",
                                      BoolGen.arbitrary());
 
 
-        Map<Record, Long> counts = TestFun.generate(1000000,
+        Map<Record, Long> counts = TestFun.generate(5000000,
                                                     gen);
 
 
@@ -574,7 +596,8 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       40000),
                                      "b",
-                                     StrGen.letters(1,1),
+                                     StrGen.letters(1,
+                                                    1),
                                      "c",
                                      IntGen.arbitrary(0,
                                                       40000));
@@ -591,6 +614,9 @@ public class TestRecordGen {
         long someKeyRemoved =
                 TestFun.countKeys(map,
                                   record -> !record.map.containsKey("a") || !record.map.containsKey("b"));
+
+        System.out.println(allKeys);
+        System.out.println(someKeyRemoved);
 
 
         //50%
@@ -627,6 +653,71 @@ public class TestRecordGen {
 
     }
 
+
+    @Test
+    public void testRecordGenWithAllOptionals() {
+
+        RecordGen gen = RecordGen.of("a",
+                                     IntGen.arbitrary(0,
+                                                      400000),
+                                     "b",
+                                     StrGen.letters(1,
+                                                    1),
+                                     "c",
+                                     IntGen.arbitrary(0,
+                                                      400000));
+
+        Map<Record, Long> map =
+                TestFun.generate(200000,
+                                 gen.setOptionals(Arrays.asList("a",
+                                                                "b",
+                                                                "c")));
+
+        // half of the times no field is removed, 7 possible subsets from [a,b,c],
+        Predicate<Long> x = TestFun.isInMargin(200000 / 2 / 7,
+                                               0.1);
+
+        // empty record, all fields are removed
+        Assertions.assertTrue(x.test(map.get(new Record(new HashMap<>()))));
+
+
+    }
+
+    @Test
+    public void testRecordGenWithAllNullable() {
+
+        RecordGen gen = RecordGen.of("a",
+                                     IntGen.arbitrary(0,
+                                                      400000),
+                                     "b",
+                                     StrGen.letters(1,
+                                                    1),
+                                     "c",
+                                     IntGen.arbitrary(0,
+                                                      400000));
+
+        Map<Record, Long> map =
+                TestFun.generate(200000,
+                                 gen.setAllNullable());
+
+        // half of the times no field is removed, 7 possible subsets from [a,b,c],
+        Predicate<Long> x = TestFun.isInMargin(200000 / 2 / 7,
+                                               0.1);
+
+        // all fields are null
+        Map<String, ?> allNull = new HashMap<>();
+        allNull.put("a",
+                    null);
+        allNull.put("b",
+                    null);
+        allNull.put("c",
+                    null);
+        Assertions.assertTrue(x.test(map.get(new Record(allNull))));
+
+
+    }
+
+
     @Test
     public void testRecordGenWithNullable() {
 
@@ -634,7 +725,8 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       40000),
                                      "b",
-                                     StrGen.letters(1,1),
+                                     StrGen.letters(1,
+                                                    1),
                                      "c",
                                      IntGen.arbitrary(0,
                                                       800000));
@@ -758,8 +850,8 @@ public class TestRecordGen {
                                                          .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           new SetGen<>(IntGen.arbitrary(),
-                                                        10))
+                                           SetGen.of(IntGen.arbitrary(),
+                                                     10))
                                        .sample(100)
                                        .allMatch(it -> it.getSet("a")
                                                          .isPresent()));
@@ -772,10 +864,10 @@ public class TestRecordGen {
                                                          .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           new MapGen<>(StrGen.alphanumeric(1,
-                                                                            10),
-                                                        IntGen.arbitrary(),
-                                                        100))
+                                           MapGen.of(StrGen.alphanumeric(1,
+                                                                         10),
+                                                     IntGen.arbitrary(),
+                                                     100))
                                        .sample(100)
                                        .allMatch(it -> {
                                            Optional<Map<String, Integer>> a = it.getMap("a");

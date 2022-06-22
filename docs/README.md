@@ -1,10 +1,10 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_java-fun&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_java-fun)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_java-fun&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_java-fun)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_java-fun&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=imrafaelmerino_java-fun)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/0.9.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/0.9.3/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/0.9.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/0.9.4/jar)
 
 - [Goal](#goal)
-- [Pseudo Random Generators (PRG)](#prg)
+- [Pseudo Random Generators](#prg)
     - [Primitive Types Generators](#ptg)
     - [Collection Generators](#cg)
     - [Tuples and Record Generators](#trg)
@@ -19,8 +19,8 @@
 ## <a name="goal"><a/> Goal
 
 The goal of java-fun is to implement in Java some important patterns 
-from Functional Programming. It doesn't transliterate these patterns 
-from other languages, aiming that any standard Java programmer finds 
+from Functional Programming. **It doesn't transliterate these patterns 
+from other languages**, aiming that any standard Java programmer finds 
 easy to adopt them and understand the essence of these concepts, not 
 getting lost in unfamiliar types and conventions.
 
@@ -32,6 +32,9 @@ to be able to compose them in any imaginable way. With java-fun, it's child's pl
 - **Optics**. Functional programmers use optics instead of getters and setters. 
 They are more safe and composable. Using optics properly, you'll never see
 again a NullPointerException!
+- **Tuples**. Java won't probably implement tuples, but I still consider them very
+useful. I've implemented tuples of two elements,i.e. pairs, and tuples of three elements,
+i.e. triples. 
 
 ## <a name="prg"><a/> Pseudo Random Generators
 Pseudorandom number generators (PRN) are important in practice for their speed 
@@ -55,7 +58,7 @@ generators easily.
 There are two crucial static factory methods to create generators:
 
 - **arbitrary**, that produces a uniform distribution of values.
-- **biased**, that generates with a higher probability values that are 
+- **biased**, that generates with a higher probability some values that are 
 proven to cause more bugs in our code. This is vital to do Property Based 
 Testing.
 
@@ -85,7 +88,8 @@ gen.sample(10).forEach(System.out::println);
 
 ```
 
-would print out strings like "", "   " or any string made up of valid printable unicode characters.
+would print out strings like "", "   " or any string of length from 0 to 3 made 
+up of valid printable unicode characters.
 
 The bounded-string-arbitrary generator produces any string of length **uniformly distributed** over 
 the interval [minLength, maxLength]. Not like the biased generator, all the values are generated 
@@ -344,10 +348,45 @@ produces true or false with the same probability
 
 - Instant generator
 
- ```  java
+The unbounded-instant-biased generator produces with higher probability the values
+1970-01-01T00:00:00Z (epoch time) 1901-12-13T20:45:52Z, (_Integer.MIN_VALUE_ from epoch time),
+2038-01-19T03:14:07Z (_Integer.MAX_VALUE_ from epoch time), _Instant.MAX_ and _Instant.MIN_:
+
+```  java
+
+Gen<Instant> :: InstantGen.biased()
 
 ```
 
+The bounded-instant-biased generator produces with higher probability _min_ and _max_ 
+seconds from the epoch time, and all the above-mentioned instants that fall into the interval 
+(min, max):
+
+```  java
+
+Gen<Instant> :: IntantGen.biased(long min, long max)
+
+```
+
+
+The unbounded-instant-arbitrary generator produces any instant  with the same
+probability (uniform distribution):
+
+```  java
+
+Gen<Instant> :: InstantGen.arbitrary()
+
+```
+
+whereas the bounded-instant-arbitrary generator produces any instant between min and max (inclusive)
+with the same probability (uniform distribution):
+
+
+```  java
+
+Gen<Instant> :: InstantGen.arbitrary(int min, int max)
+
+```
 
 
 ### <a name="cg"><a/> Collection Generators
@@ -374,26 +413,32 @@ Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
 
 - Set generator
 
+If the generator cannot or is unlikely to produce enough distinct
+elements (specified by the parameter size), this generator will fail after 10*size tries.
+You can create a new generator with a different number of tries using the method _setMaxTries_.
+
 
 ```  java
  
-public SetGen(Gen<T> gen,
-              int size,
-              int maxTries
-              )
+Gen<Set<T>> ::  SetGen.of(Gen<T> gen,
+                          int size
+                         )
 
  
 ```
 
 - Map generator
 
+If the key generator cannot or is unlikely to produce enough distinct
+keys (specified by the parameter size), this generator will fail after 10*size tries.
+You can create a new generator with a different number of tries using the method _setMaxTries_.
+
  ```  java
 
-public MapGen(Gen<K> keyGen,
-              Gen<V> valueGen,
-              int size,
-              int maxTries
-              )
+Gen<Map<K,V>> ::  MapGen<K,V>.of(Gen<K> keyGen,
+                                 Gen<V> valueGen,
+                                 int size
+                                 )
 
 ```
 
@@ -426,6 +471,7 @@ A record is just a group of field names and their associated values. This is a r
 generator in java-fun
 
  ```  java
+ 
 import fun.gen.Record 
  
 Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1,20),
@@ -455,7 +501,7 @@ Gen<A> :: Combinators.oneOf(Gen<? extends A> gen,
 
 oneOf combinator chooses each generation a generator from the list passed in as parameters.
 All the generators have the same probability to be picked, and are independent, i.e. they
-generate value with a different seed.
+generate values from a different seed.
 
 Instead of a list of generators, you can pass in a list of values
 
@@ -528,20 +574,36 @@ Gen<A> :: Combinators.nullable(Gen<A> gen,
 
 - Combinations
 
- ```  java
- 
-Gen<List<A>> ::  Combinators.combinations(int k,
-                                           List<I> input) 
-
-```
-
-- Permutations
+Given a list with n elements, there are n!/k!(n - k)! combinations of k elements without repetition:
 
  ```  java
  
-Gen<List<A>> ::  Combinators.permutations(List<A> input) 
+Gen<Set<A>> ::  Combinators.combinations(int k,
+                                          Set<I> input) 
+
 
 ```
+
+- Subsets
+
+Given a set with n elements and considering that each element can be included or not 
+(two possible states), we have 
+
+2*2*2... n times = 2^n possible subsets
+
+Since the empty set is not returned, the subsets combinator generates  2^n -1
+different subsets. For example, given the set ["a","b","c"], all the possible values are
+[[a], [b], [c], [a, b], [a, c],  [b, c],  [a, b, c]]
+
+
+ ```  java
+ 
+Gen<Set<A>> ::  Combinators.subsets(Set<A> input) 
+
+```
+
+This combinator is used to generate all possible combinations of optional and nullable fields
+in the record generator.
 
 ### <a name="og"><a/> Objects Generators
 
@@ -564,7 +626,7 @@ public class User {
         this.password = password;
     }
     
-    //toString,equals, hashcode, getters all that stuff
+    //toString, equals, hashcode, getters all that stuff
 
 }
 
@@ -584,7 +646,8 @@ Let's define a User generator:
  Gen<User> userGen = RecordGen.of("login", loginGen,
                                   "name", nameGen,
                                   "password", passwordGen)
-                              .setAllOptionals()
+                              .setAllOptional()
+                              .setAllNullable()
                               .map(record ->
                                              new User(record.getStr("login").orElse(null),
                                                       record.getStr("name").orElse(null),
@@ -593,6 +656,8 @@ Let's define a User generator:
 
 ```
 ### <a name="ucp"><a/> Useful and common patterns
+
+#### <a name="suchthat"><a/> Such-That
 
 The function suchThat takes a predicate and returns a new generator that 
 produces only values that satisfy the condition. For example, let's use 
@@ -614,6 +679,30 @@ this idea to create generators of valid and invalid data:
   
 
 ```
+
+#### <a name="permt"><a/> Generating all optional and nullable fields
+
+
+#### <a name="flatmap"><a/> Flatmap
+
+You can create new generators from existing ones using the flatmap function. For example,
+lets create a set generator where the number of elements is random between 0 and ten.
+
+```  java
+
+
+Gen<String> elemGen = StrGen.letters(5, 10);
+
+Gen<Set<String>> setGen = IntGen.arbitrary(1,10)
+                                .then(size ->  SetGen.of(elemGen,size))
+
+
+```
+
+Do notice that the size is determined at creation time, in other words, all the 
+generated sets will have the same size.
+
+
 ## <a name="optics"><a/> Optics: Lenses, Optionals and Prism
 
 It’s ubiquitous to have to navigate through recursive data structures 
@@ -1016,7 +1105,7 @@ Requires Java 8 or greater
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
-    <version>0.9.3</version>
+    <version>0.9.4</version>
     <classifier>jdk8</classifier>
 </dependency>
 

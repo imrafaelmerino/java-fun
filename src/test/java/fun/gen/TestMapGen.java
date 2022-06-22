@@ -9,12 +9,12 @@ public class TestMapGen {
     @Test
     public void testNotAbleToGenerateMapOfSize() {
         MapGen<String, Integer> gen =
-                new MapGen<>(StrGen.letters(1,
-                                            1),
-                             IntGen.arbitrary(0,
-                                              10),
-                             10000,
-                             10);
+                MapGen.of(StrGen.letters(1,
+                                         1),
+                          IntGen.arbitrary(0,
+                                           10),
+
+                          100000).setMaxTries(100001);
 
         Assertions.assertThrows(RuntimeException.class,
                                 () -> gen.sample(10).peek(System.out::println).count());
@@ -24,11 +24,11 @@ public class TestMapGen {
     public void test() {
         int SIZE = 100;
         MapGen<String, Integer> gen =
-                new MapGen<>(StrGen.letters(1,
-                                            2),
-                             IntGen.arbitrary(0,
-                                              10),
-                             SIZE);
+                MapGen.of(StrGen.letters(1,
+                                         2),
+                          IntGen.arbitrary(0,
+                                           10),
+                          SIZE);
 
         Assertions.assertTrue(gen.sample(10000)
                                  .allMatch(it -> it.size() == SIZE));

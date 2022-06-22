@@ -3,6 +3,7 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -668,7 +669,9 @@ public class TestRecordGen {
 
         Map<Record, Long> map =
                 TestFun.generate(200000,
-                                 gen.setAllOptional());
+                                 gen.setOptionals(Arrays.asList("a",
+                                                                "b",
+                                                                "c")));
 
         // half of the times no field is removed, 7 possible subsets from [a,b,c],
         Predicate<Long> x = TestFun.isInMargin(200000 / 2 / 7,
@@ -702,10 +705,13 @@ public class TestRecordGen {
                                                0.1);
 
         // all fields are null
-        Map<String,?> allNull = new HashMap<>();
-        allNull.put("a",null);
-        allNull.put("b",null);
-        allNull.put("c",null);
+        Map<String, ?> allNull = new HashMap<>();
+        allNull.put("a",
+                    null);
+        allNull.put("b",
+                    null);
+        allNull.put("c",
+                    null);
         Assertions.assertTrue(x.test(map.get(new Record(allNull))));
 
 
@@ -844,8 +850,8 @@ public class TestRecordGen {
                                                          .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           new SetGen<>(IntGen.arbitrary(),
-                                                        10))
+                                           SetGen.of(IntGen.arbitrary(),
+                                                     10))
                                        .sample(100)
                                        .allMatch(it -> it.getSet("a")
                                                          .isPresent()));
@@ -858,10 +864,10 @@ public class TestRecordGen {
                                                          .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           new MapGen<>(StrGen.alphanumeric(1,
-                                                                            10),
-                                                        IntGen.arbitrary(),
-                                                        100))
+                                           MapGen.of(StrGen.alphanumeric(1,
+                                                                         10),
+                                                     IntGen.arbitrary(),
+                                                     100))
                                        .sample(100)
                                        .allMatch(it -> {
                                            Optional<Map<String, Integer>> a = it.getMap("a");

@@ -414,14 +414,15 @@ Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
 - Set generator
 
 If the generator cannot or is unlikely to produce enough distinct
-elements (specified by the parameter size), this generator will fail after maxTries generations
+elements (specified by the parameter size), this generator will fail after 10*size tries.
+You can create a new generator with a different number of tries using the method _setMaxTries_.
+
 
 ```  java
  
-public SetGen(Gen<T> gen,
-              int size,
-              int maxTries
-              )
+Gen<Set<T>> ::  SetGen.of(Gen<T> gen,
+                          int size
+                         )
 
  
 ```
@@ -429,15 +430,15 @@ public SetGen(Gen<T> gen,
 - Map generator
 
 If the key generator cannot or is unlikely to produce enough distinct
-keys (specified by the parameter size), this generator will fail after maxTries generations
+keys (specified by the parameter size), this generator will fail after 10*size tries.
+You can create a new generator with a different number of tries using the method _setMaxTries_.
 
  ```  java
 
-public MapGen(Gen<K> keyGen,
-              Gen<V> valueGen,
-              int size,
-              int maxTries
-              )
+Gen<Map<K,V>> ::  MapGen<K,V>.of(Gen<K> keyGen,
+                                 Gen<V> valueGen,
+                                 int size
+                                 )
 
 ```
 
@@ -689,9 +690,10 @@ lets create a set generator where the number of elements is random between 0 and
 ```  java
 
 
-Gen<String> elemGen = StrGen.si;
+Gen<String> elemGen = StrGen.letters(5, 10);
 
-Gen<Set<String>> setGen = IntGen.arbitrary(1,10).then(size -> new SetGen(elemGen,size))
+Gen<Set<String>> setGen = IntGen.arbitrary(1,10)
+                                .then(size ->  SetGen.of(elemGen,size))
 
 
 ```

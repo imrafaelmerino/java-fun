@@ -5,9 +5,7 @@ import fun.gen.BytesGen;
 import fun.gen.Gen;
 import jsonvalues.*;
 import jsonvalues.gen.*;
-import jsonvalues.spec.JsObjParser;
-import jsonvalues.spec.JsObjSpec;
-import jsonvalues.spec.JsSpecs;
+import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -1084,15 +1082,7 @@ public class TestJsObjParser {
     public void test_bytes_parser() {
 
         final JsObjSpec objSpec = JsObjSpec.lenient("a",
-                                                    JsSpecs.str(s -> s.length() <= 10),
-                                                    "b",
-                                                    integer(),
-                                                    "c",
-                                                    JsSpecs.decimal(),
-                                                    "d",
-                                                    JsSpecs.binary().nullable(),
-                                                    "e",
-                                                    JsSpecs.binary(it -> it.length <= 100).nullable()
+                                                    JsSpecs.str(s -> s.length() <= 10)
                                            )
                                            .setOptionals("a");
         JsObjParser objParser = new JsObjParser(objSpec);
@@ -1116,40 +1106,16 @@ public class TestJsObjParser {
                                   .setNullables("d",
                                                 "e");
 
-        Assertions.assertTrue(objGen.sample(10000).allMatch(v -> objParser.parse(v.toString()
-                                                                                  .getBytes())
-                                                                          .equals(v)));
+        Assertions.assertTrue(objGen.sample(10000)
+                                    .allMatch(v -> objParser.parse(v.toString()
+                                                                    .getBytes())
+                                                            .equals(v)));
 
-        Assertions.assertTrue(objGen.sample(10000).allMatch(v -> objParser.parse(new ByteArrayInputStream(v.toString()
-                                                                                                           .getBytes()))
-                                                                          .equals(v)));
+        Assertions.assertTrue(objGen.sample(10000)
+                                    .allMatch(v -> objParser.parse(new ByteArrayInputStream(v.toString()
+                                                                                             .getBytes()))
+                                                            .equals(v)));
 
-
-//
-//        JsGen<JsArray> arrayGen = JsGens.array(objGen,
-//                                               10
-//        );
-//
-//        JsArrayParser arrayParser = new JsArrayParser(JsSpecs.arrayOf(objSpec));
-//
-//        TestProperty.test(arrayGen,
-//                          v -> arrayParser.parse(v.toString()
-//                                                  .getBytes())
-//                                          .equals(v),
-//                          v -> {
-//                              System.out.println(v);
-//                              Assertions.fail("Equals after parsing serialized");
-//                          }
-//        );
-//        TestProperty.test(arrayGen,
-//                          v -> arrayParser.parse(new ByteArrayInputStream(v.toString()
-//                                                                           .getBytes()))
-//                                          .equals(v),
-//                          v -> {
-//                              System.out.println(v);
-//                              Assertions.fail("Equals after parsing serialized");
-//                          }
-//        );
 
     }
 
@@ -1280,7 +1246,7 @@ public class TestJsObjParser {
                                        "b",
                                        JsIntGen.arbitrary(),
                                        "c",
-                                       JsStrGen.alphabetic(),
+                                       JsStrGen.alphanumeric(),
                                        "d",
                                        JsIntGen.arbitrary(),
                                        "e",
@@ -1307,14 +1273,15 @@ public class TestJsObjParser {
         Assertions.assertTrue(gen.sample(10000)
                                  .allMatch(o -> spec.test(parser.parse(o.toString())).isEmpty()));
 
-        Assertions.assertTrue(baseGen.suchThat(spec,100).sample(10000)
+        Assertions.assertTrue(baseGen.suchThat(spec,
+                                               100).sample(10000)
                                      .allMatch(o -> spec.test(parser.parse(o.toString())).isEmpty()));
 
-        JsObjSpec spec1 = baseSpec.setAllOptionals().suchThat(o -> dependencies(o));
+        JsObjSpec spec1 = baseSpec.setAllOptional().suchThat(o -> dependencies(o));
         JsObjParser parser1 = new JsObjParser(spec1);
-        Assertions.assertTrue(baseGen.setAllOptional().suchThat(spec1).sample(10000).allMatch(o ->
-                                                                                                      spec1.test(parser1.parse(o.toString())).isEmpty()
-        ));
+        Assertions.assertTrue(baseGen.setAllOptional()
+                                     .suchThat(spec1).sample(10000)
+                                     .allMatch(o -> spec1.test(parser1.parse(o.toString())).isEmpty()));
 
 
     }
@@ -1324,6 +1291,73 @@ public class TestJsObjParser {
         if (o.containsKey("a") && !o.containsKey("c")) return false;
         if (o.containsKey("b") && !o.containsKey("d")) return false;
         return true;
+    }
+
+    @Test
+    public void testLenientObjectParser() {
+
+        JsObjSpec spec = JsObjSpec.lenient("a",
+                                           JsSpecs.str().nullable()).setOptionals("a");
+
+        JsObjParser parser = new JsObjParser(spec);
+
+        JsObjGen objGen = JsObjGen.of("a",
+                                      JsStrGen.biased(0,
+                                                      10),
+                                      "b",
+                                      JsIntGen.biased(),
+                                      "c",
+                                      JsBigDecGen.biased(),
+                                      "d",
+                                      BytesGen.biased(0,
+                                                      10)
+                                              .map(it -> JsStr.of(Base64.getEncoder().encodeToString(it))),
+                                      "e",
+                                      BytesGen.biased(0,
+                                                      100).map(it -> JsStr.of(Base64.getEncoder().encodeToString(it)))
+                                  )
+                                  .setOptionals("a")
+                                  .setNullables("a",
+                                                "d",
+                                                "e");
+
+        Assertions.assertTrue(objGen.sample(1000).allMatch(it -> parser.parse(it.toPrettyString()).equals(it)));
+    }
+
+    @Test
+    public void testLenientArrayParser() {
+
+        JsObjSpec spec = JsObjSpec.lenient("a",
+                                           JsSpecs.str().nullable()).setOptionals("a");
+
+
+        JsArraySpec arraySpec = JsSpecs.arrayOfObjSpec(spec.nullable());
+
+        JsArrayParser parser = new JsArrayParser(arraySpec);
+
+        JsObjGen objGen = JsObjGen.of("a",
+                                      JsStrGen.biased(0,
+                                                      10),
+                                      "b",
+                                      JsIntGen.biased(),
+                                      "c",
+                                      JsBigDecGen.biased(),
+                                      "d",
+                                      BytesGen.biased(0,
+                                                      10)
+                                              .map(it -> JsStr.of(Base64.getEncoder().encodeToString(it))),
+                                      "e",
+                                      BytesGen.biased(0,
+                                                      100).map(it -> JsStr.of(Base64.getEncoder().encodeToString(it)))
+                                  )
+                                  .setOptionals("a")
+                                  .setNullables("a",
+                                                "d",
+                                                "e");
+
+        Assertions.assertTrue(JsArrayGen.arbitrary(objGen,
+                                                   0,
+                                                   10).sample(1000).allMatch(it -> parser.parse(it.toPrettyString()).equals(it)));
     }
 
 }

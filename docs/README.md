@@ -5,6 +5,8 @@
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_java-fun&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=imrafaelmerino_java-fun)
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/0.9.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/0.9.4/jar)
 
+"_When in doubt, use brute force._" **Ken Thompson**
+
 - [Goal](#goal)
 - [Pseudo Random Generators](#prg)
     - [Primitive Types Generators](#ptg)
@@ -18,7 +20,6 @@
 - [Installation](#inst)
 - [Related projects](#rp)
 
-"_When in doubt, use brute force._" **Ken Thompson**
 
 ## <a name="goal"><a/> Goal
 

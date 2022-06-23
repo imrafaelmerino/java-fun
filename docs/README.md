@@ -16,6 +16,8 @@
 - [Installation](#inst)
 - [Related projects](#rp)
 
+"_When in doubt, use brute force._" **Ken Thompson**
+
 ## <a name="goal"><a/> Goal
 
 The goal of java-fun is to implement in Java some important patterns 

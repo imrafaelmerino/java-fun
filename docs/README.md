@@ -863,106 +863,23 @@ Gen<JsObj> personGen =
 ```
 
 
-Most generators have two static factory methods: _biased_ and _arbitrary_. The latter returns
-a uniform distribution of values, whereas the former generates, with a higher probability,
-potential problematic values that tend to cause bugs in our code. For example:
+json-values uses the generators from the library [java-fun](https://github.com/imrafaelmerino/java-fun) to 
+build the JSON generator. I strongly recommend you read the readme of java-fun to get a better 
+understanding of how generators work.
 
-* Integer generator
-
-```java 
-        
-Gen<JsStr> gen = JsIntGen.biased();
-
-``` 
-It produces with higher probability the values:
-
--  Integer.MAX_VALUE
--  Integer.MIN_VALUE
--  Short.MAX_VALUE
--  Short.MIN_VALUE
--  Byte.MAX_VALUE
--  Byte.MIN_VALUE
--  0
-
-We can specify a bounded interval:
-
-```java    
-
-Gen<JsStr> gen = JsIntGen.biased(min, max)
-
-``` 
-
-that produces with higher probability the bounds of the interval *min* and *max*, and all the
-previous values from the unbounded generator that fall between the interval.
-
-* Long generator
-
-```java    
-    
-Gen<JsLong> unbounded = JsLongGen.biased();
-
-Gen<JsLong> bounded = JsLongGen.biased(min, max);
-    
-``` 
-
-Same values as the integer generators plus *Long.MAX_VALUE* and *Long.MIN_VALUE*
-
-* String generator
-
-```java    
-    
-Geb<JsStr> gen = JsStrGen.biased(min, max);
-    
-``` 
-produces with higher probability the blank string of length *min* and *max*
-
-If the predefined static factory methods doesn't suit your needs, you
-can always create a new generator from the more general primitive types generators
-and the function map or just using some combinator:
-
-```java  
-
-//notice it's a String generator
-Gen<String> gen = seed -> () -> seed.nextInt() % 2 == 0 ? "even" : "odd";
-
-Gen<JsStr> parity = gen.map(JsStr::of);
-
-//using the oneOf combinator
-
-Gen<JsStr> parity = Combinators.oneOf("even",
-                                      "odd"
-                                     )
-                               .map(JsStr::of);
-                                                          
-```
-
-You can combine any number of generators and set the probability of selecting each of them
-for the next value generation:
-
-```java 
-
-// 20% alphaumeric strings and 80% digits
-Gen<JsStr> gen = Combinators.freq(Pair.of(2, JsStrGen.alphanumeric(0, 10)),
-                                  Pair.of(8, JsStrGen.digits(0,10)));
-                                 
-// 30% long  and 70% integers                                  
-Gen<JsValue> gen = Combinators.freq(Pair.of(3, JsLongGen.biased()),
-                                    Pair.of(7, JsIntGen.biased()));                                
-
-```
 
 In our previous example, the person generator has three optional fields 
 (surname, phoneNumber, addresses), whereas de address generator has another
-three fields (tags, zipCode, city). The total number of possibilities is
+three fields (tags, zipCode, city). The total number of combinations is
 
-2^3 *  2^3 = 64
+2^3  *  2^3 = 64
 
 json-values returns every possible combination with the same probability.
 Imagine ten fields instead of just three (2^10 * 2^10 = 1_048_576). Are you
 going to test each case manually?!
 
 On the other hand, imagine you want to create a generator will all the optional
-fields present. It's really easy with the method _suchThat_. It takes a predicate
+fields present. It's really easy with the function _suchThat_. It takes a predicate
 and discard the generated values that don't fulfill the condition:
 
 
@@ -978,14 +895,10 @@ Gen<JsObj> newPersonGen =
 ```
 
 
-
-Go to the javadoc to get more details about every generator. json-values
-generators are built on top of the generators of java-fun.
-
 ### <a name="optics"><a/>Optics
 
-json-values uses the optics defined in the library [java-fun](https://github.com/imrafaelmerino/java-fun). Take a look at its readme
-to get a better understanding.
+json-values uses the optics defined in the library [java-fun](https://github.com/imrafaelmerino/java-fun). 
+Take a look at its readme to understand how optics work.
 
 I'm going to follow a top-down approach and show an example of a function crafted with optics.
 
@@ -1036,13 +949,13 @@ It can be modeled as the following record:
 ```code 
 
 {
-"name": "Rafael",
-"age": 37,
-"languages/0": "Java",
-"languages/1": "Scala",
-"address/street": "Elm street",
-"address/coordinates/0": 12.3,
-"address/coordinates/1": 34.5,
+"/name": "Rafael",
+"/age": 37,
+"/languages/0": "Java",
+"/languages/1": "Scala",
+"/address/street": "Elm street",
+"/address/coordinates/0": 12.3,
+"/address/coordinates/1": 34.5,
 *: JsNothing
 }
 
@@ -1051,8 +964,8 @@ It can be modeled as the following record:
 As you may notice, *  represents all the paths not defined for that Json, and JsNothing is their
 associated value.
 
-
-Find below some examples creating some lenses with json-values:
+From the previous paths, you can define any lenses or optionals.
+Find below some examples:
 
 ```java   
 
@@ -1185,6 +1098,7 @@ to use Prisms. It's possible and convenient to work with more specific types lik
 json objects, and arrays, instead of JsValue. If you remember well, a lens can not fail, so
 the focus must exist and has the expected type. And what happens if the focus doesn't exist?
 We can then use an Optional, another kind of optic (don't confuse with java.util.Optional).
+
 Summing up:
 - Defining a Lens<JsObj, String> is valid if the focus exists, and it's a string
 - Defining an Option<JsObj, Integer> is valid if the focus is a string (it's ok if it doesn't exist).
@@ -1237,64 +1151,6 @@ if(errors.isEmpty()) {
     JsObj newPerson = modifyPerson.apply(person);
     ....
 }
-
-```
-
-Another property that makes optics very attractive is that we can compose them to
-traverse the whole structure. For example, we can compose lenses:
-
-```java  
-
-Lens<JsObj,JsObj> address = JsObj.lens.obj("address");;
-
-Lens<JsObj,JsArray> coordinates = JsObj.lens.array("coordinates");
-
-Lens<JsArray,Double> latitude = JsArray.lens.doubleNum(0);
-
-Lens<JsObj, Double> personLatitude = address.compose(coordinates).compose(latitude);
-
-```
-
-In the case of json-values, it is usually more convenient to use a JsPath pointing to the
-latitude to get the same result, as we did in the above examples:
-
-```java   
-
-Lens<JsObj,Double> personLatitude = JsObj.lens.doubleNum(path("/address/coordinates/0"));
-
-```
-
-Using a path instead of composing lenses is a less modular approach, though.
-
-We can compose Optionals as well:
-
-```java  
-
-Option<JsObj,JsObj> address = JsObj.optional.obj("address");;
-
-Option<JsObj,JsArray> coordinates = JsObj.optional.array("coordinates");
-
-Option<JsArray,Double> latitude = JsArray.optional.doubleNum(0);
-
-Option<JsObj, Double> personLatitude = address.compose(coordinates).compose(latitude);
-
-```
-
-As with lenses, we can use a JsPath instead of composing Optionals, with the same considerations.
-
-```java  
-
-Option<JsObj,Double> personLatitude = JsObj.optional.doubleNum(path("/address/coordinates/0"));
-
-```
-
-Lenses, Optionals, and Prisms are related. Composing a lens and a prims returns and Optional:
-
-```java  
-
-Option<JsObj, String> nameOpt = JsObj.lens.value("name").compose(JsStr.prism);
-
-Option<JsObj, Integer> ageOpt = JsObj.lens.value("age").compose(JsInt.prism);
 
 ```
 

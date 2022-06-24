@@ -118,7 +118,7 @@ etc
 and we just create functions, like _modify_ in the previous example, 
 putting optics together (composition is key to handle complexity).
 
-**Filter and map was never so easy!** 
+**Filter and map were never so easy!** 
 
 ```java 
           
@@ -133,7 +133,7 @@ json.mapAllKeys(toSneakCase)
 Performance. Did you see that!?
 
 I've picked some json-schema implementations from https://json-schema.org/implementations.html
-and parse and validate a random JSON from a string. Find below the results of the
+and then parse and validate a random JSON from a string. Find below the results of the
 benchmark using [jmh](https://openjdk.java.net/projects/code-tools/jmh/)
 
 <img src="./performance_parsing_json.png" alt="parsing string comparison"/>
@@ -170,14 +170,14 @@ functional approach.
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 
 * You need to deal with Jsons, and you want to program following a functional style, **using just functions and values**,
-  but you can't benefit from all the advantage that immutability brings to your code because **Java doesn't provide
+  but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide
   [Persistent Data Structures](https://en.wikipedia.org/wiki/Persistent_data_structure)**.
 * For those architectures that work with JSON end-to-end, it's extremely safe and efficient to have a persistent Json. Think of actors sending JSON messages one to each other for example.
 * You manipulate JSON all the time, and you'd like to do it with less ceremony. json-values is declarative and
   takes advantage of a lot of concepts from FP to define a powerful API.
 * Generating JSON to do Property-Based-Testing is child's play with json-values.
 * Generating specifications to validate JSON and parse strings or bytes very efficiently is a piece of cake.
-* Simplicity matters, and I'd argue that json-values is simple.
+* Simplicity matters and I'd argue that json-values is simple.
 * As _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
 
 
@@ -254,7 +254,7 @@ json-values adds support for two more types:
 - Instant
 - Binary or array of bytes (byte[])
 
-Instants are serialized into its string representation according to ISO-8601; 
+Instants are serialized into their string representation according to ISO-8601, 
 and the binary type is serialized into a string encoded in base 64.
 
 When it comes to the _equals_ method, json-values is data oriented, I mean, two JSON
@@ -304,7 +304,8 @@ Assertions.assertEquals(xs.hashcode(), ys.hashcode());
 
 There are several ways of creating JSON:
 * Using the static factory methods _of_.
-* Parsing an array of bytes or a string. If the schema of the Json is known, the fastest way is defining a parser from a spec.
+* Parsing an array of bytes or a string. If the schema of the Json is known, 
+the fastest way is to define a parser from a spec.
 * Creating an empty object and then using the API to insert values.
 
 ### <a name="creatingjsonobj"><a/>Creating JsObj
@@ -399,8 +400,8 @@ JsObj b = JsObj.parseYaml("  ");
 
 **Parsing a string and the schema of the JSON object is known:**
 
-In this case the best and fastest option is to use a spec to do the parsing.
-We'll talk about this option later on, when I introduce json-spec.
+In this case, the best and fastest option is to use a spec to do the parsing.
+We'll talk about this option later on when I introduce json-spec.
 
 **Creating an empty object and adding new values with the method _set_:**
 
@@ -527,7 +528,7 @@ By the way, the set method always returns a brand-new json.
 If you remember well, Jsons are immutable and implemented with persistent data
 structures in json-values.
 
-Let's put some example:
+Let's put some examples:
 
 
 ```code   
@@ -636,7 +637,7 @@ array.getStr(0)
 
 
 
-### <a name="filtermapreduce"><a/>Filter, map and reduce
+### <a name="filtermapreduce"><a/>Filter, map, and reduce
 
 Let's take a look at some very common transformations using the _map_ methods.
 The map function doesn't change the structure of the JSON. This is a pattern
@@ -652,7 +653,7 @@ JsObj:: JsObj mapAllObjs( Function<JsObj, JsValue> map);
 
 JsArray:: JsArray mapAllValues( Function<JsPrimitive, JsValue> map);
 
-//an array doesnt have any key but a JSON object contained does!
+//an array doesn't have any key but a JSON object contained does!
 JsArray:: JsArray mapAllKeys( Function<String, String> map);
 
 JsArray:: JsArray mapAllObjs( Function<JsObj, JsValue> map);
@@ -665,7 +666,7 @@ The mapAllKeys function transform all the keys of JSON objects. The typical exam
 is when you want to pass from camel case format to snake case.
 
 The _mapAllValues_ function operates on primitive types (not object or arrays)
-and transform them into another value.
+and transforms them into another value.
 
 If the mapping depends not only on the value but also on its position in the JSON,
 you can pass the full path in the map function using the following overloaded
@@ -1097,7 +1098,7 @@ In the previous example, we worked with the sum-type JsValue all the time; that'
 to use Prisms. It's possible and convenient to work with more specific types like primitives,
 json objects, and arrays, instead of JsValue. If you remember well, a lens can not fail, so
 the focus must exist and has the expected type. And what happens if the focus doesn't exist?
-We can then use an Optional, another kind of optic (don't confuse with java.util.Optional).
+We can then use an Optional, another kind of optic (don't confuse it with java.util.Optional).
 
 Summing up:
 - Defining a Lens<JsObj, String> is valid if the focus exists, and it's a string
@@ -1124,7 +1125,7 @@ JsObjSpec personSpec =
                     )
              .setOptionals("address");
 
-//since we know the shema of the json we'll work with lenses and primive types instead of JsValue
+//since we know the schema of the json we'll work with lenses and primitive types instead of JsValue
 //address is optional, we can't use a lens!         
 
 Lens<JsObj, String> nameLens = JsObj.lens.str("name");
@@ -1190,11 +1191,12 @@ Steinbeck
 
 After the development of json-values, I published two more related projects:
 
-* The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
-* [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
+* [vertx-values](https://github.com/imrafaelmerino/vertx-values) Set of codecs to send the JSON from json-values across the Event Bus
 * [java-fun](https://github.com/imrafaelmerino/java-fun) json-values uses the generators and optics from java-fun
+* [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
+* The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/),
 [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
-a stream of tokens and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
+a stream of tokens, and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
 

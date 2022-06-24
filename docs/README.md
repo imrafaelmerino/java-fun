@@ -26,7 +26,7 @@
 The goal of java-fun is to implement in Java some important patterns 
 from Functional Programming. **It doesn't transliterate these patterns 
 from other languages**, aiming that any standard Java programmer finds 
-easy to adopt them and understand the essence of these concepts, not 
+it easy to adopt them and understand the essence of these concepts, not 
 getting lost in unfamiliar types and conventions.
 
 The most important concepts implemented so far are:
@@ -35,7 +35,7 @@ The most important concepts implemented so far are:
 Property-Based-Testing. And to do it well you need a good set of generators and 
 to be able to compose them in any imaginable way. With java-fun, it's child's play!
 - **Optics**. Functional programmers use optics instead of getters and setters. 
-They are more safe and composable. Using optics properly, you'll never see
+They are safe and composable. Using optics properly, you'll never see
 again a NullPointerException!
 - **Tuples**. Java won't probably implement tuples, but I still consider them very
 useful. I've implemented tuples of two elements,i.e. pairs, and tuples of three elements,
@@ -57,7 +57,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>>{}
 ```
 
 A Gen is a function that takes a seed of type Random and returns a lazy 
-computation of type O. Laziness is key in order to be able to compose 
+computation of type O. Laziness is key to be able to compose 
 generators easily.
 
 There are two crucial static factory methods to create generators:
@@ -67,8 +67,8 @@ There are two crucial static factory methods to create generators:
 proven to cause more bugs in our code. This is vital to do Property Based 
 Testing.
 
-You can create any generator just implementing the interface _Gen_. Nevertheless 
-there are a lot predefined generators you can use. Let's go over them.
+You can create any generator just by implementing the interface _Gen_. Nevertheless 
+there are a lot of predefined generators you can use. Let's go over them.
 
 
 ### <a name="ptg"><a/> Primitive Types Generators
@@ -94,7 +94,7 @@ gen.sample(10).forEach(System.out::println);
 ```
 
 would print out strings like "", "   " or any string of length from 0 to 3 made 
-up of valid printable unicode characters.
+up of valid printable Unicode characters.
 
 The bounded-string-arbitrary generator produces any string of length **uniformly distributed** over 
 the interval [minLength, maxLength]. Not like the biased generator, all the values are generated 
@@ -126,7 +126,7 @@ Gen<String> :: StrGen.ascii(int minLength, int maxLength)
 
 - Integer generator
 
-The unbounded-integer-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_, 
+The unbounded-integer-biased generator produces with a higher probability the values zero, _Byte.MAX_VALUE_, 
 _Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_ and _Integer.MIN_VALUE_:
 
 ```  java
@@ -255,7 +255,7 @@ always produce positive numbers.
 
 The arbitrary generator generates big integers uniformly distributed between 0 
 and 2^bits - 1. The biased generator produces with higher probability zero and,
-if the maximum number of bit is big enough, Byte.MAX_VALUE, Short.MAX_VALUE,
+if the maximum number of bits is big enough, Byte.MAX_VALUE, Short.MAX_VALUE,
 Integer.MAX_VALUE and Long.MAX_VALUE:
 
  ```  java
@@ -563,7 +563,7 @@ Gen<A> :: Combinators.nullable(Gen<A> gen)
 
 ```
 
-You can control the probability null is generated with.
+You can control the probability null is generated.
 
 
  ```  java
@@ -612,7 +612,7 @@ in the record generator.
 
 ### <a name="og"><a/> Objects Generators
 
-You can generate any object from your model just using the _RecordGen_ and 
+You can generate any object from your model just by using the _RecordGen_ and 
 the function map. Consider the class User:
 
 ```java 
@@ -691,7 +691,7 @@ this idea to create generators of valid and invalid data:
 #### <a name="flatmap"><a/> Flatmap
 
 You can create new generators from existing ones using the flatmap function. For example,
-lets create a set generator where the number of elements is random between 0 and ten.
+let's create a set generator where the number of elements is random between 0 and ten.
 
 ```  java
 
@@ -708,7 +708,7 @@ Do notice that the size is determined at creation time, in other words, all the
 generated sets will have the same size.
 
 
-## <a name="optics"><a/> Optics: Lenses, Optionals and Prism
+## <a name="optics"><a/> Optics: Lenses, Optionals, and Prism
 
 It’s ubiquitous to have to navigate through recursive data structures 
 like records and tuples to find, insert, and modify data. It’s a 
@@ -757,7 +757,7 @@ R = [
 
 ```
 
-The order of the fields doesn't matter. Records are other class of product-types 
+The order of the fields doesn't matter. Records are other classes of product-types 
 (2 x 3 possible values). Java added records in release 14. Thank god!
 
 We can sum A and B and get a sum-type:
@@ -773,23 +773,23 @@ It has  2 + 3 possible values. A sum-type is a type that can be one of the
 multiple possible options. In other words, S is either A or B.
 
 In FP, optics are used to work with ADTs. There are different kinds of optics.
-**Lenses** and **Optionals**(don't confuse with Java Optional class) work 
+**Lenses** and **Optionals**(don't confuse them with Java Optional class) work 
 great with product-types. **Prisms** help us work with sum-types. Optics allow 
 us to separate concerns.
 
 It's important to distinguish the following concepts:
 
 - The action. An action is a function that executes some operation over the 
-focus of a path. The most important actions are _get_, _set_ and, _modify_.
+focus of a path. The most important actions are _get_, _set_, and, _modify_.
 - The path. The path indicates which data to focus on and where to find it within 
 the structure.
 - The structure. The structure is the hunk of data that we want to work with. 
 The path selects data from within the structure, and that data will be passed 
 to the action. 
-- The focus. The smaller piece of the structure indicated by the path. The focus 
+- The focus. The smaller piece of the structure is indicated by the path. The focus 
 will be passed to the action.
 
-A Lens zooms in a piece of data within a larger structure. **A Lens must never 
+A Lens zooms in on a piece of data within a larger structure. **A Lens must never 
 fail to get or modify its focus.** Optional is another optic just like a lens, 
 **but the focus may not exist**.  
 
@@ -866,8 +866,8 @@ Let's create some optics with json-fun:
                                                       ranking));
 ```
 
-As you can see, to create a Lens or and Optional you just need to define the 
-_get_ and _set_ actions. In lenses the get action returns the focus, whereas 
+As you can see, to create a Lens or an Optional you just need to define the 
+_get_ and _set_ actions. In lenses, the get action returns the focus, whereas 
 in optionals it returns the focus wrapped in a Java Optional since it may not 
 exist. In java-fun the optional optic is called Option.
 
@@ -880,7 +880,7 @@ see how composing optics can help us with this.
 
 
 Let's discuss the type of the most important actions of a lens and an optional, 
-where S is the type of the whole structure and F the type of the focus:
+where S is the type of the whole structure and F is the type of the focus:
 
 ```code
 
@@ -969,12 +969,13 @@ consider, and we want to focus on a specific one.  Let's create a Prism
                             
 ```      
 
-You need to create two functions. The first one, how to go from the type 
-Exception to the specific subtype RuntimeException, and the second one, 
+You need to create two functions. The first one is how to go from the type 
+Exception to the specific subtype RuntimeException, and the second one is
 the other way around (since a RuntimeException is aN Exception, just return it).
 
 But you can create Prism to extract a subset of values with a specific property 
-from a more generic set. For example, let's create a Prism to get all string that 
+But you can create Prism to extract a subset of values with a specific property 
+from a more generic set. For example, let's create a Prism to get all strings that 
 are integer numbers:
 
 ```code         
@@ -992,8 +993,8 @@ are integer numbers:
                 );
 ```
 
-As you can see the first function goes from String to Integer,and it can fail, 
-since there are a lot of strings that are not numbers. And the second one goes 
+As you can see the first function goes from String to Integer, and it can fail 
+since there are a lot of strings that are not a number. And the second one goes 
 from Integer to String and of course, it never fails (every number has a string 
 representation)
 

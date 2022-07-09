@@ -91,7 +91,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @param e4   a JsValue
      * @param rest more optional JsValue
      * @return an immutable JsArray
-     * @throws UserError if an elem is a mutable Json
      */
     // squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     @SuppressWarnings("squid:S00107")
@@ -125,7 +124,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @param e3 a JsValue
      * @param e4 a JsValue
      * @return an immutable five-element JsArray
-     * @throws UserError if an elem is a mutable Json
      */
     //squid:S00107: static factory methods usually have more than 4 parameters, that's one their advantages precisely
     @SuppressWarnings("squid:S00107")
@@ -151,7 +149,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @param e2 a JsValue
      * @param e3 a JsValue
      * @return an immutable four-element JsArray
-     * @throws UserError if an elem is a mutable Json
      */
     public static JsArray of(final JsValue e,
                              final JsValue e1,
@@ -171,7 +168,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @param e1 a JsValue
      * @param e2 a JsValue
      * @return an immutable three-element JsArray
-     * @throws UserError if an elem is a mutable Json
      */
     public static JsArray of(final JsValue e,
                              final JsValue e1,
@@ -189,7 +185,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @param e  a JsValue
      * @param e1 a JsValue
      * @return an immutable two-element JsArray
-     * @throws UserError if an elem is a mutable Json
      */
     public static JsArray of(final JsValue e,
                              final JsValue e1
@@ -341,12 +336,10 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public static JsArray parseYaml(final String str) {
 
         try (JsonParser parser = JacksonFactory.YAML_FACTORY.createParser(requireNonNull(str))) {
-            final JsonToken keyEvent = parser.nextToken();
+            JsonToken keyEvent = parser.nextToken();
             if (START_ARRAY != keyEvent) throw MalformedJson.expectedArray(str);
-            return new JsArray(parse(parser
-            ));
-        } catch (Exception e) {
-
+            return new JsArray(parse(parser));
+        } catch (IOException e) {
             throw new MalformedJson(e.getMessage());
         }
 
@@ -362,7 +355,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public static JsArray parse(final String str) {
 
         try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str))) {
-            final JsonToken keyEvent = parser.nextToken();
+            JsonToken keyEvent = parser.nextToken();
             if (START_ARRAY != keyEvent) throw MalformedJson.expectedArray(str);
             return new JsArray(parse(parser
             ));
@@ -421,12 +414,12 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
         requireNonNull(path);
         return requireNonNull(array).ifEmptyElse(() -> Stream.of(Pair.of(path,
-                                                                            array
+                                                                         array
                                                  )),
                                                  () -> range(0,
                                                              array.size()
                                                  ).mapToObj(pair -> Pair.of(path.index(pair),
-                                                                               array.get(Index.of(pair))
+                                                                            array.get(Index.of(pair))
                                                   ))
                                                   .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
                                                                                                         pair.first()
@@ -443,111 +436,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     }
 
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
-    private static JsArray intersection(JsArray a,
-                                        JsArray b,
-                                        JsArray.TYPE ARRAY_AS
-    ) {
-        switch (ARRAY_AS) {
-            case SET:
-                return intersectionAsSet(a,
-                                         b
-                );
-            case LIST:
-                return intersectionAsList(a,
-                                          b
-                );
-            case MULTISET:
-                return intersectionAsMultiSet(a,
-                                              b
-                );
-            default:
-                throw JsValuesInternalError.arrayOptionNotImplemented(ARRAY_AS.name());
-        }
-
-    }
-
-    private static JsArray intersectionAsList(JsArray a,
-                                              JsArray b
-    ) {
-
-        if (a.isEmpty()) return a;
-        if (b.isEmpty()) return b;
-
-        JsArray result = JsArray.empty();
-        for (int i = 0; i < a.size(); i++) {
-            JsValue aVal = a.get(i);
-            JsValue bVal = b.get(i);
-            if (aVal.isNothing() || bVal.isNothing()) return result;
-            if (aVal.equals(bVal)) result = result.append(aVal);
-        }
-
-        return result;
-
-    }
-
-    private static JsArray intersectionAsMultiSet(final JsArray a,
-                                                  final JsArray b
-    ) {
-        if (a.isEmpty()) return a;
-        if (b.isEmpty()) return b;
-
-        JsArray result = JsArray.empty();
-        for (JsValue it : a) {
-            if (b.containsValue(it))
-                result = result.append(it);
-        }
-
-        return result;
-    }
-
-    private static JsArray intersectionAsSet(final JsArray a,
-                                             final JsArray b
-    ) {
-        if (a.isEmpty()) return a;
-        if (b.isEmpty()) return b;
-
-        JsArray result = JsArray.empty();
-        for (JsValue it : a) {
-            if (b.containsValue(it) && !result.containsValue(it)) result = result.append(it);
-        }
-        return result;
-    }
-
-    private static JsArray unionAsList(final JsArray a,
-                                       final JsArray b
-    ) {
-        if (a.isEmpty()) return b;
-        JsArray result = a;
-        for (int i = a.size(); i < b.size(); i++) {
-            result = result.append(b.get(i));
-        }
-        return result;
-    }
-
-    private static JsArray unionAsMultiSet(final JsArray a,
-                                           final JsArray b
-    ) {
-        return a.appendAll(b);
-
-    }
-
-    private static JsArray unionAsSet(final JsArray a,
-                                      final JsArray b
-    ) {
-        if (b.isEmpty()) return a;
-        if (a.isEmpty()) return b;
-
-        JsArray result = JsArray.empty();
-        for (final JsValue value : a) {
-            if (!result.containsValue(value)) result = result.append(value);
-        }
-        for (final JsValue value : b) {
-            if (!result.containsValue(value)) result = result.append(value);
-        }
-
-        return result;
-    }
 
     /**
      * Adds one or more elements, starting from the first, to the back of this array.
@@ -625,14 +513,17 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                         .mapToObj(i -> get(Index.of(i)))
                         .allMatch(elem ->
                                   {
-                                      if (!array.containsValue(elem)) return false;
-                                      if (ARRAY_AS == MULTISET) return times(elem) == array.times(elem);
+                                      if (!array.containsValue(elem))
+                                          return false;
+                                      if (ARRAY_AS == MULTISET)
+                                          return seq.count(it -> it.equals(elem)) == array.seq.count(it -> it.equals(elem));
                                       return true;
-                                  }) && IntStream.range(0,
-                                                        array.size()
-                                                 )
-                                                 .mapToObj(i -> array.get(Index.of(i)))
-                                                 .allMatch(this::containsValue);
+                                  })
+                && IntStream.range(0,
+                                   array.size()
+                            )
+                            .mapToObj(i -> array.get(Index.of(i)))
+                            .allMatch(this::containsValue);
     }
 
     /**
@@ -984,8 +875,11 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                 .get(tail);
     }
 
-    public JsArray filterValues(final BiPredicate<? super Integer, ? super JsPrimitive> filter) {
+
+    @Override
+    public JsArray filterValues(final BiPredicate<? super JsPath, ? super JsPrimitive> filter) {
         return OpFilterArrElems.filter(this,
+                                       JsPath.empty(),
                                        requireNonNull(filter)
         );
     }
@@ -997,47 +891,27 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         );
     }
 
-    @Override
-    public JsArray filterAllValues(final BiPredicate<? super JsPath, ? super JsPrimitive> filter) {
-        return OpFilterArrElems.filterAll(this,
-                                          JsPath.empty(),
-                                          requireNonNull(filter)
-        );
-    }
 
     @Override
-    public JsArray filterAllValues(final Predicate<? super JsPrimitive> filter) {
-        return OpFilterArrElems.filterAll(this,
-                                          requireNonNull(filter)
+    public JsArray filterKeys(final BiPredicate<? super JsPath, ? super JsValue> filter) {
+        return OpFilterArrKeys.filter(this,
+                                      JsPath.empty(),
+                                      filter
         );
-    }
-
-    public JsArray filterKeys(final BiPredicate<? super String, ? super JsValue> filter) {
-        return this;
     }
 
     @Override
     public JsArray filterKeys(final Predicate<? super String> filter) {
-        return this;
-    }
-
-    @Override
-    public JsArray filterAllKeys(final BiPredicate<? super JsPath, ? super JsValue> filter) {
-        return OpFilterArrKeys.filterAll(this,
-                                         JsPath.empty(),
-                                         filter
+        return OpFilterArrKeys.filter(this,
+                                      filter
         );
     }
 
-    @Override
-    public JsArray filterAllKeys(final Predicate<? super String> filter) {
-        return OpFilterArrKeys.filterAll(this,
-                                         filter
-        );
-    }
 
-    public JsArray filterObjs(final BiPredicate<? super Integer, ? super JsObj> filter) {
+    @Override
+    public JsArray filterObjs(final BiPredicate<? super JsPath, ? super JsObj> filter) {
         return OpFilterArrObjs.filter(this,
+                                      JsPath.empty(),
                                       requireNonNull(filter)
         );
     }
@@ -1050,30 +924,18 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     @Override
-    public JsArray filterAllObjs(final BiPredicate<? super JsPath, ? super JsObj> filter) {
-        return OpFilterArrObjs.filterAll(this,
-                                         JsPath.empty(),
-                                         requireNonNull(filter)
-        );
-    }
-
-    @Override
-    public JsArray filterAllObjs(final Predicate<? super JsObj> filter) {
-        return OpFilterArrObjs.filterAll(this,
-                                         requireNonNull(filter)
-        );
-    }
-
-    @Override
     public boolean isEmpty() {
         return seq.isEmpty();
     }
 
-    public JsArray mapValues(final BiFunction<? super Integer, ? super JsPrimitive, ? extends JsValue> fn) {
-        return OpMapArrElems.map(this,
-                                 requireNonNull(fn)
-        );
 
+    @Override
+    public JsArray mapValues(final BiFunction<? super JsPath, ? super JsPrimitive, ? extends JsValue> fn) {
+        return OpMapArrElems.map(this,
+                                 requireNonNull(fn),
+                                 JsPath.empty()
+                                       .index(-1)
+        );
     }
 
     @Override
@@ -1083,50 +945,29 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         );
     }
 
-    @Override
-    public JsArray mapAllValues(final BiFunction<? super JsPath, ? super JsPrimitive, ? extends JsValue> fn) {
-        return OpMapArrElems.mapAll(this,
-                                    requireNonNull(fn),
-                                    JsPath.empty()
-                                          .index(-1)
-        );
-    }
 
     @Override
-    public JsArray mapAllValues(final Function<? super JsPrimitive, ? extends JsValue> fn) {
-        return OpMapArrElems.mapAll(this,
-                                    requireNonNull(fn)
+    public JsArray mapKeys(final BiFunction<? super JsPath, ? super JsValue, String> fn) {
+        return OpMapArrKeys.map(this,
+                                requireNonNull(fn),
+                                JsPath.empty()
+                                      .index(-1)
         );
-    }
-
-    public JsArray mapKeys(final BiFunction<? super String, ? super JsValue, String> fn) {
-        return this;
     }
 
     @Override
     public JsArray mapKeys(final Function<? super String, String> fn) {
-        return this;
-    }
-
-    @Override
-    public JsArray mapAllKeys(final BiFunction<? super JsPath, ? super JsValue, String> fn) {
-        return OpMapArrKeys.mapAll(this,
-                                   requireNonNull(fn),
-                                   JsPath.empty()
-                                         .index(-1)
-        );
-    }
-
-    @Override
-    public JsArray mapAllKeys(final Function<? super String, String> fn) {
-        return OpMapArrKeys.mapAll(this,
-                                   requireNonNull(fn)
-        );
-    }
-
-    public JsArray mapObjs(final BiFunction<? super Integer, ? super JsObj, JsValue> fn) {
-        return OpMapArrObjs.map(this,
+        return OpMapArrKeys.map(this,
                                 requireNonNull(fn)
+        );
+    }
+
+    @Override
+    public JsArray mapObjs(final BiFunction<? super JsPath, ? super JsObj, ? extends JsValue> fn) {
+        return OpMapArrObjs.map(this,
+                                requireNonNull(fn),
+                                JsPath.empty().index(-1)
+
         );
     }
 
@@ -1134,23 +975,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public JsArray mapObjs(final Function<? super JsObj, ? extends JsValue> fn) {
         return OpMapArrObjs.map(this,
                                 requireNonNull(fn)
-
-        );
-    }
-
-    @Override
-    public JsArray mapAllObjs(final BiFunction<? super JsPath, ? super JsObj, ? extends JsValue> fn) {
-        return OpMapArrObjs.mapAll(this,
-                                   requireNonNull(fn),
-                                   JsPath.empty()
-
-        );
-    }
-
-    @Override
-    public JsArray mapAllObjs(final Function<? super JsObj, ? extends JsValue> fn) {
-        return OpMapArrObjs.mapAll(this,
-                                   requireNonNull(fn)
         );
     }
 
@@ -1248,16 +1072,19 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     }
 
+
+    @Override
     public <R> Optional<R> reduce(final BinaryOperator<R> op,
-                                  final BiFunction<? super Integer, ? super JsPrimitive, R> map,
-                                  final BiPredicate<? super Integer, ? super JsPrimitive> predicate
+                                  final BiFunction<? super JsPath, ? super JsPrimitive, R> map,
+                                  final BiPredicate<? super JsPath, ? super JsPrimitive> predicate
     ) {
         return OpMapReduce.reduceArr(this,
+                                     JsPath.fromIndex(-1),
                                      requireNonNull(predicate),
                                      map,
-                                     op
+                                     op,
+                                     Optional.empty()
         );
-
 
     }
 
@@ -1270,33 +1097,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                                      map,
                                      op,
                                      Optional.empty()
-        );
-    }
-
-    @Override
-    public <R> Optional<R> reduceAll(final BinaryOperator<R> op,
-                                     final BiFunction<? super JsPath, ? super JsPrimitive, R> map,
-                                     final BiPredicate<? super JsPath, ? super JsPrimitive> predicate
-    ) {
-        return OpMapReduce.reduceAllArr(this,
-                                        JsPath.fromIndex(-1),
-                                        requireNonNull(predicate),
-                                        map,
-                                        op,
-                                        Optional.empty()
-        );
-
-    }
-
-    @Override
-    public <R> Optional<R> reduceAll(final BinaryOperator<R> op,
-                                     final Function<? super JsPrimitive, R> map,
-                                     final Predicate<? super JsPrimitive> predicate) {
-        return OpMapReduce.reduceAllArr(this,
-                                        requireNonNull(predicate),
-                                        map,
-                                        op,
-                                        Optional.empty()
         );
     }
 
@@ -1331,31 +1131,12 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     @Override
-    public Stream<Pair<JsPath, JsValue>> streamAll() {
+    public Stream<Pair<JsPath, JsValue>> stream() {
         return streamOfArr(this,
                            JsPath.empty()
         );
     }
 
-    @Override
-    public Stream<Pair<JsPath, JsValue>> stream() {
-        return IntStream.range(0,
-                               size()
-                        )
-                        .mapToObj(i ->
-                                  {
-                                      JsPath path = JsPath.fromIndex(i);
-                                      return Pair.of(path,
-                                                        get(path)
-                                      );
-                                  });
-
-    }
-
-    @Override
-    public Stream<JsValue> streamValues() {
-        return seq.toJavaStream();
-    }
 
     private boolean yContainsX(final Vector<JsValue> x,
                                final Vector<JsValue> y
@@ -1460,39 +1241,26 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         return new JsArray(seq.init());
     }
 
-    /**
-     * {@code this.intersection(that, SET)} returns an array with the elements that exist in both {@code this}
-     * and {@code that}.
-     * {@code this.intersection(that, MULTISET)} returns an array with the elements that exist in both
-     * {@code this} and {@code that}, being duplicates allowed.
-     * {@code this.intersection(that, LIST)} returns an array with the elements that exist in both {@code this}
-     * and {@code that} and are located at the same position.
-     *
-     * @param that     the other array
-     * @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
-     * @return a new JsArray of the same type as the inputs (mutable or immutable)
-     */
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
-    public JsArray intersection(final JsArray that,
-                                final TYPE ARRAY_AS
-    ) {
-        return intersection(this,
-                            requireNonNull(that),
-                            requireNonNull(ARRAY_AS)
-        );
-    }
 
     /**
-     * {@code this.intersectionAll(that)} behaves as {@code this.intersection(that, LIST)}, but for those
+     * {@code this.union(that, SET)} returns {@code this} plus those elements from {@code that} that
+     * don't exist in {@code this}.
+     * {@code this.union(that, MULTISET)} returns {@code this} plus those elements from {@code that}
+     * appended to the back.
+     * {@code this.union(that, LIST)} returns {@code this} plus those elements from {@code that} which
+     * position is {@code >= this.size()}. For those
      * elements that are containers of the same type and are located at the same position, the result
      * is their intersection. So this operation is kind of a recursive intersection
      *
      * @param that the other array
-     * @return a JsArray of the same type as the inputs (mutable or immutable)
+     * @return a JsArray of the same type as the inputs
      */
-    public JsArray intersectionAll(final JsArray that) {
-        return intersectionAll(this,
-                               requireNonNull(that)
+    @Override
+    public JsArray intersection(final JsArray that,
+                                final JsArray.TYPE ARRAY_AS) {
+        return intersection(this,
+                            requireNonNull(that),
+                            ARRAY_AS
         );
     }
 
@@ -1578,27 +1346,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         return new JsArray(seq.removeAt(index));
     }
 
-    /**
-     * {@code this.union(that, SET)} returns {@code this} plus those elements from {@code that} that
-     * don't exist in {@code this}.
-     * {@code this.union(that, MULTISET)} returns {@code this} plus those elements from {@code that}
-     * appended to the back.
-     * {@code this.union(that, LIST)} returns {@code this} plus those elements from {@code that} which
-     * position is {@code >= this.size()}.
-     *
-     * @param that     the other array
-     * @param ARRAY_AS option to define if arrays are considered SETS, LISTS OR MULTISET
-     * @return a new json array of the same type as the inputs (mutable or immutable)
-     */
-    @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
-    public JsArray union(final JsArray that,
-                         final JsArray.TYPE ARRAY_AS
-    ) {
-        return union(this,
-                     requireNonNull(that),
-                     requireNonNull(ARRAY_AS)
-        );
-    }
 
     /**
      * returns {@code this} plus those elements from {@code that} which position is  {@code >= this.size()},
@@ -1607,18 +1354,21 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * because there is no notion of order.
      *
      * @param that the other array
-     * @return a new JsArray of the same type as the inputs (mutable or immutable)
+     * @return a new JsArray of the same type as the inputs
      */
     @SuppressWarnings("squid:S00100")
-    public JsArray unionAll(final JsArray that
-    ) {
-        return unionAll(this,
-                        requireNonNull(that)
+    @Override
+    public JsArray union(final JsArray that,
+                         final TYPE ARRAY_AS) {
+        return union(this,
+                     requireNonNull(that),
+                     ARRAY_AS
         );
     }
 
-    private JsArray intersectionAll(final JsArray a,
-                                    final JsArray b
+    private JsArray intersection(final JsArray a,
+                                 final JsArray b,
+                                 final JsArray.TYPE ARRAY_AS
     ) {
         if (a.isEmpty()) return a;
         if (b.isEmpty()) return b;
@@ -1634,7 +1384,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                 result = result.set(i,
                                     OpIntersectionJsons.intersectionAll(obj,
                                                                         obj1,
-                                                                        JsArray.TYPE.LIST
+                                                                        ARRAY_AS
                                     )
                 );
 
@@ -1670,30 +1420,11 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
 
     @SuppressWarnings("squid:S00117") //  ARRAY_AS is a perfectly fine name
-    private JsArray union(JsArray a,
-                          JsArray b,
-                          JsArray.TYPE ARRAY_AS
-    ) {
-        switch (ARRAY_AS) {
-            case SET:
-                return unionAsSet(a,
-                                  b
-                );
-            case LIST:
-                return unionAsList(a,
-                                   b
-                );
-            case MULTISET:
-                return unionAsMultiSet(a,
-                                       b
-                );
-            default:
-                throw JsValuesInternalError.arrayOptionNotImplemented(ARRAY_AS.name());
-        }
-    }
 
-    private JsArray unionAll(final JsArray a,
-                             final JsArray b
+
+    private JsArray union(final JsArray a,
+                          final JsArray b,
+                          final TYPE ARRAY_AS
     ) {
         if (b.isEmpty()) return a;
         if (a.isEmpty()) return b;
@@ -1707,7 +1438,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                 result = result.set(i,
                                     OpUnionJsons.unionAll(obj,
                                                           obj1,
-                                                          JsArray.TYPE.LIST
+                                                          ARRAY_AS
                                     )
                 );
 

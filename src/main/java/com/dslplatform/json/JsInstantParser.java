@@ -10,14 +10,11 @@ import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 final class JsInstantParser extends AbstractParser {
     @Override
-    JsInstant value(final JsonReader<?> reader) {
+    JsInstant value(final JsonReader<?> reader) throws IOException {
         try {
             return JsInstant.of(Instant.from(ISO_INSTANT.parse(reader.readString())));
-        } catch (ParsingException | DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             throw new JsParserException(e.getMessage(),
-                                        reader.getCurrentIndex());
-        } catch (IOException e) {
-            throw new JsParserException(e,
                                         reader.getCurrentIndex());
         }
 

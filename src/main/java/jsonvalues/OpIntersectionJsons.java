@@ -14,14 +14,53 @@ final class OpIntersectionJsons {
                                    final JsArray.TYPE ARRAY_AS
     ) {
         if (a.isObj() && b.isObj()) return a.toJsObj()
-                                            .intersectionAll(b.toJsObj(),
-                                                             ARRAY_AS
+                                            .intersection(b.toJsObj(),
+                                                          ARRAY_AS
                                             );
-        if (ARRAY_AS == JsArray.TYPE.LIST) return a.toJsArray()
-                                                   .intersectionAll(b.toJsArray());
-        return a.toJsArray()
-                .intersection(b.toJsArray(),
-                              ARRAY_AS
-                );
+        if (ARRAY_AS == JsArray.TYPE.LIST)
+            return a.toJsArray()
+                    .intersection(b.toJsArray(),
+                                  JsArray.TYPE.LIST);
+
+        if (ARRAY_AS == JsArray.TYPE.SET)
+            return intersectionAsSet(a.toJsArray(),
+                                     b.toJsArray()
+            );
+
+        if (ARRAY_AS == JsArray.TYPE.MULTISET)
+            return intersectionAsMultiSet(a.toJsArray(),
+                                          b.toJsArray()
+            );
+
+        throw JsValuesInternalError.arrayOptionNotImplemented(ARRAY_AS.name());
+    }
+
+
+    private static JsArray intersectionAsMultiSet(final JsArray a,
+                                                  final JsArray b
+    ) {
+        if (a.isEmpty()) return a;
+        if (b.isEmpty()) return b;
+
+        JsArray result = JsArray.empty();
+        for (JsValue it : a) {
+            if (b.containsValue(it))
+                result = result.append(it);
+        }
+
+        return result;
+    }
+
+    private static JsArray intersectionAsSet(final JsArray a,
+                                             final JsArray b
+    ) {
+        if (a.isEmpty()) return JsArray.empty();
+        if (b.isEmpty()) return JsArray.empty();
+
+        JsArray result = JsArray.empty();
+        for (JsValue it : a) {
+            if (b.containsValue(it) && !result.containsValue(it)) result = result.append(it);
+        }
+        return result;
     }
 }

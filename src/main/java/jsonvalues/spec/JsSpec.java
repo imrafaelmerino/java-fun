@@ -38,6 +38,11 @@ public interface JsSpec {
                         final JsValue value
     );
 
+    default Set<SpecError> test(final JsValue value) {
+        return test(JsPath.empty(),
+                    value);
+    }
+
 
 }
 

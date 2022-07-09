@@ -5,6 +5,7 @@ import jsonvalues.JsObj;
 import jsonvalues.Json;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -44,10 +45,8 @@ public final class MyDslJson<A> extends DslJson<A> {
             return parser.parse(reader)
                          .toJsObj();
         }
-        catch (JsParserException e){
-            throw e;
-        }
-        catch (Exception e) {
+
+        catch (IOException e) {
             throw new JsParserException(e.getMessage(),
                                         reader.getCurrentIndex());
 
@@ -73,10 +72,8 @@ public final class MyDslJson<A> extends DslJson<A> {
             return parser.parse(reader)
                          .toJsArray();
         }
-        catch (JsParserException e){
-            throw e;
-        }
-        catch (Exception e) {
+
+        catch (IOException e) {
             throw new JsParserException(e.getMessage(),
                                         reader.getCurrentIndex());
         } finally {
@@ -94,10 +91,8 @@ public final class MyDslJson<A> extends DslJson<A> {
             return parser.parse(reader)
                          .toJsObj();
         }
-        catch (JsParserException e){
-            throw e;
-        }
-        catch (Exception e) {
+
+        catch (IOException e) {
             throw new JsParserException(e.getMessage(),
                                         reader.getCurrentIndex());
         } finally {
@@ -109,7 +104,7 @@ public final class MyDslJson<A> extends DslJson<A> {
         try {
             return localReader.get()
                               .process(is);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new JsParserException(e);
 
         }
@@ -124,10 +119,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             return parser.parse(reader)
                          .toJsArray();
         }
-        catch (JsParserException e){
-            throw e;
-        }
-        catch (Exception e) {
+        catch (IOException e) {
             throw new JsParserException(e.getMessage(),
                                         reader.getCurrentIndex());
         } finally {
@@ -143,7 +135,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             );
             outputStream.flush();
             return outputStream.toByteArray();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new SerializerException(e);
         }
     }
@@ -155,7 +147,7 @@ public final class MyDslJson<A> extends DslJson<A> {
             super.serialize(json,
                             requireNonNull(outputstream)
             );
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new SerializerException(e);
         }
 
@@ -174,7 +166,7 @@ public final class MyDslJson<A> extends DslJson<A> {
                                                           indentLength)
             );
             return baos.toString(StandardCharsets.UTF_8.name());
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new SerializerException(e);
         }
     }

@@ -2,7 +2,7 @@
 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/11.4.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/11.4.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/11.5.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/11.5.0/jar)
 [![codecov](https://codecov.io/gh/imrafaelmerino/json-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/json-values)
 
 
@@ -124,9 +124,9 @@ putting optics together (composition is key to handle complexity).
           
 Function<String,String> toSneakCase =  key -> {...};
 
-json.mapAllKeys(toSneakCase)
-    .mapAllValues(JsStr.prism.modify.apply(String::trim))
-    .filterAllValues(JsValue::isNotNull);
+json.mapKeys(toSneakCase)
+    .mapValues(JsStr.prism.modify.apply(String::trim))
+    .filterValues(JsValue::isNotNull);
                     
 ```
 
@@ -645,27 +645,27 @@ known in FP as a functor. Consider the following signatures:
 
 ```code   
 
-JsObj:: JsObj mapAllValues( Function<JsPrimitive, JsValue> map);
+JsObj:: JsObj mapValues( Function<JsPrimitive, JsValue> map);
 
-JsObj:: JsObj mapAllKeys( Function<String, String> map);
+JsObj:: JsObj mapKeys( Function<String, String> map);
 
-JsObj:: JsObj mapAllObjs( Function<JsObj, JsValue> map);
+JsObj:: JsObj mapObjs( Function<JsObj, JsValue> map);
 
-JsArray:: JsArray mapAllValues( Function<JsPrimitive, JsValue> map);
+JsArray:: JsArray mapValues( Function<JsPrimitive, JsValue> map);
 
 //an array doesn't have any key but a JSON object contained does!
-JsArray:: JsArray mapAllKeys( Function<String, String> map);
+JsArray:: JsArray mapKeys( Function<String, String> map);
 
-JsArray:: JsArray mapAllObjs( Function<JsObj, JsValue> map);
+JsArray:: JsArray mapObjs( Function<JsObj, JsValue> map);
 
 ```
 
 All of them traverse recursively the whole JSON.
 
-The mapAllKeys function transform all the keys of JSON objects. The typical example
+The mapKeys function transform all the keys of JSON objects. The typical example
 is when you want to pass from camel case format to snake case.
 
-The _mapAllValues_ function operates on primitive types (not object or arrays)
+The _mapValues_ function operates on primitive types (not object or arrays)
 and transforms them into another value.
 
 If the mapping depends not only on the value but also on its position in the JSON,
@@ -674,11 +674,11 @@ methods:
 
 ```java  
 
-JsObj mapAllKeys( BiFunction<JsPath, JsValue, String> map); 
+JsObj mapKeys( BiFunction<JsPath, JsValue, String> map); 
 
-JsObj mapAllValues( BiFunction<JsPath, JsPrimitive, JsValue> map);
+JsObj mapValues( BiFunction<JsPath, JsPrimitive, JsValue> map);
 
-JsObj mapAllObjs( BiFunction<JsPath, JsObj, JsValue> map)
+JsObj mapObjs( BiFunction<JsPath, JsObj, JsValue> map)
 
 ```
 
@@ -1180,7 +1180,7 @@ Add the following dependency to your building tool:
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
-    <version>11.4.0</version>
+    <version>11.5.0</version>
 </dependency>
 ```
 

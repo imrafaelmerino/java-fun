@@ -801,6 +801,27 @@ JsObjSpec personSpec =
 As you can see, the spec's structure remains the same, and it’s child’s play to define
 optional and nullable fields.
 
+Another interesting spec you can define is map, i.e, an arbitrary number of
+keys and their associated values of the same type. For example a map of 
+numbers or booleans etc.
+
+``` java
+
+JsObjSpec a = JsObjSpec.strict("name", str(),
+                               "grades", mapOfInteger()
+                              );
+
+Set<SpecError> errors = 
+        spec.test(JsObj.of("name", JsStr.of("Rafael"),
+                           "grades", JsObj.of("Maths", JsInt.of(10),
+                                              "Science", JsInt.of(8),
+                                              "Geography", JsInt.of(8)
+                                              )
+                          )
+                 );                           
+
+```
+
 Another exciting thing we can do with specs is parsing strings or bytes. Instead of parsing
 the whole JSON and then validating it, we can verify the schema while parsing it and
 stop the process as soon as an error happens. **After all, failing fast is important as well!**

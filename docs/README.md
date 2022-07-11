@@ -1220,7 +1220,7 @@ json-values uses the persistent data structures from [vavr](https://www.vavr.io/
 [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens, and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
 
-## <a name="sponsors"><a/> Sponsors
+## <a name="sponsor"><a/> Sponsors
 
 IntelliJ IDEA is my preferred IDE to develop json-values. 
 JetBrains supports open source projects like json-values with its products.

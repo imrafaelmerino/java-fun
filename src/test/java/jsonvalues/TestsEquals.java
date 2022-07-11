@@ -14,6 +14,8 @@ public class TestsEquals {
 
         Assertions.assertEquals(JsBigInt.of(BigInteger.TEN),
                                 JsDouble.of(10d));
+        Assertions.assertEquals(JsBigInt.of(BigInteger.TEN),
+                                JsInt.of(10));
 
     }
 

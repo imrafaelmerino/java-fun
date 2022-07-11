@@ -1226,3 +1226,5 @@ IntelliJ IDEA is my preferred IDE to develop json-values.
 JetBrains supports open source projects like json-values with its products.
 
 <img src="./IntelliJ_IDEA.png" alt="https://jb.gg/OpenSourceSupport"/>
+
+[![IntelliJIDEA](./IntelliJ_IDEA.png)](https://jb.gg/OpenSourceSupport)

@@ -4,7 +4,6 @@
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/11.6.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/11.6.0/jar)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=imrafaelmerino_json-values)
 
-
 “_Simplicity is a great virtue, but it requires hard work to achieve it and education to appreciate it.
 And to make matters worse: complexity sells better._”
 **Edsger Wybe Dijkstra**
@@ -27,6 +26,7 @@ And to make matters worse: complexity sells better._”
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Related projects](#rp)
+- [Sponsors](#sponsor)
 
 ## <a name="cwa"><a/> Code wins arguments
 
@@ -1220,3 +1220,9 @@ json-values uses the persistent data structures from [vavr](https://www.vavr.io/
 [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into
 a stream of tokens, and [dsl-sjon](https://github.com/ngs-doo/dsl-json) to parse a string/bytes given a spec.
 
+## <a name="sponsors"><a/> Sponsors
+
+IntelliJ IDEA is my preferred IDE to develop json-values. 
+JetBrains supports open source projects like json-values with its products.
+
+<img src="./IntelliJ_IDEA.png" alt="https://jb.gg/OpenSourceSupport"/>

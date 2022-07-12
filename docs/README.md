@@ -821,6 +821,30 @@ Set<SpecError> errors =
 
 ```
 
+It's possible to validate a whole JsObj once parsed with the method _suchThat_.
+Imagine that certain properties must be present if a given property is present in 
+an object. For example, suppose we have a schema representing a customer. If you 
+have their credit card number, you also want to ensure you have a billing address. 
+If you don’t have their credit card number, a billing address would not be required:
+
+```java 
+
+ Predicate<JsObj> existsBillingIfCard = o -> {
+        if (o.containsKey("credit_card") 
+            && !o.containsKey("billing_address")) return false;
+        return true;
+    };
+
+ JsObjSpec customerSpec =
+                JsObjSpec.strict("credit_card", str(),
+                                 "billing_address", str()
+                                )
+                         .setOptionals("credit_card",
+                                       "billing_address")
+                         .suchThat(existsBillingIfCard);
+
+```
+
 Another exciting thing we can do with specs is parsing strings or bytes. Instead of parsing
 the whole JSON and then validating it, we can verify the schema while parsing it and
 stop the process as soon as an error happens. **After all, failing fast is important as well!**
@@ -1068,7 +1092,7 @@ Assertions.assertEquals(Optional.empty(),
 
 And finally, let's go back to the modifyPerson we defined previously and implement it 
 step by step using lenses and prisms.
-
+^6008330177634367
 ``` java
 
 Lens<JsObj, JsValue> nameLens = JsObj.lens.value("name");

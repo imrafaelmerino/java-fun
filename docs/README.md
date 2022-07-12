@@ -1233,12 +1233,12 @@ Add the following dependency to your building tool:
 “Ideas are like rabbits. You get a couple and learn how to handle them, and pretty soon you have a dozen.” – John
 Steinbeck
 
-After the development of json-values, I published two more related projects:
+After the development of json-values, I published some more related projects:
 
-* [vertx-values](https://github.com/imrafaelmerino/vertx-values) Set of codecs to send the JSON from json-values across the Event Bus
+* [vertx-values](https://github.com/imrafaelmerino/vertx-values) Persistent data structures makes a difference in message-passing architectures like [Vert.x](https://vertx.io)
 * [java-fun](https://github.com/imrafaelmerino/java-fun) json-values uses the generators and optics from java-fun
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
-* The Scala version: [json-scala-values](https://github.com/imrafaelmerino/json-scala-values)
+* [json-scala-values](https://github.com/imrafaelmerino/json-scala-values) The Scala version
 
 json-values uses the persistent data structures from [vavr](https://www.vavr.io/),
 [Jackson](https://github.com/FasterXML/jackson) to parse a string/bytes into

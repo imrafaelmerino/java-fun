@@ -53,6 +53,14 @@ public final class JsObjGen implements Gen<JsObj> {
     private JsObjGen(Map<String, Gen<? extends JsValue>> bindings,
                      Set<String> optionals,
                      Set<String> nullables) {
+        for(String key: optionals){
+            if(!bindings.containsKey(key))
+                throw new IllegalArgumentException("optional '"+key+"' not defined in generator");
+        }
+        for(String key: nullables){
+            if(!bindings.containsKey(key))
+                throw new IllegalArgumentException("nullable '"+key+"' not defined in generator");
+        }
         this.optionals = optionals;
         this.nullables = nullables;
         this.bindings = bindings;
@@ -983,7 +991,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param nullables the optional keys
      * @return a brand new JsObj generator
      */
-    public JsObjGen setNullables(final Collection<String> nullables) {
+    public JsObjGen withNullValues(final Collection<String> nullables) {
         return new JsObjGen(bindings,
                             optionals,
                             new HashSet<>(requireNonNull(nullables))
@@ -997,9 +1005,9 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param nullables the optional keys
      * @return a brand new JsObj generator
      */
-    public JsObjGen setNullables(final String... nullables) {
-        return setNullables(Arrays.stream(requireNonNull(nullables))
-                                  .collect(Collectors.toSet()));
+    public JsObjGen withNullValues(final String... nullables) {
+        return withNullValues(Arrays.stream(requireNonNull(nullables))
+                                    .collect(Collectors.toSet()));
     }
 
     /**
@@ -1007,7 +1015,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * all keys nullable. The value associated to a nullable key may or not be null
      * @return a new generator
      */
-    public JsObjGen setAllNullable() {
+    public JsObjGen withAllNullValues() {
         return new JsObjGen(bindings,
                             optionals,
                             bindings.keySet());
@@ -1020,7 +1028,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param optionals the optional keys
      * @return a brand new JsObj generator
      */
-    public JsObjGen setOptionals(final Collection<String> optionals) {
+    public JsObjGen withOptKeys(final Collection<String> optionals) {
         return new JsObjGen(bindings,
                             new HashSet<>(requireNonNull(optionals)),
                             nullables);
@@ -1032,7 +1040,7 @@ public final class JsObjGen implements Gen<JsObj> {
      *
      * @return a brand new JsObj generator
      */
-    public JsObjGen setAllOptional() {
+    public JsObjGen withAllOptKeys() {
         return new JsObjGen(bindings,
                             bindings.keySet(),
                             nullables);
@@ -1045,9 +1053,9 @@ public final class JsObjGen implements Gen<JsObj> {
      * @param optional the optional keys
      * @return a brand new JsObj generator
      */
-    public JsObjGen setOptionals(final String... optional) {
-        return setOptionals(Arrays.stream(requireNonNull(optional))
-                                  .collect(Collectors.toList()));
+    public JsObjGen withOptKeys(final String... optional) {
+        return withOptKeys(Arrays.stream(requireNonNull(optional))
+                                 .collect(Collectors.toList()));
     }
 
     /**

@@ -40,14 +40,14 @@ public class TestGenerators {
                                            )
         );
 
-        JsObjSpec spec = JsObjSpec.strict("a",
-                                          arrayOfStrSuchThat(a -> a.size() <= 10)
-                                                  .nullable(),
-                                          "b",
-                                          arrayOfIntSuchThat(a -> a.size() <= 10).nullable()
+        JsObjSpec spec = JsObjSpec.of("a",
+                                      arrayOfStrSuchThat(a -> a.size() <= 10)
+                                              .nullable(),
+                                      "b",
+                                      arrayOfIntSuchThat(a -> a.size() <= 10).nullable()
 
-        ).setOptionals("a",
-                       "b");
+        ).withOptKeys("a",
+                      "b");
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())
@@ -75,18 +75,18 @@ public class TestGenerators {
                                          JsBigIntGen.arbitrary(2)
         );
 
-        JsObjSpec spec = JsObjSpec.strict("a",
-                                          integer(),
-                                          "b",
-                                          str(s -> s.length() <= 10),
-                                          "c",
-                                          str(s -> s.length() <= 10),
-                                          "d",
-                                          tuple(integer(),
-                                                str(s -> s.length() <= 10)
-                                          ),
-                                          "e",
-                                          bigInteger()
+        JsObjSpec spec = JsObjSpec.of("a",
+                                      integer(),
+                                      "b",
+                                      str(s -> s.length() <= 10),
+                                      "c",
+                                      str(s -> s.length() <= 10),
+                                      "d",
+                                      tuple(integer(),
+                                            str(s -> s.length() <= 10)
+                                      ),
+                                      "e",
+                                      bigInteger()
         );
 
         Assertions.assertTrue(
@@ -130,26 +130,26 @@ public class TestGenerators {
                                    Gen.cons(JsStr.of("a"))
         );
 
-        JsObjSpec spec = JsObjSpec.strict("a",
-                                          arrayOfStr(),
-                                          "b",
-                                          tuple(str(),
-                                                bool(),
-                                                integer()
-                                          ),
-                                          "c",
-                                          JsObjSpec.strict("a",
-                                                           any(v -> v.isStr() || v.isBool())
-                                          ),
-                                          "d",
-                                          bool(),
-                                          "e",
-                                          str(),
-                                          "f",
-                                          any(v -> v.isStr() || v.isIntegral()),
-                                          "g",
-                                          str(b -> b.equals("a"))
-        ).setOptionals("e");
+        JsObjSpec spec = JsObjSpec.of("a",
+                                      arrayOfStr(),
+                                      "b",
+                                      tuple(str(),
+                                            bool(),
+                                            integer()
+                                      ),
+                                      "c",
+                                      JsObjSpec.of("a",
+                                                   any(v -> v.isStr() || v.isBool())
+                                      ),
+                                      "d",
+                                      bool(),
+                                      "e",
+                                      str(),
+                                      "f",
+                                      any(v -> v.isStr() || v.isIntegral()),
+                                      "g",
+                                      str(b -> b.equals("a"))
+        ).withOptKeys("e");
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())
@@ -215,49 +215,51 @@ public class TestGenerators {
                                                           1000
                                    )
                                )
-                               .setNullables("a",
-                                             "g")
-                               .setOptionals("a",
+                               .withNullValues("a",
+                                               "g")
+                               .withOptKeys("a",
                                              "g",
                                              "p",
                                              "o");
 
-        JsObjSpec spec = JsObjSpec.lenient("a",
-                                           str().nullable(),
-                                           "b",
-                                           integer(),
-                                           "c",
-                                           bool(),
-                                           "d",
-                                           str(),
-                                           "e",
-                                           str(),
-                                           "f",
-                                           bigInteger(),
-                                           "g",
-                                           decimal().nullable(),
-                                           "h",
-                                           bool(),
-                                           "i",
-                                           any(v -> v.isStr() || v.isDecimal()),
-                                           "j",
-                                           any(v -> v.isStr() || v.isBool()),
-                                           "k",
-                                           any(i -> i.isStr() || i.isIntegral()),
-                                           "l",
-                                           arraySuchThat(a -> a.size() == 5),
-                                           "m",
-                                           str(),
-                                           "n",
-                                           str(s -> s.length() == 1),
-                                           "o",
-                                           binary(),
-                                           "p",
-                                           instant()
-        ).setOptionals("a",
-                       "g",
-                       "o",
-                       "p");
+        JsObjSpec spec = JsObjSpec.of("a",
+                                      str().nullable(),
+                                      "b",
+                                      integer(),
+                                      "c",
+                                      bool(),
+                                      "d",
+                                      str(),
+                                      "e",
+                                      str(),
+                                      "f",
+                                      bigInteger(),
+                                      "g",
+                                      decimal().nullable(),
+                                      "h",
+                                      bool(),
+                                      "i",
+                                      any(v -> v.isStr() || v.isDecimal()),
+                                      "j",
+                                      any(v -> v.isStr() || v.isBool()),
+                                      "k",
+                                      any(i -> i.isStr() || i.isIntegral()),
+                                      "l",
+                                      arraySuchThat(a -> a.size() == 5),
+                                      "m",
+                                      str(),
+                                      "n",
+                                      str(s -> s.length() == 1),
+                                      "o",
+                                      binary(),
+                                      "p",
+                                      instant()
+                                  )
+                                  .lenient()
+                                  .withOptKeys("a",
+                                               "g",
+                                               "o",
+                                               "p");
 
         Assertions.assertTrue(
                 gen.sample(1000)
@@ -278,15 +280,15 @@ public class TestGenerators {
                                    "b",
                                    JsIntGen.arbitrary()
                                )
-                               .setOptionals("b")
-                               .setNullables("b");
+                               .withOptKeys("b")
+                               .withNullValues("b");
 
-        JsObjSpec spec = JsObjSpec.strict("a",
-                                          str(),
-                                          "b",
-                                          integer()
-                                                  .nullable()
-        ).setOptionals("b");
+        JsObjSpec spec = JsObjSpec.of("a",
+                                      str(),
+                                      "b",
+                                      integer()
+                                              .nullable()
+        ).withOptKeys("b");
 
         Assertions.assertTrue(
                 gen.sample(1000).allMatch(it -> spec.test(it).isEmpty())

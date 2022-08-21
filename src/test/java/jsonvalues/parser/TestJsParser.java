@@ -47,7 +47,7 @@ public class TestJsParser {
                                                        JsStr.of("hi")
                                    ))
     );
-    JsObjSpec objSpec = JsObjSpec.strict("a",
+    JsObjSpec objSpec = JsObjSpec.of("a",
                                          str(),
                                          "b",
                                          integer(),
@@ -68,9 +68,9 @@ public class TestJsParser {
                                          "i",
                                          array(),
                                          "j",
-                                         arrayOfObjSpec(JsObjSpec.lenient("a",
+                                         arrayOfObjSpec(JsObjSpec.of("a",
                                                                           str()
-                                         ))
+                                         ).lenient())
     );
 
     @Test
@@ -135,7 +135,7 @@ public class TestJsParser {
     public void testParseInstant() {
 
         JsObjParser parser =
-                new JsObjParser(JsObjSpec.strict("a",
+                new JsObjParser(JsObjSpec.of("a",
                                                  instant(),
                                                  "b",
                                                  instant(i -> i.isAfter(Instant.now()
@@ -168,7 +168,7 @@ public class TestJsParser {
     public void testParseBinary() {
 
         JsObjParser parser =
-                new JsObjParser(JsObjSpec.strict("a",
+                new JsObjParser(JsObjSpec.of("a",
                                                  binary(),
                                                  "b",
                                                  binary(i -> i.length <= 1024)
@@ -197,7 +197,7 @@ public class TestJsParser {
     @Test
     public void testPredicates() {
 
-        JsObjSpec spec = JsObjSpec.strict(
+        JsObjSpec spec = JsObjSpec.of(
                 "a",
                 JsSpecs.longInteger(i -> i > Integer.MAX_VALUE).nullable(),
                 "b",
@@ -239,7 +239,7 @@ public class TestJsParser {
     @Test
     public void test_parsing_nullable_arrays() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           JsSpecs.arrayOfDec(0,
                                                              1).nullable(),
                                           "b",
@@ -265,9 +265,9 @@ public class TestJsParser {
                                    JsArrayGen.arbitrary(JsLongGen.arbitrary(),
                                                         0,
                                                         1)
-        ).setNullables("a",
-                       "b",
-                       "c");
+        ).withNullValues("a",
+                         "b",
+                         "c");
 
 
         Assertions.assertTrue(gen.sample(10000)
@@ -278,7 +278,7 @@ public class TestJsParser {
 
     @Test
     public void parsingString() {
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           str(s -> s.length() < 10).nullable(),
                                           "b",
                                           arrayOfStr(s -> s.length() < 10,
@@ -289,7 +289,7 @@ public class TestJsParser {
                                                      10).nullable(),
                                           "d",
                                           arrayOfStrSuchThat(a -> a.size() < 11 && a.size() > 0).nullable()
-        ).setAllOptional();
+        ).withAllOptKeys();
 
         JsObjParser parser = new JsObjParser(spec);
 
@@ -309,8 +309,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> validGen = gen.suchThat(spec);
 
@@ -324,7 +324,7 @@ public class TestJsParser {
     @Test
     public void parseStringErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           str(s -> s.length() < 10),
                                           "b",
                                           arrayOfStr(s -> s.length() < 10,
@@ -335,7 +335,7 @@ public class TestJsParser {
                                                      10),
                                           "d",
                                           arrayOfStrSuchThat(a -> a.size() < 11 && a.size() > 0)
-        ).setAllOptional();
+        ).withAllOptKeys();
 
         JsObjParser parser = new JsObjParser(spec);
 
@@ -358,8 +358,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec);
 
@@ -377,7 +377,7 @@ public class TestJsParser {
     @Test
     public void parseIntErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           integer(s -> s < 10),
                                           "b",
                                           arrayOfInt(s -> s < 10,
@@ -414,8 +414,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec);
 
@@ -432,7 +432,7 @@ public class TestJsParser {
 
     @Test
     public void parsingInt() {
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           JsSpecs.integer(s -> s < 10).nullable(),
                                           "b",
                                           arrayOfInt(s -> s < 10,
@@ -443,7 +443,7 @@ public class TestJsParser {
                                                      10).nullable(),
                                           "d",
                                           arrayOfIntSuchThat(a -> a.size() < 11 && a.size() > 0).nullable()
-        ).setAllOptional();
+        ).withAllOptKeys();
 
         JsObjParser parser = new JsObjParser(spec);
 
@@ -463,8 +463,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> validGen = gen.suchThat(spec);
 
@@ -477,7 +477,7 @@ public class TestJsParser {
 
     @Test
     public void parsingBool() {
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           TRUE.nullable(),
                                           "b",
                                           FALSE.nullable(),
@@ -486,7 +486,7 @@ public class TestJsParser {
                                                       10).nullable(),
                                           "d",
                                           arrayOfBoolSuchThat(a -> a.size() < 11 && a.size() > 0).nullable()
-        ).setAllOptional();
+        ).withAllOptKeys();
 
         JsObjParser parser = new JsObjParser(spec);
 
@@ -505,8 +505,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> validGen = gen.suchThat(spec);
 
@@ -520,7 +520,7 @@ public class TestJsParser {
     @Test
     public void parseBoolErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           bool(),
                                           "b",
                                           arrayOfBool(1,
@@ -557,8 +557,8 @@ public class TestJsParser {
                                    "e",
                                    JsBoolGen.arbitrary()
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec);
 
@@ -577,7 +577,7 @@ public class TestJsParser {
     @Test
     public void parseLongErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           longInteger(s -> s < 10),
                                           "b",
                                           arrayOfLong(s -> s < 10,
@@ -613,8 +613,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec,
                                                100);
@@ -633,7 +633,7 @@ public class TestJsParser {
     @Test
     public void parseInstantAndBinaryErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           instant(s -> s.isAfter(Instant.EPOCH)),
                                           "b",
                                           instant(),
@@ -665,8 +665,8 @@ public class TestJsParser {
                                    "d",
                                    valueGen
                                )
-                               .setAllNullable()
-                               .setAllOptional();
+                               .withAllNullValues()
+                               .withAllOptKeys();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec,
                                                1000);
@@ -688,7 +688,7 @@ public class TestJsParser {
     @Test
     public void parseDecErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           decimal(s -> s.compareTo(BigDecimal.TEN) < 0),
                                           "b",
                                           arrayOfDec(s -> s.compareTo(BigDecimal.TEN) < 0,
@@ -724,8 +724,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec,
                                                100);
@@ -745,7 +745,7 @@ public class TestJsParser {
     @Test
     public void parseBigIntErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           bigInteger(s -> s.compareTo(BigInteger.TEN) < 0),
                                           "b",
                                           arrayOfBigInt(s -> s.compareTo(BigInteger.TEN) < 0,
@@ -781,8 +781,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec,
                                                100);
@@ -801,7 +801,7 @@ public class TestJsParser {
     @Test
     public void parseJsObErrors() {
 
-        JsObjSpec spec = JsObjSpec.strict("a",
+        JsObjSpec spec = JsObjSpec.of("a",
                                           obj(s -> s.containsKey("a")),
                                           "b",
                                           arrayOfObj(s -> s.containsKey("a"),
@@ -821,7 +821,7 @@ public class TestJsParser {
                                         JsBoolGen.arbitrary(),
                                         "b",
                                         JsStrGen.alphabetic())
-                                    .setOptionals("a");
+                                    .withOptKeys("a");
         Gen<JsValue> valueGen = Combinators.oneOf(objGen,
                                                   Gen.cons(JsNull.NULL),
                                                   Gen.cons(JsBool.TRUE),
@@ -841,8 +841,8 @@ public class TestJsParser {
                                    "d",
                                    arrayGen
                                )
-                               .setAllOptional()
-                               .setAllNullable();
+                               .withAllOptKeys()
+                               .withAllNullValues();
 
         Gen<JsObj> invalidGen = gen.suchThatNo(spec,
                                                100);

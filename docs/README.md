@@ -592,9 +592,9 @@ Gen<Set<A>> ::  Combinators.combinations(int k,
 - Subsets
 
 Given a set with n elements and considering that each element can be included or not 
-(two possible states), we have 
+(two possible options), we have 
 
-2*2*2... n times = 2^n possible subsets
+2^n possible subsets
 
 Since the empty set is not returned, the subsets combinator generates  2^n -1
 different subsets. For example, given the set ["a","b","c"], all the possible values are
@@ -651,8 +651,6 @@ Let's define a User generator:
  Gen<User> userGen = RecordGen.of("login", loginGen,
                                   "name", nameGen,
                                   "password", passwordGen)
-                              .setAllOptional()
-                              .setAllNullable()
                               .map(record ->
                                              new User(record.getStr("login").orElse(null),
                                                       record.getStr("name").orElse(null),
@@ -670,6 +668,9 @@ this idea to create generators of valid and invalid data:
 
 ```java   
 
+  //let's create a generator that produces all possible combinations of nullable values 
+  Gen<User> chaosGen = userGen.setAllNullable()
+
   Predicate<User> isValid = user ->
                                     user.getLogin() != null &&
                                     user.getPassword() != null &&
@@ -678,14 +679,12 @@ this idea to create generators of valid and invalid data:
                                     !user.getName().trim().isEmpty() &&
                                     !user.getPassword().trim().isEmpty();
 
-  Gen<User> validUserGen = userGen.suchThat(isValid);
+  Gen<User> validUserGen = chaosGen.suchThat(isValid);
 
-  Gen<User> invalidUserGen = userGen.suchThat(isValid.negate());
+  Gen<User> invalidUserGen = chaosGen.suchThat(isValid.negate());
   
 
 ```
-
-#### <a name="permt"><a/> Generating all optional and nullable fields
 
 
 #### <a name="flatmap"><a/> Flatmap
@@ -873,7 +872,7 @@ exist. In java-fun the optional optic is called Option.
 
 And what about the modify action? It's created internally from _get_ and _set_! 
 
-Defining the _set_ action you may notice how cumbersome to create records is. 
+Defining the _set_ action you may notice how cumbersome to create a records is. 
 They are immutable data structures and every modification means to create a 
 new instance. And it's even more cumbersome when we have nested records. We'll 
 see how composing optics can help us with this.
@@ -969,12 +968,11 @@ consider, and we want to focus on a specific one.  Let's create a Prism
                             
 ```      
 
-You need to create two functions. The first one is how to go from the type 
+You need to create two functions. The first one is how to go from the generic type 
 Exception to the specific subtype RuntimeException, and the second one is
-the other way around (since a RuntimeException is aN Exception, just return it).
+the other way around (since a RuntimeException is an Exception, just return it).
 
-But you can create Prism to extract a subset of values with a specific property 
-But you can create Prism to extract a subset of values with a specific property 
+But you can create a Prism to extract a subset of values with a specific property 
 from a more generic set. For example, let's create a Prism to get all strings that 
 are integer numbers:
 
@@ -1023,7 +1021,7 @@ Do notice that we don't care about the success of the operation. If we do, we ca
 use the modifyOpt action.  It's the same, but when de map function can not be 
 applied, an empty Optional is returned.
 
-Let's put some examples with the intPrism defined above:
+Let's put some examples:
 
 ```java 
 

@@ -58,7 +58,7 @@ JsObjSpec spec =
                                                                   )
                                              )
                     )
-                 .setOptionals("address");
+                 .withOptKeys("address");
     
 ```   
 
@@ -75,7 +75,7 @@ Gen<JsObj> gen =
                                                                         JsBigDecGen.biased())
                                            )
                     )
-                .setAllOptional();
+                .withAllOptKeys();
         
                   
 Gen<JsObj> validDataGen =  gen.suchThat(spec);
@@ -794,12 +794,12 @@ JsObjSpec personSpec =
                                              "zipCode", str(zipCodeSpec)
                                             )
                                          .lenient()         
-                                         .setOptionals("tags", "zipCode", "city"),
+                                         .withOptKeys("tags", "zipCode", "city"),
                                 MIN_ADDRESSES_SIZE,
                                 MAX_ADDRESSES_SIZE                
                                 )
                  )
-             .setOptionals("surname", "phoneNumber", "addresses");   
+             .withOptKeys("surname", "phoneNumber", "addresses");   
     
 ```
 
@@ -845,7 +845,7 @@ If you don’t have their credit card number, a billing address would not be req
                 JsObjSpec.of("credit_card", str(),
                              "billing_address", str()
                             )
-                         .setOptionals("credit_card",
+                         .withOptKeys("credit_card",
                                        "billing_address")
                          .suchThat(existsBillingIfCard);
 
@@ -898,7 +898,7 @@ Gen<JsArray> addressGen =
                                                             ),
                                   "zipCode", JsStrGen.biased(0, MAX_ZIPCODE_LENGTH)
                                   )
-                              .setOptionals("tags", "zipCode", "city"),
+                              .withOptKeys("tags", "zipCode", "city"),
                       MIN_ADDRESSES_SIZE, 
                       MAX_ADDRESSES_SIZE        
                       );
@@ -909,7 +909,7 @@ Gen<JsObj> personGen =
               "registrationDate", JsInstantGen.biased(0, Instant.MAX.getEpochSecond()),
               "addresses", addressGen           
               )
-          .setOptionals("surname", "phoneNumber", "addresses");
+          .withOptKeys("surname", "phoneNumber", "addresses");
 
 ```
 
@@ -1173,7 +1173,7 @@ JsObjSpec personSpec =
                  "age", integer(),
                  "address", addressSpec().lenient()
                 )
-             .setOptionals("address");
+             .withOptKeys("address");
 
 //since we know the schema of the json we'll work with lenses and primitive types instead of JsValue
 //address is optional, we can't use a lens!         

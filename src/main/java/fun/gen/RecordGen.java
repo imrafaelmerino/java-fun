@@ -13,6 +13,9 @@ import static java.util.Objects.requireNonNull;
  */
 public final class RecordGen implements Gen<Record> {
 
+    private final static int MAX_NULLABLE_FIELDS = 20;
+    private final static int MAX_OPTIONAL_FIELDS = 20;
+
 
     private final SplitGen split = SplitGen.DEFAULT;
     private Set<String> optionals = new HashSet<>();
@@ -975,7 +978,8 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    private RecordGen(){}
+    private RecordGen() {
+    }
 
     private RecordGen(final String key,
                       final Gen<?> gen
@@ -2357,32 +2361,51 @@ public final class RecordGen implements Gen<Record> {
 
 
     @Override
-    public Supplier<Record> apply(final Random gen) {
-        Objects.requireNonNull(gen);
+    public Supplier<Record> apply(final Random random) {
+        Objects.requireNonNull(random);
+        Supplier<Set<String>> optionalFields =
+                optionals.size() < MAX_OPTIONAL_FIELDS ?
+                () -> this.optionals :
+                Combinators.nOf(this.optionals,
+                                MAX_OPTIONAL_FIELDS)
+                           .apply(split.apply(random));
 
-        Map<String, Supplier<?>> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
-            map.put(pair.getKey(),
-                    pair.getValue().apply(split.apply(gen))
-            );
+        Supplier<Set<String>> nullableFields =
+                nullables.size() < MAX_NULLABLE_FIELDS ?
+                () -> this.nullables :
+                Combinators.nOf(this.nullables,
+                                MAX_NULLABLE_FIELDS)
+                           .apply(split.apply(random));
 
+
+        Random optionalPermutationsSeed = split.apply(random);
         Supplier<Set<String>> optionalPermutations =
-                Combinators.subsets(optionals)
-                           .apply(split.apply(gen));
+                () -> Combinators.subsets(optionalFields.get())
+                                 .apply(optionalPermutationsSeed)
+                                 .get();
 
         Supplier<Boolean> isRemoveOptionals =
                 optionals.isEmpty() ?
                 () -> false :
-                BoolGen.arbitrary().apply(split.apply(gen));
+                BoolGen.arbitrary().apply(split.apply(random));
 
+        Random nullablePermutationsSeed = split.apply(random);
         Supplier<Set<String>> nullablePermutations =
-                Combinators.subsets(nullables)
-                           .apply(split.apply(gen));
+                () -> Combinators.subsets(nullableFields.get())
+                                 .apply(nullablePermutationsSeed)
+                                 .get();
 
         Supplier<Boolean> isSetNullables =
                 nullables.isEmpty() ?
                 () -> false :
-                BoolGen.arbitrary().apply(split.apply(gen));
+                BoolGen.arbitrary().apply(split.apply(random));
+
+        Map<String, Supplier<?>> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
+            map.put(pair.getKey(),
+                    pair.getValue().apply(split.apply(random))
+            );
+
         return () ->
         {
             Map<String, Object> result = new LinkedHashMap<>();

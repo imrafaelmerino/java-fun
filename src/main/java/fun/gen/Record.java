@@ -50,7 +50,6 @@ public final class Record {
     public Optional<Integer> getInt(final String key) {
         Object value = map.get(key);
         if (value == null) return Optional.empty();
-
         if (value instanceof Integer) return Optional.ofNullable(((Integer) value));
         throw new RecordTypeNotExpected("Integer",
                                         value.getClass(),

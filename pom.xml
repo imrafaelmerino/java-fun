@@ -6,7 +6,7 @@
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>java-fun</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.4</version>
+  <version>0.9.5</version>
   <name>java8-fun</name>
   <description>Some patterns and idioms from Functional Programming implemented in Java</description>
   <url>https://github.com/imrafaelmerino/java-fun</url>
@@ -97,7 +97,6 @@
                       <goal>jar</goal>
                   </goals>
                   <configuration>
-                      <classifier>jdk8</classifier>
                       <includes>
                           <include>**/**</include>
                       </includes>

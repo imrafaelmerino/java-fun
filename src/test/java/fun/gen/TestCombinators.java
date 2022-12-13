@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TestCombinators {
 
@@ -89,6 +91,27 @@ public class TestCombinators {
     }
 
     @Test
+    public void testOneOfSetOfValues() {
+
+
+        Map<String, Long> counts =
+                TestFun.generate(100000,
+                                 Combinators.oneOf(new HashSet<>(Arrays.asList("a",
+                                                                               "b",
+                                                                               "c"))
+                                 )
+                );
+
+
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         TestFun.list(
+                                                                 "a",
+                                                                 "b",
+                                                                 "c"),
+                                                         0.05);
+    }
+
+    @Test
     public void nullableFreq() {
 
     }
@@ -133,11 +156,47 @@ public class TestCombinators {
                                                          TestFun.list(new HashSet<>(Arrays.asList("a")),
                                                                       new HashSet<>(Arrays.asList("b")),
                                                                       new HashSet<>(Arrays.asList("c")),
-                                                                      new HashSet<>(Arrays.asList("a","b")),
-                                                                      new HashSet<>(Arrays.asList("b","c")),
-                                                                      new HashSet<>(Arrays.asList("a","c")),
-                                                                      new HashSet<>(Arrays.asList("a","b","c"))),
+                                                                      new HashSet<>(Arrays.asList("a",
+                                                                                                  "b")),
+                                                                      new HashSet<>(Arrays.asList("b",
+                                                                                                  "c")),
+                                                                      new HashSet<>(Arrays.asList("a",
+                                                                                                  "c")),
+                                                                      new HashSet<>(Arrays.asList("a",
+                                                                                                  "b",
+                                                                                                  "c"))),
                                                          0.05);
+
+    }
+
+    @Test
+    public void testNOf() {
+
+        List<Integer> numbers = IntStream.range(0,
+                                                4).boxed().collect(Collectors.toList());
+
+
+        Combinators.nOf(numbers,
+                        2
+                   )
+                   .sample(100)
+                   .forEach(n -> {
+                       System.out.println(n);
+                       Assertions.assertEquals(2,
+                                               new HashSet<>(n).size());
+                   });
+
+
+        Combinators.nOf(new HashSet<>(numbers),
+                        2
+                   )
+                   .sample(100)
+                   .forEach(n -> {
+                       System.out.println(n);
+                       Assertions.assertEquals(2,
+                                               new HashSet<>(n).size());
+                   });
+
 
     }
 

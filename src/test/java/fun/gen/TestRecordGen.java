@@ -875,4 +875,59 @@ public class TestRecordGen {
                                        }));
     }
 
+
+    @Test
+    public void testAllNullableAndOptionalMax(){
+
+        RecordGen gen =
+                RecordGen.of(
+                                "1",
+                                IntGen.arbitrary(),
+                                "2",
+                                IntGen.arbitrary(),
+                                "3",
+                                IntGen.arbitrary(),
+                                "4",
+                                IntGen.arbitrary(),
+                                "5",
+                                IntGen.arbitrary(),
+                                "6",
+                                IntGen.arbitrary(),
+                                "7",
+                                IntGen.arbitrary(),
+                                "8",
+                                IntGen.arbitrary(),
+                                "9",
+                                IntGen.arbitrary(),
+                                "10",
+                                IntGen.arbitrary(),
+                                "11",
+                                IntGen.arbitrary(),
+                                "12",
+                                IntGen.arbitrary(),
+                                "13",
+                                IntGen.arbitrary(),
+                                "14",
+                                IntGen.arbitrary(),
+                                "15",
+                                IntGen.arbitrary(),
+                                "16",
+                                IntGen.arbitrary(),
+                                "17",
+                                IntGen.arbitrary(),
+                                "18",
+                                IntGen.arbitrary(),
+                                "19",
+                                IntGen.arbitrary()
+                );
+
+        gen.setAllNullable()
+           .setAllOptional()
+           .sample(100)
+           .forEach(System.out::println);
+
+    }
+
+
+
 }

@@ -38,8 +38,8 @@ to be able to compose them in any imaginable way. With java-fun, it's child's pl
 They are safe and composable. Using optics properly, you'll never see
 again a NullPointerException!
 - **Tuples**. Java won't probably implement tuples, but I still consider them very
-useful. I've implemented tuples of two elements,i.e. pairs, and tuples of three elements,
-i.e. triples. 
+useful. I've implemented tuples of arity two and three,
+i.e. pairs and triples. 
 
 ## <a name="prg"><a/> Pseudo Random Generators
 Pseudorandom number generators (PRN) are important in practice for their speed 
@@ -74,7 +74,7 @@ there are a lot of predefined generators you can use. Let's go over them.
 ### <a name="ptg"><a/> Primitive Types Generators
 - String generator
 
-The bounded-string-biased generator produces with higher probability the empty string, 
+The bounded-string-biased generator produces with a higher probability the empty string
 if _minLength_ is zero, blank strings, and strings of length _minLength_ and _maxLength_:
 
  ```  java
@@ -1109,8 +1109,7 @@ Requires Java 8 or greater
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
-    <version>0.9.4</version>
-    <classifier>jdk8</classifier>
+    <version>0.9.5</version>
 </dependency>
 
 ```

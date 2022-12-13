@@ -33,6 +33,76 @@ public final class Combinators {
         return r -> () -> values.get(requireNonNull(r).nextInt(values.size()));
     }
 
+    public static <T> Gen<T> oneOf(final Set<T> values) {
+        if (requireNonNull(values).isEmpty())
+            throw new RuntimeException("set empty. No value can be generated");
+        return r -> {
+            int size = values.size();
+            return () -> {
+                int counter = 0;
+                Iterator<T> iterator = values.iterator();
+                int j = r.nextInt(size);
+                T value = null;
+                while (iterator.hasNext()){
+                    T next = iterator.next();
+                    if(j == counter) value = next;
+                    counter+=1;
+                }
+                return value;
+
+            };
+        };
+    }
+
+    public static <T> Gen<List<T>> nOf(final List<T> values,
+                                       int n) {
+        if (n > values.size()) throw new IllegalArgumentException("n > list.size=" + values.size());
+        return random -> () -> {
+            List<T> result = new ArrayList<>();
+            List<T> copy = new ArrayList<>(values);
+            generateCollection(n,
+                               random,
+                               result,
+                               copy);
+            return result;
+        };
+    }
+
+    public static <T> Gen<Set<T>> nOf(final Set<T> values,
+                                      int n) {
+        if (n > values.size()) throw new IllegalArgumentException("n > set.size=" + values.size());
+        return random -> () -> {
+            Set<T> result = new HashSet<>();
+            Set<T> copy = new HashSet<>(values);
+            generateCollection(n,
+                               random,
+                               result,
+                               copy);
+            return result;
+        };
+    }
+
+    private static <T> void generateCollection(int n,
+                                               Random random,
+                                               Collection<T> result,
+                                               Collection<T> copy) {
+        for (int i = 0; i < n; i++) {
+            int counter = 0;
+            int j = random.nextInt(copy.size());
+            Iterator<T> iter = copy.iterator();
+            while (iter.hasNext()) {
+                T next = iter.next();
+                if (j == counter) {
+                    result.add(next);
+                    iter.remove();
+                }
+                counter += 1;
+
+            }
+        }
+    }
+
+
     @SafeVarargs
     @SuppressWarnings({"varargs", "overloads"})
     public static <A> Gen<A> oneOf(final Gen<? extends A> gen,

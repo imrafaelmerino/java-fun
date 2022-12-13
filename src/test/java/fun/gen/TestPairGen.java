@@ -20,23 +20,23 @@ public class TestPairGen {
 
         TestFun.assertGeneratedValuesHaveSameProbability(map,
                                                          TestFun.list(Pair.of(0,
-                                                                                 0),
+                                                                              0),
                                                                       Pair.of(0,
-                                                                                 1),
+                                                                              1),
                                                                       Pair.of(1,
-                                                                                 0),
+                                                                              0),
                                                                       Pair.of(1,
-                                                                                 1),
+                                                                              1),
                                                                       Pair.of(0,
-                                                                                 2),
+                                                                              2),
                                                                       Pair.of(2,
-                                                                                 0),
+                                                                              0),
                                                                       Pair.of(1,
-                                                                                 2),
+                                                                              2),
                                                                       Pair.of(2,
-                                                                                 1),
+                                                                              1),
                                                                       Pair.of(2,
-                                                                                 2)
+                                                                              2)
 
                                                          ),
                                                          0.05

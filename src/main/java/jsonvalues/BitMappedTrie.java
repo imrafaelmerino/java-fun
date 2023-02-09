@@ -20,6 +20,7 @@ package jsonvalues;
 
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import static jsonvalues.ArrayType.obj;
@@ -301,6 +302,9 @@ final class BitMappedTrie<T> {
 
             @Override
             public T next() {
+                if(!hasNext()){
+                    throw new NoSuchElementException();
+                }
                 if (index == length) {
                     setCurrentArray();
                 }

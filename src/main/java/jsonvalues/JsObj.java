@@ -1,42 +1,33 @@
 package jsonvalues;
 
-import com.dslplatform.json.MyDslJson;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonTokenId;
+
+import jsonvalues.spec.JsonIO;
 import fun.optic.Prism;
-import fun.tuple.Pair;
-import io.vavr.Tuple2;
-import io.vavr.collection.LinkedHashMap;
-import io.vavr.collection.Map;
 import jsonvalues.JsArray.TYPE;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static java.util.Objects.requireNonNull;
 import static jsonvalues.JsArray.streamOfArr;
-import static jsonvalues.JsBool.FALSE;
-import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsNull.NULL;
 import static jsonvalues.MatchExp.ifNothingElse;
 
 /**
  * Represents an immutable JSON object. A JSON object is an unordered set of name/element pairs.
- * The underlying data structure is a persistent LinkedHashMap from the library vavr:
+ * The underlying data structure is a persistent {@link HashMap} from the library vavr.
  */
-public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
-    public static final JsObj EMPTY = new JsObj(LinkedHashMap.empty());
+public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
+    /**
+     * the empty Json Object
+     */
+    public static final JsObj EMPTY = new JsObj(HashMap.empty());
     /**
      * lenses defined for a Json object
      */
@@ -50,26 +41,24 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      */
     public static final Prism<JsValue, JsObj> prism =
             new Prism<>(s -> s.isObj() ?
-                             Optional.of(s.toJsObj()) :
-                             Optional.empty(),
+                    Optional.of(s.toJsObj()) :
+                    Optional.empty(),
                         o -> o
             );
     public static final int TYPE_ID = 3;
-    @SuppressWarnings("squid:S3008")//EMPTY_PATH should be a valid name
-    private static final JsPath EMPTY_PATH = JsPath.empty();
-    private final Map<String, JsValue> map;
-    private volatile int hascode;
-    //squid:S3077: doesn't make any sense, volatile is perfectly valid here an as a matter of fact
-    //is a recomendation from Efective Java to apply the idiom single check for lazy initialization
-    @SuppressWarnings("squid:S3077")
 
+    @SuppressWarnings("squid:S3008")
+    private static final JsPath EMPTY_PATH = JsPath.empty();
+    private final HashMap map;
+    private volatile int hashcode;
+    @SuppressWarnings("squid:S3077")
     private volatile String str;
 
     public JsObj() {
-        this.map = LinkedHashMap.empty();
+        this.map = HashMap.empty();
     }
 
-    JsObj(final Map<String, JsValue> myMap) {
+    JsObj(final HashMap myMap) {
         this.map = myMap;
     }
 
@@ -79,20 +68,21 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     public static JsObj of(final String key,
                            final JsValue el
-    ) {
+                          ) {
 
         return JsObj.EMPTY.set(JsPath.empty()
                                      .key(requireNonNull(key)),
                                el
-        );
+                              );
     }
 
     public static JsObj of(final JsPath path,
                            final JsValue el
-    ) {
+                          ) {
 
         return JsObj.EMPTY.set(requireNonNull(path),
-                               requireNonNull(el));
+                               requireNonNull(el)
+                              );
     }
 
 
@@ -100,26 +90,28 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el1,
                            final String key2,
                            final JsValue el2
-    ) {
+                          ) {
 
         return of(key1,
                   el1
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key2)),
-              el2
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key2)),
+                       el2
+                      );
     }
 
     public static JsObj of(final JsPath path1,
                            final JsValue el1,
                            final JsPath path2,
                            final JsValue el2
-    ) {
+                          ) {
 
         return of(path1,
-                  el1)
+                  el1
+                 )
                 .set(requireNonNull(path2),
-                     requireNonNull(el2));
+                     requireNonNull(el2)
+                    );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -129,15 +121,15 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el2,
                            final String key3,
                            final JsValue el3
-    ) {
+                          ) {
         return of(key1,
                   el1,
                   key2,
                   el2
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key3)),
-              el3
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key3)),
+                       el3
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -147,14 +139,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el2,
                            final JsPath path3,
                            final JsValue el3
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
                   el2
-        ).set(requireNonNull(path3),
-              requireNonNull(el3)
-        );
+                 ).set(requireNonNull(path3),
+                       requireNonNull(el3)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -166,7 +158,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el3,
                            final String key4,
                            final JsValue el4
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -174,10 +166,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el2,
                   key3,
                   el3
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key4)),
-              el4
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key4)),
+                       el4
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -189,16 +181,16 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el3,
                            final JsPath path4,
                            final JsValue el4
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
                   el2,
                   path3,
                   el3
-        ).set(requireNonNull(path4),
-              requireNonNull(el4)
-        );
+                 ).set(requireNonNull(path4),
+                       requireNonNull(el4)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -212,7 +204,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el4,
                            final String key5,
                            final JsValue el5
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -222,10 +214,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el3,
                   key4,
                   el4
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key5)),
-              el5
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key5)),
+                       el5
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -239,7 +231,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el4,
                            final JsPath path5,
                            final JsValue el5
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -248,9 +240,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el3,
                   path4,
                   el4
-        ).set(requireNonNull(path5),
-              requireNonNull(el5)
-        );
+                 ).set(requireNonNull(path5),
+                       requireNonNull(el5)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -266,7 +258,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el5,
                            final String key6,
                            final JsValue el6
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -278,10 +270,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el4,
                   key5,
                   el5
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key6)),
-              el6
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key6)),
+                       el6
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -297,7 +289,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el5,
                            final JsPath path6,
                            final JsValue el6
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -308,9 +300,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el4,
                   path5,
                   el5
-        ).set(requireNonNull(path6),
-              requireNonNull(el6)
-        );
+                 ).set(requireNonNull(path6),
+                       requireNonNull(el6)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -328,7 +320,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el6,
                            final String key7,
                            final JsValue el7
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -342,10 +334,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el5,
                   key6,
                   el6
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key7)),
-              el7
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key7)),
+                       el7
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -363,7 +355,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el6,
                            final JsPath path7,
                            final JsValue el7
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -376,9 +368,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el5,
                   path6,
                   el6
-        ).set(requireNonNull(path7),
-              requireNonNull(el7)
-        );
+                 ).set(requireNonNull(path7),
+                       requireNonNull(el7)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -398,7 +390,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el7,
                            final String key8,
                            final JsValue el8
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -414,10 +406,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el6,
                   key7,
                   el7
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key8)),
-              el8
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key8)),
+                       el8
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -437,7 +429,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el7,
                            final JsPath path8,
                            final JsValue el8
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -452,9 +444,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el6,
                   path7,
                   el7
-        ).set(requireNonNull(path8),
-              requireNonNull(el8)
-        );
+                 ).set(requireNonNull(path8),
+                       requireNonNull(el8)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -476,7 +468,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el8,
                            final String key9,
                            final JsValue el9
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -494,10 +486,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el7,
                   key8,
                   el8
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key9)),
-              el9
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key9)),
+                       el9
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -519,7 +511,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el8,
                            final JsPath path9,
                            final JsValue el9
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -536,9 +528,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el7,
                   path8,
                   el8
-        ).set(requireNonNull(path9),
-              requireNonNull(el9)
-        );
+                 ).set(requireNonNull(path9),
+                       requireNonNull(el9)
+                      );
     }
 
 
@@ -563,7 +555,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el9,
                            final String key10,
                            final JsValue el10
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -583,10 +575,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el8,
                   key9,
                   el9
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key10)),
-              el10
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key10)),
+                       el10
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -610,7 +602,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el9,
                            final JsPath path10,
                            final JsValue el10
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -629,9 +621,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el8,
                   path9,
                   el9
-        ).set(requireNonNull(path10),
-              requireNonNull(el10)
-        );
+                 ).set(requireNonNull(path10),
+                       requireNonNull(el10)
+                      );
     }
 
 
@@ -658,7 +650,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el10,
                            final String key11,
                            final JsValue el11
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -680,10 +672,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el9,
                   key10,
                   el10
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key11)),
-              el11
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key11)),
+                       el11
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -709,7 +701,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el10,
                            final JsPath path11,
                            final JsValue el11
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -730,9 +722,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el9,
                   path10,
                   el10
-        ).set(requireNonNull(path11),
-              requireNonNull(el11)
-        );
+                 ).set(requireNonNull(path11),
+                       requireNonNull(el11)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -760,7 +752,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el11,
                            final String key12,
                            final JsValue el12
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -784,10 +776,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el10,
                   key11,
                   el11
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key12)),
-              el12
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key12)),
+                       el12
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -815,7 +807,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el11,
                            final JsPath path12,
                            final JsValue el12
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -838,9 +830,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el10,
                   path11,
                   el11
-        ).set(requireNonNull(path12),
-              requireNonNull(el12)
-        );
+                 ).set(requireNonNull(path12),
+                       requireNonNull(el12)
+                      );
     }
 
 
@@ -871,7 +863,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el12,
                            final String key13,
                            final JsValue el13
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -897,10 +889,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el11,
                   key12,
                   el12
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key13)),
-              el13
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key13)),
+                       el13
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -930,7 +922,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el12,
                            final JsPath path13,
                            final JsValue el13
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -955,9 +947,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el11,
                   path12,
                   el12
-        ).set(requireNonNull(path13),
-              requireNonNull(el13)
-        );
+                 ).set(requireNonNull(path13),
+                       requireNonNull(el13)
+                      );
     }
 
 
@@ -990,7 +982,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el13,
                            final String key14,
                            final JsValue el14
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1018,10 +1010,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el12,
                   key13,
                   el13
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key14)),
-              el14
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key14)),
+                       el14
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1053,7 +1045,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el13,
                            final JsPath path14,
                            final JsValue el14
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1080,9 +1072,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el12,
                   path13,
                   el13
-        ).set(requireNonNull(path14),
-              requireNonNull(el14)
-        );
+                 ).set(requireNonNull(path14),
+                       requireNonNull(el14)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1116,7 +1108,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el14,
                            final String key15,
                            final JsValue el15
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1146,10 +1138,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el13,
                   key14,
                   el14
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key15)),
-              el15
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key15)),
+                       el15
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1183,7 +1175,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el14,
                            final JsPath path15,
                            final JsValue el15
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1212,9 +1204,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el13,
                   path14,
                   el14
-        ).set(requireNonNull(path15),
-              requireNonNull(el15)
-        );
+                 ).set(requireNonNull(path15),
+                       requireNonNull(el15)
+                      );
     }
 
 
@@ -1251,7 +1243,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el15,
                            final String key16,
                            final JsValue el16
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1283,10 +1275,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el14,
                   key15,
                   el15
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key16)),
-              el16
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key16)),
+                       el16
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1322,7 +1314,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el15,
                            final JsPath path16,
                            final JsValue el16
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1353,9 +1345,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el14,
                   path15,
                   el15
-        ).set(requireNonNull(path16),
-              requireNonNull(el16)
-        );
+                 ).set(requireNonNull(path16),
+                       requireNonNull(el16)
+                      );
     }
 
 
@@ -1394,7 +1386,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el16,
                            final String key17,
                            final JsValue el17
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1428,10 +1420,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el15,
                   key16,
                   el16
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key17)),
-              el17
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key17)),
+                       el17
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1469,7 +1461,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el16,
                            final JsPath path17,
                            final JsValue el17
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1502,9 +1494,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el15,
                   path16,
                   el16
-        ).set(requireNonNull(path17),
-              requireNonNull(el17)
-        );
+                 ).set(requireNonNull(path17),
+                       requireNonNull(el17)
+                      );
     }
 
 
@@ -1545,7 +1537,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el17,
                            final String key18,
                            final JsValue el18
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1581,10 +1573,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el16,
                   key17,
                   el17
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key18)),
-              el18
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key18)),
+                       el18
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1624,7 +1616,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el17,
                            final JsPath path18,
                            final JsValue el18
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1659,9 +1651,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el16,
                   path17,
                   el17
-        ).set(requireNonNull(path18),
-              requireNonNull(el18)
-        );
+                 ).set(requireNonNull(path18),
+                       requireNonNull(el18)
+                      );
     }
 
 
@@ -1704,7 +1696,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el18,
                            final String key19,
                            final JsValue el19
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1742,10 +1734,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el17,
                   key18,
                   el18
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key19)),
-              el19
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key19)),
+                       el19
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1787,7 +1779,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el18,
                            final JsPath path19,
                            final JsValue el19
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1824,9 +1816,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el17,
                   path18,
                   el18
-        ).set(requireNonNull(path19),
-              requireNonNull(el19)
-        );
+                 ).set(requireNonNull(path19),
+                       requireNonNull(el19)
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1870,7 +1862,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el19,
                            final String key20,
                            final JsValue el20
-    ) {
+                          ) {
 
         return of(key1,
                   el1,
@@ -1910,10 +1902,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el18,
                   key19,
                   el19
-        ).set(JsPath.empty()
-                    .key(requireNonNull(key20)),
-              el20
-        );
+                 ).set(JsPath.empty()
+                             .key(requireNonNull(key20)),
+                       el20
+                      );
     }
 
     @SuppressWarnings("squid:S00107")
@@ -1957,7 +1949,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                            final JsValue el19,
                            final JsPath path20,
                            final JsValue el20
-    ) {
+                          ) {
         return of(path1,
                   el1,
                   path2,
@@ -1996,9 +1988,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                   el18,
                   path19,
                   el19
-        ).set(requireNonNull(path20),
-              requireNonNull(el20)
-        );
+                 ).set(requireNonNull(path20),
+                       requireNonNull(el20)
+                      );
     }
 
 
@@ -2007,115 +1999,49 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      *
      * @param str the string to be parsed
      * @return a JsOb object
-     * @throws MalformedJson if the string doesn't represent a json object
+     * @throws JsParserException if the string doesn't represent a json object
      */
     public static JsObj parse(final String str) {
-
-        try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str))) {
-            JsonToken keyEvent = parser.nextToken();
-            if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
-            return new JsObj(JsObj.parse(parser));
-        } catch (Exception e) {
-            throw new MalformedJson(e.getMessage());
-        }
+       return JsonIO.INSTANCE.parseToJsObj(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Tries to parse a YAML string into an immutable JSON object.
-     *
-     * @param str the YAML to be parsed
-     * @return a JsOb object
-     * @throws MalformedJson if the string doesn't represent a json object
-     */
-    public static JsObj parseYaml(final String str) {
 
-        try (JsonParser parser = JacksonFactory.YAML_FACTORY.createParser(requireNonNull(str))) {
-            JsonToken keyEvent = parser.nextToken();
-            if (START_OBJECT != keyEvent) throw MalformedJson.expectedObj(str);
-            return new JsObj(JsObj.parse(parser));
-        } catch (Exception e) {
-            throw new MalformedJson(e.getMessage());
-        }
-    }
-
-    static Map<String, JsValue> parse(final JsonParser parser) throws IOException {
-        Map<String, JsValue> map = LinkedHashMap.empty();
-        String key = parser.nextFieldName();
-        for (; key != null; key = parser.nextFieldName()) {
-            JsValue elem;
-            JsonToken token = parser.nextToken();
-            switch (token.id()) {
-                case JsonTokenId.ID_STRING:
-                    elem = JsStr.of(parser.getValueAsString());
-                    break;
-                case JsonTokenId.ID_NUMBER_INT:
-                    elem = JsNumber.of(parser);
-                    break;
-                case JsonTokenId.ID_NUMBER_FLOAT:
-                    elem = JsBigDec.of(parser.getDecimalValue());
-                    break;
-                case JsonTokenId.ID_FALSE:
-                    elem = FALSE;
-                    break;
-                case JsonTokenId.ID_TRUE:
-                    elem = TRUE;
-                    break;
-                case JsonTokenId.ID_NULL:
-                    elem = NULL;
-                    break;
-                case JsonTokenId.ID_START_OBJECT:
-                    elem = new JsObj(parse(parser));
-                    break;
-                case JsonTokenId.ID_START_ARRAY:
-                    elem = new JsArray(JsArray.parse(parser));
-                    break;
-                default:
-                    throw new RuntimeException("Token not expected during parsing "+token);
-            }
-            map = map.put(key,
-                          elem
-            );
-        }
-
-        return map;
-
-    }
-
-    static Stream<Pair<JsPath, JsValue>> streamOfObj(final JsObj obj,
-                                                     final JsPath path
-    ) {
+    static Stream<JsPair> streamOfObj(final JsObj obj,
+                                      final JsPath path
+                                     ) {
 
         requireNonNull(path);
-        return requireNonNull(obj).ifEmptyElse(() -> Stream.of(Pair.of(path,
-                                                                       obj
+        return requireNonNull(obj).ifEmptyElse(() -> Stream.of(new JsPair(path,
+                                                                          obj
                                                )),
                                                () -> obj.keySet()
                                                         .stream()
-                                                        .map(key -> Pair.of(path.key(key),
-                                                                            get(obj,
-                                                                                Key.of(key)
-                                                                            )
+                                                        .map(key -> new JsPair(path.key(key),
+                                                                               get(obj,
+                                                                                   Key.of(key)
+                                                                                  )
                                                         ))
                                                         .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
-                                                                                                              pair.first()
-                                                                                             ),
+                                                                                                              pair.path()
+                                                                                                             ),
                                                                                              a -> streamOfArr(a,
-                                                                                                              pair.first()
-                                                                                             ),
-                                                                                             e -> Stream.of(pair))
-                                                                                 .apply(pair.second()))
-        );
+                                                                                                              pair.path()
+                                                                                                             ),
+                                                                                             e -> Stream.of(pair)
+                                                                                            )
+                                                                                 .apply(pair.value()))
+                                              );
 
     }
 
     private static JsValue get(final JsObj obj,
                                final Position position
-    ) {
+                              ) {
         return requireNonNull(position).match(key -> obj.map.getOrElse(key,
                                                                        NOTHING
-                                              ),
+                                                                      ),
                                               index -> NOTHING
-        );
+                                             );
     }
 
     /**
@@ -2127,11 +2053,13 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      */
     public JsObj set(final String key,
                      final JsValue value
-    ) {
+                    ) {
         requireNonNull(key);
         return ifNothingElse(() -> this.delete(key),
                              elem -> new JsObj(map.put(key,
-                                                       elem))).apply(requireNonNull(value));
+                                                       elem
+                                                      ))
+                            ).apply(requireNonNull(value));
     }
 
     public JsObj delete(final String key) {
@@ -2141,7 +2069,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
 
     @Override
     public boolean containsValue(final JsValue el) {
-        return map.values().contains(el);
+        return map.containsValue(el);
     }
 
     /**
@@ -2150,8 +2078,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return a Set containing each key of this JsObj
      */
     public Set<String> keySet() {
-        return map.keySet()
-                  .toJavaSet();
+        Set<String> keys = new HashSet<>();
+        Iterator<String> iter = map.keySet();
+        while (iter.hasNext()) keys.add(iter.next());
+        return keys;
     }
 
     @Override
@@ -2159,7 +2089,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         if (path.isEmpty()) return this;
         final JsValue e = get(this,
                               path.head()
-        );
+                             );
         final JsPath tail = path.tail();
         if (tail.isEmpty()) return e;
         if (e.isPrimitive()) return NOTHING;
@@ -2172,7 +2102,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return OpFilterObjElems.filter(this,
                                        JsPath.empty(),
                                        requireNonNull(filter)
-        );
+                                      );
 
     }
 
@@ -2180,7 +2110,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     public JsObj filterValues(final Predicate<? super JsPrimitive> filter) {
         return OpFilterObjElems.filter(this,
                                        requireNonNull(filter)
-        );
+                                      );
     }
 
     @Override
@@ -2188,14 +2118,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return OpFilterObjKeys.filter(this,
                                       JsPath.empty(),
                                       filter
-        );
+                                     );
     }
 
     @Override
     public JsObj filterKeys(final Predicate<? super String> filter) {
         return OpFilterObjKeys.filter(this,
                                       filter
-        );
+                                     );
     }
 
 
@@ -2204,7 +2134,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return OpFilterObjObjs.filter(this,
                                       JsPath.empty(),
                                       requireNonNull(filter)
-        );
+                                     );
 
     }
 
@@ -2212,7 +2142,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     public JsObj filterObjs(final Predicate<? super JsObj> filter) {
         return OpFilterObjObjs.filter(this,
                                       requireNonNull(filter)
-        );
+                                     );
     }
 
     @Override
@@ -2225,14 +2155,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return OpMapObjElems.map(this,
                                  requireNonNull(fn),
                                  EMPTY_PATH
-        );
+                                );
     }
 
     @Override
     public JsObj mapValues(final Function<? super JsPrimitive, ? extends JsValue> fn) {
         return OpMapObjElems.map(this,
                                  requireNonNull(fn)
-        );
+                                );
     }
 
 
@@ -2241,14 +2171,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return OpMapObjKeys.map(this,
                                 requireNonNull(fn),
                                 EMPTY_PATH
-        );
+                               );
     }
 
     @Override
     public JsObj mapKeys(final Function<? super String, String> fn) {
         return OpMapObjKeys.map(this,
                                 requireNonNull(fn)
-        );
+                               );
     }
 
     @Override
@@ -2256,14 +2186,14 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
         return OpMapObjObjs.map(this,
                                 requireNonNull(fn),
                                 JsPath.empty()
-        );
+                               );
     }
 
     @Override
     public JsObj mapObjs(final Function<? super JsObj, ? extends JsValue> fn) {
         return OpMapObjObjs.map(this,
                                 requireNonNull(fn)
-        );
+                               );
     }
 
     @Override
@@ -2271,7 +2201,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                      final JsValue value,
                      final JsValue padElement
 
-    ) {
+                    ) {
         requireNonNull(value);
         if (requireNonNull(path).isEmpty()) return this;
         return path.head()
@@ -2280,53 +2210,55 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                               final JsPath tail = path.tail();
 
                               return tail.isEmpty() ?
-                                     ifNothingElse(() -> this.delete(head),
-                                                   elem -> new JsObj(map.put(head,
-                                                                             elem
-                                                   ))
-                                     )
-                                             .apply(value) :
-                                     isReplaceWithEmptyJson(map).test(head,
-                                                                      tail
-                                     ) ?
-                                     new JsObj(map.put(head,
-                                                       tail.head()
-                                                           .match(key -> JsObj.EMPTY
-                                                                          .set(tail,
-                                                                               value,
-                                                                               padElement
-                                                                          ),
-                                                                  index -> JsArray.EMPTY
-                                                                          .set(tail,
-                                                                               value,
-                                                                               padElement
+                                      ifNothingElse(() -> this.delete(head),
+                                                    elem -> new JsObj(map.put(head,
+                                                                              elem
+                                                                             ))
+                                                   )
+                                              .apply(value) :
+                                      isReplaceWithEmptyJson(map).test(head,
+                                                                       tail
+                                                                      ) ?
+                                              new JsObj(map.put(head,
+                                                                tail.head()
+                                                                    .match(key -> JsObj.EMPTY
+                                                                                   .set(tail,
+                                                                                        value,
+                                                                                        padElement
+                                                                                       ),
+                                                                           index -> JsArray.EMPTY
+                                                                                   .set(tail,
+                                                                                        value,
+                                                                                        padElement
+                                                                                       )
                                                                           )
-                                                           )
-                                     )) :
-                                     new JsObj(map.put(head,
-                                                       map.get(head)
-                                                          .get()
-                                                          .toJson()
-                                                          .set(tail,
-                                                               value,
-                                                               padElement
-                                                          )
-                                     ));
+                                                               )) :
+                                              new JsObj(map.put(head,
+                                                                map.get(head)
+                                                                   .get()
+                                                                   .toJson()
+                                                                   .set(tail,
+                                                                        value,
+                                                                        padElement
+                                                                       )
+                                                               ));
                           },
                           index -> this
 
-                   );
+                         );
 
     }
 
     @Override
     public JsObj set(final JsPath path,
-                     final JsValue element) {
+                     final JsValue element
+                    ) {
         return ifNothingElse(() -> this.delete(path),
                              e -> set(path,
                                       e,
                                       NULL
-                             )).apply(requireNonNull(element));
+                                     )
+                            ).apply(requireNonNull(element));
     }
 
 
@@ -2334,27 +2266,28 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     public <R> Optional<R> reduce(final BinaryOperator<R> op,
                                   final BiFunction<? super JsPath, ? super JsPrimitive, R> map,
                                   final BiPredicate<? super JsPath, ? super JsPrimitive> predicate
-    ) {
+                                 ) {
         return OpMapReduce.reduceObj(this,
                                      JsPath.empty(),
                                      requireNonNull(predicate),
                                      map,
                                      op,
                                      Optional.empty()
-        );
+                                    );
 
     }
 
     @Override
     public <R> Optional<R> reduce(final BinaryOperator<R> op,
                                   final Function<? super JsPrimitive, R> map,
-                                  final Predicate<? super JsPrimitive> predicate) {
+                                  final Predicate<? super JsPrimitive> predicate
+                                 ) {
         return OpMapReduce.reduceObj(this,
                                      requireNonNull(predicate),
                                      map,
                                      op,
                                      Optional.empty()
-        );
+                                    );
     }
 
     @Override
@@ -2366,17 +2299,17 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                               if (!map.containsKey(key)) return this;
                               final JsPath tail = path.tail();
                               return tail.isEmpty() ?
-                                     new JsObj(map.remove(key)) :
-                                     MatchExp.ifJsonElse(json -> new JsObj(map.put(key,
-                                                                                   json.delete(tail)
-                                                         )),
-                                                         e -> this
-                                             )
-                                             .apply(map.get(key)
-                                                       .get());
+                                      new JsObj(map.remove(key)) :
+                                      MatchExp.ifJsonElse(json -> new JsObj(map.put(key,
+                                                                                    json.delete(tail)
+                                                                                   )),
+                                                          e -> this
+                                                         )
+                                              .apply(map.get(key)
+                                                        .get());
                           },
                           index -> this
-                   );
+                         );
 
 
     }
@@ -2387,10 +2320,10 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     }
 
     @Override
-    public Stream<Pair<JsPath, JsValue>> stream() {
+    public Stream<JsPair> stream() {
         return streamOfObj(this,
                            JsPath.empty()
-        );
+                          );
     }
 
     /**
@@ -2404,7 +2337,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     @SuppressWarnings("squid:S00117")
     public boolean equals(final JsObj that,
                           final TYPE ARRAY_AS
-    ) {
+                         ) {
         if (isEmpty()) return that.isEmpty();
         if (that.isEmpty()) return isEmpty();
         return keySet().stream()
@@ -2418,7 +2351,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                          return elem.toJson()
                                                     .equals(thatElem,
                                                             ARRAY_AS
-                                                    );
+                                                           );
                                      return elem.equals(thatElem);
                                  }) && that.keySet()
                                            .stream()
@@ -2438,7 +2371,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     public JsValue get(final String key) {
         return map.getOrElse(requireNonNull(key),
                              NOTHING
-        );
+                            );
     }
 
     /**
@@ -2462,7 +2395,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the JsArray located at the given key or the default value provided
      */
     public JsArray getArray(final String key,
-                            final Supplier<JsArray> orElse) {
+                            final Supplier<JsArray> orElse
+                           ) {
         return JsArray.prism.getOptional.apply(get(requireNonNull(key)))
                                         .orElseGet(requireNonNull(orElse));
 
@@ -2491,7 +2425,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the BigDecimal located at the given key or the default value provided
      */
     public BigDecimal getBigDec(final String key,
-                                final Supplier<BigDecimal> orElse) {
+                                final Supplier<BigDecimal> orElse
+                               ) {
         return JsBigDec.prism.getOptional.apply(get(requireNonNull(key)))
                                          .orElseGet(requireNonNull(orElse));
 
@@ -2521,7 +2456,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the bytes located at the given key or the default value provided
      */
     public byte[] getBinary(final String key,
-                            final Supplier<byte[]> orElse) {
+                            final Supplier<byte[]> orElse
+                           ) {
         return JsBinary.prism.getOptional.apply(get(requireNonNull(key)))
                                          .orElseGet(requireNonNull(orElse));
 
@@ -2550,7 +2486,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the BigInteger located at the given key or null
      */
     public BigInteger getBigInt(final String key,
-                                final Supplier<BigInteger> orElse) {
+                                final Supplier<BigInteger> orElse
+                               ) {
         return JsBigInt.prism.getOptional.apply(get(requireNonNull(key)))
                                          .orElseGet(requireNonNull(orElse));
 
@@ -2579,7 +2516,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the instant located at the given key or null
      */
     public Instant getInstant(final String key,
-                              final Supplier<Instant> orElse) {
+                              final Supplier<Instant> orElse
+                             ) {
         return JsInstant.prism.getOptional.apply(get(requireNonNull(key)))
                                           .orElseGet(requireNonNull(orElse));
 
@@ -2606,7 +2544,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the Boolean located at the given key or null
      */
     public Boolean getBool(final String key,
-                           final Supplier<Boolean> orElse) {
+                           final Supplier<Boolean> orElse
+                          ) {
         return JsBool.prism.getOptional.apply(get(requireNonNull(key)))
                                        .orElseGet(requireNonNull(orElse));
 
@@ -2638,7 +2577,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the decimal number located at the given key or null
      */
     public Double getDouble(final String key,
-                            final Supplier<Double> orElse) {
+                            final Supplier<Double> orElse
+                           ) {
         return JsDouble.prism.getOptional.apply(get(requireNonNull(key)))
                                          .orElseGet(requireNonNull(orElse));
 
@@ -2666,7 +2606,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the integral number located at the given key or null
      */
     public Integer getInt(final String key,
-                          final Supplier<Integer> orElse) {
+                          final Supplier<Integer> orElse
+                         ) {
         return JsInt.prism.getOptional.apply(get(requireNonNull(key)))
                                       .orElseGet(requireNonNull(orElse));
 
@@ -2695,7 +2636,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the integral number located at the given key or the default value provided
      */
     public Long getLong(final String key,
-                        final Supplier<Long> orElse) {
+                        final Supplier<Long> orElse
+                       ) {
         return JsLong.prism.getOptional.apply(get(requireNonNull(key)))
                                        .orElseGet(requireNonNull(orElse));
 
@@ -2722,7 +2664,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the json object located at the given key or the default value
      */
     public JsObj getObj(final String key,
-                        final Supplier<JsObj> orElse) {
+                        final Supplier<JsObj> orElse
+                       ) {
         return JsObj.prism.getOptional.apply(get(requireNonNull(key)))
                                       .orElseGet(requireNonNull(orElse));
 
@@ -2748,7 +2691,8 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
      * @return the string located at the given key or null
      */
     public String getStr(final String key,
-                         final Supplier<String> orElse) {
+                         final Supplier<String> orElse
+                        ) {
         return JsStr.prism.getOptional.apply(get(requireNonNull(key)))
                                       .orElseGet(requireNonNull(orElse));
     }
@@ -2762,38 +2706,53 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     @Override
     @SuppressWarnings("squid:S1206")
     public int hashCode() {
-        int result = hascode;
-        if (result == 0)
-            hascode = result = map.hashCode();
+        int result = hashcode;
+        if (result == 0) {
+            for (HashArrayMappedTrieModule.LeafNode next : map) {
+                result += next.key().hashCode() ^ next.value().hashCode();
+            }
+            hashcode = result;
+        }
         return result;
     }
 
     @Override
-    public boolean equals(final Object that) {
-        if (!(that instanceof JsObj)) return false;
-        if (this == that) return true;
-        final JsObj thatMap = (JsObj) that;
-        if (isEmpty()) return thatMap.isEmpty();
+    public boolean equals(final Object o) {
 
-        return keySet().stream()
-                       .allMatch(f -> thatMap.map.get(f)
-                                                 .map(it -> it.equals(map.get(f)
-                                                                         .get())
-                                                 )
-                                                 .getOrElse(false) && thatMap.keySet()
-                                                                             .stream()
-                                                                             .allMatch(map::containsKey));
+        if (o == this)
+            return true;
+        if (!(o instanceof JsObj)) return false;
+        JsObj m = ((JsObj) o);
+        if (m.size() != size()) return false;
+
+        try {
+            for (JsObjPair e : this) {
+                String key = e.key();
+                JsValue value = e.value();
+                if (value == null) {
+                    if (!(m.get(key) == null && m.containsKey(key)))
+                        return false;
+                } else {
+                    if (!value.equals(m.get(key)))
+                        return false;
+                }
+            }
+        } catch (ClassCastException | NullPointerException unused) {
+            return false;
+        }
+
+        return true;
     }
 
-    /**
-     * // Single-check idiom Item 83 from effective java
-     */
+
+
     @Override
     public String toString() {
         String result = str;
         if (result == null)
-            str = result = new String(MyDslJson.INSTANCE.serialize(this),
-                                      StandardCharsets.UTF_8);
+            str = result = new String(JsonIO.INSTANCE.serialize(this),
+                                      StandardCharsets.UTF_8
+            );
         return result;
     }
 
@@ -2823,39 +2782,52 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     @Override
     public JsObj intersection(final JsObj that,
                               final TYPE ARRAY_AS
-    ) {
+                             ) {
 
         return intersection(this,
                             requireNonNull(that),
                             requireNonNull(ARRAY_AS)
-        );
+                           );
     }
 
     @SuppressWarnings("squid:S1602")
-    private
-        // curly braces makes IntelliJ to format the code in a more legible way
-    BiPredicate<String, JsPath> isReplaceWithEmptyJson(final Map<String, JsValue> pmap) {
+    private BiPredicate<String, JsPath> isReplaceWithEmptyJson(final HashMap pmap) {
         return (head, tail) ->
-                (!pmap.containsKey(head) || !pmap.get(head)
-                                                 .filter(JsValue::isPrimitive)
-                                                 .isEmpty())
+                (!pmap.containsKey(head) || pmap.get(head)
+                                                .filter(JsValue::isPrimitive)
+                                                .isPresent())
                         ||
                         (
                                 tail.head()
-                                    .isKey() && !pmap.get(head)
-                                                     .filter(JsValue::isArray)
-                                                     .isEmpty()
+                                    .isKey() && pmap.get(head)
+                                                    .filter(JsValue::isArray)
+                                                    .isPresent()
                         )
                         ||
                         (tail.head()
-                             .isIndex() && !pmap.get(head)
-                                                .filter(JsValue::isObj)
-                                                .isEmpty());
+                             .isIndex() && pmap.get(head)
+                                               .filter(JsValue::isObj)
+                                               .isPresent());
     }
 
     @Override
-    public Iterator<Tuple2<String, JsValue>> iterator() {
-        return map.iterator();
+    public Iterator<JsObjPair> iterator() {
+
+        Iterator<HashArrayMappedTrieModule.LeafNode> iterator = map.iterator();
+
+        return new Iterator<JsObjPair>() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public JsObjPair next() {
+                HashArrayMappedTrieModule.LeafNode next = iterator.next();
+                return new JsObjPair(next.key(), next.value());
+            }
+        };
+
     }
 
 
@@ -2875,7 +2847,7 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     @Override
     public JsObj union(final JsObj that,
                        final TYPE ARRAY_AS
-    ) {
+                      ) {
         requireNonNull(that);
         requireNonNull(ARRAY_AS);
         return ifEmptyElse(() -> that,
@@ -2883,9 +2855,9 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
                                                   () -> union(this,
                                                               that,
                                                               ARRAY_AS
-                                                  )
-                           )
-        );
+                                                             )
+                                                 )
+                          );
 
     }
 
@@ -2894,24 +2866,25 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     private JsObj intersection(final JsObj a,
                                final JsObj b,
                                final JsArray.TYPE ARRAY_AS
-    ) {
+                              ) {
         if (a.isEmpty()) return a;
         if (b.isEmpty()) return b;
         JsObj result = JsObj.empty();
-        for (Tuple2<String, JsValue> aVal : a) {
+        for (JsObjPair aVal : a) {
 
-            if (b.containsKey(aVal._1)) {
-                JsValue bVal = b.get(aVal._1);
+            if (b.containsKey(aVal.key())) {
+                JsValue bVal = b.get(aVal.key());
 
-                if (bVal.equals(aVal._2)) result = result.set(aVal._1,
-                                                              aVal._2);
-                else if (bVal.isJson() && bVal.isSameType(aVal._2)) {
-                    result = result.set(aVal._1,
-                                        OpIntersectionJsons.intersectionAll(aVal._2.toJson(),
+                if (bVal.equals(aVal.value())) result = result.set(aVal.key(),
+                                                                   aVal.value()
+                                                                  );
+                else if (bVal.isJson() && bVal.isSameType(aVal.value())) {
+                    result = result.set(aVal.key(),
+                                        OpIntersectionJsons.intersectionAll(aVal.value().toJson(),
                                                                             bVal.toJson(),
                                                                             ARRAY_AS
-                                        )
-                    );
+                                                                           )
+                                       );
                 }
             }
 
@@ -2926,26 +2899,26 @@ public class JsObj implements Json<JsObj>, Iterable<Tuple2<String, JsValue>> {
     private JsObj union(final JsObj a,
                         final JsObj b,
                         final JsArray.TYPE ARRAY_AS
-    ) {
+                       ) {
 
         if (b.isEmpty()) return a;
         JsObj result = a;
-        for (Tuple2<String, JsValue> bVal : b) {
-            if (!a.containsKey(bVal._1))
-                result = result.set(bVal._1,
-                                    bVal._2
-                );
-            JsValue aVal = a.get(bVal._1);
-            if (aVal.isJson() && aVal.isSameType(bVal._2)) {
+        for (JsObjPair bVal : b) {
+            if (!a.containsKey(bVal.key()))
+                result = result.set(bVal.key(),
+                                    bVal.value()
+                                   );
+            JsValue aVal = a.get(bVal.key());
+            if (aVal.isJson() && aVal.isSameType(bVal.value())) {
                 Json<?> aJson = aVal.toJson();
-                Json<?> bJson = bVal._2.toJson();
+                Json<?> bJson = bVal.value().toJson();
 
-                result = result.set(bVal._1,
+                result = result.set(bVal.key(),
                                     OpUnionJsons.unionAll(aJson,
                                                           bJson,
                                                           ARRAY_AS
-                                    )
-                );
+                                                         )
+                                   );
             }
         }
 

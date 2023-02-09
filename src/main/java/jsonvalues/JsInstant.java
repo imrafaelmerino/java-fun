@@ -55,7 +55,6 @@ public final class JsInstant extends JsPrimitive implements Comparable<JsInstant
     public int id() {
         return TYPE_ID;
     }
-
     @Override
     public JsPrimitive toJsPrimitive() {
         return this;

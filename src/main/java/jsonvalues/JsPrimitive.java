@@ -1,6 +1,6 @@
 package jsonvalues;
 
-public abstract class JsPrimitive implements JsValue {
+public abstract  class JsPrimitive implements JsValue   {
 
     @Override
     public boolean isPrimitive() {

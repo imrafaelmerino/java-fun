@@ -5,7 +5,6 @@ import fun.gen.DoubleGen;
 import fun.gen.Gen;
 import jsonvalues.JsDouble;
 
-import java.math.BigDecimal;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -101,7 +100,7 @@ public final class JsDoubleGen implements Gen<JsDouble> {
      *
      * @param min lower bound of the interval (inclusive)
      * @param max upper bound of the interval (inclusive)
-     *
+     * <p>
      *
      * @return a biased JsDouble generator
      */

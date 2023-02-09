@@ -17,9 +17,7 @@ import static java.util.Objects.requireNonNull;
  * Represents an immutable json number of type BigDecimal.
  */
 public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
-
     public static final int TYPE_ID = 8;
-
     /**
      * prism between the sum type JsValue and JsBigDec
      */
@@ -57,7 +55,6 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
     public int id() {
         return TYPE_ID;
     }
-
     @Override
     public boolean isBigDec() {
         return true;
@@ -244,12 +241,6 @@ public final class JsBigDec extends JsNumber implements Comparable<JsBigDec> {
 
     }
 
-    public static void main(String[] args) {
-        JsDouble a = JsDouble.of(-1.2843909090127789E17);
-        JsBigDec b = JsBigDec.of( new BigDecimal("-1.2843909090127789E17"));
-        System.out.println(a.equals(b));
-        System.out.println(b.equals(a));
 
-    }
 
 }

@@ -1,8 +1,5 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.JsSpecParser;
-import com.dslplatform.json.JsSpecParsers;
-import fun.tuple.Pair;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
@@ -10,10 +7,10 @@ import java.util.Optional;
 import java.util.function.Function;
 
 class JsArrayOfBigIntSuchThatSpec extends AbstractNullableSpec implements JsValuePredicate, JsArraySpec {
-    private final Function<JsArray, Optional<Pair<JsValue,ERROR_CODE>>> predicate;
+    private final Function<JsArray, Optional<JsError>> predicate;
     private final JsArrayOfBigIntSpec isArrayOfIntegral;
 
-    JsArrayOfBigIntSuchThatSpec(final Function<JsArray, Optional<Pair<JsValue,ERROR_CODE>>> predicate,
+    JsArrayOfBigIntSuchThatSpec(final Function<JsArray, Optional<JsError>> predicate,
                                 final boolean nullable
     ) {
         super(nullable);
@@ -35,8 +32,8 @@ class JsArrayOfBigIntSuchThatSpec extends AbstractNullableSpec implements JsValu
     }
 
     @Override
-    public Optional<Pair<JsValue,ERROR_CODE>> testValue(final JsValue value) {
-        final Optional<Pair<JsValue,ERROR_CODE>> result = isArrayOfIntegral.testValue(value);
+    public Optional<JsError> testValue(final JsValue value) {
+        final Optional<JsError> result = isArrayOfIntegral.testValue(value);
         return result.isPresent() || value.isNull() ?
                result :
                predicate.apply(value.toJsArray());

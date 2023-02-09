@@ -1,7 +1,6 @@
 package jsonvalues.spec;
 
-import fun.tuple.Pair;
-import io.vavr.Tuple2;
+
 import jsonvalues.JsObj;
 import jsonvalues.JsPath;
 import jsonvalues.JsValue;
@@ -15,6 +14,7 @@ abstract class AbstractMapSpec extends AbstractNullableSpec {
         super(nullable);
     }
 
+
     protected Set<SpecError> test(JsPath path,
                         JsValue value,
                         Predicate<JsValue> predicate,
@@ -22,7 +22,7 @@ abstract class AbstractMapSpec extends AbstractNullableSpec {
         Set<SpecError> errors = new HashSet<>();
         if (!value.isObj()) {
             errors.add(SpecError.of(path,
-                                    Pair.of(value,
+                                    new JsError(value,
                                             ERROR_CODE.OBJ_EXPECTED)));
             return errors;
         }
@@ -30,10 +30,10 @@ abstract class AbstractMapSpec extends AbstractNullableSpec {
 
         JsObj obj = value.toJsObj();
 
-        for (Tuple2<String, JsValue> pair : obj) {
-            if (predicate.test(pair._2))
-                errors.add(SpecError.of(path.key(pair._1),
-                                        Pair.of(pair._2,
+        for (jsonvalues.JsObjPair pair : obj) {
+            if (predicate.test(pair.value()))
+                errors.add(SpecError.of(path.key(pair.key()),
+                                        new JsError(pair.value(),
                                                 code)));
         }
 

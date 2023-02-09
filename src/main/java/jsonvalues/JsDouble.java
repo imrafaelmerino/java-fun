@@ -17,8 +17,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
     public static final int TYPE_ID = 5;
-
-
     /**
      * prism between the sum type JsValue and JsDouble
      */

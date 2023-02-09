@@ -1,14 +1,10 @@
 package jsonvalues;
 
-import com.dslplatform.json.MyDslJson;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonTokenId;
-import fun.optic.Prism;
-import fun.tuple.Pair;
-import io.vavr.collection.Vector;
 
-import java.io.IOException;
+
+import fun.optic.Prism;
+import jsonvalues.spec.JsonIO;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -20,13 +16,10 @@ import java.util.function.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.IntStream.range;
 import static jsonvalues.JsArray.TYPE.LIST;
 import static jsonvalues.JsArray.TYPE.MULTISET;
-import static jsonvalues.JsBool.FALSE;
-import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNothing.NOTHING;
 import static jsonvalues.JsNull.NULL;
 import static jsonvalues.JsObj.streamOfObj;
@@ -61,10 +54,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
             );
     private final Vector<JsValue> seq;
     private volatile int hashcode;
-    //squid:S3077: doesn't make any sense, volatile is perfectly valid here an as a matter of fact
-    //is a recommendation from Effective Java to apply the idiom single check for lazy initialization
-    @SuppressWarnings("squid:S3077")
-
     private volatile String str;
 
 
@@ -327,109 +316,41 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     }
 
     /**
-     * Tries to parse the YAML string into an immutable json array.
-     *
-     * @param str the YAML to be parsed
-     * @return a JsArray
-     * @throws MalformedJson if the string doesnt represent a json array
-     */
-    public static JsArray parseYaml(final String str) {
-
-        try (JsonParser parser = JacksonFactory.YAML_FACTORY.createParser(requireNonNull(str))) {
-            JsonToken keyEvent = parser.nextToken();
-            if (START_ARRAY != keyEvent) throw MalformedJson.expectedArray(str);
-            return new JsArray(parse(parser));
-        } catch (IOException e) {
-            throw new MalformedJson(e.getMessage());
-        }
-
-    }
-
-    /**
      * Tries to parse the string into an immutable json array.
      *
      * @param str the string to be parsed
      * @return a JsArray
-     * @throws MalformedJson if the string doesnt represent a json array
+     * @throws JsParserException if the string doesnt represent a json array
      */
     public static JsArray parse(final String str) {
 
-        try (JsonParser parser = JacksonFactory.INSTANCE.createParser(requireNonNull(str))) {
-            JsonToken keyEvent = parser.nextToken();
-            if (START_ARRAY != keyEvent) throw MalformedJson.expectedArray(str);
-            return new JsArray(parse(parser
-            ));
-        } catch (Exception e) {
-
-            throw new MalformedJson(e.getMessage());
-        }
+      return JsonIO.INSTANCE.parseToJsArray(str.getBytes(StandardCharsets.UTF_8));
 
     }
 
-    static Vector<JsValue> parse(final JsonParser parser) throws IOException {
-        Vector<JsValue> root = Vector.empty();
-        while (true) {
-            JsonToken token = parser.nextToken();
-            JsValue elem;
-            switch (token.id()) {
-                case JsonTokenId.ID_END_ARRAY:
-                    return root;
-                case JsonTokenId.ID_START_OBJECT:
-                    elem = new JsObj(JsObj.parse(parser)
-                    );
-                    break;
-                case JsonTokenId.ID_START_ARRAY:
-                    elem = new JsArray(parse(parser
-                    )
-                    );
-                    break;
-                case JsonTokenId.ID_STRING:
-                    elem = JsStr.of(parser.getValueAsString());
-                    break;
-                case JsonTokenId.ID_NUMBER_INT:
-                    elem = JsNumber.of(parser);
-                    break;
-                case JsonTokenId.ID_NUMBER_FLOAT:
-                    elem = JsBigDec.of(parser.getDecimalValue());
-                    break;
-                case JsonTokenId.ID_TRUE:
-                    elem = TRUE;
-                    break;
-                case JsonTokenId.ID_FALSE:
-                    elem = FALSE;
-                    break;
-                case JsonTokenId.ID_NULL:
-                    elem = NULL;
-                    break;
-                default:
-                    throw new RuntimeException("token not expected durint parsing: "+token);
-            }
-            root = root.append(elem);
-        }
-    }
 
-    static Stream<Pair<JsPath, JsValue>> streamOfArr(final JsArray array,
+    static Stream<JsPair> streamOfArr(final JsArray array,
                                                      final JsPath path) {
 
 
         requireNonNull(path);
-        return requireNonNull(array).ifEmptyElse(() -> Stream.of(Pair.of(path,
+        return requireNonNull(array).ifEmptyElse(() -> Stream.of(new JsPair(path,
                                                                          array
                                                  )),
                                                  () -> range(0,
                                                              array.size()
-                                                 ).mapToObj(pair -> Pair.of(path.index(pair),
+                                                 ).mapToObj(pair -> new JsPair(path.index(pair),
                                                                             array.get(Index.of(pair))
                                                   ))
                                                   .flatMap(pair -> MatchExp.ifJsonElse(o -> streamOfObj(o,
-                                                                                                        pair.first()
+                                                                                                        pair.path()
                                                                                        ),
                                                                                        a -> streamOfArr(a,
-                                                                                                        pair.first()
+                                                                                                        pair.path()
                                                                                        ),
                                                                                        e -> Stream.of(pair)
                                                                            )
-                                                                           .apply(pair.second())
+                                                                           .apply(pair.value())
                                                   )
         );
 
@@ -549,7 +470,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Integer getInt(final int index,
                           final Supplier<Integer> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsInt.prism.getOptional.apply(seq.get(index))
                                       .orElseGet(requireNonNull(orElse));
@@ -579,7 +500,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Long getLong(final int index,
                         final Supplier<Long> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsLong.prism.getOptional.apply(seq.get(index))
                                        .orElseGet(requireNonNull(orElse));
@@ -609,7 +530,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public String getStr(final int index,
                          final Supplier<String> orElse) {
-        return (seq.isEmpty() || index < 0 || index > seq.size() - 1) ?
+        return (seq.isEmpty() || index < 0 || index > seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsStr.prism.getOptional.apply(seq.get(index))
                                       .orElseGet(requireNonNull(orElse));
@@ -640,7 +561,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Instant getInstant(final int index,
                               final Supplier<Instant> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsInstant.prism.getOptional.apply(seq.get(index))
                                           .orElse(requireNonNull(orElse).get());
@@ -670,7 +591,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public byte[] getBinary(final int index,
                             final Supplier<byte[]> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsBinary.prism.getOptional.apply(seq.get(index))
                                          .orElseGet(requireNonNull(orElse));
@@ -698,7 +619,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Boolean getBool(final int index,
                            final Supplier<Boolean> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsBool.prism.getOptional.apply(seq.get(index))
                                        .orElseGet(requireNonNull(orElse));
@@ -733,7 +654,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public Double getDouble(final int index,
                             final Supplier<Double> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsDouble.prism.getOptional.apply(seq.get(index))
                                          .orElseGet(requireNonNull(orElse));
@@ -762,7 +683,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public BigDecimal getBigDec(final int index,
                                 final Supplier<BigDecimal> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsBigDec.prism.getOptional.apply(seq.get(index))
                                          .orElseGet(requireNonNull(orElse));
@@ -790,7 +711,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public BigInteger getBigInt(final int index,
                                 final Supplier<BigInteger> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsBigInt.prism.getOptional.apply(seq.get(index))
                                          .orElseGet(requireNonNull(orElse));
@@ -817,7 +738,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public JsObj getObj(final int index,
                         final Supplier<JsObj> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsObj.prism.getOptional.apply(seq.get(index))
                                       .orElseGet(requireNonNull(orElse));
@@ -844,7 +765,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      */
     public JsArray getArray(final int index,
                             final Supplier<JsArray> orElse) {
-        return (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+        return (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                requireNonNull(orElse).get() :
                JsArray.prism.getOptional.apply(seq.get(index))
                                         .orElseGet(requireNonNull(orElse));
@@ -853,7 +774,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     private JsValue get(final Position pos) {
         return requireNonNull(pos).match(key -> JsNothing.NOTHING,
                                          index ->
-                                                 (this.seq.isEmpty() || index < 0 || index > this.seq.size() - 1) ?
+                                                 (this.seq.isEmpty() || index < 0 || index > this.seq.length() - 1) ?
                                                  JsNothing.NOTHING :
                                                  this.seq.get(index)
         );
@@ -1107,7 +1028,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
                    .match(head -> this,
                           index ->
                           {
-                              int maxIndex = seq.size() - 1;
+                              int maxIndex = seq.length() - 1;
                               if (index < 0 || index > maxIndex) return this;
                               JsPath tail = path.tail();
                               return tail.isEmpty() ?
@@ -1127,11 +1048,11 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     @Override
     public int size() {
-        return seq.size();
+        return seq.length();
     }
 
     @Override
-    public Stream<Pair<JsPath, JsValue>> stream() {
+    public Stream<JsPair> stream() {
         return streamOfArr(this,
                            JsPath.empty()
         );
@@ -1141,7 +1062,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     private boolean yContainsX(final Vector<JsValue> x,
                                final Vector<JsValue> y
     ) {
-        for (int i = 0; i < x.size(); i++) {
+        for (int i = 0; i < x.length(); i++) {
             if (!Objects.equals(x.get(i),
                                 y.get(i)
             ))
@@ -1189,7 +1110,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         boolean thatEmpty = thatSeq.isEmpty();
         boolean thisEmpty = isEmpty();
         if (thatEmpty && thisEmpty) return true;
-        if (this.size() != thatSeq.size()) return false;
+        if (this.size() != thatSeq.length()) return false;
         return yContainsX(seq,
                           thatSeq
         ) && yContainsX(thatSeq,
@@ -1205,7 +1126,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public String toString() {
         String result = str;
         if (result == null)
-            str = result = new String(MyDslJson.INSTANCE.serialize(this),
+            str = result = new String(JsonIO.INSTANCE.serialize(this),
                                       StandardCharsets.UTF_8);
 
         return result;
@@ -1268,7 +1189,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     public int id() {
         return TYPE_ID;
     }
-
     @Override
     public boolean isArray() {
         return true;
@@ -1286,7 +1206,6 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
      * @throws UserError if this JsArray is empty
      */
     public JsValue last() {
-
         return seq.last();
     }
 
@@ -1325,7 +1244,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
     // curly braces makes IntelliJ to format the code in a more legible way
     private BiPredicate<Integer, JsPath> putEmptyJson(final Vector<JsValue> pseq) {
         return (index, tail) ->
-                index > pseq.size() - 1 || pseq.isEmpty() || pseq.get(index)
+                index > pseq.length() - 1 || pseq.isEmpty() || pseq.get(index)
                                                                  .isPrimitive()
                         ||
                         (tail.head()
@@ -1341,7 +1260,7 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
 
     public JsArray delete(final int index) {
         if (index < -0) throw new IllegalArgumentException("index must be >= 0");
-        int maxIndex = seq.size() - 1;
+        int maxIndex = seq.length() - 1;
         if (index > maxIndex) return this;
         return new JsArray(seq.removeAt(index));
     }
@@ -1407,12 +1326,12 @@ public final class JsArray implements Json<JsArray>, Iterable<JsValue> {
         assert arr != null;
         assert e != null;
 
-        if (index == arr.size()) return arr.append(e);
+        if (index == arr.length()) return arr.append(e);
 
 
-        if (index < arr.size()) return arr.update(index,
+        if (index < arr.length()) return arr.update(index,
                                                   e);
-        for (int j = arr.size(); j < index; j++) {
+        for (int j = arr.length(); j < index; j++) {
             arr = arr.append(pad);
         }
         return arr.append(e);

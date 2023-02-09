@@ -96,7 +96,6 @@ public final class JsLong extends JsNumber implements Comparable<JsLong> {
         if (that == null) return false;
         if (!(that instanceof JsNumber)) return false;
         JsNumber number = (JsNumber) that;
-
         if (number.isLong()) return value == number.toJsLong().value;
         if (number.isInt()) return intEquals(number.toJsInt());
         if (number.isBigInt()) return bigIntEquals(number.toJsBigInt());

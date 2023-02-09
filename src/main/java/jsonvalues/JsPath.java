@@ -1,12 +1,11 @@
 package jsonvalues;
-
-import io.vavr.collection.Vector;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -210,7 +209,6 @@ public final class JsPath implements Comparable<JsPath> {
      */
     @Override
     public int compareTo(final JsPath that) {
-
         if (this.isEmpty() && requireNonNull(that).isEmpty()) return 0;
         if (that.isEmpty()) return 1;
         if (this.isEmpty()) return -1;
@@ -406,6 +404,15 @@ public final class JsPath implements Comparable<JsPath> {
                                                .startsWith(path.tail());
     }
 
+    public boolean startsWithKey(final String key) {
+        return startsWith(JsPath.fromKey(key));
+    }
+
+    public boolean endsWithKey(final String key) {
+        return endsWith(JsPath.fromKey(key));
+    }
+
+
     /**
      * returns true if this path ends with the given path. If the given path is JsPath.empty(), it
      * always returns true
@@ -464,7 +471,7 @@ public final class JsPath implements Comparable<JsPath> {
     @Override
     public String toString() {
         if (positions.isEmpty()) return "";
-        return positions.iterator()
+        return positions
                         .map(pos -> pos.match(key ->
                                               {
                                                   if (key.equals("")) return key;
@@ -478,10 +485,28 @@ public final class JsPath implements Comparable<JsPath> {
                              )
 
                         )
-                        .mkString("/",
-                                  "/",
-                                  ""
-                        );
+                        .toJavaStream()
+                        .collect(Collectors.joining("/","/",""));
+    }
+
+    /**
+     * returns true if this path contains the given key
+     * @param name the name of the key
+     * @return true if this path contains the key
+     */
+    public boolean containsKey(final String name) {
+        return positions.exists(pos -> pos.isKey(key -> key.equals(name)));
+    }
+
+    /**
+     * returns true if this path contains the given path
+     * @param path the path
+     * @return true if this path contains the given path
+     */
+    public boolean contains(JsPath path) {
+        if (Objects.requireNonNull(path).isEmpty()) return true;
+        if(this.isEmpty()) return false;
+        return this.toString().contains(path.toString());
     }
 
 

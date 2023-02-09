@@ -74,7 +74,6 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
     public int id() {
         return TYPE_ID;
     }
-
     @Override
     public JsPrimitive toJsPrimitive() {
         return this;
@@ -112,7 +111,7 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(value.hashCode());
+        return value.hashCode();
     }
 
     /**

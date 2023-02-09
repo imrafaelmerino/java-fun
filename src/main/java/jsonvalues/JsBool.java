@@ -53,7 +53,6 @@ public final class JsBool extends JsPrimitive {
     public int id() {
         return TYPE_ID;
     }
-
     @Override
     public JsPrimitive toJsPrimitive() {
         return this;

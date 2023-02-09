@@ -3,7 +3,7 @@ package jsonvalues;
 
 import fun.optic.Lens;
 import fun.optic.Option;
-import jsonvalues.spec.JsObjParser;
+import jsonvalues.spec.JsObjSpecParser;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsSpecs;
 import jsonvalues.spec.SpecError;
@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.regex.Pattern;
 
 import static jsonvalues.spec.JsSpecs.str;
 
@@ -23,27 +24,28 @@ public class TestExample {
     public void test() {
 
         JsObjSpec spec = JsObjSpec.of("name",
-                                          str(),
-                                          "surname",
-                                          str(),
-                                          "languages",
-                                          JsSpecs.arrayOfStr(),
-                                          "age",
-                                          JsSpecs.integer(),
-                                          "address",
-                                          JsObjSpec.of("street",
-                                                           str(),
-                                                           "number",
-                                                           JsSpecs.any(it -> it.isInt() || it.isStr()),
-                                                           "city",
-                                                           str().nullable(),
-                                                           "coordinates",
-                                                           JsSpecs.tuple(JsSpecs.decimal(),
-                                                                         JsSpecs.decimal()
-                                                           )
-                                          )
+                                      str(Pattern.compile("\\w+")),
+                                      "surname",
+                                      str(1,
+                                          20),
+                                      "languages",
+                                      JsSpecs.arrayOfStr(),
+                                      "age",
+                                      JsSpecs.integer(),
+                                      "address",
+                                      JsObjSpec.of("street",
+                                                   str(),
+                                                   "number",
+                                                   JsSpecs.any(it -> it.isInt() || it.isStr()),
+                                                   "city",
+                                                   str().nullable(),
+                                                   "coordinates",
+                                                   JsSpecs.tuple(JsSpecs.decimal(),
+                                                                 JsSpecs.decimal()
+                                                   )
+                                      )
         ).withOptKeys("surname",
-                       "age");
+                      "age");
 
         JsObj person = JsObj.of("name",
                                 JsStr.of("Rafael"),
@@ -70,11 +72,11 @@ public class TestExample {
                                 )
         );
 
-        JsObjParser parser = new JsObjParser(spec);
+        JsObjSpecParser parser = new JsObjSpecParser(spec);
 
         Set<SpecError> test = spec.test(person);
-        Assertions.assertTrue(test
-                                      .isEmpty());
+
+        Assertions.assertTrue(test.isEmpty());
 
         Assertions.assertEquals(person,
                                 parser.parse(person.toPrettyString()));

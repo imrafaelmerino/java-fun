@@ -1,8 +1,5 @@
 package jsonvalues.spec;
 
-import com.dslplatform.json.JsSpecParser;
-import com.dslplatform.json.JsSpecParsers;
-import fun.tuple.Pair;
 import jsonvalues.JsValue;
 
 import java.util.Optional;
@@ -39,11 +36,11 @@ class JsArrayOfBigIntSpec extends AbstractSizableArrSpec implements JsValuePredi
     }
 
     @Override
-    public Optional<Pair<JsValue, ERROR_CODE>> testValue(final JsValue value) {
+    public Optional<JsError> testValue(final JsValue value) {
         return Functions.testArrayOfTestedValue(v ->
                                                         v.isIntegral() ?
                                                         Optional.empty() :
-                                                        Optional.of(Pair.of(v,
+                                                        Optional.of(new JsError(v,
                                                                             INTEGRAL_EXPECTED
                                                         )),
                                                 nullable,

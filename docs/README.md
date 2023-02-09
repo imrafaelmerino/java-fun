@@ -137,7 +137,22 @@ json.mapKeys(toSneakCase)
                     
 ```
 
-Performance. Did you see that!?
+**Json parsing**
+
+Given a spec, why don't use it to parse a Json? Parsing the whole
+Json and then validating it is not efficient. It's better to interleave
+the parsing and the validation. After all, failing fast is important too! 
+With json-values is very simple:
+
+```
+JsObjSpec spec = ...
+
+var parser = new JsObjSpecParser(spec);
+var json = parser.parse("{---}");
+
+```
+
+And that's all. And what about performance? 
 
 I've picked some json-schema implementations from https://json-schema.org/implementations.html
 and then parse and validate a random JSON from a string. Find below the results of the
@@ -148,8 +163,16 @@ benchmark using [jmh](https://openjdk.java.net/projects/code-tools/jmh/)
 You can find more details in the
 class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsDeserializers.java)
 
+Did you see that!?
+
 Disclaimer: If you know a better alternative or can improve this result, I'm more
 than glad to change it.
+
+**json-values scope is very small**
+json-values has only one very small dependency ([java-fun](https://github.com/imrafaelmerino/java-fun)).
+You hit the autocomplete button of your favourite IDE and you don't
+get drowned in thousands of classes you don't need at all. I take
+encapsulation very seriously. Only the useful classes from the client perspective come up.
 
 ## <a name="introduction"><a/> Introduction
 
@@ -864,7 +887,7 @@ stop the process as soon as an error happens. **After all, failing fast is impor
 
 ```java     
  
-JsObjParser personParser = new JsObjParser(personSpec);
+JsObjSpecParser personParser = new JsObjSpecParser(personSpec);
 
 String string = "{...}";
     

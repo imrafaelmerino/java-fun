@@ -20,7 +20,7 @@ final class JsObjReader extends AbstractJsObjReader {
                        ) throws IOException {
         final JsObj value = value(reader);
         final Optional<JsError> result = fn.apply(value);
-        if (!result.isPresent()) return value;
+        if (result.isEmpty()) return value;
         throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
                                          reader.getPositionInStream()
                                         );

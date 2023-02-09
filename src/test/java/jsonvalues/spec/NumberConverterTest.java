@@ -239,7 +239,7 @@ public class NumberConverterTest {
                 "\"minLongMinusOneAsBigDecimal\":" + minLongMinusOneAsBigDecimal + "\n" +
                 "}";
 
-        jsonvalues.JsObj result = new JsObjSpecParser(JsSpecs.obj()).parse(input);
+        var result = new JsObjSpecParser(JsSpecs.obj()).parse(input);
         Assertions.assertEquals(maxIntAsLong,
                                 result.getLong("maxIntAsLong"));
         Assertions.assertEquals(minIntAsLong,

@@ -286,7 +286,7 @@ final class BitMappedTrie<T> {
     }
 
     Iterator<T> iterator() {
-        return new Iterator<T>() {
+        return new Iterator<>() {
             private final int globalLength = BitMappedTrie.this.length;
             private int globalIndex = 0;
 

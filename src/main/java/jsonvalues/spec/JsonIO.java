@@ -1,6 +1,9 @@
 package jsonvalues.spec;
 
-import jsonvalues.*;
+import jsonvalues.JsArray;
+import jsonvalues.JsObj;
+import jsonvalues.JsParserException;
+import jsonvalues.Json;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +32,7 @@ public final class JsonIO {
     JsonIO(Settings settings) {
         final JsonIO self = this;
         this.localWriter = ThreadLocal.withInitial(() -> newWriter(512));
-        this.localReader = new ThreadLocal<JsReader>() {
+        this.localReader = new ThreadLocal<>() {
             @Override
             protected JsReader initialValue() {
                 return new JsReader(new byte[4096],
@@ -189,8 +192,10 @@ public final class JsonIO {
         final JsWriter jw = localWriter.get();
         try {
             jw.reset(stream);
-            if(json instanceof JsObj) objSerializer.write(jw, (JsObj) json);
-            else arraySerializer.write(jw, (JsArray) json);
+            switch (json) {
+                case JsObj obj -> objSerializer.write(jw, obj);
+                case JsArray arr -> arraySerializer.write(jw, arr);
+            }
         } finally {
             jw.flush();
             jw.reset();
@@ -211,11 +216,7 @@ public final class JsonIO {
                                                       indentLength
                            )
                           );
-        try {
-            return baos.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new JsSerializerException("Unsporting encoding UTF-8");
-        }
+        return baos.toString(StandardCharsets.UTF_8);
     }
 
     /**

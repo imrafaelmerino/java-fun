@@ -21,7 +21,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsInstant extends JsPrimitive implements Comparable<JsInstant> {
 
-    public static final int TYPE_ID = 11;
     /**
      * prism between the sum type JsValue and JsInstant
      */
@@ -51,10 +50,6 @@ public final class JsInstant extends JsPrimitive implements Comparable<JsInstant
         return JsInstant.of(requireNonNull(fn).apply(value));
     }
 
-    @Override
-    public int id() {
-        return TYPE_ID;
-    }
     @Override
     public JsPrimitive toJsPrimitive() {
         return this;

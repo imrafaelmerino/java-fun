@@ -23,7 +23,7 @@ import static jsonvalues.MatchExp.ifNothingElse;
  * Represents an immutable JSON object. A JSON object is an unordered set of name/element pairs.
  * The underlying data structure is a persistent {@link HashMap} from the library vavr.
  */
-public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
+public non-sealed class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
     /**
      * the empty Json Object
      */
@@ -45,8 +45,6 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
                     Optional.empty(),
                         o -> o
             );
-    public static final int TYPE_ID = 3;
-
     @SuppressWarnings("squid:S3008")
     private static final JsPath EMPTY_PATH = JsPath.empty();
     private final HashMap map;
@@ -2708,7 +2706,7 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
     public int hashCode() {
         int result = hashcode;
         if (result == 0) {
-            for (HashArrayMappedTrieModule.LeafNode next : map) {
+            for (var next : map) {
                 result += next.key().hashCode() ^ next.value().hashCode();
             }
             hashcode = result;
@@ -2721,14 +2719,15 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
 
         if (o == this)
             return true;
-        if (!(o instanceof JsObj)) return false;
-        JsObj m = ((JsObj) o);
-        if (m.size() != size()) return false;
+        if (!(o instanceof JsObj m))
+            return false;
+        if (m.size() != size())
+            return false;
 
         try {
             for (JsObjPair e : this) {
-                String key = e.key();
-                JsValue value = e.value();
+                var key = e.key();
+                var value = e.value();
                 if (value == null) {
                     if (!(m.get(key) == null && m.containsKey(key)))
                         return false;
@@ -2756,10 +2755,6 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
         return result;
     }
 
-    @Override
-    public int id() {
-        return TYPE_ID;
-    }
 
     @Override
     public boolean isObj() {
@@ -2815,7 +2810,7 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
 
         Iterator<HashArrayMappedTrieModule.LeafNode> iterator = map.iterator();
 
-        return new Iterator<JsObjPair>() {
+        return new Iterator<>() {
             @Override
             public boolean hasNext() {
                 return iterator.hasNext();
@@ -2823,7 +2818,7 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
 
             @Override
             public JsObjPair next() {
-                HashArrayMappedTrieModule.LeafNode next = iterator.next();
+                var next = iterator.next();
                 return new JsObjPair(next.key(), next.value());
             }
         };
@@ -2870,7 +2865,7 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
         if (a.isEmpty()) return a;
         if (b.isEmpty()) return b;
         JsObj result = JsObj.empty();
-        for (JsObjPair aVal : a) {
+        for (var aVal : a) {
 
             if (b.containsKey(aVal.key())) {
                 JsValue bVal = b.get(aVal.key());
@@ -2903,7 +2898,7 @@ public  class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
 
         if (b.isEmpty()) return a;
         JsObj result = a;
-        for (JsObjPair bVal : b) {
+        for (var bVal : b) {
             if (!a.containsKey(bVal.key()))
                 result = result.set(bVal.key(),
                                     bVal.value()

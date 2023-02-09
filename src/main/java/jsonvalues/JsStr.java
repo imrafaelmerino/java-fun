@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
 
-    public static final int TYPE_ID = 2;
     /**
      * prism between the sum type JsValue and JsStr
      */
@@ -71,10 +70,6 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
     }
 
     @Override
-    public int id() {
-        return TYPE_ID;
-    }
-    @Override
     public JsPrimitive toJsPrimitive() {
         return this;
     }
@@ -124,8 +119,7 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
     public boolean equals(final Object that) {
         if (this == that) return true;
         if (that == null) return false;
-        if (that instanceof JsStr) {
-            JsStr thatStr = (JsStr) that;
+        if (that instanceof JsStr thatStr) {
             return Objects.equals(value,
                                   thatStr.value
             );

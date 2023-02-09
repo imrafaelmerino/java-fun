@@ -42,8 +42,7 @@ import static java.lang.Integer.bitCount;
                 node = findNextLeaf();
             }
             ptr++;
-            if (node instanceof LeafList) {
-                LeafList leaf = (LeafList) node;
+            if (node instanceof final LeafList leaf) {
                 nodes[level] = leaf.tail;
                 return leaf;
             } else {
@@ -81,12 +80,10 @@ import static java.lang.Integer.bitCount;
         }
 
         private static AbstractNode getChild(AbstractNode node, int index) {
-            if (node instanceof IndexedNode) {
-                IndexedNode indexedNode = (IndexedNode) node;
+            if (node instanceof IndexedNode indexedNode) {
                 final Object[] subNodes = indexedNode.subNodes;
                 return index < subNodes.length ? (AbstractNode) subNodes[index] : null;
-            } else if (node instanceof ArrayNode) {
-                ArrayNode arrayNode = (ArrayNode) node;
+            } else if (node instanceof ArrayNode arrayNode) {
                 return index < AbstractNode.BUCKET_SIZE ? (AbstractNode) arrayNode.subNodes[index] : null;
             }
             return null;
@@ -232,7 +229,7 @@ import static java.lang.Integer.bitCount;
 
         @Override
         public Iterator<LeafNode> nodes() {
-            return new Iterator<LeafNode>() {
+            return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
                     return false;
@@ -329,7 +326,7 @@ import static java.lang.Integer.bitCount;
 
         @Override
         public Iterator<LeafNode> nodes() {
-            return new Iterator<LeafNode>() {
+            return new Iterator<>() {
 
                 boolean hasNext = true;
 
@@ -386,7 +383,7 @@ import static java.lang.Integer.bitCount;
             if (hash != keyHash) {
                 return Optional.empty();
             }
-            Iterator<LeafNode> iter = nodes();
+            var iter = nodes();
             while (iter.hasNext()) {
                 LeafNode next = iter.next();
                 if (Objects.equals(next.key(), key)) return Optional.of(next.value());
@@ -437,8 +434,7 @@ import static java.lang.Integer.bitCount;
             }
             LeafNode result = leaf1;
             LeafNode tail = leaf2;
-            while (tail instanceof LeafList) {
-                LeafList list = (LeafList) tail;
+            while (tail instanceof LeafList list) {
                 result = new LeafList(list.hash, list.key, list.value, result);
                 tail = list.tail;
             }
@@ -470,7 +466,7 @@ import static java.lang.Integer.bitCount;
 
         @Override
         public Iterator<LeafNode> nodes() {
-            return new Iterator<LeafNode>() {
+            return new Iterator<>() {
                 LeafNode node = LeafList.this;
 
                 @Override

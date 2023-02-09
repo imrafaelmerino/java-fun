@@ -9,7 +9,6 @@ import java.util.Optional;
  * Represents an immutable json boolean. Only two instances are created: {@link #FALSE} and {@link #TRUE}
  */
 public final class JsBool extends JsPrimitive {
-    public static final int TYPE_ID = 0;
     /**
      * The singleton false value.
      */
@@ -49,10 +48,6 @@ public final class JsBool extends JsPrimitive {
                FALSE;
     }
 
-    @Override
-    public int id() {
-        return TYPE_ID;
-    }
     @Override
     public JsPrimitive toJsPrimitive() {
         return this;

@@ -52,7 +52,7 @@ public final class JsObjSpecParser {
 
     /**
      * parses an input stream of bytes into a Json object that must conform the spec of the parser. If the
-     * the input stream of bytes doesn't represent a well-formed Json object or is a well-formed Json that doesn't
+     * input stream of bytes doesn't represent a well-formed Json object or is a well-formed Json that doesn't
      * conform the spec of the parser, a ParsingException failure wrapped in a Try computation is
      * returned. Any I/O exception processing the input stream is wrapped in a Try computation as well
      *

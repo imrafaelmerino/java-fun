@@ -140,15 +140,15 @@ json.mapKeys(toSneakCase)
 **Json parsing**
 
 Given a spec, why don't use it to parse a Json? Parsing the whole
-Json and then validating it is not efficient. It's better to interleave
-the parsing and the validation. After all, failing fast is important too! 
-With json-values is very simple:
+Json and then validating it is very inefficient in case of failure. 
+It's better to interleave the parsing and the validation. After all, 
+failing fast is important too! With json-values is very simple:
 
 ```
 JsObjSpec spec = ...
 
 var parser = new JsObjSpecParser(spec);
-var json = parser.parse("{---}");
+var json = parser.parse("{...}");
 
 ```
 
@@ -165,10 +165,11 @@ class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsD
 
 Did you see that!?
 
-Disclaimer: If you know a better alternative or can improve this result, I'm more
-than glad to change it.
+Disclaimer: If you are the author of one of other tested libraries or know a better alternative to get a better result, 
+I'm more than glad to change it.
 
 **json-values scope is very small**
+
 json-values has only one very small dependency ([java-fun](https://github.com/imrafaelmerino/java-fun)).
 You hit the autocomplete button of your favourite IDE and you don't
 get drowned in thousands of classes you don't need at all. I take
@@ -1128,7 +1129,7 @@ Assertions.assertEquals(Optional.empty(),
 
 And finally, let's go back to the modifyPerson we defined previously and implement it 
 step by step using lenses and prisms.
-^6008330177634367
+
 ``` java
 
 Lens<JsObj, JsValue> nameLens = JsObj.lens.value("name");
@@ -1251,12 +1252,24 @@ great talk that elaborates ironically on this point.
 
 Java 8 or greater for versions lower than 11.9.0 (only fixes are accepted)
 
-Java 17 or greater for versions greater than 12.0.0
+Java 17 or greater for versions greater than 12.0.0.
 
 ## <a name="installation"><a/> Installation
 
-Add the following dependency to your building tool:
+Add the following dependency to your building tool.
 
+
+Java >= 8
+```xml
+
+<dependency>
+    <groupId>com.github.imrafaelmerino</groupId>
+    <artifactId>json-values</artifactId>
+    <version>11.9.0</version>
+</dependency>
+```
+
+Java >= 17
 ```xml
 
 <dependency>

@@ -5315,7 +5315,7 @@ public final class JsObjGen implements Gen<JsObj> {
      * Returns a brand new JsObj generator with the same key-generators pairs that this instance and
      * the specified nullable keys. The value associated to a nullable key may or not be null
      *
-     * @param nullables the optional keys
+     * @param nullables the nullables keys
      * @return a brand new JsObj generator
      */
     public JsObjGen withNullValues(final Collection<String> nullables) {
@@ -5335,6 +5335,34 @@ public final class JsObjGen implements Gen<JsObj> {
     public JsObjGen withNullValues(final String... nullables) {
         return withNullValues(Arrays.stream(requireNonNull(nullables))
                                     .collect(Collectors.toSet()));
+    }
+
+    /**
+     * Returns a brand new JsObj generator with the same key-generators pairs that this instance and
+     * the specified non-nullable keys. The value associated to a non-nullable can not be null
+     *
+     * @param nonnullables the non-nullable keys
+     * @return a brand new JsObj generator
+     */
+    public JsObjGen withNonNullValues(final Collection<String> nonnullables) {
+        Set<String> fields = new HashSet<>(bindings.keySet());
+        fields.removeAll(nonnullables);
+        return new JsObjGen(bindings,
+                optionals,
+                fields
+        );
+    }
+
+    /**
+     * Returns a brand new JsObj generator with the same key-generators pairs that this instance and
+     * the specified non-nullable keys. The value associated to a non-nullable can not be null
+     *
+     * @param nonnullables the non-nullable keys
+     * @return a brand new JsObj generator
+     */
+    public JsObjGen withNonNullValues(final String... nonnullables) {
+        return withNonNullValues(Arrays.stream(requireNonNull(nonnullables))
+                .collect(Collectors.toSet()));
     }
 
     /**

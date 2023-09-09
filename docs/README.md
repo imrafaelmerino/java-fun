@@ -1,7 +1,7 @@
 <img src="./logo/package_twitter_if9bsyj4/color1/full/coverphoto/color1-white_logo_dark_background.png" alt="logo"/>
 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_json-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_json-values)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/12.3.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/12.3.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/12.3.1)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/12.3.1/jar)
 
 “_Simplicity is a great virtue, but it requires hard work to achieve it and education to appreciate it.
 And to make matters worse: complexity sells better._”
@@ -1244,7 +1244,7 @@ great talk that elaborates ironically on this point.
 
 Java 8 or greater for versions lower than 11.9.0 (only fixes are accepted)
 
-Java 17 or greater for versions greater than 12.3.0.
+Java 17 or greater for versions greater than 12.3.1.
 
 ## <a name="installation"><a/> Installation
 
@@ -1267,7 +1267,7 @@ Java >= 17
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
-    <version>12.3.0</version>
+    <version>12.3.1</version>
 </dependency>
 ```
 

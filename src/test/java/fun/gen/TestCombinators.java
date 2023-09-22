@@ -188,12 +188,12 @@ public class TestCombinators {
 
 
         Combinators.nOf(new HashSet<>(numbers),
-                        2
+                        numbers.size()
                    )
                    .sample(100)
                    .forEach(n -> {
                        System.out.println(n);
-                       Assertions.assertEquals(2,
+                       Assertions.assertEquals(numbers.size(),
                                                new HashSet<>(n).size());
                    });
 

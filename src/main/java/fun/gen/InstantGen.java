@@ -68,15 +68,15 @@ public final class InstantGen implements Gen<Instant> {
         if (min <= Integer.MIN_VALUE && max >= Integer.MIN_VALUE)
             gens.add(Pair.of(1,
                              Gen.cons((long) Integer.MIN_VALUE)));
-        if (min < 0L && max > 0L)
+        if (min <= 0L && max >= 0L)
             gens.add(Pair.of(1,
                              Gen.cons(0L)));
         gens.add(Pair.of(1,
                          Gen.cons(min)));
         if (max != min)
-
             gens.add(Pair.of(1,
                              Gen.cons(max)));
+
         gens.add(Pair.of(gens.size(),
                          LongGen.arbitrary(min,
                                            max)));
@@ -101,6 +101,25 @@ public final class InstantGen implements Gen<Instant> {
 
         return arbitrary(min.toEpochSecond(),
                          max.toEpochSecond());
+
+    }
+
+    /**
+     * generates an instant in UTC formatted with the ISO instant formatter (such as '2011-12-03T10:15:30Z'), between
+     * an interval given by two date-time with a time-zone.
+     *
+     * @param min the origin of the interval (inclusive)
+     * @param max the bound of the interval (inclusive)
+     * @return an instant generator
+     */
+
+    public static Gen<Instant> biased(final ZonedDateTime min,
+                                      final ZonedDateTime max) {
+        if (requireNonNull(max).isBefore(requireNonNull(min)))
+            throw new IllegalArgumentException(min.format(ISO_INSTANT) + " is greater than " + max.format(ISO_INSTANT));
+
+        return biased(min.toEpochSecond(),
+                      max.toEpochSecond());
 
     }
 
@@ -132,7 +151,7 @@ public final class InstantGen implements Gen<Instant> {
         requireNonNull(gen);
 
         return LongGen.arbitrary(MIN_SECONDS,
-                                 MAX_SECONDS + 1)
+                                 MAX_SECONDS)
                       .map(Instant::ofEpochSecond).apply(gen);
     }
 

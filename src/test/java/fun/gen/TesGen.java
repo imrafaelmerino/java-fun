@@ -3,6 +3,10 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class TesGen {
 
 
@@ -39,5 +43,19 @@ public class TesGen {
                                  .findAny()
                                  .isPresent());
 
+    }
+
+    @Test
+    public void testDistinct() {
+
+        List<Integer> list = IntGen.arbitrary().distinct().sample(100000).collect(Collectors.toList());
+        Assertions.assertEquals(list.size(),
+                                new HashSet<>(list).size());
+
+
+        List<String> letters = StrGen.alphabetic(1,
+                                                 10).distinct().sample(100000).collect(Collectors.toList());
+        Assertions.assertEquals(letters.size(),
+                                new HashSet<>(letters).size());
     }
 }

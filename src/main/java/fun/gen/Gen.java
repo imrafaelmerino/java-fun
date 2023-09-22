@@ -1,7 +1,6 @@
 package fun.gen;
 
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,12 +14,36 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
 
     /**
      * creates a generator that always produced the same value
+     *
      * @param value the value generated
+     * @param <O>   the type of the generated value
      * @return a constant generator
-     * @param <O> the type of the generated value
      */
     static <O> Gen<O> cons(final O value) {
         return seed -> () -> value;
+    }
+
+    default Gen<O> distinct() {
+        return distinct(10000);
+    }
+
+    default Gen<O> distinct(int tries) {
+        return seed -> {
+            Set<O> generated = new HashSet<>();
+            Supplier<O> gen = this.apply(seed);
+            return () -> {
+                int i = 0;
+                while (i < tries) {
+                    O value = gen.get();
+                    if (!generated.contains(value)) {
+                        generated.add(value);
+                        return value;
+                    }
+                    i++;
+                }
+                throw new RuntimeException("Max tries reached trying to generate a distinct value");
+            };
+        };
     }
 
     /**
@@ -129,6 +152,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
      * <p>
      * Note that this function is a dev helper and is not meant to be used
      * to build other generators.
+     *
      * @param n the number of elements
      * @return a finite stream of values
      */

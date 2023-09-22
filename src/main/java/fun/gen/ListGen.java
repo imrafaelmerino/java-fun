@@ -26,6 +26,12 @@ public final class ListGen<T> implements Gen<List<T>> {
         this.size = size;
     }
 
+    public static <T> ListGen<T> ofN(final Gen<T> gen,
+                                     final int size) {
+        return new ListGen<>(gen,
+                             size);
+    }
+
 
     public static <T> Gen<List<T>> biased(final Gen<T> gen,
                                           final int minLength,

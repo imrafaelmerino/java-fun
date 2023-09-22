@@ -43,10 +43,10 @@ public final class Combinators {
                 Iterator<T> iterator = values.iterator();
                 int j = r.nextInt(size);
                 T value = null;
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     T next = iterator.next();
-                    if(j == counter) value = next;
-                    counter+=1;
+                    if (j == counter) value = next;
+                    counter += 1;
                 }
                 return value;
 
@@ -258,7 +258,8 @@ public final class Combinators {
             List<Set<I>> combinations = getCombinations(input,
                                                         k);
             Supplier<Integer> indexGen = IntGen.arbitrary(0,
-                                                          combinations.size() - 1).apply(seed);
+                                                          combinations.size() - 1)
+                                               .apply(seed);
             return () -> combinations.get(indexGen.get());
         };
     }

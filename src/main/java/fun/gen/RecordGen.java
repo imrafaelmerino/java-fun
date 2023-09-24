@@ -9,17 +9,13 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * represent a generator of records.
+ * A generator for creating instances of a custom Record class. This generator allows you to define the fields and their corresponding generators, as well as specify which fields are optional and nullable.
  */
 public final class RecordGen implements Gen<Record> {
 
-    private final static int MAX_NULLABLE_FIELDS = 20;
-    private final static int MAX_OPTIONAL_FIELDS = 20;
-
-
     private final SplitGen split = SplitGen.DEFAULT;
-    private Set<String> optionals = new HashSet<>();
-    private Set<String> nullables = new HashSet<>();
+    private List<String> optionals = new ArrayList<>();
+    private List<String> nullables = new ArrayList<>();
     private Map<String, Gen<?>> bindings = new LinkedHashMap<>();
 
     private RecordGen(final Map<String, Gen<?>> bindings) {
@@ -1031,7 +1027,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
@@ -1052,7 +1047,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
@@ -1077,7 +1071,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
@@ -1106,7 +1099,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
@@ -1139,7 +1131,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
@@ -1217,32 +1208,7 @@ public final class RecordGen implements Gen<Record> {
                              gen8);
     }
 
-    /**
-     * static factory method to create a JsObGen of ten mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1287,34 +1253,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of eleven mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1363,36 +1301,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of twelve mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1445,38 +1354,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of thirteen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1533,40 +1411,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of fourteen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1627,42 +1472,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of fifteen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @param key15 the fifteenth key
-     * @param gen15 the mapping associated to the fifteenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1727,44 +1537,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of sixteen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @param key15 the fifteenth key
-     * @param gen15 the mapping associated to the fifteenth key
-     * @param key16 the sixteenth key
-     * @param gen16 the mapping associated to the sixteenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1833,46 +1605,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of seventeen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @param key15 the fifteenth key
-     * @param gen15 the mapping associated to the fifteenth key
-     * @param key16 the sixteenth key
-     * @param gen16 the mapping associated to the sixteenth key
-     * @param key17 the seventeenth key
-     * @param gen17 the mapping associated to the seventeenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -1945,48 +1678,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of eighteen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @param key15 the fifteenth key
-     * @param gen15 the mapping associated to the fifteenth key
-     * @param key16 the sixteenth key
-     * @param gen16 the mapping associated to the sixteenth key
-     * @param key17 the seventeenth key
-     * @param gen17 the mapping associated to the seventeenth key
-     * @param key18 the eighteenth key
-     * @param gen18 the mapping associated to the eighteenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -2063,50 +1755,7 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of nineteen mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @param key15 the fifteenth key
-     * @param gen15 the mapping associated to the fifteenth key
-     * @param key16 the sixteenth key
-     * @param gen16 the mapping associated to the sixteenth key
-     * @param key17 the seventeenth key
-     * @param gen17 the mapping associated to the seventeenth key
-     * @param key18 the eighteenth key
-     * @param gen18 the mapping associated to the eighteenth key
-     * @param key19 the nineteenth key
-     * @param gen19 the mapping associated to the nineteenth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
+
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -2187,52 +1836,6 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
-    /**
-     * static factory method to create a JsObGen of twenty mappings
-     *
-     * @param key1  the first key
-     * @param gen1  the mapping associated to the first key
-     * @param key2  the second key
-     * @param gen2  the mapping associated to the second key
-     * @param key3  the third key
-     * @param gen3  the mapping associated to the third key
-     * @param key4  the fourth key
-     * @param gen4  the mapping associated to the fourth key
-     * @param key5  the fifth key
-     * @param gen5  the mapping associated to the fifth key
-     * @param key6  the sixth key
-     * @param gen6  the mapping associated to the sixth key
-     * @param key7  the seventh key
-     * @param gen7  the mapping associated to the seventh key
-     * @param key8  the eighth key
-     * @param gen8  the mapping associated to the eighth key
-     * @param key9  the ninth key
-     * @param gen9  the mapping associated to the ninth key
-     * @param key10 the tenth key
-     * @param gen10 the mapping associated to the eleventh key
-     * @param key11 the eleventh key
-     * @param gen11 the mapping associated to the eleventh key
-     * @param key12 the twelfth key
-     * @param gen12 the mapping associated to the twelfth key,
-     * @param key13 the thirteenth key
-     * @param gen13 the mapping associated to the thirteenth key
-     * @param key14 the fourteenth key
-     * @param gen14 the mapping associated to the fourteenth key
-     * @param key15 the fifteenth key
-     * @param gen15 the mapping associated to the fifteenth key
-     * @param key16 the sixteenth key
-     * @param gen16 the mapping associated to the sixteenth key
-     * @param key17 the seventeenth key
-     * @param gen17 the mapping associated to the seventeenth key
-     * @param key18 the eighteenth key
-     * @param gen18 the mapping associated to the eighteenth key
-     * @param key19 the nineteenth key
-     * @param gen19 the mapping associated to the nineteenth key
-     * @param key20 the twentieth key
-     * @param gen20 the mapping associated to the twentieth key
-     * @return a MapGen
-     */
-    @SuppressWarnings("squid:S00107")
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -2317,38 +1920,1126 @@ public final class RecordGen implements Gen<Record> {
         );
     }
 
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24,
+                               final String key25,
+                               final Gen<?> gen25
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24)
+         .set(key25,
+              gen25);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24,
+                               final String key25,
+                               final Gen<?> gen25,
+                               final String key26,
+                               final Gen<?> gen26
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24)
+         .set(key25,
+              gen25)
+         .set(key26,
+              gen26);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24,
+                               final String key25,
+                               final Gen<?> gen25,
+                               final String key26,
+                               final Gen<?> gen26,
+                               final String key27,
+                               final Gen<?> gen27
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24)
+         .set(key25,
+              gen25)
+         .set(key26,
+              gen26)
+         .set(key27,
+              gen27);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24,
+                               final String key25,
+                               final Gen<?> gen25,
+                               final String key26,
+                               final Gen<?> gen26,
+                               final String key27,
+                               final Gen<?> gen27,
+                               final String key28,
+                               final Gen<?> gen28
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24)
+         .set(key25,
+              gen25)
+         .set(key26,
+              gen26)
+         .set(key27,
+              gen27).set(key28,
+                         gen28);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24,
+                               final String key25,
+                               final Gen<?> gen25,
+                               final String key26,
+                               final Gen<?> gen26,
+                               final String key27,
+                               final Gen<?> gen27,
+                               final String key28,
+                               final Gen<?> gen28,
+                               final String key29,
+                               final Gen<?> gen29
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24)
+         .set(key25,
+              gen25)
+         .set(key26,
+              gen26)
+         .set(key27,
+              gen27)
+         .set(key28,
+              gen28)
+         .set(key29,
+              gen29);
+    }
+
+    public static RecordGen of(final String key1,
+                               final Gen<?> gen1,
+                               final String key2,
+                               final Gen<?> gen2,
+                               final String key3,
+                               final Gen<?> gen3,
+                               final String key4,
+                               final Gen<?> gen4,
+                               final String key5,
+                               final Gen<?> gen5,
+                               final String key6,
+                               final Gen<?> gen6,
+                               final String key7,
+                               final Gen<?> gen7,
+                               final String key8,
+                               final Gen<?> gen8,
+                               final String key9,
+                               final Gen<?> gen9,
+                               final String key10,
+                               final Gen<?> gen10,
+                               final String key11,
+                               final Gen<?> gen11,
+                               final String key12,
+                               final Gen<?> gen12,
+                               final String key13,
+                               final Gen<?> gen13,
+                               final String key14,
+                               final Gen<?> gen14,
+                               final String key15,
+                               final Gen<?> gen15,
+                               final String key16,
+                               final Gen<?> gen16,
+                               final String key17,
+                               final Gen<?> gen17,
+                               final String key18,
+                               final Gen<?> gen18,
+                               final String key19,
+                               final Gen<?> gen19,
+                               final String key20,
+                               final Gen<?> gen20,
+                               final String key21,
+                               final Gen<?> gen21,
+                               final String key22,
+                               final Gen<?> gen22,
+                               final String key23,
+                               final Gen<?> gen23,
+                               final String key24,
+                               final Gen<?> gen24,
+                               final String key25,
+                               final Gen<?> gen25,
+                               final String key26,
+                               final Gen<?> gen26,
+                               final String key27,
+                               final Gen<?> gen27,
+                               final String key28,
+                               final Gen<?> gen28,
+                               final String key29,
+                               final Gen<?> gen29,
+                               final String key30,
+                               final Gen<?> gen30
+    ) {
+        return new RecordGen(key1,
+                             gen1,
+                             key2,
+                             gen2,
+                             key3,
+                             gen3,
+                             key4,
+                             gen4,
+                             key5,
+                             gen5,
+                             key6,
+                             gen6,
+                             key7,
+                             gen7,
+                             key8,
+                             gen8,
+                             key9,
+                             gen9,
+                             key10,
+                             gen10,
+                             key11,
+                             gen11,
+                             key12,
+                             gen12,
+                             key13,
+                             gen13,
+                             key14,
+                             gen14,
+                             key15,
+                             gen15,
+                             key16,
+                             gen16,
+                             key17,
+                             gen17,
+                             key18,
+                             gen18,
+                             key19,
+                             gen19,
+                             key20,
+                             gen20
+        ).set(key21,
+              gen21)
+         .set(key22,
+              gen22)
+         .set(key23,
+              gen23)
+         .set(key24,
+              gen24)
+         .set(key25,
+              gen25)
+         .set(key26,
+              gen26)
+         .set(key27,
+              gen27)
+         .set(key28,
+              gen28)
+         .set(key29,
+              gen29)
+         .set(key30,
+              gen30);
+    }
+
+    /**
+     * Sets the list of field names that can be nullable in the generated records.
+     *
+     * @param nullables A collection of field names that can be nullable.
+     * @return This RecordGen instance with updated nullable fields.
+     */
     public RecordGen setNullables(final Collection<String> nullables) {
-        this.nullables = new HashSet<>(requireNonNull(nullables));
+        this.nullables = new ArrayList<>(requireNonNull(nullables));
         return this;
     }
 
+    /**
+     * Sets all fields as nullable in the generated records.
+     *
+     * @return This RecordGen instance with all fields marked as nullable.
+     */
     public RecordGen setAllNullable() {
-        this.nullables = bindings.keySet();
+        this.nullables = new ArrayList<>(bindings.keySet());
         return this;
     }
-
+    /**
+     * Sets the list of field names that can be nullable in the generated records.
+     *
+     * @param nullables An array of field names that can be nullable.
+     * @return This RecordGen instance with updated nullable fields.
+     */
     public RecordGen setNullables(final String... nullables) {
         this.nullables = Arrays.stream(requireNonNull(nullables))
-                               .collect(Collectors.toSet());
+                               .collect(Collectors.toList());
         return this;
     }
-
+    /**
+     * Sets the list of field names that are optional in the generated records.
+     *
+     * @param optionals A collection of field names that are optional.
+     * @return This RecordGen instance with updated optional fields.
+     */
     public RecordGen setOptionals(final Collection<String> optionals) {
-        this.optionals = new HashSet<>(requireNonNull(optionals));
+        this.optionals = new ArrayList<>(requireNonNull(optionals));
         return this;
     }
 
+    /**
+     * Sets the list of field names that are optional in the generated records.
+     *
+     * @param optional An array of field names that are optional.
+     * @return This RecordGen instance with updated optional fields.
+     */
     public RecordGen setOptionals(final String... optional) {
         this.optionals = Arrays.stream(requireNonNull(optional))
-                               .collect(Collectors.toSet());
+                               .collect(Collectors.toList());
         return this;
     }
-
+    /**
+     * Sets all fields as optional in the generated records.
+     *
+     * @return This RecordGen instance with all fields marked as optional.
+     */
     public RecordGen setAllOptional() {
-        this.optionals = bindings.keySet();
+        this.optionals = new ArrayList<>(bindings.keySet());
         return this;
     }
 
+    /**
+     * Sets a specific field and its corresponding generator for the generated records.
+     *
+     * @param key The name of the field to set.
+     * @param gen The generator for the field's values.
+     * @return A new RecordGen instance with the updated field binding.
+     */
     public RecordGen set(final String key,
                          final Gen<?> gen
     ) {
@@ -2364,41 +3055,12 @@ public final class RecordGen implements Gen<Record> {
     public Supplier<Record> apply(final Random random) {
         Objects.requireNonNull(random);
         Supplier<Set<String>> optionalFields =
-                optionals.size() < MAX_OPTIONAL_FIELDS ?
-                () -> this.optionals :
-                Combinators.nOf(this.optionals,
-                                MAX_OPTIONAL_FIELDS)
-                           .apply(split.apply(random));
+                new SubsetSupplier<>(optionals,
+                                     split.apply(random));
 
         Supplier<Set<String>> nullableFields =
-                nullables.size() < MAX_NULLABLE_FIELDS ?
-                () -> this.nullables :
-                Combinators.nOf(this.nullables,
-                                MAX_NULLABLE_FIELDS)
-                           .apply(split.apply(random));
-
-
-        Random optionalPermutationsSeed = split.apply(random);
-        Supplier<Set<String>> optionalPermutations =
-                () -> Combinators.subsets(optionalFields.get())
-                                 .apply(optionalPermutationsSeed)
-                                 .get();
-
-        Supplier<Boolean> isRemoveOptionals =
-                optionals.isEmpty() ?
-                () -> false :
-                BoolGen.arbitrary().apply(split.apply(random));
-
-        Random nullablePermutationsSeed = split.apply(random);
-        Supplier<Set<String>> nullablePermutations =
-                () -> Combinators.subsets(nullableFields.get())
-                                 .apply(nullablePermutationsSeed)
-                                 .get();
-
-        Supplier<Boolean> isSetNullables =
-                nullables.isEmpty() ?
-                () -> false :
-                BoolGen.arbitrary().apply(split.apply(random));
+                new SubsetSupplier<>(nullables,
+                                     split.apply(random));
 
         Map<String, Supplier<?>> map = new LinkedHashMap<>();
         for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
@@ -2412,19 +3074,15 @@ public final class RecordGen implements Gen<Record> {
             for (Map.Entry<String, Supplier<?>> pair : map.entrySet()) {
                 Object value = pair.getValue().get();
                 result.put(pair.getKey(),
-                           value
-                );
+                           value);
             }
-            if (isRemoveOptionals.get()) {
-                Set<String> r = optionalPermutations.get();
-                for (String s : r) result.remove(s);
-            }
-            if (isSetNullables.get()) {
-                Set<String> r = nullablePermutations.get();
-                for (String s : r)
-                    result.put(s,
-                               null);
-            }
+
+            for (String s : optionalFields.get()) result.remove(s);
+
+            for (String s : nullableFields.get())
+                result.put(s,
+                           null);
+
             return new Record(result);
         };
     }

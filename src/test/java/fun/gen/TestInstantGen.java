@@ -9,6 +9,19 @@ import java.util.stream.Stream;
 
 public class TestInstantGen {
 
+    public static void main(String[] args) {
+        Gen<Set<String>> permutations = Combinators.subsets(Arrays.asList("a",
+                                                                          "b",
+                                                                          "c"));
+
+        Set<Set<String>> r = new HashSet<>();
+
+        permutations.sample(10000).forEach(r::add);
+
+        System.out.println(r);
+
+    }
+
     @Test
     public void biasedInstant() {
 
@@ -51,19 +64,6 @@ public class TestInstantGen {
                                                          problematic,
                                                          0.05);
 
-
-    }
-
-    public static void main(String[] args) {
-        Gen<Set<String>> permutations = Combinators.subsets(new HashSet<>(Arrays.asList("a",
-                                                                           "b",
-                                                                           "c")));
-
-        Set<Set<String>> r = new HashSet<>();
-
-        permutations.sample(10000).forEach(r::add);
-
-        System.out.println(r);
 
     }
 }

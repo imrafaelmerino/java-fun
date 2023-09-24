@@ -13,7 +13,23 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of big decimals.
+ * Represents a generator of {@code BigDecimal} values.
+ * This class implements the {@link Gen} interface to generate {@code BigDecimal} values within specified ranges
+ * and with various biases.
+ * <p>
+ * Example usage:
+ * <pre>
+ * // Create an arbitrary BigDecimal generator
+ * Gen&lt;BigDecimal&gt; arbitraryGenerator = BigDecGen.arbitrary();
+ * BigDecimal randomValue = arbitraryGenerator.sample(new Random()).get();
+ *
+ * // Create a biased BigDecimal generator with a specified range
+ * Gen&lt;BigDecimal&gt; biasedGenerator = BigDecGen.biased(BigDecimal.valueOf(-100), BigDecimal.valueOf(100));
+ * BigDecimal biasedValue = biasedGenerator.sample(new Random()).get();
+ * </pre>
+ *
+ * @see Gen
+ * @see Combinators
  */
 public final class BigDecGen implements Gen<BigDecimal> {
 
@@ -21,12 +37,43 @@ public final class BigDecGen implements Gen<BigDecimal> {
 
     private BigDecGen() {
     }
-
+    /**
+     * Creates an arbitrary {@code BigDecimal} generator that produces values within the range [0, 1) with a uniform distribution.
+     * The generated values are not biased towards specific values and are distributed uniformly across the specified range.
+     * <p>
+     * Example usage:
+     * <pre>
+     * Gen&lt;BigDecimal&gt; arbitraryGenerator = BigDecGen.arbitrary();
+     * BigDecimal randomValue = arbitraryGenerator.sample(new Random()).get();
+     * </pre>
+     *
+     * @return An arbitrary generator for {@code BigDecimal} values within the range [0, 1), distributed uniformly.
+     */
     public static Gen<BigDecimal> arbitrary() {
         return arbitrary;
     }
 
-
+    /**
+     * Creates a biased {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}).
+     * The generated values will be biased towards specific values based on the specified range.
+     * This method aims to create generators with specific value distributions, emphasizing the specified boundaries and zero.
+     * <p>
+     * The generated values are biased toward the following values within the specified range:
+     * - The minimum value {@code min} is always included as a possible generated value.
+     * - The maximum value {@code max} is included as a possible generated value unless it is equal to {@code min}.
+     * - Zero is included as a possible value within the specified range [{@code min}, {@code max}].
+     * <p>
+     * Example usage:
+     * <pre>
+     * Gen&lt;BigDecimal&gt; biasedGenerator = BigDecGen.biased(BigDecimal.valueOf(-100), BigDecimal.valueOf(100));
+     * BigDecimal biasedValue = biasedGenerator.sample(new Random()).get();
+     * </pre>
+     *
+     * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
+     * @param max The maximum value (exclusive) of the generated {@code BigDecimal}.
+     * @return A biased generator for {@code BigDecimal} values within the specified range, emphasizing specific values.
+     * @throws IllegalArgumentException If {@code max} is less than or equal to {@code min}.
+     */
     public static Gen<BigDecimal> biased(final BigDecimal min,
                                          final BigDecimal max) {
         requireNonNull(min);
@@ -95,6 +142,21 @@ public final class BigDecGen implements Gen<BigDecimal> {
         return Combinators.freqList(gens);
     }
 
+    /**
+     * Creates an arbitrary {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}).
+     * The generated values will be uniformly distributed across the specified range.
+     * <p>
+     * Example usage:
+     * <pre>
+     * Gen&lt;BigDecimal&gt; arbitraryGenerator = BigDecGen.arbitrary(BigDecimal.ZERO, BigDecimal.ONE);
+     * BigDecimal randomValue = arbitraryGenerator.sample(new Random()).get();
+     * </pre>
+     *
+     * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
+     * @param max The maximum value (exclusive) of the generated {@code BigDecimal}.
+     * @return An arbitrary generator for {@code BigDecimal} values within the specified range.
+     * @throws IllegalArgumentException If {@code max} is less than or equal to {@code min}.
+     */
     public static Gen<BigDecimal> arbitrary(final BigDecimal min,
                                             final BigDecimal max) {
 
@@ -110,6 +172,31 @@ public final class BigDecGen implements Gen<BigDecimal> {
         };
     }
 
+    /**
+     * Creates a biased {@code BigDecimal} generator that produces values within a predefined range of common numeric types.
+     * The generated values will be biased towards common integer and zero values within the predefined range.
+     * This method is suitable for generating {@code BigDecimal} values with typical numeric distributions.
+     * <p>
+     * The generated values are biased toward the following values within the predefined range:
+     * - The maximum possible {@code BigDecimal} value, equivalent to {@link Long#MAX_VALUE}.
+     * - The minimum possible {@code BigDecimal} value, equivalent to {@link Long#MIN_VALUE}.
+     * - The maximum possible {@code BigDecimal} value representable as an {@link Integer}.
+     * - The minimum possible {@code BigDecimal} value representable as an {@link Integer}.
+     * - The maximum possible {@code BigDecimal} value representable as a {@link Short}.
+     * - The minimum possible {@code BigDecimal} value representable as a {@link Short}.
+     * - The maximum possible {@code BigDecimal} value representable as a {@link Byte}.
+     * - The minimum possible {@code BigDecimal} value representable as a {@link Byte}.
+     * - Zero (0) is included as a possible value.
+     * - Arbitrary values distributed uniformly within the predefined range.
+     * <p>
+     * Example usage:
+     * <pre>
+     * Gen&lt;BigDecimal&gt; biasedGenerator = BigDecGen.biased();
+     * BigDecimal biasedValue = biasedGenerator.sample(new Random()).get();
+     * </pre>
+     *
+     * @return A biased generator for {@code BigDecimal} values within a predefined range, emphasizing common numeric values.
+     */
     public static Gen<BigDecimal> biased() {
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,

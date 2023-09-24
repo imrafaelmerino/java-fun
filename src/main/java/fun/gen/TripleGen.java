@@ -10,7 +10,11 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * represent a generator of triples.
+ * A generator for triples of elements of type A, B, and C.
+ *
+ * @param <A> The type of the first element.
+ * @param <B> The type of the second element.
+ * @param <C> The type of the third element.
  */
 public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
     private final Gen<A> _1;
@@ -37,7 +41,17 @@ public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
         this._3 = requireNonNull(_3);
         this.splitGen = requireNonNull(splitGen);
     }
-
+    /**
+     * Creates a TripleGen with generators for the three elements.
+     *
+     * @param _1 The generator for the first element.
+     * @param _2 The generator for the second element.
+     * @param _3 The generator for the third element.
+     * @param <A> The type of the first element.
+     * @param <B> The type of the second element.
+     * @param <C> The type of the third element.
+     * @return A TripleGen instance for generating triples of elements.
+     */
     public static <A, B, C> Gen<Triple<A, B, C>> of(final Gen<A> _1,
                                                     final Gen<B> _2,
                                                     final Gen<C> _3) {

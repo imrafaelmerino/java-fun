@@ -10,6 +10,25 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Represents a generator of {@code BigInteger} values.
+ * This class implements the {@link Gen} interface to generate {@code BigInteger} values within specified ranges
+ * and with various biases.
+ * <p>
+ * Example usage:
+ * <pre>
+ * // Create an arbitrary BigInteger generator
+ * Gen&lt;BigInteger&gt; arbitraryGenerator = BigIntGen.arbitrary();
+ * BigInteger randomValue = arbitraryGenerator.sample(new Random()).get();
+ *
+ * // Create a biased BigInteger generator with a specified range
+ * Gen&lt;BigInteger&gt; biasedGenerator = BigIntGen.biased(BigInteger.valueOf(-100), BigInteger.valueOf(100));
+ * BigInteger biasedValue = biasedGenerator.sample(new Random()).get();
+ * </pre>
+ *
+ * @see Gen
+ * @see Combinators
+ */
 public final class BigIntGen implements Gen<BigInteger> {
 
     private final int nBits;

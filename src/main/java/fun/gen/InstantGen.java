@@ -14,7 +14,8 @@ import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of instants.
+ * Represents a generator of Instant values. This class provides methods to generate arbitrary and biased Instant values.
+ * Use this class to create random Instant generators for various purposes.
  */
 public final class InstantGen implements Gen<Instant> {
 
@@ -24,11 +25,20 @@ public final class InstantGen implements Gen<Instant> {
 
     private InstantGen() {
     }
-
+    /**
+     * Returns a generator for arbitrary Instant values. This generator produces random Instant values within the entire range of possible Instant values.
+     *
+     * @return A generator for arbitrary Instant values.
+     */
     public static Gen<Instant> arbitrary() {
         return arbitrary;
     }
 
+    /**
+     * Returns a biased generator for Instant values. This generator is biased towards generating common Instant values.
+     *
+     * @return A biased generator for Instant values.
+     */
     public static Gen<Instant> biased() {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
 
@@ -49,7 +59,15 @@ public final class InstantGen implements Gen<Instant> {
         return Combinators.freqList(gens).map(Instant::ofEpochSecond);
 
     }
-
+    /**
+     * Returns a biased generator for Instant values within the specified range [{@code min}, {@code max}] (inclusive).
+     * This generator is biased towards generating common Instant values within the specified range.
+     *
+     * @param min The minimum Instant value (inclusive).
+     * @param max The maximum Instant value (inclusive).
+     * @return A biased generator for Instant values within the specified range.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min} or if the provided range exceeds the maximum and minimum Instant values.
+     */
     public static Gen<Instant> biased(final long min,
                                       final long max) {
         if (max < min)
@@ -86,12 +104,13 @@ public final class InstantGen implements Gen<Instant> {
     }
 
     /**
-     * generates an instant in UTC formatted with the ISO instant formatter (such as '2011-12-03T10:15:30Z'), between
-     * an interval given by two date-time with a time-zone.
+     * Generates an Instant in UTC format formatted with the ISO instant formatter (e.g., '2011-12-03T10:15:30Z') between
+     * an interval given by two date-times with a time-zone.
      *
-     * @param min the origin of the interval (inclusive)
-     * @param max the bound of the interval (inclusive)
-     * @return an instant generator
+     * @param min The origin of the interval (inclusive).
+     * @param max The bound of the interval (inclusive).
+     * @return An Instant generator.
+     * @throws IllegalArgumentException If {@code min} is greater than {@code max}.
      */
 
     public static Gen<Instant> arbitrary(final ZonedDateTime min,
@@ -105,12 +124,13 @@ public final class InstantGen implements Gen<Instant> {
     }
 
     /**
-     * generates an instant in UTC formatted with the ISO instant formatter (such as '2011-12-03T10:15:30Z'), between
-     * an interval given by two date-time with a time-zone.
+     * Generates an Instant in UTC format formatted with the ISO instant formatter (e.g., '2011-12-03T10:15:30Z') between
+     * an interval given by two date-times with a time-zone.
      *
-     * @param min the origin of the interval (inclusive)
-     * @param max the bound of the interval (inclusive)
-     * @return an instant generator
+     * @param min The origin of the interval (inclusive).
+     * @param max The bound of the interval (inclusive).
+     * @return An Instant generator.
+     * @throws IllegalArgumentException If {@code min} is greater than {@code max}.
      */
 
     public static Gen<Instant> biased(final ZonedDateTime min,
@@ -125,12 +145,13 @@ public final class InstantGen implements Gen<Instant> {
 
 
     /**
-     * generates an instant in UTC formatted with the ISO instant formatter (such as '2011-12-03T10:15:30Z'), between
-     * an interval given by two instants converted to the number of seconds from the epoch of 1970-01-01T00:00:00Z.
+     * Generates an Instant in UTC format formatted with the ISO instant formatter (e.g., '2011-12-03T10:15:30Z') between
+     * an interval given by two Instants converted to the number of seconds from the epoch of 1970-01-01T00:00:00Z.
      *
-     * @param min the origin of the interval (inclusive)
-     * @param max the bound of the interval (inclusive)
-     * @return an instant generator
+     * @param min The origin of the interval (inclusive).
+     * @param max The bound of the interval (inclusive).
+     * @return An Instant generator.
+     * @throws IllegalArgumentException If {@code min} is greater than {@code max} or if the provided range exceeds the maximum and minimum Instant values.
      */
     public static Gen<Instant> arbitrary(final long min,
                                          final long max) {

@@ -8,7 +8,10 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of maps.
+ * Represents a generator for maps with keys of type {@code K} and values of type {@code V}. This class provides methods to generate maps with arbitrary or biased key-value pairs.
+ *
+ * @param <K> The type of keys in the generated map.
+ * @param <V> The type of values in the generated map.
  */
 public final class MapGen<K, V> implements Gen<Map<K, V>> {
     private final Gen<K> keyGen;
@@ -31,7 +34,16 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
         this.splitGen = SplitGen.DEFAULT;
     }
 
-
+    /**
+     * Creates a MapGen instance with the specified key and value generators and target map size.
+     *
+     * @param <K>      The type of keys in the generated map.
+     * @param <V>      The type of values in the generated map.
+     * @param keyGen   A generator for map keys.
+     * @param valueGen A generator for map values.
+     * @param size     The desired size of the generated map.
+     * @return A MapGen instance with the specified generators and size.
+     */
     public static <K, V> MapGen<K, V> of(final Gen<K> keyGen,
                                          final Gen<V> valueGen,
                                          final int size) {
@@ -40,7 +52,13 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
                             size,
                             size * 100);
     }
-
+    /**
+     * Sets the maximum number of attempts to generate the map of the specified size. This method allows you to control the maximum number of iterations or tries to generate a map that meets the desired size criterion.
+     *
+     * @param tries The maximum number of attempts to generate the map.
+     * @return A new instance of MapGen with the specified maximum tries.
+     * @throws IllegalArgumentException If the provided number of tries is less than the current size of the map to be generated, or if the number of tries is negative.
+     */
     public MapGen<K, V> setMaxTries(final int tries) {
         return new MapGen<>(keyGen,
                             valueGen,

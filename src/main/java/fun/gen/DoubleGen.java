@@ -10,18 +10,32 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of doubles.
+ * Represents a generator of double values. This class provides methods to generate arbitrary and biased double values.
+ * Use this class to create random double generators for various purposes.
  */
 public final class DoubleGen implements Gen<Double> {
     private static final Gen<Double> arbitrary = new DoubleGen();
 
     private DoubleGen() {
     }
-
+    /**
+     * Returns a generator for arbitrary double values. This generator produces random double values within the entire range of double precision.
+     *
+     * @return A generator for arbitrary double values.
+     */
     public static Gen<Double> arbitrary() {
         return arbitrary;
     }
 
+    /**
+     * Returns a biased generator for double values within the specified range [{@code min}, {@code max}] (inclusive).
+     * This generator is biased towards generating common values within the specified range.
+     *
+     * @param min The minimum double value (inclusive).
+     * @param max The maximum double value (inclusive).
+     * @return A biased generator for double values within the specified range.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     */
     public static Gen<Double> biased(final double min,
                                      final double max) {
         if (max < min) throw new IllegalArgumentException("max < min");
@@ -62,7 +76,15 @@ public final class DoubleGen implements Gen<Double> {
         return Combinators.freqList(gens);
 
     }
-
+    /**
+     * Returns a generator for arbitrary double values within the specified range [{@code min}, {@code max}] (inclusive).
+     * This generator produces random double values within the specified range.
+     *
+     * @param min The minimum double value (inclusive).
+     * @param max The maximum double value (inclusive).
+     * @return A generator for arbitrary double values within the specified range.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     */
     public static Gen<Double> arbitrary(final double min,
                                         final double max) {
         if (max < min) throw new IllegalArgumentException("max < min");
@@ -76,7 +98,11 @@ public final class DoubleGen implements Gen<Double> {
         };
     }
 
-
+    /**
+     * Returns a biased generator for double values. This generator is biased towards generating common double values.
+     *
+     * @return A biased generator for double values.
+     */
     public static Gen<Double> biased() {
         List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,

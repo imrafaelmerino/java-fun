@@ -120,11 +120,14 @@ public class TestCombinators {
     public void testCombinations() {
 
         Gen<Set<String>> gen = Combinators.combinations(2,
-                                                        new HashSet<>(Arrays.asList("a",
-                                                                                    "b",
-                                                                                    "c")));
+                                                        Arrays.asList("a",
+                                                                      "b",
+                                                                      "c"));
+
+
         Assertions.assertTrue(gen.sample(100).map(ArrayList::new)
-                                 .noneMatch(it -> it.get(0).endsWith(it.get(1))));
+                                 .noneMatch(it -> it.get(0).equals(it.get(1)))
+        );
 
         Map<String, Long> count = TestFun.generate(100000,
                                                    gen.map(ArrayList::new)
@@ -143,9 +146,10 @@ public class TestCombinators {
     @Test
     public void testSubSets() {
 
-        Gen<Set<String>> gen = Combinators.subsets(new HashSet<>(Arrays.asList("a",
-                                                                               "b",
-                                                                               "c")));
+        Gen<Set<String>> gen =
+                Combinators.subsets(Arrays.asList("a",
+                                                  "b",
+                                                  "c"));
 
 
         Map<Set<String>, Long> count = TestFun.generate(100000,

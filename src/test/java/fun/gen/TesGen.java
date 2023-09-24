@@ -1,10 +1,12 @@
 package fun.gen;
 
+import fun.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TesGen {
@@ -57,5 +59,22 @@ public class TesGen {
                                                  10).distinct().sample(100000).collect(Collectors.toList());
         Assertions.assertEquals(letters.size(),
                                 new HashSet<>(letters).size());
+    }
+
+    @Test
+    public void testClassify() {
+
+        Map<String, Long> map =
+                IntGen.arbitrary(0,
+                                 10).classify(10000,
+                                              Pair.of(n -> n == 2,
+                                                      "2"),
+                                              Pair.of(n -> n > 5,
+                                                      "'> 5'"),
+                                              Pair.of(n -> n == 10,
+                                                      "'= 10'")
+                );
+
+        System.out.println(map);
     }
 }

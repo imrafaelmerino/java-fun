@@ -3,7 +3,13 @@ package fun.tuple;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
-
+/**
+ * Represents an immutable triple of three elements, A, B, and C.
+ *
+ * @param <A> The type of the first element.
+ * @param <B> The type of the second element.
+ * @param <C> The type of the third element.
+ */
 public final class Triple<A, B, C> {
 
     private final A first;
@@ -18,6 +24,17 @@ public final class Triple<A, B, C> {
         this.third = third;
     }
 
+    /**
+     * Creates a new Triple with the specified first, second, and third elements.
+     *
+     * @param first  The first element of the triple.
+     * @param second The second element of the triple.
+     * @param third  The third element of the triple.
+     * @param <A>    The type of the first element.
+     * @param <B>    The type of the second element.
+     * @param <C>    The type of the third element.
+     * @return A new Triple instance.
+     */
     public static <A, B, C> Triple<A, B, C> of(final A first,
                                                final B second,
                                                final C third) {
@@ -25,15 +42,29 @@ public final class Triple<A, B, C> {
                             requireNonNull(second),
                             requireNonNull(third));
     }
-
+    /**
+     * Gets the first element of the triple.
+     *
+     * @return The first element.
+     */
     public A first() {
         return first;
     }
 
+    /**
+     * Gets the second element of the triple.
+     *
+     * @return The second element.
+     */
     public B second() {
         return second;
     }
 
+    /**
+     * Gets the third element of the triple.
+     *
+     * @return The third element.
+     */
     public C third() {
         return third;
     }

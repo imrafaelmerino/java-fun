@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of long numbers.
+ * Represents a generator for long values. This class provides methods to generate arbitrary and biased long values within specified ranges.
  */
 public final class LongGen implements Gen<Long> {
 
@@ -19,11 +19,23 @@ public final class LongGen implements Gen<Long> {
 
     private LongGen() {
     }
-
+    /**
+     * Returns an arbitrary long generator.
+     *
+     * @return An arbitrary generator for long values.
+     */
     public static Gen<Long> arbitrary() {
         return arbitrary;
     }
 
+    /**
+     * Returns a biased long generator that generates values within the specified range [{@code min}, {@code max}] (inclusive).
+     *
+     * @param min The minimum value to be generated.
+     * @param max The maximum value to be generated.
+     * @return A biased generator for long values within the specified range.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     */
     public static Gen<Long> biased(final long min,
                                    final long max) {
         if (max < min) throw new IllegalArgumentException("max < min");
@@ -63,7 +75,14 @@ public final class LongGen implements Gen<Long> {
 
         return Combinators.freqList(gens);
     }
-
+    /**
+     * Returns an arbitrary long generator that generates values within the specified range [{@code min}, {@code max}] (inclusive).
+     *
+     * @param min The minimum value to be generated.
+     * @param max The maximum value to be generated.
+     * @return An arbitrary generator for long values within the specified range.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     */
     public static Gen<Long> arbitrary(final long min,
                                       final long max) {
 
@@ -98,7 +117,11 @@ public final class LongGen implements Gen<Long> {
         };
     }
 
-
+    /**
+     * Returns a biased long generator that generates values biased towards common long values.
+     *
+     * @return A biased generator for long values.
+     */
     public static Gen<Long> biased() {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 

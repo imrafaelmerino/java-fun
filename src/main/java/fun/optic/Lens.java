@@ -1,6 +1,5 @@
 package fun.optic;
 
-import fun.tuple.Pair;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -11,15 +10,18 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * A Lens is an optic that can be seen as a pair of functions:
- * {@code
+ * <pre>{@code
  * - get: S      => O i.e. from an S, we can extract an O
- * - set: (O, S) => S i.e. from an S and a O, we obtain a S. Unless a prism, to go back to S we need another S.
- * }
- * Typically, a Lens can be defined between a Product (e.g. record, tuple) and one of its component.
- * Given a lens there are essentially three things you might want to do:
- * -view the subpart
- * -modify the whole by changing the subpart
- * -combine this lens with another lens to look even deeper
+ * - set: (O, S) => S i.e. from an S and an O, we obtain an S. Unless it's a prism,
+ *   to go back to S, we need another S.
+ * }</pre>
+ * Typically, a Lens can be defined between a Product (e.g., record, tuple) and one of its components.
+ * Given a lens, there are essentially three things you might want to do:
+ * <ul>
+ *     <li>View the subpart.</li>
+ *     <li>Modify the whole by changing the subpart.</li>
+ *     <li>Combine this lens with another lens to look even deeper.</li>
+ * </ul>
  *
  * @param <S> the source of a lens
  * @param <O> the target of a lens
@@ -27,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 public  class Lens<S, O> {
 
     /**
-     * function to view the part
+     * Function to view the part.
      */
     public final Function<S, O> get;
     /**
@@ -49,6 +51,12 @@ public  class Lens<S, O> {
      */
     public final Function<Function<O, O>, Function<S, S>> modify;
 
+    /**
+     * Creates a new Lens instance with the specified get and set functions.
+     *
+     * @param get The function to view the part.
+     * @param set The function to modify the whole by setting the subpart.
+     */
     public Lens(final Function<S, O> get,
                 final Function<O, Function<S, S>> set) {
 
@@ -100,6 +108,13 @@ public  class Lens<S, O> {
         );
     }
 
+    /**
+     * Composes this lens with an Option.
+     *
+     * @param option The Option to compose with.
+     * @param <B>    The type of the focus on the new Option.
+     * @return A new Option.
+     */
     public <B> Option<S,B> compose(final Option<O,B> option){
 
         return new Option<>(s -> option.get.apply(get.apply(s)),

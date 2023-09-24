@@ -3,11 +3,7 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.*;
 
 public class TestRecordGen {
 
@@ -600,55 +596,26 @@ public class TestRecordGen {
                                                     1),
                                      "c",
                                      IntGen.arbitrary(0,
-                                                      40000));
-
-        Map<Record, Long> map =
-                TestFun.generate(20000,
-                                 gen.setOptionals("a",
-                                                  "b"));
-        long allKeys =
-                TestFun.countKeys(map,
-                                  record -> record.map.containsKey("a") && record.map.containsKey("b"));
+                                                      800000)
+        ).setOptionals("a",
+                       "b");
 
 
-        long someKeyRemoved =
-                TestFun.countKeys(map,
-                                  record -> !record.map.containsKey("a") || !record.map.containsKey("b"));
+        int times = 400000;
+        Map<List<?>, Long> generated = gen.collect(times,
+                                                   record -> {
+                                                       if (record.getInt("a").isPresent() && record.getStr("b").isPresent())
+                                                           return Arrays.asList("a",
+                                                                                "b");
+                                                       else if (record.getInt("a").isPresent() && !record.getStr("b").isPresent())
+                                                           return Arrays.asList("a");
+                                                       else if (!record.getInt("a").isPresent() && record.getStr("b").isPresent())
+                                                           return Arrays.asList("b");
+                                                       else return new ArrayList<>();
+                                                   });
 
-        System.out.println(allKeys);
-        System.out.println(someKeyRemoved);
-
-
-        //50%
-        Predicate<Long> inMargin = TestFun.isInMargin(map.size() / 2,
-                                                      0.1);
-
-        Assertions.assertTrue(inMargin.test(allKeys));
-        Assertions.assertTrue(inMargin.test(someKeyRemoved));
-
-
-        long aRemoved =
-                TestFun.countKeys(map,
-                                  record -> !record.map.containsKey("a")
-                                          && record.map.containsKey("b"));
-
-        long bRemoved =
-                TestFun.countKeys(map,
-                                  record -> !record.map.containsKey("b")
-                                          && record.map.containsKey("a"));
-
-
-        long allRemoved =
-                TestFun.countKeys(map,
-                                  record -> !record.map.containsKey("b")
-                                          && record.map.containsKey("a"));
-
-        Predicate<Long> x = TestFun.isInMargin(someKeyRemoved / 3,
-                                               0.1);
-
-        Assertions.assertTrue(x.test(aRemoved));
-        Assertions.assertTrue(x.test(bRemoved));
-        Assertions.assertTrue(x.test(allRemoved));
+        Assertions.assertTrue(generated.values().stream().map(n -> n * 100 / times)
+                                       .allMatch(per -> per >= 24.9 && per <= 25.1));
 
 
     }
@@ -659,26 +626,47 @@ public class TestRecordGen {
 
         RecordGen gen = RecordGen.of("a",
                                      IntGen.arbitrary(0,
-                                                      400000),
+                                                      1000),
                                      "b",
                                      StrGen.letters(1,
                                                     1),
                                      "c",
                                      IntGen.arbitrary(0,
-                                                      400000));
+                                                      1000)
+        ).setAllOptional();
 
-        Map<Record, Long> map =
-                TestFun.generate(200000,
-                                 gen.setOptionals(Arrays.asList("a",
-                                                                "b",
-                                                                "c")));
 
-        // half of the times no field is removed, 7 possible subsets from [a,b,c],
-        Predicate<Long> x = TestFun.isInMargin(200000 / 2 / 7,
-                                               0.1);
+        int times = 800000;
+        Map<List<String>, Long> generated = gen.collect(times,
+                                                        r -> {
+                                                            if (r.map.containsKey("a") && r.map.containsKey("b") && r.map.containsKey("c"))
+                                                                return Arrays.asList("a",
+                                                                                     "b",
+                                                                                     "c");
+                                                            else if (r.map.containsKey("a") && r.map.containsKey("b") && !r.map.containsKey("c"))
+                                                                return Arrays.asList("a",
+                                                                                     "b");
+                                                            else if (r.map.containsKey("a") && !r.map.containsKey("b") && r.map.containsKey("c"))
+                                                                return Arrays.asList("a",
+                                                                                     "c");
+                                                            else if (!r.map.containsKey("a") && r.map.containsKey("b") && r.map.containsKey("c"))
+                                                                return Arrays.asList("b",
+                                                                                     "c");
+                                                            else if (!r.map.containsKey("a") && !r.map.containsKey("c") && r.map.containsKey("b"))
+                                                                return Arrays.asList("b");
+                                                            else if (!r.map.containsKey("a") && r.map.containsKey("c") && !r.map.containsKey("b"))
+                                                                return Arrays.asList("c");
+                                                            else if (r.map.containsKey("a") && !r.map.containsKey("c") && !r.map.containsKey("b"))
+                                                                return Arrays.asList("a");
+                                                            else
+                                                                return Arrays.asList();
 
-        // empty record, all fields are removed
-        Assertions.assertTrue(x.test(map.get(new Record(new HashMap<>()))));
+
+                                                        });
+
+        Assertions.assertTrue(generated.values().stream()
+                                       .map(n -> n * 100 / times)
+                                       .allMatch(per -> per >= 12.4 && per <= 12.52));
 
 
     }
@@ -688,31 +676,47 @@ public class TestRecordGen {
 
         RecordGen gen = RecordGen.of("a",
                                      IntGen.arbitrary(0,
-                                                      400000),
+                                                      40000),
                                      "b",
                                      StrGen.letters(1,
                                                     1),
                                      "c",
                                      IntGen.arbitrary(0,
-                                                      400000));
+                                                      1000)
+        ).setAllNullable();
 
-        Map<Record, Long> map =
-                TestFun.generate(200000,
-                                 gen.setAllNullable());
 
-        // half of the times no field is removed, 7 possible subsets from [a,b,c],
-        Predicate<Long> x = TestFun.isInMargin(200000 / 2 / 7,
-                                               0.1);
+        int times = 800000;
+        Map<List<String>, Long> generated = gen.collect(times,
+                                                        r -> {
+                                                            if (r.map.get("a") != null && r.map.get("b") != null && r.map.get("c") != null)
+                                                                return Arrays.asList("a",
+                                                                                     "b",
+                                                                                     "c");
+                                                            else if (r.map.get("a") != null && r.map.get("b") != null && r.map.get("c") == null)
+                                                                return Arrays.asList("a",
+                                                                                     "b");
+                                                            else if (r.map.get("a") != null && r.map.get("b") == null && r.map.get("c") != null)
+                                                                return Arrays.asList("a",
+                                                                                     "c");
+                                                            else if (r.map.get("a") == null && r.map.get("b") != null && r.map.get("c") != null)
+                                                                return Arrays.asList("b",
+                                                                                     "c");
+                                                            else if (r.map.get("a") == null && r.map.get("c") == null && r.map.get("b") != null)
+                                                                return Arrays.asList("b");
+                                                            else if (r.map.get("a") == null && r.map.get("c") != null && r.map.get("b") == null)
+                                                                return Arrays.asList("c");
+                                                            else if (r.map.get("a") != null && r.map.get("c") == null && r.map.get("b") == null)
+                                                                return Arrays.asList("a");
+                                                            else
+                                                                return Arrays.asList();
 
-        // all fields are null
-        Map<String, ?> allNull = new HashMap<>();
-        allNull.put("a",
-                    null);
-        allNull.put("b",
-                    null);
-        allNull.put("c",
-                    null);
-        Assertions.assertTrue(x.test(map.get(new Record(allNull))));
+
+                                                        });
+
+        Assertions.assertTrue(generated.values().stream()
+                                       .map(n -> n * 100 / times)
+                                       .allMatch(per -> per >= 12.4 && per <= 12.51));
 
 
     }
@@ -729,48 +733,27 @@ public class TestRecordGen {
                                                     1),
                                      "c",
                                      IntGen.arbitrary(0,
-                                                      800000));
-
-        Map<Record, Long> map = TestFun.generate(400000,
-                                                 gen.setNullables("a",
-                                                                  "b"));
-        long noneNull =
-                TestFun.countKeys(map,
-                                  record -> record.map.get("a") != null && record.map.get("b") != null);
+                                                      10000)
+        ).setNullables("a",
+                       "b");
 
 
-        long someNull =
-                TestFun.countKeys(map,
-                                  record -> record.map.get("a") == null || record.map.get("b") == null);
+        int times = 800000;
+        Map<List<?>, Long> generated = gen.collect(times,
+                                                   record -> {
+                                                       if (record.getInt("a").isPresent() && record.getStr("b").isPresent())
+                                                           return Arrays.asList("a",
+                                                                                "b");
+                                                       else if (record.getInt("a").isPresent() && !record.getStr("b").isPresent())
+                                                           return Arrays.asList("a");
+                                                       else if (!record.getInt("a").isPresent() && record.getStr("b").isPresent())
+                                                           return Arrays.asList("b");
+                                                       else return new ArrayList<>();
+                                                   });
 
-
-        //50%
-        Predicate<Long> inMargin = TestFun.isInMargin(map.size() / 2,
-                                                      0.05);
-
-        Assertions.assertTrue(inMargin.test(noneNull));
-        Assertions.assertTrue(inMargin.test(someNull));
-
-
-        long aNull =
-                TestFun.countKeys(map,
-                                  record -> record.map.containsKey("a") && record.map.get("a") == null && record.map.get("b") != null);
-
-        long bNull = TestFun.countKeys(map,
-                                       record -> record.map.get("a") != null && record.map.containsKey("b") && record.map.get("b") == null);
-
-
-        long allNull = TestFun.countKeys(map,
-                                         record -> record.map.containsKey("a")
-                                                 && record.map.get("a") == null
-                                                 && record.map.containsKey("b")
-                                                 && record.map.get("b") == null);
-
-        Predicate<Long> x = TestFun.isInMargin(someNull / 3,
-                                               0.05);
-        Assertions.assertTrue(x.test(aNull));
-        Assertions.assertTrue(x.test(bNull));
-        Assertions.assertTrue(x.test(allNull));
+        Assertions.assertTrue(generated.values()
+                                       .stream().map(n -> (double) (n * 100) / times)
+                                       .allMatch(per -> per >= 24.9 && per <= 25.2));
 
 
     }
@@ -850,8 +833,8 @@ public class TestRecordGen {
                                                          .isPresent()));
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           SetGen.of(IntGen.arbitrary(),
-                                                     10))
+                                           SetGen.ofN(IntGen.arbitrary(),
+                                                      10))
                                        .sample(100)
                                        .allMatch(it -> it.getSet("a")
                                                          .isPresent()));
@@ -874,60 +857,6 @@ public class TestRecordGen {
                                            return a.isPresent();
                                        }));
     }
-
-
-    @Test
-    public void testAllNullableAndOptionalMax(){
-
-        RecordGen gen =
-                RecordGen.of(
-                                "1",
-                                IntGen.arbitrary(),
-                                "2",
-                                IntGen.arbitrary(),
-                                "3",
-                                IntGen.arbitrary(),
-                                "4",
-                                IntGen.arbitrary(),
-                                "5",
-                                IntGen.arbitrary(),
-                                "6",
-                                IntGen.arbitrary(),
-                                "7",
-                                IntGen.arbitrary(),
-                                "8",
-                                IntGen.arbitrary(),
-                                "9",
-                                IntGen.arbitrary(),
-                                "10",
-                                IntGen.arbitrary(),
-                                "11",
-                                IntGen.arbitrary(),
-                                "12",
-                                IntGen.arbitrary(),
-                                "13",
-                                IntGen.arbitrary(),
-                                "14",
-                                IntGen.arbitrary(),
-                                "15",
-                                IntGen.arbitrary(),
-                                "16",
-                                IntGen.arbitrary(),
-                                "17",
-                                IntGen.arbitrary(),
-                                "18",
-                                IntGen.arbitrary(),
-                                "19",
-                                IntGen.arbitrary()
-                );
-
-        gen.setAllNullable()
-           .setAllOptional()
-           .sample(100)
-           .forEach(System.out::println);
-
-    }
-
 
 
 }

@@ -8,7 +8,9 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * represent a generator of sets.
+ * A generator for creating sets of elements of type T.
+ *
+ * @param <T> The type of elements in the generated set.
  */
 public final class SetGen<T> implements Gen<Set<T>> {
     private final Gen<T> gen;
@@ -25,14 +27,31 @@ public final class SetGen<T> implements Gen<Set<T>> {
         this.maxTries = maxTries;
     }
 
-
-    public static <T> SetGen<T> of(final Gen<T> gen,
-                                   final int size) {
+    /**
+     * Creates a new SetGen instance with the specified generator and size.
+     * The maximum number of tries will be set to size * 10.
+     *
+     * @param gen  The generator for individual elements.
+     * @param size The desired size of the generated set.
+     * @param <T>  The type of elements in the set.
+     * @return A SetGen instance.
+     */
+    public static <T> SetGen<T> ofN(final Gen<T> gen,
+                                    final int size) {
         return new SetGen<>(gen,
                             size,
                             size * 10);
     }
-
+    /**
+     * Sets the maximum number of tries for generating the set to improve the generation process.
+     * This method creates a new instance of SetGen with the updated maximum tries.
+     *
+     * @param tries The maximum number of attempts to generate the set. Setting this value higher may increase the chances
+     *              of successfully generating a set of the desired size, but it can also increase the time it takes to
+     *              generate the set.
+     * @return A new SetGen instance with the updated maximum tries.
+     * @throws IllegalArgumentException If the specified number of tries is negative.
+     */
     public SetGen<T> setMaxTries(final int tries) {
         return new SetGen<>(gen,
                             size,

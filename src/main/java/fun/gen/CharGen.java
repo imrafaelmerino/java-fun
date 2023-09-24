@@ -7,6 +7,32 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Represents a generator of characters.
+ * This class implements the {@link Gen} interface to generate characters within various character ranges,
+ * including ASCII characters, letters (a-z), digits (0-9), and arbitrary characters within specified ranges.
+ * It provides methods to generate characters from these ranges and check for valid character codepoints.
+ * <p>
+ * Example usage:
+ * <pre>
+ * // Create an ASCII character generator.
+ * Gen&lt;Character&gt; asciiGenerator = CharGen.ascii();
+ * Character asciiChar = asciiGenerator.sample(new Random()).get();
+ *
+ * // Create a letter (a-z) character generator.
+ * Gen&lt;Character&gt; letterGenerator = CharGen.letter();
+ * Character letterChar = letterGenerator.sample(new Random()).get();
+ *
+ * // Create a digit (0-9) character generator.
+ * Gen&lt;Character&gt; digitGenerator = CharGen.digit();
+ * Character digitChar = digitGenerator.sample(new Random()).get();
+ *
+ * // Create an arbitrary character generator within the range (min, max).
+ * Gen&lt;Character&gt; arbitraryGenerator = CharGen.arbitrary('A', 'Z');
+ * Character arbitraryChar = arbitraryGenerator.sample(new Random()).get();
+ * </pre>
+ *
+ * @see Gen
+ * @see IntGen
+ * @see Combinators
  */
 public final class CharGen implements Gen<Character> {
 
@@ -15,7 +41,11 @@ public final class CharGen implements Gen<Character> {
                              ('\u007f'))
                   .map(it -> ((char) it.intValue()));
 
-
+    /**
+     * Generates ASCII characters within the range 0 to 127 (inclusive).
+     *
+     * @return An ASCII character generator.
+     */
     public static  Gen<Character> ascii(){
         return ascii;
     }
@@ -26,11 +56,14 @@ public final class CharGen implements Gen<Character> {
                              25)
                   .map(i -> ((char) ('a' + i)));
     /**
-     * Generates a letter from a-z
+     * Generates lowercase letters (a-z).
+     *
+     * @return A letter (a-z) character generator.
      */
     public static  Gen<Character> letter(){
         return letter;
     }
+
 
     private static final Gen<Character> digit =
             Combinators.oneOf(
@@ -45,7 +78,9 @@ public final class CharGen implements Gen<Character> {
                     '8',
                     '9');
     /**
-     * Generates character from 65-122
+     * Generates digits (0-9).
+     *
+     * @return A digit (0-9) character generator.
      */
     public static  Gen<Character> digit(){
         return digit;
@@ -57,6 +92,11 @@ public final class CharGen implements Gen<Character> {
                                                122))
                        .map(i -> (char) i.intValue());
 
+    /**
+     * Generates alphabetic characters (A-Z, a-z).
+     *
+     * @return An alphabetic (A-Z, a-z) character generator.
+     */
     public static  Gen<Character> alphabetic(){
         return alphabetic;
     }
@@ -78,6 +118,14 @@ public final class CharGen implements Gen<Character> {
         return codepoint >= 57344 && codepoint <= 63743;
     }
 
+    /**
+     * Generates arbitrary characters within the specified range [{@code min}, {@code max}] (inclusive).
+     *
+     * @param min The minimum character value (inclusive).
+     * @param max The maximum character value (inclusive).
+     * @return An arbitrary character generator within the specified range.
+     * @throws IllegalArgumentException If {@code min} is greater than {@code max}.
+     */
     public static Gen<Character> arbitrary(char min,
                                            char max) {
         if (min > max) throw new IllegalArgumentException("min > max");
@@ -85,7 +133,11 @@ public final class CharGen implements Gen<Character> {
                                 min,
                                 max);
     }
-
+    /**
+     * Generates arbitrary characters within the entire Unicode character range (0 to 65535).
+     *
+     * @return An arbitrary character generator for the entire Unicode range.
+     */
     public static Gen<Character> arbitrary() {
         return arbitrary;
     }

@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * represent a generator of strings.
+ * A generator for strings of various types and lengths.
  */
 public final class StrGen implements Gen<String> {
 
@@ -26,7 +26,18 @@ public final class StrGen implements Gen<String> {
     }
 
 
-
+    /**
+     * Generates a biased string with a minimum and maximum length.
+     *
+     * @param minLength The minimum length of the generated string.
+     * @param maxLength The maximum length of the generated string.
+     * @return A string generator biased towards the following values:
+     *         - Empty string ("") with a frequency of 1 if {@code minLength} is 0.
+     *         - A string with spaces (blank) of length {@code minLength}.
+     *         - A string with spaces (blank) of length {@code maxLength}.
+     *         - A string with random characters within the specified length range.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
+     */
     public static Gen<String> biased(final int minLength,
                                      final int maxLength) {
         if (minLength < 0)
@@ -63,7 +74,14 @@ public final class StrGen implements Gen<String> {
 
         return Combinators.freqList(gens);
     }
-
+    /**
+     * Generates a string with a minimum and maximum length.
+     *
+     * @param minLength The minimum length of the generated string.
+     * @param maxLength The maximum length of the generated string.
+     * @return A string generator producing values with lengths between {@code minLength} and {@code maxLength}.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
+     */
     public static Gen<String> arbitrary(final int minLength,
                                         final int maxLength) {
         if (minLength < 0) throw new IllegalArgumentException("minLength < 0");
@@ -109,11 +127,12 @@ public final class StrGen implements Gen<String> {
     }
 
     /**
-     * Generates a seq of digits of a length between the specified interval
+     * Generates a sequence of digits as a string with a length between the specified interval.
      *
-     * @param minLength min length of the string
-     * @param maxLength max length of the string
-     * @return a string generator
+     * @param minLength The minimum length of the generated digit sequence.
+     * @param maxLength The maximum length of the generated digit sequence.
+     * @return A string generator producing digit sequences between {@code minLength} and {@code maxLength} in length.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
      */
     public static Gen<String> digits(final int minLength,
                                      final int maxLength) {
@@ -127,11 +146,12 @@ public final class StrGen implements Gen<String> {
     }
 
     /**
-     * Generates a seq of digits of a length between the specified interval
+     * Generates a sequence of ASCII characters as a string with a length between the specified interval.
      *
-     * @param minLength min length of the string
-     * @param maxLength max length of the string
-     * @return a string generator
+     * @param minLength The minimum length of the generated ASCII sequence.
+     * @param maxLength The maximum length of the generated ASCII sequence.
+     * @return A string generator producing ASCII sequences between {@code minLength} and {@code maxLength} in length.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
      */
     public static Gen<String> ascii(final int minLength,
                                     final int maxLength) {
@@ -146,11 +166,12 @@ public final class StrGen implements Gen<String> {
 
 
     /**
-     * Generates a seq of letters of a length between the specified interval
+     * Generates a sequence of letters as a string with a length between the specified interval.
      *
-     * @param minLength min length of the string
-     * @param maxLength max length of the string
-     * @return a string generator
+     * @param minLength The minimum length of the generated letter sequence.
+     * @param maxLength The maximum length of the generated letter sequence.
+     * @return A string generator producing letter sequences between {@code minLength} and {@code maxLength} in length.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
      */
     public static Gen<String> letters(final int minLength,
                                       final int maxLength) {
@@ -164,11 +185,12 @@ public final class StrGen implements Gen<String> {
     }
 
     /**
-     * Generates a seq of alphabetic characters of a length between the specified interval
+     * Generates a sequence of alphabetic characters as a string with a length between the specified interval.
      *
-     * @param minLength min length of the string
-     * @param maxLength max length of the string
-     * @return a string generator
+     * @param minLength The minimum length of the generated alphabetic sequence.
+     * @param maxLength The maximum length of the generated alphabetic sequence.
+     * @return A string generator producing alphabetic sequences between {@code minLength} and {@code maxLength} in length.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
      */
     public static Gen<String> alphabetic(final int minLength,
                                          final int maxLength) {
@@ -183,11 +205,12 @@ public final class StrGen implements Gen<String> {
     }
 
     /**
-     * Generates a seq of alphanumeric characters of a length between the specified interval
+     * Generates a sequence of alphanumeric characters as a string with a length between the specified interval.
      *
-     * @param minLength min length of the string
-     * @param maxLength max length of the string
-     * @return a string generator
+     * @param minLength The minimum length of the generated alphanumeric sequence.
+     * @param maxLength The maximum length of the generated alphanumeric sequence.
+     * @return A string generator producing alphanumeric sequences between {@code minLength} and {@code maxLength} in length.
+     * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
      */
     public static Gen<String> alphanumeric(final int minLength,
                                            final int maxLength) {

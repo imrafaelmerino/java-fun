@@ -14,17 +14,6 @@ import static java.util.Objects.requireNonNull;
  * Represents a generator of {@code BigInteger} values.
  * This class implements the {@link Gen} interface to generate {@code BigInteger} values within specified ranges
  * and with various biases.
- * <p>
- * Example usage:
- * <pre>
- * // Create an arbitrary BigInteger generator
- * Gen&lt;BigInteger&gt; arbitraryGenerator = BigIntGen.arbitrary();
- * BigInteger randomValue = arbitraryGenerator.sample(new Random()).get();
- *
- * // Create a biased BigInteger generator with a specified range
- * Gen&lt;BigInteger&gt; biasedGenerator = BigIntGen.biased(BigInteger.valueOf(-100), BigInteger.valueOf(100));
- * BigInteger biasedValue = biasedGenerator.sample(new Random()).get();
- * </pre>
  *
  * @see Gen
  * @see Combinators
@@ -42,14 +31,20 @@ public final class BigIntGen implements Gen<BigInteger> {
     /**
      * Constructs a randomly generated BigInteger, uniformly distributed over the range 0 to (2^bits - 1), inclusive.
      * Note that this generator always generates  non-negative big integers
-     * @param bits  maximum bitLength of the new BigInteger
+     *
+     * @param bits maximum bitLength of the new BigInteger
      * @return a big integer generator
      */
     public static Gen<BigInteger> arbitrary(int bits) {
         return new BigIntGen(bits);
 
     }
-
+    /**
+     * Constructs a biased BigInteger generator with various ranges and biases.
+     *
+     * @param bits The maximum bit length of the generated BigInteger.
+     * @return A biased big integer generator.
+     */
     public static Gen<BigInteger> biased(int bits) {
 
         BigInteger max = BigInteger.valueOf(2)

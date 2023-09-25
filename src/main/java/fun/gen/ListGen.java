@@ -76,16 +76,7 @@ public final class ListGen<T> implements Gen<List<T>> {
 
 
     }
-    /**
-     * Returns a generator for lists of elements with lengths in the specified range [{@code minLength}, {@code maxLength}] (inclusive).
-     *
-     * @param <T>        The type of elements in the list.
-     * @param gen        The generator for individual elements in the list.
-     * @param minLength  The minimum length of the generated lists.
-     * @param maxLength  The maximum length of the generated lists.
-     * @return A generator for lists of elements with lengths in the specified range.
-     * @throws IllegalArgumentException If {@code minLength} is less than 0 or {@code maxLength} is less than {@code minLength}.
-     */
+
     public static <T> Gen<List<T>> arbitrary(final Gen<T> gen,
                                              final int minLength,
                                              final int maxLength) {

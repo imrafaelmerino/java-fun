@@ -10,25 +10,6 @@ import static java.util.Objects.requireNonNull;
  * This class implements the {@link Gen} interface to generate characters within various character ranges,
  * including ASCII characters, letters (a-z), digits (0-9), and arbitrary characters within specified ranges.
  * It provides methods to generate characters from these ranges and check for valid character codepoints.
- * <p>
- * Example usage:
- * <pre>
- * // Create an ASCII character generator.
- * Gen&lt;Character&gt; asciiGenerator = CharGen.ascii();
- * Character asciiChar = asciiGenerator.sample(new Random()).get();
- *
- * // Create a letter (a-z) character generator.
- * Gen&lt;Character&gt; letterGenerator = CharGen.letter();
- * Character letterChar = letterGenerator.sample(new Random()).get();
- *
- * // Create a digit (0-9) character generator.
- * Gen&lt;Character&gt; digitGenerator = CharGen.digit();
- * Character digitChar = digitGenerator.sample(new Random()).get();
- *
- * // Create an arbitrary character generator within the range (min, max).
- * Gen&lt;Character&gt; arbitraryGenerator = CharGen.arbitrary('A', 'Z');
- * Character arbitraryChar = arbitraryGenerator.sample(new Random()).get();
- * </pre>
  *
  * @see Gen
  * @see IntGen
@@ -40,31 +21,10 @@ public final class CharGen implements Gen<Character> {
             IntGen.arbitrary(('\u0000'),
                              ('\u007f'))
                   .map(it -> ((char) it.intValue()));
-
-    /**
-     * Generates ASCII characters within the range 0 to 127 (inclusive).
-     *
-     * @return An ASCII character generator.
-     */
-    public static  Gen<Character> ascii(){
-        return ascii;
-    }
-
-
     private static final Gen<Character> letter =
             IntGen.arbitrary(0,
                              25)
                   .map(i -> ((char) ('a' + i)));
-    /**
-     * Generates lowercase letters (a-z).
-     *
-     * @return A letter (a-z) character generator.
-     */
-    public static  Gen<Character> letter(){
-        return letter;
-    }
-
-
     private static final Gen<Character> digit =
             Combinators.oneOf(
                     '0',
@@ -77,32 +37,51 @@ public final class CharGen implements Gen<Character> {
                     '7',
                     '8',
                     '9');
-    /**
-     * Generates digits (0-9).
-     *
-     * @return A digit (0-9) character generator.
-     */
-    public static  Gen<Character> digit(){
-        return digit;
-    }
     private static final Gen<Character> alphabetic =
             Combinators.oneOf(IntGen.arbitrary(65,
                                                90),
                               IntGen.arbitrary(97,
                                                122))
                        .map(i -> (char) i.intValue());
+    private static final Gen<Character> arbitrary = new CharGen();
+
+    private CharGen() {
+    }
+
+    /**
+     * Generates ASCII characters within the range 0 to 127 (inclusive).
+     *
+     * @return An ASCII character generator.
+     */
+    public static Gen<Character> ascii() {
+        return ascii;
+    }
+
+    /**
+     * Generates lowercase letters (a-z).
+     *
+     * @return A letter (a-z) character generator.
+     */
+    public static Gen<Character> letter() {
+        return letter;
+    }
+
+    /**
+     * Generates digits (0-9).
+     *
+     * @return A digit (0-9) character generator.
+     */
+    public static Gen<Character> digit() {
+        return digit;
+    }
 
     /**
      * Generates alphabetic characters (A-Z, a-z).
      *
      * @return An alphabetic (A-Z, a-z) character generator.
      */
-    public static  Gen<Character> alphabetic(){
+    public static Gen<Character> alphabetic() {
         return alphabetic;
-    }
-    private static final Gen<Character> arbitrary = new CharGen();
-
-    private CharGen() {
     }
 
     static boolean isNonCharacter(int codepoint) {
@@ -133,6 +112,7 @@ public final class CharGen implements Gen<Character> {
                                 min,
                                 max);
     }
+
     /**
      * Generates arbitrary characters within the entire Unicode character range (0 to 65535).
      *
@@ -142,9 +122,9 @@ public final class CharGen implements Gen<Character> {
         return arbitrary;
     }
 
-     static Supplier<Character> supplier(Random gen,
-                                                char min,
-                                                char max) {
+    static Supplier<Character> supplier(Random gen,
+                                        char min,
+                                        char max) {
         Supplier<Integer> supplier = IntGen.arbitrary(min,
                                                       max)
                                            .suchThat(it -> !isNonCharacter(it) && !isPUC(it))

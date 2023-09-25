@@ -614,7 +614,8 @@ public class TestRecordGen {
                                                        else return new ArrayList<>();
                                                    });
 
-        Assertions.assertTrue(generated.values().stream().map(n -> n * 100 / times)
+        Assertions.assertTrue(generated.values().stream()
+                                       .map(n -> ((double)(n * 100)) / times)
                                        .allMatch(per -> per >= 24.9 && per <= 25.1));
 
 
@@ -665,7 +666,7 @@ public class TestRecordGen {
                                                         });
 
         Assertions.assertTrue(generated.values().stream()
-                                       .map(n -> n * 100 / times)
+                                       .map(n -> ((double)(n * 100)) / times)
                                        .allMatch(per -> per >= 12.4 && per <= 12.52));
 
 
@@ -686,7 +687,7 @@ public class TestRecordGen {
         ).setAllNullable();
 
 
-        int times = 800000;
+        int times = 1000000;
         Map<List<String>, Long> generated = gen.collect(times,
                                                         r -> {
                                                             if (r.map.get("a") != null && r.map.get("b") != null && r.map.get("c") != null)
@@ -714,9 +715,13 @@ public class TestRecordGen {
 
                                                         });
 
-        Assertions.assertTrue(generated.values().stream()
-                                       .map(n -> n * 100 / times)
-                                       .allMatch(per -> per >= 12.4 && per <= 12.51));
+
+
+        Assertions.assertTrue(generated.values()
+                                       .stream()
+                                       .map(n -> ((double)(n * 100)) / times)
+                                       .allMatch(per -> per >= 12.4 && per <= 12.51)
+        );
 
 
     }
@@ -752,7 +757,8 @@ public class TestRecordGen {
                                                    });
 
         Assertions.assertTrue(generated.values()
-                                       .stream().map(n -> (double) (n * 100) / times)
+                                       .stream()
+                                       .map(n -> ((double)(n * 100)) / times)
                                        .allMatch(per -> per >= 24.9 && per <= 25.2));
 
 

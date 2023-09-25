@@ -39,15 +39,6 @@ public class TestBigIntGen {
                 BigInteger.valueOf(Byte.MAX_VALUE),
                 BigInteger.ZERO);
 
-        System.out.println(counts.get(BigInteger.ZERO));
-        System.out.println(counts.get(BigInteger.valueOf(Byte.MAX_VALUE)));
-        System.out.println(counts.get(BigInteger.valueOf(Short.MAX_VALUE)));
-        System.out.println(counts.get(BigInteger.valueOf(Integer.MAX_VALUE)));
-        System.out.println(counts.get(BigInteger.valueOf(Long.MAX_VALUE)));
-
-
-
-
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
                                                          problematic,

@@ -13,17 +13,6 @@ import static java.util.Objects.requireNonNull;
  * Represents a generator of byte arrays.
  * This class implements the {@link Gen} interface to generate byte arrays with specified lengths.
  * It provides methods for generating byte arrays with arbitrary lengths and biasing towards specific lengths.
- * <p>
- * Example usage:
- * <pre>
- * // Create an arbitrary byte array generator with lengths between 5 and 10 (inclusive).
- * Gen&lt;byte[]&gt; arbitraryGenerator = BytesGen.arbitrary(5, 10);
- * byte[] randomBytes = arbitraryGenerator.sample(new Random()).get();
- *
- * // Create a biased byte array generator with lengths biased towards 8.
- * Gen&lt;byte[]&gt; biasedGenerator = BytesGen.biased(5, 10);
- * byte[] biasedBytes = biasedGenerator.sample(new Random()).get();
- * </pre>
  *
  * @see Gen
  * @see Combinators
@@ -35,6 +24,7 @@ public final class BytesGen implements Gen<byte[]> {
     private BytesGen(int length) {
         this.length = length;
     }
+
     /**
      * Creates an arbitrary byte array generator with lengths between {@code minLength} and {@code maxLength} (inclusive).
      *

@@ -37,14 +37,12 @@ public class TestStrGen {
                                                     StrGen.biased(0,
                                                                   3).map(String::length));
 
-        System.out.println(count);
 
         Assertions.assertTrue(count.get(0) > count.get(1));
         Assertions.assertTrue(count.get(0) > count.get(2));
         Assertions.assertTrue(count.get(3) > count.get(1));
         Assertions.assertTrue(count.get(3) > count.get(2));
 
-        System.out.println(count);
 
     }
 

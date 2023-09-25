@@ -8,10 +8,14 @@ import java.util.*;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A class representing a record with named fields and associated values. This class provides methods for safely retrieving field values of various types from the record.
+ * A class representing a record with named fields and associated values. This class provides methods for safely retrieving
+ * field values of various types from the record.
  */
 public final class Record {
 
+    /**
+     * The underlying map that holds the record data
+     */
     public final Map<String, ?> map;
 
     /**
@@ -38,6 +42,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional long integer.
      *
@@ -53,6 +58,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional string.
      *
@@ -69,6 +75,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional integer.
      *
@@ -84,6 +91,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional decimal.
      *
@@ -99,12 +107,20 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional list of a generic type.
+     * <p>
+     * This method is used to get the value of a JSON field as a list of elements of a generic type. If the field
+     * exists and its value is a list, it returns an optional containing that list; otherwise, it returns an empty optional.
      *
      * @param key The name of the field.
+     * @param <O> The generic type of the elements in the list.
      * @return An optional containing the list value if present, otherwise an empty optional.
+     * @throws RecordTypeNotExpected If the field exists but its value is not a list, this exception is thrown, indicating
+     *                               that the expected type was a list, but the actual type was different.
      */
+
     @SuppressWarnings("unchecked")
     public <O> Optional<List<O>> getList(final String key) {
         Object value = map.get(key);
@@ -117,11 +133,18 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional set of a generic type.
+     * <p>
+     * This method is used to get the value of a JSON field as a set of elements of a generic type. If the field
+     * exists and its value is a set, it returns an optional containing that set; otherwise, it returns an empty optional.
      *
      * @param key The name of the field.
+     * @param <O> The generic type of the elements in the set.
      * @return An optional containing the set value if present, otherwise an empty optional.
+     * @throws RecordTypeNotExpected If the field exists but its value is not a set, this exception is thrown, indicating
+     *                               that the expected type was a set, but the actual type was different.
      */
     @SuppressWarnings("unchecked")
     public <O> Optional<Set<O>> getSet(final String key) {
@@ -135,11 +158,19 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional map of generic types for keys and values.
+     * <p>
+     * This method is used to get the value of a JSON field as a map with generic types for keys and values. If the field
+     * exists and its value is a map, it returns an optional containing that map; otherwise, it returns an empty optional.
      *
      * @param key The name of the field.
+     * @param <K> The generic type of map keys.
+     * @param <V> The generic type of map values.
      * @return An optional containing the map value if present, otherwise an empty optional.
+     * @throws RecordTypeNotExpected If the field exists but its value is not a map, this exception is thrown, indicating
+     *                               that the expected type was a map, but the actual type was different.
      */
     @SuppressWarnings("unchecked")
     public <K, V> Optional<Map<K, V>> getMap(final String key) {
@@ -169,6 +200,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional double precision floating-point number.
      *
@@ -184,6 +216,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional boolean.
      *
@@ -201,6 +234,7 @@ public final class Record {
         );
 
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional character.
      *
@@ -216,6 +250,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Retrieves the value associated with the specified field name as an optional big integer.
      *
@@ -231,6 +266,7 @@ public final class Record {
                                         key
         );
     }
+
     /**
      * Checks if this Record is equal to another object.
      *
@@ -245,6 +281,7 @@ public final class Record {
         return Objects.equals(map,
                               record.map);
     }
+
     /**
      * Computes a hash code for this Record.
      *

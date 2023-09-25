@@ -22,17 +22,6 @@ import static java.util.Objects.requireNonNull;
  * The methods are designed to be composable and flexible, allowing users to combine and modify generators
  * to suit their requirements.
  * <p>
- * Example usage:
- * <pre>
- * // Generate random integers between 1 and 10
- * Gen<Integer> randomIntGen = Gen.oneOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
- * Integer randomInt = randomIntGen.sample().get();
- *
- * // Generate a list of 3 random integers from a list of values
- * List<Integer> values = Arrays.asList(1, 2, 3, 4, 5);
- * Gen<List<Integer>> randomListGen = Gen.nOf(values, 3);
- * List<Integer> randomList = randomListGen.sample().get();
- * </pre>
  * Note: This class is intended for advanced usage and may require an understanding of functional programming
  * concepts.
  */

@@ -11,11 +11,6 @@ public class JsParserException extends RuntimeException {
 		super(reason);
 	}
 
-	private JsParserException(String reason, Throwable cause) {
-		super(reason, cause);
-	}
-	
-
 	public static JsParserException reasonAt(String reason, long index) {
 		return new JsParserException(reason+" @ position="+index);
 

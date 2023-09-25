@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 import static java.util.Objects.requireNonNull;
 
 /**
- * represent a JsArray generator. It can be created from the static factory methods biased and
+ * Represents a JsArray generator. It can be created from the static factory methods biased and
  * arbitrary, specifying an element generator that produces JsValue and the size of the array
  * (either a bound interval or a fixed size).
  */
@@ -33,12 +33,13 @@ public final class JsArrayGen implements Gen<JsArray> {
         this.gen = requireNonNull(gen);
     }
 
+
     /**
-     * returns an fixed-size array generator
+     * Returns a fixed-size array generator.
      *
-     * @param gen  the element generator
-     * @param size the size of the generated array
-     * @return a JsArray generator
+     * @param gen  The element generator.
+     * @param size The size of the generated array.
+     * @return A JsArray generator.
      */
 
     public static Gen<JsArray> ofN(final Gen<? extends JsValue> gen,
@@ -49,12 +50,12 @@ public final class JsArrayGen implements Gen<JsArray> {
     }
 
     /**
-     * returns an array generator
+     * Returns an array generator.
      *
-     * @param gen     the element generator
-     * @param minSize the minimum size of the arrays
-     * @param maxSize the maximum size of the arrays
-     * @return a JsArray generator
+     * @param gen     The element generator.
+     * @param minSize The minimum size of the arrays.
+     * @param maxSize The maximum size of the arrays.
+     * @return A JsArray generator.
      */
     public static Gen<JsArray> arbitrary(final Gen<? extends JsValue> gen,
                                          final int minSize,
@@ -76,12 +77,12 @@ public final class JsArrayGen implements Gen<JsArray> {
     }
 
     /**
-     * returns a biased array generator
+     * Returns a biased array generator.
      *
-     * @param gen     the element generator
-     * @param minSize the minimum size of the arrays
-     * @param maxSize the maximum size of the arrays
-     * @return a JsArray generator
+     * @param gen     The element generator.
+     * @param minSize The minimum size of the arrays.
+     * @param maxSize The maximum size of the arrays.
+     * @return A JsArray generator.
      */
     public static Gen<JsArray> biased(final Gen<? extends JsValue> gen,
                                       final int minSize,
@@ -113,12 +114,7 @@ public final class JsArrayGen implements Gen<JsArray> {
                 .collect(Collectors.toList()));
     }
 
-    /**
-     * Returns a supplier from the specified seed that generates a new JsArray each time it's called
-     *
-     * @param seed the generator seed
-     * @return a JsArray supplier
-     */
+
     @Override
     public Supplier<JsArray> apply(final Random seed) {
         return arraySupplier(gen.apply(requireNonNull(seed)),

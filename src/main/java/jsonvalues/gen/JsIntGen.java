@@ -11,44 +11,35 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- *
- * Represents a JsInstant generator. It can be created using the static factory methods
- * <code>biased</code> and <code>arbitrary</code> or, if none of the previous suit your
+ * Represents a JsInt generator. It can be created using the static factory methods
+ * {@link #biased()} and {@link #arbitrary()} or, if none of the previous suit your
  * needs, from an integer generator and the function map:
  *
  * <pre>{@code
- *      import fun.gen.Gen;
- *      import jsonvalues.JsInt;
+ * import fun.gen.Gen;
+ * import jsonvalues.JsInt;
  *
- *      Gen<Integer> intGen = seed -> () -> {...};
- *      Gen<JsInteger> jsIntGen = gen.map(JsInt::of)
- *      }
- *  </pre>
- *  <p>
- * Arbitrary generators produces uniformed distributions of values.
- * Biased generators produces, with higher probability, potential problematic values that
- * usually cause more bugs.
+ * Gen<Integer> intGen = seed -> () -> {...};
+ * Gen<JsInt> jsIntGen = gen.map(JsInt::of);
+ * }</pre>
  *
+ * Arbitrary generators produce values with a uniform distribution.
+ * Biased generators produce potential problematic values with a higher probability, which can help
+ * identify and test edge cases.
  */
 public final class JsIntGen implements Gen<JsInt> {
     private static final Gen<JsInt> biased = new JsIntGen(IntGen.biased());
     private static final Gen<JsInt> arbitrary = new JsIntGen(IntGen.arbitrary());
     private final Gen<Integer> gen;
 
-    /**
-     * Creates a JsInt generator from a specified integer generator
-     *
-     * @param gen the integer generator
-     */
+
     private JsIntGen(Gen<Integer> gen) {
         this.gen = Objects.requireNonNull(gen);
     }
 
     /**
-     * returns a biased generators that produces, with higher probability, potential problematic values
-     * that usually cause more bugs. These values are:
-     *
-     * <pre>
+     * Returns a biased generator that produces potential problematic values with a higher probability.
+     * These values include:
      * - {@link Integer#MIN_VALUE}
      * - {@link Short#MIN_VALUE}
      * - {@link Byte#MIN_VALUE}
@@ -56,30 +47,28 @@ public final class JsIntGen implements Gen<JsInt> {
      * - {@link Integer#MAX_VALUE}
      * - {@link Short#MAX_VALUE}
      * - {@link Byte#MAX_VALUE}
-     * </pre>
      *
-     *
-     * @return a biased JsInt generator
+     * @return A biased JsInt generator.
      */
     public static Gen<JsInt> biased() {
         return biased;
     }
 
     /**
-     * Returns a generator that produces values uniformly distributed
-     * @return a JsInt generator
+     * Returns a generator that produces values with a uniform distribution.
+     *
+     * @return A JsInt generator.
      */
     public static Gen<JsInt> arbitrary() {
         return arbitrary;
     }
 
     /**
-     * Returns a generator that produces values uniformly distributed over a specified interval
+     * Returns a generator that produces values uniformly distributed over a specified interval.
      *
-     * @param min lower bound of the interval (inclusive)
-     * @param max upper bound of the interval (inclusive)
-     *
-     * @return a biased JsInt generator
+     * @param min The lower bound of the interval (inclusive).
+     * @param max The upper bound of the interval (inclusive).
+     * @return A JsInt generator.
      */
     public static Gen<JsInt> arbitrary(int min,
                                        int max) {
@@ -89,17 +78,11 @@ public final class JsIntGen implements Gen<JsInt> {
 
 
     /**
-     * returns a biased generators that produces, with higher probability, potential problematic values
-     * that usually cause more bugs. These values are:
-     *
-     * <pre>
-     * - the lower bound of the interval
-     * - the upper bound of the interval
-     * </pre>
-     *
-     * and the following numbers provided that they are between the specified interval:
-     *
-     * <pre>
+     * Returns a biased generator that produces potential problematic values with a higher probability.
+     * These values include:
+     * - The lower bound of the interval
+     * - The upper bound of the interval
+     * And the following numbers, provided that they are between the specified interval:
      * - {@link Integer#MIN_VALUE}
      * - {@link Short#MIN_VALUE}
      * - {@link Byte#MIN_VALUE}
@@ -107,12 +90,10 @@ public final class JsIntGen implements Gen<JsInt> {
      * - {@link Integer#MAX_VALUE}
      * - {@link Short#MAX_VALUE}
      * - {@link Byte#MAX_VALUE}
-     * </pre>
      *
-     * @param min lower bound of the interval (inclusive)
-     * @param max upper bound of the interval (inclusive)
-     *
-     * @return a biased JsInt generator
+     * @param min The lower bound of the interval (inclusive).
+     * @param max The upper bound of the interval (inclusive).
+     * @return A biased JsInt generator.
      */
     public static Gen<JsInt> biased(int min,
                                     int max) {
@@ -120,11 +101,7 @@ public final class JsIntGen implements Gen<JsInt> {
                                           max));
     }
 
-    /**
-     * Returns a supplier from the specified seed that generates a new JsInt each time it's called
-     * @param seed the generator seed
-     * @return a JsInt supplier
-     */
+
     @Override
     public Supplier<JsInt> apply(final Random seed) {
         return gen.map(JsInt::of)

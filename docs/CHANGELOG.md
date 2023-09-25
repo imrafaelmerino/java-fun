@@ -6,3 +6,6 @@ Static factory methods to create specs and generators: up to 50 key-spec and key
 12.3.1
 Bug: Some static factory methods were missing in JsSpec
 
+12.3.2
+Improved javadoc
+Improved implementation of JsObjGen 

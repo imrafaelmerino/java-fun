@@ -219,7 +219,7 @@ public class JsArrayParserTest {
                                                         3,
                                                         3),
                                    "f",
-                                   JsArrayGen.arbitrary(JsIntGen.arbitrary(),
+                                   JsArrayGen.ofN(JsIntGen.arbitrary(),
                                                         3),
                                    "g",
                                    JsArrayGen.arbitrary(seed -> () -> {
@@ -258,10 +258,10 @@ public class JsArrayParserTest {
         Gen<JsValue> valueGen = Combinators.oneOf(JsBigIntGen.biased(10),
                                                   JsStrGen.biased(10));
         JsObjGen gen = JsObjGen.of("a",
-                                   JsArrayGen.arbitrary(JsStrGen.arbitrary(10),
+                                   JsArrayGen.ofN(JsStrGen.arbitrary(10),
                                                         10),
                                    "b",
-                                   JsArrayGen.arbitrary(JsStrGen.biased(10),
+                                   JsArrayGen.ofN(JsStrGen.biased(10),
                                                         10),
                                    "d",
                                    JsArrayGen.biased(valueGen,

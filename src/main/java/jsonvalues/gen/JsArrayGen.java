@@ -35,20 +35,22 @@ public final class JsArrayGen implements Gen<JsArray> {
 
     /**
      * returns an fixed-size array generator
+     *
      * @param gen  the element generator
      * @param size the size of the generated array
      * @return a JsArray generator
      */
 
-    public static Gen<JsArray> arbitrary(final Gen<? extends JsValue> gen,
-                                         final int size) {
+    public static Gen<JsArray> ofN(final Gen<? extends JsValue> gen,
+                                   final int size) {
         return new JsArrayGen(gen,
-                              size
+                size
         );
     }
 
     /**
      * returns an array generator
+     *
      * @param gen     the element generator
      * @param minSize the minimum size of the arrays
      * @param maxSize the maximum size of the arrays
@@ -63,18 +65,19 @@ public final class JsArrayGen implements Gen<JsArray> {
         return seed -> {
             Supplier<Integer> sizeSupplier =
                     IntGen.arbitrary(minSize,
-                                     maxSize)
-                          .apply(SplitGen.DEFAULT.apply(seed));
+                                    maxSize)
+                            .apply(SplitGen.DEFAULT.apply(seed));
 
             Supplier<? extends JsValue> elemSupplier = gen.apply(SplitGen.DEFAULT.apply(seed));
             return arraySupplier(elemSupplier,
-                                 sizeSupplier);
+                    sizeSupplier);
         };
 
     }
 
     /**
      * returns a biased array generator
+     *
      * @param gen     the element generator
      * @param minSize the minimum size of the arrays
      * @param maxSize the maximum size of the arrays
@@ -87,17 +90,14 @@ public final class JsArrayGen implements Gen<JsArray> {
         if (maxSize < minSize) throw new IllegalArgumentException("maxSize < minSize");
         requireNonNull(gen);
         return Combinators.freq(Pair.of(1,
-                                           new JsArrayGen(gen,
-                                                          minSize
-                                           )),
-                                Pair.of(1,
-                                           new JsArrayGen(gen,
-                                                          maxSize
-                                           )),
-                                Pair.of(2,
-                                           JsArrayGen.arbitrary(gen,
-                                                                minSize,
-                                                                maxSize)));
+                        new JsArrayGen(gen, minSize)),
+                Pair.of(1,
+                        new JsArrayGen(gen,
+                                maxSize)),
+                Pair.of(2,
+                        JsArrayGen.arbitrary(gen,
+                                minSize,
+                                maxSize)));
 
 
     }
@@ -108,9 +108,9 @@ public final class JsArrayGen implements Gen<JsArray> {
 
 
         return () -> JsArray.ofIterable(IntStream.range(0,
-                                                        sizeSupplier.get())
-                                                 .mapToObj(i -> elemSupplier.get())
-                                                 .collect(Collectors.toList()));
+                        sizeSupplier.get())
+                .mapToObj(i -> elemSupplier.get())
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -122,7 +122,7 @@ public final class JsArrayGen implements Gen<JsArray> {
     @Override
     public Supplier<JsArray> apply(final Random seed) {
         return arraySupplier(gen.apply(requireNonNull(seed)),
-                             () -> size);
+                () -> size);
     }
 
 

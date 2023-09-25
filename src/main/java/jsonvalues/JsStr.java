@@ -18,15 +18,19 @@ import static java.util.Objects.requireNonNull;
 public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
 
     /**
-     * prism between the sum type JsValue and JsStr
+     * Prism between the sum type JsValue and JsStr.
+     * Allows conversion between JsValue and JsStr using a prism.
      */
     public static final Prism<JsValue, String> prism =
             new Prism<>(s -> s.isStr() ?
-                             Optional.of(s.toJsStr().value) :
-                             Optional.empty(),
+                    Optional.of(s.toJsStr().value) :
+                    Optional.empty(),
                         JsStr::of
             );
 
+    /**
+     * Prism for converting between Base64-encoded strings and byte arrays.
+     */
     public static final Prism<String, byte[]> base64Prism =
             new Prism<>(s -> {
                 try {
@@ -39,6 +43,9 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
                         bytes -> Base64.getEncoder().encodeToString(bytes)
             );
 
+    /**
+     * Prism for converting between ISO-8601 formatted strings and Instant objects.
+     */
     public static final Prism<String, Instant> instantPrism =
             new Prism<>(s -> {
                 try {
@@ -100,9 +107,9 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
     }
 
     /**
-     * Returns the hashcode of this json string.
+     * Returns the hashcode of this JSON string.
      *
-     * @return hashcode of this JsStr
+     * @return the hashcode of this JsStr
      */
     @Override
     public int hashCode() {
@@ -110,19 +117,20 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
     }
 
     /**
-     * Indicates whether some other object is "equal to" this json string.
+     * Indicates whether some other object is "equal to" this JSON string.
      *
-     * @param that the reference object with which to compare.
-     * @return true if <code>that</code> is a JsStr with the same value as <code>this</code> JsStr
+     * @param that the reference object with which to compare
+     * @return true if <code>that</code> is a JsStr with the same value as <code>this</code> JsStr.
+     *         If <code>that</code> is a JsInstant or JsBinary, equality is based on their conversion to strings:
+     *         - JsInstant is considered equal if its string representation (ISO-8601 format) matches the value of this JsStr.
+     *         - JsBinary is considered equal if its Base64-encoded string representation matches the value of this JsStr.
      */
     @Override
     public boolean equals(final Object that) {
         if (this == that) return true;
         if (that == null) return false;
         if (that instanceof JsStr thatStr) {
-            return Objects.equals(value,
-                                  thatStr.value
-            );
+            return Objects.equals(value, thatStr.value);
         }
         if (that instanceof JsInstant)
             return JsStr.instantPrism.reverseGet.apply(((JsInstant) that).value).equals(value);
@@ -132,9 +140,9 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
     }
 
     /**
-     * Returns the string representation of this json string which is its value quoted.
+     * Returns the string representation of this JSON string which is its value quoted.
      *
-     * @return the value quoted.
+     * @return the value quoted
      */
     @Override
     public String toString() {

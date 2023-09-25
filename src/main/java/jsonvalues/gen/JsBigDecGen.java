@@ -89,6 +89,19 @@ public final class JsBigDecGen implements Gen<JsBigDec> {
     }
 
     /**
+     * Returns a generator that produces values uniformly distributed over a specified interval
+     *
+     * @param min lower bound of the interval (inclusive)
+     * @param max upper bound of the interval (inclusive)
+     * @return a biased JsBigDec generator
+     */
+    public static Gen<JsBigDec> arbitrary(final long min,
+                                          final long max) {
+         return arbitrary(BigDecimal.valueOf(min),
+                          BigDecimal.valueOf(max));
+    }
+
+    /**
      * returns a biased generators that produces, with higher probability, potential problematic values
      * that usually cause more bugs. These values are:
      *

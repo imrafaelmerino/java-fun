@@ -29,13 +29,13 @@ public class TestGenerators {
         final Gen<JsObj> gen = JsObjGen.of("a",
                                            IntGen.arbitrary(0,
                                                             10)
-                                                 .then(n -> JsArrayGen.arbitrary(JsStrGen.alphanumeric(0,
+                                                 .then(n -> JsArrayGen.ofN(JsStrGen.alphanumeric(0,
                                                                                                        10),
                                                                                  n)),
                                            "b",
                                            IntGen.arbitrary(0,
                                                             10
-                                           ).then(n -> JsArrayGen.arbitrary(JsIntGen.arbitrary(),
+                                           ).then(n -> JsArrayGen.ofN(JsIntGen.arbitrary(),
                                                                             n)
                                            )
         );
@@ -101,7 +101,7 @@ public class TestGenerators {
     @Test
     public void test_nested_gen() {
         JsObjGen gen = JsObjGen.of("a",
-                                   JsArrayGen.arbitrary(JsStrGen.alphanumeric(0,
+                                   JsArrayGen.ofN(JsStrGen.alphanumeric(0,
                                                                               10),
                                                         5),
                                    "b",
@@ -327,7 +327,7 @@ public class TestGenerators {
     @Test
     public void testDigits() {
 
-        final Gen<JsArray> gen = JsArrayGen.arbitrary(JsStrGen.digit(),
+        final Gen<JsArray> gen = JsArrayGen.ofN(JsStrGen.digit(),
                                                       10);
 
         Assertions.assertTrue(

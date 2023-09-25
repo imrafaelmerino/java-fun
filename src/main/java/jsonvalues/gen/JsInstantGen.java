@@ -55,19 +55,24 @@ public final class JsInstantGen implements Gen<JsInstant> {
     public static Gen<JsInstant> arbitrary(long min,
                                            long max) {
         return new JsInstantGen(InstantGen.arbitrary(min,
-                                                     max));
+                max));
     }
 
     public static Gen<JsInstant> arbitrary(final ZonedDateTime min,
                                            final ZonedDateTime max) {
         return new JsInstantGen(InstantGen.arbitrary(min,
-                                                     max));
+                max));
     }
 
     public static Gen<JsInstant> biased(long min,
                                         long max) {
         return new JsInstantGen(InstantGen.biased(min,
-                                                  max));
+                max));
+    }
+
+    public static Gen<JsInstant> biased(ZonedDateTime min,
+                                        ZonedDateTime max) {
+        return new JsInstantGen(InstantGen.biased(min, max));
     }
 
     /**
@@ -79,6 +84,6 @@ public final class JsInstantGen implements Gen<JsInstant> {
     @Override
     public Supplier<JsInstant> apply(final Random seed) {
         return gen.map(JsInstant::of)
-                  .apply(requireNonNull(seed));
+                .apply(requireNonNull(seed));
     }
 }

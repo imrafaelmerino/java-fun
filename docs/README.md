@@ -1435,9 +1435,3 @@ After the development of json-values, I published some more related projects:
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
 * [json-scala-values](https://github.com/imrafaelmerino/json-scala-values) The Scala version
 
-## <a name="sponsor"><a/> Sponsors
-
-IntelliJ IDEA is my preferred IDE to develop json-values.
-JetBrains supports open source projects like json-values with its products.
-
-[![IntelliJIDEA](./IntelliJ_IDEA.png)](https://jb.gg/OpenSourceSupport)

@@ -33,14 +33,14 @@ And to make matters worse: complexity sells better._”
 
 Simplify JSON creation with a concise syntax:
 
-```java 
+```code 
 
 JsObj.of("name",JsStr.of("Rafael"),
         "languages",JsArray.of("Java","Scala","Kotlin"),
         "age",JsInt.of(1),
         "address",JsObj.of("street",JsStr.of("Elm Street"),
-        "coordinates",JsArray.of(3.32,40.4)
-        )
+                           "coordinates",JsArray.of(3.32,40.4)
+                          )
         );
 
 ```
@@ -49,19 +49,19 @@ JsObj.of("name",JsStr.of("Rafael"),
 
 Easily define JSON validation rules using a clear and expressive syntax:
 
-```java 
+```code 
 
 JsObjSpec spec=
         JsObjSpec.of("name",str(),
-        "languages",arrayOfStr(),
-        "age",integer(),
-        "address",JsObjSpec.of("street",str(),
-        "coordinates",tuple(decimal(),
-        decimal()
-        )
-        )
-        )
-        .withOptKeys("address");
+                     "languages",arrayOfStr(),
+                     "age",integer(),
+                     "address",JsObjSpec.of("street",str(),
+                                            "coordinates",tuple(decimal(),
+                                                                decimal()
+                                                               )
+                                            )
+                     )
+                  .withOptKeys("address");
 
 ```   
 
@@ -70,23 +70,24 @@ JsObjSpec spec=
 Creating complex JSON structures can be a daunting task, especially when dealing with deeply nested or intricate data.
 With **json-values**, this process becomes remarkably simple.
 
-```java 
+```code 
 
 Gen<JsObj> gen=
         JsObjGen.of("name",JsStrGen.biased(0,100),
-        "languages",JsArrayGen.biased(JsStrGen.digit(),0,10),
-        "age",JsIntGen.biased(0,100),
-        "address",JsObjGen.of("street",JsStrGen.alphanumeric(0,200),
-        "coordinates",JsTupleGen.of(JsBigDecGen.biased(),
-        JsBigDecGen.biased())
-        )
-        )
-        .withAllOptKeys();
+                    "languages",JsArrayGen.biased(JsStrGen.digit(),0,10),
+                    "age",JsIntGen.biased(0,100),
+                    "address",JsObjGen.of("street",JsStrGen.alphanumeric(0,200),
+                                          "coordinates",JsTupleGen.of(JsBigDecGen.biased(),
+                                                                      JsBigDecGen.biased()
+                                                                     )
+                                         )
+                   )
+                 .withAllOptKeys();
 
 
-        Gen<JsObj> validDataGen=gen.suchThat(spec);
+Gen<JsObj> validDataGen = gen.suchThat(spec);
 
-        Gen<JsObj> invalidDataGen=gen.suchThatNo(spec);
+Gen<JsObj> invalidDataGen = gen.suchThatNo(spec);
 
 ```
 
@@ -99,20 +100,18 @@ values known to trigger bugs.
 
 Perform JSON manipulation free of null checks and if-else conditions using optics:
 
-```java 
-
+```code 
 
 //let's craft a function using lenses and optionals
 
-Function<JsObj, JsObj> modify=
-        ageLens.modify.apply(n->n+1)
+Function<JsObj, JsObj> modify = ageLens.modify.apply(n->n+1)
         .andThen(nameLens.modify.apply(String::trim))
         .andThen(cityOpt.set.apply("Paris"))
-        .andThen(latitudeLens.modify.apply(lat->-lat))
+        .andThen(latitudeLens.modify.apply(lat -> -lat))
         .andThen(languagesLens.modify.apply(lan->lan.append(JsStr.of("Clojure"))));
 
 
-        JsObj updated=modify.apply(person);
+JsObj updated = modify.apply(person);
 
 ```
 
@@ -134,14 +133,14 @@ putting optics together (composition is key to handle complexity).
 - Transform keys, values, or both effortlessly, allowing you to adapt data to your specific needs.
 - Apply filters to remove unwanted data, ensuring your JSON conforms to your expectations.
 
-```java 
+```code 
 // Define a function to convert keys to snake_case
 Function<String, String> toSneakCase=key->{...};
 
 // Map keys to snake_case, trim string values, and filter out null values
-        json.mapKeys(toSneakCase)
-        .mapValues(JsStr.prism.modify.apply(String::trim))
-        .filterValues(JsValue::isNotNull);
+json.mapKeys(toSneakCase)
+    .mapValues(JsStr.prism.modify.apply(String::trim))
+    .filterValues(JsValue::isNotNull);
 
 ```
 
@@ -258,42 +257,46 @@ can be either a key or an index. There are two convenient ways to create a `JsPa
 - Parsing from a Path-Like String: You can parse a path-like string using the static factory method `JsPath.path`. The
   path string should follow the JSON Pointer specification defined in [RFC 6901](http://tools.ietf.org/html/rfc6901).
 
-```java   
+```code   
 
-JsPath path=JsPath.path("/a/b/0");
+JsPath path = JsPath.path("/a/b/0");
 
-        Position head=path.head();
+Position head = path.head();
 
-        Assertions.assertEquals(head,
-        Key.of("a")
-        );
+Assertions.assertEquals(head,
+                        Key.of("a")
+                       );
 
-        JsPath tail=path.tail();
+JsPath tail = path.tail();
 
-        Assertions.assertEquals(tail.head(),
-        Key.of("b")
-        );
+Assertions.assertEquals(tail.head(),
+                        Key.of("b")
+                       );
 
-        Assertions.assertEquals(tail.last(),
-        Index.of(0)
-        );
+Assertions.assertEquals(tail.last(),
+                        Index.of(0)
+                       );
 ```
 
 - Creating Incrementally: Alternatively, you can create a JsPath incrementally using static factory methods
   JsPath.fromKey or JsPath.fromIndex to start with a one-position path. Then, use the key or index methods to append
   more keys or indexes.
 
-```java   
+```code   
 
-JsPath.fromKey("a").key("b").index(0);
+JsPath.fromKey("a")
+      .key("b")
+      .index(0);
 
 ```
 
 Or, you can start with an empty path:
 
-```java   
+```code   
 
-JsPath.empty().key("a").key("b").index(0);
+JsPath.empty().key("a")
+              .key("b")
+              .index(0);
 
 ```
 
@@ -340,18 +343,18 @@ Here's the hierarchical class structure of **json-values**:
 
 For example, consider the following JSON representations, `xs` and `ys`:
 
-```java
-JsObj xs=JsObj.of("a",JsInt.of(1000),
-        "b",JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
-        "c",JsInstant.of("2022-05-25T14:27:37.353Z"),
-        "d",JsStr.of("aGkh")
-        );
+```code
+JsObj xs = JsObj.of("a",JsInt.of(1000),
+                    "b",JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
+                    "c",JsInstant.of("2022-05-25T14:27:37.353Z"),
+                    "d",JsStr.of("aGkh")
+                   );
 
-        JsObj ys=JsObj.of("b",JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
-        "a",JsLong.of(1000L),
-        "d",JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
-        "c",JsStr.of("2022-05-25T14:27:37.353Z")
-        );
+JsObj ys = JsObj.of("b",JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
+                    "a",JsLong.of(1000L),
+                    "d",JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
+                    "c",JsStr.of("2022-05-25T14:27:37.353Z")
+                   );
 
 ```
 
@@ -370,10 +373,10 @@ Despite the differences in types and key orders, both xs and ys represent the sa
 
 As a result, json-values considers them equal, including their hashcodes:
 
-````java  
+````code  
 
 Assertions.assertEquals(xs,ys);
-        Assertions.assertEquals(xs.hashcode(),ys.hashcode());
+Assertions.assertEquals(xs.hashcode(), ys.hashcode());
 
 ````
 
@@ -434,25 +437,25 @@ Let's start with creating a JSON object that represents a person:
 
 **Using the static factory methods:**
 
-```java     
+```code     
 
 JsObj person=
         JsObj.of("name",JsStr.of("Rafael"),
-        "surname",JsStr.of("Merino"),
-        "phoneNumber",JsStr.of("6666666"),
-        "registrationDate",JsInstant.of("2019-01-21T05:47:26.853Z"),
-        "addresses",JsArray.of(JsObj.of("coordinates",JsArray.of(39.8581,-4.02263),
-        "city",JsStr.of("Toledo"),
-        "zipCode",JsStr.of("45920"),
-        "tags",JsArray.of("workAddress")
-        ),
-        JsObj.of("coordinates",JsArray.of(40.4168,3.7038),
-        "city",JsStr.of("Madrid"),
-        "zipCode",JsStr.of("28029"),
-        "tags",JsArray.of("homeAddress","amazon")
-        )
-        )
-        );
+                 "surname",JsStr.of("Merino"),
+                 "phoneNumber",JsStr.of("6666666"),
+                 "registrationDate",JsInstant.of("2019-01-21T05:47:26.853Z"),
+                 "addresses",JsArray.of(JsObj.of("coordinates",JsArray.of(39.8581,-4.02263),
+                                                 "city",JsStr.of("Toledo"),
+                                                 "zipCode",JsStr.of("45920"),
+                                                 "tags",JsArray.of("workAddress")
+                                                 ),
+                                        JsObj.of("coordinates",JsArray.of(40.4168,3.7038),
+                                                 "city",JsStr.of("Madrid"),
+                                                 "zipCode",JsStr.of("28029"),
+                                                 "tags",JsArray.of("homeAddress","amazon")
+                                                 )
+                                        )
+                 );
 
 ```
 
@@ -462,32 +465,30 @@ allowing you to nest JSON objects as needed.
 Rather than specifying keys within a nested structure, you can create a JSON object directly from their respective
 paths, offering a highly convenient alternative:
 
-```java   
+```code   
 
-JsObj person=
+JsObj person =
         JsObj.of(path("/name"),JsStr.of("Rafael"),
-        path("/surname"),JsStr.of("Merino"),
-        path("/phoneNumber"),JsStr.of("6666666"),
-        path("/registrationDate"),JsInstant.of("2019-01-21T05:47:26.853Z"),
-        path("/addresses/0/coordinates/0"),JsDouble.of(39.8581),
-        path("/addresses/0/coordinates/1"),JsDouble.of(-4.02263),
-        path("/addresses/0/city"),JsStr.of("Toledo"),
-        path("/addresses/0/tags"),JsArray.of("workAddress"),
-        path("/addresses/1/coordinates/0"),JsDouble.of(40.4168),
-        path("/addresses/1/coordinates/1"),JsDouble.of(3.7038),
-        path("/addresses/1/city"),JsStr.of("Madrid"),
-        path("/addresses/1/tags"),JsArray.of("homeAddress")
-        );
+                 path("/surname"),JsStr.of("Merino"),
+                 path("/phoneNumber"),JsStr.of("6666666"),
+                 path("/registrationDate"),JsInstant.of("2019-01-21T05:47:26.853Z"),
+                 path("/addresses/0/coordinates/0"),JsDouble.of(39.8581),
+                 path("/addresses/0/coordinates/1"),JsDouble.of(-4.02263),
+                 path("/addresses/0/city"),JsStr.of("Toledo"),
+                 path("/addresses/0/tags"),JsArray.of("workAddress"),
+                 path("/addresses/1/coordinates/0"),JsDouble.of(40.4168),
+                 path("/addresses/1/coordinates/1"),JsDouble.of(3.7038),
+                 path("/addresses/1/city"),JsStr.of("Madrid"),
+                 path("/addresses/1/tags"),JsArray.of("homeAddress")
+                );
 
 ```
 
 **Parsing a string and the schema of the JSON object is unknown:**
 
-```java   
+```code   
 
-JsObj a=JsObj.parse("{...}");
-
-        JsObj b=JsObj.parseYaml("  ");
+JsObj a = JsObj.parse("{...}");
 
 ```
 
@@ -498,12 +499,12 @@ We'll talk about this option later on when I introduce json-spec.
 
 **Creating an empty object (or from an existing JsObj) and adding new values with the method _set_:**
 
-```java   
+```code   
 
 JsObj person=
         JsObj.empty().set("name",JsStr.of("Rafael"))
-        .set("surname",JsStr.of("Merino"))
-        .set("phoneNumber",JsStr.of("6666666"));
+                     .set("surname",JsStr.of("Merino"))
+                     .set("phoneNumber",JsStr.of("6666666"));
 
 ```
 
@@ -513,41 +514,44 @@ Remember that a JSON is immutable, so the set method returns a brand-new value.
 
 **From primitive types using the static factory method _of_ and _varargs_:**
 
-```java   
+```code   
 
-JsArray a=JsArray.of("apple","orange","pear");
+JsArray a = JsArray.of("apple",
+                      "orange",
+                      "pear");
 
-        JsArray b=JsArray.of(1,2,3,4);
+JsArray b = JsArray.of(1, 2, 3, 4);
 
 ```
 
 **From JSON values using the static factory method _of_ and _varargs_:**
 
-```java   
+```code   
 
-JsArray a=JsArray.of(JsStr.of("hi"),JsInt.of(1),JsBool.TRUE,JsNull.NULL);
+JsArray a = JsArray.of(JsStr.of("hi"), 
+                       JsInt.of(1), 
+                       JsBool.TRUE, 
+                       JsNull.NULL);
 
 ```
 
 **From an iterable of JSON values:**
 
-```java    
+```code    
 
-List<JsValue> list=new ArrayList<>();
-        Set<JsValue> set=new HashSet<>();
+List<JsValue> list = new ArrayList<>();
+Set<JsValue> set = new HashSet<>();
 
-        JsArray.ofIterable(list);
-        JsArray.ofIterable(set);
+JsArray.ofIterable(list);
+JsArray.ofIterable(set);
 
 ```
 
 **Parsing a string and the schema of the JSON array is unknown:**
 
-```java   
+```code   
 
-JsArray a=JsArray.parse("[...]");
-
-        JsArray b=JsArray.parseYaml("[....]");
+JsArray a = JsArray.parse("[...]");
 
 ```
 
@@ -559,16 +563,19 @@ I introduce json-spec.
 
 **Creating an empty array and adding new values with the methods _append_ and _prepend_:**
 
-```java   
+```code   
 
-JsArray a=JsArray.empty().append(JsInt.of(1))
-        .prepend(JsInt.of(0));
+JsArray a = JsArray.empty().append(JsInt.of(1))
+                           .prepend(JsInt.of(0));
 
-        JsArray b=JsArray.empty().append(JsInt.of(3))
-        .prepend(JsInt.of(2));
+JsArray b=JsArray.empty().append(JsInt.of(3))
+                         .prepend(JsInt.of(2));
 
-        Assertions.assertEquals(JsArray.of(0,1,2,3),a.appendAll(b));
-        Assertions.assertEquals(JsArray.of(2,3,0,1),a.prependAll(b));
+Assertions.assertEquals(JsArray.of(0,1,2,3), 
+                        a.appendAll(b));
+
+Assertions.assertEquals(JsArray.of(2,3,0,1), 
+                        a.prependAll(b));
 
 ```
 
@@ -713,11 +720,11 @@ String getStr(JsPath path, Supplier<String> orElse);
 
 To retrieve data from the first level of a JSON, you can simply pass in the key or index, which is less verbose:
 
-```java   
+```code   
 
 obj.getStr("a")
-
-        array.getStr(0)
+        
+array.getStr(0)
 
 ```
 
@@ -851,31 +858,30 @@ specifications, often referred to as "specs," to validate JSON data.
 You can define JSON specs in a concise and expressive manner, making the validation
 process straightforward. Consider the following example of a JSON spec for a person's data:
 
-```java   
+```code   
 
-JsObjSpec personSpec=
+JsObjSpec personSpec =
         JsObjSpec.of("name",str(),
-        "surname",str(),
-        "phoneNumber",str(),
-        "registrationDate",instant(),
-        "addresses",arrayOfObjSpec(JsObjSpec.of("coordinates",
-        tuple(decimal(),
-        decimal()
-        ),
-        "city",str(),
-        "tags",arrayOfStr(),
-        "zipCode",str()
-        )
-        .lenient()
-        )
-        );
+                     "surname",str(),
+                     "phoneNumber",str(),
+                     "registrationDate",instant(),
+                     "addresses",arrayOfObjSpec(JsObjSpec.of("coordinates",tuple(decimal(),
+                                                                                 decimal()
+                                                                                ),
+                                                             "city",str(),
+                                                             "tags",arrayOfStr(),
+                                                             "zipCode",str()
+                                                             )
+                                                         .lenient()
+                                                )
+                     );
 
-        Set<SpecError> errors=personSepc.test(person);
+Set<SpecError> errors=personSepc.test(person);
 
-        Function<SpecError, String> toStr=
-        error->error.value+" @ "+error.path+" doesn't conform spec: "+error.codeCode;
+Function<SpecError, String> toStr =
+        error -> error.value+" @ " + error.path + " doesn't conform spec: " + error.codeCode;
 
-        errors.forEach(pair->System.out.println(toStr.apply(pair)));
+errors.forEach(pair->System.out.println(toStr.apply(pair)));
 
 ```
 
@@ -885,52 +891,49 @@ as calling the method _lenient_.
 
 The real power is that you can create specs from predicates and compose them:
 
-```java   
+```code   
 
-BiFunction<Integer, Integer, Predicate<String>>lengthBetween=
-        (min,max)->string->string.length()<=max&&
-        string.length()>=min;
+BiFunction<Integer, Integer, Predicate<String>> lengthBetween=
+        (min,max) -> string -> string.length() <= max && string.length() >= min;
 
-        BiFunction<Instant, Instant, Predicate<Instant>>instantBetween=
-        (min,max)->instant->min.isBefore(instant)&&
-        max.isAfter(instant);
+BiFunction<Instant, Instant, Predicate<Instant>> instantBetween=
+        (min,max) -> instant -> min.isBefore(instant) && max.isAfter(instant);
 
-        BiFunction<Long, Long, Predicate<BigDecimal>>decBetween=
-        (min,max)->n->BigDecimal.valueOf(min).compareTo(n)< 0&&
-        BigDecimal.valueOf(max).compareTo(n)>0;
+BiFunction<Long, Long, Predicate<BigDecimal>> decBetween=
+        (min,max) ->n -> BigDecimal.valueOf(min).compareTo(n) < 0 && BigDecimal.valueOf(max).compareTo(n)>0;
 
-        int MAX_NAME_LENGTH=10;
-        int MAX_SURNAME_LENGTH=10;
-        int MAX_PHONE_LENGTH=10;
-        int MAX_CITY_LENGTH=20;
-        int MAX_TAG_LENGTH=20;
-        int MAX_ZIPCODE_LENGTH=30;
-        int MIN_ADDRESSES_SIZE=1;
-        int MAX_ADDRESSES_SIZE=100;
-        int MAX_TAGS_SIZE=10;
-        long LAT_MIN=-90;
-        long LAT_MAX=90;
-        long LON_MIN=-180;
-        long LON_MAX=180;
+int MAX_NAME_LENGTH=10;
+int MAX_SURNAME_LENGTH=10;
+int MAX_PHONE_LENGTH=10;
+int MAX_CITY_LENGTH=20;
+int MAX_TAG_LENGTH=20;
+int MAX_ZIPCODE_LENGTH=30;
+int MIN_ADDRESSES_SIZE=1;
+int MAX_ADDRESSES_SIZE=100;
+int MAX_TAGS_SIZE=10;
+long LAT_MIN=-90;
+long LAT_MAX=90;
+long LON_MIN=-180;
+long LON_MAX=180;
 
 
-        Predicate<String> nameSpec=lengthBetween.apply(0,MAX_NAME_LENGTH);
+Predicate<String> nameSpec = lengthBetween.apply(0,MAX_NAME_LENGTH);
 
-        Predicate<String> surnameSpec=lengthBetween.apply(0,MAX_SURNAME_LENGTH);
+Predicate<String> surnameSpec = lengthBetween.apply(0,MAX_SURNAME_LENGTH);
 
-        Predicate<String> phoneSpec=lengthBetween.apply(0,MAX_PHONE_LENGTH);
+Predicate<String> phoneSpec = lengthBetween.apply(0,MAX_PHONE_LENGTH);
 
-        Predicate<Instant> registrationDateSpec=instantBetween.apply(Instant.EPOCH,Instant.MAX);
+Predicate<Instant> registrationDateSpec = instantBetween.apply(Instant.EPOCH,Instant.MAX);
 
-        Predicate<BigDecimal> latitudeSpec=decBetween.apply(LAT_MIN,LAT_MAX);
+Predicate<BigDecimal> latitudeSpec = decBetween.apply(LAT_MIN,LAT_MAX);
 
-        Predicate<BigDecimal> longitudeSpec=decBetween.apply(LON_MIN,LON_MAX);
+Predicate<BigDecimal> longitudeSpec = decBetween.apply(LON_MIN,LON_MAX);
 
-        Predicate<String> citySpec=lengthBetween.apply(0,MAX_CITY_LENGTH);
+Predicate<String> citySpec = lengthBetween.apply(0,MAX_CITY_LENGTH);
 
-        Predicate<String> tagSpec=lengthBetween.apply(0,MAX_TAG_LENGTH);
+Predicate<String> tagSpec = lengthBetween.apply(0,MAX_TAG_LENGTH);
 
-        Predicate<String> zipCodeSpec=lengthBetween.apply(0,MAX_ZIPCODE_LENGTH);
+Predicate<String> zipCodeSpec = lengthBetween.apply(0,MAX_ZIPCODE_LENGTH);
 
 
         JsObjSpec personSpec=
@@ -990,21 +993,21 @@ an object. For example, suppose we have a schema representing a customer. If you
 have their credit card number, you also want to ensure you have a billing address.
 If you don’t have their credit card number, a billing address would not be required:
 
-```java 
+```code 
 
-Predicate<JsObj> existsBillingIfCard=o->{
-        if(o.containsKey("credit_card")
-        &&!o.containsKey("billing_address"))return false;
-        return true;
+Predicate<JsObj> existsBillingIfCard = 
+     o->{
+          if(o.containsKey("credit_card") && !o.containsKey("billing_address")) return false;
+          return true;
         };
 
-        JsObjSpec customerSpec=
+JsObjSpec customerSpec=
         JsObjSpec.of("credit_card",str(),
-        "billing_address",str()
-        )
-        .withOptKeys("credit_card",
-        "billing_address")
-        .suchThat(existsBillingIfCard);
+                     "billing_address",str()
+                     )
+                 .withOptKeys("credit_card",
+                              "billing_address")
+                 .suchThat(existsBillingIfCard);
 
 ```
 
@@ -1012,22 +1015,18 @@ Another exciting thing we can do with specs is parsing strings or bytes. Instead
 the whole JSON and then validating it, we can verify the schema while parsing it and
 stop the process as soon as an error happens. **After all, failing fast is important as well!**
 
-```java     
+```code     
 
 JsObjSpecParser personParser=new JsObjSpecParser(personSpec);
 
-        String string="{...}";
+String string="{...}";
 
-        try{
-
-        JsObj person=personParser.parse(string);
-
-        }
-        catch(JsParserException e){
-
-        System.out.println("Error parsing person JSON: "+e.getMessage())
-
-        }
+try{
+     JsObj person=personParser.parse(string);
+   }
+catch(JsParserException e){
+     System.out.println("Error parsing person JSON: " +e.getMessage())
+}
 
 ```
 
@@ -1114,34 +1113,31 @@ more manageable, as generators adapt to changes in your JSON schemas effortlessl
 
 Let's develop some generators:
 
-```java     
+```code     
 
 Gen<JsArray> addressGen=
-        JsArrayGen.biased(JsObjGen.of("coordinates",
-        JsTupleGen.of(JsBigDecGen.biased(LAT_MIN,LAT_MAX),
-        JsBigDecGen.biased(LON_MIN,LON_MAX)
-        ),
-        "city",JsStrGen.biased(0,MAX_CITY_LENGTH),
-        "tags",JsArrayGen.biased(JsStrGen.biased(0,
-        MAX_TAG_LENGTH
-        ),
-        0,
-        MAX_TAGS_SIZE
-        ),
-        "zipCode",JsStrGen.biased(0,MAX_ZIPCODE_LENGTH)
-        )
-        .withOptKeys("tags","zipCode","city"),
-        MIN_ADDRESSES_SIZE,
-        MAX_ADDRESSES_SIZE
-        );
-        Gen<JsObj> personGen=
+        JsArrayGen.biased(JsObjGen.of("coordinates",JsTupleGen.of(JsBigDecGen.biased(LAT_MIN,LAT_MAX),
+                                                                  JsBigDecGen.biased(LON_MIN,LON_MAX)
+                                                                  ),
+                                      "city",JsStrGen.biased(0, MAX_CITY_LENGTH),
+                                      "tags",JsArrayGen.biased(JsStrGen.biased(0,MAX_TAG_LENGTH),
+                                                               0,
+                                                               MAX_TAGS_SIZE
+                                                               ),
+                                      "zipCode",JsStrGen.biased(0,MAX_ZIPCODE_LENGTH)
+                                      )
+                                   .withOptKeys("tags","zipCode","city"),
+                          MIN_ADDRESSES_SIZE,
+                          MAX_ADDRESSES_SIZE
+                          );
+Gen<JsObj> personGen = 
         JsObjGen.of("name",JsStrGen.biased(0,MAX_NAME_LENGTH),
-        "surname",JsStrGen.biased(0,MAX_NAME_LENGTH),
-        "phoneNumber",JsStrGen.biased(0,MAX_PHONE_LENGTH),
-        "registrationDate",JsInstantGen.biased(0,Instant.MAX.getEpochSecond()),
-        "addresses",addressGen
-        )
-        .withOptKeys("surname","phoneNumber","addresses");
+                    "surname",JsStrGen.biased(0,MAX_NAME_LENGTH),
+                    "phoneNumber",JsStrGen.biased(0,MAX_PHONE_LENGTH),
+                    "registrationDate",JsInstantGen.biased(0,Instant.MAX.getEpochSecond()),
+                    "addresses",addressGen
+                    )
+                .withOptKeys("surname","phoneNumber","addresses");
 
 ```
 
@@ -1170,16 +1166,16 @@ By employing the suchThat function, you essentially perform a brute force operat
 ensures that, regardless of the complexity involved, your generator adheres precisely to your desired criteria,
 guaranteeing the generation of data with the specified properties.
 
-```java 
+```code 
 
-//
 
-Gen<JsObj> newPersonGen=
-        personGen.suchThat(p->
-        p.get("addresses").isNotNothing()&&
-        p.get("phoneNumber").isNotNothing()&&
-        p.get("surname").isNotNothing()
-        );
+
+Gen<JsObj> newPersonGen = 
+    personGen.suchThat(p->
+                         p.get("addresses").isNotNothing() &&
+                         p.get("phoneNumber").isNotNothing() &&
+                         p.get("surname").isNotNothing()
+                      );
 
 ```
 
@@ -1196,13 +1192,13 @@ library's readme.
 
 Let's dive into a top-down approach and explore an example of a function crafted with optics:
 
-```java    
-Function<JsObj, JsObj> modifyPerson=
-        modifyAge.apply(n->n+1)
-        .andThen(modifyName.apply(String::trim))
-        .andThen(setCity.apply("Paris"))
-        .andThen(modifyLatitude.apply(lat->-lat))
-        .andThen(addLanguage.apply("Lisp"));
+```code  
+  
+Function<JsObj, JsObj> modifyPerson = modifyAge.apply(n->n+1)
+          .andThen(modifyName.apply(String::trim))
+          .andThen(setCity.apply("Paris"))
+          .andThen(modifyLatitude.apply(lat->-lat))
+          .andThen(addLanguage.apply("Lisp"));
 ```
 
 This function exemplifies the power of optics. There are no messy if-else conditions or null checks. It is concise,
@@ -1211,7 +1207,9 @@ expressive, and easy to maintain, thanks to json-values and optics.
 Optics allow us to model JSON data as records of paths and their associated values:
 
 ```code
+
 Json = { path: JsValue, path1: JsValue, path2: JsValue, ... }
+
 ```
 
 Paths represent the full location of an element in JSON data and have the type JsPath. In contrast, JsValue is a
@@ -1257,20 +1255,24 @@ associated values.
 
 From these paths, you can define lenses or optionals. Here are some examples:
 
-```java   
+```code   
 Lens<JsObj, JsStr> nameLens=JsObj.lens.str("name");
-        Lens<JsObj, JsDouble> latitudeLens=JsObj.lens.double(path("/address/coordinates/0"));
-        Lens<JsObj, JsDouble> longitudeLens=JsObj.lens.double(path("/address/coordinates/1"));
 
-        JsStr name=JsStr.of("Rafael");
-        JsObj person=nameLens.set.apply(name).apply(JsObj.empty());
+Lens<JsObj, JsDouble> latitudeLens=JsObj.lens.double(path("/address/coordinates/0"));
 
-        Assertions.assertEquals(name,nameLens.get.apply(person));
+Lens<JsObj, JsDouble> longitudeLens=JsObj.lens.double(path("/address/coordinates/1"));
 
-        Function<JsStr, JsStr> toUpper=JsStr.prism.modify.apply(String::toUpperCase);
-        JsObj newPerson=nameLens.modify.apply(toUpper).apply(person);
+JsStr name=JsStr.of("Rafael");
 
-        Assertions.assertEquals(JsStr.of("RAFAEL"),nameLens.get.apply(newPerson));
+JsObj person=nameLens.set.apply(name).apply(JsObj.empty());
+
+Assertions.assertEquals(name,nameLens.get.apply(person));
+
+Function<JsStr, JsStr> toUpper=JsStr.prism.modify.apply(String::toUpperCase);
+
+JsObj newPerson=nameLens.modify.apply(toUpper).apply(person);
+
+Assertions.assertEquals(JsStr.of("RAFAEL"),nameLens.get.apply(newPerson));
 ```
 
 Every json-values type has an associated Prism. Here are some examples:
@@ -1286,56 +1288,82 @@ JsArray.prism :: Prism<JsValue, JsArray>
 
 Let's demonstrate these with examples:
 
-```java 
-Assertions.assertEquals(Optional.of("hi!"),JsStr.prism.getOptional.apply(JsStr.of("hi!")));
+```code 
+Assertions.assertEquals(Optional.of("hi!"),
+                        JsStr.prism.getOptional.apply(JsStr.of("hi!")));
+
 // Attempting to retrieve a string from an integer results in an empty optional
-        Assertions.assertEquals(Optional.empty(),JsStr.prism.getOptional.apply(JsInt.of(1)));
+Assertions.assertEquals(Optional.empty(),
+                        JsStr.prism.getOptional.apply(JsInt.of(1)));
 
-        Assertions.assertEquals(JsStr.of("HI!"),JsStr.prism.modify.apply(String::toUpperCase).apply(JsStr.of("hi!")));
+ Assertions.assertEquals(JsStr.of("HI!"),
+                         JsStr.prism.modify.apply(String::toUpperCase)
+                                           .apply(JsStr.of("hi!"))
+                         );
 // Modifying a non-string value leaves it unchanged
-        Assertions.assertEquals(JsInt.of(1),JsStr.prism.modify.apply(String::toUpperCase).apply(JsInt.of(1)));
+Assertions.assertEquals(JsInt.of(1),
+                        JsStr.prism.modify.apply(String::toUpperCase)
+                                          .apply(JsInt.of(1))
+                        );
 
-        Assertions.assertEquals(Optional.of(2),JsInt.prism.getOptional.apply(JsInt.of(2)));
+Assertions.assertEquals(Optional.of(2),
+                        JsInt.prism.getOptional.apply(JsInt.of(2)));
 // Attempting to retrieve an integer from a string results in an empty optional
-        Assertions.assertEquals(Optional.empty(),JsInt.prism.getOptional.apply(JsStr.of("hi!")));
 
-        Assertions.assertEquals(JsInt.of(2),JsInt.prism.modify.apply(n->n+1).apply(JsInt.of(1)));
-        Assertions.assertEquals(JsNull.NULL,JsInt.prism.modify.apply(n->n+1).apply(JsNull.NULL));
+Assertions.assertEquals(Optional.empty(),
+                        JsInt.prism.getOptional.apply(JsStr.of("hi!")));
+
+Assertions.assertEquals(JsInt.of(2),
+                        JsInt.prism.modify.apply(n->n+1)
+                                          .apply(JsInt.of(1)));
+
+Assertions.assertEquals(JsNull.NULL,
+                        JsInt.prism.modify.apply(n->n+1)
+                                          .apply(JsNull.NULL));
+
 // Attempting to modify a null value has no effect
-        Assertions.assertEquals(Optional.empty(),JsInt.prism.modifyOpt.apply(n->n+1).apply(JsNull.NULL));
+Assertions.assertEquals(Optional.empty(),
+                        JsInt.prism.modifyOpt.apply(n->n+1)
+                                             .apply(JsNull.NULL));
+
 ```
 
 Now, let's revisit the modifyPerson function defined previously and implement it step by step using lenses and prisms.
 We first validate the JSON data with a spec to ensure the operation's safety:
 
-```java
-Lens<JsObj, JsInt> ageLens=JsObj.lens.int("age");
-        Lens<JsObj, JsStr> nameLens=JsObj.lens.str("name");
-        Lens<JsObj, JsArray> languagesLens=JsObj.lens.arr("languages");
-        Lens<JsObj, JsStr> cityLens=JsObj.lens.str(path("/address/city"));
-        Lens<JsObj, JsDouble> latitudeLens=JsObj.lens.double(latPath);
+```code
+Lens<JsObj, JsInt> ageLens = JsObj.lens.int("age");
 
-        Function<IntFunction<Integer>,Function<JsObj, JsObj>>modifyAge=
-        fn->ageLens.modify.apply(JsInt.prism.modify.apply(fn::apply));
+Lens<JsObj, JsStr> nameLens = JsObj.lens.str("name");
 
-        Function<Function<String, String>,Function<JsObj, JsObj>>modifyName=
-        fn->nameLens.modify.apply(JsStr.prism.modify.apply(fn::apply));
+Lens<JsObj, JsArray> languagesLens = JsObj.lens.arr("languages");
 
-        Function<String, Function<JsObj, JsObj>>addLanguage=
-        language->{
-        Function<JsArray, JsArray> addLanToArr=a->a.append(JsStr.of(language));
-        return languagesLens.modify.apply(JsArray.prism.modify.apply(addLanToArr));
+Lens<JsObj, JsStr> cityLens = JsObj.lens.str(path("/address/city"));
+
+Lens<JsObj, JsDouble> latitudeLens = JsObj.lens.double(latPath);
+
+Function<IntFunction<Integer>,Function<JsObj, JsObj>> modifyAge =
+            fn -> ageLens.modify.apply(JsInt.prism.modify
+                                .apply(fn::apply));
+
+Function<Function<String, String>,Function<JsObj, JsObj>> modifyName =
+        fn -> nameLens.modify.apply(JsStr.prism.modify
+                             .apply(fn::apply));
+
+Function<String, Function<JsObj, JsObj>> addLanguage =
+        language-> {
+                Function<JsArray, JsArray> addLanToArr= a -> a.append(JsStr.of(language));
+                return languagesLens.modify.apply(JsArray.prism.modify.apply(addLanToArr));
         };
 
-        Function<String, Function<JsObj, JsObj>>setCity=
-        city->cityLens.set.apply(JsStr.of(city));
+Function<String, Function<JsObj, JsObj>> setCity = 
+    city -> cityLens.set.apply(JsStr.of(city));
 
-        Function<Function<Double, Double>,Function<JsObj, JsObj>>modifyLatitude=
-        fn->latitudeLens.modify.apply(JsDouble.prism.modify.apply(fn));
+Function<Function<Double, Double>,Function<JsObj, JsObj>> modifyLatitude=
+    fn -> latitudeLens.modify.apply(JsDouble.prism.modify.apply(fn));
 
 // And finally:
-        Function<JsObj, JsObj> modifyPerson=
-        modifyAge.apply(n->n+1)
+Function<JsObj, JsObj> modifyPerson = modifyAge.apply(n->n+1)
         .andThen(modifyName.apply(String::trim))
         .andThen(setCity.apply("Paris"))
         .andThen(modifyLatitude.apply(lat->-lat))

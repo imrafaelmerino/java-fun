@@ -82,7 +82,8 @@ Gen<JsObj> gen=
                                                                      )
                                          )
                    )
-                 .withAllOptKeys();
+                 .withAllOptKeys()
+                 .withAllNullValues();
 
 
 Gen<JsObj> validDataGen = gen.suchThat(spec);
@@ -93,10 +94,10 @@ Gen<JsObj> invalidDataGen = gen.suchThatNo(spec);
 
 The biased generators generate, with higher probability, values that are proven to cause more bugs in our code (zero,
 blank strings ...).Generating robust test data is essential for identifying potential issues in your code. With *
-*json-values**, we take this a step further by introducing **biased generators** that never forget to include special
+json-values, we take this a step further by introducing **biased generators** that never forget to include special
 values known to trigger bugs.
 
-**JSON manipulation with optics:**
+**"Optics: Elevating JSON Manipulation to a New Level"**
 
 Perform JSON manipulation free of null checks and if-else conditions using optics:
 
@@ -147,7 +148,7 @@ json.mapKeys(toSneakCase)
 **Efficient JSON Parsing and Validation**
 
 Parsing and validating JSON data can be a time-consuming process, especially when dealing with large payloads. *
-*json-values** offers a more efficient and convenient approach by interleaving parsing and validation without the need
+json-values offers a more efficient and convenient approach by interleaving parsing and validation without the need
 to parse the entire JSON. Here's how it works:
 
 ```

@@ -937,30 +937,26 @@ Predicate<String> tagSpec = lengthBetween.apply(0,MAX_TAG_LENGTH);
 Predicate<String> zipCodeSpec = lengthBetween.apply(0,MAX_ZIPCODE_LENGTH);
 
 
-        JsObjSpec personSpec=
-        JsObjSpec.of("name",str(nameSpec),
-        "surname",str(surnameSpec),
-        "phoneNumber",str(phoneSpec).nullable(),
-        "registrationDate",instant(registrationDateSpec),
-        "addresses",
-        arrayOfObjSpec(JsObjSpec.of("coordinates",
-        tuple(decimal(latitudeSpec),
-        decimal(longitudeSpec)
-        ),
-        "city",str(citySpec),
-        "tags",arrayOfStr(tagSpec,
-        0,
-        MAX_TAGS_SIZE
-        ),
-        "zipCode",str(zipCodeSpec)
-        )
-        .lenient()
-        .withOptKeys("tags","zipCode","city"),
-        MIN_ADDRESSES_SIZE,
-        MAX_ADDRESSES_SIZE
-        )
-        )
-        .withOptKeys("surname","phoneNumber","addresses");
+JsObjSpec personSpec = 
+    JsObjSpec.of("name",str(nameSpec),
+                 "surname",str(surnameSpec),
+                 "phoneNumber",str(phoneSpec).nullable(),
+                 "registrationDate",instant(registrationDateSpec),
+                 "addresses", arrayOfObjSpec(JsObjSpec.of("coordinates",
+                                                          tuple(decimal(latitudeSpec),
+                                                                decimal(longitudeSpec)
+                                                                ),
+                                                          "city", str(citySpec),
+                                                          "tags", arrayOfStr(tagSpec,0,MAX_TAGS_SIZE),
+                                                          "zipCode",str(zipCodeSpec)
+                                                          )
+                                                         .lenient()
+                                                         .withOptKeys("tags","zipCode","city"),
+                                             MIN_ADDRESSES_SIZE,
+                                             MAX_ADDRESSES_SIZE
+                                             )
+                 )
+                 .withOptKeys("surname","phoneNumber","addresses");
 
 ```
 
@@ -997,10 +993,7 @@ If you don’t have their credit card number, a billing address would not be req
 ```code 
 
 Predicate<JsObj> existsBillingIfCard = 
-     o->{
-          if(o.containsKey("credit_card") && !o.containsKey("billing_address")) return false;
-          return true;
-        };
+     person -> !person.containsKey("credit_card") || person.containsKey("billing_address");;
 
 JsObjSpec customerSpec=
         JsObjSpec.of("credit_card",str(),

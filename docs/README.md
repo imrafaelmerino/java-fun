@@ -31,6 +31,8 @@ And to make matters worse: complexity sells better._”
 
 **JSON creation**
 
+Simplify JSON creation with a concise syntax:
+
 ```java 
 
 JsObj.of("name",JsStr.of("Rafael"),
@@ -44,6 +46,8 @@ JsObj.of("name",JsStr.of("Rafael"),
 ```
 
 **JSON validation**
+
+Easily define JSON validation rules using a clear and expressive syntax:
 
 ```java 
 
@@ -61,7 +65,10 @@ JsObjSpec spec =
     
 ```   
 
-**JSON generation**
+**JSON generation made easy**
+
+Creating complex JSON structures can be a daunting task, especially when dealing with deeply nested or intricate data. With **json-values**, this process becomes remarkably simple.
+
 
 ```java 
           
@@ -83,10 +90,12 @@ Gen<JsObj> invalidDataGen = gen.suchThatNo(spec);
 
 ```
 
-The biased generators generate, with higher probability, values that are proven
-to cause more bugs in our code (zero, blank strings ...)
+The biased generators generate, with higher probability, values that are proven to cause more bugs in our code (zero, blank strings ...).Generating robust test data is essential for identifying potential issues in your code. With **json-values**, we take this a step further by introducing **biased generators** that never forget to include special values known to trigger bugs.
 
-**JSON manipulation free of NullPointerException with optics:**
+
+**JSON manipulation with optics:**
+
+Perform JSON manipulation free of null checks and if-else conditions using optics:
 
 ```java 
 
@@ -119,100 +128,112 @@ putting optics together (composition is key to handle complexity).
 
 **Filter and map were never so easy!** 
 
+- json-values simplifies complex JSON data operations into concise and readable code.
+- Transform keys, values, or both effortlessly, allowing you to adapt data to your specific needs.
+- Apply filters to remove unwanted data, ensuring your JSON conforms to your expectations.
+
 ```java 
-          
+// Define a function to convert keys to snake_case
 Function<String,String> toSneakCase =  key -> {...};
 
+// Map keys to snake_case, trim string values, and filter out null values
 json.mapKeys(toSneakCase)
     .mapValues(JsStr.prism.modify.apply(String::trim))
     .filterValues(JsValue::isNotNull);
                     
 ```
 
-**Json parsing**
+**Efficient JSON Parsing and Validation**
 
-Given a spec, why don't use it to parse a Json? Parsing the whole
-Json and then validating it is very inefficient in case of failure. 
-It's better to interleave the parsing and the validation. After all, 
-failing fast is important too! With json-values is very simple:
+Parsing and validating JSON data can be a time-consuming process, especially when dealing with large payloads. **json-values** offers a more efficient and convenient approach by interleaving parsing and validation without the need to parse the entire JSON. Here's how it works:
+
 
 ```
+// Define your JSON schema using JsObjSpec
 JsObjSpec spec = ...
 
+// Create a parser with the specified schema
 var parser = new JsObjSpecParser(spec);
+
+// Parse and validate JSON data, efficiently checking only what's necessary
 var json = parser.parse("{...}");
 
 ```
 
 And that's all. And what about performance? 
 
-I've picked some json-schema implementations from https://json-schema.org/implementations.html
-and then parse and validate a random JSON from a string. Find below the results of the
-benchmark using [jmh](https://openjdk.java.net/projects/code-tools/jmh/)
+I've put json-values to the test against various JSON schema implementations 
+listed on [json-schema.org](https://json-schema.org/implementations.html). The results speak for themselves 
+(benchmark using [jmh](https://openjdk.java.net/projects/code-tools/jmh/)):
 
 <img src="./performance_parsing_json.png" alt="parsing string comparison"/>
 
-You can find more details in the
-class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsDeserializers.java)
+You can find more details in the class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsDeserializers.java)
 
 Did you see that!?
 
-Disclaimer: If you are the author of one of the other tested libraries or know an alternative to get a better result, 
-I'm more than glad to change it.
+Note: If you are the author of one of the other tested libraries or are aware of alternative solutions that could further 
+enhance performance, we are more than open to collaboration and welcome any suggestions for improvement. 
+Our goal is to continually refine and optimize our library to benefit the community.
 
-**json-values scope is very small**
 
-json-values has only one very small dependency ([java-fun](https://github.com/imrafaelmerino/java-fun)).
-You hit the autocomplete button of your favourite IDE and you don't
-get drowned in thousands of classes you don't need at all. I take
-encapsulation very seriously. Only the useful classes from the client perspective come up.
+**Minimalistic and Focused**
+
+json-values prides itself on its minimalistic and focused approach to JSON manipulation. With only one very small dependency, [java-fun](https://github.com/imrafaelmerino/java-fun), we've intentionally kept the library lightweight and uncluttered.
+
+- When you hit the autocomplete button in your favorite IDE, you won't be overwhelmed by thousands of unnecessary classes. We believe in providing a clean and streamlined development experience.
+- Our commitment to encapsulation ensures that only the essential classes, those relevant to the client perspective, are exposed.
+
+By maintaining a small and tightly focused scope, **json-values** offers you a hassle-free and efficient way to work with JSON data without unnecessary complexity.
+
 
 ## <a name="introduction"><a/> Introduction
 
-Welcome to **json-values**, the first-ever JSON library in _Java_ implemented with
-persistent data structures.
+Welcome to **json-values**, a groundbreaking JSON library for Java that harnesses the power of persistent data structures.
 
-One of the most essential aspects of FP is immutable data structures,
-better known in FP jargon as values.
-It's a fact that, when possible, working with values leads to code with fewer bugs, is more
-readable, and is easier to maintain. Item 17 of Effective Java states that we must minimize
-mutability. Still, sometimes it's at the cost of losing performance because the
-[copy-on-write](https://en.wikipedia.org/wiki/Copy-on-write)
-approach is very inefficient for significant data structures. Here is where persistent data
-structures come into play.
+In the world of Functional Programming (FP), immutable data structures, often referred to as "values," hold a pivotal role. Working with values isn't just a best practice; it's a proven way to reduce bugs, enhance code readability, and simplify maintenance. Effective Java, Item 17, emphasizes the importance of minimizing mutability, but this sometimes comes at the expense of performance due to the inefficiency of traditional "copy-on-write" approaches for large data structures. This is where persistent data structures step in.
 
-Most functional languages, like Haskell, Clojure, and Scala, implement persistent data
-structures natively. Java doesn't.
+While languages like Haskell, Clojure, and Scala natively support persistent data structures, Java has traditionally lagged behind in this regard.
 
-The standard Java programmer finds it strange to work without objects and all the machinery
-of frameworks and annotations. FP is all about functions and values; that's it. I will try
-to cast some light on how we can manipulate JSON with json-values following a purely
-functional approach.
+**json-values** aims to bridge this gap, allowing Java developers to harness the power of persistent data structures when working with JSON data. Here's why this matters:
+
+- In FP, the focus is on functions and values, simplifying complex data manipulation.
+- By providing a purely functional approach to JSON, **json-values** opens the door to more robust and reliable code.
+- Say goodbye to the traditional complexities of working with JSON objects and embrace a more straightforward, functional approach.
+
+With **json-values**, you can unlock the potential of FP in your Java projects, creating cleaner, more maintainable code while ensuring that performance doesn't take a back seat. Let's dive into how you can leverage the strength of values and functions to manipulate JSON data effectively.
+
 
 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 
-* You need to deal with Jsons, and you want to program following a functional style, **using just functions and values**,
-  but you can't benefit from all the advantages that immutability brings to your code because **Java doesn't provide
-  [Persistent Data Structures](https://en.wikipedia.org/wiki/Persistent_data_structure)**.
-* For those architectures that work with JSON end-to-end, it's extremely safe and efficient to have a persistent Json. Think of actors sending JSON messages one to each other for example.
-* You manipulate JSON all the time, and you'd like to do it with less ceremony. json-values is declarative and
-  takes advantage of a lot of concepts from FP to define a powerful API.
-* Generating JSON to do Property-Based-Testing is child's play with json-values.
-* Generating specifications to validate JSON and parse strings or bytes very efficiently is a piece of cake.
-* Simplicity matters and I'd argue that json-values is simple.
-* As _**Pat Helland**_ said, [Immutability Changes Everything!](http://cidrdb.org/cidr2015/Papers/CIDR15_Paper16.pdf)
+**json-values** is a versatile library designed to simplify JSON manipulation while embracing a functional programming paradigm. Here are scenarios where you can benefit from using **json-values**:
+
+- **Functional Style in Java**: If you want to work with JSON in a functional style, leveraging functions and values, **json-values** provides a solution in Java, even in the absence of native persistent data structures.
+
+- **End-to-End JSON Architectures**: In architectures where JSON is the lingua franca, using a persistent JSON representation ensures both safety and efficiency. Think of scenarios where actors exchange JSON messages seamlessly.
+
+- **Streamlined JSON Manipulation**: If you frequently manipulate JSON data and seek a more declarative and less ceremonious approach, **json-values** offers a powerful API built on functional programming principles.
+
+- **Property-Based Testing**: Simplify property-based testing by effortlessly generating JSON data with **json-values**, making it a breeze to explore edge cases and unexpected scenarios.
+
+- **Efficient JSON Validation**: Create JSON specifications for efficient validation and parsing of JSON data, ensuring data integrity and accuracy.
+
+- **Simplicity Matters**: Embrace simplicity in your JSON manipulation. As the saying goes, "Immutability Changes Everything," and **json-values** brings simplicity and reliability to your code.
+
+**json-values** empowers you to work with JSON in a more functional, efficient, and straightforward manner, offering a versatile toolkit for various use cases.
 
 
 ## <a name="how-to"><a/> How-To
 
-### <a name="jspath"><a/>JsPath
+### <a name="jspath"><a/>JsPath: Navigating JSON Structures
 
-The type _JsPath_ represents a location of a specific value within a JSON. It's a sequence of _Position_, being a position
-either a _Key_ or an _Index_. Exists two different ways to create a path:
+The `JsPath` class in **json-values** represents a way to pinpoint specific values 
+within a JSON structure. It's essentially a sequence of positions, where each position 
+can be either a key or an index. There are two convenient ways to create a `JsPath`:
 
-- Parsing a path-like string using the static factory method _JsPath.path_, where the path follows 
-the Json Pointer specification [RFC 6901](http://tools.ietf.org/html/rfc6901)
+
+- Parsing from a Path-Like String: You can parse a path-like string using the static factory method `JsPath.path`. The path string should follow the JSON Pointer specification defined in [RFC 6901](http://tools.ietf.org/html/rfc6901).
 
 ```java   
 
@@ -235,8 +256,7 @@ Assertions.assertEquals(tail.last(),
                        );
 ```
 
-- Using the static factory methods _JsPath.fromKey_ or _JsPath.fromIndex_ to create
-a one-position path and then the methods _index_ or _key_ to append more keys or indexes:
+- Creating Incrementally: Alternatively, you can create a JsPath incrementally using static factory methods JsPath.fromKey or JsPath.fromIndex to start with a one-position path. Then, use the key or index methods to append more keys or indexes.
 
 ```java   
 
@@ -244,7 +264,7 @@ JsPath.fromKey("a").key("b").index(0);
 
 ```
 
-or
+Or, you can start with an empty path:
 
 ```java   
 
@@ -253,55 +273,61 @@ JsPath.empty().key("a").key("b").index(0);
 ```
 
 
-### <a name="jsvalue"><a/>JsValue
+### <a name="jsvalue"><a/>JsValue: The Foundation of JSON Elements
 
-Every element in a Json is a subtype of _JsValue_. There is a specific type for each value described
-in [json.org](https://www.json.org): 
+In **json-values**, every element in a JSON structure is represented as a subtype of `JsValue`. This includes various types described in [json.org](https://www.json.org):
 
-- String 
-- Number 
+- String
+- Number
 - Null
-- JSON object  
-- JSON array
+- JSON Object
+- JSON Array
 
-There are five number specializations: 
+Additionally, **json-values** extends support for two more data types:
 
-- Integer 
-- Long 
-- Double 
-- BigDecimal
-- BigInteger
+- Instant: Serialized into its string representation following ISO-8601 standards.
+- Binary: Represented as an array of bytes (byte[]), serialized into a base64-encoded string.
 
-json-values adds support for two more types:
+To ensure data integrity and consistency, **json-values** takes a data-oriented approach when comparing JSON elements. In other words, two JSON structures are considered equal if they convey the same information. Even if the values have different primitive types or the keys are in a different order, as long as they represent the same data, they are considered equal.
 
-- Instant
-- Binary or array of bytes (byte[])
+Here's the hierarchical class structure of **json-values**:
 
-Instants are serialized into their string representation according to ISO-8601, 
-and the binary type is serialized into a string encoded in base 64.
+- JsValue
+  - JsPrimitive
+    - JsStr
+    - JsInt
+    - JsDouble
+    - JsLong
+    - JsBigInt
+    - JsBigDec
+    - JsInstant
+    - JsBool
+    - JsBool.TRUE (singleton instance)
+    - JsBool.FALSE (singleton instance)
+    - JsNull
+    - JsNull.NULL (singleton instance)
+  - Json
+    - JsObj
+    - JsArray
 
-When it comes to the _equals_ method, json-values is data oriented, I mean, two JSON
-are equals if they represent the same piece of information. For example,
-the following JSONs xs and ys have values with different primitive types 
-and the keys don't follow the same order. 
+For example, consider the following JSON representations, `xs` and `ys`:
 
-```java  
-
+```java
 JsObj xs = JsObj.of("a", JsInt.of(1000),
-                    "b", JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
-                    "c", JsInstant.of("2022-05-25T14:27:37.353Z"),
-                    "d", JsStr.of("aGkh")
-                    );
+        "b", JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
+        "c", JsInstant.of("2022-05-25T14:27:37.353Z"),
+        "d", JsStr.of("aGkh")
+        );
 
-JsObj ys = JsObj.of("b", JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
-                    "a", JsLong.of(1000L),
-                    "d", JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
-                    "c", JsStr.of("2022-05-25T14:27:37.353Z")
-                    );  
+        JsObj ys = JsObj.of("b", JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
+        "a", JsLong.of(1000L),
+        "d", JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
+        "c", JsStr.of("2022-05-25T14:27:37.353Z")
+        );
 
 ```
 
-Nevertheless, since both JSON represents the same piece of information:
+Despite the differences in types and key orders, both xs and ys represent the same piece of information:
 
 ```json   
 
@@ -314,7 +340,8 @@ Nevertheless, since both JSON represents the same piece of information:
 
 ```
 
-it makes sense that both of them are equals, and therefore they have the same hashcode.
+As a result, json-values considers them equal, including their hashcodes:
+
 
 ````java  
 
@@ -323,17 +350,21 @@ Assertions.assertEquals(xs.hashcode(), ys.hashcode());
 
 ````
 
-### <a name="creatingjson"><a/>Creating JSON
+### <a name="creatingjson"><a/>Creating JSON with json values
 
-There are several ways of creating JSON:
-* Using the static factory methods _of_.
-* Parsing an array of bytes or a string. If the schema of the Json is known, 
-the fastest way is to define a parser from a spec.
-* Creating an empty object and then using the API to insert values.
+There are several ways of creating JSON in **json-values**:
 
-### <a name="creatingjsonobj"><a/>Creating JsObj
+1. **Using Static Factory Methods**: You can create JSON objects with up to 30 key-value pairs using the static factory methods `of`. This approach is ideal for straightforward JSON creation.
 
-Let's create the following JSON
+2. **Parsing from Bytes or String**: If you have a JSON string or byte array and the schema of the JSON is known, you can efficiently parse it. This method is particularly fast when you define a parser from a spec, which we'll discuss later.
+
+3. **Creating an Empty Object**: You can start with an empty JSON object (or from an existing one) and then use the API to insert values. This approach allows for dynamic construction of JSON.
+
+Now, let's delve into creating JSON objects and arrays with **json-values**:
+
+### <a name="creatingjsonobj"><a/>Creating JsObj: JSON objects
+
+Let's start with creating a JSON object that represents a person:
 
 ```json
 
@@ -360,7 +391,7 @@ Let's create the following JSON
 
 ```
 
-**Using the static factory methods provided by json-values:**
+**Using the static factory methods:**
 
 ```java     
  
@@ -384,12 +415,9 @@ JsObj person =
             
 ```
 
-As you can see, its definition is like raw JSON. It’s a recursive data structure.
-You can nest as many JSON objects as you want. Think of any imaginable JSON, and
-you can write it in no time.
+You can see that defining the JSON object using json-values is similar to raw JSON. It's a recursive data structure, allowing you to nest JSON objects as needed.
 
-Instead of keys and a nested structure, it's possible to create a JSON object
-from their paths, which turns out to be really convenient as well:
+Rather than specifying keys within a nested structure, you can create a JSON object directly from their respective paths, offering a highly convenient alternative:
 
 ```java   
      
@@ -426,7 +454,7 @@ JsObj b = JsObj.parseYaml("  ");
 In this case, the best and fastest option is to use a spec to do the parsing.
 We'll talk about this option later on when I introduce json-spec.
 
-**Creating an empty object and adding new values with the method _set_:**
+**Creating an empty object (or from an existing JsObj) and adding new values with the method _set_:**
 
 ```java   
 
@@ -440,7 +468,7 @@ JsObj person =
 Remember that a JSON is immutable, so the set method returns a brand-new value.
 
 
-### <a name="creatingjsonarray"><a/>Creating JsArray
+### <a name="creatingjsonarray"><a/>Creating JsArray: JSON Arrays
 
 **From primitive types using the static factory method _of_ and _varargs_:**
 
@@ -517,15 +545,10 @@ Json:: Json set(JsPath path, JsValue value, JsValue padWith);
 
 ```
 
-The get method always returns a JsValue, no matter what path is passed in. If there is no
-element at the specified path, it returns the special value JsNothing.NOTHING.
-It's a total function. Functional programmers strive for total functions.
-Their signature still reflects reality. No exceptions and no surprises.
+The get method always returns a JsValue, regardless of the path passed in. If there is no
+element at the specified path, it returns the special value JsNothing.NOTHING. It adheres to the principles of total functions, a fundamental concept in functional programming. The method's signature accurately reflects its behavior, avoiding exceptions and surprises.
 
-Following the same philosophy, if you set a value at a specific path,
-it will always be created, creating any needed container and padding arrays when necessary.
-The next line of code after setting that value, you can count on it will be at the specified
-path. The following property always holds:
+Similarly, when you set a value at a specific path, it will always be created, including any necessary containers and padding arrays. You can confidently expect that the value will be at the specified path, as demonstrated by the following property:
 
 ```code   
 
@@ -535,8 +558,9 @@ Assertions.assertEquals(value,
 
 ```
 
-What do you think setting _JsNothing_ at a path does?
-Well, it has to remove the value, so that _get_ returns JsNothing:
+Setting JsNothing at a path removes the value, ensuring that get returns JsNothing:
+
+
 
 ```code   
 
@@ -546,12 +570,9 @@ Assertions.assertEquals(JsNothing.NOTHING,
                         
 ```
 
-FP has to do with honesty. Establishing laws makes it easier to reason about the code we write.
-By the way, the set method always returns a brand-new json.
-If you remember well, Jsons are immutable and implemented with persistent data
-structures in json-values.
+Functional programming is founded on principles of honesty and adherence to laws, making it easier to reason about code. Additionally, the set method always returns a brand-new JSON. Remember, JSONs are immutable and implemented with persistent data structures in json-values.
 
-Let's put some examples:
+Let's look at some examples:
 
 
 ```code   
@@ -605,8 +626,8 @@ Assertions.assertEquals(JsNothing.NOTHING,
 
 ```
 
-You may want to get the Java primitive types directly. In this case, if there is no element at
-the specified path, the following methods returns null, unless you specify a supplier to
+You may want to retrieve Java primitive types directly. In this case, if there is no element at
+the specified path, the following methods return null, unless you specify a supplier to
 produce a default value:
 
 ```code          
@@ -647,8 +668,7 @@ String getStr(JsPath path, Supplier<String> orElse);
 
 ```
 
-To get data from the first level of a JSON, there is no need to create a path.
-You can just pass in the key or the index, which is less verbose:
+To retrieve data from the first level of a JSON, you can simply pass in the key or index, which is less verbose:
 
 ```java   
 
@@ -658,8 +678,6 @@ array.getStr(0)
 
 ```
 
-
-
 ### <a name="filtermapreduce"><a/>Filter, map, and reduce
 
 Let's take a look at some very common transformations using the _map_ methods.
@@ -667,53 +685,116 @@ The map function doesn't change the structure of the JSON. This is a pattern
 known in FP as a functor. Consider the following signatures:
 
 ```code   
+Json mapValues(Function<JsPrimitive, JsValue> map);
 
-JsObj:: JsObj mapValues( Function<JsPrimitive, JsValue> map);
+Json mapKeys(Function<String, String> map);
 
-JsObj:: JsObj mapKeys( Function<String, String> map);
+Json mapObjs(Function<JsObj, JsValue> map);
 
-JsObj:: JsObj mapObjs( Function<JsObj, JsValue> map);
-
-JsArray:: JsArray mapValues( Function<JsPrimitive, JsValue> map);
-
-//an array doesn't have any key but a JSON object contained does!
-JsArray:: JsArray mapKeys( Function<String, String> map);
-
-JsArray:: JsArray mapObjs( Function<JsObj, JsValue> map);
+Json mapValues(Function<JsPrimitive, JsValue> map);
 
 ```
 
-All of them traverse recursively the whole JSON.
+All of these methods traverse the entire JSON structure recursively.
 
-The mapKeys function transform all the keys of JSON objects. The typical example
-is when you want to pass from camel case format to snake case.
+The mapKeys function transforms all the keys of JSON objects. A typical use case is when you want to convert from camel case format to snake case.
 
-The _mapValues_ function operates on primitive types (not object or arrays)
-and transforms them into another value.
+The mapValues function operates on primitive types (not objects or arrays) and transforms them into another value.
 
-If the mapping depends not only on the value but also on its position in the JSON,
-you can pass the full path in the map function using the following overloaded
-methods:
+Now, here's where it gets interesting:
 
-```java  
+If the mapping depends not only on the value but also on its position in the JSON, you can pass the full path to the map function using 
+the following overloaded methods:
 
-JsObj mapKeys( BiFunction<JsPath, JsValue, String> map); 
+```code  
 
-JsObj mapValues( BiFunction<JsPath, JsPrimitive, JsValue> map);
+Json mapKeys(BiFunction<JsPath, JsValue, String> map);
 
-JsObj mapObjs( BiFunction<JsPath, JsObj, JsValue> map)
+Json Json mapValues(BiFunction<JsPath, JsPrimitive, JsValue> map);
+
+Json mapObjs(BiFunction<JsPath, JsObj, JsValue> map);
 
 ```
 
+Using these methods with paths provides precise control over where the transformation occurs within the JSON structure. It allows you to apply transformations that are context-aware, considering both the value and its position.
 
-filter and reduce: TODO
+Now, let's look at the filter methods. The filter methods are used to selectively include or exclude elements from the JSON based on specific criteria. Here are the equivalent filter methods:
 
 
+```code  
 
-### <a name="specs"><a/>Specs
 
-But what about validating JSON? We can define the JSON schema following precisely
-the same approach as defining JSON:
+Json filterValues(Predicate<JsPrimitive> filter);
+
+Json filterKeys(Predicate<String> filter);
+
+Json filterObjs(Predicate<JsObj> filter);
+
+```
+
+Similarly to the map methods, these filter methods traverse the entire JSON structure recursively. They allow you to selectively include or exclude elements from the JSON based on the specified criteria. Now, here's the key point:
+
+If the filtering depends on both the value and its position in the JSON, you can pass the full path to the filter function using the following overloaded methods:
+
+```code 
+Json filterKeys(BiPredicate<JsPath, JsValue> filter);
+
+Json filterValues(BiPredicate<JsPath, JsPrimitive> filter);
+
+Json filterObjs(BiPredicate<JsPath, JsObj> filter);
+```
+
+These filter methods provide powerful ways to filter JSON data based on various conditions, and using paths allows you to precisely pinpoint where the filtering takes place within the JSON structure. It's incredibly useful for context-aware transformations and filtering.
+
+And finally, let's take a look at the reduce operations from json-values.
+
+The `reduce` methods in json-values provide powerful capabilities for reducing JSON data, allowing you to aggregate and process JSON values based on specific conditions. These operations can be applied selectively, and you can choose whether or not to access the element's path during the reduction process.
+
+
+```code
+
+//`reduce` with Path, Predicate, and Mapping
+
+<R> Optional<R> reduce(BinaryOperator<R> op,
+                       BiFunction<? super JsPath, ? super JsPrimitive, R> map,
+                       BiPredicate<? super JsPath, ? super JsPrimitive> predicate
+                       );
+
+```
+
+This method enables you to reduce the values of a JSON object while providing access to the element's path. 
+You can perform custom reduction operations using the provided operator `op` and `map` the path and primitive value to a 
+result of type `R` using the map function. The `predicate determines which values are included in the reduction. 
+It's important to note that this method traverses the entire JSON structure recursively.
+
+```code 
+//reduce with Predicate and Mapping
+
+<R> Optional<R> reduce(BinaryOperator<R> op,
+                       Function<? super JsPrimitive, R> map,
+                       Predicate<? super JsPrimitive> predicate
+                       );
+```
+
+This method allows you to reduce the values of a JSON object without accessing the element's path. You can specify the 
+operator `op` to apply to values of type `R` and map the values to the desired type `R` using the map function. The `predicate` 
+determines which values are included in the reduction. Just like the previous method, it traverses the entire JSON structure 
+recursively.
+
+**Example:**
+Suppose you have a JSON object representing sales data, and you want to calculate the total revenue from products that meet specific criteria. You can use the reduce methods to perform this custom reduction operation.
+
+Using these reduce methods, you can tailor reduction operations to your specific use cases, whether you need access to the element's path or not. This flexibility empowers you to efficiently process and aggregate JSON values in a way that suits your needs.
+
+### <a name="specs"><a/>JSON validation with specs made easy
+
+JSON validation is essential to ensure that the data you receive or produce conforms 
+to a specified schema. In this section, we'll explore how to define and use JSON 
+specifications, often referred to as "specs," to validate JSON data.
+
+You can define JSON specs in a concise and expressive manner, making the validation 
+process straightforward. Consider the following example of a JSON spec for a person's data:
+
 
 ```java   
 
@@ -743,9 +824,7 @@ errors.forEach(pair -> System.out.println(toStr.apply(pair)));
     
 ```
 
-I’d argue that it is very expressive, concise, and straightforward. I call it json-spec.
-I named it after a Clojure library named [spec](https://clojure.org/guides/spec). Writing
-specs feels like writing JSON. Specs by default are strict, which means that they don't allow 
+Writing specs feels like writing JSON. Specs by default are strict, which means that they don't allow 
 keys that are not specified, whereas lenient ones do. Turning strict specs into lenient ones is as easy
 as calling the method _lenient_.
 
@@ -827,7 +906,7 @@ JsObjSpec personSpec =
 ```
 
 As you can see, the spec's structure remains the same, and it’s child’s play to define
-optional and nullable fields.
+optional and nullable fields. 
 
 Another interesting spec you can define is map, i.e, an arbitrary number of
 keys and their associated values of the same type. For example a map of 
@@ -897,13 +976,55 @@ catch(JsParserException e){
 
 ```
 
-### <a name="gen"><a/>Generators
+We can describe json-specs as:
 
-Another critical aspect of software development is data generation. It’s an essential aspect
-of property-based testing, a technique for the random testing of program properties very well
-known in FP. Computers are way better than humans at generating random data. You'll catch more
-bugs testing your code against a lot of inputs instead of just one. Writing generators, like
-specs, is as simple as writing JSON:
+- Expressive and Concise: Defining JSON specs using json-values feels akin to writing JSON itself. The syntax is highly expressive, making it easy to represent your schema in a clear and concise manner. You specify keys, data types, and constraints using a familiar and readable format, ensuring that your intentions are easily conveyed.
+- Composition: Json-values empowers you to compose specs seamlessly. Whether you're creating nested JSON structures or combining multiple specifications, json-values provides a consistent and straightforward approach. You can build complex specs by composing simpler ones, promoting code reusability and maintainability.
+- Optional and Nullable Fields: Handling optional and nullable fields within your JSON specs is effortless with json-values. You can specify which fields are optional or nullable, allowing you to describe schema variations accurately. This flexibility ensures that your specs adapt to different JSON data scenarios.
+- Predicate-Based Specs: Json-values enables you to define specs based on predicates. You can create custom validation rules using predicates and compose them to form intricate specifications. Whether you need to enforce length constraints, numerical ranges, or other custom validations, json-values has you covered.
+- Map Specs: Json-values supports map specs, allowing you to describe JSON objects with an arbitrary number of keys and associated values of the same type. This feature is particularly useful when dealing with dynamic or unpredictable JSON structures.
+- Validation During Parsing: Json-values goes a step further by enabling schema validation during parsing. Instead of parsing the entire JSON and validating afterward, json-values checks the schema while parsing, halting the process as soon as an error is encountered. This "fail fast" approach ensures efficient and immediate validation.
+
+In summary, json-values simplifies the creation and composition of JSON specs, making it a breeze to describe even the most intricate JSON schemas. Whether you're defining straightforward structures or tackling complex data models, json-values offers a powerful and user-friendly way to express your schema requirements. It's a tool that empowers developers to work with JSON data confidently and effectively, no matter the level of complexity involved.
+
+### <a name="gen"><a/>Effortless Data Generation with json-values
+
+In software development, data generation plays a pivotal role, particularly in property-based testing—an established technique in functional programming. Generating diverse, random data for testing is crucial for uncovering hidden bugs and ensuring robust code. json-values simplifies this process with intuitive data generators that are as easy to work with as writing JSON itself.
+
+**The Power of Random Testing**
+
+Computers excel at generating a multitude of test cases, far beyond human capabilities. By subjecting your code to numerous inputs, you increase the likelihood of identifying edge cases and unearthing elusive bugs. Writing data generators is your ticket to comprehensive testing without manual effort.
+
+**json-values: Where Data Generation Feels Like JSON**
+
+Creating data generators in json-values is remarkably straightforward. It mirrors the simplicity of defining JSON objects, making it accessible to developers of all levels. The process is akin to crafting a JSON structure, where you specify keys, data types, and constraints—your intentions are conveyed with clarity.
+
+**Composition for Complex Scenarios**
+
+json-values empowers you to compose generators effortlessly. Whether you're dealing with nested JSON structures or merging multiple specifications, json-values provides a consistent and hassle-free approach. You can construct intricate generators by combining simpler ones, promoting code reusability and maintainability.
+
+**Handling Optional and Nullable Fields**
+
+Flexibility is key when working with JSON data, and json-values understands this implicitly. Defining optional and nullable fields within your data generators is a breeze. You have the freedom to specify which fields are optional or nullable, ensuring your generators adapt seamlessly to various data scenarios.
+
+**Predicate-Based Data Generation**
+
+Take control of data generation with predicates. json-values enables you to define generators based on custom validation rules. Create and compose predicates to enforce constraints like length limits, numerical ranges, or other tailored validations. This flexibility ensures that your generated data adheres to your exact requirements.
+
+**Exploring Every Combination**
+
+json-values utilizes generators from the "java-fun" library, an invaluable resource for data generation. It simplifies the process of exploring every possible combination of data with equal probabilities. For complex scenarios with numerous fields, json-values ensures you don't miss out on any testing scenarios.
+
+**Customizing Data Generation**
+
+Tailoring data generation to specific scenarios is effortless with the suchThat function. It allows you to create generators that adhere to precise conditions. This "fail fast" approach ensures efficient and immediate validation during testing, helping you catch issues sooner in the development process.
+
+**Finding Bugs, Simplifying Maintenance**
+
+Effortless data generation is a game-changer in bug discovery and test maintenance. By generating a wide array of test cases automatically, you maximize your chances of uncovering bugs early. Moreover, maintaining your test suite becomes more manageable, as generators adapt to changes in your JSON schemas effortlessly.
+
+Let's develop some generators:
+
 
 ```java     
  
@@ -938,26 +1059,24 @@ Gen<JsObj> personGen =
 
 
 json-values uses the generators from the library [java-fun](https://github.com/imrafaelmerino/java-fun) to 
-build the JSON generator. I strongly recommend you read the readme of java-fun to get a better 
+build the JSON generators. I strongly recommend you read the readme of java-fun to get a better 
 understanding of how generators work.
 
 
-In our previous example, the person generator has three optional fields 
-(surname, phoneNumber, addresses), whereas de address generator has another
-three fields (tags, zipCode, city). The total number of combinations is
+json-values leverages the generators provided by the [java-fun](https://github.com/imrafaelmerino/java-fun) library to construct its JSON generators. For a more comprehensive understanding of how these generators function, I highly recommend reviewing the java-fun library's README.
 
-2^3  *  2^3 = 64
+In our earlier example, the person generator featured three optional fields (surname, phoneNumber, addresses), while the address generator included an additional three fields (tags, zipCode, city). This configuration results in a total of 64 possible combinations, computed as 2^3 * 2^3.
 
-json-values returns every possible combination with the same probability.
-Imagine ten fields instead of just three (2^10 * 2^10 = 1_048_576). Are you
-going to test each case manually?!
+json-values ensures that each of these combinations is generated with equal probability. Consider the scenario with ten fields instead of three, resulting in a staggering 1,048,576 possible combinations. Manually testing each case in such a scenario would be impractical.
 
-On the other hand, imagine you want to create a generator will all the optional
-fields present. It's really easy with the function _suchThat_. It takes a predicate
-and discard the generated values that don't fulfill the condition:
+In the earlier example, the keys—addresses, phoneNumber, and surname—were designated as optional. However, if you wish to generate data where these fields are consistently present, you can achieve this effortlessly using the suchThat function. This function employs a predicate-based approach to selectively filter out generated values that do not align with the specified condition.
+
+By employing the suchThat function, you essentially perform a brute force operation—a task that computers excel at. It ensures that, regardless of the complexity involved, your generator adheres precisely to your desired criteria, guaranteeing the generation of data with the specified properties.
 
 
 ```java 
+
+//
 
 Gen<JsObj> newPersonGen = 
         personGen.suchThat(p -> 
@@ -967,6 +1086,9 @@ Gen<JsObj> newPersonGen =
                           );
 
 ```
+
+In summary, json-values simplifies the creation and composition of data generators, making it a breeze to generate test data for even the most complex scenarios. Whether you're testing straightforward structures or tackling intricate data models, json-values offers a powerful and user-friendly way to generate data confidently and effectively. It's a tool that empowers developers to identify bugs efficiently and maintain robust test suites with ease.
+
 
 
 ### <a name="optics"><a/>Optics
@@ -1234,26 +1356,38 @@ I strongly recommend watching the talk "Beyond Scala Lenses."
 
 ## <a name="notwhatfor"><a/> When not to use it
 
-json-values fits well in _pure_ OOP and incredibly well in FP, but NOT in _EOOP_, which stands for
-Enterprise Object-Oriented Programming. Don't create yet another fancy abstraction with getters and setters
-or a complex DSL over json-values. [Narcissistic Design](https://www.youtube.com/watch?v=LEZv-kQUSi4) from **Stuart
-Halloway** is a
-great talk that elaborates ironically on this point.
+json-values is a well-suited library for use in pure Object-Oriented Programming (OOP) and particularly shines in the Functional Programming (FP) paradigm. However, there are scenarios where it may not be the best choice, particularly in the context of Enterprise Object-Oriented Programming (EOOP).
+
+**Avoid Overengineering**
+
+json-values is a powerful tool for working with JSON data in a straightforward and expressive manner. However, it's essential to exercise restraint and avoid creating overly complex abstractions, especially if they involve excessive use of getters and setters or intricate DSLs built on top of json-values.
+
+**Consider Your Design Choices**
+
+In the realm of EOOP, it's crucial to strike a balance between leveraging the capabilities of json-values and adhering to the principles of good software design. Creating abstractions that are more about showcasing technical prowess than addressing practical problems can lead to what's humorously referred to as "Narcissistic Design."
+
+**Watch "Narcissistic Design"**
+
+If you're interested in exploring this concept further, you can watch the thought-provoking talk titled "Narcissistic Design" by Stuart Halloway. This presentation offers an ironic take on the pitfalls of overengineering and the importance of keeping design decisions pragmatic and focused on solving real-world challenges.
+
+In summary, while json-values is a valuable tool, it's essential to use it judiciously and avoid creating overly complex abstractions that may not align with the practical needs of your project, especially in the context of EOOP.
 
 ## <a name="requirements"><a/> Requirements
 
-Java 8 or greater for versions lower than 11.9.0 (only fixes are accepted)
+Certainly, here's a rephrased version:
 
-Java 17 or greater for versions greater than 12.0.0.
+- For versions prior to 11.9.0, json-values requires Java 8 or later. Please note that only fixes are accepted for these versions.
+- For versions starting from 12.0.0 and beyond, json-values mandates Java 17 or later.
 
 ## <a name="installation"><a/> Installation
 
-Add the following dependency to your building tool.
+Here's a rephrased version:
 
+To include json-values in your project, add the corresponding dependency to your build tool based on your Java version:
 
-Java >= 8
+For Java 8 or higher:
+
 ```xml
-
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
@@ -1261,15 +1395,17 @@ Java >= 8
 </dependency>
 ```
 
-Java >= 17
-```xml
+For Java 17 or higher:
 
+```xml
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <version>12.4.0</version>
 </dependency>
 ```
+
+Choose the appropriate version according to your Java runtime.
 
 ## <a name="rp"><a/> Related projects
 

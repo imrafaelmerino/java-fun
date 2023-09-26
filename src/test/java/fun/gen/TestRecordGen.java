@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class TestRecordGen {
 
@@ -597,8 +598,8 @@ public class TestRecordGen {
                                      "c",
                                      IntGen.arbitrary(0,
                                                       800000)
-        ).setOptionals("a",
-                       "b");
+        ).withOptKeys("a",
+                      "b");
 
 
         int times = 400000;
@@ -615,7 +616,7 @@ public class TestRecordGen {
                                                    });
 
         Assertions.assertTrue(generated.values().stream()
-                                       .map(n -> ((double)(n * 100)) / times)
+                                       .map(n -> ((double) (n * 100)) / times)
                                        .allMatch(per -> per >= 24.9 && per <= 25.1));
 
 
@@ -634,10 +635,10 @@ public class TestRecordGen {
                                      "c",
                                      IntGen.arbitrary(0,
                                                       1000)
-        ).setAllOptional();
+        ).withAllOptKeys();
 
 
-        int times = 800000;
+        int times = 1000000;
         Map<List<String>, Long> generated = gen.collect(times,
                                                         r -> {
                                                             if (r.map.containsKey("a") && r.map.containsKey("b") && r.map.containsKey("c"))
@@ -666,7 +667,7 @@ public class TestRecordGen {
                                                         });
 
         Assertions.assertTrue(generated.values().stream()
-                                       .map(n -> ((double)(n * 100)) / times)
+                                       .map(n -> ((double) (n * 100)) / times)
                                        .allMatch(per -> per >= 12.4 && per <= 12.52));
 
 
@@ -684,7 +685,7 @@ public class TestRecordGen {
                                      "c",
                                      IntGen.arbitrary(0,
                                                       1000)
-        ).setAllNullable();
+        ).withAllNullValues();
 
 
         int times = 1000000;
@@ -716,10 +717,9 @@ public class TestRecordGen {
                                                         });
 
 
-
         Assertions.assertTrue(generated.values()
                                        .stream()
-                                       .map(n -> ((double)(n * 100)) / times)
+                                       .map(n -> ((double) (n * 100)) / times)
                                        .allMatch(per -> per >= 12.4 && per <= 12.51)
         );
 
@@ -730,38 +730,51 @@ public class TestRecordGen {
     @Test
     public void testRecordGenWithNullable() {
 
-        RecordGen gen = RecordGen.of("a",
-                                     IntGen.arbitrary(0,
-                                                      40000),
-                                     "b",
-                                     StrGen.letters(1,
-                                                    1),
-                                     "c",
-                                     IntGen.arbitrary(0,
-                                                      10000)
-        ).setNullables("a",
-                       "b");
+        RecordGen baseGen = RecordGen.of("a",
+                                         IntGen.arbitrary(0,
+                                                          40000),
+                                         "b",
+                                         StrGen.letters(1,
+                                                        1),
+                                         "c",
+                                         IntGen.arbitrary(0,
+                                                          10000)
+        );
 
 
         int times = 800000;
-        Map<List<?>, Long> generated = gen.collect(times,
-                                                   record -> {
-                                                       if (record.getInt("a").isPresent() && record.getStr("b").isPresent())
-                                                           return Arrays.asList("a",
-                                                                                "b");
-                                                       else if (record.getInt("a").isPresent() && !record.getStr("b").isPresent())
-                                                           return Arrays.asList("a");
-                                                       else if (!record.getInt("a").isPresent() && record.getStr("b").isPresent())
-                                                           return Arrays.asList("b");
-                                                       else return new ArrayList<>();
-                                                   });
-
-        Assertions.assertTrue(generated.values()
-                                       .stream()
-                                       .map(n -> ((double)(n * 100)) / times)
-                                       .allMatch(per -> per >= 24.9 && per <= 25.2));
+        Function<Record, List<?>> mapFn = record -> {
+            if (record.getInt("a").isPresent() && record.getStr("b").isPresent())
+                return Arrays.asList("a",
+                                     "b");
+            else if (record.getInt("a").isPresent() && !record.getStr("b").isPresent())
+                return Arrays.asList("a");
+            else if (!record.getInt("a").isPresent() && record.getStr("b").isPresent())
+                return Arrays.asList("b");
+            else return new ArrayList<>();
+        };
 
 
+        Assertions.assertTrue(baseGen.withNullValues("a",
+                                                     "b").collect(times,
+                                                                  mapFn).values()
+                                     .stream()
+                                     .map(n -> ((double) (n * 100)) / times)
+                                     .allMatch(per -> per >= 24.9 && per <= 25.2));
+
+
+        Assertions.assertTrue(baseGen.withOptKeys("a",
+                                                  "b").collect(times,
+                                                               mapFn).values()
+                                     .stream()
+                                     .map(n -> ((double) (n * 100)) / times)
+                                     .allMatch(per -> per >= 24.9 && per <= 25.2));
+
+        Assertions.assertTrue(baseGen.withReqKeys("c").collect(times,
+                                                               mapFn).values()
+                                     .stream()
+                                     .map(n -> ((double) (n * 100)) / times)
+                                     .allMatch(per -> per >= 24.9 && per <= 25.2));
     }
 
 

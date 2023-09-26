@@ -4,10 +4,8 @@ import fun.gen.Combinators;
 import fun.gen.Gen;
 import fun.gen.RecordGen;
 import fun.gen.StrGen;
-import fun.optic.Option;
 import fun.optic.Prism;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -56,7 +54,7 @@ public class Readme {
                                          passwordGen,
                                          NAME_FIELD,
                                          nameGen)
-                                     .setAllOptional()
+                                     .withAllOptKeys()
                                      .map(record ->
                                                   new User(record.getStr(LOGIN_FIELD).orElse(null),
                                                            record.getStr(NAME_FIELD).orElse(null),

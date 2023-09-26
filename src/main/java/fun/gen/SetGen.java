@@ -42,6 +42,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
                             size,
                             size * 10);
     }
+
     /**
      * Sets the maximum number of tries for generating the set to improve the generation process.
      * This method creates a new instance of SetGen with the updated maximum tries.

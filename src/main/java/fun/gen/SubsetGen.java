@@ -2,31 +2,21 @@ package fun.gen;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
-class SubsetSupplier<O> implements Supplier<Set<O>> {
+class SubsetGen<O> implements Gen<Set<O>> {
 
-    private final Supplier<Stream<Set<O>>> s;
 
+    private final static int MAX_N_FIELDS_TO_CALCULATE_ALL_COMBINATIONS = 22;
     private final List<O> inputs;
-    private final Supplier<Long> gen;
     private final Map<Integer, List<Set<O>>> memoizationMap;
 
-    SubsetSupplier(List<O> inputs,
-                   Random random) {
+    SubsetGen(List<O> inputs) {
         this.inputs = Objects.requireNonNull(inputs);
-        this.s = () -> subsets(inputs);
-        long i = (long) Math.pow(2,
-                                 inputs.size()) - 1;
-        this.gen = LongGen.arbitrary(0,
-                                     i).apply(Objects.requireNonNull(random));
+
+
         this.memoizationMap = new HashMap<>();
     }
 
-    public SubsetSupplier(List<O> inputs) {
-        this(inputs,
-             new Random());
-    }
 
     private static <I> void subsets(List<I> elements,
                                     int currentIndex,
@@ -50,10 +40,10 @@ class SubsetSupplier<O> implements Supplier<Set<O>> {
                 combinations);
     }
 
-    private Stream<Set<O>> subsets(List<O> elements) {
+    private List<Set<O>> subsets(List<O> elements) {
         int hashCode = elements.hashCode();
         if (memoizationMap.containsKey(hashCode)) {
-            return memoizationMap.get(hashCode).stream();
+            return memoizationMap.get(hashCode);
         }
 
         List<Set<O>> combinations = new ArrayList<>();
@@ -61,23 +51,35 @@ class SubsetSupplier<O> implements Supplier<Set<O>> {
                 0,
                 new HashSet<>(),
                 combinations);
-        Stream<Set<O>> resultStream = combinations.stream();
         memoizationMap.put(hashCode,
                            combinations);
 
-        return resultStream;
+        return combinations;
     }
 
-    Gen<Set<O>> gen() {
-        return random -> new SubsetSupplier<>(SubsetSupplier.this.inputs,
-                                              random
-        );
-    }
 
     @Override
-    public Set<O> get() {
-        return s.get().skip(gen.get()).findFirst().orElse(null);
+    public Supplier<Set<O>> apply(Random random) {
+
+        if (inputs.size() < MAX_N_FIELDS_TO_CALCULATE_ALL_COMBINATIONS) {
+            List<Set<O>> combinations = subsets(inputs);
+            Gen<Integer> gen = IntGen.arbitrary(0,
+                                                combinations.size() - 1);
+            Supplier<Integer> indexSupplier = gen.apply(random);
+            return () -> combinations.get(indexSupplier.get());
+        } else {
+            Gen<Integer> gen = IntGen.arbitrary(0,
+                                                inputs.size());
+            Supplier<Integer> nSupplier = gen.apply(SplitGen.DEFAULT.apply(random));
+
+
+            return () -> {
+                List<O> xs = new ArrayList<>(inputs);
+                Collections.shuffle(xs,
+                                    random); // Shuffle the elements randomly
+                return new HashSet<>(xs.subList(0,
+                                                nSupplier.get()));
+            };
+        }
     }
-
-
 }

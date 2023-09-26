@@ -1,12 +1,13 @@
 package fun.gen;
 
-import fun.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TesGen {
@@ -26,7 +27,7 @@ public class TesGen {
                              "c",
                              StrGen.alphanumeric(1,
                                                  1))
-                         .setAllOptional();
+                         .withAllOptKeys();
 
 
         Assertions.assertTrue(gen.suchThat(it ->
@@ -63,17 +64,18 @@ public class TesGen {
 
     @Test
     public void testClassify() {
-
+        Map<String, Predicate<Integer>> classifier =
+                new HashMap<>();
+        classifier.put("2",
+                       n -> n == 2);
+        classifier.put("> 5",
+                       n -> n > 5);
+        classifier.put("= 10",
+                       n -> n == 10);
         Map<String, Long> map =
                 IntGen.arbitrary(0,
                                  10).classify(10000,
-                                              Pair.of(n -> n == 2,
-                                                      "2"),
-                                              Pair.of(n -> n > 5,
-                                                      "'> 5'"),
-                                              Pair.of(n -> n == 10,
-                                                      "'= 10'")
-                );
+                                              classifier);
 
         System.out.println(map);
     }

@@ -76,7 +76,18 @@ public final class ListGen<T> implements Gen<List<T>> {
 
 
     }
-
+    /**
+     * Generates a list of arbitrary elements using the provided element generator within a specified length range. This method allows you to create lists of elements with varying lengths, where each element is generated independently based on the given generator.
+     *
+     * <p>The {@code gen} parameter specifies the generator for individual elements of the list, while {@code minLength} and {@code maxLength} define the allowed length range for the generated list. You can control the size and content of the list by specifying these minimum and maximum lengths.</p>
+     *
+     * @param <T>        the type of elements to generate and include in the list
+     * @param gen        the generator for individual elements of the list
+     * @param minLength  the minimum allowed length of the generated list (must be non-negative)
+     * @param maxLength  the maximum allowed length of the generated list (must be greater than or equal to {@code minLength})
+     * @return a generator for lists of arbitrary elements within the specified length range
+     * @throws IllegalArgumentException if {@code minLength} is negative or if {@code maxLength} is less than {@code minLength}
+     */
     public static <T> Gen<List<T>> arbitrary(final Gen<T> gen,
                                              final int minLength,
                                              final int maxLength) {

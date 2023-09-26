@@ -51,8 +51,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
      * The generated values are biased toward the following values within the specified range:
      * - The minimum value {@code min} is always included as a possible generated value.
      * - The maximum value {@code max} is included as a possible generated value unless it is equal to {@code min}.
-     * - Zero is included as a possible value within the specified range [{@code min}, {@code max}].
-     * <p>
+     * - Zero is included as a possible value within the specified range [{@code min}, {@code max}].*
      *
      * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
      * @param max The maximum value (exclusive) of the generated {@code BigDecimal}.

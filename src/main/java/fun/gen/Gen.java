@@ -118,8 +118,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
      */
     default <P> Gen<P> then(final Function<O, ? extends Gen<P>> fn) {
         Objects.requireNonNull(fn);
-        return seed -> fn.apply(this.apply(SplitGen.DEFAULT.apply(seed))
-                                    .get())
+        return seed -> fn.apply(this.apply(SplitGen.DEFAULT.apply(seed)).get())
                          .apply(SplitGen.DEFAULT.apply(seed));
     }
 
@@ -260,28 +259,26 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
     }
 
     /**
-     * Classifies sampled values into multiple categories based on a set of predicate-label pairs,
-     * counts the occurrences in each category, and assigns a default label to values that do not match any predicate.
+     * Classifies sampled values into multiple categories based on a set of label-predicate pairs,
+     * counts the occurrences in each category, and assigns a default label (Others) to values that do not match any predicate.
      *
      * @param n          The number of samples to generate for classification and counting.
-     * @param classifier An array of predicate-label pairs used to classify values into different categories.
+     * @param classifier An map of label-predicate pairs used to classify values into different categories.
      * @return A map containing the labels as keys and their respective counts as values.
      */
     default Map<String, Long> classify(final int n,
-                                       final Pair<Predicate<O>, String>... classifier) {
+                                       final Map<String,Predicate<O>> classifier) {
 
         Predicate<O> defaultClassifier =
-                o -> Arrays.stream(classifier)
-                           .noneMatch(cla -> cla.first().test(o));
+                o -> classifier.values().stream()
+                           .noneMatch(cla -> cla.test(o));
 
-        List<Pair<Predicate<O>, String>> classifiers =
-                Arrays.stream(classifier).collect(Collectors.toList());
-        classifiers.add(Pair.of(defaultClassifier,
-                                "others"));
+        Map<String,Predicate<O>> xs = new HashMap<>(classifier);
+        xs.put("Others",defaultClassifier);
+
         return collect(n,
-                       o -> classifiers.stream()
-                                       .filter(cla -> cla.first().test(o))
-                                       .map(Pair::second)
+                       o -> xs.keySet().stream()
+                                       .filter(key ->  xs.get(key).test(o))
                                        .collect(Collectors.joining(","))
         );
 

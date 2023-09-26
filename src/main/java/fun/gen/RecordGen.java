@@ -2158,6 +2158,9 @@ public final class RecordGen implements Gen<Record> {
 
         Supplier<Set<String>> nullableFields =
                 new SubsetGen<>(nullables).apply(split.apply(random));
+        Supplier<Boolean> isRemoveOpts = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(random));
+        Supplier<Boolean> isSetNullables = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(random));
+
 
         Map<String, Supplier<?>> map = new LinkedHashMap<>();
         for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
@@ -2174,11 +2177,16 @@ public final class RecordGen implements Gen<Record> {
                            value);
             }
 
-            for (String s : optionalFields.get()) result.remove(s);
+            if (isRemoveOpts.get()) {
+                for (String s : optionalFields.get())
+                    result.remove(s);
+            }
 
-            for (String s : nullableFields.get())
-                result.put(s,
-                           null);
+            if (isSetNullables.get()) {
+                for (String s : nullableFields.get())
+                    result.put(s,
+                               null);
+            }
 
             return new Record(result);
         };

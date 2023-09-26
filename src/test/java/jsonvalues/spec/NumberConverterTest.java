@@ -266,8 +266,8 @@ public class NumberConverterTest {
     @Test
     public void shortWhitespaceGuard() throws JsParserException {
         String input = "1234  ";
-        final JsReader jr = dslJson.newReader(input.getBytes());
-        final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(input.getBytes()),
+        final JsReader jr = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
+        final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),
                                                new byte[64]);
         jr.readNextToken();
         Number number = NumberConverter.deserializeNumber(jr);
@@ -280,7 +280,7 @@ public class NumberConverterTest {
     @Test
     public void longWhitespaceGuard() throws JsParserException {
         String input = "1234        \t\n\r               ";
-        final JsReader reader = dslJson.newReader(input.getBytes());
+        final JsReader reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
         reader.readNextToken();
         Number number = NumberConverter.deserializeNumber(reader);
         Assertions.assertTrue(number instanceof Long);
@@ -289,7 +289,7 @@ public class NumberConverterTest {
     @Test
     public void overflowDetection() throws JsParserException {
         String input = "1234567890123456        \t\n\r               ";
-        JsReader reader = dslJson.newReader(input.getBytes());
+        JsReader reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
         reader.readNextToken();
         try {
             NumberConverter.deserializeInt(reader);
@@ -298,7 +298,7 @@ public class NumberConverterTest {
             Assertions.assertTrue(e.getMessage().contains("Integer overflow"));
         }
         input = "-1234567890123456        \t\n\r               ";
-        reader = dslJson.newReader(input.getBytes());
+        reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
         reader.readNextToken();
         try {
             NumberConverter.deserializeInt(reader);
@@ -475,7 +475,6 @@ public class NumberConverterTest {
             res = NumberConverter.deserializeDecimal(reader);
             if (error != null) Assertions.fail("Expecting " + error);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
             Assertions.assertTrue(ex.getMessage().contains(error));
         }
         return res;
@@ -488,7 +487,6 @@ public class NumberConverterTest {
             res = NumberConverter.deserializeInt(reader);
             if (error != null) Assertions.fail("Expecting " + error);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
             Assertions.assertTrue(ex.getMessage().contains(error));
         }
         return res;
@@ -501,7 +499,6 @@ public class NumberConverterTest {
             res = NumberConverter.deserializeLong(reader);
             if (error != null) Assertions.fail("Expecting " + error);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
             Assertions.assertTrue(ex.getMessage().contains(error));
         }
         return res;
@@ -514,7 +511,6 @@ public class NumberConverterTest {
             res = NumberConverter.deserializeNumber(reader);
             if (error != null) Assertions.fail("Expecting " + error);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
             Assertions.assertTrue(ex.getMessage().contains(error));
         }
         return res;
@@ -650,7 +646,6 @@ public class NumberConverterTest {
         };
 
         for (String d : values) {
-            System.out.println(d);
             BigDecimal f = new BigDecimal(d);
 
             byte[] input = d.getBytes(StandardCharsets.UTF_8);
@@ -669,8 +664,6 @@ public class NumberConverterTest {
             jsr.read();
 
             final BigDecimal valueParsed2 = NumberConverter.deserializeDecimal(jsr);
-            System.out.println(f);
-            System.out.println(valueParsed2);
             Assertions.assertEquals(0, f.compareTo(valueParsed2));
         }
     }
@@ -694,7 +687,6 @@ public class NumberConverterTest {
                 -1800849.97476139d,
                 54940.89750944923d,
                 54940.89750944924d,
-                //54940.897509449234d, //TODO: doesn't work in default
                 -740342.9473267009d,
                 -74034294.73267009d,
                 -7403429.473267009d,
@@ -704,7 +696,6 @@ public class NumberConverterTest {
                 -9.514467982939291E8d,
                 0.9644868606768501d,
                 0.96448686067685d,
-                //2.716906186888657d, //TODO: doesn't work in default
                 2.7169061868886573d,
                 98.48415401998089d,
                 98.48415401998088d,
@@ -724,9 +715,6 @@ public class NumberConverterTest {
 
         for (double d : values) {
             sw.reset();
-
-            //System.out.println("processing " + d);
-
             NumberConverter.serialize(BigDecimal.valueOf(d),
                                       sw);
 

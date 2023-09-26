@@ -4,6 +4,8 @@ import fun.gen.BoolGen;
 import fun.gen.Combinators;
 import fun.gen.Gen;
 import fun.gen.SplitGen;
+import fun.tuple.Pair;
+import jsonvalues.JsBool;
 import jsonvalues.JsNull;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
@@ -45,8 +47,6 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsObjGen implements Gen<JsObj> {
 
-    private final static int MAX_NULLABLE_FIELDS = 20;
-    private final static int MAX_OPTIONAL_FIELDS = 20;
 
     private final Map<String, Gen<? extends JsValue>> bindings;
 
@@ -5464,40 +5464,14 @@ public final class JsObjGen implements Gen<JsObj> {
         requireNonNull(seed);
 
         Supplier<Set<String>> optionalFields =
-                optionals.size() < MAX_OPTIONAL_FIELDS ?
-                        () -> this.optionals :
-                        Combinators.nOf(this.optionals,
-                                        MAX_OPTIONAL_FIELDS)
-                                   .apply(SplitGen.DEFAULT.apply(seed));
+                Combinators.subsets(optionals).sample(SplitGen.DEFAULT.apply(seed));
 
         Supplier<Set<String>> nullableFields =
-                nullables.size() < MAX_NULLABLE_FIELDS ?
-                        () -> this.nullables :
-                        Combinators.nOf(this.nullables,
-                                        MAX_NULLABLE_FIELDS)
-                                   .apply(SplitGen.DEFAULT.apply(seed));
+                Combinators.subsets(nullables).sample(SplitGen.DEFAULT.apply(seed));
 
-        Random optionalCombinationsSeed = SplitGen.DEFAULT.apply(seed);
-        Supplier<Set<String>> optionalCombinations =
-                () -> Combinators.subsets(optionalFields.get())
-                                 .apply(optionalCombinationsSeed)
-                                 .get();
+        Supplier<Boolean> isRemoveOpts = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(seed));
+        Supplier<Boolean> isSetNullables = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(seed));
 
-        Random nullableCombinationsSeed = SplitGen.DEFAULT.apply(seed);
-        Supplier<Set<String>> nullableCombinations =
-                () -> Combinators.subsets(nullableFields.get())
-                                 .apply(nullableCombinationsSeed)
-                                 .get();
-
-        Supplier<Boolean> isRemoveOptionals =
-                optionals.isEmpty() ?
-                        () -> false :
-                        BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(seed));
-
-        Supplier<Boolean> isRemoveNullables =
-                nullables.isEmpty() ?
-                        () -> false :
-                        BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(seed));
 
         return () ->
         {
@@ -5509,13 +5483,14 @@ public final class JsObjGen implements Gen<JsObj> {
                               value
                              );
             }
-            if (Boolean.TRUE.equals(isRemoveOptionals.get())) {
-                final Set<String> r = optionalCombinations.get();
-                for (String s : r) obj = obj.delete(s);
+            if(isRemoveOpts.get()) {
+                final Set<String> rs = optionalFields.get();
+                for (String s : rs) obj = obj.delete(s);
             }
-            if (Boolean.TRUE.equals(isRemoveNullables.get())) {
-                final Set<String> r = nullableCombinations.get();
-                for (String s : r)
+
+            if(isSetNullables.get()) {
+                final Set<String> rr = nullableFields.get();
+                for (String s : rr)
                     obj = obj.set(s,
                                   JsNull.NULL);
             }

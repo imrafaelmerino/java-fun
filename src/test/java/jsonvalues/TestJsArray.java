@@ -1219,8 +1219,6 @@ public class TestJsArray {
 
         JsArray b = a.filterValues(JsInt.prism.exists.apply(n -> n > 5));
 
-        System.out.println(b);
-
         Assertions.assertEquals(JsArray.of(JsInt.of(10),
                                            JsArray.of(6,
                                                       7,

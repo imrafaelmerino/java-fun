@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static jsonvalues.spec.JsSpecs.*;
 
@@ -347,8 +349,8 @@ public class TestGenerators {
     public void testDates() {
 
 
-        Gen<JsInstant> gen = JsInstantGen.arbitrary(ZonedDateTime.now(),
-                                                    ZonedDateTime.now()
+        Gen<JsInstant> gen = JsInstantGen.arbitrary(ZonedDateTime.now(ZoneId.of("Europe/Paris")),
+                                                    ZonedDateTime.now(ZoneId.of("Europe/Paris"))
                                                                  .plus(Duration.ofDays(2))
                                                    );
 
@@ -410,7 +412,9 @@ public class TestGenerators {
                              JsIntGen.arbitrary());
 
 
-        gen.withAllNullValues().sample(100).forEach(System.out::println);
+        Assertions.assertEquals(10000L,
+                                gen.withAllNullValues().sample(10000).count()
+                               );
     }
 
 

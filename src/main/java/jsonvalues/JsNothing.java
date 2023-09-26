@@ -47,9 +47,7 @@ public final class JsNothing implements JsValue {
         return this == that;
     }
 
-    /**
-     * @return "NOTHING"
-     */
+
     @Override
     public String toString() {
         return "NOTHING";

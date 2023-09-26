@@ -45,9 +45,6 @@ public final class JsNull extends JsPrimitive {
         return that == this;
     }
 
-    /**
-     * @return "null"
-     */
     @Override
     public String toString() {
         return "null";

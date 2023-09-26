@@ -39,8 +39,6 @@ public class TestJsObjSpec {
                                                          JsInt.of(1)
                                                         ));
 
-        errors.forEach(pair -> System.out.println(pair.value + " @ " + pair.path + " doesn't not conform spec: " + pair.errorCode));
-
         Assertions.assertFalse(errors.isEmpty());
 
         final SpecError pair = errors.stream()
@@ -1582,14 +1580,12 @@ public class TestJsObjSpec {
 
         Assertions.assertTrue(gen.sample(10000).allMatch(o -> {
             Set<SpecError> errors = spec.test(o);
-            if (!errors.isEmpty()) System.out.println(errors);
             return errors.isEmpty();
         }));
 
 
         Assertions.assertTrue(baseGen.suchThat(spec).sample(10000).allMatch(o -> {
             Set<SpecError> errors = spec.test(o);
-            if (!errors.isEmpty()) System.out.println(errors);
             return errors.isEmpty();
         }));
 
@@ -1597,7 +1593,6 @@ public class TestJsObjSpec {
         JsObjSpec spec1 = baseSpec.withAllOptKeys().suchThat(o -> dependencies(o));
         Assertions.assertTrue(baseGen.withAllOptKeys().suchThat(spec1).sample(10000).allMatch(o -> {
             Set<SpecError> errors = spec1.test(o);
-            if (!errors.isEmpty()) System.out.println(errors);
             return errors.isEmpty();
         }));
 

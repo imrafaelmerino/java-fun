@@ -1381,10 +1381,6 @@ invaluable tool when working with JSON data in your project.
 
 ## <a name="notwhatfor"><a/> When not to use it
 
-json-values is a well-suited library for use in pure Object-Oriented Programming (OOP) and particularly shines in the
-Functional Programming (FP) paradigm. However, there are scenarios where it may not be the best choice, particularly in
-the context of Enterprise Object-Oriented Programming (EOOP).
-
 **Avoid Overengineering**
 
 json-values is a powerful tool for working with JSON data in a straightforward and expressive manner. However, it's
@@ -1393,7 +1389,7 @@ of getters and setters or intricate DSLs built on top of json-values.
 
 **Consider Your Design Choices**
 
-In the realm of EOOP, it's crucial to strike a balance between leveraging the capabilities of json-values and adhering
+It's crucial to strike a balance between leveraging the capabilities of json-values and adhering
 to the principles of good software design. Creating abstractions that are more about showcasing technical prowess than
 addressing practical problems can lead to what's humorously referred to as "Narcissistic Design."
 
@@ -1408,15 +1404,11 @@ abstractions that may not align with the practical needs of your project, especi
 
 ## <a name="requirements"><a/> Requirements
 
-Certainly, here's a rephrased version:
-
 - For versions prior to 11.9.0, json-values requires Java 8 or later. Please note that only fixes are accepted for these
   versions.
 - For versions starting from 12.0.0 and beyond, json-values mandates Java 17 or later.
 
 ## <a name="installation"><a/> Installation
-
-Here's a rephrased version:
 
 To include json-values in your project, add the corresponding dependency to your build tool based on your Java version:
 

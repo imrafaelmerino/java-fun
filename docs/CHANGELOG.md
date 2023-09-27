@@ -10,7 +10,7 @@ Bug: Some static factory methods were missing in JsSpec
 Improved javadoc
 Improved implementation of JsObjGen 
 
-12.4.0
+12.5.0
 JsObjGen with optional and nullable fields, generates the whole json and with no null vales 50% of the times
 refactor some tests
 Improved javadoc

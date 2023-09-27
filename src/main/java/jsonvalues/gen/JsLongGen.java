@@ -77,6 +77,16 @@ public final class JsLongGen implements Gen<JsLong> {
     }
 
     /**
+     * Returns a generator that produces values uniformly distributed over the interval [min,Integer.MAX_VALUE].
+     *
+     * @param min The lower bound of the interval (inclusive).
+     * @return A JsLong generator.
+     */
+    public static Gen<JsLong> arbitrary(long min) {
+        return new JsLongGen(LongGen.arbitrary(min));
+    }
+
+    /**
      * Returns a biased generator that produces potential problematic values with a higher probability.
      * These values include:
      * - The lower bound of the interval
@@ -100,6 +110,29 @@ public final class JsLongGen implements Gen<JsLong> {
                                      final long max) {
         return new JsLongGen(LongGen.biased(min,
                                             max));
+    }
+
+    /**
+     * Returns a biased generator that produces potential problematic values with a higher probability.
+     * These values include:
+     * - The lower bound of the interval
+     * - The upper bound of the interval {@link Long#MAX_VALUE}
+     * And the following numbers provided that they are between the specified interval:
+     * - {@link Long#MIN_VALUE}
+     * - {@link Integer#MIN_VALUE}
+     * - {@link Short#MIN_VALUE}
+     * - {@link Byte#MIN_VALUE}
+     * - 0
+     * - {@link Integer#MAX_VALUE}
+     * - {@link Short#MAX_VALUE}
+     * - {@link Byte#MAX_VALUE}
+     * - {@link Long#MAX_VALUE}
+     *
+     * @param min The lower bound of the interval (inclusive).
+     * @return A biased JsLong generator.
+     */
+    public static Gen<JsLong> biased(final long min) {
+        return new JsLongGen(LongGen.biased(min));
     }
 
 

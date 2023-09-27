@@ -17,653 +17,491 @@
 - [Installation](#inst)
 - [Related projects](#rp)
 
-
 ## <a name="goal"><a/> Goal
 
-The goal of java-fun is to implement in Java some important patterns 
-from Functional Programming. **It doesn't transliterate these patterns 
-from other languages**, aiming that any standard Java programmer finds 
-it easy to adopt them and understand the essence of these concepts, not 
-getting lost in unfamiliar types and conventions.
+The primary objective of **java-fun** is to bring essential Functional Programming (FP) patterns to the Java ecosystem.
+Unlike mere translations of these patterns from other languages, **java-fun** is designed with the intent that any
+typical Java developer can effortlessly embrace and comprehend these concepts. The emphasis is on preserving the essence
+of these patterns, ensuring developers do not become entangled in unfamiliar types and conventions.
 
-The most important concepts implemented so far are:
+Here are the key concepts that have been thoughtfully implemented within **java-fun**:
 
-- **Pseudo Random Generators**. The best way to do testing is by far 
-Property-Based-Testing. And to do it well you need a good set of generators and 
-to be able to compose them in any imaginable way. With java-fun, it's child's play!
-- **Optics**. Functional programmers use optics instead of getters and setters. 
-They are safe and composable. Using optics properly, you'll never see
-again a NullPointerException!
-- **Tuples**. Java won't probably implement tuples, but I still consider them very
-useful. I've implemented tuples of arity two and three,
-i.e. pairs and triples. 
+- **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach, and having a robust set
+  of generators that can be composed in countless ways is crucial. **java-fun** simplifies this process, making it
+  incredibly straightforward.
+
+- **Optics**: In functional programming, optics take precedence over traditional getters and setters. They offer safety
+  and composability, eliminating the likelihood of encountering NullPointerExceptions when used correctly.
+
+- **Tuples**: Although Java may not officially support tuples, they remain exceptionally valuable. **java-fun**
+  introduces tuples with arities of two and three, encompassing pairs and triples, respectively. These structures
+  enhance code expressiveness and maintainability.
 
 ## <a name="prg"><a/> Pseudo Random Generators
-Pseudorandom number generators (PRN) are important in practice for their speed 
-in number generation and their reproducibility. These properties, when it comes 
-to testing, are very significant.
 
-A PRG is modeled with the following type Gen:
+Pseudorandom number generators (PRNs) play a vital role in practical scenarios due to their rapid number generation
+capabilities and the ability to produce reproducible results. These attributes are particularly valuable in testing
+contexts.
 
-``` java
+In **java-fun**, we represent a PRN with the `Gen` type:
+
+```code
 import fun.gen.Gen;
+
 import java.util.Random;
 
-public interface Gen<O> extends Function<Random, Supplier<O>>{}
-
+public interface Gen<O> extends Function<Random, Supplier<O>> {
+}
 ```
 
-A Gen is a function that takes a seed of type Random and returns a lazy 
-computation of type O. Laziness is key to be able to compose 
-generators easily.
+Here, a `Gen` is essentially a function that accepts a `Random` seed and yields a lazy computation of type `O`. The lazy
+nature of these computations is essential for seamless generator composition.
 
-There are two crucial static factory methods to create generators:
+To create generators, you have access to two fundamental static factory methods:
 
-- **arbitrary**, that produces a uniform distribution of values.
-- **biased**, that generates with a higher probability some values that are 
-proven to cause more bugs in our code. This is vital to do Property Based 
-Testing.
+- **arbitrary**: This method produces generators that offer a uniform distribution of values.
+- **biased**: This method generates values with varying probabilities, giving higher probabilities to values that are
+  known to trigger more bugs in our code. This is a crucial aspect of Property-Based Testing.
 
-You can create any generator just by implementing the interface _Gen_. Nevertheless 
-there are a lot of predefined generators you can use. Let's go over them.
-
+While you can create custom generators by implementing the `Gen` interface, **java-fun** provides a plethora of
+predefined generators for your convenience. Let's delve into these predefined generators.
 
 ### <a name="ptg"><a/> Primitive Types Generators
-- String generator
 
-The bounded-string-biased generator produces with a higher probability the empty string
-if _minLength_ is zero, blank strings, and strings of length _minLength_ and _maxLength_:
+In `java-fun`, we provide a range of generators for primitive data types to facilitate Property-Based Testing. These
+generators are crucial for efficient testing and come in various flavors. Let's explore them in detail:
 
- ```  java
- 
-Gen<String> :: StrGen.biased(int minLength, int maxLength)
- 
-```
+#### **String Generators**
 
-For example:
+- **Bounded String Biased Generator**: This generator is biased towards producing specific string values. It generates
+  the empty string, blank strings, and strings of lengths within the specified range with higher probability, making it
+  useful for targeting scenarios prone to bugs.
 
-``` java
+    ```code
+    Gen<String> gen = StrGen.biased(int minLength, int maxLength);
+    ```
 
-Gen<String> gen =  StrGen.biased(0,3);
+  For instance:
 
-gen.sample(10).forEach(System.out::println);
+    ```code
+    Gen<String> gen = StrGen.biased(0, 3);
+    ```
 
-```
+  This might produce strings like "", "   ", or any string of length from 0 to 3, composed of valid printable Unicode
+  characters.
 
-would print out strings like "", "   " or any string of length from 0 to 3 made 
-up of valid printable Unicode characters.
+- **Bounded String Arbitrary Generators**: These generators produce strings of lengths uniformly distributed within the
+  specified range `[minLength, maxLength]`. Unlike the biased generator, all values within this range are generated with
+  equal probability.
 
-The bounded-string-arbitrary generator produces any string of length **uniformly distributed** over 
-the interval [minLength, maxLength]. Not like the biased generator, all the values are generated 
-with the same probability.
+    ```code
+    Gen<String> gen = StrGen.arbitrary(int minLength, int maxLength);
+    ```
 
- ```  java
- 
-Gen<String> :: StrGen.arbitrary(int minLength, int maxLength)
-              
-```
+  Other types of bounded string arbitrary generators include:
 
+    ```code
+    Gen<String> gen = StrGen.alphanumeric(int minLength, int maxLength);
+    Gen<String> gen = StrGen.alphabetic(int minLength, int maxLength);
+    Gen<String> gen = StrGen.letters(int minLength, int maxLength);
+    Gen<String> gen = StrGen.digits(int minLength, int maxLength);
+    Gen<String> gen = StrGen.ascii(int minLength, int maxLength);
+    ```
 
-Other bounded-string-arbitrary generators are:
+#### **Integer Generators**
 
- ```  java
- 
-Gen<String> :: StrGen.alphanumeric(int minLength, int maxLength)
+- **Unbounded Integer Biased Generator**: This generator focuses on producing specific integer values with higher
+  probability. It generates
+  zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`,
+  and `Integer.MIN_VALUE`.
 
-Gen<String> :: StrGen.alphabetic(int minLength, int maxLength)
+    ```code
+    Gen<Integer> gen = IntGen.biased();
+    ```
 
-Gen<String> :: StrGen.letters(int minLength, int maxLength)
+- **Bounded Integer Biased Generator**: Similar to the unbounded version, this generator produces values within the
+  specified interval `(min, max)` with a higher probability.
 
-Gen<String> :: StrGen.digits(int minLength, int maxLength)
+    ```code
+    Gen<Integer> gen = IntGen.biased(int min, int max);
+    ```
 
-Gen<String> :: StrGen.ascii(int minLength, int maxLength)
-              
-```
+- **Unbounded Integer Arbitrary Generator**: This generator produces any integer number with the same probability,
+  following a uniform distribution.
 
+    ```code
+    Gen<Integer> gen = IntGen.arbitrary();
+    ```
 
-- Integer generator
+- **Bounded Integer Arbitrary Generator**: Similar to the unbounded version, this generator produces integers
+  between `min` and `max` (inclusive) with the same probability, following a uniform distribution.
 
-The unbounded-integer-biased generator produces with a higher probability the values zero, _Byte.MAX_VALUE_, 
-_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_ and _Integer.MIN_VALUE_:
+    ```code
+    Gen<Integer> gen = IntGen.arbitrary(int min, int max);
+    ```
 
-```  java
+#### **Long Generators**
 
-Gen<Integer> :: IntGen.biased()
+- **Unbounded Long Biased Generator**: This generator focuses on producing specific long values with higher probability.
+  It generates values such as
+  zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, `Integer.MIN_VALUE`, `Long.MIN_VALUE`,
+  and `Long.MAX_VALUE`.
 
-```
+    ```code
+    Gen<Long> gen = LongGen.biased();
+    ```
 
-The bounded-integer-biased generator produces with higher probability _min_ and _max_, and
-all the above-mentioned values that fall into the interval (min, max):
+- **Bounded Long Biased Generator**: Similar to the unbounded version, this generator produces values within the
+  specified interval `(min, max)` with a higher probability.
 
-```  java
+    ```code
+    Gen<Long> gen = LongGen.biased(long min, long max);
+    ```
 
-Gen<Integer> :: IntGen.biased(int min, int max)
+- **Unbounded Long Arbitrary Generator**: This generator produces any positive long number with the same probability,
+  following a uniform distribution.
 
-```
+    ```code
+    Gen<Long> gen = LongGen.arbitrary();
+    ```
 
+- **Bounded Long Arbitrary Generator**: Similar to the unbounded version, this generator produces long integers
+  between `min` and `max` (inclusive) with the same probability, following a uniform distribution.
 
-The unbounded-integer-arbitrary generator produces any integer number with the same 
-probability (uniform distribution):
+    ```code
+    Gen<Long> gen = LongGen.arbitrary(long min, long max);
+    ```
 
-```  java
+#### **Double Generators**
 
-Gen<Integer> :: IntGen.arbitrary()
+- **Unbounded Double Biased Generator**: This generator focuses on producing specific double values with higher
+  probability. It generates values such as
+  zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`,
+  and `Double.MAX_VALUE`.
 
-```
+    ```code
+    Gen<Double> gen = DoubleGen.biased();
+    ```
 
-whereas the bounded-integer-arbitrary generator produces any integer number between min and max (inclusive)
-with the same probability (uniform distribution):
+- **Bounded Double Biased Generator**: Similar to the unbounded version, this generator produces values within the
+  specified interval `(min, max)` with a higher probability.
 
+    ```code
+    Gen<Double> gen = DoubleGen.biased(double min, double max);
+    ```
 
-```  java
+- **Unbounded Double Arbitrary Generator**: This generator produces any double number with the same probability,
+  following a uniform distribution.
 
-Gen<Integer> :: IntGen.arbitrary(int min, int max)
+    ```code
+    Gen<Double> gen = DoubleGen.arbitrary();
+    ```
 
-```
+- **Bounded Double Arbitrary Generator**: Similar to the unbounded version, this generator produces double numbers
+  between `min` and `max` (inclusive) with the same probability, following a uniform distribution.
 
+    ```code
+    Gen<Double> gen = DoubleGen.arbitrary(double min, double max);
+    ```
 
-- Long generator
+#### **Big Integer and Big Decimal Generators**
 
-The unbounded-long-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_,
-_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_, _Integer.MIN_VALUE_,
-_Long.MIN_VALUE_ and _Long.MAX_VALUE_:
+- **Biased Big Integer Generator**: This generator produces zero and, if the maximum number of bits is sufficiently
+  large, values such as `Byte.MAX_VALUE`, `Short.MAX_VALUE`, `Integer.MAX_VALUE`, and `Long.MAX_VALUE`.
 
-```  java
+    ```code
+    Gen<BigInteger> gen = BigIntGen.biased(int bits);
+    ```
 
-Gen<Long> :: LongGen.biased()
+- **Arbitrary Big Integer Generator**: This generator generates big integers uniformly distributed between 0 and
+  2^bits - 1.
 
-```
+    ```code
+    Gen<BigInteger> gen = BigIntGen.arbitrary(int bits);
+    ```
 
-The bounded-long-biased generator produces with higher probability _min_ and _max_, and
-all the above-mentioned values that fall into the interval (min, max):
+- **Unbounded Decimal Biased Generator**: This generator focuses on producing specific decimal values with higher
+  probability. It generates values such as
+  zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`,
+  and `Double.MAX_VALUE`.
 
-```  java
+    ```code
+    Gen<BigDecimal> gen = BigDecGen.biased();
+    ```
 
-Gen<Long> :: LongGen.biased(long min, long max)
+- **Bounded Decimal Biased Generator**: Similar to the unbounded version, this generator produces values within the
+  specified interval `(min, max)` with a higher probability.
 
-```
+    ```code
+    Gen<BigDecimal> gen = BigDecGen.biased(BigDecimal min, BigDecimal max);
+    ```
 
+- **Unbounded Decimal Arbitrary Generator**: This generator produces any decimal number with the same probability,
+  following a uniform distribution.
 
-The unbounded-long-arbitrary generator produces any integer number with the same
-probability (uniform distribution):
+    ```code
+    Gen<BigDecimal> gen = BigDecGen.arbitrary();
+    ```
 
-```  java
+- **Bounded Decimal Arbitrary Generator**: Similar to the unbounded version, this generator produces decimal numbers
+  between `min` and `max` (inclusive) with the same probability, following a uniform distribution.
 
-Gen<Long> :: LongGen.arbitrary()
+    ```code
+    Gen<BigDecimal> gen = BigDecGen.arbitrary(BigDecimal min, BigDecimal max);
+    ```
 
-```
+#### **Other Primitive Generators**
 
-whereas the bounded-long-arbitrary generator produces any integer number between min and max (inclusive)
-with the same probability (uniform distribution):
+- **Bytes Generator**: This generator creates byte arrays with lengths biased
 
+or uniformly distributed within specified ranges.
 
-```  java
+    ```code
+    Gen<byte[]> gen = BytesGen.biased(int minLength, int maxLength);
+    Gen<byte[]> gen = BytesGen.arbitrary(int minLength, int maxLength);
+    ```
 
-Gen<Long> :: LongGen.arbitrary(long min, long max)
+- **Character Generator**: Various character generators are available, including arbitrary characters, characters within
+  specified ranges, alphanumeric characters, alphabetic characters, letters, digits, and ASCII characters.
 
-```
+    ```code
+    Gen<Character> gen = CharGen.arbitrary();
+    Gen<Character> gen = CharGen.arbitrary(char min, char max);
+    Gen<Character> gen = CharGen.alphanumeric();
+    Gen<Character> gen = CharGen.alphabetic();
+    Gen<Character> gen = CharGen.letter();
+    Gen<Character> gen = CharGen.digit();
+    Gen<Character> gen = CharGen.ascii();
+    ```
 
-- Double generator
+- **Boolean Generator**: This generator produces true or false values with equal probability.
 
-The unbounded-double-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_,
-_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_, _Integer.MIN_VALUE_,
-_Long.MIN_VALUE_, _Long.MAX_VALUE_, _Double.MIN_VALUE_ and _Double.MAX_VALUE_:
+    ```code
+    Gen<Boolean> gen = GenBool.arbitrary();
+    ```
 
-```  java
+- **Instant Generator**: For generating Instant values, both biased and arbitrary generators are available. The biased
+  generators focus on specific Instant values, while the arbitrary generators provide uniform distribution.
 
-Gen<Double> :: DoubleGen.biased()
+    ```code
+    Gen<Instant> gen = InstantGen.biased();
+    Gen<Instant> gen = InstantGen.biased(long min, long max);
+    Gen<Instant> gen = InstantGen.arbitrary();
+    Gen<Instant> gen = InstantGen.arbitrary(long min, long max);
+    ```
 
-```
+These comprehensive primitive type generators enable you to perform thorough Property-Based Testing with ease and
+precision.
 
-The bounded-double-biased generator produces with higher probability _min_ and _max_, and
-all the above-mentioned values that fall into the interval (min, max):
+### <a name="cg"><a/> Containers Generators
 
-```  java
+In `java-fun`, we provide generators for container types like lists, sets, and maps. These generators allow you to
+create diverse test data for various scenarios. Let's explore them in detail:
 
-Gen<Double> :: DoubleGen.biased(double min, double max)
+#### **List Generator**
 
-```
+- **Bounded List Biased Generator**: This generator produces lists of type `List<T>` with a bias towards specific
+  values. You can specify the minimum and maximum lengths for the generated lists.
 
+    ```code
+    Gen<List<T>> gen = ListGen.biased(Gen<T> gen, int minLength, int maxLength);
+    ```
 
-The unbounded-double-arbitrary generator produces any integer number with the same
-probability (uniform distribution):
+- **Bounded List Arbitrary Generator**: Similar to the biased generator, this generator produces lists of type `List<T>`
+  within the specified length range. However, all values within this range are generated with equal probability.
 
-```  java
+    ```code
+    Gen<List<T>> gen = ListGen.arbitrary(Gen<T> gen, int minLength, int maxLength);
+    ```
 
-Gen<Double> :: DoubleGen.arbitrary()
+- **List of N Generator**: This generator creates lists of type `List<T>` with a fixed size `size` using the provided
+  generator `gen`.
 
-```
+    ```code
+    Gen<List<T>> gen = ListGen.ofN(Gen<T> gen, int size);
+    ```
 
-whereas the bounded-double-arbitrary generator produces any integer number between min and max (inclusive)
-with the same probability (uniform distribution):
+#### **Set Generator**
 
+- **Set of N Generator**: This generator creates sets of type `Set<T>` with a fixed size `size` using the provided
+  generator `gen`. If the generator cannot produce enough distinct elements, it will fail after 10 times the specified
+  size.
 
-```  java
+    ```code
+    Gen<Set<T>> gen = SetGen.ofN(Gen<T> gen, int size);
+    ```
 
-Gen<Double> :: DoubleGen.arbitrary(double min, double max)
+  You can also create a new generator with a different number of tries using the method `withMaxTries`.
 
-```
+#### **Map Generator**
 
+- **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size `size`. You need to provide
+  key and value generators, and it ensures that keys are distinct. If the key generator cannot produce enough distinct
+  keys, it will fail after 10 times the specified size (customized with the method `withMaxTries`)
 
-- Big Integer generator
-
-Big integer generators accept the maximum number of bits as a parameter. They 
-always produce positive numbers.
-
-The arbitrary generator generates big integers uniformly distributed between 0 
-and 2^bits - 1. The biased generator produces with higher probability zero and,
-if the maximum number of bits is big enough, Byte.MAX_VALUE, Short.MAX_VALUE,
-Integer.MAX_VALUE and Long.MAX_VALUE:
-
- ```  java
- 
-Gen<BigInteger> :: BigIntGen.biased(int bits)
-
-Gen<BigInteger> :: BigIntGen.arbitrary(int bits)
-
-```
-
-
-- Big Decimal generator
-
-The unbounded-decimal-biased generator produces with higher probability the values zero, _Byte.MAX_VALUE_,
-_Byte.MIN_VALUE_, _Short.MAX_VALUE_, _Short.MIN_VALUE_, _Integer.MAX_VALUE_, _Integer.MIN_VALUE_,
-_Long.MIN_VALUE_, _Long.MAX_VALUE_, _Double.MIN_VALUE_ and _Double.MAX_VALUE_:
-
-```  java
-
-Gen<BigDecimal> :: BigDecGen.biased()
-
-```
-
-The bounded-decimal-biased generator produces with higher probability _min_ and _max_, and
-all the above-mentioned values that fall into the interval (min, max):
-
-```  java
-
-Gen<BigDecimal> :: BigDecGen.biased(BigDecimal min, BigDecimal max)
-
-```
-
-
-The unbounded-decimal-arbitrary generator produces any integer number with the same
-probability (uniform distribution):
-
-```  java
-
-Gen<BigDecimal> :: BigDecGen.arbitrary()
-
-```
-
-whereas the bounded-decimal-arbitrary generator produces any integer number between min and max (inclusive)
-with the same probability (uniform distribution):
-
-
-```  java
-
-Gen<BigDecimal> :: BigDecGen.arbitrary(BigDecimal min, BigDecimal max)
-
-```
-
-- Bytes generator
-
- ```  java
- 
-Gen<byte[]> :: BytesGen.biased(int minLength, int maxLength)
- 
-Gen<byte[]> :: BytesGen.arbitrary(int minLength, int maxLength)
-
-
-```
-
-- Character generator
-
-
-```  java
-  
-Gen<Character> :: CharGen.arbitrary()  
-
-Gen<Character> :: CharGen.arbitrary(char min, char max)  
- 
-Gen<Character> :: CharGen.alphanumeric()
-
-Gen<Character> :: CharGen.alphabetic()
-
-Gen<Character> :: CharGen.letter()
-
-Gen<Character> :: CharGen.digit()
-
-Gen<Character> :: CharGen.ascii()
-              
-
-```
-
-- Boolean generator
-
- ```  java
- 
- Gen<Boolean> :: GenBool.arbitrary()
-
-```
-
-produces true or false with the same probability
-
-- Instant generator
-
-The unbounded-instant-biased generator produces with higher probability the values
-1970-01-01T00:00:00Z (epoch time) 1901-12-13T20:45:52Z, (_Integer.MIN_VALUE_ from epoch time),
-2038-01-19T03:14:07Z (_Integer.MAX_VALUE_ from epoch time), _Instant.MAX_ and _Instant.MIN_:
-
-```  java
-
-Gen<Instant> :: InstantGen.biased()
-
-```
-
-The bounded-instant-biased generator produces with higher probability _min_ and _max_ 
-seconds from the epoch time, and all the above-mentioned instants that fall into the interval 
-(min, max):
-
-```  java
-
-Gen<Instant> :: IntantGen.biased(long min, long max)
-
-```
-
-
-The unbounded-instant-arbitrary generator produces any instant  with the same
-probability (uniform distribution):
-
-```  java
-
-Gen<Instant> :: InstantGen.arbitrary()
-
-```
-
-whereas the bounded-instant-arbitrary generator produces any instant between min and max (inclusive)
-with the same probability (uniform distribution):
-
-
-```  java
-
-Gen<Instant> :: InstantGen.arbitrary(int min, int max)
-
-```
-
-
-### <a name="cg"><a/> Collection Generators
-
-- List generator
-
- ```  java
- 
-Gen<List<T>> :: ListGen.biased(Gen<T> gen,
-                                int minLength,
-                                int maxLength
-                               )
-
-```
-
- ```  java
- 
-Gen<List<T>> :: ListGen.arbitrary(Gen<T> gen,
-                                   int minLength,
-                                   int maxLength
-                                 )
-
-```
-
-- Set generator
-
-If the generator cannot or is unlikely to produce enough distinct
-elements (specified by the parameter size), this generator will fail after 10*size tries.
-You can create a new generator with a different number of tries using the method _setMaxTries_.
-
-
-```  java
- 
-Gen<Set<T>> ::  SetGen.of(Gen<T> gen,
-                          int size
-                         )
-
- 
-```
-
-- Map generator
-
-If the key generator cannot or is unlikely to produce enough distinct
-keys (specified by the parameter size), this generator will fail after 10*size tries.
-You can create a new generator with a different number of tries using the method _setMaxTries_.
-
- ```  java
-
-Gen<Map<K,V>> ::  MapGen<K,V>.of(Gen<K> keyGen,
-                                 Gen<V> valueGen,
-                                 int size
-                                 )
-
-```
+    ```code
+    Gen<Map<K, V>> gen = MapGen.of(Gen<K> keyGen, Gen<V> valueGen, int size);
+    ```
 
 ### <a name="trg"><a/> Tuples and Record Generators
 
-- Pair generator
+`java-fun` also provides generators for tuples and record-like structures.
 
- ```  java
+#### **Pair Generator**
 
-Gen<Pair<A, B>> ::  PairGen.of(Gen<A> _1,
-                                Gen<B> _2
-                              )
+- **Pair Generator**: This generator creates pairs of type `Pair<A, B>` using the provided generators for elements `A`
+  and `B`.
 
-```
+    ```code
+    Gen<Pair<A, B>> gen = PairGen.of(Gen<A> _1, Gen<B> _2);
+    ```
 
-- Triple generator
+#### **Triple Generator**
 
- ```  java
- 
-Gen<Triple<A, B, C>> ::  TripleGen.of(Gen<A> _1,
-                                       Gen<B> _2,
-                                       Gen<C> _3
-                                     ) 
+- **Triple Generator**: This generator creates triples of type `Triple<A, B, C>` using the provided generators for
+  elements `A`, `B`, and `C`.
 
-```
+    ```code
+    Gen<Triple<A, B, C>> gen = TripleGen.of(Gen<A> _1, Gen<B> _2, Gen<C> _3);
+    ```
 
-- Record generator
+#### **Record Generator**
 
-A record is just a group of field names and their associated values. This is a record
-generator in java-fun
+- **Record Generator**: A record is a structured data type with named fields and their associated values. In `java-fun`,
+  you can create record-like structures using the `Record` generator. This generator allows you to define fields and
+  associated generators, making it easy to generate structured data.
 
- ```  java
- 
-import fun.gen.Record 
- 
-Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1,20),
-                                   age, IntGen.biased(0,150),
-                                   birthdate, InstantGen.arbitrary() )
+    ```code
+    Gen<Record> person = RecordGen.of(
+        name, StrGen.arbitrary(1, 20),
+        age, IntGen.biased(0, 150),
+        birthdate, InstantGen.arbitrary()
+    );
+    ```
 
-```
-
-The class fun.gen.Record it's just a Map<String,?> to hold the generated data and
-syntactic sugar to get the value of any field without doing any type conversion.
-Record generators are extremely useful to create any object generator using the 
-function map. Find [here](#og) an example.
-
+  The `fun.gen.Record` class functions as a `Map<String, ?>` to store generated data and provides convenient access to
+  field values without requiring explicit type conversions. Record generators are highly versatile and useful for
+  creating custom object generators using the function map. Find an example [here](#og).
 
 ### <a name="com"><a/> Combinators
 
-- OneOf 
+`java-fun` offers various combinator functions to enhance the capabilities of generators.
 
+- **OneOf Combinator**: The `oneOf` combinator selects one generator from a list of generators. All generators in the
+  list have the same probability of being chosen, and they operate independently.
 
- ```  java
- 
-Gen<A> :: Combinators.oneOf(Gen<? extends A> gen,
-                             Gen<? extends A>... others)
-                            
+    ```code
+    Gen<A> gen = Combinators.oneOf(Gen<? extends A> gen, Gen<? extends A>... others);
+    ```
 
-```
+  Alternatively, you can pass a list of values instead of generators:
 
-oneOf combinator chooses each generation a generator from the list passed in as parameters.
-All the generators have the same probability to be picked, and are independent, i.e. they
-generate values from a different seed.
+    ```code
+    Gen<A> gen = Combinators.oneOf(List<A> values);
+    ```
 
-Instead of a list of generators, you can pass in a list of values
+  Or use varargs:
 
- ```  java
- 
-Gen<A> :: Combinators.oneOf(List<A> values)                            
-                         
+    ```code
+    Gen<A> gen = Combinators.oneOf(A value, A... others);
+    ```
 
-```
+- **Freq Combinator**: The `freq` combinator is similar to `oneOf`, but it allows you to assign different weights (
+  probabilities) to each generator, controlling their chances of being selected.
 
-or, using varargs
+    ```code
+    Combinators.freq(Pair<Integer, Gen<? extends A>> freq, Pair<Integer, Gen<? extends A>>... others);
+    ```
 
- ```  java
- 
-Gen<A> :: Combinators.oneOf(A value,
-                             A... others)                           
-                         
+  For example, you can generate strings with a 75% probability and booleans with a 25% probability:
 
-```
+    ```code
+    Combinators.freq(Pair.of(3, StrGen.biased(0, 10)), Pair.of(1, BoolGen.arbitrary()));
+    ```
 
-- Freq
+- **Nullable Combinator**: The `nullable` combinator introduces the possibility of generating `null` values in your
+  data. It is particularly useful for catching potential `NullPointerException` issues.
 
-Freq combinator is like oneOf, but you can assign a different weight to each generator to control
-the probability they are chosen with
+    ```code
+     Combinators.nullable(Gen<O> gen) 
+     
+     //custom probability for null values
+     Combinators.nullable(Gen<O> gen,
+                          int prob) 
+  ```
 
- ```  java
- 
-Gen<A> ::  Combinators.freq(Pair<Integer, Gen<? extends A>> freq,
-                             Pair<Integer, Gen<? extends A>>... others
-                            )
+This section on "Objects Generators" explains how to create generators for custom objects in your model
+using `RecordGen` and the function map. Let's delve deeper into this process:
 
-```
+Consider you have a class `User` with fields `login`, `name`, and `password`. You want to generate instances of this
+class with various values for testing purposes.
 
-For example, let's generate strings with a 75% prob. and booleans with a 25%:
-
- ```  java
- 
- Combinators.freq(Pair.of(3, StrGen.biased(0,10)),
-                  Pair.of(1, BoolGen.arbitrary())
-                 )  
- 
- ```
-
-
-- Nullable
-
-Sometimes, you want to generate null, especially if you are interested in catching bugs. Remember that
-NullPointerException is probably the most seen exception in Java! The nullable combinator produces null
-50% of the generations.
-
- ```  java
-
-Gen<A> :: Combinators.nullable(Gen<A> gen) 
-
-```
-
-You can control the probability null is generated.
-
-
- ```  java
-
-//generates null % specified by prob
-
-Gen<A> :: Combinators.nullable(Gen<A> gen,
-                                int prob) 
-
-```
-
-
-
-- Combinations
-
-Given a list with n elements, there are n!/k!(n - k)! combinations of k elements without repetition:
-
- ```  java
- 
-Gen<Set<A>> ::  Combinators.combinations(int k,
-                                          Set<I> input) 
-
-
-```
-
-- Subsets
-
-Given a set with n elements and considering that each element can be included or not 
-(two possible options), we have 
-
-2^n possible subsets
-
-Since the empty set is not returned, the subsets combinator generates  2^n -1
-different subsets. For example, given the set ["a","b","c"], all the possible values are
-[[a], [b], [c], [a, b], [a, c],  [b, c],  [a, b, c]]
-
-
- ```  java
- 
-Gen<Set<A>> ::  Combinators.subsets(Set<A> input) 
-
-```
-
-This combinator is used to generate all possible combinations of optional and nullable fields
-in the record generator.
-
-### <a name="og"><a/> Objects Generators
-
-You can generate any object from your model just by using the _RecordGen_ and 
-the function map. Consider the class User:
-
-```java 
-
+```code
 public class User {
-
     String login;
     String name;
     String password;
- 
-    public User(String login,
-                String name,
-                String password) {
+
+    public User(String login, String name, String password) {
         this.login = login;
         this.name = name;
         this.password = password;
     }
-    
-    //toString, equals, hashcode, getters all that stuff
 
+    // Additional methods like toString, equals, hashCode, getters, etc.
 }
-
 ```
 
-Let's define a User generator:
+Now, you can create a generator for the `User` class as follows:
 
+1. Define generators for the individual fields of the `User` class, such as `login`, `password`, and `name`. These
+   generators determine the values of each field.
 
-```java   
+    ```code
+    Gen<String> loginGen = StrGen.alphabetic(0, 100);
+    Gen<String> passwordGen = StrGen.biased(0, 100);
+    Gen<String> nameGen = StrGen.alphabetic(0, 100);
+    ```
 
- Gen<String> loginGen = StrGen.alphabetic(0, 100);
+2. Create a `User` generator using `RecordGen`:
 
- Gen<String> passwordGen = StrGen.biased(0, 100);
+    ```code
+    Gen<User> userGen = RecordGen.of("login", loginGen,
+                                     "name", nameGen,
+                                     "password", passwordGen)
+                                 .map(record -> new User(
+                                                         record.getStr("login").orElse(null),
+                                                         record.getStr("name").orElse(null),
+                                                         record.getStr("password").orElse(null)
+                                                         )
+                                      );
+    ```
 
- Gen<String> nameGen = StrGen.alphabetic(0, 100);
+   Here's how this works:
 
- Gen<User> userGen = RecordGen.of("login", loginGen,
-                                  "name", nameGen,
-                                  "password", passwordGen)
-                              .map(record ->
-                                             new User(record.getStr("login").orElse(null),
-                                                      record.getStr("name").orElse(null),
-                                                      record.getStr("password").orElse(null))
-                                  );
+    - `RecordGen.of("login", loginGen, ...)` defines a record generator with fields "login," "name," and "password,"
+      each associated with their respective generators.
 
-```
+    - `.map(record -> new User(...))` uses the function map to transform the generated record into a `User` object.
+      The `record` object allows you to access the generated values for each field using methods
+      like `getStr("fieldName")`.
+
+    - `orElse(null)` ensures that if a value for a field is not generated (which can happen with optional values), it
+      defaults to `null`.
+
+With this `userGen`, you can now generate instances of the `User` class with random or predefined values for testing.
+This approach allows you to easily create generators for complex objects in your model, making property-based testing
+more effective and efficient.
+
 ### <a name="ucp"><a/> Useful and common patterns
 
 #### <a name="suchthat"><a/> Such-That
 
-The function suchThat takes a predicate and returns a new generator that 
-produces only values that satisfy the condition. For example, let's use 
-this idea to create generators of valid and invalid data:    
+The function suchThat takes a predicate and returns a new generator that
+produces only values that satisfy the condition. For example, let's use
+this idea to create generators of valid and invalid data:
 
-```java   
+```code   
 
   //let's create a generator that produces all possible combinations of nullable values 
   Gen<User> chaosGen = userGen.setAllNullable()
@@ -683,13 +521,12 @@ this idea to create generators of valid and invalid data:
 
 ```
 
-
 #### <a name="flatmap"><a/> Flatmap
 
 You can create new generators from existing ones using the flatmap function. For example,
 let's create a set generator where the number of elements is random between 0 and ten.
 
-```  java
+```  code
 
 
 Gen<String> elemGen = StrGen.letters(5, 10);
@@ -700,103 +537,91 @@ Gen<Set<String>> setGen = IntGen.arbitrary(1,10)
 
 ```
 
-Do notice that the size is determined at creation time, in other words, all the 
+Do notice that the size is determined at creation time, in other words, all the
 generated sets will have the same size.
-
 
 ## <a name="optics"><a/> Optics: Lenses, Optionals, and Prism
 
-It’s ubiquitous to have to navigate through recursive data structures 
-like records and tuples to find, insert, and modify data. It’s a 
-cumbersome and error-prone task (a NullPointerException is always lurking 
-around) that requires a defensive style of programming with much boilerplate 
-code. The more nested the structure is, the worse. The imperative style 
-uses getters and setters with the mentioned inconveniences, whereas 
-Functional Programming uses optics to cope with these limitations,. 
+Navigating through recursive data structures, such as records and tuples, to locate, insert, or modify data is a common
+and often challenging task. This process can be error-prone, with the constant risk of encountering
+NullPointerExceptions, leading to a need for defensive programming practices and the inclusion of substantial
+boilerplate code. The complexity intensifies as the structure becomes more deeply nested. In contrast, imperative
+programming tends to rely on getters and setters, which come with their own inconveniences.
 
-Before getting into more details about optics and their implementation 
-in **java-fun**, I'm going to explain ADTs (Algebraic Data Types).
+Functional Programming takes a different approach by utilizing optics to address these challenges effectively. Before
+delving into the specifics of optics and their implementation in **java-fun**, it's essential to understand Algebraic
+Data Types (ADTs).
 
-A type is nothing else than a name for a set of values. Not like objects, 
-they don't have any behavior. We can operate with types. Given the types 
-A and B and their domains:
+In essence, a type serves as a label for a set of values. Unlike objects, types lack inherent behavior. Instead, we can
+perform operations on types. Consider types A and B, each with its respective domains:
 
 ```code
-
 A = { "a", "b" }
 B = { 1, 2, 3 }
-
 ```
 
-It's possible to create new types out of them. We can pair A and B and 
-get a tuple of two elements:
+It is possible to create new types by combining A and B, resulting in a tuple with two elements:
 
 ```code
-
 T = ( A, B )
 T = [ ("a", 1), ("a", 2), ("a", 3), ("b", 1), ("b", 2), ("b", 3) ]
-
 ```
 
-The order matter; (B, A) would be a different type. Tuples are product-types 
-( 2 x 3 possible values).
+The order of combination matters; switching the order of (B, A) would yield a distinct type. These combinations are
+known as product-types, resulting in 2 x 3 possible values.
 
-We can group A and B in fields and get a record:
+Alternatively, we can group A and B into fields to form a record:
 
 ```code
-
 R = { f: A,  f1: B }
 R = [
 { f:"a", f1:1}, { f:"a", f1:2}, { f:"a", f1:3}, { f:"b", f1:1},
 { f:"b", f1:2}, { f:"b", f1:3}
 ]
-
 ```
 
-The order of the fields doesn't matter. Records are other classes of product-types 
-(2 x 3 possible values). Java added records in release 14. Thank god!
+In this case, the order of the fields becomes irrelevant. Records represent another class of product-types, offering the
+same 2 x 3 possible values. Notably, Java introduced records in release 14.
 
-We can sum A and B and get a sum-type:
+Additionally, we can combine A and B into a sum-type:
 
 ```code
-
 S = A | B
 S= [ "a", "b", 1, 2, 3 ]
-
 ```
 
-It has  2 + 3 possible values. A sum-type is a type that can be one of the 
-multiple possible options. In other words, S is either A or B.
+This type has 2 + 3 possible values, where a sum-type represents a choice between multiple potential options. In simpler
+terms, S can either be A or B.
 
-In FP, optics are used to work with ADTs. There are different kinds of optics.
-**Lenses** and **Optionals**(don't confuse them with Java Optional class) work 
-great with product-types. **Prisms** help us work with sum-types. Optics allow 
-us to separate concerns.
+Within Functional Programming, optics play a crucial role in handling ADTs. These optics come in various forms, with *
+*Lenses** and **Optionals** (distinct from the Java Optional class) being particularly suited for product-types, while *
+*Prisms** assist in dealing with sum-types. Optics offer a powerful means of separating concerns and simplifying
+operations in such complex data structures.
 
-It's important to distinguish the following concepts:
+It's essential to clarify several key concepts:
 
-- The action. An action is a function that executes some operation over the 
-focus of a path. The most important actions are _get_, _set_, and, _modify_.
-- The path. The path indicates which data to focus on and where to find it within 
-the structure.
-- The structure. The structure is the hunk of data that we want to work with. 
-The path selects data from within the structure, and that data will be passed 
-to the action. 
-- The focus. The smaller piece of the structure is indicated by the path. The focus 
-will be passed to the action.
+- **Action**: An action refers to a function responsible for executing operations on the focus of a path. The most
+  significant actions include _get_, _set_, and _modify_.
 
-A Lens zooms in on a piece of data within a larger structure. **A Lens must never 
-fail to get or modify its focus.** Optional is another optic just like a lens, 
-**but the focus may not exist**.  
+- **Path**: The path specifies which data to focus on and where to locate it within the structure.
 
-We'll use the following records to put some examples:
+- **Structure**: The structure represents the chunk of data that we intend to work with. The path selects specific data
+  from within this structure, and that data is then passed to the action.
 
-```java     
+- **Focus**: The focus is the smaller piece of the structure indicated by the path. This focus is what the action
+  operates on.
 
+A **Lens** functions by zooming in on a particular piece of data within a larger structure. Importantly, a Lens must
+never fail when attempting to get or modify its focus. On the other hand, an **Optional** is another optic similar to a
+Lens, with the key distinction that the focus may not necessarily exist.
+
+To illustrate these concepts, let's use the following records:
+
+```code
 public record Person(String name, Address address, Integer ranking) {
 
     public Person {
-        if(name==null || name.isBlank()) 
+        if(name == null || name.isBlank()) 
             throw new IllegalArgumentException("name empty");
   
         if(address == null) 
@@ -824,280 +649,240 @@ public record Coordinates(double longitude, double latitude) {
             throw new IllegalArgumentException("90 => latitude >= -90");
     }
 }
-
-
-
 ```
 
-Let's create some optics with json-fun:
-
-```java   
-   // Person is the whole structure
-   // Address is the focus, an it's a required field according to Person constructor
-   
-   Lens<Person, Address> addressLens =
-         new Lens<>(Person::address,
-                    address -> person -> new Person(person.name(),
-                                                    address,
-                                                    person.birthDate()));
-
-      
-   // Person is the whole structure
-   // The String representing the name is the focus, and it's also a required field
-   
-   Lens<Person, String> nameLens =
-         new Lens<>(Person::name,
-                    name -> person -> new Person(name,
-                                                 person.address(),
-                                                 person.birthDate()));
-   
-   // Person is the whole structure
-   // The Integer representing the ranking is the focus, and it's not required
-   // we use an optional instead of a lens                                           
-   
-   Option<Person, Integer> rankingOpt =
-         new Option<>(person -> Optional.ofNullable(person.ranking()),
-                      ranking -> person -> new Person(person.name(),
-                                                      person.address(),
-                                                      ranking));
-```
-
-As you can see, to create a Lens or an Optional you just need to define the 
-_get_ and _set_ actions. In lenses, the get action returns the focus, whereas 
-in optionals it returns the focus wrapped in a Java Optional since it may not 
-exist. In java-fun the optional optic is called Option.
-
-And what about the modify action? It's created internally from _get_ and _set_! 
-
-Defining the _set_ action you may notice how cumbersome to create a records is. 
-They are immutable data structures and every modification means to create a 
-new instance. And it's even more cumbersome when we have nested records. We'll 
-see how composing optics can help us with this.
-
-
-Let's discuss the type of the most important actions of a lens and an optional, 
-where S is the type of the whole structure and F is the type of the focus:
+Now, let's create some optics using json-fun:
 
 ```code
+// Person represents the entire structure, while Address is the focus, which is a required field according to the Person constructor.
+Lens<Person, Address> addressLens =
+     new Lens<>(Person::address,
+                address -> person -> new Person(person.name(),
+                                                address,
+                                                person.birthDate()));
 
+  
+// Person is the entire structure, and the String representing the name is the focus, which is also a required field.
+Lens<Person, String> nameLens =
+     new Lens<>(Person::name,
+                name -> person -> new Person(name,
+                                             person.address(),
+                                             person.birthDate()));
+   
+// Person is the entire structure, and the Integer representing the ranking is the focus. It's not required, so we use an optional instead of a lens. 
+Option<Person, Integer> rankingOpt =
+     new Option<>(person -> Optional.ofNullable(person.ranking()),
+                  ranking -> person -> new Person(person.name(),
+                                                  person.address(),
+                                                  ranking));
+```
+
+As you can observe, creating a Lens or an Optional simply involves defining the _get_ and _set_ actions. In lenses, the
+get action returns the focus, whereas in optionals, it returns the focus wrapped in a Java Optional, acknowledging the
+possibility that it may not exist. In java-fun, the optional optic is known as Option.
+
+Regarding the modify action, it is generated internally based on _get_ and _set_. It's worth noting that defining the
+_set_ action may reveal the challenges of working with records. Records are immutable data structures, so every
+modification necessitates creating a new instance. This complexity is magnified when dealing with nested records.
+However, we will explore how composing optics can simplify this process.
+
+Let's delve into the fundamental actions of a lens and an optional, with the context of the whole structure (S) and the
+focus (F) in mind:
+
+```code
 get :: Function<S, F>            // for lenses
 get :: Function<S, Optional<F>>  // for optionals
 set :: Function<F, Function<S, S>>
 modify :: Function<Function<F, F>, Function<S, S>>
-
 ```
 
-Imagine the focus is the name of the person. The get action is a function that
-takes a person and returns their name. The set action is a function that takes
-a new name and returns a function that, given a person, it produces a new one
-with the new name. The modify action is like set, but instead of a name, it 
-takes a function to produce a new name from the old one. 
+Consider the focus to be the name of a person. The get action is a function that, given a person, returns their name.
+The set action, on the other hand, is a function that takes a new name and returns a function. This returned function,
+when applied to a person, produces a new person with the updated name. In essence, set allows us to replace the name
+with a new one.
 
+Now, let's explore these actions through a practical example:
 
-Let's check out a practical example.
+```code   
+Person joe = new Person("Joe", address, null);
 
-```java   
-
-Person joe = new Person("Joe",address,null);
-
+// Setting a new name using the set action
 Person joeArmstrong = nameLens.set.apply("Joe Armstrong").apply(joe);
 
-// records are immutable
-Assertions.assertEquals("Joe",
-                        nameLens.get.apply(joe));
-                        
-Assertions.assertEquals("Joe Armstrong",
-                        nameLens.get.apply(joeArmstrong));                        
+// Records are immutable, so we create a new person with the updated name
+Assertions.assertEquals("Joe", nameLens.get.apply(joe));
+Assertions.assertEquals("Joe Armstrong", nameLens.get.apply(joeArmstrong));                        
 
+// Define a function to convert a name to uppercase
 Function<String, String> toUpper = String::toUpperCase;
 
+// Use the modify action to apply the toUpper function to the name
 Person joeUpper = nameLens.modify.apply(toUpper).apply(joe);
 
-Assertions.assertEquals("JOE",
-                        nameLens.get.apply(updated));
+// Check if the modification resulted in uppercase name
+Assertions.assertEquals("JOE", nameLens.get.apply(updated));
                         
-//let's increment the ranking by one
+// Let's increment the ranking by one
+// Since ranking is null, the same person is returned       
+Assertions.assertEquals(joe, rankingOpt.modify.apply(ranking -> ranking + 1).apply(joe))       
 
-//since ranking is null, the same person is returned       
-Assertions.assertEquals(joe, 
-                        rankingOpt.modify.apply(ranking -> ranking + 1).apply(joe))       
-
+// Set a new ranking value (1)
 Person joeRanked = rankingOpt.set(1).apply(joe);
 
-Assertions.assertEquals(1, 
-                        joeRanked.ranking())       
+// Verify if the ranking was set correctly
+Assertions.assertEquals(1, joeRanked.ranking())       
 
-//since ranking is 1, the function is applied and a new person is created
+// Since ranking is 1, the function is applied, and a new person is created with ranking * 10
 Person joeRankedUpdated = rankingOpt.modify.apply(ranking -> ranking * 10).apply(joeRanked);
 
-Assertions.assertEquals(10, 
-                        joeRankedUpdated.ranking())       
-               
+// Check if the ranking was modified as expected
+Assertions.assertEquals(10, joeRankedUpdated.ranking())       
 ```
 
-Do notice that it’s at the very end when we passed in the person into the
-functions. In OOP, it would be just the opposite, the starting point would 
-be a person object, and then we would get or set a value with a getter or 
-setter. In FP, we describe actions; then, we may compose them, and it’s at 
-the last moment when we specify the inputs and execute them.
+It's essential to note that in functional programming, we follow a different approach compared to object-oriented
+programming (OOP). Instead of starting with a person object and then using getters or setters, we first define actions
+and potentially compose them. Only at the end do we specify the inputs and execute these actions. This functional
+approach provides a clear and systematic way of working with data.
 
-A Lens must respect the getSet law, which states that if you get a value and
-set it back in, the result is a value identical to the original one. A side
-effect of this law is that set must only update the value it points to,
-nothing else. On the other hand, the setGet law states that if you set a value,
-you always get the same value. This law guarantees that set is updating a value
-inside the container. Laws are relevant in FP. They help us reason about our
-code more clearly.
+Furthermore, lenses adhere to two important laws:
 
+1. **getSet Law**: This law states that if you get a value and set it back in, the result should be a value identical to
+   the original one. In other words, setting a value and then getting it should not change the underlying data.
 
-Let's change gears and talk about Prisms. If you think of a Prism does to light,
-it happens the same with any sum-type. We have several subtypes to
-consider, and we want to focus on a specific one.  Let's create a Prism
+2. **setGet Law**: According to this law, if you set a value, you should always get the same value. This ensures that
+   the set action accurately updates a value inside the container without altering other aspects. These laws are
+   significant in functional programming as they enhance code clarity and reasoning.
+
+Let's transition our discussion to Prisms. The concept of a Prism can be likened to what happens when light passes
+through it, but in the context of sum-types, where we have various subtypes to consider, and our goal is to focus on a
+specific one. Let's create a Prism to illustrate this:
 
 ```code  
+Prism<Exception, RuntimeException> prism =
+    new Prism<>(e -> {
+        if (e instanceof RuntimeException) return Optional.of(((RuntimeException) e));
+        return Optional.empty();
+    },
+    r -> r);
+```
 
-  Prism<Exception, RuntimeException> prism =
-                  new Prism<>(e -> {
-                      if (e instanceof RuntimeException) return Optional.of(((RuntimeException) e));
-                      return Optional.empty();
-                  },
-                              r -> r);
-                            
-```      
+To create a Prism, you need to define two functions. The first function outlines how to transition from the generic type
+Exception to the specific subtype RuntimeException. Conversely, the second function defines the reverse transition, as a
+RuntimeException is also an Exception, so we return it directly.
 
-You need to create two functions. The first one is how to go from the generic type 
-Exception to the specific subtype RuntimeException, and the second one is
-the other way around (since a RuntimeException is an Exception, just return it).
-
-But you can create a Prism to extract a subset of values with a specific property 
-from a more generic set. For example, let's create a Prism to get all strings that 
-are integer numbers:
+However, Prisms can also be used to extract a subset of values from a more general set based on specific criteria. For
+example, let's create a Prism to extract all strings that represent integer numbers:
 
 ```code         
-
-   Prism<String, Integer> intPrism =
-                new Prism<>(str -> {
-                     try {
-                        return Optional.of(Integer.parseInt(str));
-                        } 
-                     catch (NumberFormatException e) {
-                        return Optional.empty();
-                     }
-                    },
-                            integer -> Integer.toString(integer)
-                );
+Prism<String, Integer> intPrism =
+    new Prism<>(str -> {
+        try {
+            return Optional.of(Integer.parseInt(str));
+        } 
+        catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    },
+    integer -> Integer.toString(integer)
+);
 ```
 
-As you can see the first function goes from String to Integer, and it can fail 
-since there are a lot of strings that are not a number. And the second one goes 
-from Integer to String and of course, it never fails (every number has a string 
-representation)
+In the above Prism, the first function converts from String to Integer. It can fail if the input string is not a valid
+integer, resulting in an empty Optional. The second function, on the other hand, converts from Integer to String and
+never fails since every integer has a string representation.
 
-Considering the above Prism, let's take a look at the most important actions and 
-their signatures:
+Let's examine the key actions and their signatures for the intPrism:
 
 ```code  
-
 getOptional :: Function<String, Optional<Integer>>
 
 modify :: Function<Function<Integer, Integer>, Function<String, String>>
 
 modifyOpt :: Function<Function<Integer, Integer>, Function<String, Optional<String>>>
-
 ```
 
-The getOptional function takes a String, and if it's not a number, it returns an 
-_Optional.empty_. If it's a number, it returns its value wrapped in an Optional. 
-Nothing exceptional, isn't it?
+The getOptional function takes a String as input and returns an Optional. If the input string is not a number, it
+returns an Optional.empty. However, if the input is a number, it returns the value wrapped in an Optional. In essence,
+it handles the potential failure of the conversion.
 
-The modify function is handy. I use it all the time. It takes a function to map 
-numbers and returns a function from String to String. If the input value is a 
-number, it applies the map function on it and returns it as a String. If it is 
-not a number, we can not use the map function, and the input is returned as it was. 
-Do notice that we don't care about the success of the operation. If we do, we can 
-use the modifyOpt action.  It's the same, but when de map function can not be 
-applied, an empty Optional is returned.
+The modify function is quite practical and takes a function to map numbers. It returns a function that goes from String
+to String. If the input value is a number, it applies the mapping function and returns the result as a String. However,
+if the input is not a number, the mapping function cannot be applied, and the original input string is returned as is.
+Notably, this function doesn't concern itself with the success or failure of the operation.
 
-Let's put some examples:
+If you require information about the success of the operation, you can use the modifyOpt action. It behaves similarly to
+modify but returns an empty Optional when the mapping function cannot be applied.
 
-```java 
+Let's demonstrate these actions with some examples:
 
+```code 
 Assertions.assertEquals(Optional.of("10"),
                         intPrism.getOptional.apply("10"));
 
-// apple is not a string, empty is returned
+// If "apple" is not a valid string representation of a number, an empty Optional is returned
 Assertions.assertEquals(Optional.empty(),
                         intPrism.getOptional.apply("apple"));
 
+// Applying a mapping function to the valid input "1" results in "10"
 Assertions.assertEquals("10",
-                        intPris.mmodify.apply(a -> a * 10)
+                        intPrism.modify.apply(a -> a * 10)
                                       .apply("1"));
 
-// apple is not a string, the same value is returned
+// Since "apple" is not a valid number, the original input "apple" is returned
 Assertions.assertEquals("apple",
                         intPrism.modify.apply(a -> a * 10)
                                        .apply("apple"));
+```
 
-``` 
+These examples showcase the functionality of Prisms and how they handle conversions and potential failures, providing a
+powerful tool for working with sum-types in functional programming.
 
-You can compose lenses, optional and prism. For example:
+You can combine lenses, optionals, and prisms to build more complex operations. For instance:
 
-``` java
+``` code
 
-   Option<Address, Coordinates> coordinatesOpt =
-         new Option<>(address -> Optional.ofNullable(address.coordinates()),
-                      coordiantes -> address -> new Address(coordinates,
-                                                            address.description(),
-                                                            )
-                     );
-            
-   Lens<Coordinate, Double> longitudeLens =
-         new Option<>(Coordinates::longitude,
-                      coordinates -> lon -> new Coordinates(long,
-                                                            coordinates.latitude()
-                                                            )
-                     );
-            
-                        
-   Lens<Coordinate, Double> latitudeLens =
-         new Option<>(Coordinates::latitude,
-                      coordinates -> lat -> new Coordinates(coordiantes.longitude(),
-                                                            lat
-                                                            )
-                     );
-            
-   // let's apply composition!
- 
-   Option<Person,Double> personLatitudeOpt = 
-                addressLens.compose(coordinatesOpt)
-                           .compose(latitudeLens);    
+Option<Address, Coordinates> coordinatesOpt =
+    new Option<>(address -> Optional.ofNullable(address.coordinates()),
+                 coordinates -> address -> new Address(coordinates,
+                                                       address.description()));
 
-   Option<Person,Double> personLongitudeOpt = 
-                addressLens.compose(coordinatesOpt)
-                           .compose(longitudeLens);                        
-            
-            
-```    
+Lens<Coordinates, Double> longitudeLens =
+    new Option<>(Coordinates::longitude,
+                 coordinates -> lon -> new Coordinates(lon, coordinates.latitude()));
 
-Composition is key to handle complexity. Imagine you have to create a function 
-to set the latitude and longitude of a person:
+Lens<Coordinates, Double> latitudeLens =
+    new Option<>(Coordinates::latitude,
+                 coordinates -> lat -> new Coordinates(coordinates.longitude(), lat));
 
-```  java
+// Let's apply composition!
 
-Function<Coordinates,Function<Person,Person>> setCoordinates = 
-        c -> personLatitudeOpt.set.apply(c.latitude())
-                              .andThen(personLongitudeOpt.set.apply(c.longitude()))
-                               
-Person newPerson = setCoordiantes.apply(new Coordinates(14.5,45.78))
-                                 .apply(person);                          
+Option<Person, Double> personLatitudeOpt =
+    addressLens.compose(coordinatesOpt).compose(latitudeLens);
 
+Option<Person, Double> personLongitudeOpt =
+    addressLens.compose(coordinatesOpt).compose(longitudeLens);
+```
 
-```  
+Composition is a powerful technique to manage complexity. Imagine you need to create a function to set both the latitude
+and longitude of a person:
+
+``` code
+
+Function<Coordinates, Function<Person, Person>> setCoordinates = 
+    c -> personLatitudeOpt.set.apply(c.latitude())
+                           .andThen(personLongitudeOpt.set.apply(c.longitude()));
+
+Person newPerson = setCoordinates.apply(new Coordinates(14.5, 45.78))
+                                 .apply(person);
+
+```
+
+This composition allows you to efficiently manipulate complex data structures, such as setting the latitude and
+longitude of a person with ease.
 
 ## <a name="req"><a/> Requirements
 
 Requires Java 8 or greater
-
 
 ## <a name="inst"><a/> Installation
 

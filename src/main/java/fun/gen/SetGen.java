@@ -53,7 +53,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
      * @return A new SetGen instance with the updated maximum tries.
      * @throws IllegalArgumentException If the specified number of tries is negative.
      */
-    public SetGen<T> setMaxTries(final int tries) {
+    public SetGen<T> withMaxTries(final int tries) {
         return new SetGen<>(gen,
                             size,
                             tries);

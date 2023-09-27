@@ -14,7 +14,7 @@ public class TestMapGen {
                           IntGen.arbitrary(0,
                                            10),
 
-                          100000).setMaxTries(100001);
+                          100000).withMaxTries(100001);
 
         Assertions.assertThrows(RuntimeException.class,
                                 () -> gen.sample(10).peek(System.out::println).count());

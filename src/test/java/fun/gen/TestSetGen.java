@@ -12,7 +12,7 @@ public class TestSetGen {
                 SetGen.ofN(StrGen.letters(1,
                                           1),
                            5000)
-                      .setMaxTries(5001);
+                      .withMaxTries(5001);
 
         Assertions.assertThrows(RuntimeException.class,
                                 () -> gen.sample(10).peek(System.out::println).count());

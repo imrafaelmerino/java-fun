@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/base/full/coverphoto/base_logo_white_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/0.9.9)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/0.9.9/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/1.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/1.0.0/jar)
 
 "_When in doubt, use brute force._" **Ken Thompson**
 
@@ -891,7 +891,7 @@ Requires Java 8 or greater
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
-    <version>0.9.9</version>
+    <version>1.0.0</version>
 </dependency>
 
 ```

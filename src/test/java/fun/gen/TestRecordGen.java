@@ -603,7 +603,7 @@ public class TestRecordGen {
                       "b");
 
 
-        int times = 400000;
+        int times = 1000000;
         Map<List<?>, Long> generated =
                 gen.collect(times,
                             record -> {

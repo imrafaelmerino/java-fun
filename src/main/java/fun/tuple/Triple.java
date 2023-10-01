@@ -3,6 +3,7 @@ package fun.tuple;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+
 /**
  * Represents an immutable triple of three elements, A, B, and C.
  *
@@ -42,6 +43,7 @@ public final class Triple<A, B, C> {
                             requireNonNull(second),
                             requireNonNull(third));
     }
+
     /**
      * Gets the first element of the triple.
      *

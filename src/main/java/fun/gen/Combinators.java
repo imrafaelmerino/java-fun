@@ -342,8 +342,8 @@ public final class Combinators {
      * Generates a new list by shuffling the elements of the given list using a random generator.
      * The original list {@code xs} remains unaffected.
      *
-     * @param xs     the list of elements to shuffle
-     * @param <I>    the type of elements in the list
+     * @param xs  the list of elements to shuffle
+     * @param <I> the type of elements in the list
      * @return a generator that produces shuffled lists
      */
     public static <I> Gen<List<I>> shuffle(List<I> xs) {

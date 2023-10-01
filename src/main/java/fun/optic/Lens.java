@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  * @param <S> the source of a lens
  * @param <O> the target of a lens
  */
-public  class Lens<S, O> {
+public class Lens<S, O> {
 
     /**
      * Function to view the part.
@@ -63,10 +63,10 @@ public  class Lens<S, O> {
         this.set = requireNonNull(set);
         this.get = requireNonNull(get);
         this.modify = f -> json -> set.apply(f.apply(get.apply(json)))
-                .apply(json);
+                                      .apply(json);
         this.find = predicate -> s -> predicate.test(get.apply(s)) ?
-                Optional.of(get.apply(s)) :
-                Optional.empty();
+                                      Optional.of(get.apply(s)) :
+                                      Optional.empty();
         this.exists = predicate -> s -> predicate.test(get.apply(s));
     }
 
@@ -83,7 +83,7 @@ public  class Lens<S, O> {
         return new Option<>(
                 json -> requireNonNull(prism).getOptional.apply(get.apply(json)),
                 value -> json -> set.apply(prism.reverseGet.apply(requireNonNull(value)))
-                        .apply(requireNonNull(json))
+                                    .apply(requireNonNull(json))
         );
 
 
@@ -99,12 +99,12 @@ public  class Lens<S, O> {
     public <B> Lens<S, B> compose(final Lens<O, B> other) {
         Objects.requireNonNull(other);
         return new Lens<>(this.get.andThen(other.get),
-                b -> s -> {
-                    O o = this.get.apply(requireNonNull(s));
-                    if (o == null) return s;
-                    O newO = other.set.apply(requireNonNull(b)).apply(o);
-                    return this.set.apply(newO).apply(s);
-                }
+                          b -> s -> {
+                              O o = this.get.apply(requireNonNull(s));
+                              if (o == null) return s;
+                              O newO = other.set.apply(requireNonNull(b)).apply(o);
+                              return this.set.apply(newO).apply(s);
+                          }
         );
     }
 
@@ -115,12 +115,12 @@ public  class Lens<S, O> {
      * @param <B>    The type of the focus on the new Option.
      * @return A new Option.
      */
-    public <B> Option<S,B> compose(final Option<O,B> option){
+    public <B> Option<S, B> compose(final Option<O, B> option) {
 
         return new Option<>(s -> option.get.apply(get.apply(s)),
                             b -> s -> {
                                 O c = get.apply(s);
-                                if(c==null)return s;
+                                if (c == null) return s;
                                 O d = option.set.apply(b).apply(c);
                                 return set.apply(d).apply(s);
                             });

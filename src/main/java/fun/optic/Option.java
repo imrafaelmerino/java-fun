@@ -30,15 +30,17 @@ public class Option<S, T> {
      * modify the target of an optional with a function if it exists, returning the same source otherwise
      */
     public final Function<Function<T, T>, Function<S, S>> modify;
+
     /**
      * Creates a new Optional with the given functions for getting and setting the optional focus.
      *
      * @param get The function to get the target of an Optional or nothing if there is no target.
      * @param set The function to look into S, set a value for an optional focus T, and obtain the modified source.
      */
-    public Option(final Function<S, Optional<T>> get, final Function<T, Function<S, S>> set) {
-        this.get =  Objects.requireNonNull(get);
-        this.set =  Objects.requireNonNull(set);
+    public Option(final Function<S, Optional<T>> get,
+                  final Function<T, Function<S, S>> set) {
+        this.get = Objects.requireNonNull(get);
+        this.set = Objects.requireNonNull(set);
 
         this.modify = f -> json -> {
             final Optional<T> value = get.apply(json);
@@ -61,11 +63,12 @@ public class Option<S, T> {
             Optional<T> t = this.get.apply(s);
             if (t.isPresent()) return other.get.apply(t.get());
             else return Optional.empty();
-        }, f -> s -> {
-            Optional<T> t = this.get.apply(s);
-            if (t.isPresent()) return this.set.apply(other.set.apply(f).apply(t.get())).apply(s);
-            else return s;
-        });
+        },
+                            f -> s -> {
+                                Optional<T> t = this.get.apply(s);
+                                if (t.isPresent()) return this.set.apply(other.set.apply(f).apply(t.get())).apply(s);
+                                else return s;
+                            });
     }
 
 }

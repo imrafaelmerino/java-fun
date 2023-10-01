@@ -11,11 +11,11 @@
  * Key Classes:
  * - {@link fun.gen.Gen}: The base interface for all generators, defining the contract for generating data.
  * - {@link fun.gen.Combinators}: A utility class that offers combinator functions for working with
- *   generators. Combinators enable the composition, transformation, and customization of
- *   generators to create complex data generation scenarios.
+ * generators. Combinators enable the composition, transformation, and customization of
+ * generators to create complex data generation scenarios.
  * - Other generator classes such as {@link fun.gen.LongGen}, {@link fun.gen.MapGen}, {@link fun.gen.PairGen}, {@link fun.gen.RecordGen},
- *   {@link fun.gen.SetGen}, {@link fun.gen.StrGen}, {@link fun.gen.TripleGen}, etc., provide specialized generators for
- *   generating specific data types or structures.
+ * {@link fun.gen.SetGen}, {@link fun.gen.StrGen}, {@link fun.gen.TripleGen}, etc., provide specialized generators for
+ * generating specific data types or structures.
  * <p>
  * Usage of the generators package helps improve the effectiveness of software testing by enabling
  * the generation of diverse and representative test data. Developers can create custom data

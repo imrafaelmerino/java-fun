@@ -12,8 +12,6 @@ class SubsetGen<O> implements Gen<Set<O>> {
 
     SubsetGen(List<O> inputs) {
         this.inputs = Objects.requireNonNull(inputs);
-
-
         this.memoizationMap = new HashMap<>();
     }
 

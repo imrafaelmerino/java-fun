@@ -4,6 +4,7 @@ package fun.tuple;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+
 /**
  * Represents an immutable pair of two elements, A and B.
  *
@@ -19,6 +20,7 @@ public final class Pair<A, B> {
         this.first = first;
         this.second = second;
     }
+
     /**
      * Creates a new Pair with the specified first and second elements.
      *
@@ -33,6 +35,7 @@ public final class Pair<A, B> {
         return new Pair<>(requireNonNull(first),
                           requireNonNull(second));
     }
+
     /**
      * Gets the first element of the pair.
      *
@@ -41,6 +44,7 @@ public final class Pair<A, B> {
     public A first() {
         return first;
     }
+
     /**
      * Gets the second element of the pair.
      *

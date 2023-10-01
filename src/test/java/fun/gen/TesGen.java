@@ -75,7 +75,8 @@ public class TesGen {
         Map<String, Long> map =
                 IntGen.arbitrary(0,
                                  10).classify(10000,
-                                              classifier);
+                                              classifier,
+                                              "Others");
 
         System.out.println(map);
     }

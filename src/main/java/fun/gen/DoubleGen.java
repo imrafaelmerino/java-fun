@@ -18,6 +18,7 @@ public final class DoubleGen implements Gen<Double> {
 
     private DoubleGen() {
     }
+
     /**
      * Returns a generator for arbitrary double values. This generator produces random double values within the entire range of double precision.
      *
@@ -76,6 +77,7 @@ public final class DoubleGen implements Gen<Double> {
         return Combinators.freqList(gens);
 
     }
+
     /**
      * Returns a generator for arbitrary double values within the specified range [{@code min}, {@code max}] (inclusive).
      * This generator produces random double values within the specified range.

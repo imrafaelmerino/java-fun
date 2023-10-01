@@ -32,10 +32,10 @@ public final class StrGen implements Gen<String> {
      * @param minLength The minimum length of the generated string.
      * @param maxLength The maximum length of the generated string.
      * @return A string generator biased towards the following values:
-     *         - Empty string ("") with a frequency of 1 if {@code minLength} is 0.
-     *         - A string with spaces (blank) of length {@code minLength}.
-     *         - A string with spaces (blank) of length {@code maxLength}.
-     *         - A string with random characters within the specified length range.
+     * - Empty string ("") with a frequency of 1 if {@code minLength} is 0.
+     * - A string with spaces (blank) of length {@code minLength}.
+     * - A string with spaces (blank) of length {@code maxLength}.
+     * - A string with random characters within the specified length range.
      * @throws IllegalArgumentException If {@code minLength} is negative or {@code maxLength} is less than {@code minLength}.
      */
     public static Gen<String> biased(final int minLength,
@@ -74,6 +74,7 @@ public final class StrGen implements Gen<String> {
 
         return Combinators.freqList(gens);
     }
+
     /**
      * Generates a string with a minimum and maximum length.
      *
@@ -107,6 +108,7 @@ public final class StrGen implements Gen<String> {
 
 
     }
+
     private static Supplier<String> genStr(Random seed,
                                            Integer length) {
         Supplier<List<Character>> chars =

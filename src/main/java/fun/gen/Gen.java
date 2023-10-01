@@ -1,7 +1,5 @@
 package fun.gen;
 
-import fun.tuple.Pair;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -260,26 +258,29 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
 
     /**
      * Classifies sampled values into multiple categories based on a set of label-predicate pairs,
-     * counts the occurrences in each category, and assigns a default label (Others) to values that do not match any predicate.
+     * counts the occurrences in each category, and assigns a default label to values that do not match any predicate.
      *
-     * @param n          The number of samples to generate for classification and counting.
-     * @param classifier An map of label-predicate pairs used to classify values into different categories.
+     * @param n            The number of samples to generate for classification and counting.
+     * @param classifier   A map of label-predicate pairs used to classify values into different categories.
+     * @param defaultLabel The default label assigned to values that do not match any predicate.
      * @return A map containing the labels as keys and their respective counts as values.
      */
     default Map<String, Long> classify(final int n,
-                                       final Map<String,Predicate<O>> classifier) {
+                                       final Map<String, Predicate<O>> classifier,
+                                       final String defaultLabel) {
 
         Predicate<O> defaultClassifier =
                 o -> classifier.values().stream()
-                           .noneMatch(cla -> cla.test(o));
+                               .noneMatch(cla -> cla.test(o));
 
-        Map<String,Predicate<O>> xs = new HashMap<>(classifier);
-        xs.put("Others",defaultClassifier);
+        Map<String, Predicate<O>> xs = new HashMap<>(classifier);
+        xs.put(requireNonNull(defaultLabel),
+               defaultClassifier);
 
         return collect(n,
                        o -> xs.keySet().stream()
-                                       .filter(key ->  xs.get(key).test(o))
-                                       .collect(Collectors.joining(","))
+                              .filter(key -> xs.get(key).test(o))
+                              .collect(Collectors.joining(","))
         );
 
     }

@@ -8,12 +8,18 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * A generator for creating records. This generator provides a flexible way to define the fields and their corresponding generators for generating records. You can specify which fields are optional and nullable, allowing you to generate records with varying structures.
+ * A generator for creating records. This generator provides a flexible way to define the fields and their corresponding
+ * generators for generating records. You can specify which fields are optional and nullable, allowing you to generate
+ * records with varying structures.
  *
- * <p>With {@code RecordGen}, you can easily generate custom records for testing and data generation purposes. It enables you to control the generation of each field, making it suitable for generating diverse data for your record-based classes. A common use case involves defining a generator for a custom Java object by creating a Record and then using the {@link Gen#map} function to transform the generated record into your desired custom object.</p>
+ * <p>With {@code RecordGen}, you can easily generate custom records for testing and data generation purposes. It enables
+ * you to control the generation of each field, making it suitable for generating diverse data for your record-based classes.
+ * A common use case involves defining a generator for a custom Java object by creating a Record and then using the
+ * {@link Gen#map} function to transform the generated record into your desired custom object.</p>
  */
 public final class RecordGen implements Gen<Record> {
 
+    private final static Supplier<Set<String>> EMPTY_SET_GEN = () -> new HashSet<>();
     private final SplitGen split;
     private final List<String> optionals;
     private final List<String> nullables;
@@ -21,8 +27,7 @@ public final class RecordGen implements Gen<Record> {
 
     private RecordGen(Map<String, Gen<?>> bindings,
                       List<String> optionals,
-                      List<String> nullables
-    ) {
+                      List<String> nullables) {
         for (String key : optionals) {
             if (!bindings.containsKey(key))
                 throw new IllegalArgumentException("optional '" + key + "' not defined in generator");
@@ -38,22 +43,20 @@ public final class RecordGen implements Gen<Record> {
 
     }
 
+
     private RecordGen(final Map<String, Gen<?>> bindings) {
         this(bindings,
              new ArrayList<>(),
              new ArrayList<>());
     }
 
-
-    public static RecordGen of(
-    ) {
+    public static RecordGen of() {
         Map<String, Gen<?>> map = new HashMap<>();
         return new RecordGen(map);
     }
 
     public static RecordGen of(final String key,
-                               final Gen<?> gen
-    ) {
+                               final Gen<?> gen) {
         Map<String, Gen<?>> map = new HashMap<>();
         map.put(requireNonNull(key),
                 requireNonNull(gen));
@@ -63,8 +66,7 @@ public final class RecordGen implements Gen<Record> {
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
-                               final Gen<?> gen1
-    ) {
+                               final Gen<?> gen1) {
         return RecordGen.of(key,
                             gen).set(key1,
                                      gen1);
@@ -75,8 +77,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key1,
                                final Gen<?> gen1,
                                final String key2,
-                               final Gen<?> gen2
-    ) {
+                               final Gen<?> gen2) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -91,8 +92,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key2,
                                final Gen<?> gen2,
                                final String key3,
-                               final Gen<?> gen3
-    ) {
+                               final Gen<?> gen3) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -112,8 +112,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key3,
                                final Gen<?> gen3,
                                final String key4,
-                               final Gen<?> gen4
-    ) {
+                               final Gen<?> gen4) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -137,8 +136,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key4,
                                final Gen<?> gen4,
                                final String key5,
-                               final Gen<?> gen5
-    ) {
+                               final Gen<?> gen5) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -166,8 +164,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key5,
                                final Gen<?> gen5,
                                final String key6,
-                               final Gen<?> gen6
-    ) {
+                               final Gen<?> gen6) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -198,8 +195,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key6,
                                final Gen<?> gen6,
                                final String key7,
-                               final Gen<?> gen7
-    ) {
+                               final Gen<?> gen7) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -236,8 +232,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key7,
                                final Gen<?> gen7,
                                final String key8,
-                               final Gen<?> gen8
-    ) {
+                               final Gen<?> gen8) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -258,7 +253,6 @@ public final class RecordGen implements Gen<Record> {
 
     }
 
-
     public static RecordGen of(final String key,
                                final Gen<?> gen,
                                final String key1,
@@ -278,8 +272,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key8,
                                final Gen<?> gen8,
                                final String key9,
-                               final Gen<?> gen9
-    ) {
+                               final Gen<?> gen9) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -322,8 +315,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key9,
                                final Gen<?> gen9,
                                final String key10,
-                               final Gen<?> gen10
-    ) {
+                               final Gen<?> gen10) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -346,7 +338,6 @@ public final class RecordGen implements Gen<Record> {
                             gen9).set(key10,
                                       gen10);
     }
-
 
     public static RecordGen of(final String key,
                                final Gen<?> gen,
@@ -371,8 +362,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key10,
                                final Gen<?> gen10,
                                final String key11,
-                               final Gen<?> gen11
-    ) {
+                               final Gen<?> gen11) {
         return RecordGen.of(key,
                             gen,
                             key1,
@@ -399,7 +389,6 @@ public final class RecordGen implements Gen<Record> {
 
     }
 
-
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -425,8 +414,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key12,
                                final Gen<?> gen12,
                                final String key13,
-                               final Gen<?> gen13
-    ) {
+                               final Gen<?> gen13) {
 
         return RecordGen.of(key1,
                             gen1,
@@ -455,7 +443,6 @@ public final class RecordGen implements Gen<Record> {
                                        gen13);
     }
 
-
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -483,8 +470,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key13,
                                final Gen<?> gen13,
                                final String key14,
-                               final Gen<?> gen14
-    ) {
+                               final Gen<?> gen14) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -513,7 +499,6 @@ public final class RecordGen implements Gen<Record> {
                             gen13).set(key14,
                                        gen14);
     }
-
 
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
@@ -544,8 +529,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key14,
                                final Gen<?> gen14,
                                final String key15,
-                               final Gen<?> gen15
-    ) {
+                               final Gen<?> gen15) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -609,8 +593,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key15,
                                final Gen<?> gen15,
                                final String key16,
-                               final Gen<?> gen16
-    ) {
+                               final Gen<?> gen16) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -645,7 +628,6 @@ public final class RecordGen implements Gen<Record> {
 
     }
 
-
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -679,8 +661,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key16,
                                final Gen<?> gen16,
                                final String key17,
-                               final Gen<?> gen17
-    ) {
+                               final Gen<?> gen17) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -717,7 +698,6 @@ public final class RecordGen implements Gen<Record> {
 
     }
 
-
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -753,8 +733,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key17,
                                final Gen<?> gen17,
                                final String key18,
-                               final Gen<?> gen18
-    ) {
+                               final Gen<?> gen18) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -793,7 +772,6 @@ public final class RecordGen implements Gen<Record> {
 
     }
 
-
     public static RecordGen of(final String key1,
                                final Gen<?> gen1,
                                final String key2,
@@ -831,8 +809,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key18,
                                final Gen<?> gen18,
                                final String key19,
-                               final Gen<?> gen19
-    ) {
+                               final Gen<?> gen19) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -912,8 +889,7 @@ public final class RecordGen implements Gen<Record> {
                                final String key19,
                                final Gen<?> gen19,
                                final String key20,
-                               final Gen<?> gen20
-    ) {
+                               final Gen<?> gen20) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -957,50 +933,48 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 21 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1040,58 +1014,55 @@ public final class RecordGen implements Gen<Record> {
                             key19,
                             gen19,
                             key20,
-                            gen20)
-                        .set(key21,
-                             gen21);
+                            gen20).set(key21,
+                                       gen21);
     }
 
     // Method for 22 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1138,54 +1109,52 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 23 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1234,56 +1203,54 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 24 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1334,58 +1301,56 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 25 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24,
-            String key25,
-            Gen<?> gen25
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24,
+                               String key25,
+                               Gen<?> gen25) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1438,60 +1403,58 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 26 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24,
-            String key25,
-            Gen<?> gen25,
-            String key26,
-            Gen<?> gen26
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24,
+                               String key25,
+                               Gen<?> gen25,
+                               String key26,
+                               Gen<?> gen26) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1546,62 +1509,60 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 27 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24,
-            String key25,
-            Gen<?> gen25,
-            String key26,
-            Gen<?> gen26,
-            String key27,
-            Gen<?> gen27
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24,
+                               String key25,
+                               Gen<?> gen25,
+                               String key26,
+                               Gen<?> gen26,
+                               String key27,
+                               Gen<?> gen27) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1658,64 +1619,62 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 28 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24,
-            String key25,
-            Gen<?> gen25,
-            String key26,
-            Gen<?> gen26,
-            String key27,
-            Gen<?> gen27,
-            String key28,
-            Gen<?> gen28
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24,
+                               String key25,
+                               Gen<?> gen25,
+                               String key26,
+                               Gen<?> gen26,
+                               String key27,
+                               Gen<?> gen27,
+                               String key28,
+                               Gen<?> gen28) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1774,66 +1733,64 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 29 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24,
-            String key25,
-            Gen<?> gen25,
-            String key26,
-            Gen<?> gen26,
-            String key27,
-            Gen<?> gen27,
-            String key28,
-            Gen<?> gen28,
-            String key29,
-            Gen<?> gen29
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24,
+                               String key25,
+                               Gen<?> gen25,
+                               String key26,
+                               Gen<?> gen26,
+                               String key27,
+                               Gen<?> gen27,
+                               String key28,
+                               Gen<?> gen28,
+                               String key29,
+                               Gen<?> gen29) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -1894,68 +1851,66 @@ public final class RecordGen implements Gen<Record> {
     }
 
     // Method for 30 parameters
-    public static RecordGen of(
-            String key1,
-            Gen<?> gen1,
-            String key2,
-            Gen<?> gen2,
-            String key3,
-            Gen<?> gen3,
-            String key4,
-            Gen<?> gen4,
-            String key5,
-            Gen<?> gen5,
-            String key6,
-            Gen<?> gen6,
-            String key7,
-            Gen<?> gen7,
-            String key8,
-            Gen<?> gen8,
-            String key9,
-            Gen<?> gen9,
-            String key10,
-            Gen<?> gen10,
-            String key11,
-            Gen<?> gen11,
-            String key12,
-            Gen<?> gen12,
-            String key13,
-            Gen<?> gen13,
-            String key14,
-            Gen<?> gen14,
-            String key15,
-            Gen<?> gen15,
-            String key16,
-            Gen<?> gen16,
-            String key17,
-            Gen<?> gen17,
-            String key18,
-            Gen<?> gen18,
-            String key19,
-            Gen<?> gen19,
-            String key20,
-            Gen<?> gen20,
-            String key21,
-            Gen<?> gen21,
-            String key22,
-            Gen<?> gen22,
-            String key23,
-            Gen<?> gen23,
-            String key24,
-            Gen<?> gen24,
-            String key25,
-            Gen<?> gen25,
-            String key26,
-            Gen<?> gen26,
-            String key27,
-            Gen<?> gen27,
-            String key28,
-            Gen<?> gen28,
-            String key29,
-            Gen<?> gen29,
-            String key30,
-            Gen<?> gen30
-    ) {
+    public static RecordGen of(String key1,
+                               Gen<?> gen1,
+                               String key2,
+                               Gen<?> gen2,
+                               String key3,
+                               Gen<?> gen3,
+                               String key4,
+                               Gen<?> gen4,
+                               String key5,
+                               Gen<?> gen5,
+                               String key6,
+                               Gen<?> gen6,
+                               String key7,
+                               Gen<?> gen7,
+                               String key8,
+                               Gen<?> gen8,
+                               String key9,
+                               Gen<?> gen9,
+                               String key10,
+                               Gen<?> gen10,
+                               String key11,
+                               Gen<?> gen11,
+                               String key12,
+                               Gen<?> gen12,
+                               String key13,
+                               Gen<?> gen13,
+                               String key14,
+                               Gen<?> gen14,
+                               String key15,
+                               Gen<?> gen15,
+                               String key16,
+                               Gen<?> gen16,
+                               String key17,
+                               Gen<?> gen17,
+                               String key18,
+                               Gen<?> gen18,
+                               String key19,
+                               Gen<?> gen19,
+                               String key20,
+                               Gen<?> gen20,
+                               String key21,
+                               Gen<?> gen21,
+                               String key22,
+                               Gen<?> gen22,
+                               String key23,
+                               Gen<?> gen23,
+                               String key24,
+                               Gen<?> gen24,
+                               String key25,
+                               Gen<?> gen25,
+                               String key26,
+                               Gen<?> gen26,
+                               String key27,
+                               Gen<?> gen27,
+                               String key28,
+                               Gen<?> gen28,
+                               String key29,
+                               Gen<?> gen29,
+                               String key30,
+                               Gen<?> gen30) {
         return RecordGen.of(key1,
                             gen1,
                             key2,
@@ -2017,7 +1972,6 @@ public final class RecordGen implements Gen<Record> {
                                        gen30);
     }
 
-
     /**
      * Returns a brand new record generator with the same key-generators pairs as this instance and
      * the specified nullable keys. The value associated with a nullable key may or may not be null.
@@ -2030,7 +1984,6 @@ public final class RecordGen implements Gen<Record> {
                              optionals,
                              new ArrayList<>(requireNonNull(nullables)));
     }
-
 
     /**
      * Returns a brand new record generator with the same key-generators pairs as this instance and
@@ -2086,7 +2039,6 @@ public final class RecordGen implements Gen<Record> {
                              nullables);
     }
 
-
     /**
      * Returns a brand new record generator with the same key-generators pairs as this instance and
      * the specified optional keys. An optional key may or may not appear in the generated record.
@@ -2138,26 +2090,30 @@ public final class RecordGen implements Gen<Record> {
      * @return A new RecordGen instance with the updated field binding.
      */
     public RecordGen set(final String key,
-                         final Gen<?> gen
-    ) {
+                         final Gen<?> gen) {
         LinkedHashMap<String, Gen<?>> b = new LinkedHashMap<>(bindings);
         b.put(key,
-              gen
-        );
+              gen);
         return new RecordGen(b,
                              optionals,
                              nullables);
     }
 
-
     @Override
     public Supplier<Record> apply(final Random random) {
         Objects.requireNonNull(random);
         Supplier<Set<String>> optionalFields =
-                new SubsetGen<>(optionals).apply(split.apply(random));
+                optionals.isEmpty() ?
+                EMPTY_SET_GEN :
+                new SubsetGen<>(optionals).suchThat(set -> !set.isEmpty())
+                                          .apply(split.apply(random));
 
         Supplier<Set<String>> nullableFields =
-                new SubsetGen<>(nullables).apply(split.apply(random));
+                nullables.isEmpty() ?
+                EMPTY_SET_GEN :
+                new SubsetGen<>(nullables)
+                        .suchThat(set -> !set.isEmpty())
+                        .apply(split.apply(random));
         Supplier<Boolean> isRemoveOpts = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(random));
         Supplier<Boolean> isSetNullables = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(random));
 
@@ -2165,11 +2121,9 @@ public final class RecordGen implements Gen<Record> {
         Map<String, Supplier<?>> map = new LinkedHashMap<>();
         for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
             map.put(pair.getKey(),
-                    pair.getValue().apply(split.apply(random))
-            );
+                    pair.getValue().apply(split.apply(random)));
 
-        return () ->
-        {
+        return () -> {
             Map<String, Object> result = new LinkedHashMap<>();
             for (Map.Entry<String, Supplier<?>> pair : map.entrySet()) {
                 Object value = pair.getValue().get();
@@ -2191,6 +2145,5 @@ public final class RecordGen implements Gen<Record> {
             return new Record(result);
         };
     }
-
 
 }

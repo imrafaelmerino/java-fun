@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class TestRecordGen {
 
@@ -593,88 +594,80 @@ public class TestRecordGen {
                                      IntGen.arbitrary(0,
                                                       40000),
                                      "b",
-                                     StrGen.letters(1,
-                                                    1),
+                                     IntGen.arbitrary(0,
+                                                      40000),
                                      "c",
                                      IntGen.arbitrary(0,
-                                                      800000)
+                                                      40000)
         ).withOptKeys("a",
                       "b");
 
 
         int times = 400000;
-        Map<List<?>, Long> generated = gen.collect(times,
-                                                   record -> {
-                                                       if (record.getInt("a").isPresent() && record.getStr("b").isPresent())
-                                                           return Arrays.asList("a",
-                                                                                "b");
-                                                       else if (record.getInt("a").isPresent() && !record.getStr("b").isPresent())
-                                                           return Arrays.asList("a");
-                                                       else if (!record.getInt("a").isPresent() && record.getStr("b").isPresent())
-                                                           return Arrays.asList("b");
-                                                       else return new ArrayList<>();
-                                                   });
+        Map<List<?>, Long> generated =
+                gen.collect(times,
+                            record -> {
+                                if (record.getInt("a").isPresent()
+                                        && record.getInt("b").isPresent()
+                                        && record.getInt("c").isPresent())
+                                    return Arrays.asList("a",
+                                                         "b",
+                                                         "c");
+                                if (record.getInt("a").isPresent()
+                                        && record.getInt("b").isPresent()
+                                )
+                                    return Arrays.asList("a",
+                                                         "b");
+                                if (record.getInt("a").isPresent()
+                                        && record.getInt("c").isPresent()
+                                )
+                                    return Arrays.asList("a",
+                                                         "c");
+                                if (record.getInt("b").isPresent()
+                                        && record.getInt("c").isPresent()
+                                )
+                                    return Arrays.asList("b",
+                                                         "c");
+                                if (record.getInt("a").isPresent())
+                                    return Arrays.asList("a");
+                                if (record.getInt("b").isPresent())
+                                    return Arrays.asList("b");
+                                if (record.getInt("c").isPresent())
+                                    return Arrays.asList("c");
+                                return new ArrayList<>();
+                            });
 
-        Assertions.assertTrue(generated.values().stream()
-                                       .map(n -> ((double) (n * 100)) / times)
-                                       .allMatch(per -> per >= 24.9 && per <= 25.1));
+        Function<Long, Double> toPer =
+                e -> ((double) (e * 100)) / times;
+
+        Predicate<Map.Entry<List<?>, Long>> containsAll =
+                it -> it.getKey().containsAll(Arrays.asList("a",
+                                                            "b",
+                                                            "c"));
+        Assertions.assertTrue(generated
+                                      .entrySet()
+                                      .stream()
+                                      .filter(containsAll)
+                                      .map(it -> it.getValue())
+                                      .map(toPer)
+                                      .peek(System.out::println)
+                                      .allMatch(it -> it <= 50.1 && it >= 49.9));
+
+        Assertions.assertTrue(generated
+                                      .entrySet()
+                                      .stream()
+                                      .filter(containsAll.negate())
+                                      .map(it -> it.getValue())
+                                      .map(toPer)
+                                      .peek(System.out::println)
+                                      .allMatch(it -> it <= 16.7 && it >= 16.6));
 
 
     }
 
 
     @Test
-    public void testRecordGenWithAllOptionals() {
-
-        RecordGen gen = RecordGen.of("a",
-                                     IntGen.arbitrary(0,
-                                                      1000),
-                                     "b",
-                                     StrGen.letters(1,
-                                                    1),
-                                     "c",
-                                     IntGen.arbitrary(0,
-                                                      1000)
-        ).withAllOptKeys();
-
-
-        int times = 1000000;
-        Map<List<String>, Long> generated = gen.collect(times,
-                                                        r -> {
-                                                            if (r.map.containsKey("a") && r.map.containsKey("b") && r.map.containsKey("c"))
-                                                                return Arrays.asList("a",
-                                                                                     "b",
-                                                                                     "c");
-                                                            else if (r.map.containsKey("a") && r.map.containsKey("b") && !r.map.containsKey("c"))
-                                                                return Arrays.asList("a",
-                                                                                     "b");
-                                                            else if (r.map.containsKey("a") && !r.map.containsKey("b") && r.map.containsKey("c"))
-                                                                return Arrays.asList("a",
-                                                                                     "c");
-                                                            else if (!r.map.containsKey("a") && r.map.containsKey("b") && r.map.containsKey("c"))
-                                                                return Arrays.asList("b",
-                                                                                     "c");
-                                                            else if (!r.map.containsKey("a") && !r.map.containsKey("c") && r.map.containsKey("b"))
-                                                                return Arrays.asList("b");
-                                                            else if (!r.map.containsKey("a") && r.map.containsKey("c") && !r.map.containsKey("b"))
-                                                                return Arrays.asList("c");
-                                                            else if (r.map.containsKey("a") && !r.map.containsKey("c") && !r.map.containsKey("b"))
-                                                                return Arrays.asList("a");
-                                                            else
-                                                                return Arrays.asList();
-
-
-                                                        });
-
-        Assertions.assertTrue(generated.values().stream()
-                                       .map(n -> ((double) (n * 100)) / times)
-                                       .allMatch(per -> per >= 12.4 && per <= 12.52));
-
-
-    }
-
-    @Test
-    public void testRecordGenWithAllNullable() {
+    public void testRecordGenWithAllNullableAndOptionals() {
 
         RecordGen gen = RecordGen.of("a",
                                      IntGen.arbitrary(0,
@@ -685,96 +678,150 @@ public class TestRecordGen {
                                      "c",
                                      IntGen.arbitrary(0,
                                                       1000)
-        ).withAllNullValues();
-
-
-        int times = 1000000;
-        Map<List<String>, Long> generated = gen.collect(times,
-                                                        r -> {
-                                                            if (r.map.get("a") != null && r.map.get("b") != null && r.map.get("c") != null)
-                                                                return Arrays.asList("a",
-                                                                                     "b",
-                                                                                     "c");
-                                                            else if (r.map.get("a") != null && r.map.get("b") != null && r.map.get("c") == null)
-                                                                return Arrays.asList("a",
-                                                                                     "b");
-                                                            else if (r.map.get("a") != null && r.map.get("b") == null && r.map.get("c") != null)
-                                                                return Arrays.asList("a",
-                                                                                     "c");
-                                                            else if (r.map.get("a") == null && r.map.get("b") != null && r.map.get("c") != null)
-                                                                return Arrays.asList("b",
-                                                                                     "c");
-                                                            else if (r.map.get("a") == null && r.map.get("c") == null && r.map.get("b") != null)
-                                                                return Arrays.asList("b");
-                                                            else if (r.map.get("a") == null && r.map.get("c") != null && r.map.get("b") == null)
-                                                                return Arrays.asList("c");
-                                                            else if (r.map.get("a") != null && r.map.get("c") == null && r.map.get("b") == null)
-                                                                return Arrays.asList("a");
-                                                            else
-                                                                return Arrays.asList();
-
-
-                                                        });
-
-
-        Assertions.assertTrue(generated.values()
-                                       .stream()
-                                       .map(n -> ((double) (n * 100)) / times)
-                                       .allMatch(per -> per >= 12.4 && per <= 12.51)
         );
 
-
-    }
-
-
-    @Test
-    public void testRecordGenWithNullable() {
-
-        RecordGen baseGen = RecordGen.of("a",
-                                         IntGen.arbitrary(0,
-                                                          40000),
-                                         "b",
-                                         StrGen.letters(1,
-                                                        1),
-                                         "c",
-                                         IntGen.arbitrary(0,
-                                                          10000)
-        );
-
-
-        int times = 800000;
-        Function<Record, List<?>> mapFn = record -> {
-            if (record.getInt("a").isPresent() && record.getStr("b").isPresent())
+        int times = 2000000;
+        Function<Record, List<String>> nonNullKeys = r -> {
+            if (r.map.get("a") != null
+                    && r.map.get("b") != null
+                    && r.map.get("c") != null)
+                return Arrays.asList("a",
+                                     "b",
+                                     "c");
+            if (r.map.get("a") != null
+                    && r.map.get("b") != null
+                    && r.map.get("c") == null)
                 return Arrays.asList("a",
                                      "b");
-            else if (record.getInt("a").isPresent() && !record.getStr("b").isPresent())
-                return Arrays.asList("a");
-            else if (!record.getInt("a").isPresent() && record.getStr("b").isPresent())
+            if (r.map.get("a") != null
+                    && r.map.get("b") == null
+                    && r.map.get("c") != null)
+                return Arrays.asList("a",
+                                     "c");
+            if (r.map.get("a") == null
+                    && r.map.get("b") != null
+                    && r.map.get("c") != null)
+                return Arrays.asList("b",
+                                     "c");
+            if (r.map.get("a") == null
+                    && r.map.get("c") == null
+                    && r.map.get("b") != null)
                 return Arrays.asList("b");
-            else return new ArrayList<>();
+            if (r.map.get("a") == null
+                    && r.map.get("c") != null
+                    && r.map.get("b") == null)
+                return Arrays.asList("c");
+            if (r.map.get("a") != null
+                    && r.map.get("c") == null
+                    && r.map.get("b") == null)
+                return Arrays.asList("a");
+
+            return Arrays.asList();
         };
 
+        Function<Record, List<String>> presentKeys = r -> {
+            if (r.map.containsKey("a")
+                    && r.map.containsKey("b")
+                    && r.map.containsKey("c"))
+                return Arrays.asList("a",
+                                     "b",
+                                     "c");
+            if (r.map.containsKey("a")
+                    && r.map.containsKey("b")
+                    && !r.map.containsKey("c"))
+                return Arrays.asList("a",
+                                     "b");
+            if (r.map.containsKey("a")
+                    && !r.map.containsKey("b")
+                    && r.map.containsKey("c"))
+                return Arrays.asList("a",
+                                     "c");
+            if (!r.map.containsKey("a")
+                    && r.map.containsKey("b")
+                    && r.map.containsKey("c"))
+                return Arrays.asList("b",
+                                     "c");
+            if (!r.map.containsKey("a")
+                    && !r.map.containsKey("c")
+                    && r.map.containsKey("b"))
+                return Arrays.asList("b");
+            if (!r.map.containsKey("a")
+                    && r.map.containsKey("c")
+                    && !r.map.containsKey("b"))
+                return Arrays.asList("c");
+            if (r.map.containsKey("a")
+                    && !r.map.containsKey("c")
+                    && !r.map.containsKey("b"))
+                return Arrays.asList("a");
 
-        Assertions.assertTrue(baseGen.withNullValues("a",
-                                                     "b").collect(times,
-                                                                  mapFn).values()
-                                     .stream()
-                                     .map(n -> ((double) (n * 100)) / times)
-                                     .allMatch(per -> per >= 24.9 && per <= 25.2));
+            return Arrays.asList();
+        };
+
+        Predicate<Map.Entry<List<String>, Long>> containsAll =
+                it -> it.getKey().containsAll(Arrays.asList("a",
+                                                            "b",
+                                                            "c"));
+        Function<Map.Entry<List<String>, Long>, Double> toPer =
+                e -> ((double) (e.getValue() * 100)) / times;
+
+        Assertions.assertTrue(gen.withAllNullValues()
+                                 .collect(times,
+                                          nonNullKeys)
+                                 .entrySet()
+                                 .stream()
+                                 .filter(containsAll)
+                                 .map(toPer)
+                                 .allMatch(it -> it <= 50.5 && it >= 49.5));
+
+        Assertions.assertTrue(gen.withAllOptKeys()
+                                 .collect(times,
+                                          presentKeys)
+                                 .entrySet()
+                                 .stream()
+                                 .filter(containsAll)
+                                 .map(toPer)
+                                 .allMatch(it -> it <= 50.5 && it >= 49.5));
 
 
-        Assertions.assertTrue(baseGen.withOptKeys("a",
-                                                  "b").collect(times,
-                                                               mapFn).values()
-                                     .stream()
-                                     .map(n -> ((double) (n * 100)) / times)
-                                     .allMatch(per -> per >= 24.9 && per <= 25.2));
+        Assertions.assertTrue(
+                gen
+                        .withAllNullValues()
+                        .collect(times,
+                                 nonNullKeys)
+                        .entrySet()
+                        .stream()
+                        .filter(containsAll.negate())
+                        .map(toPer)
+                        .allMatch(it -> it <= 7.2 && it >= 6.8));
 
-        Assertions.assertTrue(baseGen.withReqKeys("c").collect(times,
-                                                               mapFn).values()
-                                     .stream()
-                                     .map(n -> ((double) (n * 100)) / times)
-                                     .allMatch(per -> per >= 24.9 && per <= 25.2));
+        Assertions.assertTrue(
+                gen
+                        .withNullValues("a","b","c")
+                        .collect(times,
+                                 nonNullKeys)
+                        .entrySet()
+                        .stream()
+                        .filter(containsAll.negate())
+                        .map(toPer)
+                        .allMatch(it -> it <= 7.2 && it >= 6.8));
+
+        Assertions.assertTrue(gen.withAllOptKeys()
+                                 .collect(times,
+                                          presentKeys)
+                                 .entrySet()
+                                 .stream()
+                                 .filter(containsAll.negate())
+                                 .map(toPer)
+                                 .allMatch(it -> it <= 7.2 && it >= 6.8));
+
+        Assertions.assertTrue(gen.withOptKeys("a","b","c")
+                                 .collect(times,
+                                          presentKeys)
+                                 .entrySet()
+                                 .stream()
+                                 .filter(containsAll.negate())
+                                 .map(toPer)
+                                 .allMatch(it -> it <= 7.2 && it >= 6.8));
     }
 
 

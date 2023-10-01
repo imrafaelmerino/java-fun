@@ -1,7 +1,7 @@
 package fun.gen;
 
-import java.util.function.UnaryOperator;
 import java.util.Random;
+import java.util.function.UnaryOperator;
 
 /**
  * A functional interface representing a generator splitter that takes a source {@link Random} generator and produces a new one.

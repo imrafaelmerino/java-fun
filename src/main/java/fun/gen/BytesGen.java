@@ -43,6 +43,7 @@ public final class BytesGen implements Gen<byte[]> {
                                       .apply(seed));
     }
 
+
     /**
      * Creates a biased byte array generator with lengths between {@code minLength} and {@code maxLength} (inclusive).
      * The generator is biased towards generating byte arrays with lengths equal to {@code minLength} and {@code maxLength}.

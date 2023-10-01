@@ -39,6 +39,7 @@ public final class BigIntGen implements Gen<BigInteger> {
         return new BigIntGen(bits);
 
     }
+
     /**
      * Constructs a biased BigInteger generator with various ranges and biases.
      *

@@ -19,6 +19,7 @@ public final class LongGen implements Gen<Long> {
 
     private LongGen() {
     }
+
     /**
      * Returns an arbitrary long generator.
      *
@@ -75,6 +76,7 @@ public final class LongGen implements Gen<Long> {
 
         return Combinators.freqList(gens);
     }
+
     /**
      * Returns an arbitrary long generator that generates values within the specified range [{@code min}, {@code max}] (inclusive).
      *
@@ -149,6 +151,31 @@ public final class LongGen implements Gen<Long> {
                          arbitrary));
 
         return Combinators.freqList(gens);
+    }
+
+    /**
+     * Returns a biased generator for long values within the range [{@code min}, {@link Long#MAX_VALUE}] (inclusive).
+     * This generator is biased towards generating common long values within the specified range.
+     *
+     * @param min The minimum long value (inclusive).
+     * @return A biased long generator starting from the specified minimum value.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     */
+    public static Gen<Long> biased(long min) {
+        return biased(min,
+                      Long.MAX_VALUE);
+    }
+
+    /**
+     * Generates a long value within the range [{@code min}, {@link Long#MAX_VALUE}] (inclusive) using the provided Random generator.
+     *
+     * @param min The minimum long value (inclusive).
+     * @return A long generator starting from the specified minimum value.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     */
+    public static Gen<Long> arbitrary(long min) {
+        return arbitrary(min,
+                         Long.MAX_VALUE);
     }
 
     @Override

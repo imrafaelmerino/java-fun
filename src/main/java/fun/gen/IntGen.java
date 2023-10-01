@@ -21,6 +21,7 @@ public final class IntGen implements Gen<Integer> {
 
     private IntGen() {
     }
+
     /**
      * Returns a generator for arbitrary Integer values. This generator produces random Integer values within the entire range of possible Integer values.
      *
@@ -28,6 +29,19 @@ public final class IntGen implements Gen<Integer> {
      */
     public static Gen<Integer> arbitrary() {
         return arbitrary;
+    }
+
+    /**
+     * Returns a biased generator for Integer values starting from {@code min} (inclusive).
+     * This generator is biased towards producing common Integer values starting from the specified minimum value.
+     *
+     * @param min The minimum Integer value (inclusive) from which values will be generated.
+     * @return A biased generator for Integer values starting from the specified minimum value.
+     * @throws IllegalArgumentException If {@code min} is greater than {@link Integer#MAX_VALUE}.
+     */
+    public static Gen<Integer> biased(int min) {
+        return biased(min,
+                      Integer.MAX_VALUE);
     }
 
     /**
@@ -72,6 +86,7 @@ public final class IntGen implements Gen<Integer> {
 
         return Combinators.freqList(gens);
     }
+
     /**
      * Generates an Integer value within the specified range [{@code min}, {@code max}] (inclusive) using the provided Random generator.
      *
@@ -107,6 +122,18 @@ public final class IntGen implements Gen<Integer> {
             }
             return r;
         };
+    }
+
+    /**
+     * Generates an Integer value starting from {@code min} (inclusive) up to {@link Integer#MAX_VALUE} (inclusive) using the provided Random generator.
+     *
+     * @param min The minimum Integer value (inclusive) from which values will be generated.
+     * @return An Integer generator starting from the specified minimum value.
+     * @throws IllegalArgumentException If {@code min} is greater than {@link Integer#MAX_VALUE}.
+     */
+    public static Gen<Integer> arbitrary(int min) {
+        return arbitrary(min,
+                         Integer.MAX_VALUE);
     }
 
     /**

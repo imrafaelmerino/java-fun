@@ -25,6 +25,7 @@ public final class InstantGen implements Gen<Instant> {
 
     private InstantGen() {
     }
+
     /**
      * Returns a generator for arbitrary Instant values. This generator produces random Instant values within the entire range of possible Instant values.
      *
@@ -59,6 +60,7 @@ public final class InstantGen implements Gen<Instant> {
         return Combinators.freqList(gens).map(Instant::ofEpochSecond);
 
     }
+
     /**
      * Returns a biased generator for Instant values within the specified range [{@code min}, {@code max}] (inclusive).
      * This generator is biased towards generating common Instant values within the specified range.

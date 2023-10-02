@@ -97,7 +97,7 @@ blank strings ...).Generating robust test data is essential for identifying pote
 json-values, we take this a step further by introducing **biased generators** that never forget to include special
 values known to trigger bugs.
 
-**"Optics: Elevating JSON Manipulation to a New Level"**
+**Optics: Elevating JSON Manipulation to a New Level**
 
 Perform JSON manipulation free of null checks and if-else conditions using optics:
 

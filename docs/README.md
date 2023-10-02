@@ -430,6 +430,32 @@ create diverse test data for various scenarios. Let's explore them in detail:
                           int prob) 
   ```
 
+- **nOf Combinator**: pick n elements randomly from a list or set.
+
+    ```code
+     Gen<List<O>> nListGen =  Combinators.nOf(List<O> list,
+                                              int n);
+     
+     Gen<Set<T>> nSetGen =  Combinators.nOf(Set<O> set,
+                                            int n)  
+  ```
+- **subsets and combinations Combinator**: They generate all posible subsets and n-combinations.
+
+    ```code
+     Gen<List<O>> comb = Combinators.combinations(int n,
+                                                  List<O> set);
+     
+     Gen<Set<O>> subsets =  Combinators.subsets(Set<O> set)  
+    ```
+- **shuffle Combinator**:  
+
+    ```code
+     Gen<List<O>> gen = Combinators.shuffle(List<O> list);
+     
+    ```
+
+### <a name="og"><a/> Objects generators
+
 This section on "Objects Generators" explains how to create generators for custom objects in your model
 using `RecordGen` and the function map. Let's delve deeper into this process:
 

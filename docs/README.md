@@ -504,7 +504,7 @@ this idea to create generators of valid and invalid data:
 ```code   
 
   //let's create a generator that produces all possible combinations of nullable values 
-  Gen<User> chaosGen = userGen.setAllNullable()
+  Gen<User> chaosGen = userGen.withAllNullValues()
 
   Predicate<User> isValid = user ->
                                     user.getLogin() != null &&

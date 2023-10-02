@@ -68,7 +68,7 @@ JsObjSpec spec=
 **JSON generation made easy**
 
 Creating complex JSON structures can be a daunting task, especially when dealing with deeply nested or intricate data.
-With **json-values**, this process becomes remarkably simple.
+With json-values, this process becomes remarkably simple.
 
 ```code 
 
@@ -192,12 +192,12 @@ uncluttered.
 - Our commitment to encapsulation ensures that only the essential classes, those relevant to the client perspective, are
   exposed.
 
-By maintaining a small and tightly focused scope, **json-values** offers you a hassle-free and efficient way to work
+By maintaining a small and tightly focused scope, json-values offers you a hassle-free and efficient way to work
 with JSON data without unnecessary complexity.
 
 ## <a name="introduction"><a/> Introduction
 
-Welcome to **json-values**, a groundbreaking JSON library for Java that harnesses the power of persistent data
+Welcome to json-values, a groundbreaking JSON library for Java that harnesses the power of persistent data
 structures.
 
 In the world of Functional Programming (FP), immutable data structures, often referred to as "values," hold a pivotal
@@ -209,49 +209,69 @@ structures. This is where persistent data structures step in.
 While languages like Haskell, Clojure, and Scala natively support persistent data structures, Java has traditionally
 lagged behind in this regard.
 
-**json-values** aims to bridge this gap, allowing Java developers to harness the power of persistent data structures
+json-values aims to bridge this gap, allowing Java developers to harness the power of persistent data structures
 when working with JSON data. Here's why this matters:
 
 - In FP, the focus is on functions and values, simplifying complex data manipulation.
-- By providing a purely functional approach to JSON, **json-values** opens the door to more robust and reliable code.
+- By providing a purely functional approach to JSON, json-values opens the door to more robust and reliable code.
 - Say goodbye to the traditional complexities of working with JSON objects and embrace a more straightforward,
   functional approach.
 
-With **json-values**, you can unlock the potential of FP in your Java projects, creating cleaner, more maintainable code
+With json-values, you can unlock the potential of FP in your Java projects, creating cleaner, more maintainable code
 while ensuring that performance doesn't take a back seat. Let's dive into how you can leverage the strength of values
 and functions to manipulate JSON data effectively.
 
 ## <a name="whatfor"><a/> What to use json-values for and when to use it
 
-**json-values** is a versatile library designed to simplify JSON manipulation while embracing a functional programming
-paradigm. Here are scenarios where you can benefit from using **json-values**:
+json-values is a versatile library designed to simplify JSON manipulation while embracing a functional programming
+paradigm. Here are scenarios where you can benefit from using json-values:
 
-- **Functional Style in Java**: If you want to work with JSON in a functional style, leveraging functions and values, *
-  *json-values** provides a solution in Java, even in the absence of native persistent data structures.
+- **Functional Style in Java**: If you want to work with JSON in a functional style, leveraging functions and values,
+  json-values provides a solution in Java, even in the absence of native persistent data structures.
 
 - **End-to-End JSON Architectures**: In architectures where JSON is the lingua franca, using a persistent JSON
   representation ensures both safety and efficiency. Think of scenarios where actors exchange JSON messages seamlessly.
 
 - **Streamlined JSON Manipulation**: If you frequently manipulate JSON data and seek a more declarative and less
-  ceremonious approach, **json-values** offers a powerful API built on functional programming principles.
+  ceremonious approach, json-values offers a powerful API built on functional programming principles.
 
-- **Property-Based Testing**: Simplify property-based testing by effortlessly generating JSON data with **json-values**,
+- **Property-Based Testing**: Simplify property-based testing by effortlessly generating JSON data with json-values,
   making it a breeze to explore edge cases and unexpected scenarios.
 
 - **Efficient JSON Validation**: Create JSON specifications for efficient validation and parsing of JSON data, ensuring
   data integrity and accuracy.
 
 - **Simplicity Matters**: Embrace simplicity in your JSON manipulation. As the saying goes, "Immutability Changes
-  Everything," and **json-values** brings simplicity and reliability to your code.
+  Everything," and json-values brings simplicity and reliability to your code.
 
-**json-values** empowers you to work with JSON in a more functional, efficient, and straightforward manner, offering a
+json-values empowers you to work with JSON in a more functional, efficient, and straightforward manner, offering a
 versatile toolkit for various use cases.
+
+## <a name="notwhatfor"><a/> When not to use it
+
+**Avoid Overengineering**
+
+json-values is a powerful tool for working with JSON data in a straightforward and expressive manner. However, it's
+essential to exercise restraint and avoid creating overly complex abstractions, especially if they involve excessive use
+of getters and setters or intricate DSLs built on top of json-values.
+
+**Consider Your Design Choices**
+
+It's crucial to strike a balance between leveraging the capabilities of json-values and adhering
+to the principles of good software design. Creating abstractions that are more about showcasing technical prowess than
+addressing practical problems can lead to what's humorously referred to as "Narcissistic Design."
+
+**Watch "Narcissistic Design"**
+
+If you're interested in exploring this concept further, you can watch the thought-provoking talk titled "Narcissistic
+Design" by Stuart Halloway. This presentation offers an ironic take on the pitfalls of overengineering and the
+importance of keeping design decisions pragmatic and focused on solving real-world challenges.
 
 ## <a name="how-to"><a/> How-To
 
 ### <a name="jspath"><a/>JsPath: Navigating JSON Structures
 
-The `JsPath` class in **json-values** represents a way to pinpoint specific values
+The `JsPath` class in json-values represents a way to pinpoint specific values
 within a JSON structure. It's essentially a sequence of positions, where each position
 can be either a key or an index. There are two convenient ways to create a `JsPath`:
 
@@ -303,7 +323,7 @@ JsPath.empty().key("a")
 
 ### <a name="jsvalue"><a/>JsValue: The Foundation of JSON Elements
 
-In **json-values**, every element in a JSON structure is represented as a subtype of `JsValue`. This includes various
+In json-values, every element in a JSON structure is represented as a subtype of `JsValue`. This includes various
 types described in [json.org](https://www.json.org):
 
 - String
@@ -312,17 +332,17 @@ types described in [json.org](https://www.json.org):
 - JSON Object
 - JSON Array
 
-Additionally, **json-values** extends support for two more data types:
+Additionally, json-values extends support for two more data types:
 
 - Instant: Serialized into its string representation following ISO-8601 standards.
 - Binary: Represented as an array of bytes (byte[]), serialized into a base64-encoded string.
 
-To ensure data integrity and consistency, **json-values** takes a data-oriented approach when comparing JSON elements.
+To ensure data integrity and consistency, json-values takes a data-oriented approach when comparing JSON elements.
 In other words, two JSON structures are considered equal if they convey the same information. Even if the values have
 different primitive types or the keys are in a different order, as long as they represent the same data, they are
 considered equal.
 
-Here's the hierarchical class structure of **json-values**:
+Here's the hierarchical class structure of json-values:
 
 - JsValue
     - JsPrimitive
@@ -383,7 +403,7 @@ Assertions.assertEquals(xs.hashcode(), ys.hashcode());
 
 ### <a name="creatingjson"><a/>Creating JSON with json values
 
-There are several ways of creating JSON in **json-values**:
+There are several ways of creating JSON in json-values:
 
 1. **Using Static Factory Methods**: You can create JSON objects with up to 30 key-value pairs using the static factory
    methods `of`. This approach is ideal for straightforward JSON creation.
@@ -395,7 +415,7 @@ There are several ways of creating JSON in **json-values**:
 3. **Creating an Empty Object**: You can start with an empty JSON object (or from an existing one) and then use the API
    to insert values. This approach allows for dynamic construction of JSON.
 
-Now, let's delve into creating JSON objects and arrays with **json-values**:
+Now, let's delve into creating JSON objects and arrays with json-values:
 
 ### <a name="creatingjsonobj"><a/>Creating JsObj: JSON objects
 
@@ -1378,29 +1398,6 @@ Once you've established your optics, creating new functions becomes a straightfo
 
 So, while the initial setup may seem involved, the long-term benefits of reusability and code clarity make optics an
 invaluable tool when working with JSON data in your project.
-
-## <a name="notwhatfor"><a/> When not to use it
-
-**Avoid Overengineering**
-
-json-values is a powerful tool for working with JSON data in a straightforward and expressive manner. However, it's
-essential to exercise restraint and avoid creating overly complex abstractions, especially if they involve excessive use
-of getters and setters or intricate DSLs built on top of json-values.
-
-**Consider Your Design Choices**
-
-It's crucial to strike a balance between leveraging the capabilities of json-values and adhering
-to the principles of good software design. Creating abstractions that are more about showcasing technical prowess than
-addressing practical problems can lead to what's humorously referred to as "Narcissistic Design."
-
-**Watch "Narcissistic Design"**
-
-If you're interested in exploring this concept further, you can watch the thought-provoking talk titled "Narcissistic
-Design" by Stuart Halloway. This presentation offers an ironic take on the pitfalls of overengineering and the
-importance of keeping design decisions pragmatic and focused on solving real-world challenges.
-
-In summary, while json-values is a valuable tool, it's essential to use it judiciously and avoid creating overly complex
-abstractions that may not align with the practical needs of your project, especially in the context of EOOP.
 
 ## <a name="requirements"><a/> Requirements
 

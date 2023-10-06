@@ -2,8 +2,6 @@ package fun.tuple;
 
 import java.util.Objects;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * Represents an immutable triple of three elements, A, B, and C.
  *
@@ -26,7 +24,7 @@ public final class Triple<A, B, C> {
     }
 
     /**
-     * Creates a new Triple with the specified first, second, and third elements.
+     * Creates a new Triple with the specified first, second, and third elements.Null is allowed
      *
      * @param first  The first element of the triple.
      * @param second The second element of the triple.
@@ -39,9 +37,9 @@ public final class Triple<A, B, C> {
     public static <A, B, C> Triple<A, B, C> of(final A first,
                                                final B second,
                                                final C third) {
-        return new Triple<>(requireNonNull(first),
-                            requireNonNull(second),
-                            requireNonNull(third));
+        return new Triple<>(first,
+                            second,
+                            third);
     }
 
     /**

@@ -184,6 +184,7 @@ public class TestCombinators {
                         2
                    )
                    .sample(100)
+
                    .forEach(n -> {
                        Assertions.assertEquals(2,
                                                new HashSet<>(n).size());
@@ -194,11 +195,8 @@ public class TestCombinators {
                         numbers.size()
                    )
                    .sample(100)
-                   .forEach(n -> {
-                       System.out.println(n);
-                       Assertions.assertEquals(numbers.size(),
-                                               new HashSet<>(n).size());
-                   });
+                   .forEach(n -> Assertions.assertEquals(numbers.size(),
+                                                     new HashSet<>(n).size()));
 
 
     }

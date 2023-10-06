@@ -96,7 +96,7 @@ public final class Combinators {
     }
 
     /**
-     * Creates a generator that produces a list of random values by selecting and removing elements from a provided list.
+     * Creates a generator that produces a list of random values (indexes not repeated) by selecting and removing elements from a provided list.
      *
      * @param <T>    The type of values to choose from.
      * @param values A list of values to choose from.
@@ -119,7 +119,7 @@ public final class Combinators {
     }
 
     /**
-     * Creates a generator that produces a set of random values by selecting and removing elements from a provided set.
+     * Creates a generator that produces a set of random values (not repeated) by selecting and removing elements from a provided set.
      *
      * @param <T>    The type of values to choose from.
      * @param values A set of values to choose from.
@@ -354,5 +354,7 @@ public final class Combinators {
             return ys;
         };
     }
+
+
 
 }

@@ -3,10 +3,7 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -79,5 +76,12 @@ public class TesGen {
                                               "Others");
 
         System.out.println(map);
+    }
+
+    @Test
+    public void testSeq(){
+        Assertions.assertEquals(Arrays.asList(1, 2, 3, 4, 5),
+                                Gen.seq(n -> n)
+                                   .sample(5).collect(Collectors.toList()));
     }
 }

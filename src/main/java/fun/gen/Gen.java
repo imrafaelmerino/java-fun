@@ -1,6 +1,7 @@
 package fun.gen;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -27,6 +28,27 @@ import static java.util.Objects.requireNonNull;
 public interface Gen<O> extends Function<Random, Supplier<O>> {
 
     /**
+     * Creates a generator that produces values based on the provided function, where the integer input to the function
+     * represents the call sequence (starting from 1 for the first call).
+     *
+     * @param fn  The function to generate values based on the call sequence.
+     * @param <O> The type of value to generate.
+     * @return A generator that produces values according to the provided function and call sequence.
+     * @throws NullPointerException if the provided function is null.
+     */
+    static <O> Gen<O> seq(final Function<Integer, O> fn) {
+        Objects.requireNonNull(fn);
+        return random -> {
+            AtomicInteger ai = new AtomicInteger(1);
+            Supplier<O> supplier = () -> {
+                int n = ai.getAndIncrement();
+                return fn.apply(n);
+            };
+            return supplier;
+        };
+    }
+
+    /**
      * Creates a generator that always produces a constant value {@code value}.
      *
      * @param <O>   The type of value to generate.
@@ -36,7 +58,6 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
     static <O> Gen<O> cons(final O value) {
         return seed -> () -> value;
     }
-
 
     /**
      * Creates a generator that ensures distinct values are generated from the underlying generator,
@@ -104,6 +125,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
             return it;
         });
     }
+
 
     /**
      * Creates a new generator by chaining the generation of values from this generator with another generator.
@@ -284,4 +306,6 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
         );
 
     }
+
+
 }

@@ -23,3 +23,6 @@ New methods:
  JsLongGen.biased(min)
  JsLongGen.arbitrary(min)
  JsIntGen.arbitrary(min)
+
+12.6.0
+upgrade java-fun to 1.3.2

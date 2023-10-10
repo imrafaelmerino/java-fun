@@ -211,9 +211,10 @@ public final class JsIO {
         final JsWriter jw = localWriter.get();
         try {
             jw.reset(stream);
-            switch (json) {
-                case JsObj obj -> objSerializer.write(jw, obj);
-                case JsArray arr -> arraySerializer.write(jw, arr);
+            if (Objects.requireNonNull(json) instanceof JsObj obj) {
+                objSerializer.write(jw, obj);
+            } else if (json instanceof JsArray arr) {
+                arraySerializer.write(jw, arr);
             }
         } finally {
             jw.flush();

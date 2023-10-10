@@ -5,6 +5,7 @@ package jsonvalues;
  Exception that models a programming error made by the user. The user has a bug in their code and something
  has to be fixed. Part of the exception message is a suggestion to fix the bug.
  */
+@SuppressWarnings("serial")
 public final class UserError extends RuntimeException {
 
     private static final String GENERAL_MESSAGE = "%s. Suggestion: %s.";

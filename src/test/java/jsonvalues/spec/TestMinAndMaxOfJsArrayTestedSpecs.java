@@ -155,7 +155,7 @@ public class TestMinAndMaxOfJsArrayTestedSpecs {
     public void testArrayOfDec() {
 
         JsBigDec TEN = JsBigDec.of(BigDecimal.TEN);
-        JsArraySpec spec = JsSpecs.arrayOfDec(d -> d.equals(BigDecimal.TEN),
+        JsArraySpec spec = JsSpecs.arrayOfDec(d -> d.compareTo(BigDecimal.TEN)==0,
                                               1,
                                               2);
 

@@ -45,9 +45,10 @@ class JsValueReader extends AbstractReader {
         switch (reader.last()) {
             case 't':
                 if (reader.wasTrue()) return JsBool.TRUE;
-
+                throw JsParserException.reasonAt("true was expected",reader.getCurrentIndex());
             case 'f':
                 if (reader.wasFalse()) return JsBool.FALSE;
+                throw JsParserException.reasonAt("false was expected",reader.getCurrentIndex());
             case '"':
                 return JsStr.of(reader.readString());
             case '{':

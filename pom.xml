@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
     <packaging>jar</packaging>
-    <version>12.6.0</version>
+    <version>12.7.0</version>
     <name>json-values</name>
     <description>json-values is a functional Java library to work with immutable Json using persistent data structures.</description>
     <url>https://github.com/imrafaelmerino/json-values</url>
@@ -71,12 +71,11 @@
                     <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
                     <target>${MAVEN-COMPILER-PLUGIN.TARGET}</target>
                     <showWarnings>true</showWarnings>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <compilerArgs>
                         <arg>-XDcompilePolicy=simple</arg>
                         <arg>-Xplugin:ErrorProne</arg>
-                        <arg>--enable-preview</arg>
-                        <arg> -Xlint:unchecked</arg>
+                        <arg>-Xlint:all</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
@@ -91,9 +90,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
-                <configuration>
-                    <argLine>--enable-preview</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -112,8 +108,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
                 <configuration>
-                    <source>17</source>
-                    <additionalOptions>--enable-preview</additionalOptions>
+                    <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
                 </configuration>
                 <executions>
                     <execution>

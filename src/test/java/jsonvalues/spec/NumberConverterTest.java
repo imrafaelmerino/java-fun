@@ -668,6 +668,7 @@ public class NumberConverterTest {
         }
     }
 
+    @SuppressWarnings("FloatingPointLiteralPrecision")
     @Test
     public void doubleRoundingError() throws JsParserException {
         final JsIO dslJson = new JsIO(new Settings().doublePrecision(JsReader.DoublePrecision.DEFAULT));

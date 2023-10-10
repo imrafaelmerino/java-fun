@@ -57,7 +57,7 @@ final class BitMappedTrie<T> {
 
     private static final BitMappedTrie<?> EMPTY = new BitMappedTrie<>(obj(), obj().empty(), 0, 0, 0);
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     static BitMappedTrie empty() {
         return EMPTY;
     }

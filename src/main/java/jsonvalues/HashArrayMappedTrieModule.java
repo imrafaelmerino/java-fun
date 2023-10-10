@@ -194,6 +194,7 @@ import static jsonvalues.HashArrayMappedTrieModule.Action.REMOVE;
     /**
      * The empty node.
      */
+    @SuppressWarnings("serial")
     final class EmptyNode extends AbstractNode implements Serializable {
 
         private static final EmptyNode INSTANCE = new EmptyNode();
@@ -365,6 +366,7 @@ import static jsonvalues.HashArrayMappedTrieModule.Action.REMOVE;
     /**
      * Representation of a HAMT leaf node with more than one element.
      */
+    @SuppressWarnings("serial")
     final class LeafList extends LeafNode implements Serializable {
 
         private final int hash;

@@ -32,3 +32,6 @@ Bug: Previous versions compiled without enabling preview features. All preview f
 no longer necessary and were exclusively used for internal purposes.
 
 Eliminate compilation warnings in both source and test code."
+
+12.8.0
+JsObjGen::concat method

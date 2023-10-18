@@ -2805,6 +2805,175 @@ public non-sealed class JsObj implements Json<JsObj>, Iterable<JsObjPair> {
     }
 
     /**
+     * Sets the value of the specified key in this JSON object to a string value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The string value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final String value){
+        return set(key, JsStr.of(value));
+    }
+
+    /**
+     * Sets the value of the specified key in this JSON object to an integer value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The integer value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final int value){
+        return set(key, JsInt.of(value));
+    }
+
+    /**
+     * Sets the value of the specified key in this JSON object to a long value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The long value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final long value){
+        return set(key, JsLong.of(value));
+    }
+
+    /**
+     * Sets the value of the specified key in this JSON object to a boolean value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The boolean value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final boolean value){
+        return set(key, JsBool.of(value));
+    }
+
+    /**
+     * Sets the value of the specified key in this JSON object to an Instant value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The Instant value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final Instant value){
+        return set(key, JsInstant.of(value));
+    }
+
+    /**
+     * Sets the value of the specified key in this JSON object to a BigDecimal value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The BigDecimal value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final BigDecimal value){
+        return set(key, JsBigDec.of(value));
+    }
+
+    /**
+     * Sets the value of the specified key in this JSON object to a Double value.
+     * If the key does not exist, it will be created.
+     *
+     * @param key   The key to set.
+     * @param value The Double value to set.
+     * @return A new JSON object with the specified key and value.
+     */
+    public JsObj set(final String key, final Double value){
+        return set(key, JsDouble.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to a string value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The string value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final String value){
+        return set(path, JsStr.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to an integer value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The integer value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final int value){
+        return set(path, JsInt.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to a long value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The long value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final long value){
+        return set(path, JsLong.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to a boolean value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The boolean value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final boolean value){
+        return set(path, JsBool.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to an Instant value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The Instant value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final Instant value){
+        return set(path, JsInstant.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to a BigDecimal value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The BigDecimal value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final BigDecimal value){
+        return set(path, JsBigDec.of(value));
+    }
+
+    /**
+     * Sets the value of the specified path in this JSON object to a Double value.
+     * If the path does not exist, it will be created.
+     *
+     * @param path  The path to set.
+     * @param value The Double value to set.
+     * @return A new JSON object with the specified path and value.
+     */
+    public JsObj set(final JsPath path, final Double value){
+        return set(path, JsDouble.of(value));
+    }
+
+
+    /**
      * Sets the specified key to the given JSON value. If the key already exists, its value will be updated.
      * If the key doesn't exist, a new key-value pair will be added to the JSON object.
      *

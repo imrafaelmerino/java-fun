@@ -35,3 +35,8 @@ Eliminate compilation warnings in both source and test code."
 
 12.8.0
 JsObjGen::concat method
+
+12.9.0
+JsObj new methods: 
+    set(key,primitive)
+    set(path,primitive)

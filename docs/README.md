@@ -124,7 +124,7 @@ As you may notice, each field has an associated optic defined:
 - latitude -> latitudeLens
   etc
 
-and we just create functions, like _modify_ in the previous example,
+and we just create functions, like `modify` in the previous example,
 putting optics together (composition is key to handle complexity).
 
 **Filter and map were never so easy!**
@@ -155,7 +155,7 @@ to parse the entire JSON. Here's how it works:
 JsObjSpec spec = ...
 
 // Create a parser with the specified schema
-var parser = new JsObjSpecParser(spec);
+var parser = JsObjSpecParser.of(spec);
 
 // Parse and validate JSON data, efficiently checking only what's necessary
 var json = parser.parse("{...}");
@@ -517,14 +517,14 @@ JsObj a = JsObj.parse("{...}");
 In this case, the best and fastest option is to use a spec to do the parsing.
 We'll talk about this option later on when I introduce json-spec.
 
-**Creating an empty object (or from an existing JsObj) and adding new values with the method _set_:**
+**Creating an empty object (or from an existing JsObj) and adding new values with the method `set`:**
 
 ```code   
 
 JsObj person=
-        JsObj.empty().set("name",JsStr.of("Rafael"))
-                     .set("surname",JsStr.of("Merino"))
-                     .set("phoneNumber",JsStr.of("6666666"));
+        JsObj.empty().set("name", "Rafael")
+                     .set("surname", "Merino")
+                     .set("phoneNumber", "6666666");
 
 ```
 
@@ -532,19 +532,19 @@ Remember that a JSON is immutable, so the set method returns a brand-new value.
 
 ### <a name="creatingjsonarray"><a/>Creating JsArray: JSON Arrays
 
-**From primitive types using the static factory method _of_ and _varargs_:**
+**From primitive types using the static factory method `of` and _varargs_:**
 
 ```code   
 
 JsArray a = JsArray.of("apple",
-                      "orange",
-                      "pear");
+                       "orange",
+                       "pear");
 
 JsArray b = JsArray.of(1, 2, 3, 4);
 
 ```
 
-**From JSON values using the static factory method _of_ and _varargs_:**
+**From JSON values using the static factory method `of` and _varargs_:**
 
 ```code   
 
@@ -581,7 +581,7 @@ In this case, like parsing objects with a schema, the best and fastest option
 is to use a spec to do the parsing. We'll also talk about this option later on when
 I introduce json-spec.
 
-**Creating an empty array and adding new values with the methods _append_ and _prepend_:**
+**Creating an empty array and adding new values with the methods `append` and `prepend`:**
 
 ```code   
 
@@ -601,7 +601,7 @@ Assertions.assertEquals(JsArray.of(2,3,0,1),
 
 ### <a name="inout"><a/>Putting data in and getting data out
 
-Two important methods in the API are _get_ and _set_:
+Two important methods in the API are `get` and `set`:
 
 ```code   
 
@@ -750,7 +750,7 @@ array.getStr(0)
 
 ### <a name="filtermapreduce"><a/>Filter, map, and reduce
 
-Let's take a look at some very common transformations using the _map_ methods.
+Let's take a look at some very common transformations using the `map` methods.
 The map function doesn't change the structure of the JSON. This is a pattern
 known in FP as a functor. Consider the following signatures:
 
@@ -1003,7 +1003,7 @@ List<SpecError> errors =
 
 ```
 
-It's possible to validate a whole JsObj once parsed with the method _suchThat_.
+It's possible to validate a whole JsObj once parsed with the method `suchThat`.
 Imagine that certain properties must be present if a given property is present in
 an object. For example, suppose we have a schema representing a customer. If you
 have their credit card number, you also want to ensure you have a billing address.
@@ -1030,9 +1030,9 @@ stop the process as soon as an error happens. **After all, failing fast is impor
 
 ```code     
 
-JsObjSpecParser personParser=new JsObjSpecParser(personSpec);
+JsObjSpecParser personParser = JsObjSpecParser.of(personSpec);
 
-String string="{...}";
+String string = "{...}";
 
 try{
      JsObj person=personParser.parse(string);
@@ -1443,5 +1443,7 @@ After the development of json-values, I published some more related projects:
   message-passing architectures like [Vert.x](https://vertx.io)
 * [java-fun](https://github.com/imrafaelmerino/java-fun) json-values uses the generators and optics from java-fun
 * [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values with MongoDB
+* [avro-spec](https://github.com/imrafaelmerino/avro-spec) To create avro schemas from specs and serialize/deserialize
+  `JsObj` according avro specification
 * [json-scala-values](https://github.com/imrafaelmerino/json-scala-values) The Scala version
 

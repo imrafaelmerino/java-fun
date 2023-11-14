@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
 
-class JsBooleanSpec extends AbstractNullableSpec implements JsValuePredicate {
+final class JsBooleanSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
     JsBooleanSpec(final boolean nullable) {
         super(nullable);
     }
@@ -19,8 +19,8 @@ class JsBooleanSpec extends AbstractNullableSpec implements JsValuePredicate {
 
 
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofBool(nullable);
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofBool(nullable);
     }
 
     @Override
@@ -29,8 +29,10 @@ class JsBooleanSpec extends AbstractNullableSpec implements JsValuePredicate {
         return Functions.testElem(JsValue::isBool,
                                   BOOLEAN_EXPECTED,
                                   nullable
-                        )
+                                 )
                         .apply(value);
 
     }
+
+
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
 
-class JsIntSpec extends AbstractNullableSpec implements JsValuePredicate {
+final class JsIntSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
     JsIntSpec(final boolean nullable) {
         super(nullable);
     }
@@ -19,8 +19,8 @@ class JsIntSpec extends AbstractNullableSpec implements JsValuePredicate {
 
 
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofInt(nullable);
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofInt(nullable);
     }
 
     @Override
@@ -28,10 +28,11 @@ class JsIntSpec extends AbstractNullableSpec implements JsValuePredicate {
         return Functions.testElem(JsValue::isInt,
                                   INT_EXPECTED,
                                   nullable
-                        )
+                                 )
                         .apply(value);
 
     }
+
 
 
 }

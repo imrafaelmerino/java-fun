@@ -14,6 +14,9 @@ import static java.util.Objects.requireNonNull;
  * Represents an immutable JSON number of type BigInteger.
  */
 public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
+    /**
+     * prism between the sum type JsValue and JsBigInt. int and long types are considered valid bigintegers
+     */
     public static final Prism<JsValue, BigInteger> prism =
             new Prism<>(s ->
                         {
@@ -33,7 +36,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
     public final BigInteger value;
 
     private JsBigInt(final BigInteger value) {
-        this.value = value;
+        this.value = requireNonNull(value);
     }
 
     /**
@@ -43,7 +46,7 @@ public final class JsBigInt extends JsNumber implements Comparable<JsBigInt> {
      * @return a new JsBigInt
      */
     public static JsBigInt of(BigInteger n) {
-        return new JsBigInt(requireNonNull(n));
+        return new JsBigInt(n);
     }
 
 

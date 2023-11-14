@@ -1,9 +1,8 @@
 package jsonvalues.spec;
 
 /**
- * The `ERROR_CODE` enum represents various error codes that can be associated with
- * validation errors when using JSON value specifications (`JsSpecs`). Each error code
- * corresponds to a specific type of validation failure.
+ * The `ERROR_CODE` enum represents various code codes that can be associated with validation errors when using JSON
+ * value specifications (`JsSpecs`). Each code corresponds to a specific type of validation failure.
  */
 public enum ERROR_CODE {
     /**
@@ -27,6 +26,11 @@ public enum ERROR_CODE {
     BINARY_EXPECTED,
 
     /**
+     * Indicates that a binary (byte array) value of a specified size was expected.
+     */
+    BINARY_FIXED_LENGTH_EXPECTED,
+
+    /**
      * Indicates that an instant (date/time) value was expected but a different type of value was encountered.
      */
     INSTANT_EXPECTED,
@@ -42,9 +46,19 @@ public enum ERROR_CODE {
     LONG_EXPECTED,
 
     /**
+     * Indicates that a double number value was expected but a different type of value was encountered.
+     */
+    DOUBLE_EXPECTED,
+
+    /**
      * Represents a failed condition for a long integer value.
      */
     LONG_CONDITION,
+
+    /**
+     * Represents a failed condition for a double value.
+     */
+    DOUBLE_CONDITION,
 
     /**
      * Indicates that a boolean value was expected but a different type of value was encountered.
@@ -129,7 +143,7 @@ public enum ERROR_CODE {
     /**
      * Indicates that a `null` value was encountered.
      */
-    NULL,
+    NULL_NOT_EXPECTED,
 
     /**
      * Indicates that a `null` value was expected but a non-null value was encountered.
@@ -164,5 +178,18 @@ public enum ERROR_CODE {
     /**
      * Indicates that an array size is greater than the specified maximum length.
      */
-    ARR_SIZE_GREATER_THAN_MAX
+    ARR_SIZE_GREATER_THAN_MAX,
+
+    /**
+     * A value from an enumeration is expected
+     */
+    ENUM_SYMBOL_EXPECTED,
+
+    /**
+     * All the specs from the `OneOf` spec was tried but the value doesn't confirm none of them
+     */
+    ONE_OF_SPEC_EXHAUSTED
+
+
 }
+

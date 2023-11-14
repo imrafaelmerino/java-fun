@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
 
-class JsStrSpec extends AbstractNullableSpec implements JsValuePredicate {
+final class JsStrSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
     JsStrSpec(final boolean nullable) {
         super(nullable);
     }
@@ -19,16 +19,18 @@ class JsStrSpec extends AbstractNullableSpec implements JsValuePredicate {
 
 
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofStr(nullable);
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofStr(nullable);
     }
+
+
 
     @Override
     public Optional<JsError> testValue(final JsValue value) {
         return Functions.testElem(JsValue::isStr,
                                   STRING_EXPECTED,
                                   nullable
-                        )
+                                 )
                         .apply(value);
     }
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.LONG_EXPECTED;
 
-class JsLongSpec extends AbstractNullableSpec implements JsValuePredicate {
+final class JsLongSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
     JsLongSpec(final boolean nullable) {
         super(nullable);
     }
@@ -18,8 +18,8 @@ class JsLongSpec extends AbstractNullableSpec implements JsValuePredicate {
 
 
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofLong(nullable);
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofLong(nullable);
     }
 
     @Override
@@ -30,4 +30,6 @@ class JsLongSpec extends AbstractNullableSpec implements JsValuePredicate {
                         )
                         .apply(value);
     }
+
+
 }

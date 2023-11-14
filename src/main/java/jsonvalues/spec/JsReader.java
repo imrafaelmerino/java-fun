@@ -1,25 +1,26 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
+
+import static jsonvalues.spec.ParserErrors.UNEXPECTED_END_OF_JSON;
 
 /**
- * Object for processing JSON from byte[] and InputStream. The only public methods are
- * {@link #readNextToken()} and {@link #reset()}. Most of the time you don't need to
- * parse a JSON token by token since there are a lot of high-level and efficient alternatives
- * implemented in json-values. Just in case, find below an example:
+ * Object for processing JSON from byte[] and InputStream. The only public methods are {@link #readNextToken()} and
+ * {@link #reset()}. Most of the time you don't need to parse a JSON token by token since there are a lot of high-level
+ * and efficient alternatives implemented in json-values. Just in case, find below an example:
  *
  * <pre>
  *     {@code
-            String json = "[1,2,3]";
-            var reader = JsonIO.INSTANCE.createReader(json.getBytes(StandardCharsets.UTF_8));
-            byte token;
-            while ((token = reader.readNextToken()) != ']'){
-                if(Character.isDigit(token)) System.out.println(Character.toString(token));
-            }
+ * String json = "[1,2,3]";
+ * var reader = JsonIO.INSTANCE.createReader(json.getBytes(StandardCharsets.UTF_8));
+ * byte token;
+ * while ((token = reader.readNextToken()) != ']'){
+ * if(Character.isDigit(token)) System.out.println(Character.toString(token));
+ * }
  *
  *
  *     }
@@ -27,9 +28,10 @@ import java.util.Arrays;
  * </pre>
  *
  * <p>
- * You can also  read tokens as JsValue and validate them using the method {@link jsonvalues.spec.JsSpec#readNextValue(JsReader)}
+ * You can also  read tokens as JsValue and validate them using the method
+ * {@link jsonvalues.spec.JsSpec#parse(String)}
  */
-public final class JsReader {
+ final class JsReader {
 
     private static final boolean[] WHITESPACE = new boolean[256];
 
@@ -46,54 +48,36 @@ public final class JsReader {
         WHITESPACE[-29 + 128] = true;
     }
 
+    private final StringCache keyCache;
+    private final StringCache valuesCache;
+    private final byte[] originalBuffer;
+    private final int originalBufferLenWithExtraSpace;
+    private final int maxStringBuffer;
+    byte[] buffer;
+    char[] chars;
+
+    DoublePrecision doublePrecision;
+    int doubleLengthLimit;
+    int maxNumberDigits;
+    private final Deque<Integer> markPositions = new ArrayDeque<>();
     private int currentIndex = 0;
     private long currentPosition = 0;
     private byte last = ' ';
-
     private int length;
-
-    byte[] buffer;
-    char[] chars;
 
     private InputStream stream;
     private int readLimit;
     //always leave some room for reading special stuff, so that buffer contains enough padding for such optimizations
     private int bufferLenWithExtraSpace;
 
-    private final StringCache keyCache;
-    private final StringCache valuesCache;
-
-    private final byte[] originalBuffer;
-    private final int originalBufferLenWithExtraSpace;
-
-
-    enum DoublePrecision {
-        EXACT(0),
-        HIGH(1),
-        DEFAULT(3),
-        LOW(4);
-
-        final int level;
-
-        DoublePrecision(int level) {
-            this.level = level;
-        }
-    }
-
-    DoublePrecision doublePrecision;
-    int doubleLengthLimit;
-    int maxNumberDigits;
-    private final int maxStringBuffer;
-
-    private JsReader(
-            char[] tmp,
-            byte[] buffer,
-            int length,
-            StringCache keyCache,
-            StringCache valuesCache,
-            DoublePrecision doublePrecision,
-            int maxNumberDigits,
-            int maxStringBuffer
+    private JsReader(char[] tmp,
+                     byte[] buffer,
+                     int length,
+                     StringCache keyCache,
+                     StringCache valuesCache,
+                     DoublePrecision doublePrecision,
+                     int maxNumberDigits,
+                     int maxStringBuffer
                     ) {
         this.buffer = buffer;
         this.length = length;
@@ -109,16 +93,14 @@ public final class JsReader {
         this.originalBufferLenWithExtraSpace = bufferLenWithExtraSpace;
     }
 
-
-    JsReader(
-            byte[] buffer,
-            int length,
-            char[] tmp,
-            StringCache keyCache,
-            StringCache valuesCache,
-            DoublePrecision doublePrecision,
-            int maxNumberDigits,
-            int maxStringBuffer
+    JsReader(byte[] buffer,
+             int length,
+             char[] tmp,
+             StringCache keyCache,
+             StringCache valuesCache,
+             DoublePrecision doublePrecision,
+             int maxNumberDigits,
+             int maxStringBuffer
             ) {
         this(tmp, buffer, length, keyCache, valuesCache, doublePrecision, maxNumberDigits, maxStringBuffer);
         if (length > buffer.length) {
@@ -128,10 +110,18 @@ public final class JsReader {
         }
     }
 
+    private static int readFully(byte[] buffer, InputStream stream, int offset) throws IOException {
+        int read;
+        int position = offset;
+        while (position < buffer.length
+               && (read = stream.read(buffer, position, buffer.length - position)) != -1) {
+            position += read;
+        }
+        return position;
+    }
 
     /**
-     * Reset reader after processing input
-     * It will release reference to provided byte[] or InputStream input
+     * Reset reader after processing input It will release reference to provided byte[] or InputStream input
      */
     public void reset() {
         this.buffer = this.originalBuffer;
@@ -143,9 +133,8 @@ public final class JsReader {
     }
 
     /**
-     * Bind input stream for processing.
-     * Stream will be processed in byte[] chunks.
-     * If stream is null, reference to stream will be released.
+     * Bind input stream for processing. Stream will be processed in byte[] chunks. If stream is null, reference to
+     * stream will be released.
      *
      * @param stream set input stream
      * @return itself
@@ -168,9 +157,9 @@ public final class JsReader {
     }
 
     /**
-     * Bind byte[] buffer for processing.
-     * If this method is used in combination with process(InputStream) this buffer will be used for processing chunks of stream.
-     * If null is sent for byte[] buffer, new length for valid input will be set for existing buffer.
+     * Bind byte[] buffer for processing. If this method is used in combination with process(InputStream) this buffer
+     * will be used for processing chunks of stream. If null is sent for byte[] buffer, new length for valid input will
+     * be set for existing buffer.
      *
      * @param newBuffer new buffer to use for processing
      * @param newLength length of buffer which can be used
@@ -200,20 +189,8 @@ public final class JsReader {
         return length;
     }
 
-    private static int readFully(byte[] buffer, InputStream stream, int offset) throws IOException {
-        int read;
-        int position = offset;
-        while (position < buffer.length
-                && (read = stream.read(buffer, position, buffer.length - position)) != -1) {
-            position += read;
-        }
-        return position;
-    }
-
-
     /**
-     * Read next byte from the JSON input.
-     * If buffer has been read in full IOException will be thrown
+     * Read next byte from the JSON input. If buffer has been read in full IOException will be thrown
      *
      * @return next byte
      * @throws JsParserException when end of JSON input
@@ -223,7 +200,7 @@ public final class JsReader {
             prepareNextBlock();
         }
         if (currentIndex >= length) {
-            throw JsParserException.reasonAt("Unexpected end of JSON input", currentIndex);
+            throw JsParserException.reasonAt(UNEXPECTED_END_OF_JSON, currentIndex);
         }
         return last = buffer[currentIndex++];
     }
@@ -260,8 +237,8 @@ public final class JsReader {
     }
 
     /**
-     * Which was last byte read from the JSON input.
-     * JsonReader doesn't allow to go back, but it remembers previously read byte
+     * Which was last byte read from the JSON input. JsonReader doesn't allow to go back, but it remembers previously
+     * read byte
      *
      * @return which was the last byte read
      */
@@ -277,7 +254,6 @@ public final class JsReader {
         return getPositionInStream(0);
     }
 
-
     JsParserException newParseError(String description) {
         return JsParserException.reasonAt(description, getPositionInStream(0));
     }
@@ -289,7 +265,6 @@ public final class JsReader {
     int getCurrentIndex() {
         return currentIndex;
     }
-
 
     int scanNumber() {
         int tokenStart = currentIndex - 1;
@@ -308,7 +283,7 @@ public final class JsReader {
 
     char[] prepareBuffer(int start, int len) throws JsParserException {
         if (len > maxNumberDigits) {
-            throw newParseError("Too many digits detected in number (" + len + ")", len);
+            throw newParseError(ParserErrors.TOO_MANY_DIGITS.formatted(len), len);
         }
         while (chars.length < len) {
             chars = Arrays.copyOf(chars, chars.length * 2);
@@ -329,26 +304,23 @@ public final class JsReader {
         return true;
     }
 
-
     /**
-     * Read string from JSON input.
-     * If values cache is used, string will be looked up from the cache.
+     * Read string from JSON input. If values cache is used, string will be looked up from the cache.
      * <p>
      * String value must start and end with a double quote (").
      *
      * @return parsed string
-     * @throws JsParserException error reading string input
+     * @throws JsParserException code reading string input
      */
     String readString() throws JsParserException {
         int len = parseString();
         return valuesCache == null ? new String(chars, 0, len) : valuesCache.get(chars, len);
     }
 
-
     int parseString() throws JsParserException {
         int startIndex = currentIndex;
-        if (last != '"') throw newParseError("Expecting '\"' for string start");
-        else if (currentIndex == length) throw newParseError("Premature end of JSON string");
+        if (last != '"') throw newParseError(ParserErrors.EXPECTING_STRING_START);
+        else if (currentIndex == length) throw newParseError(ParserErrors.PREMATURE_END_OF_JSONSTRING);
 
         byte bb;
         int ci = currentIndex;
@@ -372,7 +344,7 @@ public final class JsReader {
         if (i == _tmp.length) {
             int newSize = chars.length * 2;
             if (newSize > maxStringBuffer) {
-                throw newParseError("Maximum string buffer limit exceeded (" + maxStringBuffer + ")");
+                throw newParseError(ParserErrors.MAXIMUM_STRING_BUFFER_REACHED.formatted(maxStringBuffer));
             }
             _tmp = chars = Arrays.copyOf(chars, newSize);
         }
@@ -390,7 +362,7 @@ public final class JsReader {
                 if (soFar >= _tmpLen - 6) {
                     int newSize = chars.length * 2;
                     if (newSize > maxStringBuffer) {
-                        throw newParseError("Maximum string buffer limit exceeded (" + maxStringBuffer + ")");
+                        throw newParseError(ParserErrors.MAXIMUM_STRING_BUFFER_REACHED.formatted(maxStringBuffer));
                     }
                     _tmp = chars = Arrays.copyOf(chars, newSize);
                     _tmpLen = _tmp.length;
@@ -419,19 +391,19 @@ public final class JsReader {
                         break;
                     case 'u':
                         bc = (hexToInt(buffer[currentIndex++]) << 12) +
-                                (hexToInt(buffer[currentIndex++]) << 8) +
-                                (hexToInt(buffer[currentIndex++]) << 4) +
-                                hexToInt(buffer[currentIndex++]);
+                             (hexToInt(buffer[currentIndex++]) << 8) +
+                             (hexToInt(buffer[currentIndex++]) << 4) +
+                             hexToInt(buffer[currentIndex++]);
                         break;
 
                     default:
-                        throw newParseError("Invalid escape combination detected (" + bc + ")");
+                        throw newParseError(ParserErrors.INVALID_ESCAPE_CHARACTER.formatted(bc));
                 }
             } else if ((bc & 0x80) != 0) {
                 if (soFar >= _tmpLen - 4) {
                     int newSize = chars.length * 2;
                     if (newSize > maxStringBuffer) {
-                        throw newParseError("Maximum string buffer limit exceeded (" + maxStringBuffer + ")");
+                        throw newParseError(ParserErrors.MAXIMUM_STRING_BUFFER_REACHED.formatted(maxStringBuffer));
                     }
                     _tmp = chars = Arrays.copyOf(chars, newSize);
                     _tmpLen = _tmp.length;
@@ -449,13 +421,13 @@ public final class JsReader {
                             bc = ((bc & 0x07) << 18) + ((u2 & 0x3F) << 12) + ((u3 & 0x3F) << 6) + (u4 & 0x3F);
                         } else {
                             // there are legal 5 & 6 byte combinations, but none are _valid_
-                            throw newParseError("Invalid unicode character detected");
+                            throw newParseError(ParserErrors.INVALID_UNICODE_CHARACTER);
                         }
 
                         if (bc >= 0x10000) {
                             // check if valid unicode
                             if (bc >= 0x110000) {
-                                throw newParseError("Invalid unicode character detected");
+                                throw newParseError(ParserErrors.INVALID_UNICODE_CHARACTER);
                             }
 
                             // split surrogates
@@ -469,7 +441,7 @@ public final class JsReader {
             } else if (soFar >= _tmpLen) {
                 int newSize = chars.length * 2;
                 if (newSize > maxStringBuffer) {
-                    throw newParseError("Maximum string buffer limit exceeded (" + maxStringBuffer + ")");
+                    throw newParseError(ParserErrors.MAXIMUM_STRING_BUFFER_REACHED.formatted(maxStringBuffer));
                 }
                 _tmp = chars = Arrays.copyOf(chars, newSize);
                 _tmpLen = _tmp.length;
@@ -477,14 +449,14 @@ public final class JsReader {
 
             _tmp[soFar++] = (char) bc;
         }
-        throw newParseError("JSON string was not closed with a double quote");
+        throw newParseError(ParserErrors.STRING_NOT_CLOSED);
     }
 
     private int hexToInt(byte value) throws JsParserException {
         if (value >= '0' && value <= '9') return value - 0x30;
         if (value >= 'A' && value <= 'F') return value - 0x37;
         if (value >= 'a' && value <= 'f') return value - 0x57;
-        throw newParseError("Could not parse unicode escape, expected a hexadecimal digit");
+        throw newParseError(ParserErrors.INVALID_HEX);
     }
 
     private boolean wasWhiteSpace() {
@@ -551,8 +523,8 @@ public final class JsReader {
     }
 
     /**
-     * Read next token (byte) from input JSON.
-     * Whitespace will be skipped and next non-whitespace byte will be returned.
+     * Read next token (byte) from input JSON. Whitespace will be skipped and next non-whitespace byte will be
+     * returned.
      *
      * @return next non-whitespace byte in the JSON input
      * @throws JsParserException unable to get next byte (end of stream, ...)
@@ -567,25 +539,21 @@ public final class JsReader {
         return last;
     }
 
-
     /**
-     * Read key value of JSON input.
-     * If key cache is used, it will be looked up from there.
+     * Read key value of JSON input. If key cache is used, it will be looked up from there.
      *
      * @return parsed key value
      */
     String readKey() {
         int len = parseString();
         String key = keyCache != null ? keyCache.get(chars, len) : new String(chars, 0, len);
-        if (readNextToken() != ':') throw newParseError("Expecting ':' after attribute name");
+        if (readNextToken() != ':') throw newParseError(ParserErrors.EXPECTING_COLON);
         readNextToken();
         return key;
     }
 
-
     /**
-     * Checks if 'null' value is at current position.
-     * This means last read byte was 'n' and 'ull' are next three bytes.
+     * Checks if 'null' value is at current position. This means last read byte was 'n' and 'ull' are next three bytes.
      * If last byte was n but next three are not 'ull' it will throw since that is not a valid JSON construct.
      *
      * @return true if 'null' value is at current position
@@ -594,19 +562,18 @@ public final class JsReader {
     boolean wasNull() throws JsParserException {
         if (last == 'n') {
             if (currentIndex + 2 < length && buffer[currentIndex] == 'u'
-                    && buffer[currentIndex + 1] == 'l' && buffer[currentIndex + 2] == 'l') {
+                && buffer[currentIndex + 1] == 'l' && buffer[currentIndex + 2] == 'l') {
                 currentIndex += 3;
                 last = 'l';
                 return true;
             }
-            throw newParseError("Invalid null constant found");
+            throw newParseError(ParserErrors.INVALID_NULL);
         }
         return false;
     }
 
     /**
-     * Checks if 'true' value is at current position.
-     * This means last read byte was 't' and 'rue' are next three bytes.
+     * Checks if 'true' value is at current position. This means last read byte wasn't' and 'rue' are next three bytes.
      * If last byte was t but next three are not 'rue' it will throw since that is not a valid JSON construct.
      *
      * @return true if 'true' value is at current position
@@ -615,19 +582,18 @@ public final class JsReader {
     boolean wasTrue() throws JsParserException {
         if (last == 't') {
             if (currentIndex + 2 < length && buffer[currentIndex] == 'r'
-                    && buffer[currentIndex + 1] == 'u' && buffer[currentIndex + 2] == 'e') {
+                && buffer[currentIndex + 1] == 'u' && buffer[currentIndex + 2] == 'e') {
                 currentIndex += 3;
                 last = 'e';
                 return true;
             }
-            throw newParseError("Invalid true constant found");
+            throw newParseError(ParserErrors.INVALID_TRUE_CONSTANT);
         }
         return false;
     }
 
     /**
-     * Checks if 'false' value is at current position.
-     * This means last read byte was 'f' and 'alse' are next four bytes.
+     * Checks if 'false' value is at current position. This means last read byte was 'f' and 'alse' are next four bytes.
      * If last byte was f but next four are not 'alse' it will throw since that is not a valid JSON construct.
      *
      * @return true if 'false' value is at current position
@@ -636,13 +602,13 @@ public final class JsReader {
     boolean wasFalse() throws JsParserException {
         if (last == 'f') {
             if (currentIndex + 3 < length && buffer[currentIndex] == 'a'
-                    && buffer[currentIndex + 1] == 'l' && buffer[currentIndex + 2] == 's'
-                    && buffer[currentIndex + 3] == 'e') {
+                && buffer[currentIndex + 1] == 'l' && buffer[currentIndex + 2] == 's'
+                && buffer[currentIndex + 3] == 'e') {
                 currentIndex += 4;
                 last = 'e';
                 return true;
             }
-            throw newParseError("Invalid false constant found");
+            throw newParseError(ParserErrors.INVALID_FALSE_CONSTANT);
         }
         return false;
     }
@@ -652,9 +618,47 @@ public final class JsReader {
      */
     void checkArrayEnd() {
         if (last != ']') {
-            if (currentIndex >= length) throw newParseError("Unexpected end of JSON in collection");
-            throw newParseError("Expecting ']' as array end");
+            if (currentIndex >= length) throw newParseError(ParserErrors.UNEXPECTED_END_OF_ARRAY);
+            throw newParseError(ParserErrors.EXPECTING_END_OF_ARRAY);
         }
     }
+
+    /**
+     * Sets a mark at the current parsing position. This allows you to later roll back to this marked position using
+     * {@link #rollbackToMark()}.
+     */
+    void setMark() {
+        markPositions.push(currentIndex);
+    }
+
+    /**
+     * Rolls back the parsing position to the last marked position set using {@link #setMark()}. This is useful for
+     * reverting to a previous parsing state within the JSON document.
+     *
+     * @throws IllegalArgumentException if the stack of marks is empty and no mark is available to roll back to.
+     */
+    void rollbackToMark() {
+        if (!markPositions.isEmpty()) {
+            currentIndex = markPositions.pop();
+            last = (currentIndex > 0) ? buffer[currentIndex - 1] : (byte) ' ';
+
+        } else {
+            throw new IllegalArgumentException("Stack of marks is empty. No mark available to roll back to.");
+        }
+    }
+
+    enum DoublePrecision {
+        EXACT(0),
+        HIGH(1),
+        DEFAULT(3),
+        LOW(4);
+
+        final int level;
+
+        DoublePrecision(int level) {
+            this.level = level;
+        }
+    }
+
 
 }

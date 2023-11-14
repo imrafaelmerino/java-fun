@@ -1,7 +1,8 @@
 package jsonvalues.spec;
 
 
-import jsonvalues.JsParserException;
+import jsonvalues.JsObj;
+import jsonvalues.spec.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -236,7 +237,7 @@ public class NumberConverterTest {
                 "\"minLongMinusOneAsBigDecimal\":" + minLongMinusOneAsBigDecimal + "\n" +
                 "}";
 
-        var result = new JsObjSpecParser(JsSpecs.obj()).parse(input);
+        var result = JsObj.parse(input);
         Assertions.assertEquals(maxIntAsLong,
                                 result.getLong("maxIntAsLong"));
         Assertions.assertEquals(minIntAsLong,

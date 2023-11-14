@@ -11,9 +11,8 @@ import java.util.function.Function;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents an immutable instant. An instant is not part of the JSON specification. It is serialized into
- * its string representation using the ISO-8601 format. A JsInstant and a JsStr are equal
- * if both represent the same date.
+ * Represents an immutable instant. An instant is not part of the JSON specification. It is serialized into its string
+ * representation using the ISO-8601 format. A JsInstant and a JsStr are equal if both represent the same date.
  * <p>
  * For example:
  * <pre>{@code
@@ -37,7 +36,7 @@ public final class JsInstant extends JsPrimitive implements Comparable<JsInstant
     public final Instant value;
 
     private JsInstant(final Instant value) {
-        this.value = value;
+        this.value = requireNonNull(value);
     }
 
     /**
@@ -47,7 +46,7 @@ public final class JsInstant extends JsPrimitive implements Comparable<JsInstant
      * @return a JsInstant representing the given Instant.
      */
     public static JsInstant of(final Instant instant) {
-        return new JsInstant(requireNonNull(instant));
+        return new JsInstant(instant);
     }
 
     /**

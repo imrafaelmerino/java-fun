@@ -4,7 +4,7 @@ import jsonvalues.JsValue;
 
 import java.util.Optional;
 
-class AnySpec implements JsValuePredicate {
+final class AnySpec implements JsOneErrorSpec {
 
     @Override
     public JsSpec nullable() {
@@ -12,15 +12,21 @@ class AnySpec implements JsValuePredicate {
     }
 
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofValue();
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofValue();
+    }
+
+
+    @Override
+    public boolean isNullable() {
+        return true;
     }
 
     @Override
     public Optional<JsError> testValue(final JsValue value) {
         return value.isNothing() ?
-               Optional.of(new JsError(value,
-                                      ERROR_CODE.REQUIRED)) :
-               Optional.empty();
+                Optional.of(new JsError(value,
+                                        ERROR_CODE.REQUIRED)) :
+                Optional.empty();
     }
 }

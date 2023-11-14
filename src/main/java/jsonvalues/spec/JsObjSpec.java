@@ -13,63 +13,72 @@ import static java.util.Objects.requireNonNull;
 import static jsonvalues.spec.ERROR_CODE.*;
 
 /**
- * Represents a specification of a JSON object, allowing you to define rules and constraints for validating JSON objects.
- * This class is part of the js-values library and is designed to facilitate the validation of JSON data structures.
- * You can create an instance of JsObjSpec to specify the expected structure and constraints of a JSON object.
+ * Represents a specification of a JSON object, allowing you to define rules and constraints for validating JSON
+ * objects. This class is part of the js-values library and is designed to facilitate the validation of JSON data
+ * structures. You can create an instance of JsObjSpec to specify the expected structure and constraints of a JSON
+ * object.
  * <p>
- * Usage:
- * - Create an instance of JsObjSpec using the builder methods provided.
- * - Define required and optional keys using {@code withReqKeys} and {@code withOptKeys}.
- * - Specify conditions that the JSON object must meet using {@code suchThat}.
- * - Perform validation using {@code test} to check if a given JSON object conforms to the defined specification.
+ * Usage: - Create an instance of JsObjSpec using the builder methods provided. - Define required and optional keys
+ * using {@code withReqKeys} and {@code withOptKeys}. - Specify conditions that the JSON object must meet using
+ * {@code suchThat}. - Perform validation using {@code test} to check if a given JSON object conforms to the defined
+ * specification.
  * <p>
  * Example:
  * <pre>{@code
  *
  * JsObjSpec personSpec = JsObjSpec
- *     .of()
+ *     .of("age",JsSpecs.integer(),"name",JsSpecs.str())
  *     .withReqKeys("name", "age")
- *     .withOptKeys("address")
- *     .suchThat(person -> person.getInt("age").orElse(0) >= 18);
+ *     .suchThat(person -> person.getInt("age") >= 18);
  *
  * // Validation
  * JsValue json = // JSON data to validate
- * Set<SpecError> errors = personSpec.test(JsPath.root(), json);
+ * List<SpecError> errors = personSpec.test(JsPath.root(), json);
  * }
  * </pre>
  * <p>
- * The JsObjSpec class provides methods for defining required and optional keys, specifying predicates, and performing validation.
- * Additionally, it supports nullable objects and strict mode to enforce key presence.
+ * The JsObjSpec class provides methods for defining required and optional keys, specifying predicates, and performing
+ * validation. Additionally, it supports nullable objects and strict mode to enforce key presence.
  *
  * @see JsSpec
- * @see JsSpecParser
+ * @see JsParser
  * @see SpecError
  */
-public final class JsObjSpec implements JsSpec {
+public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpec {
+    final boolean strict;
+    final Map<String, JsParser> parsers;
+    final Map<String, JsSpec> bindings;
+    final MetaData metaData;
+    final List<String> requiredFields;
+    final List<String> optionalFields;
 
-    private final boolean nullable;
-    private final List<String> requiredFields;
-    boolean strict;
-    Map<String, JsSpecParser> parsers;
-    Map<String, JsSpec> bindings;
-    Predicate<JsObj> predicate;
+    final Predicate<JsObj> predicate;
 
-    private JsObjSpec(Map<String, JsSpec> bindings,
-                      boolean nullable,
-                      boolean strict,
-                      Predicate<JsObj> predicate,
-                      List<String> requiredFields
-                     ) {
+
+    JsObjSpec(Map<String, JsSpec> bindings,
+              boolean nullable,
+              boolean strict,
+              Predicate<JsObj> predicate,
+              List<String> requiredFields,
+              MetaData metaData
+             ) {
+        super(nullable);
         for (String key : requiredFields) {
             if (!bindings.containsKey(key))
                 throw new IllegalArgumentException("required '" + key + "' not defined in spec");
         }
-
-        this.bindings = bindings;
-        this.nullable = nullable;
+        this.metaData = metaData;
+        this.bindings = Collections.unmodifiableMap(bindings);
         this.strict = strict;
         this.predicate = predicate;
-        this.requiredFields = requiredFields;
+        this.requiredFields = Collections.unmodifiableList(requiredFields);
+        this.optionalFields = bindings.keySet().stream()
+                                      .filter(it -> !requiredFields.contains(it))
+                                      .toList();
+        assert requiredFields.size() + optionalFields.size() == bindings.size();
+        assert requiredFields.stream().noneMatch(optionalFields::contains);
+        assert optionalFields.stream()
+                             .noneMatch(requiredFields::contains);
         this.parsers = new LinkedHashMap<>();
         for (Map.Entry<String, JsSpec> entry : bindings.entrySet())
             parsers.put(entry.getKey(),
@@ -77,8 +86,8 @@ public final class JsObjSpec implements JsSpec {
                        );
     }
 
-    public static JsObjSpec of(String key,
-                               JsSpec spec
+    public static JsObjSpec of(final String key,
+                               final JsSpec spec
                               ) {
         Map<String, JsSpec> bindings = new LinkedHashMap<>();
         bindings.put(requireNonNull(key),
@@ -88,14 +97,15 @@ public final class JsObjSpec implements JsSpec {
                              false,
                              true,
                              null,
-                             new ArrayList<>(bindings.keySet())
+                             new ArrayList<>(bindings.keySet()),
+                             null
         );
     }
 
-    public static JsObjSpec of(String key1,
-                               JsSpec spec1,
-                               String key2,
-                               JsSpec spec2
+    public static JsObjSpec of(final String key1,
+                               final JsSpec spec1,
+                               final String key2,
+                               final JsSpec spec2
                               ) {
 
         return of(key1,
@@ -107,12 +117,12 @@ public final class JsObjSpec implements JsSpec {
     }
 
     @SuppressWarnings("squid:S00107")
-    public static JsObjSpec of(String key1,
-                               JsSpec spec1,
-                               String key2,
-                               JsSpec spec2,
-                               String key3,
-                               JsSpec spec3
+    public static JsObjSpec of(final String key1,
+                               final JsSpec spec1,
+                               final String key2,
+                               final JsSpec spec2,
+                               final String key3,
+                               final JsSpec spec3
                               ) {
         return of(key1,
                   spec1,
@@ -125,15 +135,14 @@ public final class JsObjSpec implements JsSpec {
     }
 
     @SuppressWarnings("squid:S00107")
-    public static JsObjSpec of(
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4
+    public static JsObjSpec of(final String key1,
+                               final JsSpec spec1,
+                               final String key2,
+                               final JsSpec spec2,
+                               final String key3,
+                               final JsSpec spec3,
+                               final String key4,
+                               final JsSpec spec4
                               ) {
         return of(key1,
                   spec1,
@@ -147,17 +156,16 @@ public final class JsObjSpec implements JsSpec {
     }
 
     @SuppressWarnings("squid:S00107")
-    public static JsObjSpec of(
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5
+    public static JsObjSpec of(final String key1,
+                               final JsSpec spec1,
+                               final String key2,
+                               final JsSpec spec2,
+                               final String key3,
+                               final JsSpec spec3,
+                               final String key4,
+                               final JsSpec spec4,
+                               final String key5,
+                               final JsSpec spec5
                               ) {
         return of(key1,
                   spec1,
@@ -173,19 +181,18 @@ public final class JsObjSpec implements JsSpec {
     }
 
     @SuppressWarnings("squid:S00107")
-    public static JsObjSpec of(
-            String key1,
-            JsSpec spec1,
-            String key2,
-            JsSpec spec2,
-            String key3,
-            JsSpec spec3,
-            String key4,
-            JsSpec spec4,
-            String key5,
-            JsSpec spec5,
-            String key6,
-            JsSpec spec6
+    public static JsObjSpec of(String key1,
+                               JsSpec spec1,
+                               String key2,
+                               JsSpec spec2,
+                               String key3,
+                               JsSpec spec3,
+                               String key4,
+                               JsSpec spec4,
+                               String key5,
+                               JsSpec spec5,
+                               String key6,
+                               JsSpec spec6
                               ) {
         return of(key1,
                   spec1,
@@ -5486,18 +5493,27 @@ public final class JsObjSpec implements JsSpec {
                       );
     }
 
+
+    MetaData getMetaData() {
+        return metaData;
+    }
+
+    Map<String, JsSpec> getBindings() {
+        return bindings;
+    }
+
     /**
      * Returns a lenient version of this JsObjSpec. Lenient mode allows additional keys in the JSON object.
      *
      * @return A new JsObjSpec instance with lenient mode enabled.
      */
     public JsObjSpec lenient() {
-        return new JsObjSpec(bindings, nullable, false, predicate, requiredFields);
+        return new JsObjSpec(bindings, nullable, false, predicate, requiredFields, metaData);
     }
 
     /**
-     * Adds a condition that the JSON object must meet. The predicate is applied to the entire JSON object.
-     * If the predicate returns false, a validation error will be generated.
+     * Adds a condition that the JSON object must meet. The predicate is applied to the entire JSON object. If the
+     * predicate returns false, a validation code will be generated.
      *
      * @param predicate The predicate to apply to the JSON object.
      * @return A new JsObjSpec instance with the specified condition.
@@ -5507,7 +5523,8 @@ public final class JsObjSpec implements JsSpec {
                              nullable,
                              strict,
                              predicate,
-                             requiredFields
+                             requiredFields,
+                             metaData
         );
     }
 
@@ -5516,9 +5533,19 @@ public final class JsObjSpec implements JsSpec {
      *
      * @return A list of required field names.
      */
-    public List<String> getRequiredFields() {
+     List<String> getRequiredFields() {
         return requiredFields;
     }
+
+    /**
+     * Returns a list of optional field names specified in this JsObjSpec.
+     *
+     * @return A list of optional field names.
+     */
+    List<String> getOptionalFields() {
+        return optionalFields;
+    }
+
 
     /**
      * Returns a new JsObjSpec that allows all keys in the JSON object to be optional.
@@ -5530,7 +5557,8 @@ public final class JsObjSpec implements JsSpec {
                              nullable,
                              strict,
                              predicate,
-                             new ArrayList<>()
+                             new ArrayList<>(),
+                             metaData
         );
     }
 
@@ -5578,14 +5606,15 @@ public final class JsObjSpec implements JsSpec {
         optionalFields.add(field);
         optionalFields
                 .addAll(Arrays.stream(requireNonNull(fields))
-                              .collect(Collectors.toList()));
+                              .toList());
         return new JsObjSpec(bindings,
                              nullable,
                              strict,
                              predicate,
                              getRequiredFields(bindings.keySet(),
                                                optionalFields
-                                              )
+                                              ),
+                             metaData
         );
     }
 
@@ -5610,7 +5639,8 @@ public final class JsObjSpec implements JsSpec {
                              predicate,
                              getRequiredFields(bindings.keySet(),
                                                optionals
-                                              )
+                                              ),
+                             metaData
         );
 
     }
@@ -5626,7 +5656,8 @@ public final class JsObjSpec implements JsSpec {
                              true,
                              strict,
                              predicate,
-                             requiredFields
+                             requiredFields,
+                             metaData
         );
     }
 
@@ -5636,39 +5667,38 @@ public final class JsObjSpec implements JsSpec {
      * @return A JsSpecParser for parsing JSON objects.
      */
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofObjSpec(requiredFields,
-                                                parsers,
-                                                predicate,
-                                                nullable,
-                                                strict
-                                               );
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofObjSpec(requiredFields,
+                                            parsers,
+                                            predicate,
+                                            nullable,
+                                            strict,
+                                            metaData
+                                           );
     }
 
     /**
      * Validates a given JSON object against this JsObjSpec and returns a set of validation errors, if any.
      *
-     * @param parentPath The path of the parent JSON object, used for error reporting.
+     * @param parentPath The path of the parent JSON object, used for code reporting.
      * @param value      The JSON object to validate.
      * @return A set of validation errors, or an empty set if validation passes.
      */
     @Override
-    public Set<SpecError> test(JsPath parentPath,
-                               JsValue value
-                              ) {
+    public List<SpecError> test(JsPath parentPath,
+                                JsValue value
+                               ) {
         return test(parentPath,
-                    this,
-                    new HashSet<>(),
+                    new ArrayList<>(),
                     value
                    );
     }
 
 
-    private Set<SpecError> test(JsPath parent,
-                                JsObjSpec parentObjSpec,
-                                Set<SpecError> errors,
-                                JsValue parentValue
-                               ) {
+    private List<SpecError> test(JsPath parent,
+                                 List<SpecError> errors,
+                                 JsValue parentValue
+                                ) {
 
         if (parentValue.isNull() && nullable) return errors;
         if (!parentValue.isObj()) {
@@ -5685,23 +5715,20 @@ public final class JsObjSpec implements JsSpec {
             JsValue value = next.value();
             JsPath keyPath = JsPath.fromKey(key);
             JsPath currentPath = parent.append(keyPath);
-            JsSpec spec = parentObjSpec.bindings.get(key);
-            if (spec == null) {
-                if (parentObjSpec.strict) {
-                    errors.add(SpecError.of(currentPath,
-                                            new JsError(value,
-                                                        SPEC_MISSING
-                                            )
-                                           ));
-                }
-            } else errors.addAll(spec.test(currentPath,
-                                           value
-                                          ));
+            JsSpec spec = getSpec(key);
+
+            if (spec != null) errors.addAll(spec.test(currentPath,
+                                                      value));
+            else if (strict) errors.add(SpecError.of(currentPath,
+                                                     new JsError(value,
+                                                                 SPEC_MISSING)));
 
         }
 
         for (String requiredField : requiredFields) {
-            if (!json.containsKey(requiredField))
+            if (!json.containsKey(requiredField) && !containAnAlias(json,
+                                                                    requiredField,
+                                                                    metaData))
                 errors.add(SpecError.of(parent.key(requiredField),
                                         new JsError(JsNothing.NOTHING,
                                                     REQUIRED
@@ -5715,23 +5742,44 @@ public final class JsObjSpec implements JsSpec {
                                     new JsError(json,
                                                 OBJ_CONDITION
                                     )
-                                   ));
+                                   )
+                      );
 
 
         return errors;
     }
 
+    JsSpec getSpec(String key) {
+        JsSpec spec = bindings.get(key);
+        if (spec != null) return spec;
+        String aliasField = metaData != null ? metaData.getAliasField(key) : null;
+        if (aliasField != null) {
+            return bindings.get(aliasField);
+        }
+        return null;
+    }
+
+    private boolean containAnAlias(JsObj json, String key, MetaData metaData) {
+        if (metaData == null) return false;
+        if (metaData.fieldsAliases() == null) return false;
+        if (!metaData.fieldsAliases().containsKey(key)) return false;
+        return metaData.fieldsAliases()
+                       .get(key)
+                       .stream()
+                       .anyMatch(json::containsKey);
+    }
+
     /**
-     * Adds or replaces a field specification in this JsObjSpec. This method allows you to specify or modify
-     * the validation rules for a specific field in the JSON object.
+     * Adds or replaces a field specification in this JsObjSpec. This method allows you to specify or modify the
+     * validation rules for a specific field in the JSON object.
      *
      * @param key  The name of the field for which to set or replace the specification.
      * @param spec The JsSpec instance that defines the validation rules for the specified field.
      * @return A new JsObjSpec instance with the updated or added field specification.
      * @throws NullPointerException if either the key or spec is null.
      */
-    public JsObjSpec set(String key,
-                         JsSpec spec
+    public JsObjSpec set(final String key,
+                         final JsSpec spec
                         ) {
         LinkedHashMap<String, JsSpec> newBindings = new LinkedHashMap<>(this.bindings);
         newBindings.put(requireNonNull(key),
@@ -5741,8 +5789,11 @@ public final class JsObjSpec implements JsSpec {
                              this.nullable,
                              this.strict,
                              this.predicate,
-                             new ArrayList<>(newBindings.keySet())
+                             new ArrayList<>(newBindings.keySet()),
+                             metaData
         );
 
     }
+
+
 }

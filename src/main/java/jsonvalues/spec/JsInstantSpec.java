@@ -6,21 +6,20 @@ import java.util.Optional;
 
 import static jsonvalues.spec.ERROR_CODE.INSTANT_EXPECTED;
 
-class JsInstantSpec extends AbstractNullableSpec implements JsValuePredicate {
+final class JsInstantSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
+
     JsInstantSpec(final boolean nullable) {
         super(nullable);
     }
-
 
     @Override
     public JsSpec nullable() {
         return new JsInstantSpec(true);
     }
 
-
     @Override
-    public JsSpecParser parser() {
-        return JsSpecParsers.INSTANCE.ofInstant(nullable);
+    public JsParser parser() {
+        return JsParsers.INSTANCE.ofInstant(nullable);
     }
 
     @Override
@@ -28,7 +27,7 @@ class JsInstantSpec extends AbstractNullableSpec implements JsValuePredicate {
         return Functions.testElem(JsValue::isInstant,
                                   INSTANT_EXPECTED,
                                   nullable
-                        )
+                                 )
                         .apply(value);
 
     }

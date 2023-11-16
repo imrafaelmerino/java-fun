@@ -34,11 +34,11 @@ Simplify JSON creation with a concise syntax:
 
 ```code 
 
-JsObj.of("name",JsStr.of("Rafael"),
-        "languages",JsArray.of("Java","Scala","Kotlin"),
-        "age",JsInt.of(1),
-        "address",JsObj.of("street",JsStr.of("Elm Street"),
-                           "coordinates",JsArray.of(3.32,40.4)
+JsObj.of("name", JsStr.of("Rafael"),
+        "languages", JsArray.of("Java", "Scala", "Kotlin"),
+        "age", JsInt.of(1),
+        "address", JsObj.of("street", JsStr.of("Elm Street"),
+                            "coordinates", JsArray.of(3.32,40.4)
                           )
         );
 
@@ -51,13 +51,13 @@ Easily define JSON validation rules using a clear and expressive syntax:
 ```code 
 
 JsObjSpec spec=
-        JsObjSpec.of("name",str(),
-                     "languages",arrayOfStr(),
-                     "age",integer(),
-                     "address",JsObjSpec.of("street",str(),
-                                            "coordinates",tuple(decimal(),
-                                                                decimal()
-                                                               )
+        JsObjSpec.of("name", str(),
+                     "languages", arrayOfStr(),
+                     "age", integer(),
+                     "address", JsObjSpec.of("street",str(),
+                                             "coordinates",tuple(decimal(),
+                                                                 decimal()
+                                                                )
                                             )
                      )
                   .withOptKeys("address");
@@ -72,14 +72,14 @@ With json-values, this process becomes remarkably simple.
 ```code 
 
 Gen<JsObj> gen=
-        JsObjGen.of("name",JsStrGen.biased(0,100),
-                    "languages",JsArrayGen.biased(JsStrGen.digit(),0,10),
-                    "age",JsIntGen.biased(0,100),
-                    "address",JsObjGen.of("street",JsStrGen.alphanumeric(0,200),
-                                          "coordinates",JsTupleGen.of(JsBigDecGen.biased(),
-                                                                      JsBigDecGen.biased()
-                                                                     )
-                                         )
+        JsObjGen.of("name", JsStrGen.biased(0, 100),
+                    "languages", JsArrayGen.biased(JsStrGen.digit(), 0, 10),
+                    "age", JsIntGen.biased(0, 100),
+                    "address", JsObjGen.of("street", JsStrGen.alphanumeric(0, 200),
+                                           "coordinates", JsTupleGen.of(JsBigDecGen.biased(),
+                                                                        JsBigDecGen.biased()
+                                                                       )
+                                          )
                    )
                  .withAllOptKeys()
                  .withAllNullValues();
@@ -103,13 +103,12 @@ Perform JSON manipulation free of null checks and if-else conditions using optic
 ```code 
 
 //let's craft a function using lenses and optionals
-
-Function<JsObj, JsObj> modify = ageLens.modify.apply(n->n+1)
-        .andThen(nameLens.modify.apply(String::trim))
-        .andThen(cityOpt.set.apply("Paris"))
-        .andThen(latitudeLens.modify.apply(lat -> -lat))
-        .andThen(languagesLens.modify.apply(lan->lan.append(JsStr.of("Clojure"))));
-
+Function<JsObj, JsObj> modify = 
+    ageLens.modify.apply(n -> n + 1)
+           .andThen(nameLens.modify.apply(String::trim))
+           .andThen(cityOpt.set.apply("Paris"))
+           .andThen(latitudeLens.modify.apply(lat -> -lat))
+           .andThen(languagesLens.modify.apply(lan -> lan.append(JsStr.of("Clojure"))));
 
 JsObj updated = modify.apply(person);
 
@@ -135,7 +134,7 @@ putting optics together (composition is key to handle complexity).
 
 ```code 
 // Define a function to convert keys to snake_case
-Function<String, String> toSneakCase=key->{...};
+Function<String, String> toSneakCase = key -> {...};
 
 // Map keys to snake_case, trim string values, and filter out null values
 json.mapKeys(toSneakCase)
@@ -152,7 +151,7 @@ to parse the entire JSON. Here's how it works:
 
 ```
 // Define your JSON schema using JsObjSpec
-JsObjSpec spec = ...
+JsObjSpec spec = ???
 
 // Create a parser with the specified schema
 var parser = JsObjSpecParser.of(spec);
@@ -176,8 +175,7 @@ class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsD
 Did you see that!?
 
 Note: If you are the author of one of the other tested libraries or are aware of alternative solutions that could
-further
-enhance performance, we are more than open to collaboration and welcome any suggestions for improvement.
+further enhance performance, we are more than open to collaboration and welcome any suggestions for improvement.
 Our goal is to continually refine and optimize our library to benefit the community.
 
 **Minimalistic and Focused**
@@ -358,16 +356,16 @@ Here's the hierarchical class structure of json-values:
 For example, consider the following JSON representations, `xs` and `ys`:
 
 ```code
-JsObj xs = JsObj.of("a",JsInt.of(1000),
-                    "b",JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
-                    "c",JsInstant.of("2022-05-25T14:27:37.353Z"),
-                    "d",JsStr.of("aGkh")
+JsObj xs = JsObj.of("a", JsInt.of(1000),
+                    "b", JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
+                    "c", JsInstant.of("2022-05-25T14:27:37.353Z"),
+                    "d", JsStr.of("aGkh")
                    );
 
-JsObj ys = JsObj.of("b",JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
-                    "a",JsLong.of(1000L),
-                    "d",JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
-                    "c",JsStr.of("2022-05-25T14:27:37.353Z")
+JsObj ys = JsObj.of("b", JsBigInt.of(BigInteger.valueOf(100_000_000_000_000L)),
+                    "a", JsLong.of(1000L),
+                    "d", JsBinary.of("hi!".getBytes(StandardCharsets.UTF_8)),
+                    "c", JsStr.of("2022-05-25T14:27:37.353Z")
                    );
 
 ```
@@ -389,7 +387,7 @@ As a result, json-values considers them equal, including their hashcode:
 
 ````code  
 
-Assertions.assertEquals(xs,ys);
+Assertions.assertEquals(xs, ys);
 Assertions.assertEquals(xs.hashcode(), ys.hashcode());
 
 ````
@@ -581,8 +579,8 @@ I introduce json-spec.
 JsArray a = JsArray.empty().append(JsInt.of(1))
                            .prepend(JsInt.of(0));
 
-JsArray b=JsArray.empty().append(JsInt.of(3))
-                         .prepend(JsInt.of(2));
+JsArray b = JsArray.empty().append(JsInt.of(3))
+                           .prepend(JsInt.of(2));
 
 Assertions.assertEquals(JsArray.of(0,1,2,3), 
                         a.appendAll(b));

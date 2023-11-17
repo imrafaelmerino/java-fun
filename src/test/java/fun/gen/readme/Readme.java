@@ -102,6 +102,9 @@ public class Readme {
             System.out.println(x);
         });
 
+        Gen<Integer> seq = Gen.seq(n-> n);
+
+        seq.sample(5).forEach(System.out::println);
 
     }
 

@@ -554,6 +554,42 @@ relationships effortlessly.
 
 ### <a name="ucp"><a/> Useful and common patterns
 
+#### <a name="seq"><a/> Sequential generators
+
+The `Gen.seq` method provides a powerful tool for generating sequential data, making it particularly useful for testing
+scenarios. This method allows you to create generators that produce values based on the call sequence, making it easy to
+simulate various scenarios and conditions during testing.
+
+```code
+
+Gen<String> seqGen = Gen.seq(n -> "TestValue_" + n);
+
+seqGen.sample(5)
+      .forEach(System.out::println);
+
+```
+
+In this example, the `Gen.seq` method is used to create a generator that produces sequential strings, such as "
+TestValue_1", "TestValue_2", and so on. This can be incredibly useful when you need to test functionalities that involve
+ordered or sequential data.
+
+#### Benefits of Using `Gen.seq` for Testing:
+
+1. **Deterministic Testing**: The generated values follow a predictable sequence, enabling deterministic testing where
+   you can precisely control the input data.
+
+2. **Sequential Scenarios**: Ideal for testing scenarios where the order of data is crucial, such as testing algorithms,
+   data structures, or scenarios where events occur in a specific sequence.
+
+3. **Reproducibility**: Since the sequence is based on the call sequence, tests can be easily reproduced, aiding in
+   debugging and identifying issues.
+
+4. **Scenario Simulation**: Useful for simulating different scenarios by generating values in a sequence that mimics
+   specific use cases.
+
+By incorporating `Gen.seq` into your test data generation, you can enhance the precision and effectiveness of your
+testing strategies, ensuring that your code behaves as expected across various scenarios and sequences of data.
+
 #### <a name="suchthat"><a/> Such-That
 
 The function suchThat takes a predicate and returns a new generator that

@@ -98,7 +98,6 @@ values known to trigger bugs.
 
 **Modeling inheritance**
 
-<<<<<<< HEAD
 The `jsonvalues` library simplifies the implementation of inheritance and the generation of structured data in Java.
 Let's explore an example showcasing the ease of defining object specifications, generating data, and validating against
 specifications.

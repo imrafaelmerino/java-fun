@@ -98,6 +98,15 @@ values known to trigger bugs.
 
 **Modeling inheritance**
 
+The `jsonvalues` library simplifies the implementation of inheritance and the generation of structured data in Java.
+Let's explore an example showcasing the ease of defining object specifications, generating data, and validating against
+specifications.
+
+In this example, picked
+from [this article](https://json-schema.org/blog/posts/modelling-inheritance#so-is-inheritance-in-json-schema-possible)
+we model a hierarchy of devices, including mice, keyboards, and USB hubs. Each device type has specific
+attributes, and we use inheritance to share common fields across all device types.
+
 ```java
 
 public class ModelingInheritance {
@@ -199,6 +208,10 @@ public class ModelingInheritance {
 
 
 ```
+
+This example illustrates the straightforward approach of implementing inheritance and generating structured data
+using `jsonvalues`. The library's features make it easy to model complex hierarchies, generate diverse data, and ensure
+compliance with defined specifications.
 
 **Optics: Elevating JSON Manipulation to a New Level**
 

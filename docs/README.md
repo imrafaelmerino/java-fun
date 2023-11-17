@@ -573,20 +573,6 @@ In this example, the `Gen.seq` method is used to create a generator that produce
 TestValue_1", "TestValue_2", and so on. This can be incredibly useful when you need to test functionalities that involve
 ordered or sequential data.
 
-#### Benefits of Using `Gen.seq` for Testing:
-
-1. **Deterministic Testing**: The generated values follow a predictable sequence, enabling deterministic testing where
-   you can precisely control the input data.
-
-2. **Sequential Scenarios**: Ideal for testing scenarios where the order of data is crucial, such as testing algorithms,
-   data structures, or scenarios where events occur in a specific sequence.
-
-3. **Reproducibility**: Since the sequence is based on the call sequence, tests can be easily reproduced, aiding in
-   debugging and identifying issues.
-
-4. **Scenario Simulation**: Useful for simulating different scenarios by generating values in a sequence that mimics
-   specific use cases.
-
 By incorporating `Gen.seq` into your test data generation, you can enhance the precision and effectiveness of your
 testing strategies, ensuring that your code behaves as expected across various scenarios and sequences of data.
 

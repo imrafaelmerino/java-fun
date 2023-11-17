@@ -98,6 +98,7 @@ values known to trigger bugs.
 
 **Modeling inheritance**
 
+<<<<<<< HEAD
 The `jsonvalues` library simplifies the implementation of inheritance and the generation of structured data in Java.
 Let's explore an example showcasing the ease of defining object specifications, generating data, and validating against
 specifications.
@@ -110,7 +111,6 @@ attributes, and we use inheritance to share common fields across all device type
 ```java
 
 public class ModelingInheritance {
-
 
     String NAME_FIELD = "name";
     String TYPE_FIELD = "type";
@@ -158,8 +158,7 @@ public class ModelingInheritance {
                             TYPE_FIELD, Gen.cons(JsStr.of("keyboard"))
                            )
                         .concat(baseGen);
-
-
+        
         var usbHubSpec =
                 JsObjSpec.of(CONNECTED_DEVICES_FIELD, 
                              JsSpecs.arrayOfSpec(JsSpecs.ofNamedSpec(PERIPHERAL_FIELD))
@@ -174,8 +173,7 @@ public class ModelingInheritance {
                            )
                         .withOptKeys(CONNECTED_DEVICES_FIELD)
                         .concat(baseGen);
-
-
+        
         var peripheralSpec = 
                 JsSpecs.ofNamedSpec(PERIPHERAL_FIELD,
                                     oneSpecOf(mouseSpec, keyboardSpec, usbHubSpec));
@@ -183,11 +181,9 @@ public class ModelingInheritance {
         var peripheralGen =
                 NamedGen.of(PERIPHERAL_FIELD, 
                             Combinators.oneOf(mouseGen, keyboardGen, usbHubGen));
-
-
+        
         var parser = JsObjSpecParser.of(peripheralSpec);
-
-
+        
         peripheralGen.sample(10).peek(System.out::println)
                      .forEach(obj -> {
                                   System.out.println(obj.getStr(TYPE_FIELD));
@@ -199,13 +195,9 @@ public class ModelingInheritance {
                                   Assertions.assertTrue(peripheralSpec.test(obj).isEmpty());
                               }
                              );
-
-
     }
-
-
+    
 }
-
 
 ```
 

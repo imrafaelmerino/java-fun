@@ -28,6 +28,7 @@ final class GenCache {
                                                              name));
     }
 
+    @SuppressWarnings("unchecked")
     static <O extends Gen<?>> O get(String name) {
         O gen = (O) cache.get(requireNonNull(name));
         if (gen == null)

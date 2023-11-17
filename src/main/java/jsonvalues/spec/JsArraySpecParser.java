@@ -66,7 +66,7 @@ public final class JsArraySpecParser {
             return oneOf
                     .specs
                     .stream()
-                    .allMatch(it -> it instanceof JsArraySpec || it instanceof OneOf);
+                    .allMatch(this::isValid);
         if(spec instanceof NamedSpec namedSpec)
             return isValid(JsSpecCache.get(namedSpec.name));
         return false;

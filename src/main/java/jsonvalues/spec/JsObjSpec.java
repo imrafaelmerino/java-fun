@@ -5795,7 +5795,14 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
     }
 
-
+    /**
+     * Concatenates the current JSON object specification with another JSON object specification.
+     * The concatenation includes combining bindings, required fields, predicates, and metadata.
+     *
+     * @param other The JSON object specification to concatenate with the current specification.
+     * @return A new JSON object specification resulting from the concatenation.
+     * @throws NullPointerException If the provided {@code other} specification is {@code null}.
+     */
     public JsObjSpec concat(final JsObjSpec other) {
         var newBindings = new HashMap<>(bindings);
         newBindings.putAll(other.bindings);

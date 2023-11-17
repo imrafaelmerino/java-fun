@@ -96,6 +96,110 @@ blank strings ...).Generating robust test data is essential for identifying pote
 json-values, we take this a step further by introducing **biased generators** that never forget to include special
 values known to trigger bugs.
 
+**Modeling inheritance**
+
+```java
+
+public class ModelingInheritance {
+
+
+    String NAME_FIELD = "name";
+    String TYPE_FIELD = "type";
+    String BUTTON_COUNT_FIELD = "buttonCount";
+    String WHEEL_COUNT_FIELD = "wheelCount";
+    String TRACKING_TYPE_FIELD = "trackingType";
+    String KEY_COUNT_FIELD = "keyCount";
+    String MEDIA_BUTTONS_FIELD = "mediaButtons";
+    String CONNECTED_DEVICES_FIELD = "connectedDevices";
+    String PERIPHERAL_FIELD = "peripheral";
+    List<String> TRACKING_TYPE_ENUM = List.of("ball", "optical");
+
+    @Test
+    public void test() {
+        
+        var baseSpec = JsObjSpec.of(NAME_FIELD, JsSpecs.str(),
+                                    TYPE_FIELD, JsSpecs.oneStringOf("mouse", "keyboard", "usb_hub"));
+
+        var baseGen = JsObjGen.of(NAME_FIELD, JsStrGen.alphabetic());
+
+        var mouseSpec =
+                JsObjSpec.of(BUTTON_COUNT_FIELD, JsSpecs.integer(),
+                             WHEEL_COUNT_FIELD, JsSpecs.integer(),
+                             TRACKING_TYPE_FIELD, JsSpecs.oneStringOf(TRACKING_TYPE_ENUM)
+                            )
+                         .concat(baseSpec);
+
+        var mouseGen =
+                JsObjGen.of(BUTTON_COUNT_FIELD, JsIntGen.arbitrary(0, 10),
+                            WHEEL_COUNT_FIELD, JsIntGen.arbitrary(0, 10),
+                            TRACKING_TYPE_FIELD, Combinators.oneOf(TRACKING_TYPE_ENUM).map(JsStr::of),
+                            TYPE_FIELD, Gen.cons(JsStr.of("mouse"))
+                           )
+                        .concat(baseGen);
+
+        var keyboardSpec =
+                JsObjSpec.of(KEY_COUNT_FIELD, JsSpecs.integer(),
+                             MEDIA_BUTTONS_FIELD, JsSpecs.bool()
+                            )
+                         .concat(baseSpec);
+
+        var keyboardGen =
+                JsObjGen.of(KEY_COUNT_FIELD, JsIntGen.arbitrary(0, 10),
+                            MEDIA_BUTTONS_FIELD, JsBoolGen.arbitrary(),
+                            TYPE_FIELD, Gen.cons(JsStr.of("keyboard"))
+                           )
+                        .concat(baseGen);
+
+
+        var usbHubSpec =
+                JsObjSpec.of(CONNECTED_DEVICES_FIELD, 
+                             JsSpecs.arrayOfSpec(JsSpecs.ofNamedSpec(PERIPHERAL_FIELD))
+                            )
+                         .withOptKeys(CONNECTED_DEVICES_FIELD)
+                         .concat(baseSpec);
+
+        var usbHubGen = 
+                JsObjGen.of(CONNECTED_DEVICES_FIELD, 
+                            JsArrayGen.biased(NamedGen.of(PERIPHERAL_FIELD), 2, 10),
+                            TYPE_FIELD, Gen.cons(JsStr.of("usb_hub"))
+                           )
+                        .withOptKeys(CONNECTED_DEVICES_FIELD)
+                        .concat(baseGen);
+
+
+        var peripheralSpec = 
+                JsSpecs.ofNamedSpec(PERIPHERAL_FIELD,
+                                    oneSpecOf(mouseSpec, keyboardSpec, usbHubSpec));
+
+        var peripheralGen =
+                NamedGen.of(PERIPHERAL_FIELD, 
+                            Combinators.oneOf(mouseGen, keyboardGen, usbHubGen));
+
+
+        var parser = JsObjSpecParser.of(peripheralSpec);
+
+
+        peripheralGen.sample(10).peek(System.out::println)
+                     .forEach(obj -> {
+                                  System.out.println(obj.getStr(TYPE_FIELD));
+                                  
+                                  Assertions.assertEquals(obj,
+                                                          parser.parse(obj.toString())
+                                                         );
+
+                                  Assertions.assertTrue(peripheralSpec.test(obj).isEmpty());
+                              }
+                             );
+
+
+    }
+
+
+}
+
+
+```
+
 **Optics: Elevating JSON Manipulation to a New Level**
 
 Perform JSON manipulation free of null checks and if-else conditions using optics:
@@ -169,8 +273,7 @@ listed on [json-schema.org](https://json-schema.org/implementations.html). The r
 
 <img src="./performance_parsing_json.png" alt="parsing string comparison"/>
 
-You can find more details in the
-class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsDeserializers.java)
+You can find more details in the class [JsDeserializers](./../benchmarking/src/main/java/jsonvalues/benchmark/JsDeserializers.java)
 
 Did you see that!?
 
@@ -1044,8 +1147,8 @@ catch(JsParserException e){
 ```
 
 Another compelling feature is the use of named specs, which simplifies the creation of recursive specifications. To
-implement this, start by creating a spec with `JsObjSpecBuilder` to give it a name. Then, refer to it using
-the `JsSpecs.ofNamedSpec(name)` method within its own definition.
+implement this, start by creating a spec with `JsObjSpecBuilder` or `JsObjSpecs.ofNamedSpec(name, spec)` to give it a name . 
+Then, refer to it using the `JsSpecs.ofNamedSpec(name)` method within its own definition.
 
 ```code
 var spec = 

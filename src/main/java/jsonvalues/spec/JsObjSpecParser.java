@@ -65,7 +65,7 @@ public final class JsObjSpecParser {
         if (spec instanceof OneOf oneOf)
             return oneOf.specs
                     .stream()
-                    .allMatch(it -> it instanceof JsObjSpec || it instanceof OneOf);
+                    .allMatch(this::isValid);
         if (spec instanceof NamedSpec namedSpec)
             return isValid(JsSpecCache.get(namedSpec.name));
         return false;

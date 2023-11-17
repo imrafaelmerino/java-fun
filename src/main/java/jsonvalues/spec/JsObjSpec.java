@@ -5533,7 +5533,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
      *
      * @return A list of required field names.
      */
-     List<String> getRequiredFields() {
+    List<String> getRequiredFields() {
         return requiredFields;
     }
 
@@ -5796,4 +5796,28 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
     }
 
 
+    public JsObjSpec concat(final JsObjSpec other) {
+        var newBindings = new HashMap<>(bindings);
+        newBindings.putAll(other.bindings);
+
+        var newReq = new ArrayList<>(requiredFields);
+        newReq.addAll(other.requiredFields);
+
+        Predicate<JsObj> newPred;
+        if (other.predicate == null) newPred = this.predicate;
+        else if (this.predicate != null) newPred = this.predicate.and(other.predicate);
+        else newPred = other.predicate;
+
+        MetaData newMet;
+        if (other.metaData == null) newMet = this.metaData;
+        else if (this.metaData != null) newMet = this.metaData.concat(other.metaData);
+        else newMet = other.metaData;
+
+        return new JsObjSpec(newBindings,
+                             this.nullable,
+                             this.strict,
+                             newPred,
+                             newReq,
+                             newMet);
+    }
 }

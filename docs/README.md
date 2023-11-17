@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/color1/full/coverphoto/color1-white_logo_dark_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/13.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/13.0.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/13.1.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/13.1.0/jar)
 
 “_Simplicity is a great virtue, but it requires hard work to achieve it and education to appreciate it.
 And to make matters worse: complexity sells better._”
@@ -1552,7 +1552,7 @@ For Java 17 or higher:
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>json-values</artifactId>
-    <version>13.0.0</version>
+    <version>13.1.0</version>
 </dependency>
 ```
 

@@ -59,6 +59,9 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
         return seed -> () -> value;
     }
 
+
+
+
     /**
      * Creates a generator that ensures distinct values are generated from the underlying generator,
      * with a default maximum number of tries set to 1000.
@@ -125,7 +128,6 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
             return it;
         });
     }
-
 
     /**
      * Creates a new generator by chaining the generation of values from this generator with another generator.
@@ -223,7 +225,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
     }
 
     /**
-     * Generates a collection of sampled values and their counts by repeatedly generating values using this generator
+     * Generates a map of sampled values and their counts by repeatedly generating values using this generator
      * with a new random seed and counting the occurrences of each value.
      *
      * @param n The number of samples to generate for collecting values and counts.
@@ -240,7 +242,7 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
     }
 
     /**
-     * Generates a collection of sampled values mapped to another type and their counts by repeatedly generating values
+     * Generates a map of sampled values mapped to another type and their counts by repeatedly generating values
      * using this generator with a new random seed, applying the provided mapping function, and counting the occurrences
      * of each mapped value.
      *
@@ -306,6 +308,8 @@ public interface Gen<O> extends Function<Random, Supplier<O>> {
         );
 
     }
+
+
 
 
 }

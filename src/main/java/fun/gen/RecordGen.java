@@ -2123,27 +2123,33 @@ public final class RecordGen implements Gen<Record> {
             map.put(pair.getKey(),
                     pair.getValue().apply(split.apply(random)));
 
+
         return () -> {
+            Set<String> nullFields = isSetNullables.get() ?
+                                     nullableFields.get() :
+                                     null;
+
+            Set<String> optFields = isRemoveOpts.get() ?
+                                    optionalFields.get() :
+                                    null;
+
             Map<String, Object> result = new LinkedHashMap<>();
+
             for (Map.Entry<String, Supplier<?>> pair : map.entrySet()) {
-                Object value = pair.getValue().get();
-                result.put(pair.getKey(),
-                           value);
-            }
-
-            if (isRemoveOpts.get()) {
-                for (String s : optionalFields.get())
-                    result.remove(s);
-            }
-
-            if (isSetNullables.get()) {
-                for (String s : nullableFields.get())
-                    result.put(s,
-                               null);
+                if (optFields == null || !optFields.contains(pair.getKey())) {
+                    Object value =
+                            nullFields != null && nullFields.contains(pair.getKey()) ?
+                            null :
+                            pair.getValue().get();
+                    result.put(pair.getKey(),
+                               value);
+                }
             }
 
             return new Record(result);
-        };
+        }
+
+                ;
     }
 
 }

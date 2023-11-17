@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/base/full/coverphoto/base_logo_white_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/1.3.2)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/1.3.2/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/1.4.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/1.4.0/jar)
 
 "_When in doubt, use brute force._" **Ken Thompson**
 
@@ -11,6 +11,7 @@
     - [Tuples and Record Generators](#trg)
     - [Combinators](#com)
     - [Objects Generators](#og)
+    - [Recursive generators](#rg)
     - [Useful and common patterns](#ucp)
 - [Optics](#optics)
 - [Requirements](#req)
@@ -447,7 +448,7 @@ create diverse test data for various scenarios. Let's explore them in detail:
      
      Gen<Set<O>> subsets =  Combinators.subsets(Set<O> set)  
     ```
-- **shuffle Combinator**:  
+- **shuffle Combinator**:
 
     ```code
      Gen<List<O>> gen = Combinators.shuffle(List<O> list);
@@ -518,6 +519,38 @@ Now, you can create a generator for the `User` class as follows:
 With this `userGen`, you can now generate instances of the `User` class with random or predefined values for testing.
 This approach allows you to easily create generators for complex objects in your model, making property-based testing
 more effective and efficient.
+
+### <a name="rg"><a/> Recursive generators
+
+`NamedGen` provides a simple and intuitive way to define recursive generators, allowing you to create complex data
+structures with ease. This is particularly useful when generating data structures that reference themselves or include
+nested structures.
+
+#### Example:
+
+```code
+
+Gen<Record> recordGen = 
+    NamedGen.of("person",
+                RecordGen.of("age", IntGen.arbitrary(16, 100),
+                             "name", StrGen.alphabetic(10, 50),
+                             "father", NamedGen.of("person")
+                             )
+                          .withOptKeys("father")
+                );
+
+// Generate and print 10 sample records
+recordGen.sample(10).forEach(System.out::println);
+```
+
+In this example, we create a generator for a `person` record that includes fields for `age`, `name`, and a potentially
+recursive field `father`. The use of `NamedGen.of("person")` inside the `RecordGen` indicates that the `father` field
+refers to the same `person` generator, creating a recursive structure.
+
+With `NamedGen`, defining and using recursive generators becomes straightforward, allowing you to model complex data
+relationships effortlessly.
+
+---
 
 ### <a name="ucp"><a/> Useful and common patterns
 
@@ -917,7 +950,7 @@ Requires Java 8 or greater
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
-    <version>1.3.2</version>
+    <version>1.4.0</version>
 </dependency>
 
 ```

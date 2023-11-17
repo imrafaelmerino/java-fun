@@ -125,8 +125,9 @@ public class ModelingInheritance {
     @Test
     public void test() {
         
-        var baseSpec = JsObjSpec.of(NAME_FIELD, JsSpecs.str(),
-                                    TYPE_FIELD, JsSpecs.oneStringOf("mouse", "keyboard", "usb_hub"));
+        var baseSpec = 
+                JsObjSpec.of(NAME_FIELD, JsSpecs.str(),
+                             TYPE_FIELD, JsSpecs.oneStringOf("mouse", "keyboard", "usb_hub"));
 
         var baseGen = JsObjGen.of(NAME_FIELD, JsStrGen.alphabetic());
 
@@ -140,7 +141,8 @@ public class ModelingInheritance {
         var mouseGen =
                 JsObjGen.of(BUTTON_COUNT_FIELD, JsIntGen.arbitrary(0, 10),
                             WHEEL_COUNT_FIELD, JsIntGen.arbitrary(0, 10),
-                            TRACKING_TYPE_FIELD, Combinators.oneOf(TRACKING_TYPE_ENUM).map(JsStr::of),
+                            TRACKING_TYPE_FIELD, Combinators.oneOf(TRACKING_TYPE_ENUM)
+                                                            .map(JsStr::of),
                             TYPE_FIELD, Gen.cons(JsStr.of("mouse"))
                            )
                         .concat(baseGen);

@@ -5533,7 +5533,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
      *
      * @return A list of required field names.
      */
-     List<String> getRequiredFields() {
+    List<String> getRequiredFields() {
         return requiredFields;
     }
 
@@ -5795,5 +5795,36 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
     }
 
+    /**
+     * Concatenates the current JSON object specification with another JSON object specification.
+     * The concatenation includes combining bindings, required fields, predicates, and metadata.
+     *
+     * @param other The JSON object specification to concatenate with the current specification.
+     * @return A new JSON object specification resulting from the concatenation.
+     * @throws NullPointerException If the provided {@code other} specification is {@code null}.
+     */
+    public JsObjSpec concat(final JsObjSpec other) {
+        var newBindings = new HashMap<>(bindings);
+        newBindings.putAll(other.bindings);
 
+        var newReq = new ArrayList<>(requiredFields);
+        newReq.addAll(other.requiredFields);
+
+        Predicate<JsObj> newPred;
+        if (other.predicate == null) newPred = this.predicate;
+        else if (this.predicate != null) newPred = this.predicate.and(other.predicate);
+        else newPred = other.predicate;
+
+        MetaData newMet;
+        if (other.metaData == null) newMet = this.metaData;
+        else if (this.metaData != null) newMet = this.metaData.concat(other.metaData);
+        else newMet = other.metaData;
+
+        return new JsObjSpec(newBindings,
+                             this.nullable,
+                             this.strict,
+                             newPred,
+                             newReq,
+                             newMet);
+    }
 }

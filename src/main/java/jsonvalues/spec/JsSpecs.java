@@ -1286,4 +1286,10 @@ public final class JsSpecs {
     }
 
 
+    public static JsSpec ofNamedSpec(final String name, final JsSpec spec) {
+        JsSpecCache.put(name, spec);
+        return new NamedSpec(name);
+    }
+
+
 }

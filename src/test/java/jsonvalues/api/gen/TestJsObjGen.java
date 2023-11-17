@@ -4,10 +4,14 @@ import fun.gen.Gen;
 import jsonvalues.JsInt;
 import jsonvalues.gen.JsIntGen;
 import jsonvalues.gen.JsObjGen;
+import jsonvalues.gen.JsStrGen;
+import jsonvalues.spec.JsObjSpec;
+import jsonvalues.spec.JsObjSpecBuilder;
+import jsonvalues.spec.JsSpecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TestJsObjGenConstructors {
+public class TestJsObjGen {
     @Test
     public void test_20_args() {
 
@@ -55,8 +59,7 @@ public class TestJsObjGenConstructors {
                                    ONE
                                   );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==20));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 20));
 
 
     }
@@ -104,13 +107,13 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "s",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==19));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 19));
 
 
     }
+
     @Test
     public void test_18_args() {
 
@@ -152,13 +155,13 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "r",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==18));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 18));
 
 
     }
+
     @Test
     public void test_17_args() {
 
@@ -198,13 +201,13 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "q",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==17));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 17));
 
 
     }
+
     @Test
     public void test_16_args() {
 
@@ -242,10 +245,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "p",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==16));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 16));
 
 
     }
@@ -285,10 +287,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "o",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==15));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 15));
 
 
     }
@@ -326,9 +327,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "n",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==14));
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 14));
 
 
     }
@@ -364,10 +365,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "m",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==13));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 13));
 
 
     }
@@ -402,10 +402,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "l",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==12));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 12));
 
 
     }
@@ -437,10 +436,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "k",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==11));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 11));
 
 
     }
@@ -470,10 +468,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "j",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==10));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 10));
 
 
     }
@@ -501,10 +498,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "i",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==9));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 9));
 
 
     }
@@ -530,10 +526,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "h",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==8));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 8));
 
 
     }
@@ -557,10 +552,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "g",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==7));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 7));
 
 
     }
@@ -582,10 +576,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "f",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==6));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 6));
 
 
     }
@@ -605,9 +598,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "e",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==5));
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 5));
 
 
     }
@@ -625,10 +618,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "d",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==4));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 4));
 
 
     }
@@ -644,10 +636,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "c",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==3));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 3));
 
 
     }
@@ -661,10 +652,9 @@ public class TestJsObjGenConstructors {
                                    ONE,
                                    "b",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==2));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 2));
 
 
     }
@@ -676,11 +666,45 @@ public class TestJsObjGenConstructors {
         Gen<JsInt> ONE = JsIntGen.biased();
         JsObjGen obj = JsObjGen.of("a",
                                    ONE
-        );
+                                  );
 
-        Assertions.assertTrue(obj.sample(100).allMatch(it->it.size()==1));
-
+        Assertions.assertTrue(obj.sample(100).allMatch(it -> it.size() == 1));
 
 
     }
+
+    @Test
+    public void testConcatGen() {
+
+        JsObjGen xs = JsObjGen.of("a", JsStrGen.alphabetic(),
+                                  "b", JsStrGen.alphabetic())
+                              .withAllOptKeys()
+                              .withAllNullValues();
+
+        JsObjSpec xsSpec = JsObjSpecBuilder.withName("xsSpec")
+                                                   .build(JsObjSpec.of("a", JsSpecs.str().nullable(),
+                                                                       "b", JsSpecs.str().nullable())
+                                                                   .withAllOptKeys()
+                                                         );
+
+        JsObjGen ys = JsObjGen.of("c", JsStrGen.alphabetic(),
+                                  "d", JsStrGen.alphabetic())
+                              .withAllOptKeys()
+                              .withAllNullValues();
+
+        JsObjSpec ysSpec = JsObjSpecBuilder.withName("ysSpec")
+                                           .build(JsObjSpec.of("c", JsSpecs.str().nullable(),
+                                                               "d", JsSpecs.str().nullable())
+                                                           .withAllOptKeys());
+
+        JsObjSpec zsSpec = xsSpec.concat(ysSpec);
+
+        Assertions.assertTrue(xs.concat(ys)
+                                .sample(1000)
+                                .allMatch(obj -> zsSpec.test(obj).isEmpty()));
+
+
+    }
+
+
 }

@@ -16,9 +16,8 @@ import java.util.stream.IntStream;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a JsArray generator. It can be created from the static factory methods biased and
- * arbitrary, specifying an element generator that produces JsValue and the size of the array
- * (either a bound interval or a fixed size).
+ * Represents a JsArray generator. It can be created from the static factory methods biased and arbitrary, specifying an
+ * element generator that produces JsValue and the size of the array (either a bound interval or a fixed size).
  */
 public final class JsArrayGen implements Gen<JsArray> {
 
@@ -27,7 +26,7 @@ public final class JsArrayGen implements Gen<JsArray> {
 
     private JsArrayGen(final Gen<? extends JsValue> gen,
                        final int size
-    ) {
+                      ) {
         if (size < 0) throw new IllegalArgumentException("size < 0");
         this.size = size;
         this.gen = requireNonNull(gen);
@@ -43,9 +42,10 @@ public final class JsArrayGen implements Gen<JsArray> {
      */
 
     public static Gen<JsArray> ofN(final Gen<? extends JsValue> gen,
-                                   final int size) {
+                                   final int size
+                                  ) {
         return new JsArrayGen(gen,
-                size
+                              size
         );
     }
 
@@ -59,19 +59,21 @@ public final class JsArrayGen implements Gen<JsArray> {
      */
     public static Gen<JsArray> arbitrary(final Gen<? extends JsValue> gen,
                                          final int minSize,
-                                         final int maxSize) {
+                                         final int maxSize
+                                        ) {
         if (minSize < 0) throw new IllegalArgumentException("minSize < 0");
         if (maxSize < minSize) throw new IllegalArgumentException("maxSize < minSize");
         requireNonNull(gen);
         return seed -> {
             Supplier<Integer> sizeSupplier =
                     IntGen.arbitrary(minSize,
-                                    maxSize)
-                            .apply(SplitGen.DEFAULT.apply(seed));
+                                     maxSize)
+                          .apply(SplitGen.DEFAULT.apply(seed));
 
-            Supplier<? extends JsValue> elemSupplier = gen.apply(SplitGen.DEFAULT.apply(seed));
+            Supplier<? extends JsValue> elemSupplier =
+                    gen.apply(SplitGen.DEFAULT.apply(seed));
             return arraySupplier(elemSupplier,
-                    sizeSupplier);
+                                 sizeSupplier);
         };
 
     }
@@ -86,39 +88,42 @@ public final class JsArrayGen implements Gen<JsArray> {
      */
     public static Gen<JsArray> biased(final Gen<? extends JsValue> gen,
                                       final int minSize,
-                                      final int maxSize) {
+                                      final int maxSize
+                                     ) {
         if (minSize < 0) throw new IllegalArgumentException("minSize < 0");
         if (maxSize < minSize) throw new IllegalArgumentException("maxSize < minSize");
         requireNonNull(gen);
         return Combinators.freq(Pair.of(1,
-                        new JsArrayGen(gen, minSize)),
-                Pair.of(1,
-                        new JsArrayGen(gen,
-                                maxSize)),
-                Pair.of(2,
-                        JsArrayGen.arbitrary(gen,
-                                minSize,
-                                maxSize)));
+                                        new JsArrayGen(gen, minSize)),
+                                Pair.of(1,
+                                        new JsArrayGen(gen,
+                                                       maxSize)),
+                                Pair.of(2,
+                                        JsArrayGen.arbitrary(gen,
+                                                             minSize,
+                                                             maxSize)));
 
 
     }
 
 
     private static Supplier<JsArray> arraySupplier(Supplier<? extends JsValue> elemSupplier,
-                                                   Supplier<Integer> sizeSupplier) {
+                                                   Supplier<Integer> sizeSupplier
+                                                  ) {
 
 
-        return () -> JsArray.ofIterable(IntStream.range(0,
-                        sizeSupplier.get())
-                .mapToObj(i -> elemSupplier.get())
-                .collect(Collectors.toList()));
+        return () ->
+                JsArray.ofIterable(IntStream.range(0,
+                                                   sizeSupplier.get())
+                                            .mapToObj(i -> elemSupplier.get())
+                                            .collect(Collectors.toList()));
     }
 
 
     @Override
     public Supplier<JsArray> apply(final Random seed) {
         return arraySupplier(gen.apply(requireNonNull(seed)),
-                () -> size);
+                             () -> size);
     }
 
 

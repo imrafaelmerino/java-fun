@@ -63,7 +63,11 @@ public final class JsObjSpecParser {
     private boolean isValid(JsSpec spec) {
         if (spec instanceof JsObjSpec) return true;
         if (spec instanceof OneOf oneOf)
-            return oneOf.specs.stream().allMatch(it -> it instanceof JsObjSpec || it instanceof OneOf);
+            return oneOf.specs
+                    .stream()
+                    .allMatch(this::isValid);
+        if (spec instanceof NamedSpec namedSpec)
+            return isValid(JsSpecCache.get(namedSpec.name));
         return false;
 
 
@@ -89,6 +93,8 @@ public final class JsObjSpecParser {
         return obj;
 
     }
+
+
 
     /**
      * Parses a string into a JSON object that must conform to the spec of the parser. If the string doesn't represent a

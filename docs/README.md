@@ -977,6 +977,9 @@ Requires Java 8 or greater
 
 ```
 
+Find [here](./../docs/CHANGELOG.md) the releases notes.
+
+
 ## <a name="rp"><a/> Related projects
 
 [json-values](https://github.com/imrafaelmerino/json-values) has defined a JSON generator

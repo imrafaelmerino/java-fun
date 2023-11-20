@@ -1,7 +1,7 @@
 package fun.gen;
 
 /**
- * A runtime exception indicating that the type of a value associated with a key in a Record does not match the expected type.
+ * A runtime exception indicating that the type of value associated with a key in a Record does not match the expected type.
  * This exception is typically thrown when using the `getXXX` methods of the Record class to retrieve values of specific types.
  */
 public final class RecordTypeNotExpected extends RuntimeException {

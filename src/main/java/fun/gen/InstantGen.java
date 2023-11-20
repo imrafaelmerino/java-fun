@@ -41,7 +41,7 @@ public final class InstantGen implements Gen<Instant> {
      * @return A biased generator for Instant values.
      */
     public static Gen<Instant> biased() {
-        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
+        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
                          Gen.cons(MAX_SECONDS)));
@@ -80,7 +80,7 @@ public final class InstantGen implements Gen<Instant> {
         if (min < MIN_SECONDS)
             throw new IllegalArgumentException(max + " is lower than MIN_SECONDS " + MIN_SECONDS);
 
-        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<Pair<Integer, Gen<? extends Long>>>();
+        List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 
         if (min <= Integer.MAX_VALUE && max >= Integer.MAX_VALUE)
             gens.add(Pair.of(1,

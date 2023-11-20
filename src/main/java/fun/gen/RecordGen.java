@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class RecordGen implements Gen<Record> {
 
-    private final static Supplier<Set<String>> EMPTY_SET_GEN = () -> new HashSet<>();
+    private final static Supplier<Set<String>> EMPTY_SET_GEN = HashSet::new;
     private final SplitGen split;
     private final List<String> optionals;
     private final List<String> nullables;

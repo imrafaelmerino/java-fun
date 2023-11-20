@@ -7,7 +7,7 @@ import static java.util.Objects.requireNonNull;
 
 final class GenCache {
 
-    static Map<String, Gen<?>> cache = new HashMap<>();
+    static final Map<String, Gen<?>> cache = new HashMap<>();
 
     private GenCache() {
     }

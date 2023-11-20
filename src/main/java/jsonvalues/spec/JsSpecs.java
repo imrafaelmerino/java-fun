@@ -1278,7 +1278,6 @@ public final class JsSpecs {
      *
      * @param name The name of the named spec to retrieve from the cache.
      * @return A named spec with the specified name.
-     * @throws IllegalArgumentException If the specified name does not correspond to a cached named spec.
      * @see JsObjSpecBuilder
      */
     public static JsSpec ofNamedSpec(final String name) {
@@ -1286,8 +1285,29 @@ public final class JsSpecs {
     }
 
 
+    /**
+     * Creates and caches a named spec.
+     *
+     * @param name The name of the named spec.
+     * @param spec The JsSpec to be associated with the named spec.
+     * @return A named spec with the specified name.
+     * @throws IllegalArgumentException If the specified name already exists or the name is not valid
+     */
     public static JsSpec ofNamedSpec(final String name, final JsSpec spec) {
-        JsSpecCache.put(name, spec);
+        //builders already cache the specs, we need to create named specs with the builder
+        //to create a metadata object used by avro-spec library. It's more common to
+        //use the builder because there are a lot of metadata options not provided by this method
+        //(only the name). This is more commonly used by other kind of specs like oneOf(obspec1,objspec2)
+        if (requireNonNull(spec) instanceof JsObjSpec objSpec) {
+            var unused = JsObjSpecBuilder.withName(name).build(objSpec);
+            assert unused != null;
+        } else if (spec instanceof JsEnum enumSpec) {
+            var unused = JsEnumBuilder.withName(name).build(enumSpec.symbols);
+            assert unused != null;
+        } else if (spec instanceof JsFixedBinary fixed) {
+            var unused = JsFixedBuilder.withName(name).build(fixed.getSize());
+            assert unused != null;
+        } else JsSpecCache.put(name, spec);
         return new NamedSpec(name);
     }
 

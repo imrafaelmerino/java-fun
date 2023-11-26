@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/base/full/coverphoto/base_logo_white_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/1.4.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/1.4.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/2.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/2.0.0/jar)
 
 "_When in doubt, use brute force._" **Ken Thompson**
 
@@ -49,9 +49,9 @@ In **java-fun**, we represent a PRN with the `Gen` type:
 ```code
 import fun.gen.Gen;
 
-import java.util.Random;
+import java.util.RandomGenerator;
 
-public interface Gen<O> extends Function<Random, Supplier<O>> {
+public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
 }
 ```
 
@@ -967,6 +967,11 @@ Requires Java 8 or greater
 
 ## <a name="inst"><a/> Installation
 
+To include java-fun in your project, add the corresponding dependency to your build tool based on your Java version:
+
+
+For Java 8 or higher:
+
 ```xml
 
 <dependency>
@@ -976,6 +981,20 @@ Requires Java 8 or greater
 </dependency>
 
 ```
+
+For Java 17 or higher:
+
+```xml
+
+<dependency>
+    <groupId>com.github.imrafaelmerino</groupId>
+    <artifactId>java-fun</artifactId>
+    <version>2.0.0</version>
+</dependency>
+
+```
+
+Choose the appropriate version according to your Java runtime.
 
 Find [here](./../docs/CHANGELOG.md) the releases notes.
 

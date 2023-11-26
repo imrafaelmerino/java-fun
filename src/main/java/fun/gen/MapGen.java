@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -68,7 +69,7 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
     }
 
     @Override
-    public Supplier<Map<K, V>> apply(final Random gen) {
+    public Supplier<Map<K, V>> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         final Supplier<K> keys = keyGen.apply(splitGen.apply(requireNonNull(gen)));
         final Supplier<V> values = valueGen.apply(splitGen.apply(gen));

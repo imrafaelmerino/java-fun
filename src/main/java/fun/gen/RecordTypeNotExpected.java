@@ -4,8 +4,8 @@ package fun.gen;
  * A runtime exception indicating that the type of value associated with a key in a Record does not match the expected type.
  * This exception is typically thrown when using the `getXXX` methods of the Record class to retrieve values of specific types.
  */
+@SuppressWarnings("serialid")
 public final class RecordTypeNotExpected extends RuntimeException {
-    private static final long serialVersionUID = 1L;
 
     private static final String TEMPLATE =
             "The type you expect of the value associated to the key %s is %s, however the " +

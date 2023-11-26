@@ -4,6 +4,7 @@ import fun.tuple.Pair;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +94,7 @@ public final class StrGen implements Gen<String> {
                                     .apply(SplitGen.DEFAULT.apply(seed)));
     }
 
-    private static Supplier<String> genStr(Random seed,
+    private static Supplier<String> genStr(RandomGenerator seed,
                                            Supplier<Integer> lengthGen) {
 
         return () -> {
@@ -109,7 +110,7 @@ public final class StrGen implements Gen<String> {
 
     }
 
-    private static Supplier<String> genStr(Random seed,
+    private static Supplier<String> genStr(RandomGenerator seed,
                                            Integer length) {
         Supplier<List<Character>> chars =
                 ListGen.arbitrary(CharGen.arbitrary(),
@@ -236,7 +237,7 @@ public final class StrGen implements Gen<String> {
     }
 
     @Override
-    public Supplier<String> apply(final Random gen) {
+    public Supplier<String> apply(final RandomGenerator gen) {
         Objects.requireNonNull(gen);
         return genStr(gen,
                       length);

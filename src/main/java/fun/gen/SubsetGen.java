@@ -2,6 +2,7 @@ package fun.gen;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 class SubsetGen<O> implements Gen<Set<O>> {
 
@@ -57,13 +58,13 @@ class SubsetGen<O> implements Gen<Set<O>> {
 
 
     @Override
-    public Supplier<Set<O>> apply(Random random) {
+    public Supplier<Set<O>> apply(RandomGenerator random) {
 
         if (inputs.size() < MAX_N_FIELDS_TO_CALCULATE_ALL_COMBINATIONS) {
             List<Set<O>> combinations = subsets(inputs);
             Gen<Integer> gen = IntGen.arbitrary(0,
                                                 combinations.size() - 1);
-            Supplier<Integer> indexSupplier = gen.apply(random);
+            Supplier<Integer> indexSupplier = gen.apply(SplitGen.DEFAULT.apply(random));
             return () -> combinations.get(indexSupplier.get());
         } else {
             Gen<Integer> gen = IntGen.arbitrary(0,
@@ -73,7 +74,7 @@ class SubsetGen<O> implements Gen<Set<O>> {
 
             return () -> {
                 List<O> xs = new ArrayList<>(inputs);
-                Collections.shuffle(xs,
+                Combinators.shuffle(xs,
                                     random); // Shuffle the elements randomly
                 return new HashSet<>(xs.subList(0,
                                                 nSupplier.get()));

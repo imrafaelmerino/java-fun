@@ -3,6 +3,8 @@ package fun.gen;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
+import java.util.random.RandomGeneratorFactory;
 
 import static java.util.Objects.requireNonNull;
 
@@ -1972,6 +1974,24 @@ public final class RecordGen implements Gen<Record> {
                                        gen30);
     }
 
+    public static void main(String[] args) {
+
+
+        RandomGenerator random = RandomGeneratorFactory.getDefault().create();
+        for (int i = 0; i < 100; i++) {
+            Supplier<Boolean> isRemoveOpts = BoolGen.arbitrary()
+                                                    .apply(SplitGen.DEFAULT
+                                                                   .apply(random));
+            Supplier<Boolean> isSetNullables = BoolGen.arbitrary()
+                                                      .apply(SplitGen.DEFAULT
+                                                                     .apply(random));
+            System.out.println(isRemoveOpts.get());
+            System.out.println(isSetNullables.get());
+        }
+
+
+    }
+
     /**
      * Returns a brand new record generator with the same key-generators pairs as this instance and
      * the specified nullable keys. The value associated with a nullable key may or may not be null.
@@ -2100,42 +2120,51 @@ public final class RecordGen implements Gen<Record> {
     }
 
     @Override
-    public Supplier<Record> apply(final Random random) {
+    public Supplier<Record> apply(final RandomGenerator random) {
         Objects.requireNonNull(random);
-        Supplier<Set<String>> optionalFields =
+        var optionalFields =
                 optionals.isEmpty() ?
                 EMPTY_SET_GEN :
                 new SubsetGen<>(optionals).suchThat(set -> !set.isEmpty())
                                           .apply(split.apply(random));
 
-        Supplier<Set<String>> nullableFields =
+        var nullableFields =
                 nullables.isEmpty() ?
                 EMPTY_SET_GEN :
                 new SubsetGen<>(nullables)
                         .suchThat(set -> !set.isEmpty())
                         .apply(split.apply(random));
-        Supplier<Boolean> isRemoveOpts = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(random));
-        Supplier<Boolean> isSetNullables = BoolGen.arbitrary().apply(SplitGen.DEFAULT.apply(random));
+
+        var isRemoveOpts = BoolGen.arbitrary()
+                                  .apply(random);
+        var isSetNullables = BoolGen.arbitrary()
+                                    .apply(random);
 
 
         Map<String, Supplier<?>> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Gen<?>> pair : bindings.entrySet())
+        for (var pair : bindings.entrySet()) {
+            Gen<?> value = pair.getValue();
             map.put(pair.getKey(),
-                    pair.getValue().apply(split.apply(random)));
+                    value.apply(split.apply(random))
+            );
+        }
 
 
         return () -> {
-            Set<String> nullFields = isSetNullables.get() ?
-                                     nullableFields.get() :
-                                     null;
 
-            Set<String> optFields = isRemoveOpts.get() ?
-                                    optionalFields.get() :
-                                    null;
+            var nullFields = isSetNullables.get() ?
+                             nullableFields.get() :
+                             null;
+
+
+            var optFields = isRemoveOpts.get() ?
+                            optionalFields.get() :
+                            null;
+
 
             Map<String, Object> result = new LinkedHashMap<>();
 
-            for (Map.Entry<String, Supplier<?>> pair : map.entrySet()) {
+            for (var pair : map.entrySet()) {
                 if (optFields == null || !optFields.contains(pair.getKey())) {
                     Object value =
                             nullFields != null && nullFields.contains(pair.getKey()) ?
@@ -2147,9 +2176,9 @@ public final class RecordGen implements Gen<Record> {
             }
 
             return new Record(result);
-        }
+        };
 
-                ;
+
     }
 
 }

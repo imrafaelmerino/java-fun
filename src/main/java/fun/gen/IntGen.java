@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -172,7 +173,7 @@ public final class IntGen implements Gen<Integer> {
     }
 
     @Override
-    public Supplier<Integer> apply(final Random gen) {
+    public Supplier<Integer> apply(final RandomGenerator gen) {
         Objects.requireNonNull(gen);
         return requireNonNull(gen)::nextInt;
     }

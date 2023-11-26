@@ -4,8 +4,8 @@ import fun.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -135,7 +135,7 @@ public final class DoubleGen implements Gen<Double> {
     }
 
     @Override
-    public Supplier<Double> apply(final Random gen) {
+    public Supplier<Double> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         return gen::nextDouble;
     }

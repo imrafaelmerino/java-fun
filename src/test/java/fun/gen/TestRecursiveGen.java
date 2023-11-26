@@ -23,7 +23,7 @@ public class TestRecursiveGen {
                                                      )
                                                      .withNullValues("father"));
         recordGen
-                .sample(10)
+                .sample(1)
                 .forEach(System.out::println);
 
 

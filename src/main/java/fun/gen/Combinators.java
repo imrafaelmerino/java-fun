@@ -4,6 +4,7 @@ import fun.tuple.Pair;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -25,6 +26,8 @@ import static java.util.Objects.requireNonNull;
  * concepts.
  */
 public final class Combinators {
+    private static final int SHUFFLE_THRESHOLD = 5;
+
     private Combinators() {
     }
 
@@ -142,7 +145,7 @@ public final class Combinators {
     }
 
     private static <T> void generateCollection(int n,
-                                               Random random,
+                                               RandomGenerator random,
                                                Collection<T> result,
                                                Collection<T> copy) {
         for (int i = 0; i < n; i++) {
@@ -182,7 +185,7 @@ public final class Combinators {
             suppliers.add(requireNonNull(gen.apply(SplitGen.DEFAULT.apply(r))));
             suppliers.addAll(Arrays.stream(others)
                                    .map(it -> it.apply(SplitGen.DEFAULT.apply(r)))
-                                   .collect(Collectors.toList()));
+                                   .toList());
             final int bound = 1 + requireNonNull(others).length;
             return () -> suppliers.get(r.nextInt(bound))
                                   .get();
@@ -227,7 +230,7 @@ public final class Combinators {
     }
 
     private static <A> Supplier<A> freqSupplier(SplitGen split,
-                                                Random seed,
+                                                RandomGenerator seed,
                                                 List<Pair<Integer, Gen<? extends A>>> filtered) {
         int total = 0;
         TreeMap<Integer, Supplier<? extends A>> treeMap = new TreeMap<>();
@@ -337,7 +340,6 @@ public final class Combinators {
         return subsets(new ArrayList<>(elements));
     }
 
-
     /**
      * Generates a new list by shuffling the elements of the given list using a random generator.
      * The original list {@code xs} remains unaffected.
@@ -349,12 +351,76 @@ public final class Combinators {
     public static <I> Gen<List<I>> shuffle(List<I> xs) {
         return random -> () -> {
             List<I> ys = new ArrayList<>(xs);
-            Collections.shuffle(ys,
-                                random);
+            shuffle(ys,
+                    random);
             return ys;
         };
     }
 
+    static void shuffle(List<?> list,
+                        RandomGenerator rnd) {
+        int size = list.size();
+        if (size < SHUFFLE_THRESHOLD || list instanceof RandomAccess) {
+            for (int i = size; i > 1; i--)
+                swap(list,
+                     i - 1,
+                     rnd.nextInt(i));
+        } else {
+            Object[] arr = list.toArray();
 
+            // Shuffle array
+            for (int i = size; i > 1; i--)
+                swap(arr,
+                     i - 1,
+                     rnd.nextInt(i));
+
+            // Dump array back into list
+            // instead of using a raw type here, it's possible to capture
+            // the wildcard but it will require a call to a supplementary
+            // private method
+            ListIterator it = list.listIterator();
+            for (Object e : arr) {
+                it.next();
+                it.set(e);
+            }
+        }
+    }
+
+    /**
+     * Swaps the elements at the specified positions in the specified list.
+     * (If the specified positions are equal, invoking this method leaves
+     * the list unchanged.)
+     *
+     * @param list The list in which to swap elements.
+     * @param i    the index of one element to be swapped.
+     * @param j    the index of the other element to be swapped.
+     * @throws IndexOutOfBoundsException if either {@code i} or {@code j}
+     *                                   is out of range (i &lt; 0 || i &gt;= list.size()
+     *                                   || j &lt; 0 || j &gt;= list.size()).
+     * @since 1.4
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static void swap(List<?> list,
+                            int i,
+                            int j) {
+        // instead of using a raw type here, it's possible to capture
+        // the wildcard but it will require a call to a supplementary
+        // private method
+        final List l = list;
+        l.set(i,
+              l.set(j,
+                    l.get(i)));
+    }
+
+    /**
+     * Swaps the two specified elements in the specified array.
+     */
+    private static void swap(Object[] arr,
+                             int i,
+                             int j) {
+        Object tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
 
 }

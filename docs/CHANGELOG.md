@@ -109,3 +109,6 @@ Doc
   - Upgrade to java-fun 2.0.0. 
   - This java-fun version works with the new Java 17 interface `RandomGenerator` instead of `Random`,
     that is an implementation.
+
+13.4.0 
+  - Examples.java class leak in source code

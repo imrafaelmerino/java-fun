@@ -4,8 +4,8 @@ import fun.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -97,12 +97,12 @@ public final class ListGen<T> implements Gen<List<T>> {
         if (maxLength < minLength) throw new IllegalArgumentException("maxLength < minLength");
         requireNonNull(gen);
         return seed -> {
-            Supplier<Integer> sizeSupplier =
+            var sizeSupplier =
                     IntGen.arbitrary(minLength,
                                      maxLength)
                           .apply(SplitGen.DEFAULT.apply(seed));
 
-            Supplier<T> elemSupplier = gen.apply(SplitGen.DEFAULT.apply(seed));
+            var elemSupplier = gen.apply(SplitGen.DEFAULT.apply(seed));
             return listSupplier(sizeSupplier,
                                 elemSupplier);
         };
@@ -118,7 +118,7 @@ public final class ListGen<T> implements Gen<List<T>> {
     }
 
     @Override
-    public Supplier<List<T>> apply(Random seed) {
+    public Supplier<List<T>> apply(RandomGenerator seed) {
         requireNonNull(seed);
         return listSupplier(() -> size,
                             gen.apply(requireNonNull(seed)));

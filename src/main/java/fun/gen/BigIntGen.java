@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -88,7 +89,7 @@ public final class BigIntGen implements Gen<BigInteger> {
 
     @Override
     @SuppressWarnings("java:S2142")
-    public Supplier<BigInteger> apply(final Random gen) {
+    public Supplier<BigInteger> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         @SuppressWarnings("serial") Random rnd = new Random() {
 

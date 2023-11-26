@@ -6,8 +6,7 @@ public class User {
     String login;
     String name;
     String password;
-   // Set<Rating> ratings;
-   // Set<User> friends;
+
 
     public User(String login,
                 String name,

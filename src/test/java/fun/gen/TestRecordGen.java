@@ -560,7 +560,9 @@ public class TestRecordGen {
                                         InstantGen.arbitrary(1000000,
                                                              1000000000)
         );
-        Assertions.assertTrue(twenty.sample(100).allMatch(it -> it.map.size() == 20));
+        Assertions.assertTrue(twenty.sample(100)
+                                    .allMatch(it -> it.map.size() == 20)
+        );
     }
 
 
@@ -680,7 +682,7 @@ public class TestRecordGen {
                                                       1000)
         );
 
-        int times = 2000000;
+        int times = 5_000_000;
         Function<Record, List<String>> nonNullKeys = r -> {
             if (r.map.get("a") != null
                     && r.map.get("b") != null
@@ -822,6 +824,7 @@ public class TestRecordGen {
                                  .stream()
                                  .filter(containsAll.negate())
                                  .map(toPer)
+                                      .peek(System.out::println)
                                  .allMatch(it -> it <= 7.2 && it >= 6.8));
     }
 

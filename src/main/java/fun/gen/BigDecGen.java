@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -206,7 +206,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
     }
 
     @Override
-    public Supplier<BigDecimal> apply(final Random gen) {
+    public Supplier<BigDecimal> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         return () -> BigDecimal.valueOf(gen.nextDouble());
     }

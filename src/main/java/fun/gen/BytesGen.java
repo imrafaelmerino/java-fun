@@ -4,8 +4,8 @@ import fun.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -79,7 +79,7 @@ public final class BytesGen implements Gen<byte[]> {
         return Combinators.freqList(gens);
     }
 
-    private static Supplier<byte[]> genBytes(Random gen,
+    private static Supplier<byte[]> genBytes(RandomGenerator gen,
                                              Supplier<Integer> size) {
         return () -> {
             byte[] bytes = new byte[size.get()];
@@ -89,7 +89,7 @@ public final class BytesGen implements Gen<byte[]> {
     }
 
     @Override
-    public Supplier<byte[]> apply(final Random gen) {
+    public Supplier<byte[]> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         return genBytes(gen,
                         () -> length);

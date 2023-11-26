@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Objects.requireNonNull;
@@ -170,7 +171,7 @@ public final class InstantGen implements Gen<Instant> {
     }
 
     @Override
-    public Supplier<Instant> apply(final Random gen) {
+    public Supplier<Instant> apply(final RandomGenerator gen) {
         requireNonNull(gen);
 
         return LongGen.arbitrary(MIN_SECONDS,

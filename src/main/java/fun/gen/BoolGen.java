@@ -1,7 +1,7 @@
 package fun.gen;
 
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +27,7 @@ public final class BoolGen implements Gen<Boolean> {
     }
 
     @Override
-    public Supplier<Boolean> apply(final Random gen) {
+    public Supplier<Boolean> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         return gen::nextBoolean;
     }

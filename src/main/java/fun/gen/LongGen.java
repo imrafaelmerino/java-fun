@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -179,7 +180,7 @@ public final class LongGen implements Gen<Long> {
     }
 
     @Override
-    public Supplier<Long> apply(final Random gen) {
+    public Supplier<Long> apply(final RandomGenerator gen) {
         requireNonNull(gen);
         return gen::nextLong;
     }

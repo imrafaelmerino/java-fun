@@ -1,7 +1,7 @@
 package fun.gen;
 
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -122,7 +122,7 @@ public final class CharGen implements Gen<Character> {
         return arbitrary;
     }
 
-    static Supplier<Character> supplier(Random gen,
+    static Supplier<Character> supplier(RandomGenerator gen,
                                         char min,
                                         char max) {
         Supplier<Integer> supplier = IntGen.arbitrary(min,
@@ -134,7 +134,7 @@ public final class CharGen implements Gen<Character> {
     }
 
     @Override
-    public Supplier<Character> apply(final Random seed) {
+    public Supplier<Character> apply(final RandomGenerator seed) {
 
         requireNonNull(seed);
         return supplier(seed,

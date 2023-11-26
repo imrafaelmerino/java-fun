@@ -4,6 +4,7 @@ import fun.tuple.Pair;
 
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -50,7 +51,7 @@ public final class PairGen<A, B> implements Gen<Pair<A, B>> {
     }
 
     @Override
-    public Supplier<Pair<A, B>> apply(final Random seed) {
+    public Supplier<Pair<A, B>> apply(final RandomGenerator seed) {
         requireNonNull(seed);
         final Supplier<A> a = _1.apply(splitGen.apply(seed));
         final Supplier<B> b = _2.apply(splitGen.apply(seed));

@@ -193,13 +193,13 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
 
     /**
      * Creates a supplier that generates a sample value using this generator with a new random seed.
-     * An alternative method is available to specify a custom random seed using {@link #sample(Random)}.
+     * An alternative method is available to specify a custom random seed using {@link #sample(RandomGenerator)}.
      *
      * @return A supplier that produces a sample value using this generator with a newly generated random seed.
-     * @see #sample(Random)
+     * @see #sample(RandomGenerator)
      */
     default Supplier<O> sample() {
-        return apply(new Random());
+        return apply(RandomGenerator.getDefault());
     }
 
     /**

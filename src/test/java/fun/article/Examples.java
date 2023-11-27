@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 public class Examples {
@@ -23,7 +26,12 @@ public class Examples {
                                          .collect(Collectors.toMap(Map.Entry::getKey,
                                                                    Map.Entry::getValue));
 
+
+
+
         return collect;
+
+
     }
 
 
@@ -37,6 +45,17 @@ public class Examples {
                                          100_000_000);
 
         System.out.println(map);
+
+        Gen<Integer> gen = IntGen.arbitrary();
+        Supplier<Integer> supplier = gen.apply(new Random());
+
+        var a = supplier.get();
+        var b = supplier.get();
+        var c = supplier.get();
+
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
 
     }
 

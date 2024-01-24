@@ -64,20 +64,19 @@ class SubsetGen<O> implements Gen<Set<O>> {
             List<Set<O>> combinations = subsets(inputs);
             Gen<Integer> gen = IntGen.arbitrary(0,
                                                 combinations.size() - 1);
-            Supplier<Integer> indexSupplier = gen.apply(SplitGen.DEFAULT.apply(random));
+            Supplier<Integer> indexSupplier = gen.apply(random);
             return () -> combinations.get(indexSupplier.get());
         } else {
             Gen<Integer> gen = IntGen.arbitrary(0,
                                                 inputs.size());
-            Supplier<Integer> nSupplier = gen.apply(SplitGen.DEFAULT.apply(random));
-
+            Supplier<Integer> lengthSupplier = gen.apply(SplitGen.DEFAULT.apply(random));
 
             return () -> {
                 List<O> xs = new ArrayList<>(inputs);
                 Combinators.shuffle(xs,
                                     random); // Shuffle the elements randomly
                 return new HashSet<>(xs.subList(0,
-                                                nSupplier.get()));
+                                                lengthSupplier.get()));
             };
         }
     }

@@ -357,6 +357,7 @@ public final class Combinators {
         };
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     static void shuffle(List<?> list,
                         RandomGenerator rnd) {
         int size = list.size();
@@ -376,7 +377,7 @@ public final class Combinators {
 
             // Dump array back into list
             // instead of using a raw type here, it's possible to capture
-            // the wildcard but it will require a call to a supplementary
+            // the wildcard, but it will require a call to a supplementary
             // private method
             ListIterator it = list.listIterator();
             for (Object e : arr) {
@@ -404,12 +405,11 @@ public final class Combinators {
                             int i,
                             int j) {
         // instead of using a raw type here, it's possible to capture
-        // the wildcard but it will require a call to a supplementary
+        // the wildcard, but it will require a call to a supplementary
         // private method
-        final List l = list;
-        l.set(i,
-              l.set(j,
-                    l.get(i)));
+        ((List) list).set(i,
+                          ((List) list).set(j,
+                                            ((List) list).get(i)));
     }
 
     /**

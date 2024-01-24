@@ -72,7 +72,11 @@ public final class QuintupleGen<A, B, C, D, E> implements Gen<Quintuple<A, B, C,
                                                                    final Gen<C> _3,
                                                                    final Gen<D> _4,
                                                                    final Gen<E> _5) {
-        return new QuintupleGen<>(_1, _2, _3, _4, _5);
+        return new QuintupleGen<>(_1,
+                                  _2,
+                                  _3,
+                                  _4,
+                                  _5);
     }
 
     @Override
@@ -83,6 +87,10 @@ public final class QuintupleGen<A, B, C, D, E> implements Gen<Quintuple<A, B, C,
         final Supplier<C> c = _3.apply(splitGen.apply(seed));
         final Supplier<D> d = _4.apply(splitGen.apply(seed));
         final Supplier<E> e = _5.apply(splitGen.apply(seed));
-        return () -> Quintuple.of(a.get(), b.get(), c.get(), d.get(), e.get());
+        return () -> Quintuple.of(a.get(),
+                                  b.get(),
+                                  c.get(),
+                                  d.get(),
+                                  e.get());
     }
 }

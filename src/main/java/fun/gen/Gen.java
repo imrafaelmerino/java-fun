@@ -60,8 +60,6 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
     }
 
 
-
-
     /**
      * Creates a generator that ensures distinct values are generated from the underlying generator,
      * with a default maximum number of tries set to 1000.
@@ -210,7 +208,7 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
      * @throws IllegalArgumentException If {@code n} is less than 0.
      */
     default Stream<O> sample(final int n) {
-        return Stream.generate(apply(new Random())).limit(n);
+        return Stream.generate(apply(RandomGenerator.getDefault())).limit(n);
     }
 
     /**
@@ -308,8 +306,5 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
         );
 
     }
-
-
-
 
 }

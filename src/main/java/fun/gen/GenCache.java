@@ -32,7 +32,8 @@ final class GenCache {
     static <O extends Gen<?>> O get(String name) {
         O gen = (O) cache.get(requireNonNull(name));
         if (gen == null)
-            throw new RuntimeException(String.format("The gen `%s` doesn't exist.",name));
+            throw new RuntimeException(String.format("The gen `%s` doesn't exist.",
+                                                     name));
         return gen;
     }
 

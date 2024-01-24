@@ -1,5 +1,6 @@
 package fun.gen;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.function.UnaryOperator;
 import java.util.random.RandomGenerator;
@@ -12,8 +13,16 @@ import java.util.random.RandomGeneratorFactory;
 @FunctionalInterface
 public interface SplitGen extends UnaryOperator<RandomGenerator> {
     /**
-     * A default implementation of the {@code SplitGen} interface, which creates a new {@link Random} generator with a seed generated from the source generator's state.
+     * A default implementation of the {@code SplitGen} interface, which creates a new {@link RandomGenerator} generator with a
+     * seed generated from the source generator's state.
      * This default implementation is commonly used to split a random generator into multiple independent generators.
      */
-    SplitGen DEFAULT = rg -> RandomGeneratorFactory.getDefault().create(rg.nextLong());
+    SplitGen DEFAULT = rg -> {
+        if (rg instanceof RandomGenerator.SplittableGenerator s) return s.split();
+        if (rg instanceof SecureRandom r) return new SecureRandom(r.generateSeed(r.nextInt(64,
+                                                                                           128)));
+        if (rg instanceof Random r) return new Random(r.nextLong());
+        return RandomGeneratorFactory.getDefault()
+                                     .create(rg.nextLong());
+    };
 }

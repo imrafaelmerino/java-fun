@@ -4,12 +4,11 @@ package fun.gen;
  * A runtime exception indicating that the type of value associated with a key in a Record does not match the expected type.
  * This exception is typically thrown when using the `getXXX` methods of the Record class to retrieve values of specific types.
  */
-@SuppressWarnings("serialid")
+@SuppressWarnings("serial")
 public final class RecordTypeNotExpected extends RuntimeException {
 
     private static final String TEMPLATE =
-            "The type you expect of the value associated to the key %s is %s, however the " +
-                    "real type is %s. Consider using another getXXX method or the generator is not producing the expected values";
+            "The anticipated data type for the value linked to the key %s is %s, yet the actual type is %s. Please contemplate utilizing an alternative getXXX method, or verify that the generator is producing the anticipated values";
 
     /**
      * Constructs a new RecordTypeNotExpected instance with the specified error message.
@@ -31,8 +30,8 @@ public final class RecordTypeNotExpected extends RuntimeException {
                                  Class<?> realType,
                                  String key) {
         this(String.format(TEMPLATE,
-                           typeExpected,
                            key,
+                           typeExpected,
                            realType.getName()));
     }
 }

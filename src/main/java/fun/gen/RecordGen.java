@@ -2143,7 +2143,7 @@ public final class RecordGen implements Gen<Record> {
 
         Map<String, Supplier<?>> map = new LinkedHashMap<>();
         for (var pair : bindings.entrySet()) {
-            Gen<?> value = pair.getValue();
+            var value = pair.getValue();
             map.put(pair.getKey(),
                     value.apply(split.apply(random))
             );

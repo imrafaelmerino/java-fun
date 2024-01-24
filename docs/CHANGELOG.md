@@ -28,4 +28,7 @@ New:
 - `CSVStreamBuilder` class to read csv files into Stream of `Record`
 - upgrade error prone library
 - New `getOptXXX` methods in `Record` class (`getOptStr`, `getOptInt` ...)
-
+- The methods `getXXX` and `getOptXXX` in the `Record` class prioritize returning data where possible instead
+  of throwing exceptions.For instance, the `record.getLong("age")` method can return not only `Long` but
+  also `Byte`, `Short`, and `Integer`. Similarly, the `getDouble` method can return integral numbers in addition to
+  floating-point values.

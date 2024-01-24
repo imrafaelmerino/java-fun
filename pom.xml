@@ -87,9 +87,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
-                <configuration>
-                    <source>8</source>
-                </configuration>
+                    <configuration>
+                        <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
+                    </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

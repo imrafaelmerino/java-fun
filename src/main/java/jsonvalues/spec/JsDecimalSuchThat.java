@@ -9,42 +9,43 @@ import java.util.function.Function;
 import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 
 final class JsDecimalSuchThat extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
-    final Function<BigDecimal, Optional<JsError>> predicate;
 
-    JsDecimalSuchThat(final Function<BigDecimal, Optional<JsError>> predicate,
-                      final boolean nullable
-                     ) {
-        super(nullable);
-        this.predicate = predicate;
-    }
+  final Function<BigDecimal, Optional<JsError>> predicate;
 
-
-    @Override
-    public JsSpec nullable() {
-        return new JsDecimalSuchThat(predicate,
-                                     true
-        );
-    }
+  JsDecimalSuchThat(final Function<BigDecimal, Optional<JsError>> predicate,
+                    final boolean nullable
+                   ) {
+    super(nullable);
+    this.predicate = predicate;
+  }
 
 
-    @Override
-    public JsParser parser() {
-        return JsParsers.INSTANCE.ofDecimalSuchThat(predicate,
-                                                    nullable
-                                                   );
-    }
+  @Override
+  public JsSpec nullable() {
+    return new JsDecimalSuchThat(predicate,
+                                 true
+    );
+  }
 
 
-    @Override
-    public Optional<JsError> testValue(final JsValue value) {
-        final Optional<JsError> error = Functions.testElem(JsValue::isDecimal,
-                                                           DECIMAL_EXPECTED,
-                                                           nullable
-                                                          )
-                                                 .apply(value);
+  @Override
+  public JsParser parser() {
+    return JsParsers.INSTANCE.ofDecimalSuchThat(predicate,
+                                                nullable
+                                               );
+  }
 
-        return error.isPresent() || value.isNull() ?
-                error :
-                predicate.apply(value.toJsBigDec().value);
-    }
+
+  @Override
+  public Optional<JsError> testValue(final JsValue value) {
+    final Optional<JsError> error = Functions.testElem(JsValue::isDecimal,
+                                                       DECIMAL_EXPECTED,
+                                                       nullable
+                                                      )
+                                             .apply(value);
+
+    return error.isPresent() || value.isNull() ?
+           error :
+           predicate.apply(value.toJsBigDec().value);
+  }
 }

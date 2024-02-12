@@ -8,5 +8,7 @@ package jsonvalues;
  * @param key   the key
  * @param value the value associated to the key
  */
-public record JsObjPair(String key, JsValue value) {
+public record JsObjPair(String key,
+                        JsValue value) {
+
 }

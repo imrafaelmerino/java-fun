@@ -29,8 +29,8 @@ package jsonvalues.spec;
  * methods not used can simply be commented out.<br><br>
  * <p>
  * There is also a "fast" version of all decode methods that works the same way as the normal ones, but har a few
- * demands on the decoded input. Normally though, these fast versions should be used if the source of the input is known,
- * and it hasn't been tampered with.<br><br>
+ * demands on the decoded input. Normally though, these fast versions should be used if the source of the input is
+ * known, and it hasn't been tampered with.<br><br>
  * <p>
  * If you find the code useful, or you find a bug, please send me a note at base64 @ miginfocom . com.
  * <p>
@@ -58,49 +58,52 @@ package jsonvalues.spec;
  */
 
 abstract class Base64 {
-    private static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
-    private static final byte[] BA;
 
-    static {
-        BA = new byte[CA.length];
-        for (int i = 0; i < CA.length; i++) {
-            BA[i] = (byte) CA[i];
-        }
+  private static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
+  private static final byte[] BA;
+
+  static {
+    BA = new byte[CA.length];
+    for (int i = 0; i < CA.length; i++) {
+      BA[i] = (byte) CA[i];
+    }
+  }
+
+  static int encodeToBytes(byte[] sArr,
+                           byte[] dArr,
+                           final int start) {
+    final int sLen = sArr.length;
+
+    final int eLen = (sLen / 3) * 3;              // Length of even 24-bits.
+    final int dLen = ((sLen - 1) / 3 + 1) << 2;   // Returned character count
+
+    // Encode even 24-bits
+    for (int s = 0, d = start; s < eLen; ) {
+      // Copy next three bytes into lower 24 bits of int, paying attention to sign.
+      int i = (sArr[s++] & 0xff) << 16 | (sArr[s++] & 0xff) << 8 | (sArr[s++] & 0xff);
+
+      // Encode the int into four chars
+      dArr[d++] = BA[(i >>> 18) & 0x3f];
+      dArr[d++] = BA[(i >>> 12) & 0x3f];
+      dArr[d++] = BA[(i >>> 6) & 0x3f];
+      dArr[d++] = BA[i & 0x3f];
     }
 
-    static int encodeToBytes(byte[] sArr, byte[] dArr, final int start) {
-        final int sLen = sArr.length;
+    // Pad and encode last bits if source isn't even 24 bits.
+    int left = sLen - eLen; // 0 - 2.
+    if (left > 0) {
+      // Prepare the int
+      int i = ((sArr[eLen] & 0xff) << 10) | (left == 2 ? ((sArr[sLen - 1] & 0xff) << 2) : 0);
 
-        final int eLen = (sLen / 3) * 3;              // Length of even 24-bits.
-        final int dLen = ((sLen - 1) / 3 + 1) << 2;   // Returned character count
-
-        // Encode even 24-bits
-        for (int s = 0, d = start; s < eLen; ) {
-            // Copy next three bytes into lower 24 bits of int, paying attention to sign.
-            int i = (sArr[s++] & 0xff) << 16 | (sArr[s++] & 0xff) << 8 | (sArr[s++] & 0xff);
-
-            // Encode the int into four chars
-            dArr[d++] = BA[(i >>> 18) & 0x3f];
-            dArr[d++] = BA[(i >>> 12) & 0x3f];
-            dArr[d++] = BA[(i >>> 6) & 0x3f];
-            dArr[d++] = BA[i & 0x3f];
-        }
-
-        // Pad and encode last bits if source isn't even 24 bits.
-        int left = sLen - eLen; // 0 - 2.
-        if (left > 0) {
-            // Prepare the int
-            int i = ((sArr[eLen] & 0xff) << 10) | (left == 2 ? ((sArr[sLen - 1] & 0xff) << 2) : 0);
-
-            // Set last four chars
-            dArr[start + dLen - 4] = BA[i >> 12];
-            dArr[start + dLen - 3] = BA[(i >>> 6) & 0x3f];
-            dArr[start + dLen - 2] = left == 2 ? BA[i & 0x3f] : (byte) '=';
-            dArr[start + dLen - 1] = '=';
-        }
-
-        return dLen;
+      // Set last four chars
+      dArr[start + dLen - 4] = BA[i >> 12];
+      dArr[start + dLen - 3] = BA[(i >>> 6) & 0x3f];
+      dArr[start + dLen - 2] = left == 2 ? BA[i & 0x3f] : (byte) '=';
+      dArr[start + dLen - 1] = '=';
     }
+
+    return dLen;
+  }
 
 
 }

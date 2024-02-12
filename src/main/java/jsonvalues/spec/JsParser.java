@@ -5,5 +5,6 @@ import jsonvalues.JsValue;
 
 @FunctionalInterface
 interface JsParser {
-    JsValue parse(JsReader reader) throws JsParserException;
+
+  JsValue parse(JsReader reader) throws JsParserException;
 }

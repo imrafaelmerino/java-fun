@@ -3,654 +3,678 @@ package jsonvalues.api.optics;
 
 import fun.optic.Lens;
 import fun.optic.Option;
-import jsonvalues.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Optional;
+import jsonvalues.JsArray;
+import jsonvalues.JsBigDec;
+import jsonvalues.JsBigInt;
+import jsonvalues.JsBinary;
+import jsonvalues.JsBool;
+import jsonvalues.JsDouble;
+import jsonvalues.JsInstant;
+import jsonvalues.JsInt;
+import jsonvalues.JsLong;
+import jsonvalues.JsNull;
+import jsonvalues.JsObj;
+import jsonvalues.JsPath;
+import jsonvalues.JsStr;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TestJsArrayOptics {
 
-    @Test
-    public void testBigIntLensesByPath() {
+  @Test
+  public void testBigIntLensesByPath() {
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsBigInt.of(BigInteger.TEN)
-        );
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsBigInt.of(BigInteger.TEN)
+                           );
 
-        Lens<JsArray, BigInteger> lens = JsArray.lens.integralNum(path);
+    Lens<JsArray, BigInteger> lens = JsArray.lens.integralNum(path);
 
-        Assertions.assertEquals(BigInteger.TEN,
-                                lens.get.apply(a));
+    Assertions.assertEquals(BigInteger.TEN,
+                            lens.get.apply(a));
 
+    JsArray b = lens.set.apply(BigInteger.ONE)
+                        .apply(a);
 
-        JsArray b = lens.set.apply(BigInteger.ONE)
-                            .apply(a);
+    Assertions.assertEquals(BigInteger.ONE,
+                            lens.get.apply(b));
 
-        Assertions.assertEquals(BigInteger.ONE,
-                                lens.get.apply(b));
+    JsArray c = lens.modify.apply(i -> i.pow(2))
+                           .apply(a);
 
-        JsArray c = lens.modify.apply(i -> i.pow(2))
-                               .apply(a);
+    Assertions.assertEquals(BigInteger.valueOf(100),
+                            lens.get.apply(c));
 
-        Assertions.assertEquals(BigInteger.valueOf(100),
-                                lens.get.apply(c));
 
+  }
 
-    }
+  @Test
+  public void testBigIntLenses() {
 
-    @Test
-    public void testBigIntLenses() {
+    JsArray a = JsArray.of(BigInteger.TEN,
+                           BigInteger.ONE);
 
-        JsArray a = JsArray.of(BigInteger.TEN,
-                               BigInteger.ONE);
+    Lens<JsArray, BigInteger> lens = JsArray.lens.integralNum(0);
 
-        Lens<JsArray, BigInteger> lens = JsArray.lens.integralNum(0);
+    Assertions.assertEquals(BigInteger.TEN,
+                            lens.get.apply(a));
 
-        Assertions.assertEquals(BigInteger.TEN,
-                                lens.get.apply(a));
+    JsArray b = lens.set.apply(BigInteger.ONE)
+                        .apply(a);
 
+    Assertions.assertEquals(JsArray.of(BigInteger.ONE,
+                                       BigInteger.ONE),
+                            b);
 
-        JsArray b = lens.set.apply(BigInteger.ONE)
-                            .apply(a);
+    Assertions.assertEquals(BigInteger.ONE,
+                            lens.get.apply(b));
 
-        Assertions.assertEquals(JsArray.of(BigInteger.ONE,
-                                           BigInteger.ONE),
-                                b);
+    JsArray c = lens.modify.apply(i -> i.pow(2))
+                           .apply(a);
 
-        Assertions.assertEquals(BigInteger.ONE,
-                                lens.get.apply(b));
+    Assertions.assertEquals(BigInteger.valueOf(100),
+                            lens.get.apply(c));
 
-        JsArray c = lens.modify.apply(i -> i.pow(2))
-                               .apply(a);
 
-        Assertions.assertEquals(BigInteger.valueOf(100),
-                                lens.get.apply(c));
+  }
 
 
-    }
+  @Test
+  public void testStrLenses() {
 
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsStr.of("abc")
+                           );
 
-    @Test
-    public void testStrLenses() {
+    Lens<JsArray, String> lens = JsArray.lens.str(path);
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsStr.of("abc")
-        );
+    Assertions.assertEquals("abc",
+                            lens.get.apply(a));
 
-        Lens<JsArray, String> lens = JsArray.lens.str(path);
+    JsArray b = lens.set.apply("abcd")
+                        .apply(a);
 
-        Assertions.assertEquals("abc",
-                                lens.get.apply(a));
+    Assertions.assertEquals("abcd",
+                            lens.get.apply(b));
 
+    JsArray c = lens.modify.apply(String::toUpperCase)
+                           .apply(a);
 
-        JsArray b = lens.set.apply("abcd")
-                            .apply(a);
+    Assertions.assertEquals("ABC",
+                            lens.get.apply(c));
 
-        Assertions.assertEquals("abcd",
-                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(String::toUpperCase)
-                               .apply(a);
+  }
 
-        Assertions.assertEquals("ABC",
-                                lens.get.apply(c));
 
+  @Test
+  public void testDoubleLenses() {
 
-    }
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsDouble.of(1.5)
+                           );
 
+    Lens<JsArray, Double> lens = JsArray.lens.doubleNum(path);
 
-    @Test
-    public void testDoubleLenses() {
+    Assertions.assertEquals(Double.valueOf(1.5),
+                            lens.get.apply(a));
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsDouble.of(1.5)
-        );
+    JsArray b = lens.set.apply(10.5)
+                        .apply(a);
 
-        Lens<JsArray, Double> lens = JsArray.lens.doubleNum(path);
+    Assertions.assertEquals(Double.valueOf(10.5),
+                            lens.get.apply(b));
 
-        Assertions.assertEquals(Double.valueOf(1.5),
-                                lens.get.apply(a));
+    JsArray c = lens.modify.apply(i -> i + 1.0)
+                           .apply(b);
 
+    Assertions.assertEquals(Double.valueOf(11.5),
+                            lens.get.apply(c));
 
-        JsArray b = lens.set.apply(10.5)
-                            .apply(a);
 
-        Assertions.assertEquals(Double.valueOf(10.5),
-                                lens.get.apply(b));
+  }
 
-        JsArray c = lens.modify.apply(i -> i + 1.0)
-                               .apply(b);
+  @Test
+  public void testLongLenses() {
 
-        Assertions.assertEquals(Double.valueOf(11.5),
-                                lens.get.apply(c));
+    JsArray a = JsArray.of(JsNull.NULL,
+                           JsLong.of(Long.MAX_VALUE)
+                          );
 
+    Lens<JsArray, Long> lens = JsArray.lens.longNum(1);
 
-    }
+    Assertions.assertEquals(Long.valueOf(Long.MAX_VALUE),
+                            lens.get.apply(a));
 
-    @Test
-    public void testLongLenses() {
+    JsArray b = lens.set.apply(Long.MIN_VALUE)
+                        .apply(a);
 
-        JsArray a = JsArray.of(JsNull.NULL,
-                               JsLong.of(Long.MAX_VALUE)
-        );
+    Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE),
+                            lens.get.apply(b));
 
-        Lens<JsArray, Long> lens = JsArray.lens.longNum(1);
+    JsArray c = lens.modify.apply(i -> i + 1)
+                           .apply(b);
 
-        Assertions.assertEquals(Long.valueOf(Long.MAX_VALUE),
-                                lens.get.apply(a));
+    Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE + 1),
+                            lens.get.apply(c));
 
-        JsArray b = lens.set.apply(Long.MIN_VALUE)
-                            .apply(a);
 
-        Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE),
-                                lens.get.apply(b));
+  }
 
-        JsArray c = lens.modify.apply(i -> i + 1)
-                               .apply(b);
+  @Test
+  public void testLongLensesByPath() {
 
-        Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE + 1),
-                                lens.get.apply(c));
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsLong.of(Long.MAX_VALUE)
+                           );
 
+    Lens<JsArray, Long> lens = JsArray.lens.longNum(path);
 
-    }
+    Assertions.assertEquals(Long.valueOf(Long.MAX_VALUE),
+                            lens.get.apply(a));
 
-    @Test
-    public void testLongLensesByPath() {
+    JsArray b = lens.set.apply(Long.MIN_VALUE)
+                        .apply(a);
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsLong.of(Long.MAX_VALUE)
-        );
+    Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE),
+                            lens.get.apply(b));
 
-        Lens<JsArray, Long> lens = JsArray.lens.longNum(path);
+    JsArray c = lens.modify.apply(i -> i + 1)
+                           .apply(b);
 
-        Assertions.assertEquals(Long.valueOf(Long.MAX_VALUE),
-                                lens.get.apply(a));
+    Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE + 1),
+                            lens.get.apply(c));
 
 
-        JsArray b = lens.set.apply(Long.MIN_VALUE)
-                            .apply(a);
+  }
 
-        Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE),
-                                lens.get.apply(b));
+  @Test
+  public void testIntegerLenses() {
 
-        JsArray c = lens.modify.apply(i -> i + 1)
-                               .apply(b);
+    JsArray a = JsArray.of(0,
+                           Integer.MAX_VALUE);
 
-        Assertions.assertEquals(Long.valueOf(Long.MIN_VALUE + 1),
-                                lens.get.apply(c));
+    Lens<JsArray, Integer> lens = JsArray.lens.intNum(1);
 
+    Assertions.assertEquals(Integer.valueOf(Integer.MAX_VALUE),
+                            lens.get.apply(a));
 
-    }
+    JsArray b = lens.set.apply(Integer.MIN_VALUE)
+                        .apply(a);
 
-    @Test
-    public void testIntegerLenses() {
+    Assertions.assertEquals(b,
+                            JsArray.of(0,
+                                       Integer.MIN_VALUE));
 
-        JsArray a = JsArray.of(0,
-                               Integer.MAX_VALUE);
+    Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE),
+                            lens.get.apply(b));
 
-        Lens<JsArray, Integer> lens = JsArray.lens.intNum(1);
+    JsArray c = lens.modify.apply(i -> i + 1)
+                           .apply(b);
 
-        Assertions.assertEquals(Integer.valueOf(Integer.MAX_VALUE),
-                                lens.get.apply(a));
+    Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE + 1),
+                            lens.get.apply(c));
 
 
-        JsArray b = lens.set.apply(Integer.MIN_VALUE)
-                            .apply(a);
+  }
 
-        Assertions.assertEquals(b,
-                                JsArray.of(0,
-                                           Integer.MIN_VALUE));
+  @Test
+  public void testIntegerLensesByPath() {
 
-        Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE),
-                                lens.get.apply(b));
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsInt.of(Integer.MAX_VALUE)
+                           );
 
-        JsArray c = lens.modify.apply(i -> i + 1)
-                               .apply(b);
+    Lens<JsArray, Integer> lens = JsArray.lens.intNum(path);
 
-        Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE + 1),
-                                lens.get.apply(c));
+    Assertions.assertEquals(Integer.valueOf(Integer.MAX_VALUE),
+                            lens.get.apply(a));
 
+    JsArray b = lens.set.apply(Integer.MIN_VALUE)
+                        .apply(a);
 
-    }
+    Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE),
+                            lens.get.apply(b));
 
-    @Test
-    public void testIntegerLensesByPath() {
+    JsArray c = lens.modify.apply(i -> i + 1)
+                           .apply(b);
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsInt.of(Integer.MAX_VALUE)
-        );
+    Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE + 1),
+                            lens.get.apply(c));
 
-        Lens<JsArray, Integer> lens = JsArray.lens.intNum(path);
 
-        Assertions.assertEquals(Integer.valueOf(Integer.MAX_VALUE),
-                                lens.get.apply(a));
+  }
 
 
-        JsArray b = lens.set.apply(Integer.MIN_VALUE)
-                            .apply(a);
+  @Test
+  public void testBooleanLensesByPath() {
 
-        Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE),
-                                lens.get.apply(b));
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsBool.TRUE
+                           );
 
-        JsArray c = lens.modify.apply(i -> i + 1)
-                               .apply(b);
+    Lens<JsArray, Boolean> lens = JsArray.lens.bool(path);
 
-        Assertions.assertEquals(Integer.valueOf(Integer.MIN_VALUE + 1),
-                                lens.get.apply(c));
+    Assertions.assertTrue(lens.get.apply(a));
 
+    JsArray b = lens.set.apply(false)
+                        .apply(a);
 
-    }
+    Assertions.assertFalse(lens.get.apply(b));
 
+    JsArray c = lens.modify.apply(i -> !i)
+                           .apply(b);
 
-    @Test
-    public void testBooleanLensesByPath() {
+    Assertions.assertTrue(lens.get.apply(c));
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsBool.TRUE
-        );
 
-        Lens<JsArray, Boolean> lens = JsArray.lens.bool(path);
+  }
 
-        Assertions.assertTrue(lens.get.apply(a));
+  @Test
+  public void testBooleanLenses() {
 
+    JsArray a = JsArray.of(
+        JsBool.TRUE,
+        JsNull.NULL
+                          );
 
-        JsArray b = lens.set.apply(false)
-                            .apply(a);
+    Lens<JsArray, Boolean> lens = JsArray.lens.bool(0);
 
-        Assertions.assertFalse(lens.get.apply(b));
+    Assertions.assertTrue(lens.get.apply(a));
 
-        JsArray c = lens.modify.apply(i -> !i)
-                               .apply(b);
+    JsArray b = lens.set.apply(false)
+                        .apply(a);
 
-        Assertions.assertTrue(lens.get.apply(c));
+    Assertions.assertEquals(JsArray.of(JsBool.FALSE,
+                                       JsNull.NULL),
+                            b);
 
+    Assertions.assertFalse(lens.get.apply(b));
 
-    }
+    JsArray c = lens.modify.apply(i -> !i)
+                           .apply(b);
 
-    @Test
-    public void testBooleanLenses() {
+    Assertions.assertTrue(lens.get.apply(c));
 
-        JsArray a = JsArray.of(
-                JsBool.TRUE,
-                JsNull.NULL
-        );
 
-        Lens<JsArray, Boolean> lens = JsArray.lens.bool(0);
+  }
 
-        Assertions.assertTrue(lens.get.apply(a));
+  @Test
+  public void testDecimalLenses() {
 
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsBigDec.of(new BigDecimal("1.11"))
+                           );
 
-        JsArray b = lens.set.apply(false)
-                            .apply(a);
+    Lens<JsArray, BigDecimal> lens = JsArray.lens.decimalNum(path);
 
-        Assertions.assertEquals(JsArray.of(JsBool.FALSE,
-                                           JsNull.NULL),
-                                b);
+    Assertions.assertEquals(new BigDecimal("1.11"),
+                            lens.get.apply(a));
 
-        Assertions.assertFalse(lens.get.apply(b));
+    JsArray b = lens.set.apply(new BigDecimal("10.11"))
+                        .apply(a);
 
-        JsArray c = lens.modify.apply(i -> !i)
-                               .apply(b);
+    Assertions.assertEquals(new BigDecimal("10.11"),
+                            lens.get.apply(b));
 
-        Assertions.assertTrue(lens.get.apply(c));
+    JsArray c = lens.modify.apply(i -> i.plus()
+                                        .add(BigDecimal.valueOf(10.0)))
+                           .apply(b);
 
+    Assertions.assertEquals(new BigDecimal("20.11"),
+                            lens.get.apply(c));
 
-    }
 
-    @Test
-    public void testDecimalLenses() {
+  }
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsBigDec.of(new BigDecimal("1.11"))
-        );
 
-        Lens<JsArray, BigDecimal> lens = JsArray.lens.decimalNum(path);
+  @Test
+  public void testBoolLenses() {
 
-        Assertions.assertEquals(new BigDecimal("1.11"),
-                                lens.get.apply(a));
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsBool.TRUE
+                           );
 
+    Lens<JsArray, Boolean> lens = JsArray.lens.bool(path);
 
-        JsArray b = lens.set.apply(new BigDecimal("10.11"))
-                            .apply(a);
+    Assertions.assertEquals(true,
+                            lens.get.apply(a));
 
-        Assertions.assertEquals(new BigDecimal("10.11"),
-                                lens.get.apply(b));
+    JsArray b = lens.set.apply(false)
+                        .apply(a);
 
-        JsArray c = lens.modify.apply(i -> i.plus().add(BigDecimal.valueOf(10.0)))
-                               .apply(b);
+    Assertions.assertEquals(false,
+                            lens.get.apply(b));
 
-        Assertions.assertEquals(new BigDecimal("20.11"),
-                                lens.get.apply(c));
+    JsArray c = lens.modify.apply(i -> !i)
+                           .apply(b);
 
+    Assertions.assertEquals(true,
+                            lens.get.apply(c));
 
-    }
 
+  }
 
-    @Test
-    public void testBoolLenses() {
+  @Test
+  public void testComposeArr() {
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsBool.TRUE
-        );
+    JsArray arr = JsArray.of(JsArray.of(JsArray.of("a",
+                                                   "b"),
+                                        JsArray.of("c",
+                                                   "d")
+                                       )
+                            );
 
-        Lens<JsArray, Boolean> lens = JsArray.lens.bool(path);
+    Lens<JsArray, JsArray> firstArr = JsArray.lens.array(0);
+    Lens<JsArray, String> a = firstArr.compose(firstArr)
+                                      .compose(JsArray.lens.str(0));
 
-        Assertions.assertEquals(true,
-                                lens.get.apply(a));
+    Assertions.assertEquals("a",
+                            a.get.apply(arr));
 
+    Assertions.assertEquals("hi",
+                            a.get.apply(a.set.apply("hi")
+                                             .apply(arr)));
 
-        JsArray b = lens.set.apply(false)
-                            .apply(a);
+    JsArray newArr = a.modify.apply(String::toUpperCase)
+                             .apply(arr);
+    Assertions.assertEquals("A",
+                            a.get.apply(newArr));
 
-        Assertions.assertEquals(false,
-                                lens.get.apply(b));
+    Assertions.assertEquals("a",
+                            firstArr.compose(JsArray.lens
+                                                 .str(JsPath.path("/0/0")))
+                                .get.apply(arr)
+                           );
 
-        JsArray c = lens.modify.apply(i -> !i)
-                               .apply(b);
 
-        Assertions.assertEquals(true,
-                                lens.get.apply(c));
+  }
 
 
-    }
+  @Test
+  public void testObjLenses() {
 
-    @Test
-    public void testComposeArr() {
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsObj.empty()
+                           );
 
-        JsArray arr = JsArray.of(JsArray.of(JsArray.of("a",
-                                                       "b"),
-                                            JsArray.of("c",
-                                                       "d")
-                                 )
-        );
+    Lens<JsArray, JsObj> lens = JsArray.lens.obj(path);
 
+    Assertions.assertEquals(JsObj.empty(),
+                            lens.get.apply(a));
 
-        Lens<JsArray, JsArray> firstArr = JsArray.lens.array(0);
-        Lens<JsArray, String> a = firstArr.compose(firstArr)
-                                          .compose(JsArray.lens.str(0));
+    JsArray b = lens.set.apply(JsObj.of("a",
+                                        JsInt.of(1)))
+                        .apply(a);
 
-        Assertions.assertEquals("a",
-                                a.get.apply(arr));
+    Assertions.assertEquals(JsObj.of("a",
+                                     JsInt.of(1)),
+                            lens.get.apply(b));
 
-        Assertions.assertEquals("hi",
-                                a.get.apply(a.set.apply("hi").apply(arr)));
+    JsArray c = lens.modify.apply(i -> i.set("b",
+                                             JsStr.of("hi")))
+                           .apply(b);
 
-        JsArray newArr = a.modify.apply(String::toUpperCase).apply(arr);
-        Assertions.assertEquals("A",
-                                a.get.apply(newArr));
+    Assertions.assertEquals(JsObj.of("a",
+                                     JsInt.of(1))
+                                 .set("b",
+                                      JsStr.of("hi")),
+                            lens.get.apply(c));
 
-        Assertions.assertEquals("a",
-                                firstArr.compose(JsArray.lens
-                                                         .str(JsPath.path("/0/0")))
-                                        .get.apply(arr)
-        );
 
+  }
 
-    }
+  @Test
+  public void testArrayLenses() {
 
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsArray.empty()
+                           );
 
-    @Test
-    public void testObjLenses() {
+    Lens<JsArray, JsArray> lens = JsArray.lens.array(path);
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsObj.empty()
-        );
+    Assertions.assertEquals(JsArray.empty(),
+                            lens.get.apply(a));
 
-        Lens<JsArray, JsObj> lens = JsArray.lens.obj(path);
+    JsArray b = lens.set.apply(JsArray.empty()
+                                      .append(JsInt.of(1)))
+                        .apply(a);
 
-        Assertions.assertEquals(JsObj.empty(),
-                                lens.get.apply(a));
+    Assertions.assertEquals(JsArray.empty()
+                                   .append(JsInt.of(1)),
+                            lens.get.apply(b));
 
+    JsArray c = lens.modify.apply(i -> i.append(JsInt.of(2)))
+                           .apply(b);
 
-        JsArray b = lens.set.apply(JsObj.of("a",
-                                            JsInt.of(1)))
-                            .apply(a);
+    Assertions.assertEquals(JsArray.empty()
+                                   .append(JsInt.of(1),
+                                           JsInt.of(2)),
+                            lens.get.apply(c));
 
-        Assertions.assertEquals(JsObj.of("a",
-                                         JsInt.of(1)),
-                                lens.get.apply(b));
 
-        JsArray c = lens.modify.apply(i -> i.set("b",
-                                                 JsStr.of("hi")))
-                               .apply(b);
+  }
 
-        Assertions.assertEquals(JsObj.of("a",
-                                         JsInt.of(1)).set("b",
-                                                          JsStr.of("hi")),
-                                lens.get.apply(c));
+  @Test
+  public void testArrayBinaryLensesByPath() {
 
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsBinary.of("hi".getBytes(StandardCharsets.UTF_8)));
 
-    }
+    Lens<JsArray, byte[]> lens = JsArray.lens.binary(path);
 
-    @Test
-    public void testArrayLenses() {
+    Assertions.assertArrayEquals("hi".getBytes(StandardCharsets.UTF_8),
+                                 lens.get.apply(a));
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsArray.empty()
-        );
 
-        Lens<JsArray, JsArray> lens = JsArray.lens.array(path);
+  }
 
-        Assertions.assertEquals(JsArray.empty(),
-                                lens.get.apply(a));
+  @Test
+  public void testArrayBinaryLenses() {
 
+    JsArray a = JsArray.of(JsBinary.of("hi".getBytes(StandardCharsets.UTF_8)));
 
-        JsArray b = lens.set.apply(JsArray.empty().append(JsInt.of(1)))
-                            .apply(a);
+    Lens<JsArray, byte[]> lens = JsArray.lens.binary(0);
 
-        Assertions.assertEquals(JsArray.empty().append(JsInt.of(1)),
-                                lens.get.apply(b));
+    Assertions.assertArrayEquals("hi".getBytes(StandardCharsets.UTF_8),
+                                 lens.get.apply(a));
 
-        JsArray c = lens.modify.apply(i -> i.append(JsInt.of(2)))
-                               .apply(b);
 
-        Assertions.assertEquals(JsArray.empty().append(JsInt.of(1),
-                                                       JsInt.of(2)),
-                                lens.get.apply(c));
+  }
 
+  @Test
+  public void testArrayInstantLensesByPath() {
 
-    }
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsInstant.of(Instant.MAX));
 
-    @Test
-    public void testArrayBinaryLensesByPath() {
+    Lens<JsArray, Instant> lens = JsArray.lens.instant(path);
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsBinary.of("hi".getBytes(StandardCharsets.UTF_8)));
+    Assertions.assertEquals(Instant.MAX,
+                            lens.get.apply(a));
 
-        Lens<JsArray, byte[]> lens = JsArray.lens.binary(path);
 
-        Assertions.assertArrayEquals("hi".getBytes(StandardCharsets.UTF_8),
-                                     lens.get.apply(a));
+  }
 
+  @Test
+  public void testArrayInstantLenses() {
 
-    }
+    JsArray a = JsArray.of(JsInstant.of(Instant.MAX));
 
-    @Test
-    public void testArrayBinaryLenses() {
+    Lens<JsArray, Instant> lens = JsArray.lens.instant(0);
 
-        JsArray a = JsArray.of(JsBinary.of("hi".getBytes(StandardCharsets.UTF_8)));
+    Assertions.assertEquals(Instant.MAX,
+                            lens.get.apply(a));
 
-        Lens<JsArray, byte[]> lens = JsArray.lens.binary(0);
+  }
 
-        Assertions.assertArrayEquals("hi".getBytes(StandardCharsets.UTF_8),
-                                     lens.get.apply(a));
+  @Test
+  public void testArrayStrLensesByPath() {
 
+    JsPath path = JsPath.path("/0/b/c");
+    JsArray a = JsArray.empty()
+                       .set(path,
+                            JsStr.of("a"));
 
-    }
+    Lens<JsArray, String> lens = JsArray.lens.str(path);
 
-    @Test
-    public void testArrayInstantLensesByPath() {
+    Assertions.assertEquals("a",
+                            lens.get.apply(a));
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsInstant.of(Instant.MAX));
 
-        Lens<JsArray, Instant> lens = JsArray.lens.instant(path);
+  }
 
-        Assertions.assertEquals(Instant.MAX,
-                                lens.get.apply(a));
+  @Test
+  public void testArrayStrLenses() {
 
+    JsArray a = JsArray.of(JsStr.of("a"));
 
-    }
+    Lens<JsArray, String> lens = JsArray.lens.str(0);
 
-    @Test
-    public void testArrayInstantLenses() {
+    Assertions.assertEquals("a",
+                            lens.get.apply(a));
 
-        JsArray a = JsArray.of(JsInstant.of(Instant.MAX));
+  }
 
-        Lens<JsArray, Instant> lens = JsArray.lens.instant(0);
+  @Test
+  public void testArrayStrOption() {
 
-        Assertions.assertEquals(Instant.MAX,
-                                lens.get.apply(a));
+    JsArray a = JsArray.of(JsStr.of("a"));
 
-    }
+    Option<JsArray, String> lens = JsArray.optional.str(0);
 
-    @Test
-    public void testArrayStrLensesByPath() {
+    Assertions.assertEquals("a",
+                            lens.get.apply(a)
+                                    .get());
 
-        JsPath path = JsPath.path("/0/b/c");
-        JsArray a = JsArray.empty().set(path,
-                                        JsStr.of("a"));
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.empty()));
 
-        Lens<JsArray, String> lens = JsArray.lens.str(path);
+  }
 
-        Assertions.assertEquals("a",
-                                lens.get.apply(a));
+  @Test
+  public void testArrayIntOption() {
 
+    JsArray a = JsArray.of(JsInt.of(1));
 
-    }
+    Option<JsArray, Integer> lens = JsArray.optional.intNum(0);
 
-    @Test
-    public void testArrayStrLenses() {
+    Assertions.assertEquals(1,
+                            lens.get.apply(a)
+                                    .get());
 
-        JsArray a = JsArray.of(JsStr.of("a"));
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.of("a")));
 
-        Lens<JsArray, String> lens = JsArray.lens.str(0);
+  }
 
-        Assertions.assertEquals("a",
-                                lens.get.apply(a));
+  @Test
+  public void testArrayLongOption() {
 
-    }
+    JsArray a = JsArray.of(JsLong.of(Long.MAX_VALUE));
 
-    @Test
-    public void testArrayStrOption() {
+    Option<JsArray, Long> lens = JsArray.optional.longNum(0);
 
-        JsArray a = JsArray.of(JsStr.of("a"));
+    Assertions.assertEquals(Long.MAX_VALUE,
+                            lens.get.apply(a)
+                                    .get());
 
-        Option<JsArray, String> lens = JsArray.optional.str(0);
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.of("a")));
 
-        Assertions.assertEquals("a",
-                                lens.get.apply(a).get());
+  }
 
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.empty()));
+  @Test
+  public void testArrayBigIntOption() {
 
-    }
+    JsArray a = JsArray.of(JsBigInt.of(BigInteger.TEN));
 
-    @Test
-    public void testArrayIntOption() {
+    Option<JsArray, BigInteger> lens = JsArray.optional.integralNum(0);
 
-        JsArray a = JsArray.of(JsInt.of(1));
+    Assertions.assertEquals(BigInteger.TEN,
+                            lens.get.apply(a)
+                                    .get());
 
-        Option<JsArray, Integer> lens = JsArray.optional.intNum(0);
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.of("a")));
 
-        Assertions.assertEquals(1,
-                                lens.get.apply(a).get());
+  }
 
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.of("a")));
+  @Test
+  public void testArrayBigDecOption() {
 
-    }
+    JsArray a = JsArray.of(JsBigDec.of(BigDecimal.TEN));
 
-    @Test
-    public void testArrayLongOption() {
+    Option<JsArray, BigDecimal> lens = JsArray.optional.decimalNum(0);
 
-        JsArray a = JsArray.of(JsLong.of(Long.MAX_VALUE));
+    Assertions.assertEquals(BigDecimal.TEN,
+                            lens.get.apply(a)
+                                    .get());
 
-        Option<JsArray, Long> lens = JsArray.optional.longNum(0);
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.of("a")));
 
-        Assertions.assertEquals(Long.MAX_VALUE,
-                                lens.get.apply(a).get());
+  }
 
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.of("a")));
+  @Test
+  public void testArrayBoolOption() {
 
-    }
+    JsArray a = JsArray.of(JsBool.TRUE);
 
-    @Test
-    public void testArrayBigIntOption() {
+    Option<JsArray, Boolean> lens = JsArray.optional.bool(0);
 
-        JsArray a = JsArray.of(JsBigInt.of(BigInteger.TEN));
+    Assertions.assertEquals(true,
+                            lens.get.apply(a)
+                                    .get());
 
-        Option<JsArray, BigInteger> lens = JsArray.optional.integralNum(0);
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.of("a")));
 
-        Assertions.assertEquals(BigInteger.TEN,
-                                lens.get.apply(a).get());
+  }
 
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.of("a")));
+  @Test
+  public void testArrayDoubleOption() {
 
-    }
+    JsArray a = JsArray.of(JsDouble.of(1.5d));
 
-    @Test
-    public void testArrayBigDecOption() {
+    Option<JsArray, Double> lens = JsArray.optional.doubleNum(0);
 
-        JsArray a = JsArray.of(JsBigDec.of(BigDecimal.TEN));
+    Assertions.assertEquals(1.5d,
+                            lens.get.apply(a)
+                                    .get());
 
-        Option<JsArray, BigDecimal> lens = JsArray.optional.decimalNum(0);
+    Assertions.assertEquals(Optional.empty(),
+                            lens.get.apply(JsArray.of("a")));
 
-        Assertions.assertEquals(BigDecimal.TEN,
-                                lens.get.apply(a).get());
-
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.of("a")));
-
-    }
-
-    @Test
-    public void testArrayBoolOption() {
-
-        JsArray a = JsArray.of(JsBool.TRUE);
-
-        Option<JsArray, Boolean> lens = JsArray.optional.bool(0);
-
-        Assertions.assertEquals(true,
-                                lens.get.apply(a).get());
-
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.of("a")));
-
-    }
-
-    @Test
-    public void testArrayDoubleOption() {
-
-        JsArray a = JsArray.of(JsDouble.of(1.5d));
-
-        Option<JsArray, Double> lens = JsArray.optional.doubleNum(0);
-
-        Assertions.assertEquals(1.5d,
-                                lens.get.apply(a).get());
-
-        Assertions.assertEquals(Optional.empty(),
-                                lens.get.apply(JsArray.of("a")));
-
-    }
+  }
 
 }

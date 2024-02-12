@@ -13,22 +13,22 @@ package jsonvalues;
  * @see JsLong     Represents a JSON number of type long integer.
  */
 public abstract sealed class JsNumber extends JsPrimitive
-        permits JsBigDec, JsBigInt, JsDouble, JsInt, JsLong {
+    permits JsBigDec, JsBigInt, JsDouble, JsInt, JsLong {
 
-    @Override
-    public JsPrimitive toJsPrimitive() {
-        return this;
-    }
+  @Override
+  public JsPrimitive toJsPrimitive() {
+    return this;
+  }
 
-    /**
-     * Indicates whether this JSON number is of numeric type.
-     *
-     * @return true if this JSON number is of numeric type, otherwise false.
-     */
-    @Override
-    public boolean isNumber() {
-        return true;
-    }
+  /**
+   * Indicates whether this JSON number is of numeric type.
+   *
+   * @return true if this JSON number is of numeric type, otherwise false.
+   */
+  @Override
+  public boolean isNumber() {
+    return true;
+  }
 
 
 }

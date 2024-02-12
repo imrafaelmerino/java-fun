@@ -5,11 +5,14 @@ package jsonvalues.spec;
  */
 @SuppressWarnings("serial")
 public class JsSerializerException extends RuntimeException {
-     JsSerializerException(String reason) {
-        super(reason);
-    }
 
-     JsSerializerException(String reason, Throwable cause) {
-        super(reason, cause);
-    }
+  JsSerializerException(String reason) {
+    super(reason);
+  }
+
+  JsSerializerException(String reason,
+                        Throwable cause) {
+    super(reason,
+          cause);
+  }
 }

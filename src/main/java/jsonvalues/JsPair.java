@@ -7,6 +7,7 @@ package jsonvalues;
  * @param path  the location of the value
  * @param value the value itself
  */
-public record JsPair(JsPath path, JsValue value) {
+public record JsPair(JsPath path,
+                     JsValue value) {
 
 }

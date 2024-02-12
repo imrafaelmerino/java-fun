@@ -7,14 +7,15 @@ package jsonvalues.spec;
 @SuppressWarnings("serial")
 public class JsParserException extends RuntimeException {
 
-    private JsParserException(String reason) {
-        super(reason);
-    }
+  private JsParserException(String reason) {
+    super(reason);
+  }
 
-    static JsParserException reasonAt(String reason, long index) {
-        return new JsParserException(reason + " @ position=" + index);
+  static JsParserException reasonAt(String reason,
+                                    long index) {
+    return new JsParserException(reason + " @ position=" + index);
 
-    }
+  }
 
 
 }

@@ -33,109 +33,116 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsArraySpecParser {
 
-    private final JsParser parser;
+  private final JsParser parser;
 
-    private final JsSpec spec;
+  private final JsSpec spec;
 
 
-    private JsArraySpecParser(final JsSpec spec) {
-        if (!isValid(requireNonNull(spec))) {
-            throw new IllegalArgumentException("`%s` constructor requires a `%s` or `OneSpecOf(%s)`".formatted(JsArraySpecParser.class.getName(),
-                                                                                                               JsArraySpec.class.getName(),
-                                                                                                               JsArraySpec.class.getName()
-                                                                                                              ));
-        }
-        this.spec = spec;
-        parser = spec.parser();
-
+  private JsArraySpecParser(final JsSpec spec) {
+    if (!isValid(requireNonNull(spec))) {
+      throw new IllegalArgumentException("`%s` constructor requires a `%s` or `OneSpecOf(%s)`".formatted(JsArraySpecParser.class.getName(),
+                                                                                                         JsArraySpec.class.getName(),
+                                                                                                         JsArraySpec.class.getName()
+                                                                                                        ));
     }
-    /**
-     * Creates a JSON array parser based on the provided JSON array specification (spec). The parser will validate that
-     * every element in a JSON array adheres to the schema defined in the given specification.
-     *
-     * @param spec The JSON array specification that defines the expected schema for each element in the array.
-     * @return a Json array parser
-     */
-    public static JsArraySpecParser of(final JsSpec spec) {
-        return new JsArraySpecParser(spec);
-    }
+    this.spec = spec;
+    parser = spec.parser();
 
-    private boolean isValid(JsSpec spec) {
-        if (spec instanceof JsArraySpec) return true;
-        if (spec instanceof OneOf oneOf)
-            return oneOf
-                    .specs
-                    .stream()
-                    .allMatch(this::isValid);
-        if(spec instanceof NamedSpec namedSpec)
-            return isValid(JsSpecCache.get(namedSpec.name));
-        return false;
-    }
+  }
 
-    /**
-     * Parses an array of bytes representing JSON array data into a structured JSON array. The parsed JSON array must
-     * conform to the schema defined in the associated JSON specification (spec). If the input bytes do not represent a
-     * well-formed JSON array or if the parsed array does not adhere to the specified schema, a
-     * {@link JsParserException} is thrown.
-     *
-     * @param bytes An array of bytes containing JSON array data.
-     * @return The parsed JSON array if parsing is successful.
-     * @throws JsParserException If parsing fails due to JSON syntax errors or specification violations.
-     */
-    public JsArray parse(final byte[] bytes) {
+  /**
+   * Creates a JSON array parser based on the provided JSON array specification (spec). The parser will validate that
+   * every element in a JSON array adheres to the schema defined in the given specification.
+   *
+   * @param spec The JSON array specification that defines the expected schema for each element in the array.
+   * @return a Json array parser
+   */
+  public static JsArraySpecParser of(final JsSpec spec) {
+    return new JsArraySpecParser(spec);
+  }
 
-        JsArray arr = JsIO.INSTANCE.parseToJsArray(requireNonNull(bytes),
-                                                   parser
-                                                  );
+  private boolean isValid(JsSpec spec) {
+      if (spec instanceof JsArraySpec) {
+          return true;
+      }
+      if (spec instanceof OneOf oneOf) {
+          return oneOf
+              .specs
+              .stream()
+              .allMatch(this::isValid);
+      }
+      if (spec instanceof NamedSpec namedSpec) {
+          return isValid(JsSpecCache.get(namedSpec.name));
+      }
+    return false;
+  }
 
-        assert spec.test(arr).isEmpty();
+  /**
+   * Parses an array of bytes representing JSON array data into a structured JSON array. The parsed JSON array must
+   * conform to the schema defined in the associated JSON specification (spec). If the input bytes do not represent a
+   * well-formed JSON array or if the parsed array does not adhere to the specified schema, a {@link JsParserException}
+   * is thrown.
+   *
+   * @param bytes An array of bytes containing JSON array data.
+   * @return The parsed JSON array if parsing is successful.
+   * @throws JsParserException If parsing fails due to JSON syntax errors or specification violations.
+   */
+  public JsArray parse(final byte[] bytes) {
 
-        return arr;
-    }
+    JsArray arr = JsIO.INSTANCE.parseToJsArray(requireNonNull(bytes),
+                                               parser
+                                              );
+
+    assert spec.test(arr)
+               .isEmpty();
+
+    return arr;
+  }
 
 
-    /**
-     * Parses a JSON array string into a structured JSON array. The parsed JSON array must conform to the schema defined
-     * in the associated JSON specification (spec). If the input string does not represent a well-formed JSON array or
-     * if the parsed array does not adhere to the specified schema, a {@link JsParserException} is thrown.
-     *
-     * @param str A string containing JSON array data.
-     * @return The parsed JSON array if parsing is successful.
-     * @throws JsParserException If parsing fails due to JSON syntax errors or specification violations.
-     */
-    public JsArray parse(String str) {
-        JsArray arr = JsIO.INSTANCE
-                .parseToJsArray(requireNonNull(str).getBytes(StandardCharsets.UTF_8),
-                                parser
-                               );
+  /**
+   * Parses a JSON array string into a structured JSON array. The parsed JSON array must conform to the schema defined
+   * in the associated JSON specification (spec). If the input string does not represent a well-formed JSON array or if
+   * the parsed array does not adhere to the specified schema, a {@link JsParserException} is thrown.
+   *
+   * @param str A string containing JSON array data.
+   * @return The parsed JSON array if parsing is successful.
+   * @throws JsParserException If parsing fails due to JSON syntax errors or specification violations.
+   */
+  public JsArray parse(String str) {
+    JsArray arr = JsIO.INSTANCE
+        .parseToJsArray(requireNonNull(str).getBytes(StandardCharsets.UTF_8),
+                        parser
+                       );
 
-        assert spec.test(arr).isEmpty();
+    assert spec.test(arr)
+               .isEmpty();
 
-        return arr;
-    }
+    return arr;
+  }
 
-    /**
-     * Parses JSON array data from an input stream into a structured JSON array. The parsed JSON array must conform to
-     * the schema defined in the associated JSON specification (spec). If the input stream does not contain a
-     * well-formed JSON array or if the parsed array does not adhere to the specified schema, a
-     * {@link JsParserException} is thrown. Any I/O exceptions encountered while reading from the input stream are also
-     * captured and wrapped in the thrown exception.
-     *
-     * @param inputstream An input stream containing JSON array data.
-     * @return The parsed JSON array if parsing is successful.
-     * @throws JsParserException If parsing fails due to JSON syntax errors, specification violations, or I/O
-     *                           exceptions.
-     */
-    public JsArray parse(InputStream inputstream) {
-        JsArray arr = JsIO.INSTANCE.parseToJsArray(requireNonNull(inputstream),
-                                                   parser
-                                                  );
+  /**
+   * Parses JSON array data from an input stream into a structured JSON array. The parsed JSON array must conform to the
+   * schema defined in the associated JSON specification (spec). If the input stream does not contain a well-formed JSON
+   * array or if the parsed array does not adhere to the specified schema, a {@link JsParserException} is thrown. Any
+   * I/O exceptions encountered while reading from the input stream are also captured and wrapped in the thrown
+   * exception.
+   *
+   * @param inputstream An input stream containing JSON array data.
+   * @return The parsed JSON array if parsing is successful.
+   * @throws JsParserException If parsing fails due to JSON syntax errors, specification violations, or I/O exceptions.
+   */
+  public JsArray parse(InputStream inputstream) {
+    JsArray arr = JsIO.INSTANCE.parseToJsArray(requireNonNull(inputstream),
+                                               parser
+                                              );
 
-        assert spec.test(arr).isEmpty();
+    assert spec.test(arr)
+               .isEmpty();
 
-        return arr;
+    return arr;
 
-    }
+  }
 
 
 }

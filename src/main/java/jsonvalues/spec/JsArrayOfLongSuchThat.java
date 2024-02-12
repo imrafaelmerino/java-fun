@@ -7,39 +7,40 @@ import java.util.Optional;
 import java.util.function.Function;
 
 final class JsArrayOfLongSuchThat extends AbstractNullable implements JsOneErrorSpec, JsArraySpec, AvroSpec {
-    private final Function<JsArray, Optional<JsError>> predicate;
-    private final JsArrayOfLong arrayOfLongSpec;
 
-    JsArrayOfLongSuchThat(final Function<JsArray, Optional<JsError>> predicate,
-                          final boolean nullable
-                         ) {
-        super(nullable);
-        this.arrayOfLongSpec = new JsArrayOfLong(nullable);
-        this.predicate = predicate;
-    }
+  private final Function<JsArray, Optional<JsError>> predicate;
+  private final JsArrayOfLong arrayOfLongSpec;
 
-
-    @Override
-    public JsSpec nullable() {
-        return new JsArrayOfLongSuchThat(predicate,
-                                         true
-        );
-    }
+  JsArrayOfLongSuchThat(final Function<JsArray, Optional<JsError>> predicate,
+                        final boolean nullable
+                       ) {
+    super(nullable);
+    this.arrayOfLongSpec = new JsArrayOfLong(nullable);
+    this.predicate = predicate;
+  }
 
 
-    @Override
-    public JsParser parser() {
-        return JsParsers.INSTANCE.ofArrayOfLongSuchThat(predicate,
-                                                        nullable
-                                                       );
-    }
+  @Override
+  public JsSpec nullable() {
+    return new JsArrayOfLongSuchThat(predicate,
+                                     true
+    );
+  }
 
 
-    @Override
-    public Optional<JsError> testValue(final JsValue value) {
-        Optional<JsError> result = arrayOfLongSpec.testValue(value);
-        return result.isPresent() || value.isNull() ?
-                result :
-                predicate.apply(value.toJsArray());
-    }
+  @Override
+  public JsParser parser() {
+    return JsParsers.INSTANCE.ofArrayOfLongSuchThat(predicate,
+                                                    nullable
+                                                   );
+  }
+
+
+  @Override
+  public Optional<JsError> testValue(final JsValue value) {
+    Optional<JsError> result = arrayOfLongSpec.testValue(value);
+    return result.isPresent() || value.isNull() ?
+           result :
+           predicate.apply(value.toJsArray());
+  }
 }

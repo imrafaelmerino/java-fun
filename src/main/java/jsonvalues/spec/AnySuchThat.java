@@ -9,36 +9,36 @@ import static jsonvalues.spec.ERROR_CODE.REQUIRED;
 
 final class AnySuchThat implements JsOneErrorSpec {
 
-    private final Function<JsValue, Optional<JsError>> predicate;
+  private final Function<JsValue, Optional<JsError>> predicate;
 
-    AnySuchThat(final Function<JsValue, Optional<JsError>> predicate) {
-        this.predicate = predicate;
-    }
-
-
-    @Override
-    public JsSpec nullable() {
-        return this;
-    }
-
-    @Override
-    public boolean isNullable() {
-        return false;
-    }
+  AnySuchThat(final Function<JsValue, Optional<JsError>> predicate) {
+    this.predicate = predicate;
+  }
 
 
-    @Override
-    public JsParser parser() {
-        return JsParsers.INSTANCE.ofValueSuchThat(predicate);
-    }
+  @Override
+  public JsSpec nullable() {
+    return this;
+  }
+
+  @Override
+  public boolean isNullable() {
+    return false;
+  }
 
 
-    @Override
-    public Optional<JsError> testValue(final JsValue value) {
-        return value.isNothing() ?
-                Optional.of(new JsError(value,
-                                        REQUIRED)) :
-                predicate.apply(value);
+  @Override
+  public JsParser parser() {
+    return JsParsers.INSTANCE.ofValueSuchThat(predicate);
+  }
 
-    }
+
+  @Override
+  public Optional<JsError> testValue(final JsValue value) {
+    return value.isNothing() ?
+           Optional.of(new JsError(value,
+                                   REQUIRED)) :
+           predicate.apply(value);
+
+  }
 }

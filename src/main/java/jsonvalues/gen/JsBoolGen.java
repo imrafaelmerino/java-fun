@@ -11,34 +11,32 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 /**
- *
  * Represents a JsBool generator
- *
  */
 public final class JsBoolGen implements Gen<JsBool> {
 
-    private static final Gen<JsBool> arbitrary = new JsBoolGen(BoolGen.arbitrary());
-    private final Gen<Boolean> gen;
+  private static final Gen<JsBool> arbitrary = new JsBoolGen(BoolGen.arbitrary());
+  private final Gen<Boolean> gen;
 
 
-    private JsBoolGen(final Gen<Boolean> gen) {
-        this.gen = requireNonNull(gen);
-    }
+  private JsBoolGen(final Gen<Boolean> gen) {
+    this.gen = requireNonNull(gen);
+  }
 
-    /**
-     * Returns a generator that produces values with a uniform distribution of JsBool.
-     *
-     * @return A JsBool generator.
-     */
-    public static Gen<JsBool> arbitrary() {
-        return arbitrary;
-    }
+  /**
+   * Returns a generator that produces values with a uniform distribution of JsBool.
+   *
+   * @return A JsBool generator.
+   */
+  public static Gen<JsBool> arbitrary() {
+    return arbitrary;
+  }
 
 
-    @Override
-    public Supplier<JsBool> apply(final RandomGenerator seed) {
-        return gen.map(JsBool::of)
-                  .apply(requireNonNull(seed));
-    }
+  @Override
+  public Supplier<JsBool> apply(final RandomGenerator seed) {
+    return gen.map(JsBool::of)
+              .apply(requireNonNull(seed));
+  }
 }
 

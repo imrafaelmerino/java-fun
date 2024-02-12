@@ -20,8 +20,10 @@ package jsonvalues;
 
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -30,67 +32,127 @@ import java.util.Optional;
  */
 final class HashMap implements Iterable<HashArrayMappedTrieModule.LeafNode> {
 
-    private static final HashMap EMPTY = new HashMap(HashArrayMappedTrie.empty());
+  private static final HashMap EMPTY = new HashMap(HashArrayMappedTrie.empty());
 
-    private final HashArrayMappedTrie trie;
+  private final HashArrayMappedTrie trie;
 
-    private HashMap(HashArrayMappedTrie trie) {
-        this.trie = Objects.requireNonNull(trie);
+  private HashMap(HashArrayMappedTrie trie) {
+    this.trie = Objects.requireNonNull(trie);
+  }
+
+  static HashMap empty() {
+    return EMPTY;
+  }
+
+  private static HashMap wrap(HashArrayMappedTrie trie) {
+    return trie.isEmpty() ? empty() : new HashMap(trie);
+  }
+
+  static HashMap ofEntries(Set<Map.Entry<String, JsValue>> entries) {
+    Objects.requireNonNull(entries,
+                           "entries is null");
+    HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
+    for (var entry : entries) {
+      trie = trie.put(entry.getKey(),
+                      entry.getValue());
     }
+    return wrap(trie);
+  }
 
-    public static HashMap empty() {
-        return EMPTY;
+  static HashMap ofStrEntries(Set<Map.Entry<String, String>> entries) {
+    Objects.requireNonNull(entries,
+                           "entries is null");
+    HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
+    for (var entry : entries) {
+      trie = trie.put(entry.getKey(),
+                      JsStr.of(entry.getValue()));
     }
+    return wrap(trie);
+  }
 
-    private static HashMap wrap(HashArrayMappedTrie trie) {
-        return trie.isEmpty() ? empty() : new HashMap(trie);
+  static HashMap ofIntEntries(Set<Map.Entry<String, Integer>> entries) {
+    Objects.requireNonNull(entries,
+                           "entries is null");
+    HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
+    for (var entry : entries) {
+      trie = trie.put(entry.getKey(),
+                      JsInt.of(entry.getValue()));
     }
+    return wrap(trie);
+  }
 
-    public boolean containsKey(String key) {
-        return trie.containsKey(key);
+  static HashMap ofLongEntries(Set<Map.Entry<String, Long>> entries) {
+    Objects.requireNonNull(entries,
+                           "entries is null");
+    HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
+    for (var entry : entries) {
+      trie = trie.put(entry.getKey(),
+                      JsLong.of(entry.getValue()));
     }
+    return wrap(trie);
+  }
 
-    public Optional<JsValue> get(String key) {
-        return trie.get(key);
+  static HashMap ofDoubleEntries(Set<Map.Entry<String, Double>> entries) {
+    Objects.requireNonNull(entries,
+                           "entries is null");
+    HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
+    for (var entry : entries) {
+      trie = trie.put(entry.getKey(),
+                      JsDouble.of(entry.getValue()));
     }
+    return wrap(trie);
+  }
 
-    public JsValue getOrElse(String key, JsValue defaultValue) {
-        return trie.getOrElse(key, defaultValue);
-    }
+  boolean containsKey(String key) {
+    return trie.containsKey(key);
+  }
 
-    public boolean isEmpty() {
-        return trie.isEmpty();
-    }
+  Optional<JsValue> get(String key) {
+    return trie.get(key);
+  }
 
-    public HashMap put(String key, JsValue value) {
-        return new HashMap(trie.put(key, value));
-    }
+  JsValue getOrElse(String key,
+                    JsValue defaultValue) {
+    return trie.getOrElse(key,
+                          defaultValue);
+  }
 
-    public HashMap remove(String key) {
-        final HashArrayMappedTrie result = trie.remove(key);
-        return result.size() == trie.size() ? this : wrap(result);
-    }
+  boolean isEmpty() {
+    return trie.isEmpty();
+  }
 
-    public int size() {
-        return trie.size();
-    }
+  HashMap put(String key,
+              JsValue value) {
+    return new HashMap(trie.put(key,
+                                value));
+  }
 
-    public Iterator<String> keySet() {
-        return trie.keysIterator();
-    }
+  HashMap remove(String key) {
+    final HashArrayMappedTrie result = trie.remove(key);
+    return result.size() == trie.size() ? this : wrap(result);
+  }
 
+  int size() {
+    return trie.size();
+  }
 
-    public boolean containsValue(JsValue value) {
-        for (Iterator<JsValue> it = trie.valuesIterator(); it.hasNext(); ) {
-            JsValue v = it.next();
-            if (v.equals(value)) return true;
+  Iterator<String> keySet() {
+    return trie.keysIterator();
+  }
+
+  boolean containsValue(JsValue value) {
+    for (Iterator<JsValue> it = trie.valuesIterator(); it.hasNext(); ) {
+      JsValue v = it.next();
+        if (v.equals(value)) {
+            return true;
         }
-
-        return false;
     }
 
-    @Override
-    public Iterator<HashArrayMappedTrieModule.LeafNode> iterator() {
-        return trie.iterator();
-    }
+    return false;
+  }
+
+  @Override
+  public Iterator<HashArrayMappedTrieModule.LeafNode> iterator() {
+    return trie.iterator();
+  }
 }

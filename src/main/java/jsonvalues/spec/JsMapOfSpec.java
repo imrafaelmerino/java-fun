@@ -8,38 +8,41 @@ import java.util.Optional;
 
 final class JsMapOfSpec extends AbstractMap implements JsOneErrorSpec, AvroSpec {
 
-    private final JsSpec valueSpec;
+  private final JsSpec valueSpec;
 
-    JsMapOfSpec(JsSpec spec) {
-        this(false, spec);
-    }
+  JsMapOfSpec(JsSpec spec) {
+    this(false,
+         spec);
+  }
 
-    JsMapOfSpec(boolean nullable, JsSpec spec) {
-        super(nullable);
-        this.valueSpec = Objects.requireNonNull(spec);
-    }
+  JsMapOfSpec(boolean nullable,
+              JsSpec spec) {
+    super(nullable);
+    this.valueSpec = Objects.requireNonNull(spec);
+  }
 
-    JsSpec getValueSpec() {
-        return valueSpec;
-    }
+  JsSpec getValueSpec() {
+    return valueSpec;
+  }
 
-    @Override
-    public JsSpec nullable() {
-        return new JsMapOfSpec(true, valueSpec);
-    }
+  @Override
+  public JsSpec nullable() {
+    return new JsMapOfSpec(true,
+                           valueSpec);
+  }
 
-    @Override
-    public JsParser parser() {
-        return JsParsers.INSTANCE.ofMapOfSpec(valueSpec.parser(),
-                                              nullable);
-    }
+  @Override
+  public JsParser parser() {
+    return JsParsers.INSTANCE.ofMapOfSpec(valueSpec.parser(),
+                                          nullable);
+  }
 
 
-    @Override
-    public Optional<JsError> testValue(JsValue value) {
-        return test(value,
-                    valueSpec);
-    }
+  @Override
+  public Optional<JsError> testValue(JsValue value) {
+    return test(value,
+                valueSpec);
+  }
 
 
 }

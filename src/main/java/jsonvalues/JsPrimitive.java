@@ -13,15 +13,16 @@ package jsonvalues;
  * @see JsNumber
  * @see JsStr
  */
-public abstract sealed class JsPrimitive implements JsValue permits JsBinary, JsBool, JsInstant, JsNull, JsNumber, JsStr {
+public abstract sealed class JsPrimitive implements JsValue permits JsBinary, JsBool, JsInstant, JsNull, JsNumber,
+                                                                    JsStr {
 
-    @Override
-    public boolean isPrimitive() {
-        return true;
-    }
+  @Override
+  public boolean isPrimitive() {
+    return true;
+  }
 
-    @Override
-    public boolean isJson() {
-        return false;
-    }
+  @Override
+  public boolean isJson() {
+    return false;
+  }
 }

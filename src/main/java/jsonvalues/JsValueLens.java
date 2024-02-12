@@ -1,9 +1,9 @@
 package jsonvalues;
 
 
-import fun.optic.Lens;
-
 import static java.util.Objects.requireNonNull;
+
+import fun.optic.Lens;
 
 /**
  * Represent a Lens which focus is the value of a Json
@@ -12,15 +12,15 @@ import static java.util.Objects.requireNonNull;
  */
 class JsValueLens<S extends Json<S>> extends Lens<S, JsValue> {
 
-    JsValueLens(JsPath path) {
-        super(json -> requireNonNull(json).get(path),
-              value -> json -> requireNonNull(json).set(path,
-                                                        requireNonNull(value)
-                                                       )
-             );
+  JsValueLens(JsPath path) {
+    super(json -> requireNonNull(json).get(path),
+          value -> json -> requireNonNull(json).set(path,
+                                                    requireNonNull(value)
+                                                   )
+         );
 
 
-    }
+  }
 
 
 }

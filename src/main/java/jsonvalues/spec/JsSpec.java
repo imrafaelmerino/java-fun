@@ -37,56 +37,58 @@ import java.util.Objects;
  */
 public sealed interface JsSpec permits JsArraySpec, JsObjSpec, JsOneErrorSpec, NamedSpec, OneOf {
 
-    /**
-     * Returns the same spec with the nullable flag enabled.
-     *
-     * @return A new `JsSpec` instance with the nullable flag enabled.
-     */
-    JsSpec nullable();
+  /**
+   * Returns the same spec with the nullable flag enabled.
+   *
+   * @return A new `JsSpec` instance with the nullable flag enabled.
+   */
+  JsSpec nullable();
 
-    /**
-     * Returns the deserializer used during the parsing process to parse an array of bytes or strings into a JSON
-     * value.
-     *
-     * @return The deserializer used during parsing.
-     */
-    JsParser parser();
+  /**
+   * Returns the deserializer used during the parsing process to parse an array of bytes or strings into a JSON value.
+   *
+   * @return The deserializer used during parsing.
+   */
+  JsParser parser();
 
-    /**
-     * Low-level method to parse a JSON value from their string representation. Returns the JsValue if it conforms to
-     * this spec, otherwise throws a `JsParserException`.
-     *
-     * @param json The reader to parse JSON values from.
-     * @return The next token as a `JsValue`.
-     * @throws JsParserException If the parsed value does not conform to this spec.
-     */
-    default JsValue parse(final String json) throws JsParserException {
-        var reader = JsIO.INSTANCE.createReader(Objects.requireNonNull(json).getBytes(StandardCharsets.UTF_8));
-        reader.readNextToken();
-        return parser().parse(reader);
-    }
+  /**
+   * Low-level method to parse a JSON value from their string representation. Returns the JsValue if it conforms to this
+   * spec, otherwise throws a `JsParserException`.
+   *
+   * @param json The reader to parse JSON values from.
+   * @return The next token as a `JsValue`.
+   * @throws JsParserException If the parsed value does not conform to this spec.
+   */
+  default JsValue parse(final String json) throws JsParserException {
+    var reader = JsIO.INSTANCE.createReader(Objects.requireNonNull(json)
+                                                   .getBytes(StandardCharsets.UTF_8));
+    reader.readNextToken();
+    return parser().parse(reader);
+  }
 
-    /**
-     * Verify if the given JSON value satisfies this spec.
-     *
-     * @param parentPath The path where the tested value is located within the JSON structure.
-     * @param value      The JSON value to be tested.
-     * @return A set of path/code pairs representing validation errors.
-     */
-    List<SpecError> test(final JsPath parentPath, final JsValue value);
+  /**
+   * Verify if the given JSON value satisfies this spec.
+   *
+   * @param parentPath The path where the tested value is located within the JSON structure.
+   * @param value      The JSON value to be tested.
+   * @return A set of path/code pairs representing validation errors.
+   */
+  List<SpecError> test(final JsPath parentPath,
+                       final JsValue value);
 
-    /**
-     * Verify if the given JSON value satisfies this spec, starting from the root path.
-     *
-     * @param value The JSON value to be tested.
-     * @return A set of path/code pairs representing validation errors.
-     */
-    default List<SpecError> test(final JsValue value) {
-        return test(JsPath.empty(), value);
-    }
+  /**
+   * Verify if the given JSON value satisfies this spec, starting from the root path.
+   *
+   * @param value The JSON value to be tested.
+   * @return A set of path/code pairs representing validation errors.
+   */
+  default List<SpecError> test(final JsValue value) {
+    return test(JsPath.empty(),
+                value);
+  }
 
 
-    boolean isNullable();
+  boolean isNullable();
 
 }
 

@@ -19,11 +19,10 @@
 package jsonvalues;
 
 
-import jsonvalues.HashArrayMappedTrieModule.EmptyNode;
-
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Function;
+import jsonvalues.HashArrayMappedTrieModule.EmptyNode;
 
 
 /**
@@ -31,50 +30,52 @@ import java.util.function.Function;
  */
 interface HashArrayMappedTrie extends Iterable<HashArrayMappedTrieModule.LeafNode> {
 
-     static  <T, U> Iterator<U> map(Iterator<T> iter,
-                                    Function<? super T, ? extends U> mapper) {
-        return new Iterator<>() {
+  static <T, U> Iterator<U> map(Iterator<T> iter,
+                                Function<? super T, ? extends U> mapper) {
+    return new Iterator<>() {
 
-            @Override
-            public boolean hasNext() {
-                return iter.hasNext();
-            }
+      @Override
+      public boolean hasNext() {
+        return iter.hasNext();
+      }
 
-            @Override
-            public U next() {
-                return mapper.apply(iter.next());
-            }
-
-
-        };
-
-    }
-
-    static HashArrayMappedTrie empty() {
-        return EmptyNode.instance();
-    }
-
-    boolean isEmpty();
-
-    int size();
-
-    Optional<JsValue> get(String key);
-
-    JsValue getOrElse(String key, JsValue defaultValue);
-
-    boolean containsKey(String key);
-
-    HashArrayMappedTrie put(String key, JsValue value);
-
-    HashArrayMappedTrie remove(String key);
-
-    @Override
-    Iterator<HashArrayMappedTrieModule.LeafNode> iterator();
+      @Override
+      public U next() {
+        return mapper.apply(iter.next());
+      }
 
 
-    Iterator<String> keysIterator();
+    };
+
+  }
+
+  static HashArrayMappedTrie empty() {
+    return EmptyNode.instance();
+  }
+
+  boolean isEmpty();
+
+  int size();
+
+  Optional<JsValue> get(String key);
+
+  JsValue getOrElse(String key,
+                    JsValue defaultValue);
+
+  boolean containsKey(String key);
+
+  HashArrayMappedTrie put(String key,
+                          JsValue value);
+
+  HashArrayMappedTrie remove(String key);
+
+  @Override
+  Iterator<HashArrayMappedTrieModule.LeafNode> iterator();
 
 
-    Iterator<JsValue> valuesIterator();
+  Iterator<String> keysIterator();
+
+
+  Iterator<JsValue> valuesIterator();
 }
 

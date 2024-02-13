@@ -20,16 +20,16 @@
 
 ## <a name="goal"><a/> Goal
 
-The primary objective of java-fun is to bring essential Functional Programming (FP) patterns to
-the Java ecosystem. Unlike mere translations of these patterns from other languages, java-fun
-is designed with the intent that any typical Java developer can effortlessly embrace and comprehend
+The primary objective of java-fun is to bring essential Functional Programming (FP) patterns to the
+Java ecosystem. Unlike mere translations of these patterns from other languages, java-fun is
+designed with the intent that any typical Java developer can effortlessly embrace and comprehend
 these concepts. The emphasis is on preserving the essence of these patterns, ensuring developers do
 not become entangled in unfamiliar types and conventions.
 
 Here are the key concepts that have been thoughtfully implemented within **java-fun**:
 
--   **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach,
-    and having a robust set of generators that can be composed in countless ways is crucial.
+-   **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach, and
+    having a robust set of generators that can be composed in countless ways is crucial.
     **java-fun** simplifies this process, making it incredibly straightforward.
 
 -   **Optics**: In functional programming, optics take precedence over traditional getters and
@@ -63,9 +63,9 @@ of type `O`. The lazy nature of these computations is essential for seamless gen
 To create generators, you have access to two fundamental static factory methods:
 
 -   **arbitrary**: This method produces generators that offer a uniform distribution of values.
--   **biased**: This method generates values with varying probabilities, giving higher
-    probabilities to values that are known to trigger more bugs in our code. This is a crucial
-    aspect of Property-Based Testing.
+-   **biased**: This method generates values with varying probabilities, giving higher probabilities
+    to values that are known to trigger more bugs in our code. This is a crucial aspect of
+    Property-Based Testing.
 
 While you can create custom generators by implementing the `Gen` interface, **java-fun ** provides a
 plethora of predefined generators for your convenience. Let's delve into these predefined
@@ -224,8 +224,8 @@ flavors. Let's explore them in detail:
     Gen<BigInteger> gen = BigIntGen.biased(int bits);
     ```
 
--   **Arbitrary Big Integer Generator**: This generator generates big integers uniformly
-    distributed between 0 and 2^bits - 1.
+-   **Arbitrary Big Integer Generator**: This generator generates big integers uniformly distributed
+    between 0 and 2^bits - 1.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.arbitrary(int bits);
@@ -265,14 +265,15 @@ flavors. Let's explore them in detail:
 
 #### **Other Primitive Generators**
 
--   **Byte Generator**: This generator creates byte arrays with lengths biased
+-   **Byte Generator**: This generator creates byte arrays with lengths biased or uniformly
+    distributed within specified ranges.
 
-or uniformly distributed within specified ranges.
+```code
 
-    ```code
     Gen<byte[]> gen = BytesGen.biased(int minLength, int maxLength);
     Gen<byte[]> gen = BytesGen.arbitrary(int minLength, int maxLength);
-    ```
+
+```
 
 -   **Character Generator**: Various character generators are available, including arbitrary
     characters, characters within specified ranges, alphanumeric characters, alphabetic characters,
@@ -332,8 +333,8 @@ detail:
     Gen<List<T>> gen = ListGen.arbitrary(Gen<T> gen, int minLength, int maxLength);
     ```
 
--   **List of N Generator**: This generator creates lists of type `List<T>` with a fixed size
-    `size` using the provided generator `gen`.
+-   **List of N Generator**: This generator creates lists of type `List<T>` with a fixed size `size`
+    using the provided generator `gen`.
 
     ```code
     Gen<List<T>> gen = ListGen.ofN(Gen<T> gen, int size);
@@ -354,10 +355,10 @@ detail:
 
 #### **Map Generator**
 
--   **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size
-    `size`. You need to provide key and value generators, and it ensures that keys are distinct. If
-    the key generator cannot produce enough distinct keys, it will fail after 10 times the specified
-    size (customized with the method `withMaxTries`)
+-   **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size `size`.
+    You need to provide key and value generators, and it ensures that keys are distinct. If the key
+    generator cannot produce enough distinct keys, it will fail after 10 times the specified size
+    (customized with the method `withMaxTries`)
 
     ```code
     Gen<Map<K, V>> gen = MapGen.of(Gen<K> keyGen, Gen<V> valueGen, int size);
@@ -409,7 +410,7 @@ detail:
 
 `java-fun` offers various combinator functions to enhance the capabilities of generators.
 
--   **OneOf Combinator: The `oneOf` combinator selects one generator from a list of generators.
+-   **OneOf Combinator** : The `oneOf` combinator selects one generator from a list of generators.
     All generators in the list have the same probability of being chosen, and they operate
     independently.
 
@@ -429,7 +430,7 @@ detail:
     Gen<A> gen = Combinators.oneOf(A value, A... others);
     ```
 
--   **Freq Combinator: The `freq` combinator is similar to `oneOf`, but it allows you to assign
+-   **Freq Combinator**: The `freq` combinator is similar to `oneOf`, but it allows you to assign
     different weights (probabilities) to each generator, controlling their chances of being
     selected.
 
@@ -444,7 +445,7 @@ detail:
     Combinators.freq(Pair.of(3, StrGen.biased(0, 10)), Pair.of(1, BoolGen.arbitrary()));
     ```
 
--   **Nullable Combinator: The `nullable` combinator introduces the possibility of generating
+-   **Nullable Combinator** : The `nullable` combinator introduces the possibility of generating
     `null` values in your data. It is particularly useful for catching potential
     `NullPointerException` issues.
 
@@ -1046,3 +1047,6 @@ Find [here](./../docs/CHANGELOG.md) the releases notes.
 
 [json-values](https://github.com/imrafaelmerino/json-values) has defined a JSON generator and some
 optics to manipulate JSON using this library.
+
+[jio-test](https://github.com/imrafaelmerino/JIO?tab=readme-ov-file#jio-test) uses
+java-fun for its Property-Based-Testing API

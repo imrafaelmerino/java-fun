@@ -45,7 +45,7 @@ public class TestBytesGen {
                                  .allMatch(it -> it.length < 4));
 
         Map<Integer, Long> count = TestFun.generate(100000,
-                                                    gen.map(it->it.length));
+                                                    gen.map(it -> it.length));
 
         TestFun.isInMargin(100000 / 3,
                            0.1).test(count.get(0));

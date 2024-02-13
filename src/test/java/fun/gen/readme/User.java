@@ -3,9 +3,9 @@ package fun.gen.readme;
 
 public class User {
 
-    String login;
-    String name;
-    String password;
+    final String login;
+    final String name;
+    final String password;
 
 
     public User(String login,

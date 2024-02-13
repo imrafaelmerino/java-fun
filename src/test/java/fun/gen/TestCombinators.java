@@ -111,10 +111,6 @@ public class TestCombinators {
                                                          0.05);
     }
 
-    @Test
-    public void nullableFreq() {
-
-    }
 
     @Test
     public void testCombinations() {
@@ -157,9 +153,9 @@ public class TestCombinators {
 
 
         TestFun.assertGeneratedValuesHaveSameProbability(count,
-                                                         TestFun.list(new HashSet<>(Arrays.asList("a")),
-                                                                      new HashSet<>(Arrays.asList("b")),
-                                                                      new HashSet<>(Arrays.asList("c")),
+                                                         TestFun.list(new HashSet<>(List.of("a")),
+                                                                      new HashSet<>(List.of("b")),
+                                                                      new HashSet<>(List.of("c")),
                                                                       new HashSet<>(Arrays.asList("a",
                                                                                                   "b")),
                                                                       new HashSet<>(Arrays.asList("b",
@@ -185,10 +181,8 @@ public class TestCombinators {
                    )
                    .sample(100)
 
-                   .forEach(n -> {
-                       Assertions.assertEquals(2,
-                                               new HashSet<>(n).size());
-                   });
+                   .forEach(n -> Assertions.assertEquals(2,
+                                                         new HashSet<>(n).size()));
 
 
         Combinators.nOf(new HashSet<>(numbers),
@@ -196,7 +190,7 @@ public class TestCombinators {
                    )
                    .sample(100)
                    .forEach(n -> Assertions.assertEquals(numbers.size(),
-                                                     new HashSet<>(n).size()));
+                                                         new HashSet<>(n).size()));
 
 
     }

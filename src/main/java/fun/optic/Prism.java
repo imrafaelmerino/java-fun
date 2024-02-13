@@ -88,8 +88,8 @@ public class Prism<S, T> {
             final Optional<T> opt = getOptional.apply(v);
             return opt.map(t -> reverseGet.apply(f.apply(t)));
         };
-        this.isEmpty = target -> !getOptional.apply(target)
-                                             .isPresent();
+        this.isEmpty = target -> getOptional.apply(target)
+                                            .isEmpty();
         this.nonEmpty = target -> getOptional.apply(target)
                                              .isPresent();
         this.find = predicate -> v -> getOptional.apply(v)

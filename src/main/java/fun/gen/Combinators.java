@@ -369,16 +369,11 @@ public final class Combinators {
         } else {
             Object[] arr = list.toArray();
 
-            // Shuffle array
             for (int i = size; i > 1; i--)
                 swap(arr,
                      i - 1,
                      rnd.nextInt(i));
 
-            // Dump array back into list
-            // instead of using a raw type here, it's possible to capture
-            // the wildcard, but it will require a call to a supplementary
-            // private method
             ListIterator it = list.listIterator();
             for (Object e : arr) {
                 it.next();

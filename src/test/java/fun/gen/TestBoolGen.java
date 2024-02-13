@@ -8,7 +8,6 @@ import java.util.Map;
 public class TestBoolGen {
 
 
-
     @Test
     public void testBooleanGen() {
 

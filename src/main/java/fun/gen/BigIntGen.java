@@ -30,8 +30,8 @@ public final class BigIntGen implements Gen<BigInteger> {
 
 
     /**
-     * Constructs a randomly generated BigInteger, uniformly distributed over the range 0 to (2^bits - 1), inclusive.
-     * Note that this generator always generates  non-negative big integers
+     * Constructs a randomly generated BigInteger, uniformly distributed over the range 0 to (2^bits-1), inclusive.
+     * Note that this generator always generates non-negative big integers
      *
      * @param bits maximum bitLength of the new BigInteger
      * @return a big integer generator

@@ -10,14 +10,14 @@ import java.util.Optional;
 
 public class TestLenses {
 
-    Lens<Pair<String, Integer>, String> first =
+    final Lens<Pair<String, Integer>, String> first =
             new Lens<>(Pair::first,
                        str -> pair -> Pair.of(str,
                                               pair.second())
             );
 
 
-    Lens<Pair<String, Integer>, Integer> second =
+    final Lens<Pair<String, Integer>, Integer> second =
             new Lens<>(Pair::second,
                        integer -> pair -> Pair.of(pair.first(),
                                                   integer)
@@ -155,7 +155,8 @@ public class TestLenses {
         Option<Map<String, Long>, Long> option =
                 new Option<>(m -> Optional.ofNullable(m.get("bye")),
                              b -> c -> {
-                                 c.put("bye", b);
+                                 c.put("bye",
+                                       b);
                                  return c;
                              });
 

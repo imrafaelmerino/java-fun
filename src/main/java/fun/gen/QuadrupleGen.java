@@ -23,27 +23,16 @@ public final class QuadrupleGen<A, B, C, D> implements Gen<Quadruple<A, B, C, D>
     private final Gen<D> _4;
     private final SplitGen splitGen;
 
-    private QuadrupleGen(final Gen<A> _1,
-                         final Gen<B> _2,
-                         final Gen<C> _3,
-                         final Gen<D> _4) {
-        this(_1,
-             _2,
-             _3,
-             _4,
-             SplitGen.DEFAULT);
-    }
 
     private QuadrupleGen(final Gen<A> _1,
                          final Gen<B> _2,
                          final Gen<C> _3,
-                         final Gen<D> _4,
-                         final SplitGen splitGen) {
+                         final Gen<D> _4) {
         this._1 = requireNonNull(_1);
         this._2 = requireNonNull(_2);
         this._3 = requireNonNull(_3);
         this._4 = requireNonNull(_4);
-        this.splitGen = requireNonNull(splitGen);
+        this.splitGen = SplitGen.DEFAULT;
     }
 
     /**

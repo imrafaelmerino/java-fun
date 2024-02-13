@@ -1,14 +1,14 @@
 package fun.gen;
 
 
+import static java.util.Objects.requireNonNull;
+
 import fun.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Represents a generator for long values. This class provides methods to generate arbitrary and biased long values within specified ranges.
@@ -92,19 +92,11 @@ public final class LongGen implements Gen<Long> {
 
         return seed -> () -> {
             long r = seed.nextLong();
-            // It's not case (1).
             final long n = max - min + 1;
             final long m = n - 1;
             if ((n & m) == 0L) {
-                // It is case (2): length of range is a power of 2.
                 r = (r & m) + min;
             } else if (n > 0L) {
-                // It is case (3): need to reject over-represented candidates.
-                /* This loop takes an unlovable form (but it works):
-                   because the first candidate is already available,
-                   we need a break-in-the-middle construction,
-                   which is concisely but cryptically performed
-                   within the while-condition of a body-less for loop. */
                 for (long u = r >>> 1;            // ensure nonnegative
                      u + m - (r = u % n) < 0L;    // rejection check
                      u = seed.nextLong() >>> 1) // retry

@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public class TestPrism {
 
-    Prism<Exception, IllegalArgumentException> prism =
+    final Prism<Exception, IllegalArgumentException> prism =
             new Prism<>(e -> e instanceof IllegalArgumentException ?
                              Optional.of(((IllegalArgumentException) e)) :
                              Optional.empty(),
@@ -46,7 +46,6 @@ public class TestPrism {
                                       && opt.get().getMessage().equals("modified hi"));
 
     }
-
 
 
     @Test

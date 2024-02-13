@@ -54,7 +54,7 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
     }
 
     /**
-     * Sets the maximum number of attempts to generate the map of the specified size. This method allows you to control the maximum number of iterations or tries to generate a map that meets the desired size criterion.
+     * Sets the maximum number of attempts to generate the map of the specified size. This method allows you to control the maximum number of iterations or try to generate a map that meets the desired size criterion.
      *
      * @param tries The maximum number of attempts to generate the map.
      * @return A new instance of MapGen with the specified maximum tries.

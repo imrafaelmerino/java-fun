@@ -1,6 +1,8 @@
 package fun.gen;
 
 
+import static java.util.Objects.requireNonNull;
+
 import fun.tuple.Pair;
 
 import java.math.BigDecimal;
@@ -9,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Represents a generator of {@code BigDecimal} values.

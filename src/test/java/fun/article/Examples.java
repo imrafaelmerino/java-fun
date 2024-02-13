@@ -11,7 +11,6 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 public class Examples {
@@ -19,17 +18,13 @@ public class Examples {
 
     public static <I> Map<I, String> toPer(Map<I, Long> counters,
                                            double gen) {
-        Map<I, String> collect = counters.entrySet()
-                                         .stream()
-                                         .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(),
-                                                                                 (e.getValue() / gen) * 100 + " %"))
-                                         .collect(Collectors.toMap(Map.Entry::getKey,
-                                                                   Map.Entry::getValue));
 
-
-
-
-        return collect;
+        return counters.entrySet()
+                       .stream()
+                       .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(),
+                                                               (e.getValue() / gen) * 100 + " %"))
+                       .collect(Collectors.toMap(Map.Entry::getKey,
+                                                 Map.Entry::getValue));
 
 
     }

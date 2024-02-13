@@ -33,29 +33,13 @@ public final class SextupleGen<A, B, C, D, E, F> implements Gen<Sextuple<A, B, C
                         final Gen<D> _4,
                         final Gen<E> _5,
                         final Gen<F> _6) {
-        this(_1,
-             _2,
-             _3,
-             _4,
-             _5,
-             _6,
-             SplitGen.DEFAULT);
-    }
-
-    private SextupleGen(final Gen<A> _1,
-                        final Gen<B> _2,
-                        final Gen<C> _3,
-                        final Gen<D> _4,
-                        final Gen<E> _5,
-                        final Gen<F> _6,
-                        final SplitGen splitGen) {
         this._1 = requireNonNull(_1);
         this._2 = requireNonNull(_2);
         this._3 = requireNonNull(_3);
         this._4 = requireNonNull(_4);
         this._5 = requireNonNull(_5);
         this._6 = requireNonNull(_6);
-        this.splitGen = requireNonNull(splitGen);
+        this.splitGen = SplitGen.DEFAULT;
     }
 
     /**

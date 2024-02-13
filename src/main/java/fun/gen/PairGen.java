@@ -19,19 +19,12 @@ public final class PairGen<A, B> implements Gen<Pair<A, B>> {
     private final Gen<B> _2;
     private final SplitGen splitGen;
 
-    private PairGen(final Gen<A> _1,
-                    final Gen<B> _2) {
-        this(_1,
-             _2,
-             SplitGen.DEFAULT);
-    }
 
     private PairGen(final Gen<A> _1,
-                    final Gen<B> _2,
-                    final SplitGen splitGen) {
+                    final Gen<B> _2) {
         this._1 = requireNonNull(_1);
         this._2 = requireNonNull(_2);
-        this.splitGen = requireNonNull(splitGen);
+        this.splitGen = SplitGen.DEFAULT;
     }
 
     /**

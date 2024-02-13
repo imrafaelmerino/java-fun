@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -631,11 +632,11 @@ public class TestRecordGen {
                                     return Arrays.asList("b",
                                                          "c");
                                 if (record.getOptInt("a").isPresent())
-                                    return Arrays.asList("a");
+                                    return List.of("a");
                                 if (record.getOptInt("b").isPresent())
-                                    return Arrays.asList("b");
+                                    return List.of("b");
                                 if (record.getOptInt("c").isPresent())
-                                    return Arrays.asList("c");
+                                    return List.of("c");
                                 return new ArrayList<>();
                             });
 
@@ -650,20 +651,10 @@ public class TestRecordGen {
                                       .entrySet()
                                       .stream()
                                       .filter(containsAll)
-                                      .map(it -> it.getValue())
+                                      .map(Entry::getValue)
                                       .map(toPer)
                                       .peek(System.out::println)
                                       .allMatch(it -> it <= 50.1 && it >= 49.9));
-
-//        Assertions.assertTrue(generated
-//                                      .entrySet()
-//                                      .stream()
-//                                      .filter(containsAll.negate())
-//                                      .map(it -> it.getValue())
-//                                      .map(toPer)
-//                                      .peek(System.out::println)
-//                                      .allMatch(it -> it <= 16.7 && it >= 16.6));
-
 
     }
 
@@ -708,17 +699,17 @@ public class TestRecordGen {
             if (r.map.get("a") == null
                     && r.map.get("c") == null
                     && r.map.get("b") != null)
-                return Arrays.asList("b");
+                return List.of("b");
             if (r.map.get("a") == null
                     && r.map.get("c") != null
                     && r.map.get("b") == null)
-                return Arrays.asList("c");
+                return List.of("c");
             if (r.map.get("a") != null
                     && r.map.get("c") == null
                     && r.map.get("b") == null)
-                return Arrays.asList("a");
+                return List.of("a");
 
-            return Arrays.asList();
+            return List.of();
         };
 
         Function<Record, List<String>> presentKeys = r -> {
@@ -746,17 +737,17 @@ public class TestRecordGen {
             if (!r.map.containsKey("a")
                     && !r.map.containsKey("c")
                     && r.map.containsKey("b"))
-                return Arrays.asList("b");
+                return List.of("b");
             if (!r.map.containsKey("a")
                     && r.map.containsKey("c")
                     && !r.map.containsKey("b"))
-                return Arrays.asList("c");
+                return List.of("c");
             if (r.map.containsKey("a")
                     && !r.map.containsKey("c")
                     && !r.map.containsKey("b"))
-                return Arrays.asList("a");
+                return List.of("a");
 
-            return Arrays.asList();
+            return List.of();
         };
 
         Predicate<Map.Entry<List<String>, Long>> containsAll =

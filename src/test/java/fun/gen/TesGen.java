@@ -1,11 +1,15 @@
 package fun.gen;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TesGen {
 
@@ -48,13 +52,13 @@ public class TesGen {
     @Test
     public void testDistinct() {
 
-        List<Integer> list = IntGen.arbitrary().distinct().sample(100000).collect(Collectors.toList());
+        List<Integer> list = IntGen.arbitrary().distinct().sample(100000).toList();
         Assertions.assertEquals(list.size(),
                                 new HashSet<>(list).size());
 
 
         List<String> letters = StrGen.alphabetic(1,
-                                                 10).distinct().sample(100000).collect(Collectors.toList());
+                                                 10).distinct().sample(100000).toList();
         Assertions.assertEquals(letters.size(),
                                 new HashSet<>(letters).size());
     }
@@ -79,8 +83,12 @@ public class TesGen {
     }
 
     @Test
-    public void testSeq(){
-        Assertions.assertEquals(Arrays.asList(1, 2, 3, 4, 5),
+    public void testSeq() {
+        Assertions.assertEquals(Arrays.asList(1,
+                                              2,
+                                              3,
+                                              4,
+                                              5),
                                 Gen.seq(n -> n)
                                    .sample(5).collect(Collectors.toList()));
     }

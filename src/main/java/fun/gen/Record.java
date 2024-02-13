@@ -102,7 +102,7 @@ public final class Record {
      * If the field does not exist, it returns the result from the provided supplier.
      *
      * @param key      The name of the field.
-     * @param supplier A supplier to provide a default long value if the field is null.
+     * @param supplier A supplier to provide a default-long value if the field is null.
      * @return The long value if present, or the result from the supplier if the field is null.
      * @throws RecordTypeNotExpected If the field exists but its value is not a long integer,
      *                               this exception is thrown, indicating an unexpected type.

@@ -23,23 +23,14 @@ public final class TripleGen<A, B, C> implements Gen<Triple<A, B, C>> {
 
     private final SplitGen splitGen;
 
-    private TripleGen(final Gen<A> _1,
-                      final Gen<B> _2,
-                      final Gen<C> _3) {
-        this(_1,
-             _2,
-             _3,
-             SplitGen.DEFAULT);
-    }
 
     private TripleGen(final Gen<A> _1,
                       final Gen<B> _2,
-                      final Gen<C> _3,
-                      final SplitGen splitGen) {
+                      final Gen<C> _3) {
         this._1 = requireNonNull(_1);
         this._2 = requireNonNull(_2);
         this._3 = requireNonNull(_3);
-        this.splitGen = requireNonNull(splitGen);
+        this.splitGen = SplitGen.DEFAULT;
     }
 
     /**

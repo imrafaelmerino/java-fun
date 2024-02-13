@@ -44,7 +44,7 @@ public class Option<S, T> {
 
         this.modify = f -> json -> {
             final Optional<T> value = get.apply(json);
-            if (!value.isPresent()) return json;
+            if (value.isEmpty()) return json;
             return set.apply(f.apply(value.get())).apply(json);
         };
     }

@@ -101,21 +101,17 @@ public final class IntGen implements Gen<Integer> {
 
         return seed -> () -> {
             int r = seed.nextInt();
-            // It's not case (1).
             final int n = max - min + 1;
             final int m = n - 1;
             if ((n & m) == 0) {
-                // It is case (2): length of range is a power of 2.
                 r = (r & m) + min;
             } else if (n > 0) {
-                // It is case (3): need to reject over-represented candidates.
                 for (int u = r >>> 1;
                      u + m - (r = u % n) < 0;
                      u = seed.nextInt() >>> 1)
                     ;
                 r += min;
             } else {
-                // It is case (4): length of range not representable as long.
                 while (r < min || r > max) {
                     r = seed.nextInt();
                 }

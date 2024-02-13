@@ -24,7 +24,7 @@ public final class Triple<A, B, C> {
     }
 
     /**
-     * Creates a new Triple with the specified first, second, and third elements.Null is allowed
+     * Creates a new Triple with the specified first, second, and third elements. Null is allowed
      *
      * @param first  The first element of the triple.
      * @param second The second element of the triple.

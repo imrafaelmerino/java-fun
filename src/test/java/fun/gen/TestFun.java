@@ -1,6 +1,5 @@
 package fun.gen;
 
-import fun.gen.Gen;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
@@ -66,14 +65,6 @@ public class TestFun {
         return xs.stream()
                  .reduce(Long::sum)
                  .get() / xs.size();
-    }
-
-    static <I> long countKeys(Map<I, Long> map,
-                              Predicate<I> predicate) {
-        return map.keySet()
-                  .stream()
-                  .filter(predicate)
-                  .count();
     }
 
     @SafeVarargs

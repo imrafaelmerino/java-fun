@@ -1,9 +1,9 @@
 package fun.gen;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Represents a generator of characters.

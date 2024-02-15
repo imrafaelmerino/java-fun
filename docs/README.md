@@ -411,7 +411,7 @@ detail:
 
 `java-fun` offers various combinator functions to enhance the capabilities of generators.
 
--   **OneOf Combinator ** : The `oneOf` combinator selects one generator from a list of generators.
+-   **OneOf Combinator**: The `oneOf` combinator selects one generator from a list of generators.
     All generators in the list have the same probability of being chosen, and they operate
     independently.
 

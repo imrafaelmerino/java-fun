@@ -118,7 +118,7 @@ flavors. Let's explore them in detail:
 
 #### **Integer Generators**
 
--   **Unbounded Integer Biased Generator **: This generator focuses on producing specific integer
+-   **Unbounded Integer Biased Generator**: This generator focuses on producing specific integer
     values with higher probability. It generates zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`,
     `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, and `Integer.MIN_VALUE`.
 
@@ -126,21 +126,21 @@ flavors. Let's explore them in detail:
     Gen<Integer> gen = IntGen.biased();
     ```
 
--   **Bounded Integer Biased Generator **: Similar to the unbounded version, this generator produces
+-   **Bounded Integer Biased Generator**: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<Integer> gen = IntGen.biased(int min, int max);
     ```
 
--   **Unbounded Integer Arbitrary Generator **: This generator produces any integer number with the
+-   **Unbounded Integer Arbitrary Generator**: This generator produces any integer number with the
     same probability, following a uniform distribution.
 
     ```code
     Gen<Integer> gen = IntGen.arbitrary();
     ```
 
--   **Bounded Integer Arbitrary Generator **: Similar to the unbounded version, this generator
+-   **Bounded Integer Arbitrary Generator**: Similar to the unbounded version, this generator
     produces integers between `min` and `max` (inclusive) with the same probability, following a
     uniform distribution.
 
@@ -150,7 +150,7 @@ flavors. Let's explore them in detail:
 
 #### **Long Generators**
 
--   **Unbounded Long Biased Generator **: This generator focuses on producing specific long values
+-   **Unbounded Long Biased Generator**: This generator focuses on producing specific long values
     with higher probability. It generates values such as zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`,
     `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, `Integer.MIN_VALUE`,
     `Long.MIN_VALUE`, and `Long.MAX_VALUE`.
@@ -159,21 +159,21 @@ flavors. Let's explore them in detail:
     Gen<Long> gen = LongGen.biased();
     ```
 
--   **Bounded Long-Biased Generator **: Similar to the unbounded version, this generator produces
+-   **Bounded Long-Biased Generator**: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<Long> gen = LongGen.biased(long min, long max);
     ```
 
--   **Unbounded Long Arbitrary Generator **: This generator produces any positive long number with
+-   **Unbounded Long Arbitrary Generator**: This generator produces any positive long number with
     the same probability, following a uniform distribution.
 
     ```code
     Gen<Long> gen = LongGen.arbitrary();
     ```
 
--   **Bounded Long Arbitrary Generator **: Similar to the unbounded version, this generator produces
+-   **Bounded Long Arbitrary Generator**: Similar to the unbounded version, this generator produces
     long integers between `min` and `max` (inclusive) with the same probability, following a uniform
     distribution.
 
@@ -183,7 +183,7 @@ flavors. Let's explore them in detail:
 
 #### **Double Generators**
 
--   **Unbounded Double Biased Generator **: This generator focuses on producing specific double
+-   **Unbounded Double Biased Generator**: This generator focuses on producing specific double
     values with higher probability. It generates values such as zero, `Byte.MAX_VALUE`,
     `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`,
     `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`, and
@@ -193,21 +193,21 @@ flavors. Let's explore them in detail:
     Gen<Double> gen = DoubleGen.biased();
     ```
 
--   **Bounded Double-Biased Generator **: Similar to the unbounded version, this generator produces
+-   **Bounded Double-Biased Generator**: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<Double> gen = DoubleGen.biased(double min, double max);
     ```
 
--   **Unbounded Double Arbitrary Generator **: This generator produces any double number with the
+-   **Unbounded Double Arbitrary Generator**: This generator produces any double number with the
     same probability, following a uniform distribution.
 
     ```code
     Gen<Double> gen = DoubleGen.arbitrary();
     ```
 
--   **Bounded Double Arbitrary Generator **: Similar to the unbounded version, this generator
+-   **Bounded Double Arbitrary Generator**: Similar to the unbounded version, this generator
     produces double numbers between `min` and `max` (inclusive) with the same probability, following
     a uniform distribution.
 
@@ -217,7 +217,7 @@ flavors. Let's explore them in detail:
 
 #### **Big Integer and Big Decimal Generators**
 
--   **Biased Big Integer Generator **: This generator produces zero and, if the maximum number of
+-   **Biased Big Integer Generator**: This generator produces zero and, if the maximum number of
     bits is sufficiently large, values such as `Byte.MAX_VALUE`, `Short.MAX_VALUE`,
     `Integer.MAX_VALUE`, and `Long.MAX_VALUE`.
 
@@ -225,14 +225,14 @@ flavors. Let's explore them in detail:
     Gen<BigInteger> gen = BigIntGen.biased(int bits);
     ```
 
--   **Arbitrary Big Integer Generator **: This generator generates big integers uniformly
+-   **Arbitrary Big Integer Generator**: This generator generates big integers uniformly
     distributed between 0 and 2^bits - 1.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.arbitrary(int bits);
     ```
 
--   **Unbounded Decimal-Biased Generator **: This generator focuses on producing specific decimal
+-   **Unbounded Decimal-Biased Generator**: This generator focuses on producing specific decimal
     values with higher probability. It generates values such as zero, `Byte.MAX_VALUE`,
     `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`,
     `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`, and
@@ -242,21 +242,21 @@ flavors. Let's explore them in detail:
     Gen<BigDecimal> gen = BigDecGen.biased();
     ```
 
--   **Bounded Decimal-Biased Generator **: Similar to the unbounded version, this generator produces
+-   **Bounded Decimal-Biased Generator**: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<BigDecimal> gen = BigDecGen.biased(BigDecimal min, BigDecimal max);
     ```
 
--   **Unbounded Decimal Arbitrary Generator **: This generator produces any decimal number with the
+-   **Unbounded Decimal Arbitrary Generator**: This generator produces any decimal number with the
     same probability, following a uniform distribution.
 
     ```code
     Gen<BigDecimal> gen = BigDecGen.arbitrary();
     ```
 
--   **Bounded Decimal Arbitrary Generator **: Similar to the unbounded version, this generator
+-   **Bounded Decimal Arbitrary Generator**: Similar to the unbounded version, this generator
     produces decimal numbers between `min` and `max` (inclusive) with the same probability,
     following a uniform distribution.
 
@@ -266,7 +266,7 @@ flavors. Let's explore them in detail:
 
 #### **Other Primitive Generators**
 
--   **Byte Generator **: This generator creates byte arrays with lengths biased or uniformly
+-   **Byte Generator**: This generator creates byte arrays with lengths biased or uniformly
     distributed within specified ranges.
 
 ```code
@@ -276,7 +276,7 @@ flavors. Let's explore them in detail:
 
 ```
 
--   **Character Generator **: Various character generators are available, including arbitrary
+-   **Character Generator**: Various character generators are available, including arbitrary
     characters, characters within specified ranges, alphanumeric characters, alphabetic characters,
     letters, digits, and ASCII characters.
 
@@ -296,7 +296,7 @@ flavors. Let's explore them in detail:
     Gen<Boolean> gen = GenBool.arbitrary();
     ```
 
--   **Instant Generator **: For generating Instant values, both biased and arbitrary generators are
+-   **Instant Generator**: For generating Instant values, both biased and arbitrary generators are
     available. The biased generators focus on specific Instant values, while the arbitrary
     generators provide uniform distribution.
 
@@ -318,7 +318,7 @@ detail:
 
 #### **List Generator**
 
--   **Bounded List Biased Generator **: This generator produces lists of type `List<T>` with a bias
+-   **Bounded List Biased Generator**: This generator produces lists of type `List<T>` with a bias
     towards specific values. You can specify the minimum and maximum lengths for the generated
     lists.
 
@@ -326,7 +326,7 @@ detail:
     Gen<List<T>> gen = ListGen.biased(Gen<T> gen, int minLength, int maxLength);
     ```
 
--   **Bounded List Arbitrary Generator **: Similar to the biased generator, this generator produces
+-   **Bounded List Arbitrary Generator**: Similar to the biased generator, this generator produces
     lists of type `List<T>` within the specified length range. However, all values within this range
     are generated with equal probability.
 
@@ -356,7 +356,7 @@ detail:
 
 #### **Map Generator**
 
--   **Map Generator **: This generator creates maps of type `Map<K, V>` with a specified size
+-   **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size
     `size`. You need to provide key and value generators, and it ensures that keys are distinct. If
     the key generator cannot produce enough distinct keys, it will fail after 10 times the specified
     size (customized with the method `withMaxTries`)
@@ -371,7 +371,7 @@ detail:
 
 #### **Pair Generator**
 
--   **Pair Generator **: This generator creates pairs of type `Pair<A, B>` using the provided
+-   **Pair Generator**: This generator creates pairs of type `Pair<A, B>` using the provided
     generators for elements `A` and `B`.
 
     ```code
@@ -380,7 +380,7 @@ detail:
 
 #### **Triple Generator**
 
--   **Triple Generator **: This generator creates triples of type `Triple<A, B, C>` using the
+-   **Triple Generator**: This generator creates triples of type `Triple<A, B, C>` using the
     provided generators for elements `A`, `B`, and `C`.
 
     ```code
@@ -389,7 +389,7 @@ detail:
 
 #### **Record Generator**
 
--   **Record Generator **: A record is a structured data type with named fields and their associated
+-   **Record Generator**: A record is a structured data type with named fields and their associated
     values. In `java-fun`, you can create record-like structures using the `Record` generator. This
     generator allows you to define fields and associated generators, making it easy to generate
     structured data.
@@ -431,7 +431,7 @@ detail:
     Gen<A> gen = Combinators.oneOf(A value, A... others);
     ```
 
--   **Freq Combinator **: The `freq` combinator is similar to `oneOf`, but it allows you to assign
+-   **Freq Combinator**: The `freq` combinator is similar to `oneOf`, but it allows you to assign
     different weights (probabilities) to each generator, controlling their chances of being
     selected.
 
@@ -762,15 +762,15 @@ structures.
 
 It's essential to clarify several key concepts:
 
--   **Action **: An action refers to a function responsible for executing operations on the focus of
+-   **Action**: An action refers to a function responsible for executing operations on the focus of
     a path. The most significant actions include _get_, _set_, and _modify_.
 
 -   **Path**: The path specifies which data to focus on and where to locate it within the structure.
 
--   **Structure **: The structure represents the chunk of data that we intend to work with. The path
+-   **Structure**: The structure represents the chunk of data that we intend to work with. The path
     selects specific data from within this structure, and that data is then passed to the action.
 
--   **Focus **: The focus is the smaller piece of the structure indicated by the path. This focus is
+-   **Focus**: The focus is the smaller piece of the structure indicated by the path. This focus is
     what the action operates on.
 
 A **Lens ** functions by zooming in on a particular piece of data within a larger structure.
@@ -912,11 +912,11 @@ working with data.
 
 Furthermore, lenses adhere to two important laws:
 
-1. **getSet Law **: This law states that if you get a value and set it back in, the result should be
+1. **getSet Law**: This law states that if you get a value and set it back in, the result should be
    a value identical to the original one. In other words, setting a value and then getting it should
    not change the underlying data.
 
-2. **setGet Law **: According to this law, if you set a value, you should always get the same value.
+2. **setGet Law**: According to this law, if you set a value, you should always get the same value.
    This ensures that the set action accurately updates a value inside the container without altering
    other aspects. These laws are significant in functional programming as they enhance code clarity
    and reasoning.

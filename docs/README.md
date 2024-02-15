@@ -13,6 +13,7 @@
     -   [Objects Generators](#og)
     -   [Recursive generators](#rg)
     -   [Useful and common patterns](#ucp)
+    -   [Using generators in JMeter Test Plans](#jmeter)
 -   [Optics](#optics)
 -   [Requirements](#req)
 -   [Installation](#inst)
@@ -28,16 +29,16 @@ not become entangled in unfamiliar types and conventions.
 
 Here are the key concepts that have been thoughtfully implemented within **java-fun**:
 
--   **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach, and
-    having a robust set of generators that can be composed in countless ways is crucial.
+-   **Pseudo Random Generators **: Property-Based Testing is a highly effective testing approach,
+    and having a robust set of generators that can be composed in countless ways is crucial.
     **java-fun** simplifies this process, making it incredibly straightforward.
 
--   **Optics**: In functional programming, optics take precedence over traditional getters and
+-   **Optics **: In functional programming, optics take precedence over traditional getters and
     setters. They offer safety and composability, eliminating the likelihood of encountering
     NullPointerExceptions when used correctly.
 
 -   **Tuples**: Although Java may not officially support tuples, they remain exceptionally valuable.
-    **java-fun** introduces tuples with arities of two and three, encompassing pairs and triples,
+    **java-fun ** introduces tuples with arities of two and three, encompassing pairs and triples,
     respectively. These structures enhance code expressiveness and maintainability.
 
 ## <a name="prg"><a/> Pseudo Random Generators
@@ -63,9 +64,9 @@ of type `O`. The lazy nature of these computations is essential for seamless gen
 To create generators, you have access to two fundamental static factory methods:
 
 -   **arbitrary**: This method produces generators that offer a uniform distribution of values.
--   **biased**: This method generates values with varying probabilities, giving higher probabilities
-    to values that are known to trigger more bugs in our code. This is a crucial aspect of
-    Property-Based Testing.
+-   **biased **: This method generates values with varying probabilities, giving higher
+    probabilities to values that are known to trigger more bugs in our code. This is a crucial
+    aspect of Property-Based Testing.
 
 While you can create custom generators by implementing the `Gen` interface, **java-fun ** provides a
 plethora of predefined generators for your convenience. Let's delve into these predefined
@@ -79,7 +80,7 @@ flavors. Let's explore them in detail:
 
 #### **String Generators**
 
--   **Bounded String Biased Generator**: This generator is biased towards producing specific string
+-   **Bounded String Biased Generator **: This generator is biased towards producing specific string
     values. It generates the empty string, blank strings, and strings of lengths within the
     specified range with higher probability, making it useful for focusing on scenarios prone to
     bugs.
@@ -97,7 +98,7 @@ flavors. Let's explore them in detail:
     This might produce strings like "", " ", or any string of length from zero to three, composed of
     valid printable Unicode characters.
 
--   **Bounded String Arbitrary Generators**: These generators produce strings of lengths uniformly
+-   **Bounded String Arbitrary Generators **: These generators produce strings of lengths uniformly
     distributed within the specified range `[minLength, maxLength]`. Unlike the biased generator,
     all values within this range are generated with equal probability.
 
@@ -117,7 +118,7 @@ flavors. Let's explore them in detail:
 
 #### **Integer Generators**
 
--   **Unbounded Integer Biased Generator**: This generator focuses on producing specific integer
+-   **Unbounded Integer Biased Generator **: This generator focuses on producing specific integer
     values with higher probability. It generates zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`,
     `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, and `Integer.MIN_VALUE`.
 
@@ -125,21 +126,21 @@ flavors. Let's explore them in detail:
     Gen<Integer> gen = IntGen.biased();
     ```
 
--   **Bounded Integer Biased Generator**: Similar to the unbounded version, this generator produces
+-   **Bounded Integer Biased Generator **: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<Integer> gen = IntGen.biased(int min, int max);
     ```
 
--   **Unbounded Integer Arbitrary Generator**: This generator produces any integer number with the
+-   **Unbounded Integer Arbitrary Generator **: This generator produces any integer number with the
     same probability, following a uniform distribution.
 
     ```code
     Gen<Integer> gen = IntGen.arbitrary();
     ```
 
--   **Bounded Integer Arbitrary Generator**: Similar to the unbounded version, this generator
+-   **Bounded Integer Arbitrary Generator **: Similar to the unbounded version, this generator
     produces integers between `min` and `max` (inclusive) with the same probability, following a
     uniform distribution.
 
@@ -149,7 +150,7 @@ flavors. Let's explore them in detail:
 
 #### **Long Generators**
 
--   **Unbounded Long Biased Generator**: This generator focuses on producing specific long values
+-   **Unbounded Long Biased Generator **: This generator focuses on producing specific long values
     with higher probability. It generates values such as zero, `Byte.MAX_VALUE`, `Byte.MIN_VALUE`,
     `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`, `Integer.MIN_VALUE`,
     `Long.MIN_VALUE`, and `Long.MAX_VALUE`.
@@ -158,21 +159,21 @@ flavors. Let's explore them in detail:
     Gen<Long> gen = LongGen.biased();
     ```
 
--   **Bounded Long-Biased Generator**: Similar to the unbounded version, this generator produces
+-   **Bounded Long-Biased Generator **: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<Long> gen = LongGen.biased(long min, long max);
     ```
 
--   **Unbounded Long Arbitrary Generator**: This generator produces any positive long number with
+-   **Unbounded Long Arbitrary Generator **: This generator produces any positive long number with
     the same probability, following a uniform distribution.
 
     ```code
     Gen<Long> gen = LongGen.arbitrary();
     ```
 
--   **Bounded Long Arbitrary Generator**: Similar to the unbounded version, this generator produces
+-   **Bounded Long Arbitrary Generator **: Similar to the unbounded version, this generator produces
     long integers between `min` and `max` (inclusive) with the same probability, following a uniform
     distribution.
 
@@ -182,7 +183,7 @@ flavors. Let's explore them in detail:
 
 #### **Double Generators**
 
--   **Unbounded Double Biased Generator**: This generator focuses on producing specific double
+-   **Unbounded Double Biased Generator **: This generator focuses on producing specific double
     values with higher probability. It generates values such as zero, `Byte.MAX_VALUE`,
     `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`,
     `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`, and
@@ -192,21 +193,21 @@ flavors. Let's explore them in detail:
     Gen<Double> gen = DoubleGen.biased();
     ```
 
--   **Bounded Double-Biased Generator**: Similar to the unbounded version, this generator produces
+-   **Bounded Double-Biased Generator **: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<Double> gen = DoubleGen.biased(double min, double max);
     ```
 
--   **Unbounded Double Arbitrary Generator**: This generator produces any double number with the
+-   **Unbounded Double Arbitrary Generator **: This generator produces any double number with the
     same probability, following a uniform distribution.
 
     ```code
     Gen<Double> gen = DoubleGen.arbitrary();
     ```
 
--   **Bounded Double Arbitrary Generator**: Similar to the unbounded version, this generator
+-   **Bounded Double Arbitrary Generator **: Similar to the unbounded version, this generator
     produces double numbers between `min` and `max` (inclusive) with the same probability, following
     a uniform distribution.
 
@@ -216,7 +217,7 @@ flavors. Let's explore them in detail:
 
 #### **Big Integer and Big Decimal Generators**
 
--   **Biased Big Integer Generator**: This generator produces zero and, if the maximum number of
+-   **Biased Big Integer Generator **: This generator produces zero and, if the maximum number of
     bits is sufficiently large, values such as `Byte.MAX_VALUE`, `Short.MAX_VALUE`,
     `Integer.MAX_VALUE`, and `Long.MAX_VALUE`.
 
@@ -224,14 +225,14 @@ flavors. Let's explore them in detail:
     Gen<BigInteger> gen = BigIntGen.biased(int bits);
     ```
 
--   **Arbitrary Big Integer Generator**: This generator generates big integers uniformly distributed
-    between 0 and 2^bits - 1.
+-   **Arbitrary Big Integer Generator **: This generator generates big integers uniformly
+    distributed between 0 and 2^bits - 1.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.arbitrary(int bits);
     ```
 
--   **Unbounded Decimal-Biased Generator**: This generator focuses on producing specific decimal
+-   **Unbounded Decimal-Biased Generator **: This generator focuses on producing specific decimal
     values with higher probability. It generates values such as zero, `Byte.MAX_VALUE`,
     `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`,
     `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`, and
@@ -241,21 +242,21 @@ flavors. Let's explore them in detail:
     Gen<BigDecimal> gen = BigDecGen.biased();
     ```
 
--   **Bounded Decimal-Biased Generator**: Similar to the unbounded version, this generator produces
+-   **Bounded Decimal-Biased Generator **: Similar to the unbounded version, this generator produces
     values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<BigDecimal> gen = BigDecGen.biased(BigDecimal min, BigDecimal max);
     ```
 
--   **Unbounded Decimal Arbitrary Generator**: This generator produces any decimal number with the
+-   **Unbounded Decimal Arbitrary Generator **: This generator produces any decimal number with the
     same probability, following a uniform distribution.
 
     ```code
     Gen<BigDecimal> gen = BigDecGen.arbitrary();
     ```
 
--   **Bounded Decimal Arbitrary Generator**: Similar to the unbounded version, this generator
+-   **Bounded Decimal Arbitrary Generator **: Similar to the unbounded version, this generator
     produces decimal numbers between `min` and `max` (inclusive) with the same probability,
     following a uniform distribution.
 
@@ -265,7 +266,7 @@ flavors. Let's explore them in detail:
 
 #### **Other Primitive Generators**
 
--   **Byte Generator**: This generator creates byte arrays with lengths biased or uniformly
+-   **Byte Generator **: This generator creates byte arrays with lengths biased or uniformly
     distributed within specified ranges.
 
 ```code
@@ -275,7 +276,7 @@ flavors. Let's explore them in detail:
 
 ```
 
--   **Character Generator**: Various character generators are available, including arbitrary
+-   **Character Generator **: Various character generators are available, including arbitrary
     characters, characters within specified ranges, alphanumeric characters, alphabetic characters,
     letters, digits, and ASCII characters.
 
@@ -295,7 +296,7 @@ flavors. Let's explore them in detail:
     Gen<Boolean> gen = GenBool.arbitrary();
     ```
 
--   **Instant Generator**: For generating Instant values, both biased and arbitrary generators are
+-   **Instant Generator **: For generating Instant values, both biased and arbitrary generators are
     available. The biased generators focus on specific Instant values, while the arbitrary
     generators provide uniform distribution.
 
@@ -317,7 +318,7 @@ detail:
 
 #### **List Generator**
 
--   **Bounded List Biased Generator**: This generator produces lists of type `List<T>` with a bias
+-   **Bounded List Biased Generator **: This generator produces lists of type `List<T>` with a bias
     towards specific values. You can specify the minimum and maximum lengths for the generated
     lists.
 
@@ -325,7 +326,7 @@ detail:
     Gen<List<T>> gen = ListGen.biased(Gen<T> gen, int minLength, int maxLength);
     ```
 
--   **Bounded List Arbitrary Generator**: Similar to the biased generator, this generator produces
+-   **Bounded List Arbitrary Generator **: Similar to the biased generator, this generator produces
     lists of type `List<T>` within the specified length range. However, all values within this range
     are generated with equal probability.
 
@@ -355,10 +356,10 @@ detail:
 
 #### **Map Generator**
 
--   **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size `size`.
-    You need to provide key and value generators, and it ensures that keys are distinct. If the key
-    generator cannot produce enough distinct keys, it will fail after 10 times the specified size
-    (customized with the method `withMaxTries`)
+-   **Map Generator **: This generator creates maps of type `Map<K, V>` with a specified size
+    `size`. You need to provide key and value generators, and it ensures that keys are distinct. If
+    the key generator cannot produce enough distinct keys, it will fail after 10 times the specified
+    size (customized with the method `withMaxTries`)
 
     ```code
     Gen<Map<K, V>> gen = MapGen.of(Gen<K> keyGen, Gen<V> valueGen, int size);
@@ -370,7 +371,7 @@ detail:
 
 #### **Pair Generator**
 
--   **Pair Generator**: This generator creates pairs of type `Pair<A, B>` using the provided
+-   **Pair Generator **: This generator creates pairs of type `Pair<A, B>` using the provided
     generators for elements `A` and `B`.
 
     ```code
@@ -379,7 +380,7 @@ detail:
 
 #### **Triple Generator**
 
--   **Triple Generator**: This generator creates triples of type `Triple<A, B, C>` using the
+-   **Triple Generator **: This generator creates triples of type `Triple<A, B, C>` using the
     provided generators for elements `A`, `B`, and `C`.
 
     ```code
@@ -388,7 +389,7 @@ detail:
 
 #### **Record Generator**
 
--   **Record Generator**: A record is a structured data type with named fields and their associated
+-   **Record Generator **: A record is a structured data type with named fields and their associated
     values. In `java-fun`, you can create record-like structures using the `Record` generator. This
     generator allows you to define fields and associated generators, making it easy to generate
     structured data.
@@ -410,7 +411,7 @@ detail:
 
 `java-fun` offers various combinator functions to enhance the capabilities of generators.
 
--   **OneOf Combinator** : The `oneOf` combinator selects one generator from a list of generators.
+-   **OneOf Combinator ** : The `oneOf` combinator selects one generator from a list of generators.
     All generators in the list have the same probability of being chosen, and they operate
     independently.
 
@@ -430,7 +431,7 @@ detail:
     Gen<A> gen = Combinators.oneOf(A value, A... others);
     ```
 
--   **Freq Combinator**: The `freq` combinator is similar to `oneOf`, but it allows you to assign
+-   **Freq Combinator **: The `freq` combinator is similar to `oneOf`, but it allows you to assign
     different weights (probabilities) to each generator, controlling their chances of being
     selected.
 
@@ -651,6 +652,52 @@ Gen<Set<String>> setGen = IntGen.arbitrary(1,10)
 Do notice that the size is determined at creation time, in other words, all the generated sets will
 have the same size.
 
+### <a name="jmeter"><a/> Using generators in JMeter Test Plans (JMX Files)
+
+To integrate custom generators into your JMeter test plans (JMX files), follow these steps:
+
+1. **Create a JMeter Function:**
+
+    - Develop a JMeter function by extending the `org.apache.jmeter.functions.AbstractFunction`
+      class. Refer to the example class
+      [JMeterExampleGen](../src/test/java/fun/jmeter/JMeterExampleGen.java) for guidance.
+
+2. **Build a JAR File:**
+
+    - Compile your JMeter functions into a JAR file, e.g., `my-jmeter-functions.jar`. If you are
+      using Maven and your functions are in the `test` folder, generate the JAR with the command
+      `mvn jar:test-jar`. The resulting JAR will be in the `target` folder.
+
+3. **Place JAR in JMeter's Extension Folder:**
+
+    - Move the JAR file (`my-jmeter-functions.jar`) into the `${JMETER_HOME}/lib/ext` folder.
+
+4. **Include Dependencies:**
+
+    - Download the latest version of the `java-fun` JAR from Maven Central and place it in the
+      `${JMETER_HOME}/lib` folder. Also, include any other dependencies, such as `json-values` if
+      needed, in the same folder.
+
+5. **Restart JMeter:**
+
+    - Restart JMeter to ensure that the new functions and dependencies are recognized.
+
+6. **Verify Function Integration:**
+
+    - Open the function dialog in JMeter.
+      ![JMeter dialog function](./jmeter-open-function-dialog.png)
+    - Select your custom function from the list.
+      ![JMeter select generator](./jmeter-select-generator.png)
+    - Verify that your function is available and can generate data.
+      ![JMeter generates data](./jmeter-gen-example-data.png)
+
+7. **Utilize the Function in HTTP Request Payloads:**
+    - Incorporate your custom function to generate dynamic payloads for HTTP requests.
+      ![JMeter generates data](./jmeter-body-req.png)
+
+By following these steps, you can seamlessly integrate custom generators into your JMeter test
+plans, enhancing the flexibility and adaptability of your performance tests.
+
 ## <a name="optics"><a/> Optics: Lenses, Optionals, and Prism
 
 Navigating through recursive data structures, such as records and tuples, to locate, insert, or
@@ -708,25 +755,25 @@ This type has 2 + 3 possible values, where a sum-type represents a choice betwee
 options. In simpler terms, S can either be A or B.
 
 Within Functional Programming, optics play a crucial role in handling ADTs. These optics come in
-various forms, with **Lenses** and **Optionals** (distinct from the Java Optional class) being
-particularly suited for product-types, while **Prisms** assist in dealing with sum-types. Optics
-offer a powerful means of separating concerns and simplifying operations in such complex data
+various forms, with \* _Lenses** and **Optionals\*\* (distinct from the Java Optional class) being
+particularly suited for product-types, while _ \*Prisms \*\* assist in dealing with sum-types.
+Optics offer a powerful means of separating concerns and simplifying operations in such complex data
 structures.
 
 It's essential to clarify several key concepts:
 
--   **Action**: An action refers to a function responsible for executing operations on the focus of
+-   **Action **: An action refers to a function responsible for executing operations on the focus of
     a path. The most significant actions include _get_, _set_, and _modify_.
 
 -   **Path**: The path specifies which data to focus on and where to locate it within the structure.
 
--   **Structure**: The structure represents the chunk of data that we intend to work with. The path
+-   **Structure **: The structure represents the chunk of data that we intend to work with. The path
     selects specific data from within this structure, and that data is then passed to the action.
 
--   **Focus**: The focus is the smaller piece of the structure indicated by the path. This focus is
+-   **Focus **: The focus is the smaller piece of the structure indicated by the path. This focus is
     what the action operates on.
 
-A **Lens** functions by zooming in on a particular piece of data within a larger structure.
+A **Lens ** functions by zooming in on a particular piece of data within a larger structure.
 Importantly, a Lens must never fail when attempting to get or modify its focus. On the other hand,
 an **Optional** is another optic similar to a Lens, with the key distinction that the focus may not
 necessarily exist.
@@ -865,11 +912,11 @@ working with data.
 
 Furthermore, lenses adhere to two important laws:
 
-1. **getSet Law**: This law states that if you get a value and set it back in, the result should be
+1. **getSet Law **: This law states that if you get a value and set it back in, the result should be
    a value identical to the original one. In other words, setting a value and then getting it should
    not change the underlying data.
 
-2. **setGet Law**: According to this law, if you set a value, you should always get the same value.
+2. **setGet Law **: According to this law, if you set a value, you should always get the same value.
    This ensures that the set action accurately updates a value inside the container without altering
    other aspects. These laws are significant in functional programming as they enhance code clarity
    and reasoning.
@@ -1048,5 +1095,5 @@ Find [here](./../docs/CHANGELOG.md) the releases notes.
 [json-values](https://github.com/imrafaelmerino/json-values) has defined a JSON generator and some
 optics to manipulate JSON using this library.
 
-[jio-test](https://github.com/imrafaelmerino/JIO?tab=readme-ov-file#jio-test) uses
-java-fun for its Property-Based-Testing API
+[jio-test](https://github.com/imrafaelmerino/JIO?tab=readme-ov-file#jio-test) uses java-fun for its
+Property-Based-Testing API

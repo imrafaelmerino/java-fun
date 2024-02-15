@@ -41,14 +41,30 @@
         <sonar.organization>imrafaelmerino</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>imrafaelmerino_java-fun</sonar.projectKey>
+        <APACHE_JMETER_CORE.VERSION>5.6.3</APACHE_JMETER_CORE.VERSION>
+        <JUNIT-JUPITER-API.VERSION>5.7.0</JUNIT-JUPITER-API.VERSION>
+        <JSON-VALUES.VERSION>13.4.0</JSON-VALUES.VERSION>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0</version>
+            <version>${JUNIT-JUPITER-API.VERSION}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_core</artifactId>
+            <version>${APACHE_JMETER_CORE.VERSION}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.imrafaelmerino</groupId>
+            <artifactId>json-values</artifactId>
+            <version>${JSON-VALUES.VERSION}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

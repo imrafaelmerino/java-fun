@@ -660,7 +660,7 @@ To integrate custom generators into your JMeter test plans (JMX files), follow t
 
     - Develop a JMeter function by extending the `org.apache.jmeter.functions.AbstractFunction`
       class. Refer to the example class
-      [JMeterExampleGen](../src/test/java/fun/jmeter/JMeterExampleGen.java) for guidance.
+      [JMeterExampleGen](../src/test/java/fun/jmeter/JMeterExampleFunction.java) for guidance.
 
 2. **Build a JAR File:**
 

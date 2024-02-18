@@ -24,7 +24,6 @@ it. And to make matters worse: complexity sells better._” **Edsger Wybe Dijkst
 - [Installation](#installation)
 - [Backward compatibility](#bc)
 - [Related projects](#rp)
-- [Sponsors](#sponsor)
 
 ## <a name="cwa"><a/> Code wins arguments
 

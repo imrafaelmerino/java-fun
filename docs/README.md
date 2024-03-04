@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/base/full/coverphoto/base_logo_white_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/2.1.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/2.1.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/2.2.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/2.2.0/jar)
 
 "_When in doubt, use brute force._" **Ken Thompson**
 
@@ -217,29 +217,34 @@ flavors. Let's explore them in detail:
 
 #### **Big Integer and Big Decimal Generators**
 
--   **Biased Big Integer Generator**: This generator produces zero and, if the maximum number of
-    bits is sufficiently large, values such as `Byte.MAX_VALUE`, `Short.MAX_VALUE`,
-    `Integer.MAX_VALUE`, and `Long.MAX_VALUE`.
+-   **Unbounded BigInteger Biased Generator**: This generator focuses on producing specific big integer
+    values with higher probability: `Integer.MAX_VALUE + 1`, `Integer.MIN_VALUE -1`, `Long.MIN_VALUE - 1`, `Long.MAX_VALUE + 1`, and zero.
+    It also produces big integer numbers of 64 bits uniformly distributed.
 
     ```code
-    Gen<BigInteger> gen = BigIntGen.biased(int bits);
+    Gen<BigInteger> gen = BigIntGen.biased();
     ```
 
--   **Arbitrary Big Integer Generator**: This generator generates big integers uniformly
-    distributed between 0 and 2^bits - 1.
+-   **Bounded BigInteger-Biased Generator**: Similar to the unbounded version, this generator produces
+    values within the specified interval `(min, max)` with a higher probability.
 
     ```code
-    Gen<BigInteger> gen = BigIntGen.arbitrary(int bits);
+    Gen<BigInteger> gen = BigIntGen.biased(BigInteger min, BigInteger max);
     ```
 
--   **Unbounded Decimal-Biased Generator**: This generator focuses on producing specific decimal
-    values with higher probability. It generates values such as zero, `Byte.MAX_VALUE`,
-    `Byte.MIN_VALUE`, `Short.MAX_VALUE`, `Short.MIN_VALUE`, `Integer.MAX_VALUE`,
-    `Integer.MIN_VALUE`, `Long.MIN_VALUE`, `Long.MAX_VALUE`, `Double.MIN_VALUE`, and
-    `Double.MAX_VALUE`.
+-   **Unbounded BigInteger Arbitrary Generator**: This generator produces any big integer number of 64 bits with the
+    same probability, following a uniform distribution.
 
     ```code
-    Gen<BigDecimal> gen = BigDecGen.biased();
+    Gen<BigInteger> gen = BigIntGen.arbitrary();
+    ```
+
+-   **Bounded BigInteger Arbitrary Generator**: Similar to the unbounded version, this generator
+    produces big integer numbers between `min` and `max` (inclusive) with the same probability, following
+    a uniform distribution.
+
+    ```code
+    Gen<BigInteger> gen = BigIntGen.arbitrary(BigInteger min, BigInteger max);
     ```
 
 -   **Bounded Decimal-Biased Generator**: Similar to the unbounded version, this generator produces
@@ -395,11 +400,10 @@ detail:
     structured data.
 
     ```code
-    Gen<Record> person = RecordGen.of(
-        name, StrGen.arbitrary(1, 20),
-        age, IntGen.biased(0, 150),
-        birthdate, InstantGen.arbitrary()
-    );
+    Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1, 20),
+                                      age, IntGen.biased(0, 150),
+                                      birthdate, InstantGen.arbitrary()
+                                     );
     ```
 
     The `fun.gen.Record` class functions as a `Map<String, ?>` to store generated data and provides
@@ -1081,7 +1085,7 @@ For Java 17 or higher:
 <dependency>
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 
 ```

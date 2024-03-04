@@ -5,43 +5,71 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
 
 public class TestBigIntGen {
 
 
     @Test
-    public void arbitraryBigInt() {
-        Map<BigInteger, Long> counts = TestFun.generate(100000,
-                                                        BigIntGen.arbitrary(3));
+    public void arbitrary() {
 
 
-        Assertions.assertTrue(IntStream.range(0,
-                                              7)
-                                       .allMatch(it -> counts.containsKey(BigInteger.valueOf(it))));
+        BigInteger min = new BigInteger("1000000000");
+        BigInteger max = new BigInteger("2000000000");
+        Gen<BigInteger> arbitraryBigIntGen =
+                BigIntGen.arbitrary(min,
+                                    max
+                );
+
+        Assertions.assertTrue(arbitraryBigIntGen
+                                      .sample(100000)
+                                      .allMatch(
+                                              bi -> bi.compareTo(min) >= 0 && bi.compareTo(max) <= 0));
     }
 
 
     @Test
-    public void biasedBigIntInterval() {
-
-        Map<BigInteger, Long> counts =
-                TestFun.generate(1000000,
-                                 BigIntGen.biased(1000));
-
-
-        List<BigInteger> problematic = TestFun.list(
-                BigInteger.valueOf(Long.MAX_VALUE),
-                BigInteger.valueOf(Integer.MAX_VALUE),
-                BigInteger.valueOf(Short.MAX_VALUE),
-                BigInteger.valueOf(Byte.MAX_VALUE),
-                BigInteger.ZERO);
+    public void biasedWithInterval() {
+        BigInteger min = new BigInteger("-10000000000000000000000");
+        BigInteger max = new BigInteger("100000000000000000000000");
+        var gen =
+                BigIntGen.biased(min,
+                                 max
+                );
 
 
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+        List<BigInteger> problematic =
+                TestFun.list(min,
+                             max,
+                             BigInteger.valueOf(Integer.MIN_VALUE).subtract(BigInteger.ONE),
+                             BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.ONE),
+                             BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE),
+                             BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE),
+                             BigInteger.ZERO);
+
+        TestFun.assertGeneratedValuesHaveSameProbability(gen.collect(10000000),
                                                          problematic,
-                                                         0.1);
+                                                         0.05);
+
+
+    }
+
+    @Test
+    public void biased() {
+        var gen = BigIntGen.biased();
+
+
+        List<BigInteger> problematic =
+                TestFun.list(BigInteger.valueOf(Integer.MIN_VALUE).subtract(BigInteger.ONE),
+                             BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.ONE),
+                             BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE),
+                             BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE),
+                             BigInteger.ZERO);
+
+        TestFun.assertGeneratedValuesHaveSameProbability(gen.collect(10000000),
+                                                         problematic,
+                                                         0.05);
+
+
     }
 
 

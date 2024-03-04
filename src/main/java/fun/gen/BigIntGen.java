@@ -23,67 +23,129 @@ public final class BigIntGen implements Gen<BigInteger> {
 
     private final int nBits;
 
+    private static final Gen<BigInteger> arbitrary = new BigIntGen(64);
+
     private BigIntGen(final int nBits) {
         if (nBits < 0) throw new IllegalArgumentException("nBits < 0");
         this.nBits = nBits;
     }
 
-
-    /**
-     * Constructs a randomly generated BigInteger, uniformly distributed over the range 0 to (2^bits-1), inclusive.
-     * Note that this generator always generates non-negative big integers
-     *
-     * @param bits maximum bitLength of the new BigInteger
-     * @return a big integer generator
-     */
-    public static Gen<BigInteger> arbitrary(int bits) {
-        return new BigIntGen(bits);
-
+    public static Gen<BigInteger> arbitrary() {
+        return arbitrary;
     }
 
-    /**
-     * Constructs a biased BigInteger generator with various ranges and biases.
-     *
-     * @param bits The maximum bit length of the generated BigInteger.
-     * @return A biased big integer generator.
-     */
-    public static Gen<BigInteger> biased(int bits) {
-
-        BigInteger max = BigInteger.valueOf(2)
-                                   .pow(bits);
-
+    public static Gen<BigInteger> biased() {
         List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
-        if (max.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
-            gens.add(Pair.of(1,
-                             Gen.cons(BigInteger.valueOf(Long.MAX_VALUE))));
 
-        if (max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
-            gens.add(Pair.of(1,
-                             Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE))));
+        gens.add(Pair.of(1,
+                         Gen.cons(BigInteger.valueOf(Long.MAX_VALUE)
+                                            .add(BigInteger.ONE))));
+        gens.add(Pair.of(1,
+                         Gen.cons(BigInteger.valueOf(Long.MIN_VALUE)
+                                            .subtract(BigInteger.ONE))));
 
-        if (max.compareTo(BigInteger.valueOf(Short.MAX_VALUE)) > 0)
-            gens.add(Pair.of(1,
-                             Gen.cons(BigInteger.valueOf(Short.MAX_VALUE))));
-
-
-        if (max.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) > 0)
-            gens.add(Pair.of(1,
-                             Gen.cons(BigInteger.valueOf(Byte.MAX_VALUE))));
-
+        gens.add(Pair.of(1,
+                         Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE)
+                                            .add(BigInteger.ONE))));
+        gens.add(Pair.of(1,
+                         Gen.cons(BigInteger.valueOf(Integer.MIN_VALUE)
+                                            .subtract(BigInteger.ONE))));
 
         gens.add(Pair.of(1,
                          Gen.cons(BigInteger.ZERO)));
 
-
-        gens.add(Pair.of(1,
-                         Gen.cons(max)));
-
-
         gens.add(Pair.of(gens.size(),
-                         arbitrary(bits)));
+                         arbitrary));
 
         return Combinators.freqList(gens);
+    }
 
+    public static Gen<BigInteger> arbitrary(final BigInteger min,
+                                            final BigInteger max) {
+        if (requireNonNull(min).compareTo(requireNonNull(max)) > 0) {
+            throw new IllegalArgumentException("min must be less than or equal to max");
+        }
+
+        return r -> {
+            BigInteger range = max.subtract(min).add(BigInteger.ONE);
+            int bitLength = range.bitLength();
+            Random random = new Random(r.nextInt());
+            return () -> {
+                BigInteger randomBigInteger;
+                do {
+                    randomBigInteger = new BigInteger(bitLength,
+                                                      random);
+                } while (randomBigInteger.compareTo(range) >= 0);
+
+                return randomBigInteger.add(min);
+            };
+        };
+
+
+    }
+
+
+    public static Gen<BigInteger> biased(final BigInteger min,
+                                         final BigInteger max) {
+
+        if (requireNonNull(min).compareTo(requireNonNull(max)) > 0)
+            throw new IllegalArgumentException("max < min");
+
+        List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
+
+        addGenIfBetween(BigInteger.valueOf(Long.MAX_VALUE)
+                                  .add(BigInteger.ONE),
+                        gens,
+                        min,
+                        max);
+
+        addGenIfBetween(BigInteger.valueOf(Long.MIN_VALUE)
+                                  .subtract(BigInteger.ONE),
+                        gens,
+                        min,
+                        max);
+
+        addGenIfBetween(BigInteger.valueOf(Integer.MAX_VALUE)
+                                  .add(BigInteger.ONE),
+                        gens,
+                        min,
+                        max);
+
+        addGenIfBetween(BigInteger.valueOf(Integer.MIN_VALUE)
+                                  .subtract(BigInteger.ONE),
+                        gens,
+                        min,
+                        max);
+
+        addGenIfBetween(BigInteger.ZERO,
+                        gens,
+                        min,
+                        max);
+
+        gens.add(Pair.of(1,
+                         Gen.cons(min)));
+
+        if (min.compareTo(max) != 0) {
+            gens.add(Pair.of(1,
+                             Gen.cons(max)));
+        }
+
+        gens.add(Pair.of(gens.size(),
+                         arbitrary(min,
+                                   max)));
+
+        return Combinators.freqList(gens);
+    }
+
+    private static void addGenIfBetween(BigInteger value,
+                                        List<Pair<Integer, Gen<? extends BigInteger>>> gens,
+                                        BigInteger min,
+                                        BigInteger max) {
+        if (max.compareTo(value) >= 0
+                && min.compareTo(value) <= 0) {
+            gens.add(Pair.of(1,
+                             Gen.cons(value)));
+        }
     }
 
 

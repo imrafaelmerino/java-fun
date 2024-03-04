@@ -29,3 +29,11 @@ New:
     possible instead of throwing exceptions.For instance, the `record.getLong("age")` method can
     return not only `Long` but also `Byte`, `Short`, and `Integer`. Similarly, the `getDouble`
     method can return integral numbers in addition to floating-point values.
+
+    2.2.0
+
+Breaking:
+- `BigIntGen` deleted methods `arbitrary(int nBits)` and `biased(int nBits)` 
+
+New:
+- `BigIntGen` new static factory methods `arbitrary(BigInteger min, BigInteger max)` and `biased(BigInteger min, BigInteger max)`

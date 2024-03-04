@@ -111,6 +111,70 @@ public class TestCombinators {
                                                          0.05);
     }
 
+    @Test
+    public void testOneOfGen() {
+
+
+        HashSet<String> values = new HashSet<>(Arrays.asList("a",
+                                                             "b",
+                                                             "c"));
+        var gen = Combinators.oneOf(values);
+
+        HashSet<String> values1 = new HashSet<>(Arrays.asList("d",
+                                                              "e",
+                                                              "f"));
+        var gen1 = Combinators.oneOf(values1);
+
+        Map<String, Long> counts =
+                TestFun.generate(100000,
+                                 Combinators.oneOf(gen,
+                                                   gen1)
+                );
+
+
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         TestFun.list(
+                                                                 "a",
+                                                                 "b",
+                                                                 "c",
+                                                                 "d",
+                                                                 "e",
+                                                                 "f"),
+                                                         0.05);
+    }
+
+    @Test
+    public void testOneOfListGen() {
+
+
+        HashSet<String> values = new HashSet<>(Arrays.asList("a",
+                                                             "b",
+                                                             "c"));
+        var gen = Combinators.oneOf(values);
+
+        HashSet<String> values1 = new HashSet<>(Arrays.asList("d",
+                                                              "e",
+                                                              "f"));
+        var gen1 = Combinators.oneOf(values1);
+
+        Map<String, Long> counts =
+                TestFun.generate(100000,
+                                 Combinators.oneOfList(List.of(gen,
+                                                               gen1))
+                );
+
+
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         TestFun.list(
+                                                                 "a",
+                                                                 "b",
+                                                                 "c",
+                                                                 "d",
+                                                                 "e",
+                                                                 "f"),
+                                                         0.05);
+    }
+
 
     @Test
     public void testCombinations() {

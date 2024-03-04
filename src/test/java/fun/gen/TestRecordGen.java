@@ -3,6 +3,7 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -270,7 +271,8 @@ public class TestRecordGen {
                                           "l",
                                           LongGen.biased(),
                                           "m",
-                                          BigIntGen.arbitrary(10)
+                                          BigIntGen.arbitrary(BigInteger.ONE,
+                                                              BigInteger.TEN)
         );
         Assertions.assertTrue(thirteen.sample(100).allMatch(it -> it.map.size() == 13));
 
@@ -303,7 +305,8 @@ public class TestRecordGen {
                                           "l",
                                           LongGen.biased(),
                                           "m",
-                                          BigIntGen.arbitrary(10),
+                                          BigIntGen.arbitrary(BigInteger.ONE,
+                                                              BigInteger.TEN),
                                           "n",
                                           BigDecGen.biased()
         );
@@ -338,7 +341,8 @@ public class TestRecordGen {
                                          "l",
                                          LongGen.biased(),
                                          "m",
-                                         BigIntGen.arbitrary(10),
+                                         BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                             new BigInteger("2000000000")),
                                          "n",
                                          BigDecGen.biased(),
                                          "o",
@@ -375,7 +379,8 @@ public class TestRecordGen {
                                          "l",
                                          LongGen.biased(),
                                          "m",
-                                         BigIntGen.arbitrary(10),
+                                         BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                             new BigInteger("2000000000")),
                                          "n",
                                          BigDecGen.biased(),
                                          "o",
@@ -414,7 +419,8 @@ public class TestRecordGen {
                                            "l",
                                            LongGen.biased(),
                                            "m",
-                                           BigIntGen.arbitrary(10),
+                                           BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                               new BigInteger("2000000000")),
                                            "n",
                                            BigDecGen.biased(),
                                            "o",
@@ -455,7 +461,8 @@ public class TestRecordGen {
                                           "l",
                                           LongGen.biased(),
                                           "m",
-                                          BigIntGen.arbitrary(10),
+                                          BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                              new BigInteger("2000000000")),
                                           "n",
                                           BigDecGen.biased(),
                                           "o",
@@ -499,7 +506,8 @@ public class TestRecordGen {
                                           "l",
                                           LongGen.biased(),
                                           "m",
-                                          BigIntGen.arbitrary(10),
+                                          BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                              new BigInteger("2000000000")),
                                           "n",
                                           BigDecGen.biased(),
                                           "o",
@@ -544,7 +552,8 @@ public class TestRecordGen {
                                         "l",
                                         LongGen.biased(),
                                         "m",
-                                        BigIntGen.arbitrary(10),
+                                        BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                            new BigInteger("2000000000")),
                                         "n",
                                         BigDecGen.biased(),
                                         "o",
@@ -839,7 +848,8 @@ public class TestRecordGen {
 
 
         Assertions.assertTrue(RecordGen.of("a",
-                                           BigIntGen.biased(10))
+                                           BigIntGen.arbitrary(new BigInteger("1000000000"),
+                                                               new BigInteger("2000000000")))
                                        .sample(100)
                                        .allMatch(it -> it.getOptBigInt("a")
                                                          .isPresent()));

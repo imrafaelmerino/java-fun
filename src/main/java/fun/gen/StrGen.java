@@ -22,7 +22,8 @@ public final class StrGen implements Gen<String> {
     private static final Gen<String> letter = CharGen.letter().map(String::valueOf);
     private static final Gen<String> alphabetic = CharGen.alphabetic().map(String::valueOf);
     private static final Gen<String> alphanumeric = Combinators.oneOf(CharGen.alphabetic(),
-                                                                      CharGen.digit()).map(String::valueOf);
+                                                                      CharGen.digit())
+                                                               .map(String::valueOf);
     private final int length;
 
     private StrGen(final int length) {

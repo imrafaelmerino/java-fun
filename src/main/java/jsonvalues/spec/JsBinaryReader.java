@@ -1,14 +1,13 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsBinary;
-
 import java.util.Base64;
+import jsonvalues.JsBinary;
 
 
 final class JsBinaryReader extends AbstractReader {
 
   @Override
-  JsBinary value(final JsReader reader) throws JsParserException {
+  JsBinary value(final DslJsReader reader) throws JsParserException {
     try {
       byte[] bytes = Base64.getDecoder()
                            .decode(reader.readString());

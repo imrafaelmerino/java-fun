@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Supplier;
 import jsonvalues.JsArray;
@@ -72,7 +73,7 @@ public class TestJsObj {
     Assertions.assertEquals(5,
                             obj.size()
                            );
-    final JsObj obj1 = obj.mapKeys(key -> key.toUpperCase());
+    final JsObj obj1 = obj.mapKeys(key -> key.toUpperCase(Locale.ENGLISH));
 
     Set<String> set = new HashSet<>(Arrays.asList("A",
                                                   "B",
@@ -113,7 +114,7 @@ public class TestJsObj {
     Assertions.assertEquals(5,
                             obj.size()
                            );
-    final JsObj obj1 = obj.mapKeys(key -> key.toUpperCase());
+    final JsObj obj1 = obj.mapKeys(key -> key.toUpperCase(Locale.ENGLISH));
 
     Set<String> set = new HashSet<>(Arrays.asList("A",
                                                   "B",
@@ -505,7 +506,7 @@ public class TestJsObj {
                                                                     () -> JsObj.parse("")
                                                                    );
 
-    Assertions.assertEquals("Unexpected end of JSON @ position=0",
+    Assertions.assertEquals("Unexpected end of JSON. Current parser position is 0",
                             malformedJson.getMessage()
                            );
 
@@ -678,11 +679,11 @@ public class TestJsObj {
                                                                                         );
                                                                  return path.last()
                                                                             .asKey().name.trim()
-                                                                                         .toUpperCase();
+                                                                                         .toUpperCase(Locale.ENGLISH);
                                                                })));
 
     Assertions.assertFalse(anyKeyLetterIsLowerCase(obj.mapKeys(key -> key.trim()
-                                                                         .toUpperCase())));
+                                                                         .toUpperCase(Locale.ENGLISH))));
 
   }
 
@@ -898,9 +899,9 @@ public class TestJsObj {
                            );
     Assertions.assertNull(o.getInt("b"));
     Assertions.assertEquals(1,
-                            (int) o.getInt("b",
-                                           () -> 1
-                                          )
+                            o.getInt("b",
+                                     () -> 1
+                                    )
                            );
     Assertions.assertNull(o.getBool("b"));
     Assertions.assertFalse(o.getBool("b",
@@ -916,9 +917,9 @@ public class TestJsObj {
 
     Assertions.assertNull(o.getDouble("b"));
     Assertions.assertEquals(1.5,
-                            (double) o.getDouble("b",
-                                                 () -> 1.5
-                                                )
+                            o.getDouble("b",
+                                        () -> 1.5
+                                       )
                            );
 
     Assertions.assertNull(o.getArray("b"));
@@ -930,9 +931,9 @@ public class TestJsObj {
 
     Assertions.assertNull(o.getLong("c"));
     Assertions.assertEquals(10L,
-                            (long) o.getLong("c",
-                                             () -> 10L
-                                            )
+                            o.getLong("c",
+                                      () -> 10L
+                                     )
                            );
 
     Assertions.assertNull(o.getStr("e"));

@@ -91,8 +91,8 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
    * @see String#compareTo(String)
    */
   @Override
-  public int compareTo(final JsStr o) {
-    return value.compareTo(requireNonNull(o).value);
+  public int compareTo(final JsStr other) {
+    return value.compareTo(requireNonNull(other).value);
   }
 
   /**
@@ -126,24 +126,24 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
    */
   @Override
   public boolean equals(final Object that) {
-      if (this == that) {
-          return true;
-      }
-      if (that == null) {
-          return false;
-      }
+    if (this == that) {
+      return true;
+    }
+    if (that == null) {
+      return false;
+    }
     if (that instanceof JsStr thatStr) {
       return Objects.equals(value,
                             thatStr.value);
     }
-      if (that instanceof JsInstant) {
-          return JsStr.instantPrism.reverseGet.apply(((JsInstant) that).value)
-                                              .equals(value);
-      }
-      if (that instanceof JsBinary) {
-          return JsStr.base64Prism.reverseGet.apply(((JsBinary) that).value)
-                                             .equals(value);
-      }
+    if (that instanceof JsInstant) {
+      return JsStr.instantPrism.reverseGet.apply(((JsInstant) that).value)
+                                          .equals(value);
+    }
+    if (that instanceof JsBinary) {
+      return JsStr.base64Prism.reverseGet.apply(((JsBinary) that).value)
+                                         .equals(value);
+    }
     return false;
   }
 
@@ -169,13 +169,20 @@ public final class JsStr extends JsPrimitive implements Comparable<JsStr> {
 
   @Override
   public boolean isBinary() {
-    return JsStr.base64Prism.getOptional.apply(value)
-                                        .isPresent();
+    try {
+      return Base64.getDecoder()
+                   .decode(value) != null;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 
   @Override
   public boolean isInstant() {
-    return JsStr.instantPrism.getOptional.apply(value)
-                                         .isPresent();
+    try {
+      return Instant.parse(value) != null;
+    } catch (DateTimeParseException e) {
+      return false;
+    }
   }
 }

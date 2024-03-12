@@ -1,26 +1,30 @@
 package jsonvalues.gen;
 
-import fun.gen.BoolGen;
+import static java.util.Objects.requireNonNull;
+
 import fun.gen.Combinators;
 import fun.gen.Gen;
 import fun.gen.SplitGen;
+import fun.tuple.Pair;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
+import java.util.stream.Collectors;
 import jsonvalues.JsNull;
 import jsonvalues.JsObj;
 import jsonvalues.JsValue;
 import jsonvalues.spec.JsObjSpec;
 
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.random.RandomGenerator;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
-
-
 /**
  * Represents a JsObj generator. It can be created using the static factory methods {@code of} or inserting new
  * key-generator pairs to an existing JsObj generator with the method {@link JsObjGen#set(String, Gen)}. Each generator
- * of the Json is created from a new seed that is calculated passing the original one to the
+ * of the Json is created from a new seed that is calculated by passing the original one to the
  * {@link SplitGen#DEFAULT split generator }
  * <p>
  * There are factory methods to create generators of up to 50-key Json objects.
@@ -44,30 +48,31 @@ import static java.util.Objects.requireNonNull;
  */
 public final class JsObjGen implements Gen<JsObj> {
 
-
   private final static Supplier<Set<String>> EMPTY_SET_GEN = HashSet::new;
   private final Map<String, Gen<? extends JsValue>> bindings;
   private final Set<String> optionals;
   private final Set<String> nullables;
 
-  private JsObjGen(Map<String, Gen<? extends JsValue>> bindings,
-                   Set<String> optionals,
-                   Set<String> nullables
-                  ) {
+
+  public JsObjGen(Map<String, Gen<? extends JsValue>> bindings,
+                  Set<String> optionals,
+                  Set<String> nullables
+                 ) {
     for (String key : optionals) {
-        if (!bindings.containsKey(key)) {
-            throw new IllegalArgumentException("optional '" + key + "' not defined in generator");
-        }
+      if (!bindings.containsKey(key)) {
+        throw new IllegalArgumentException("optional '%s' not defined in generator".formatted(key));
+      }
     }
     for (String key : nullables) {
-        if (!bindings.containsKey(key)) {
-            throw new IllegalArgumentException("nullable '" + key + "' not defined in generator");
-        }
+      if (!bindings.containsKey(key)) {
+        throw new IllegalArgumentException("nullable '" + key + "' not defined in generator");
+      }
     }
     this.optionals = optionals;
     this.nullables = nullables;
     this.bindings = bindings;
   }
+
 
   private JsObjGen(Map<String, Gen<? extends JsValue>> bindings) {
     this.optionals = new HashSet<>();
@@ -75,10 +80,11 @@ public final class JsObjGen implements Gen<JsObj> {
     this.bindings = bindings;
   }
 
-  public static JsObjGen of() {
+  public static JsObjGen empty() {
     Map<String, Gen<? extends JsValue>> map = new HashMap<>();
     return new JsObjGen(map);
   }
+
 
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen
@@ -91,7 +97,6 @@ public final class JsObjGen implements Gen<JsObj> {
 
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -104,7 +109,7 @@ public final class JsObjGen implements Gen<JsObj> {
 
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -120,7 +125,6 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen2);
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -140,7 +144,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen3);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -164,7 +168,6 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen4);
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -192,7 +195,6 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen5);
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -224,7 +226,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen6);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key,
                             final Gen<? extends JsValue> gen,
                             final String key1,
@@ -299,7 +301,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen8);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -343,7 +345,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen10);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -391,7 +393,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen11);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -443,7 +445,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen12);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -499,7 +501,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen13);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -559,7 +561,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen14);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -623,7 +625,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen15);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -691,7 +693,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen16);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -763,7 +765,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen17);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -839,7 +841,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen18);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -919,7 +921,7 @@ public final class JsObjGen implements Gen<JsObj> {
                         gen19);
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjGen of(final String key1,
                             final Gen<? extends JsValue> gen1,
                             final String key2,
@@ -5502,10 +5504,46 @@ public final class JsObjGen implements Gen<JsObj> {
                         nullables);
   }
 
+  int optionalProbability = 2;
+  int nullableProbability = 2;
+
+  /**
+   * Sets the probability of including optional fields when generating JsObj instances.
+   *
+   * @param prob The probability value should be between 2 and 10 (inclusive). Default value is 2. Higher values make
+   *             the inclusion of optional fields more likely. For example, if prob is set to 4, the chances of
+   *             including optional fields are 4 times higher.
+   * @return The JsObjGen instance for method chaining.
+   * @throws IllegalArgumentException If the probability is not within the valid range.
+   */
+  public JsObjGen withOptionalProbability(int prob) {
+    if (prob < 2) {
+      throw new IllegalArgumentException("The probability must be greater than 2");
+    }
+    this.optionalProbability = prob;
+    return this;
+  }
+
+  /**
+   * Sets the probability of including nullable fields when generating JsObj instances.
+   *
+   * @param prob The probability value should be between 2 and 10 (inclusive). Default value is 2. Higher values make
+   *             the inclusion of nullable fields more likely. For example, if prob is set to 4, the chances of
+   *             including nullable fields are 4 times higher.
+   * @return The JsObjGen instance for method chaining.
+   * @throws IllegalArgumentException If the probability is not within the valid range.
+   */
+  public JsObjGen withNullableProbability(int prob) {
+    if (prob < 2) {
+      throw new IllegalArgumentException("The probability must be greater than 2");
+    }
+    this.nullableProbability = prob;
+    return this;
+  }
+
   @Override
   public Supplier<JsObj> apply(final RandomGenerator seed) {
     requireNonNull(seed);
-
     var optionalFields =
         optionals.isEmpty() ?
         EMPTY_SET_GEN :
@@ -5520,32 +5558,55 @@ public final class JsObjGen implements Gen<JsObj> {
                    .suchThat(set -> !set.isEmpty())
                    .sample(SplitGen.DEFAULT.apply(seed));
 
-    var isOpt = BoolGen.arbitrary()
-                       .apply(seed);
-    var isNullable = BoolGen.arbitrary()
-                            .apply(seed);
+    var isOpt = Combinators.freq(Pair.of(optionalProbability,
+                                         Gen.cons(true)),
+                                 Pair.of(1,
+                                         Gen.cons(false)))
+                           .apply(seed);
+    var isNullable = Combinators.freq(Pair.of(nullableProbability,
+                                              Gen.cons(true)),
+                                      Pair.of(1,
+                                              Gen.cons(false)))
+                                .sample(seed);
 
     Map<String, Supplier<? extends JsValue>> map = new LinkedHashMap<>();
-      for (var pair : bindings.entrySet()) {
-          map.put(pair.getKey(),
-                  pair.getValue()
-                      .apply(SplitGen.DEFAULT.apply(seed)));
-      }
+    for (var pair : bindings.entrySet()) {
+      map.put(pair.getKey(),
+              pair.getValue()
+                  .apply(SplitGen.DEFAULT.apply(seed))
+             );
+    }
 
     return () ->
     {
       var obj = JsObj.empty();
       var nullFields = isNullable.get() ? nullableFields.get() : null;
       var optFields = isOpt.get() ? optionalFields.get() : null;
-
       for (var pair : map.entrySet()) {
-        if (optFields == null || !optFields.contains(pair.getKey())) {
-          var value = nullFields != null && nullFields.contains(pair.getKey()) ?
-                      JsNull.NULL :
-                      pair.getValue()
-                          .get();
+        boolean isOptional =
+            optFields != null
+            && optFields.contains(pair.getKey());
+        boolean isNull =
+            nullFields != null
+            && nullFields.contains(pair.getKey());
+
+        if (isOptional && isNull) {
+          if (seed.nextBoolean()) {
+            obj = obj.set(pair.getKey(),
+                          JsNull.NULL
+                         );
+          }
+        } else if (isOptional) {
+          continue;
+        } else if (isNull) {
           obj = obj.set(pair.getKey(),
-                        value);
+                        JsNull.NULL
+                       );
+        } else {
+          obj = obj.set(pair.getKey(),
+                        pair.getValue()
+                            .get()
+                       );
         }
       }
       return obj;

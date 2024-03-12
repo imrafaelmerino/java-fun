@@ -87,7 +87,6 @@
   - Introducing a new section in the readme, featuring an illustrative implementation of
     [Modeling Inheritance](https://json-schema.org/blog/posts/modelling-inheritance)."
 - Issues:
-
   - https://github.com/imrafaelmerino/json-values/issues/195
 
 **13.2.0**
@@ -113,3 +112,23 @@ New features:
 **13.4.0**
 
 - Examples.java class leak in source code
+
+**14.0.0**
+
+Breaking changes:
+
+- JsSpec parsers returns `JsBigInt` instead of `JsBigDec` when numbers don't have a decimal part and
+  don't fit in a `long` If you are parsing strings into Json using spec parsers and have to deal
+  with big integer numbers, please take this into account.
+- Removed methods `biased(nBits)` and `arbitrary(nBits)` since better alternatives has been added
+
+New features:
+
+- `SpecToJsonSchema` to convert specs into json-schema (SchemaDraft.DRAFT_2019_09)
+- `SpecToGen` to convert specs into generators
+- `JsBigIntGen` new methods `biased(min, max)` and `arbitrary(min,max)`
+- `Cons` spec
+
+Bugs:
+
+- `writeBinary` method in `JsWritter` class when binary was one byte long

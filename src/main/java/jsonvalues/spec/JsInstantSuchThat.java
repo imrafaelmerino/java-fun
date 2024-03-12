@@ -1,18 +1,16 @@
 package jsonvalues.spec;
 
-import jsonvalues.*;
+import static jsonvalues.spec.ERROR_CODE.INSTANT_EXPECTED;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.function.Function;
-
-import static jsonvalues.spec.ERROR_CODE.INSTANT_EXPECTED;
+import jsonvalues.JsValue;
 
 final class JsInstantSuchThat extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
-  final Function<Instant, Optional<JsError>> predicate;
+  final Function<Instant, JsError> predicate;
 
-  JsInstantSuchThat(final Function<Instant, Optional<JsError>> predicate,
+  JsInstantSuchThat(final Function<Instant, JsError> predicate,
                     final boolean nullable
                    ) {
     super(nullable);
@@ -37,14 +35,15 @@ final class JsInstantSuchThat extends AbstractNullable implements JsOneErrorSpec
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    final Optional<JsError> error = Functions.testElem(JsValue::isInstant,
-                                                       INSTANT_EXPECTED,
-                                                       nullable
-                                                      )
-                                             .apply(value);
+  public JsError testValue(final JsValue value) {
+    JsError error =
+        Fun.testValue(JsValue::isInstant,
+                      INSTANT_EXPECTED,
+                      nullable,
+                      value
+                     );
 
-    return error.isPresent() || value.isNull() ?
+    return error != null || value.isNull() ?
            error :
            predicate.apply(value.toJsInstant().value);
   }

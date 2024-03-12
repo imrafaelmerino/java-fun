@@ -1,11 +1,19 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.*;
-
 import static java.util.Objects.requireNonNull;
-import static jsonvalues.spec.NameValidationSpecConstants.*;
+import static jsonvalues.spec.NameValidationSpecConstants.AVRO_NAMESPACE_PATTERN;
+import static jsonvalues.spec.NameValidationSpecConstants.AVRO_NAME_PATTERN;
+import static jsonvalues.spec.NameValidationSpecConstants.isValidName;
+import static jsonvalues.spec.NameValidationSpecConstants.isValidNamespace;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import jsonvalues.JsValue;
 
 
 /**
@@ -61,14 +69,16 @@ public final class JsObjSpecBuilder {
   private Map<String, JsValue> fieldsDefaults;
   private String nameSpace;
   private List<String> aliases;
+  private int minProperties = 0;
+  private int maxProperties = Integer.MAX_VALUE;
 
   private JsObjSpecBuilder(String name) {
-      if (!isValidName.test(requireNonNull(name))) {
-          throw new IllegalArgumentException(("The name of the JsObjSpec with name `%s` doesn't follow the " +
-                                              "pattern %s"
-                                             ).formatted(name,
-                                                         AVRO_NAME_PATTERN));
-      }
+    if (!isValidName.test(requireNonNull(name))) {
+      throw new IllegalArgumentException(("The name of the JsObjSpec with name `%s` doesn't follow the " +
+                                          "pattern %s"
+                                         ).formatted(name,
+                                                     AVRO_NAME_PATTERN));
+    }
     this.name = name;
   }
 
@@ -106,11 +116,11 @@ public final class JsObjSpecBuilder {
    */
   public JsObjSpecBuilder withNamespace(final String nameSpace) {
     this.nameSpace = requireNonNull(nameSpace);
-      if (!isValidNamespace.test(nameSpace)) {
-          throw new IllegalArgumentException(("The namespace of the JsObjSpec with name %s doesn't follow the " +
-                                              "pattern %s").formatted(name,
-                                                                      AVRO_NAMESPACE_PATTERN));
-      }
+    if (!isValidNamespace.test(nameSpace)) {
+      throw new IllegalArgumentException(("The namespace of the JsObjSpec with name %s doesn't follow the " +
+                                          "pattern %s").formatted(name,
+                                                                  AVRO_NAMESPACE_PATTERN));
+    }
     return this;
   }
 
@@ -161,11 +171,41 @@ public final class JsObjSpecBuilder {
     this.fieldsAliases = Collections.unmodifiableMap(requireNonNull(fieldsAliases));
     for (Map.Entry<String, List<String>> entry : fieldsAliases.entrySet()) {
       for (String alias : entry.getValue()) {
-          if (requireNonNull(alias).isEmpty() || alias.isBlank()) {
-              throw new IllegalArgumentException("Alias empty or blank");
-          }
+        if (requireNonNull(alias).isEmpty() || alias.isBlank()) {
+          throw new IllegalArgumentException("Alias empty or blank");
+        }
       }
     }
+    return this;
+  }
+
+  /**
+   * Sets the minimum number of properties that the JSON object must have.
+   *
+   * @param minProperties The minimum number of properties (inclusive).
+   * @return This JsObjSpecBuilder instance for method chaining.
+   * @throws IllegalArgumentException If minProperties is negative.
+   */
+  public JsObjSpecBuilder withMinProperties(int minProperties) {
+    if (minProperties < 0) {
+      throw new IllegalArgumentException("minProperties can not be negative");
+    }
+    this.minProperties = minProperties;
+    return this;
+  }
+
+  /**
+   * Sets the maximum number of properties that the JSON object must have.
+   *
+   * @param maxProperties The maximum number of properties (inclusive).
+   * @return This JsObjSpecBuilder instance for method chaining.
+   * @throws IllegalArgumentException If maxProperties is negative.
+   */
+  public JsObjSpecBuilder withMaxProperties(int maxProperties) {
+    if (maxProperties < 0) {
+      throw new IllegalArgumentException("maxProperties can not be negative");
+    }
+    this.maxProperties = maxProperties;
     return this;
   }
 
@@ -225,22 +265,22 @@ public final class JsObjSpecBuilder {
    */
   public JsObjSpec build(final JsObjSpec spec) {
     Objects.requireNonNull(spec);
-      if (fieldsDefaults != null) {
-          validateDefaults(spec,
-                           fieldsDefaults);
-      }
-      if (fieldsDoc != null) {
-          validateDocs(spec,
-                       fieldsDoc);
-      }
-      if (fieldsOrder != null) {
-          validateOrders(spec,
-                         fieldsOrder);
-      }
-      if (fieldsAliases != null) {
-          validateAliases(spec,
-                          fieldsAliases);
-      }
+    if (fieldsDefaults != null) {
+      validateDefaults(spec,
+                       fieldsDefaults);
+    }
+    if (fieldsDoc != null) {
+      validateDocs(spec,
+                   fieldsDoc);
+    }
+    if (fieldsOrder != null) {
+      validateOrders(spec,
+                     fieldsOrder);
+    }
+    if (fieldsAliases != null) {
+      validateAliases(spec,
+                      fieldsAliases);
+    }
 
     var metadata = new MetaData(name,
                                 nameSpace,
@@ -249,18 +289,20 @@ public final class JsObjSpecBuilder {
                                 fieldsDoc,
                                 fieldsOrder,
                                 fieldsAliases,
-                                fieldsDefaults);
-    var metadataSpec = new JsObjSpec(spec.bindings,
-                                     spec.nullable,
-                                     spec.strict,
-                                     spec.predicate,
-                                     spec.requiredFields,
-                                     metadata);
+                                fieldsDefaults,
+                                minProperties,
+                                maxProperties);
+    var objSpec = new JsObjSpec(spec.bindings,
+                                spec.nullable,
+                                spec.strict,
+                                spec.predicate,
+                                spec.requiredFields,
+                                metadata);
     JsSpecCache.putAll(metadata.getFullName(),
                        aliases,
-                       metadataSpec);
+                       objSpec);
 
-    return metadataSpec;
+    return objSpec;
 
   }
 
@@ -271,22 +313,22 @@ public final class JsObjSpecBuilder {
     List<String> allAliases = new ArrayList<>();
     for (Map.Entry<String, List<String>> entry : fieldsAlias.entrySet()) {
       var key = entry.getKey();
-        if (entry.getValue()
-                 .contains(key)) {
-            throw new IllegalArgumentException("The field `%s` can not be contained in the aliases".formatted(key));
-        }
-        if (!bindings.containsKey(key)) {
-            throw new IllegalArgumentException("The field `%s`is not defined in the JsObjSpec with name `%s`".formatted(key,
-                                                                                                                        name));
-        }
-        if (containsDuplicates(entry.getValue())) {
-            throw new IllegalArgumentException("The field `%s` has duplicated aliases".formatted(key));
-        }
+      if (entry.getValue()
+               .contains(key)) {
+        throw new IllegalArgumentException("The field `%s` can not be contained in the aliases".formatted(key));
+      }
+      if (!bindings.containsKey(key)) {
+        throw new IllegalArgumentException("The field `%s`is not defined in the JsObjSpec with name `%s`".formatted(key,
+                                                                                                                    name));
+      }
+      if (containsDuplicates(entry.getValue())) {
+        throw new IllegalArgumentException("The field `%s` has duplicated aliases".formatted(key));
+      }
       allAliases.addAll(entry.getValue());
     }
-      if (containsDuplicates(allAliases)) {
-          throw new IllegalArgumentException("Found duplicate in aliases for spec `%s`.".formatted(name));
-      }
+    if (containsDuplicates(allAliases)) {
+      throw new IllegalArgumentException("Found duplicate in aliases for spec `%s`.".formatted(name));
+    }
 
   }
 
@@ -296,10 +338,10 @@ public final class JsObjSpecBuilder {
 
     for (Map.Entry<String, ORDERS> entry : fieldsOrder.entrySet()) {
       var key = entry.getKey();
-        if (!bindings.containsKey(key)) {
-            throw new IllegalArgumentException("The key `%s`is not defined in the JsObjSpec with name %s".formatted(key,
-                                                                                                                    name));
-        }
+      if (!bindings.containsKey(key)) {
+        throw new IllegalArgumentException("The key `%s`is not defined in the JsObjSpec with name %s".formatted(key,
+                                                                                                                name));
+      }
     }
   }
 
@@ -309,10 +351,10 @@ public final class JsObjSpecBuilder {
 
     for (Map.Entry<String, String> entry : fieldsDoc.entrySet()) {
       var key = entry.getKey();
-        if (!bindings.containsKey(key)) {
-            throw new IllegalArgumentException("The key `%s` is not defined in the JsObjSpec with name %s".formatted(key,
-                                                                                                                     name));
-        }
+      if (!bindings.containsKey(key)) {
+        throw new IllegalArgumentException("The key `%s` is not defined in the JsObjSpec with name %s".formatted(key,
+                                                                                                                 name));
+      }
     }
   }
 
@@ -324,42 +366,42 @@ public final class JsObjSpecBuilder {
     for (Map.Entry<String, JsValue> entry : fieldsDefaults.entrySet()) {
       var key = entry.getKey();
       var value = entry.getValue();
-        if (value == null) {
-            throw new IllegalArgumentException("The value of the key `%s` of `fieldsDefaults` can not be null".formatted(key));
-        }
-        if (!bindings.containsKey(key)) {
-            throw new IllegalArgumentException("The key `%s` is not defined in the JsObjSpec with name %s".formatted(key,
-                                                                                                                     name));
-        }
+      if (value == null) {
+        throw new IllegalArgumentException("The value of the key `%s` of `fieldsDefaults` can not be null".formatted(key));
+      }
+      if (!bindings.containsKey(key)) {
+        throw new IllegalArgumentException("The key `%s` is not defined in the JsObjSpec with name %s".formatted(key,
+                                                                                                                 name));
+      }
       JsSpec keySpec = bindings.get(key);
       if (keySpec instanceof OneOf oneOf) {
         var errors = oneOf.getSpecs()
                           .get(0)
                           .test(value);
-          if (!errors.isEmpty()) {
-              throw new IllegalArgumentException(("The default value `%s` doesn't conform the FIRST spec " +
-                                                  "associated to the key `%s` of the JsObjSpec with name `%s`"
-                                                 ).formatted(value,
-                                                             key,
-                                                             name));
-          }
+        if (!errors.isEmpty()) {
+          throw new IllegalArgumentException(("The default value `%s` doesn't conform the FIRST spec " +
+                                              "associated to the key `%s` of the JsObjSpec with name `%s`"
+                                             ).formatted(value,
+                                                         key,
+                                                         name));
+        }
       } else if (keySpec instanceof NamedSpec) {
-          if (value.isNotNull()) {
-              throw new IllegalArgumentException("Named specs doesn't support default values different than null. " +
-                                                 "They can't be used to validate the default values before being " +
-                                                 "created and cached.");
-          } else if (!keySpec.isNullable()) {
-              throw new IllegalArgumentException("The default value for `%s` is null but the spec is not nullable".formatted(key));
-          }
+        if (value.isNotNull()) {
+          throw new IllegalArgumentException("Named specs doesn't support default values different than null. " +
+                                             "They can't be used to validate the default values before being " +
+                                             "created and cached.");
+        } else if (!keySpec.isNullable()) {
+          throw new IllegalArgumentException("The default value for `%s` is null but the spec is not nullable".formatted(key));
+        }
       } else {
         var errors = keySpec.test(value);
-          if (!errors.isEmpty()) {
-              throw new IllegalArgumentException(("The default value `%s` doesn't conform the spec associated to" +
-                                                  " the key `%s` of the JsObjSpec with name `%s`"
-                                                 ).formatted(value,
-                                                             key,
-                                                             name));
-          }
+        if (!errors.isEmpty()) {
+          throw new IllegalArgumentException(("The default value `%s` doesn't conform the spec associated to" +
+                                              " the key `%s` of the JsObjSpec with name `%s`"
+                                             ).formatted(value,
+                                                         key,
+                                                         name));
+        }
       }
     }
   }

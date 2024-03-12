@@ -2,8 +2,6 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-
 
 final class JsArrayOfValue extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec {
 
@@ -11,37 +9,32 @@ final class JsArrayOfValue extends AbstractSizableArr implements JsOneErrorSpec,
     super(nullable);
   }
 
-  JsArrayOfValue(final boolean nullable,
-                 int min,
-                 int max
+  JsArrayOfValue(boolean nullable,
+                 ArraySchemaConstraints arrayConstraints
                 ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
   }
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfValue(true,
-                              min,
-                              max);
+                              arrayConstraints);
   }
 
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfValue(nullable,
-                                             min,
-                                             max);
+                                             arrayConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArray(nullable,
-                               min,
-                               max)
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArray(nullable,
+                         arrayConstraints,
+                         value);
   }
 
 }

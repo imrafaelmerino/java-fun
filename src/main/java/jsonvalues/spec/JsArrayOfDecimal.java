@@ -1,52 +1,69 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsArrayOfDecimal extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
+  final DecimalSchemaConstraints constraints;
+
   JsArrayOfDecimal(final boolean nullable) {
-    super(nullable);
+    this(nullable,
+         null);
   }
 
   JsArrayOfDecimal(final boolean nullable,
-                   int min,
-                   int max
+                   DecimalSchemaConstraints constraints,
+                   ArraySchemaConstraints arrayConstraints) {
+    super(nullable,
+          arrayConstraints);
+    this.constraints = constraints;
+
+  }
+
+  JsArrayOfDecimal(final boolean nullable,
+                   ArraySchemaConstraints arrayConstraints
+                  ) {
+    this(nullable,
+         arrayConstraints,
+         null);
+  }
+
+  JsArrayOfDecimal(final boolean nullable,
+                   ArraySchemaConstraints arrayConstraints,
+                   DecimalSchemaConstraints constraints
                   ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
+    this.constraints = constraints;
   }
+
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfDecimal(true,
-                                min,
-                                max);
+                                arrayConstraints,
+                                constraints);
   }
 
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfDecimal(nullable,
-                                               min,
-                                               max);
+                                               arrayConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v -> v.isNumber() ?
-                                                 Optional.empty() :
-                                                 Optional.of(new JsError(v,
-                                                                         DECIMAL_EXPECTED)),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v -> v.isNumber() ?
+                                           null :
+                                           new JsError(v,
+                                                       DECIMAL_EXPECTED),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 }

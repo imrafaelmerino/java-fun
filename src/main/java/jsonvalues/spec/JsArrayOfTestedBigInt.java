@@ -1,32 +1,28 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
+import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
 
 import java.math.BigInteger;
-import java.util.Optional;
 import java.util.function.Function;
-
-import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
+import jsonvalues.JsValue;
 
 final class JsArrayOfTestedBigInt extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  private final Function<BigInteger, Optional<JsError>> predicate;
+  private final Function<BigInteger, JsError> predicate;
 
-  JsArrayOfTestedBigInt(final Function<BigInteger, Optional<JsError>> predicate,
+  JsArrayOfTestedBigInt(final Function<BigInteger, JsError> predicate,
                         final boolean nullable
                        ) {
     super(nullable);
     this.predicate = predicate;
   }
 
-  JsArrayOfTestedBigInt(final Function<BigInteger, Optional<JsError>> predicate,
-                        final boolean nullable,
-                        int min,
-                        int max
+  JsArrayOfTestedBigInt(Function<BigInteger, JsError> predicate,
+                        boolean nullable,
+                        ArraySchemaConstraints arrayConstraints
                        ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
     this.predicate = predicate;
   }
 
@@ -34,33 +30,30 @@ final class JsArrayOfTestedBigInt extends AbstractSizableArr implements JsOneErr
   public JsSpec nullable() {
     return new JsArrayOfTestedBigInt(predicate,
                                      true,
-                                     min,
-                                     max);
+                                     arrayConstraints);
   }
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfIntegralEachSuchThat(predicate,
                                                             nullable,
-                                                            min,
-                                                            max
+                                                            arrayConstraints
                                                            );
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v ->
-                                                v.isIntegral() ?
-                                                predicate.apply(v.toJsBigInt().value) :
-                                                Optional.of(new JsError(v,
-                                                                        INTEGRAL_EXPECTED
-                                                            )
-                                                           ),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v ->
+                                          v.isIntegral() ?
+                                          predicate.apply(v.toJsBigInt().value) :
+                                          new JsError(v,
+                                                      INTEGRAL_EXPECTED
+
+                                          ),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 
 

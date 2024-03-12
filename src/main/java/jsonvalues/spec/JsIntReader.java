@@ -1,26 +1,24 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsInt;
-
-import java.util.Optional;
 import java.util.function.IntFunction;
+import jsonvalues.JsInt;
 
 final class JsIntReader extends AbstractReader {
 
   @Override
-  JsInt value(final JsReader reader) throws JsParserException {
+  JsInt value(final DslJsReader reader) throws JsParserException {
     return JsInt.of(NumberConverter.deserializeInt(reader));
   }
 
-  JsInt valueSuchThat(final JsReader reader,
-                      final IntFunction<Optional<JsError>> fn
+  JsInt valueSuchThat(final DslJsReader reader,
+                      final IntFunction<JsError> fn
                      ) throws JsParserException {
     int value = NumberConverter.deserializeInt(reader);
-    Optional<JsError> result = fn.apply(value);
-      if (result.isEmpty()) {
-          return JsInt.of(value);
-      }
-    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
+    JsError result = fn.apply(value);
+    if (result == null) {
+      return JsInt.of(value);
+    }
+    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result),
                                      reader.getPositionInStream()
                                     );
   }

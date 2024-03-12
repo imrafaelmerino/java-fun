@@ -1,10 +1,8 @@
 package jsonvalues.spec;
 
 
+import java.util.function.Function;
 import jsonvalues.JsValue;
-
-import java.util.Optional;
-import java.util.function.Predicate;
 
 abstract class AbstractMap extends AbstractNullable {
 
@@ -13,52 +11,52 @@ abstract class AbstractMap extends AbstractNullable {
   }
 
 
-  protected Optional<JsError> test(JsValue value,
-                                   Predicate<JsValue> isError,
-                                   ERROR_CODE code
-                                  ) {
-      if (value.isNull() && nullable) {
-          return Optional.empty();
-      }
+  protected JsError test(JsValue value,
+                         Function<JsValue, ERROR_CODE> getError
+                        ) {
+    if (value.isNull() && nullable) {
+      return null;
+    }
     if (!value.isObj()) {
-      return Optional.of(new JsError(value,
-                                     ERROR_CODE.OBJ_EXPECTED));
+      return new JsError(value,
+                         ERROR_CODE.OBJ_EXPECTED);
     }
 
     var obj = value.toJsObj();
 
     for (var pair : obj) {
-        if (isError.test(pair.value())) {
-            return Optional.of(new JsError(pair.value(),
-                                           code));
-        }
+      ERROR_CODE errorCode = getError.apply(pair.value());
+      if (errorCode != null) {
+        return new JsError(pair.value(),
+                           errorCode);
+      }
     }
 
-    return Optional.empty();
+    return null;
   }
 
-  protected Optional<JsError> test(JsValue value,
-                                   JsSpec spec
-                                  ) {
-      if (value.isNull() && nullable) {
-          return Optional.empty();
-      }
+  protected JsError test(JsValue value,
+                         JsSpec spec
+                        ) {
+    if (value.isNull() && nullable) {
+      return null;
+    }
 
-      if (!value.isObj()) {
-          return Optional.of(new JsError(value,
-                                         ERROR_CODE.OBJ_EXPECTED));
-      }
+    if (!value.isObj()) {
+      return new JsError(value,
+                         ERROR_CODE.OBJ_EXPECTED);
+    }
 
     var obj = value.toJsObj();
 
     for (var pair : obj) {
       var xs = spec.test(pair.value());
-        if (!xs.isEmpty()) {
-            return Optional.of(xs.get(0).error);
-        }
+      if (!xs.isEmpty()) {
+        return xs.get(0).error;
+      }
     }
 
-    return Optional.empty();
+    return null;
   }
 
 }

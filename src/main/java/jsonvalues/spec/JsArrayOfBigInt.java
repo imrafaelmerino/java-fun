@@ -1,54 +1,52 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.INTEGRAL_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsArrayOfBigInt extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  JsArrayOfBigInt(final boolean nullable) {
+  BigIntSchemaConstraints constraints;
+
+  JsArrayOfBigInt(boolean nullable) {
     super(nullable);
   }
 
-  JsArrayOfBigInt(final boolean nullable,
-                  int min,
-                  int max
+  JsArrayOfBigInt(boolean nullable,
+                  ArraySchemaConstraints arrayConstraints,
+                  BigIntSchemaConstraints constraints
                  ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
+    this.constraints = constraints;
   }
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfBigInt(true,
-                               min,
-                               max);
+                               arrayConstraints,
+                               constraints);
   }
 
 
   @Override
   public JsParser parser() {
-    return JsParsers.INSTANCE
-        .ofArrayOfIntegral(nullable,
-                           min,
-                           max);
+    return JsParsers.INSTANCE.ofArrayOfIntegral(nullable,
+                                                arrayConstraints,
+                                                constraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v ->
-                                                v.isIntegral() ?
-                                                Optional.empty() :
-                                                Optional.of(new JsError(v,
-                                                                        INTEGRAL_EXPECTED)),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v ->
+                                          v.isIntegral() ?
+                                          null :
+                                          new JsError(v,
+                                                      INTEGRAL_EXPECTED),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 }

@@ -1,10 +1,8 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsArrayOfObj extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec {
 
@@ -13,40 +11,35 @@ final class JsArrayOfObj extends AbstractSizableArr implements JsOneErrorSpec, J
   }
 
   JsArrayOfObj(final boolean nullable,
-               int min,
-               int max
+               ArraySchemaConstraints arrayConstraints
               ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
   }
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfObj(true,
-                            min,
-                            max);
+                            arrayConstraints);
   }
 
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfObj(nullable,
-                                           min,
-                                           max);
+                                           arrayConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v -> v.isObj() ?
-                                                 Optional.empty() :
-                                                 Optional.of(new JsError(v,
-                                                                         OBJ_EXPECTED)),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v -> v.isObj() ?
+                                           null :
+                                           new JsError(v,
+                                                       OBJ_EXPECTED),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 }

@@ -1,18 +1,16 @@
 package jsonvalues.spec;
 
+import java.util.function.Function;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 
 final class JsArrayOfDoubleSuchThat extends AbstractNullable implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  private final Function<JsArray, Optional<JsError>> predicate;
+  final Function<JsArray, JsError> predicate;
   private final JsArrayOfDouble arrayOfDoubleSpec;
 
-  JsArrayOfDoubleSuchThat(final Function<JsArray, Optional<JsError>> predicate,
+  JsArrayOfDoubleSuchThat(final Function<JsArray, JsError> predicate,
                           final boolean nullable
                          ) {
     super(nullable);
@@ -36,9 +34,9 @@ final class JsArrayOfDoubleSuchThat extends AbstractNullable implements JsOneErr
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    final Optional<JsError> result = arrayOfDoubleSpec.testValue(value);
-    return result.isPresent() || value.isNull() ?
+  public JsError testValue(final JsValue value) {
+    final JsError result = arrayOfDoubleSpec.testValue(value);
+    return result != null || value.isNull() ?
            result :
            predicate.apply(value.toJsArray());
 

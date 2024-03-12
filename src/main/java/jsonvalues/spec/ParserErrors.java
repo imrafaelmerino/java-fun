@@ -8,9 +8,32 @@ import java.util.function.UnaryOperator;
 class ParserErrors {
 
   public static final String OBJ_CONDITION = "JSON Object was parsed but it doesn't conform the predicate specified with the spec method 'suchThat'";
+  public static final String STR_LENGTH_LOWER_THAN_MINIMUM = "String length lower than minimum";
+  public static final String STR_LENGTH_GREATER_THAN_MAXIMUM = "String length greater than maximum";
+  public static final String STR_STRING_DOES_NOT_MATCH_PATTERN = "String does not match pattern";
+  public static final String LONG_LOWER_THAN_MINIMUM = "Long number lower than minimum";
+  public static final String LONG_GREATER_THAN_MAXIMUM = "Long number greater than maximum";
+  public static final String LONG_NOT_MULTIPLE_OF = "Long number is not multiple of";
+  public static final String INT_LOWER_THAN_MINIMUM = "Int number lower than minimum";
+  public static final String INT_GREATER_THAN_MAXIMUM = "Int number greater than maximum";
+  public static final String INT_NOT_MULTIPLE_OF = "Int number is not multiple of";
+  public static final String DOUBLE_LOWER_THAN_MINIMUM = "Double number lower than minimum";
+  public static final String DOUBLE_GREATER_THAN_MAXIMUM = "Double number greater than maximum";
+  public static final String DOUBLE_NOT_MULTIPLE_OF = "Double number is not multiple of";
+  public static final String BIGINT_LOWER_THAN_MINIMUM = "BigInteger number lower than minimum";
+  public static final String BIGINT_GREATER_THAN_MAXIMUM = "BigInteger number greater than maximum";
+  public static final String BIGINT_NOT_MULTIPLE_OF = "BigInteger number is not multiple of";
+  public static final String DECIMAL_LOWER_THAN_MINIMUM = "BigDecimal number lower than minimum";
+  public static final String DECIMAL_GREATER_THAN_MAXIMUM = "BigDecimal number greater than maximum";
+  public static final String DECIMAL_NOT_MULTIPLE_OF = "BigDecimal number is not multiple of";
+  public static final String OBJ_MAX_SIZE_EXCEEDED = "Object max size exceeded";
+  public static final String OBJ_MIN_SIZE_NOT_MET = "Object min size not met";
+  public static final String DUPLICATED_ARRAY_ITEM = "Duplicated array item";
+  public static final String INSTANT_LOWER_THAN_MINIMUM = "Instant lower than minimum";
+  public static final String INSTANT_GREATER_THAN_MAXIMUM = "Instant greater than maximum";
   static final String EXPECTING_FOR_OBJ_START = "Expecting '{' for Json object start but get %s";
   static final String EXPECTING_FOR_MAP_END = "Expecting '}' for Json object end but get %s";
-  static final String ONEOF_EXHAUSTED = "`OneOf` spec exhausted";
+  static final String ONE_OF_EXHAUSTED = "`OneOf` spec exhausted";
 
   static final String UNEXPECTED_END_OF_JSON = "Unexpected end of JSON";
 
@@ -21,14 +44,13 @@ class ParserErrors {
   static final String EXPECTING_FOR_ARRAY_START = "Expecting '[' for Json array start";
   static final String BOOL_EXPECTED = "Boolean expected";
   static final String BIG_INTEGER_WITH_FRACTIONAL_PART = "`BigInteger` with fractional part";
-  static final UnaryOperator<String> SPEC_NOT_FOUND = key -> "The key '" + key
-                                                             + "' has no spec associated to it. Strict specs don't allow this."
-                                                             +
-                                                             " Either declare de spec lenient or add a new spec for the missing key";
-  static final UnaryOperator<String> REQUIRED_KEY_NOT_FOUND = key ->
-      "The JSON doesn't conform the spec because the required key '" + key + "' doesn't exist";
-  static final Function<JsError, String> JS_ERROR_2_STR = e -> "Error code: %s".formatted(e.code()
-                                                                                           .name());
+  static final UnaryOperator<String> SPEC_NOT_FOUND =
+      "The key '%s' has no spec associated to it. Strict specs don't allow this. Either declare de spec lenient or add a new spec for the missing key"::formatted;
+  static final UnaryOperator<String> REQUIRED_KEY_NOT_FOUND =
+      "The JSON doesn't conform the spec because the required key '%s' doesn't exist"::formatted;
+  static final Function<JsError, String> JS_ERROR_2_STR =
+      e -> "Error code: %s".formatted(e.code()
+                                       .name());
   static final String TOO_MANY_DIGITS = "Too many digits detected in number: %d";
   static final String LEADING_ZERO = "Leading zero is not allowed";
   static final String NOT_VALID_NUMBER = "Invalid representation of a number";

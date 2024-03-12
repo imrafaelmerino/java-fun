@@ -1,32 +1,28 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
+import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.function.Function;
-
-import static jsonvalues.spec.ERROR_CODE.DECIMAL_EXPECTED;
+import jsonvalues.JsValue;
 
 final class JsArrayOfTestedDecimal extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  final Function<BigDecimal, Optional<JsError>> predicate;
+  final Function<BigDecimal, JsError> predicate;
 
-  JsArrayOfTestedDecimal(final Function<BigDecimal, Optional<JsError>> predicate,
+  JsArrayOfTestedDecimal(final Function<BigDecimal, JsError> predicate,
                          final boolean nullable
                         ) {
     super(nullable);
     this.predicate = predicate;
   }
 
-  JsArrayOfTestedDecimal(final Function<BigDecimal, Optional<JsError>> predicate,
-                         final boolean nullable,
-                         int min,
-                         int max
+  JsArrayOfTestedDecimal(Function<BigDecimal, JsError> predicate,
+                         boolean nullable,
+                         ArraySchemaConstraints arrayConstraints
                         ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
     this.predicate = predicate;
   }
 
@@ -34,8 +30,7 @@ final class JsArrayOfTestedDecimal extends AbstractSizableArr implements JsOneEr
   public JsSpec nullable() {
     return new JsArrayOfTestedDecimal(predicate,
                                       true,
-                                      min,
-                                      max
+                                      arrayConstraints
     );
   }
 
@@ -43,25 +38,23 @@ final class JsArrayOfTestedDecimal extends AbstractSizableArr implements JsOneEr
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfDecimalEachSuchThat(predicate,
                                                            nullable,
-                                                           min,
-                                                           max
+                                                           arrayConstraints
                                                           );
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v ->
-                                                v.isDouble() || v.isBigDec() ?
-                                                predicate.apply(v.toJsBigDec().value) :
-                                                Optional.of(new JsError(v,
-                                                                        DECIMAL_EXPECTED
-                                                            )
-                                                           ),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v ->
+                                          v.isDouble() || v.isBigDec() ?
+                                          predicate.apply(v.toJsBigDec().value) :
+                                          new JsError(v,
+                                                      DECIMAL_EXPECTED
+
+                                          ),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 
 

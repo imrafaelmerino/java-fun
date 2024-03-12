@@ -1,10 +1,8 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.BOOLEAN_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsBooleanSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
@@ -25,13 +23,13 @@ final class JsBooleanSpec extends AbstractNullable implements JsOneErrorSpec, Av
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
+  public JsError testValue(final JsValue value) {
 
-    return Functions.testElem(JsValue::isBool,
-                              BOOLEAN_EXPECTED,
-                              nullable
-                             )
-                    .apply(value);
+    return Fun.testValue(JsValue::isBool,
+                         BOOLEAN_EXPECTED,
+                         nullable,
+                         value
+                        );
 
   }
 

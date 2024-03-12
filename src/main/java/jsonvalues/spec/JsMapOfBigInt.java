@@ -2,13 +2,20 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-
 
 final class JsMapOfBigInt extends AbstractMap implements JsOneErrorSpec, AvroSpec {
 
+  final BigIntSchemaConstraints valuesConstraints;
+
   JsMapOfBigInt(boolean nullable) {
+    this(nullable,
+         null);
+  }
+
+  JsMapOfBigInt(boolean nullable,
+                BigIntSchemaConstraints valuesConstraints) {
     super(nullable);
+    this.valuesConstraints = valuesConstraints;
   }
 
   @Override
@@ -18,15 +25,26 @@ final class JsMapOfBigInt extends AbstractMap implements JsOneErrorSpec, AvroSpe
 
   @Override
   public JsParser parser() {
-    return JsParsers.INSTANCE.ofMapOfBigInt(nullable);
+    return JsParsers.INSTANCE.ofMapOfBigInt(nullable,
+                                            valuesConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(JsValue value) {
+  public JsError testValue(JsValue value) {
     return test(value,
-                it -> !it.isIntegral(),
-                ERROR_CODE.INTEGRAL_EXPECTED);
+                it -> {
+                  if (!it.isIntegral()) {
+                    return ERROR_CODE.INTEGRAL_EXPECTED;
+                  }
+                  if (valuesConstraints != null) {
+                    return Fun.testBigIntConstraints(valuesConstraints,
+                                                     value.toJsBigInt());
+                  }
+                  return null;
+                }
+               );
+
   }
 
 

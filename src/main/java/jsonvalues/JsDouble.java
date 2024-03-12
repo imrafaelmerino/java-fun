@@ -22,13 +22,13 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
   public static final Prism<JsValue, Double> prism =
       new Prism<>(s ->
                   {
-                      if (s.isDouble()) {
-                          return Optional.of(s.toJsDouble().value);
-                      }
-                      if (s.isDecimal()) {
-                          return s.toJsBigDec()
-                                  .doubleValueExact();
-                      }
+                    if (s.isDouble()) {
+                      return Optional.of(s.toJsDouble().value);
+                    }
+                    if (s.isDecimal()) {
+                      return s.toJsBigDec()
+                              .doubleValueExact();
+                    }
                     return Optional.empty();
                   },
                   JsDouble::of
@@ -49,6 +49,12 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
    * @return a new JsDouble
    */
   public static JsDouble of(double n) {
+    if (Double.isNaN(n)) {
+      throw new IllegalArgumentException("JsDouble cannot be NaN");
+    }
+    if (Double.isInfinite(n)) {
+      throw new IllegalArgumentException("JsDouble cannot be Infinity");
+    }
     return new JsDouble(n);
   }
 
@@ -80,15 +86,15 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
     JsBigDec bigDecimal = JsBigDec.of(BigDecimal.valueOf(this.value));
 
     OptionalInt optInt = bigDecimal.intValueExact();
-      if (optInt.isPresent()) {
-          return optInt.getAsInt();
-      }
+    if (optInt.isPresent()) {
+      return optInt.getAsInt();
+    }
 
     OptionalLong optLong = bigDecimal.longValueExact();
-      if (optLong.isPresent()) {
-          return JsLong.of(optLong.getAsLong())
-                       .hashCode();
-      }
+    if (optLong.isPresent()) {
+      return JsLong.of(optLong.getAsLong())
+                   .hashCode();
+    }
 
     Optional<BigInteger> optBigInt = bigDecimal.bigIntegerExact();
     return optBigInt.map(BigInteger::hashCode)
@@ -104,27 +110,27 @@ public final class JsDouble extends JsNumber implements Comparable<JsDouble> {
    */
   @Override
   public boolean equals(final Object that) {
-      if (this == that) {
-          return true;
-      }
-      if (!(that instanceof JsNumber number)) {
-          return false;
-      }
-      if (number.isDouble()) {
-          return value == number.toJsDouble().value;
-      }
-      if (number.isLong()) {
-          return longEquals(number.toJsLong());
-      }
-      if (number.isInt()) {
-          return intEquals(number.toJsInt());
-      }
-      if (number.isBigInt()) {
-          return bigIntEquals(number.toJsBigInt());
-      }
-      if (number.isBigDec()) {
-          return bigDecEquals(number.toJsBigDec());
-      }
+    if (this == that) {
+      return true;
+    }
+    if (!(that instanceof JsNumber number)) {
+      return false;
+    }
+    if (number.isDouble()) {
+      return value == number.toJsDouble().value;
+    }
+    if (number.isLong()) {
+      return longEquals(number.toJsLong());
+    }
+    if (number.isInt()) {
+      return intEquals(number.toJsInt());
+    }
+    if (number.isBigInt()) {
+      return bigIntEquals(number.toJsBigInt());
+    }
+    if (number.isBigDec()) {
+      return bigDecEquals(number.toJsBigDec());
+    }
     return false;
   }
 

@@ -1,12 +1,10 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsArray;
-import jsonvalues.JsValue;
-
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
+import jsonvalues.JsArray;
+import jsonvalues.JsValue;
 
 final class JsArrayOfBigIntReader extends JsArrayReader {
 
@@ -17,29 +15,25 @@ final class JsArrayOfBigIntReader extends JsArrayReader {
     this.parser = parser;
   }
 
-  JsValue nullOrArrayEachSuchThat(final JsReader reader,
-                                  final Function<BigInteger, Optional<JsError>> fn,
-                                  final int min,
-                                  final int max
+  JsValue nullOrArrayEachSuchThat(final DslJsReader reader,
+                                  final Function<BigInteger, JsError> fn,
+                                  final ArraySchemaConstraints arrayConstraints
                                  ) throws JsParserException {
     return nullOrArrayEachSuchThat(reader,
                                    () -> parser.valueSuchThat(reader,
                                                               fn),
-                                   min,
-                                   max);
+                                   arrayConstraints);
   }
 
 
-  JsArray arrayEachSuchThat(final JsReader reader,
-                            final Function<BigInteger, Optional<JsError>> fn,
-                            final int min,
-                            final int max
+  JsArray arrayEachSuchThat(final DslJsReader reader,
+                            final Function<BigInteger, JsError> fn,
+                            final ArraySchemaConstraints arrayConstraints
                            ) throws JsParserException {
     return arrayEachSuchThat(reader,
                              () -> parser.valueSuchThat(reader,
                                                         fn),
-                             min,
-                             max);
+                             arrayConstraints);
   }
 
 

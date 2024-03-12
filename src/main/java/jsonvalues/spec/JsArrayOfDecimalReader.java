@@ -1,13 +1,11 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsArray;
-import jsonvalues.JsValue;
+import static java.util.Objects.requireNonNull;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
+import jsonvalues.JsArray;
+import jsonvalues.JsValue;
 
 final class JsArrayOfDecimalReader extends JsArrayReader {
 
@@ -18,28 +16,24 @@ final class JsArrayOfDecimalReader extends JsArrayReader {
     this.parser = parser;
   }
 
-  JsValue nullOrArrayEachSuchThat(final JsReader reader,
-                                  final Function<BigDecimal, Optional<JsError>> fn,
-                                  final int min,
-                                  final int max
+  JsValue nullOrArrayEachSuchThat(DslJsReader reader,
+                                  Function<BigDecimal, JsError> fn,
+                                  ArraySchemaConstraints arrayConstraints
                                  ) throws JsParserException {
     return nullOrArrayEachSuchThat(reader,
                                    () -> parser.valueSuchThat(reader,
                                                               fn),
-                                   min,
-                                   max);
+                                   arrayConstraints);
   }
 
-  JsArray arrayEachSuchThat(final JsReader reader,
-                            final Function<BigDecimal, Optional<JsError>> fn,
-                            final int min,
-                            final int max
+  JsArray arrayEachSuchThat(DslJsReader reader,
+                            Function<BigDecimal, JsError> fn,
+                            ArraySchemaConstraints arrayConstraints
                            ) throws JsParserException {
     return arrayEachSuchThat(reader,
                              () -> parser.valueSuchThat(reader,
                                                         fn),
-                             min,
-                             max);
+                             arrayConstraints);
 
   }
 

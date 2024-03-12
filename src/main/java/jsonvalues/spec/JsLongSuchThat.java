@@ -1,17 +1,15 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-import java.util.function.LongFunction;
-
 import static jsonvalues.spec.ERROR_CODE.LONG_EXPECTED;
+
+import java.util.function.LongFunction;
+import jsonvalues.JsValue;
 
 final class JsLongSuchThat extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
-  final LongFunction<Optional<JsError>> predicate;
+  final LongFunction<JsError> predicate;
 
-  JsLongSuchThat(final LongFunction<Optional<JsError>> predicate,
+  JsLongSuchThat(final LongFunction<JsError> predicate,
                  final boolean nullable
                 ) {
     super(nullable);
@@ -37,14 +35,15 @@ final class JsLongSuchThat extends AbstractNullable implements JsOneErrorSpec, A
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    final Optional<JsError> error = Functions.testElem(JsValue::isLong,
-                                                       LONG_EXPECTED,
-                                                       nullable
-                                                      )
-                                             .apply(value);
+  public JsError testValue(final JsValue value) {
+    JsError error =
+        Fun.testValue(JsValue::isLong,
+                      LONG_EXPECTED,
+                      nullable,
+                      value
+                     );
 
-    return error.isPresent() || value.isNull() ?
+    return error != null || value.isNull() ?
            error :
            predicate.apply(value.toJsLong().value);
   }

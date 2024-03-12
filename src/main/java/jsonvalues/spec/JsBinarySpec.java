@@ -1,10 +1,8 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.BINARY_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsBinarySpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
@@ -24,12 +22,12 @@ final class JsBinarySpec extends AbstractNullable implements JsOneErrorSpec, Avr
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testElem(JsValue::isBinary,
-                              BINARY_EXPECTED,
-                              nullable
-                             )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testValue(JsValue::isBinary,
+                         BINARY_EXPECTED,
+                         nullable,
+                         value
+                        );
 
   }
 

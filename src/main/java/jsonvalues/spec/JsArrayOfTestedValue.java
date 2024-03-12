@@ -1,29 +1,25 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
 import java.util.function.Function;
+import jsonvalues.JsValue;
 
 final class JsArrayOfTestedValue extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec {
 
-  private final Function<JsValue, Optional<JsError>> predicate;
+  private final Function<JsValue, JsError> predicate;
 
-  JsArrayOfTestedValue(final Function<JsValue, Optional<JsError>> predicate,
+  JsArrayOfTestedValue(final Function<JsValue, JsError> predicate,
                        final boolean nullable
                       ) {
     super(nullable);
     this.predicate = predicate;
   }
 
-  JsArrayOfTestedValue(final Function<JsValue, Optional<JsError>> predicate,
-                       final boolean nullable,
-                       int min,
-                       int max
+  JsArrayOfTestedValue(Function<JsValue, JsError> predicate,
+                       boolean nullable,
+                       ArraySchemaConstraints arrayConstraints
                       ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
     this.predicate = predicate;
   }
 
@@ -32,8 +28,7 @@ final class JsArrayOfTestedValue extends AbstractSizableArr implements JsOneErro
   public JsSpec nullable() {
     return new JsArrayOfTestedValue(predicate,
                                     true,
-                                    min,
-                                    max
+                                    arrayConstraints
     );
   }
 
@@ -42,17 +37,15 @@ final class JsArrayOfTestedValue extends AbstractSizableArr implements JsOneErro
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfValueEachSuchThat(predicate,
                                                          nullable,
-                                                         min,
-                                                         max);
+                                                         arrayConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(predicate,
-                                            nullable,
-                                            min,
-                                            max)
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(predicate,
+                                      nullable,
+                                      arrayConstraints,
+                                      value);
   }
 }

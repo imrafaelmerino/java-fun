@@ -3,6 +3,7 @@ package jsonvalues.spec;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import jsonvalues.JsObj;
@@ -16,13 +17,13 @@ public class NumberConverterTest {
   @Test
   public void rangeCheckInt() throws JsParserException {
     // setup
-    final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    JsWriter sw = new JsWriter(40);
+    DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                        new byte[64]);
 
-    final int from = -10000000;
-    final int to = 10000000;
+    int from = -10000000;
+    int to = 10000000;
 
     for (int value = from; value <= to; value += 33) {
       sw.reset();
@@ -34,7 +35,7 @@ public class NumberConverterTest {
       jr.process(null,
                  sw.size());
       jr.read();
-      final int valueParsed1 = NumberConverter.deserializeInt(jr);
+      int valueParsed1 = NumberConverter.deserializeInt(jr);
       Assertions.assertEquals(value,
                               valueParsed1);
 
@@ -42,7 +43,7 @@ public class NumberConverterTest {
                                            0,
                                            sw.size()));
       jsr.read();
-      final int valueParsed2 = NumberConverter.deserializeInt(jsr);
+      int valueParsed2 = NumberConverter.deserializeInt(jsr);
       Assertions.assertEquals(value,
                               valueParsed2);
     }
@@ -51,13 +52,13 @@ public class NumberConverterTest {
   @Test
   public void rangeCheckLong() throws JsParserException {
     // setup
-    final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    JsWriter sw = new JsWriter(40);
+    DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                        new byte[64]);
 
-    final long from = -10000000000L;
-    final long to = 10000000000L;
+    long from = -10000000000L;
+    long to = 10000000000L;
 
     for (long value = from; value <= to; value += 33333) {
       sw.reset();
@@ -69,14 +70,14 @@ public class NumberConverterTest {
       jr.process(null,
                  sw.size());
       jr.read();
-      final long valueParsed1 = NumberConverter.deserializeLong(jr);
+      long valueParsed1 = NumberConverter.deserializeLong(jr);
       Assertions.assertEquals(value,
                               valueParsed1);
 
       jr.process(null,
                  sw.size());
       jr.read();
-      final Number numberParsed1 = NumberConverter.deserializeNumber(jr);
+      Number numberParsed1 = NumberConverter.deserializeNumber(jr);
       Assertions.assertEquals(value,
                               numberParsed1);
 
@@ -84,7 +85,7 @@ public class NumberConverterTest {
                                            0,
                                            sw.size()));
       jsr.read();
-      final long valueParsed2 = NumberConverter.deserializeLong(jsr);
+      long valueParsed2 = NumberConverter.deserializeLong(jsr);
       Assertions.assertEquals(value,
                               valueParsed2);
 
@@ -92,7 +93,7 @@ public class NumberConverterTest {
                                            0,
                                            sw.size()));
       jsr.read();
-      final Number numberParsed2 = NumberConverter.deserializeNumber(jsr);
+      Number numberParsed2 = NumberConverter.deserializeNumber(jsr);
       Assertions.assertEquals(value,
                               numberParsed2);
     }
@@ -101,14 +102,14 @@ public class NumberConverterTest {
   @Test
   public void rangeCheckDecimal() throws JsParserException {
     // setup
-    final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    JsWriter sw = new JsWriter(40);
+    DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                        new byte[64]);
 
-    final int from = -100000000;
-    final int to = 100000000;
-    final double[] dividers = {1, 10, 0.1, 100, 0.01, 1000, 0.001};
+    int from = -100000000;
+    int to = 100000000;
+    double[] dividers = {1, 10, 0.1, 100, 0.01, 1000, 0.001};
     int x = 0;
 
     for (int value = from; value <= to; value += 333) {
@@ -122,13 +123,13 @@ public class NumberConverterTest {
       jr.process(null,
                  sw.size());
       jr.read();
-      final BigDecimal valueParsed1 = NumberConverter.deserializeDecimal(jr);
+      BigDecimal valueParsed1 = NumberConverter.deserializeDecimal(jr);
       Assertions.assertEquals(bd,
                               valueParsed1);
       jr.process(null,
                  sw.size());
       jr.read();
-      final Number numberParsed1 = NumberConverter.deserializeNumber(jr);
+      Number numberParsed1 = NumberConverter.deserializeNumber(jr);
       Assertions.assertEquals(bd,
                               BigDecimal.valueOf(numberParsed1.doubleValue()));
 
@@ -136,14 +137,14 @@ public class NumberConverterTest {
                                            0,
                                            sw.size()));
       jsr.read();
-      final BigDecimal valueParsed2 = NumberConverter.deserializeDecimal(jsr);
+      BigDecimal valueParsed2 = NumberConverter.deserializeDecimal(jsr);
       Assertions.assertEquals(bd,
                               valueParsed2);
       jsr.process(new ByteArrayInputStream(sw.getByteBuffer(),
                                            0,
                                            sw.size()));
       jsr.read();
-      final Number numberParsed2 = NumberConverter.deserializeNumber(jsr);
+      Number numberParsed2 = NumberConverter.deserializeNumber(jsr);
       Assertions.assertEquals(bd,
                               BigDecimal.valueOf(numberParsed2.doubleValue()));
     }
@@ -153,10 +154,10 @@ public class NumberConverterTest {
   @Test
   public void testSerialization() {
     // setup
-    final JsWriter sw = new JsWriter(40);
+    JsWriter sw = new JsWriter(40);
 
-    final int from = -1000000;
-    final int to = 1000000;
+    int from = -1000000;
+    int to = 1000000;
 
     for (long value = from; value <= to; value++) {
 
@@ -168,7 +169,7 @@ public class NumberConverterTest {
                                 sw);
 
       // check
-      final String valueString = sw.toString();
+      String valueString = sw.toString();
       final int valueParsed = Integer.parseInt(valueString);
       Assertions.assertEquals(value,
                               valueParsed);
@@ -186,7 +187,7 @@ public class NumberConverterTest {
       // space to prevent end of stream gotcha
       final byte[] body = (sciForm + " ").getBytes(StandardCharsets.ISO_8859_1);
 
-      final JsReader jr = dslJson.newReader(body);
+      final DslJsReader jr = dslJson.newReader(body);
       jr.readNextToken();
       final long parsed1 = NumberConverter.deserializeLong(jr);
       jr.process(new byte[64],
@@ -210,36 +211,32 @@ public class NumberConverterTest {
   public void testGenericNumberLongBoundaries() {
     final Long maxIntAsLong = (long) Integer.MAX_VALUE;
     final Long minIntAsLong = (long) Integer.MIN_VALUE;
-    final BigDecimal maxIntWithDecimalAsBigDecimal = BigDecimal.valueOf(Integer.MAX_VALUE)
-                                                               .setScale(1);
-    final BigDecimal minIntWithDecimalAsBigDecimal = BigDecimal.valueOf(Integer.MIN_VALUE)
-                                                               .setScale(1);
+    final BigInteger maxIntWithDecimalAsBigInt = BigInteger.valueOf(Integer.MAX_VALUE);
+    final BigInteger minIntWithDecimalAsBigInt = BigInteger.valueOf(Integer.MIN_VALUE);
     final Long positive18DigitLong = 876543210987654321L;
     final Long negative18DigitLong = -876543210987654321L;
-    final BigDecimal positive18DigitAndOneDecimal = BigDecimal.valueOf(876543210987654321L)
-                                                              .setScale(1);
-    final BigDecimal negative18DigitAndOneDecimal = BigDecimal.valueOf(-876543210987654321L)
-                                                              .setScale(1);
+    final BigInteger positive18DigitAndOneInt = BigInteger.valueOf(876543210987654321L);
+    final BigInteger negative18DigitAndOneInt = BigInteger.valueOf(-876543210987654321L);
     final Long maxLong = Long.MAX_VALUE;
     final Long minLong = Long.MIN_VALUE;
-    final BigDecimal maxLongPlusOneAsBigDecimal = BigDecimal.valueOf(Long.MAX_VALUE)
-                                                            .add(BigDecimal.ONE);
-    final BigDecimal minLongMinusOneAsBigDecimal = BigDecimal.valueOf(Long.MIN_VALUE)
-                                                             .subtract(BigDecimal.ONE);
+    final BigInteger maxLongPlusOneAsBigInt = BigInteger.valueOf(Long.MAX_VALUE)
+                                                            .add(BigInteger.ONE);
+    final BigInteger minLongMinusOneAsBigInt= BigInteger.valueOf(Long.MIN_VALUE)
+                                                             .subtract(BigInteger.ONE);
 
     String input = "{\n" +
                    "\"maxIntAsLong\":" + maxIntAsLong + ",\n" +
                    "\"minIntAsLong\":" + minIntAsLong + ",\n" +
-                   "\"maxIntWithDecimalAsBigDecimal\":" + maxIntWithDecimalAsBigDecimal + ",\n" +
-                   "\"minIntWithDecimalAsBigDecimal\":" + minIntWithDecimalAsBigDecimal + ",\n" +
+                   "\"maxIntWithDecimalAsBigInt\":" + maxIntWithDecimalAsBigInt + ",\n" +
+                   "\"minIntWithDecimalAsBigInt\":" + minIntWithDecimalAsBigInt + ",\n" +
                    "\"positive18DigitLong\":" + positive18DigitLong + ",\n" +
                    "\"negative18DigitLong\":" + negative18DigitLong + ",\n" +
-                   "\"positive18DigitAndOneDecimal\":" + positive18DigitAndOneDecimal + ",\n" +
-                   "\"negative18DigitAndOneDecimal\":" + negative18DigitAndOneDecimal + ",\n" +
+                   "\"positive18DigitAndOneDecimal\":" + positive18DigitAndOneInt + ",\n" +
+                   "\"negative18DigitAndOneDecimal\":" + negative18DigitAndOneInt + ",\n" +
                    "\"maxLong\":" + maxLong + ",\n" +
                    "\"minLong\":" + minLong + ",\n" +
-                   "\"maxLongPlusOneAsBigDecimal\":" + maxLongPlusOneAsBigDecimal + ",\n" +
-                   "\"minLongMinusOneAsBigDecimal\":" + minLongMinusOneAsBigDecimal + "\n" +
+                   "\"maxLongPlusOneAsBigInt\":" + maxLongPlusOneAsBigInt + ",\n" +
+                   "\"minLongMinusOneAsBigInt\":" + minLongMinusOneAsBigInt + "\n" +
                    "}";
 
     var result = JsObj.parse(input);
@@ -247,34 +244,34 @@ public class NumberConverterTest {
                             result.getLong("maxIntAsLong"));
     Assertions.assertEquals(minIntAsLong,
                             result.getLong("minIntAsLong"));
-    Assertions.assertEquals(maxIntWithDecimalAsBigDecimal,
-                            result.getBigDec("maxIntWithDecimalAsBigDecimal"));
-    Assertions.assertEquals(minIntWithDecimalAsBigDecimal,
-                            result.getBigDec("minIntWithDecimalAsBigDecimal"));
+    Assertions.assertEquals(maxIntWithDecimalAsBigInt,
+                            result.getBigInt("maxIntWithDecimalAsBigInt"));
+    Assertions.assertEquals(minIntWithDecimalAsBigInt,
+                            result.getBigInt("minIntWithDecimalAsBigInt"));
     Assertions.assertEquals(positive18DigitLong,
                             result.getLong("positive18DigitLong"));
     Assertions.assertEquals(negative18DigitLong,
                             result.getLong("negative18DigitLong"));
-    Assertions.assertEquals(positive18DigitAndOneDecimal,
-                            result.getBigDec("positive18DigitAndOneDecimal"));
-    Assertions.assertEquals(negative18DigitAndOneDecimal,
-                            result.getBigDec("negative18DigitAndOneDecimal"));
+    Assertions.assertEquals(positive18DigitAndOneInt,
+                            result.getBigInt("positive18DigitAndOneDecimal"));
+    Assertions.assertEquals(negative18DigitAndOneInt,
+                            result.getBigInt("negative18DigitAndOneDecimal"));
     Assertions.assertEquals(maxLong,
                             result.getLong("maxLong"));
     Assertions.assertEquals(minLong,
                             result.getLong("minLong"));
-    Assertions.assertEquals(maxLongPlusOneAsBigDecimal,
-                            result.getBigDec("maxLongPlusOneAsBigDecimal"));
-    Assertions.assertEquals(minLongMinusOneAsBigDecimal,
-                            result.getBigDec("minLongMinusOneAsBigDecimal"));
+    Assertions.assertEquals(maxLongPlusOneAsBigInt,
+                            result.getBigInt("maxLongPlusOneAsBigInt"));
+    Assertions.assertEquals(minLongMinusOneAsBigInt,
+                            result.getBigInt("minLongMinusOneAsBigInt"));
   }
 
   @Test
   public void shortWhitespaceGuard() throws JsParserException {
     String input = "1234  ";
-    final JsReader jr = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),
+                                              new byte[64]);
     jr.readNextToken();
     Number number = NumberConverter.deserializeNumber(jr);
     Assertions.assertTrue(number instanceof Long);
@@ -286,7 +283,7 @@ public class NumberConverterTest {
   @Test
   public void longWhitespaceGuard() throws JsParserException {
     String input = "1234        \t\n\r               ";
-    final JsReader reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
+    final DslJsReader reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
     reader.readNextToken();
     Number number = NumberConverter.deserializeNumber(reader);
     Assertions.assertTrue(number instanceof Long);
@@ -295,7 +292,7 @@ public class NumberConverterTest {
   @Test
   public void overflowDetection() throws JsParserException {
     String input = "1234567890123456        \t\n\r               ";
-    JsReader reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
+    DslJsReader reader = dslJson.newReader(input.getBytes(StandardCharsets.UTF_8));
     reader.readNextToken();
     try {
       NumberConverter.deserializeInt(reader);
@@ -319,9 +316,9 @@ public class NumberConverterTest {
   @Test
   public void doubleRandom() throws JsParserException {
     final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     final Random rnd = new Random(0);
 
@@ -356,9 +353,9 @@ public class NumberConverterTest {
   @Test
   public void doubleIntRandom() throws JsParserException {
     final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     final Random rnd = new Random(0);
 
@@ -394,9 +391,9 @@ public class NumberConverterTest {
   public void floatRandom() throws JsParserException {
     // setup
     final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     final Random rnd = new Random(0);
 
@@ -432,9 +429,9 @@ public class NumberConverterTest {
   public void floatIntRandom() throws JsParserException {
     // setup
     final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     final Random rnd = new Random(0);
 
@@ -466,7 +463,7 @@ public class NumberConverterTest {
     }
   }
 
-  private void prepareJson(JsReader reader,
+  private void prepareJson(DslJsReader reader,
                            byte[] input) throws JsParserException {
     reader.process(input,
                    input.length);
@@ -476,14 +473,14 @@ public class NumberConverterTest {
   }
 
 
-  private BigDecimal checkDecimalError(JsReader reader,
+  private BigDecimal checkDecimalError(DslJsReader reader,
                                        String error) {
     BigDecimal res = null;
     try {
       res = NumberConverter.deserializeDecimal(reader);
-        if (error != null) {
-            Assertions.fail("Expecting " + error);
-        }
+      if (error != null) {
+        Assertions.fail("Expecting " + error);
+      }
     } catch (Exception ex) {
       Assertions.assertTrue(ex.getMessage()
                               .contains(error));
@@ -491,14 +488,14 @@ public class NumberConverterTest {
     return res;
   }
 
-  private int checkIntError(JsReader reader,
+  private int checkIntError(DslJsReader reader,
                             String error) {
     int res = 0;
     try {
       res = NumberConverter.deserializeInt(reader);
-        if (error != null) {
-            Assertions.fail("Expecting " + error);
-        }
+      if (error != null) {
+        Assertions.fail("Expecting " + error);
+      }
     } catch (Exception ex) {
       Assertions.assertTrue(ex.getMessage()
                               .contains(error));
@@ -506,14 +503,14 @@ public class NumberConverterTest {
     return res;
   }
 
-  private long checkLongError(JsReader reader,
+  private long checkLongError(DslJsReader reader,
                               String error) {
     long res = 0;
     try {
       res = NumberConverter.deserializeLong(reader);
-        if (error != null) {
-            Assertions.fail("Expecting " + error);
-        }
+      if (error != null) {
+        Assertions.fail("Expecting " + error);
+      }
     } catch (Exception ex) {
       Assertions.assertTrue(ex.getMessage()
                               .contains(error));
@@ -521,14 +518,14 @@ public class NumberConverterTest {
     return res;
   }
 
-  private Number checkNumberError(JsReader reader,
+  private Number checkNumberError(DslJsReader reader,
                                   String error) {
     Number res = null;
     try {
       res = NumberConverter.deserializeNumber(reader);
-        if (error != null) {
-            Assertions.fail("Expecting " + error);
-        }
+      if (error != null) {
+        Assertions.fail("Expecting " + error);
+      }
     } catch (Exception ex) {
       Assertions.assertTrue(ex.getMessage()
                               .contains(error));
@@ -538,7 +535,7 @@ public class NumberConverterTest {
 
   @Test
   public void emptyParsing() throws JsParserException {
-    final JsReader jr = dslJson.newReader(new byte[0]);
+    final DslJsReader jr = dslJson.newReader(new byte[0]);
 
     byte[] empty = "{\"x\":}".getBytes(StandardCharsets.UTF_8);
     byte[] space = "{\"x\": }".getBytes(StandardCharsets.UTF_8);
@@ -571,34 +568,34 @@ public class NumberConverterTest {
       prepareJson(jr,
                   it);
       checkDecimalError(jr,
-                        "@ position");
+                        "Current parser position");
       prepareJson(jr,
                   it);
       checkDecimalError(jr,
-                        "@ position");
+                        "Current parser position");
       prepareJson(jr,
                   it);
       checkDecimalError(jr,
-                        "@ position");
+                        "Current parser position");
       prepareJson(jr,
                   it);
       checkIntError(jr,
-                    "@ position");
+                    "Current parser position");
       prepareJson(jr,
                   it);
       checkLongError(jr,
-                     "@ position");
+                     "Current parser position");
       prepareJson(jr,
                   it);
       checkNumberError(jr,
-                       "@ position");
+                       "Current parser position");
     }
   }
 
 
   @Test
   public void wrongSpaceParsing() throws JsParserException {
-    final JsReader jr = dslJson.newReader(new byte[0]);
+    final DslJsReader jr = dslJson.newReader(new byte[0]);
 
     byte[] doubleZero = "{\"x\":0 0}".getBytes(StandardCharsets.UTF_8);
     byte[] doubleDot1 = "{\"x\":0.0.}".getBytes(StandardCharsets.UTF_8);
@@ -612,31 +609,31 @@ public class NumberConverterTest {
       prepareJson(jr,
                   it);
       checkDecimalError(jr,
-                        "@ position=");
+                        "Current parser position");
       prepareJson(jr,
                   it);
       checkDecimalError(jr,
-                        "@ position=");
+                        "Current parser position");
       prepareJson(jr,
                   it);
       checkDecimalError(jr,
-                        "@ position=");
+                        "Current parser position");
       prepareJson(jr,
                   it);
       checkIntError(jr,
-                    "@ position=");
+                    "Current parser position");
       prepareJson(jr,
                   it);
       checkLongError(jr,
-                     "@ position=");
+                     "Current parser position");
     }
   }
 
   @Test
   public void specialFloats() throws JsParserException {
-    final JsReader jr = dslJson.newReader(new byte[0]);
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(new byte[0]);
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     String[] values = {
         Double.toString(Double.MAX_VALUE / 10),
@@ -692,11 +689,11 @@ public class NumberConverterTest {
   @SuppressWarnings("FloatingPointLiteralPrecision")
   @Test
   public void doubleRoundingError() throws JsParserException {
-    final JsIO dslJson = new JsIO(new Settings().doublePrecision(JsReader.DoublePrecision.DEFAULT));
+    final JsIO dslJson = new JsIO(new Settings().doublePrecision(DslJsReader.DoublePrecision.DEFAULT));
     final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     double[] values = {
         -5983259.62725876d,
@@ -764,9 +761,9 @@ public class NumberConverterTest {
   @Test
   public void bidDecimalRandom() {
     final JsWriter sw = new JsWriter(40);
-    final JsReader jr = dslJson.newReader(sw.getByteBuffer());
-    final JsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
-                                           new byte[64]);
+    final DslJsReader jr = dslJson.newReader(sw.getByteBuffer());
+    final DslJsReader jsr = dslJson.newReader(new ByteArrayInputStream(new byte[0]),
+                                              new byte[64]);
 
     final Random rnd = new Random(0);
 
@@ -823,7 +820,7 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithProcessStream() {
     final BigDecimal expected = new BigDecimal("0.112233445566778899001122334455667788993");
     final byte[] input = "0.112233445566778899001122334455667788993,[".getBytes(StandardCharsets.UTF_8);
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(new ByteArrayInputStream(input));
     jr.read(); // init start pointer
 
@@ -837,7 +834,7 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithProcessStreamWhenAtBoundary() {
     final byte[] input = "0.112233445566778899".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(new ByteArrayInputStream(input));
     jr.read(); // init start pointer
 
@@ -851,7 +848,7 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithProcessStreamWhenAtBoundaryAndMore() {
     final byte[] input = "0.112233445566778899,1".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(new ByteArrayInputStream(input));
     jr.read(); // init start pointer
 
@@ -865,7 +862,7 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithProcessBuffer() {
     final BigDecimal expected = new BigDecimal("0.112233445566778899001122334455667788993");
     final byte[] input = "0.112233445566778899001122334455667788993".getBytes(StandardCharsets.UTF_8);
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(input,
                input.length);
     jr.read(); // init start pointer
@@ -880,7 +877,7 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithProcessBufferWhenAtBoundary() {
     final byte[] input = "0.112233445566778899".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(input,
                input.length);
     jr.read(); // init start pointer
@@ -895,7 +892,7 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithProcessBufferWhenAtBoundaryAndMore() {
     final byte[] input = "0.112233445566778899,1".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(input,
                input.length);
     jr.read(); // init start pointer
@@ -910,8 +907,8 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithNewStream() {
     final BigDecimal expected = new BigDecimal("0.112233445566778899001122334455667788993");
     final byte[] input = "0.112233445566778899001122334455667788993".getBytes(StandardCharsets.UTF_8);
-    final JsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
-                                          new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
+                                             new byte[20]);
     jr.read(); // init start pointer
 
     final BigDecimal actual = NumberConverter.deserializeDecimal(jr);
@@ -924,8 +921,8 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithNewStreamWhenAtBoundary() {
     final byte[] input = "0.112233445566778899".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
-                                          new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
+                                             new byte[20]);
     jr.read(); // init start pointer
 
     final BigDecimal actual = NumberConverter.deserializeDecimal(jr);
@@ -938,8 +935,8 @@ public class NumberConverterTest {
   public void testBigDecimalDeserializationWithNewStreamWhenAtBoundaryAndMore() {
     final byte[] input = "0.112233445566778899,1".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
-                                          new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
+                                             new byte[20]);
     jr.read(); // init start pointer
 
     final BigDecimal actual = NumberConverter.deserializeDecimal(jr);
@@ -952,7 +949,7 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithProcessStream() {
     final Number expected = new BigDecimal("0.112233445566778899001122334455667788993");
     final byte[] input = "0.112233445566778899001122334455667788993".getBytes(StandardCharsets.UTF_8);
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(new ByteArrayInputStream(input));
     jr.read(); // init start pointer
 
@@ -966,7 +963,7 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithProcessStreamWhenAtBoundary() {
     final byte[] input = "0.112233445566778899".getBytes(StandardCharsets.UTF_8);
     final Number expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(new ByteArrayInputStream(input));
     jr.read(); // init start pointer
 
@@ -980,7 +977,7 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithProcessStreamWhenAtBoundaryAndMore() {
     final byte[] input = "0.112233445566778899,1".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(new ByteArrayInputStream(input));
     jr.read(); // init start pointer
 
@@ -994,7 +991,7 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithProcessBuffer() {
     final BigDecimal expected = new BigDecimal("0.112233445566778899001122334455667788993");
     final byte[] input = "0.112233445566778899001122334455667788993".getBytes(StandardCharsets.UTF_8);
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(input,
                input.length);
     jr.read(); // init start pointer
@@ -1009,7 +1006,7 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithProcessBufferWhenAtBoundary() {
     final byte[] input = "0.112233445566778899".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(input,
                input.length);
     jr.read(); // init start pointer
@@ -1024,7 +1021,7 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithProcessBufferWhenAtBoundaryAndMore() {
     final byte[] input = "0.112233445566778899,1".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new byte[20]);
     jr.process(input,
                input.length);
     jr.read(); // init start pointer
@@ -1039,8 +1036,8 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithNewStream() {
     final BigDecimal expected = new BigDecimal("0.112233445566778899001122334455667788993");
     final byte[] input = "0.112233445566778899001122334455667788993".getBytes(StandardCharsets.UTF_8);
-    final JsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
-                                          new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
+                                             new byte[20]);
     jr.read(); // init start pointer
 
     final Number actual = NumberConverter.deserializeNumber(jr);
@@ -1053,8 +1050,8 @@ public class NumberConverterTest {
   public void testNumberDeserializationWithNewStreamWhenAtBoundary() {
     final byte[] input = "0.112233445566778899".getBytes(StandardCharsets.UTF_8);
     final BigDecimal expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
-                                          new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
+                                             new byte[20]);
     jr.read(); // init start pointer
 
     final Number actual = NumberConverter.deserializeNumber(jr);
@@ -1064,11 +1061,35 @@ public class NumberConverterTest {
   }
 
   @Test
+  public void testPositiveBigInteger(){
+    var bytes = "9223372036854775808".getBytes(StandardCharsets.UTF_8);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(bytes),
+                                             new byte[100]);
+    jr.read(); // init start pointer
+
+    final Number actual = NumberConverter.deserializeNumber(jr);
+    Assertions.assertEquals(new BigInteger("9223372036854775808"),
+                            actual);
+  }
+
+  @Test
+  public void testNegativeBigInteger(){
+    var bytes = "-9223372036854775808999999".getBytes(StandardCharsets.UTF_8);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(bytes),
+                                             new byte[100]);
+    jr.read(); // init start pointer
+
+    final Number actual = NumberConverter.deserializeNumber(jr);
+    Assertions.assertEquals(new BigInteger("-9223372036854775808999999"),
+                            actual);
+  }
+
+  @Test
   public void testNumberDeserializationWithNewStreamWhenAtBoundaryAndMore() {
     final byte[] input = "0.112233445566778899,1".getBytes(StandardCharsets.UTF_8);
     final Number expected = new BigDecimal("0.112233445566778899");
-    final JsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
-                                          new byte[20]);
+    final DslJsReader jr = dslJson.newReader(new ByteArrayInputStream(input),
+                                             new byte[20]);
     jr.read(); // init start pointer
 
     final Number actual = NumberConverter.deserializeNumber(jr);

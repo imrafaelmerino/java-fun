@@ -19,6 +19,7 @@ it. And to make matters worse: complexity sells better._” **Edsger Wybe Dijkst
   - [Filter, map and reduce](#filtermapreduce)
   - [Specs](#specs)
   - [Generators](#gen)
+  - [Parsers](#parsers)
   - [Optics](#optics)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -65,8 +66,45 @@ JsObjSpec spec=
 
 **JSON generation made easy**
 
-Creating complex JSON structures can be a daunting task, especially when dealing with deeply nested
-or intricate data. With json-values, this process becomes remarkably simple.
+Transforming specifications into generators is effortless:
+
+```code
+
+Gen<JsObj> gen = SpecToGen.DEFAULT.convert(spec);
+
+```
+
+Further customization is possible:
+
+```code
+SpecToGen specToGen =
+    SpecToGen.of(new SpecGenConfBuilder().withIntSize(10,100)
+                                         .withStringLength(10,100)
+                                         .withOptionalKeyProbability(4)
+                );
+
+Gen<JsObj> gen = specToGen.convert(spec);
+
+
+```
+
+Override default generators:
+
+```code
+
+var longitudGen = JsBigDecGen.arbitrary(-180, 180);
+
+var latitudeGen = JsBigDecGen.arbitrary(-90, 90);
+
+var overrides = Map.of(JsPath.path("/address/$0"), latitudeGen,
+                       JsPath.path("/address/$1"), longitudGen
+                      );
+
+Gen<JsObj> gen = specToGen.convert(spec, overrides);
+
+```
+
+Create custom generators from scratch:
 
 ```code
 
@@ -83,6 +121,7 @@ Gen<JsObj> gen=
                  .withAllOptKeys()
                  .withAllNullValues();
 
+// and combine specs and generators!
 
 Gen<JsObj> validDataGen = gen.suchThat(spec);
 
@@ -90,10 +129,79 @@ Gen<JsObj> invalidDataGen = gen.suchThatNo(spec);
 
 ```
 
-The biased generators generate, with higher probability, values that are proven to cause more bugs in our code (zero,
-blank strings ...).Generating robust test data is essential for identifying potential issues in your code. With
-json-values, we take this a step further by introducing **biased generators** that never forget to include special
-values known to trigger bugs.
+The biased generators generate, with higher probability, values that are proven to cause more bugs
+in our code (zero, blank strings ...).Generating robust test data is essential for identifying
+potential issues in your code. With json-values, we take this a step further by introducing **biased
+generators** that never forget to include special values known to trigger bugs.
+
+**JSON SCHEMA conversion**
+
+```code
+
+JsObj jsonSchema = SpecToJsonSchema.convert(spec);
+
+System.out.println(jsonSchema.toPrettyString());
+
+```
+
+and the result is:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "coordinates": {
+          "items": {
+            "items": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "additionalItems": false,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": ["street", "coordinates"]
+    },
+    "languages": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "age": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": ["name", "languages", "age"]
+}
+```
+
+Using [avro-spec](https://github.com/imrafaelmerino/avro-spec) you can convert json-values specs to
+avro schemas as well:
+
+```code
+
+AvroSchema avroSchema = SpecToAvroSchema.convert(spec);
+
+```
 
 **Modeling inheritance**
 
@@ -107,6 +215,8 @@ we model a hierarchy of devices, including mice, keyboards, and USB hubs. Each d
 specific attributes, and we use inheritance to share common fields across all device types.
 
 ```java
+
+import jsonvalues.spec.JsSpecs;
 
 public class ModelingInheritance {
 
@@ -127,17 +237,13 @@ public class ModelingInheritance {
 
     var baseSpec =
         JsObjSpec.of(NAME_FIELD,
-                     JsSpecs.str(),
-                     TYPE_FIELD,
-                     JsSpecs.oneStringOf("mouse",
-                                         "keyboard",
-                                         "usb_hub"));
-
-    var baseGen = JsObjGen.of(NAME_FIELD,
-                              JsStrGen.alphabetic());
+                     JsSpecs.str()
+                    );
 
     var mouseSpec =
-        JsObjSpec.of(BUTTON_COUNT_FIELD,
+        JsObjSpec.of(TYPE_FIELD,
+                     JsSpecs.cons(JsStr.of("mouse")),
+                     BUTTON_COUNT_FIELD,
                      JsSpecs.integer(),
                      WHEEL_COUNT_FIELD,
                      JsSpecs.integer(),
@@ -146,77 +252,41 @@ public class ModelingInheritance {
                     )
                  .concat(baseSpec);
 
-    var mouseGen =
-        JsObjGen.of(BUTTON_COUNT_FIELD,
-                    JsIntGen.arbitrary(0,
-                                       10),
-                    WHEEL_COUNT_FIELD,
-                    JsIntGen.arbitrary(0,
-                                       10),
-                    TRACKING_TYPE_FIELD,
-                    Combinators.oneOf(TRACKING_TYPE_ENUM)
-                               .map(JsStr::of),
-                    TYPE_FIELD,
-                    Gen.cons(JsStr.of("mouse"))
-                   )
-                .concat(baseGen);
-
     var keyboardSpec =
-        JsObjSpec.of(KEY_COUNT_FIELD,
+        JsObjSpec.of(TYPE_FIELD,
+                     JsSpecs.cons(JsStr.of("keyboard")),
+                     KEY_COUNT_FIELD,
                      JsSpecs.integer(),
                      MEDIA_BUTTONS_FIELD,
                      JsSpecs.bool()
                     )
                  .concat(baseSpec);
 
-    var keyboardGen =
-        JsObjGen.of(KEY_COUNT_FIELD,
-                    JsIntGen.arbitrary(0,
-                                       10),
-                    MEDIA_BUTTONS_FIELD,
-                    JsBoolGen.arbitrary(),
-                    TYPE_FIELD,
-                    Gen.cons(JsStr.of("keyboard"))
-                   )
-                .concat(baseGen);
-
     var usbHubSpec =
-        JsObjSpec.of(CONNECTED_DEVICES_FIELD,
+        JsObjSpec.of(TYPE_FIELD,
+                     JsSpecs.cons(JsStr.of("usbHub")),
+                     CONNECTED_DEVICES_FIELD,
                      JsSpecs.arrayOfSpec(JsSpecs.ofNamedSpec(PERIPHERAL_FIELD))
                     )
                  .withOptKeys(CONNECTED_DEVICES_FIELD)
                  .concat(baseSpec);
 
-    var usbHubGen =
-        JsObjGen.of(CONNECTED_DEVICES_FIELD,
-                    JsArrayGen.biased(NamedGen.of(PERIPHERAL_FIELD),
-                                      2,
-                                      10),
-                    TYPE_FIELD,
-                    Gen.cons(JsStr.of("usb_hub"))
-                   )
-                .withOptKeys(CONNECTED_DEVICES_FIELD)
-                .concat(baseGen);
-
     var peripheralSpec =
         JsSpecs.ofNamedSpec(PERIPHERAL_FIELD,
-                            oneSpecOf(mouseSpec,
-                                      keyboardSpec,
-                                      usbHubSpec));
+                            oneSpecOf(JsSpecs.ofNamedSpec("mouse",
+                                                          mouseSpec),
+                                      JsSpecs.ofNamedSpec("keyboard",
+                                                          keyboardSpec),
+                                      JsSpecs.ofNamedSpec("usbHub",
+                                                          usbHubSpec)));
 
-    var peripheralGen =
-        NamedGen.of(PERIPHERAL_FIELD,
-                    Combinators.oneOf(mouseGen,
-                                      keyboardGen,
-                                      usbHubGen));
+    var peripheralGen = SpecToGen.DEFAULT.convert(peripheralSpec);
 
     var parser = JsObjSpecParser.of(peripheralSpec);
 
     peripheralGen.sample(10)
                  .peek(System.out::println)
                  .forEach(obj -> {
-                            System.out.println(obj.getStr(TYPE_FIELD));
-
                             Assertions.assertEquals(obj,
                                                     parser.parse(obj.toString())
                                                    );
@@ -231,9 +301,107 @@ public class ModelingInheritance {
 
 ```
 
-This example illustrates the straightforward approach of implementing inheritance and generating structured data
-using json-values. The library's features make it easy to model complex hierarchies, generate diverse data, and ensure
-compliance with defined specifications.
+Let's convert the spec into a json schema
+
+```code
+
+var jsonSchema = SpecToJsonSchema.convert(peripheralSpec);
+System.out.println(jsonSchema.toPrettyString());
+
+```
+
+and the result is:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "defs": {
+    "mouse": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "trackingType": {
+          "enum": ["ball", "optical"],
+          "type": "string"
+        },
+        "wheelCount": {
+          "type": "integer"
+        },
+        "type": {
+          "const": "mouse"
+        },
+        "buttonCount": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "$id": "mouse",
+      "required": ["type", "buttonCount", "wheelCount", "trackingType", "name"]
+    },
+    "keyboard": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "keyCount": {
+          "type": "integer"
+        },
+        "type": {
+          "const": "keyboard"
+        },
+        "mediaButtons": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "$id": "keyboard",
+      "required": ["type", "keyCount", "mediaButtons", "name"]
+    },
+    "peripheral": {
+      "oneOf": [
+        {
+          "$ref": "#/defs/mouse"
+        },
+        {
+          "$ref": "#/defs/keyboard"
+        },
+        {
+          "$ref": "#/defs/usb_hub"
+        }
+      ]
+    },
+    "usb_hub": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "connectedDevices": {
+          "items": {
+            "$ref": "#/defs/peripheral"
+          },
+          "type": ["array", "null"]
+        },
+        "type": {
+          "const": "usb_hub"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "$id": "usb_hub",
+      "required": ["type", "name"]
+    }
+  },
+  "$ref": "#/defs/peripheral",
+  "$id": "peripheral"
+}
+```
+
+This example illustrates the straightforward approach of implementing inheritance and generating
+structured data using json-values. The library's features make it easy to model complex hierarchies,
+generate diverse data, and ensure compliance with defined specifications.
 
 **Optics: Elevating JSON Manipulation to a New Level**
 
@@ -283,9 +451,9 @@ json.mapKeys(toSneakCase)
 
 **Efficient JSON Parsing and Validation**
 
-Parsing and validating JSON data can be a time-consuming process, especially when dealing with large payloads.
-json-values offers a more efficient and convenient approach by interleaving parsing and validation without the need
-to parse the entire JSON. Here's how it works:
+Parsing and validating JSON data can be a time-consuming process, especially when dealing with large
+payloads. json-values offers a more efficient and convenient approach by interleaving parsing and
+validation without the need to parse the entire JSON. Here's how it works:
 
 ```
 // Define your JSON schema using JsObjSpec
@@ -1123,18 +1291,25 @@ associated values of the same type. For example a map of numbers or booleans etc
 
 ```java
 
-JsObjSpec a = JsObjSpec.of("name", str(),
-                           "grades", mapOfInteger()
+JsObjSpec a = JsObjSpec.of("name",
+                           str(),
+                           "grades",
+                           mapOfInteger()
                           );
 
 List<SpecError> errors =
-        spec.test(JsObj.of("name", JsStr.of("Rafael"),
-                           "grades", JsObj.of("Maths", JsInt.of(10),
-                                              "Science", JsInt.of(8),
-                                              "Geography", JsInt.of(8)
-                                              )
-                          )
-                 );
+    spec.test(JsObj.of("name",
+                       JsStr.of("Rafael"),
+                       "grades",
+                       JsObj.of("Maths",
+                                JsInt.of(10),
+                                "Science",
+                                JsInt.of(8),
+                                "Geography",
+                                JsInt.of(8)
+                               )
+                      )
+             );
 
 ```
 
@@ -1171,7 +1346,7 @@ JsObjSpecParser personParser = JsObjSpecParser.of(personSpec);
 String string = "{...}";
 
 try{
-     JsObj person=personParser.parse(string);
+     JsObj person = personParser.parse(string);
    }
 catch(JsParserException e){
      System.out.println("Error parsing person JSON: " +e.getMessage())
@@ -1185,10 +1360,11 @@ specifications. To implement this, start by creating a spec with `JsObjSpecBuild
 `JsSpecs.ofNamedSpec(name)` method within its own definition.
 
 ```code
+
 var spec =
     JsObjSpecBuilder.withName("person")
                     .build(JsObjSpec.of("name", JsSpecs.str(),
-                                        "image", JsSpecs.fixedBinary(1),
+                                        "image", JsSpecs.fixedBinary(10*1024),
                                         "age", JsSpecs.integer(),
                                         "father", JsSpecs.ofNamedSpec("person")
                                        )
@@ -1197,6 +1373,32 @@ var spec =
 ```
 
 In this example, the spec named 'person' is referenced within its own definition.
+
+You can turn a spec into a generator as well:
+
+```code 
+
+Gen<JsObj> gen = SpecToGen.DEFAULT.convert(spec);
+
+```
+
+As previously mentioned, the capability to create JSON and AVRO schemas is a powerful feature. It
+enables the generation of schemas from specifications, facilitating the sharing of schemas with
+other systems or tools that necessitate such structured representations.
+
+```code
+
+JsObj jsonSchema = SpecToJsonSchema.convert(spec);
+
+```
+
+Using the library [avro-spec](https://github.com/imrafaelmerino/avro-spec):
+
+```code
+
+JsObj avroSchema = SpecToAvroSchema.convert(spec);
+
+```
 
 We can describe json-specs as:
 
@@ -1325,7 +1527,7 @@ Gen<JsObj> personGen =
 
 json-values uses the generators from the library
 [java-fun](https://github.com/imrafaelmerino/java-fun) to build the JSON generators. I strongly
-recommend you read the readme of java-fun to get a better understanding of how generators work.
+recommend you read the readme of [java-fun](https://github.com/imrafaelmerino/java-fun) to get a better understanding of how generators work.
 
 json-values leverages the generators provided by the
 [java-fun](https://github.com/imrafaelmerino/java-fun) library to construct its JSON generators. For
@@ -1342,17 +1544,15 @@ combinations. Manually testing each case in such a scenario would be impractical
 
 In the earlier example, the keys—addresses, phoneNumber, and surname—were designated as optional.
 However, if you wish to generate data where these fields are consistently present, you can achieve
-this effortlessly using the suchThat function. This function employs a predicate-based approach to
+this effortlessly using the `suchThat` function. This function employs a predicate-based approach to
 selectively filter out generated values that do not align with the specified condition.
 
-By employing the suchThat function, you essentially perform a brute force operation—a task that
+By employing the `suchThat` function, you essentially perform a brute force operation—a task that
 computers excel at. It ensures that, regardless of the complexity involved, your generator adheres
 precisely to your desired criteria, guaranteeing the generation of data with the specified
 properties.
 
 ```code
-
-
 
 Gen<JsObj> newPersonGen =
     personGen.suchThat(p->
@@ -1369,7 +1569,60 @@ straightforward structures or tackling intricate data models, json-values offers
 user-friendly way to generate data confidently and effectively. It's a tool that empowers developers
 to identify bugs efficiently and maintain robust test suites with ease.
 
-### <a name="optics"><a/>Enhance Clarity and Safety with json-values Optics
+### <a name="parsers"><a/>Spec Parsers
+
+The capability to create parsers from specifications is a valuable feature, enabling the parsing of JSON data while enforcing adherence to a defined schema. This approach ensures that the parsed data aligns with the specified schema, offering a robust, efficient, and reliable JSON processing mechanism.
+
+Furthermore, customization options are available for the parsing process, providing enhanced flexibility. These options include the provision of default values for optional fields and the definition of field aliases, which streamline the schema versioning process. To implement these customizations, specifications can be created using the `JsObjSpecBuilder` class, which allows the addition of metadata.
+
+```code
+
+    JsObjSpec personSpec =
+        JsObjSpecBuilder.withName("person")
+                        .withFieldAliases(Map.of("name", List.of("first_name"),
+                                                 "surname", List.of("last_name")
+                                                )
+                                         )
+                        .withFieldsDefaults(Map.of("title", JsStr.of("none")))
+                        .build(JsObjSpec.of("name", JsSpecs.str(),
+                                            "surname",  JsSpecs.str(),
+                                            "title", JsSpecs.str()
+                                           )
+                                        .withOptKeys("title")
+                              );
+
+    JsObjSpecParser parser = JsObjSpecParser.of(personSpec);
+
+    String personStr = JsObj.of("first_name",
+                             JsStr.of("John"),
+                             "last_name",
+                             JsStr.of("Doe")
+                            )
+                         .toString();
+                         
+    JsObj person = parser.parse(personStr);
+
+````
+
+To elaborate, the behavior of aliases and defaults is akin to that observed in Avro. Aliases facilitate 
+schema evolution by allowing fields to possess multiple names, while defaults ensure consistency by providing 
+fallback values for optional fields. This simplifies the process of schema versioning, making it more manageable and efficient.
+
+```json
+
+{
+  "name": "John",
+  "surname": "Doe",
+  "title": "none"
+}
+
+
+```
+
+
+
+
+### <a name="optics"><a/>Enhance Clarity and Safety with Optics
 
 json-values harnesses the power of optics, as defined in the library
 [java-fun](https://github.com/imrafaelmerino/java-fun). To grasp optics thoroughly, please refer to
@@ -1601,6 +1854,17 @@ For Java 17 or higher:
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
   <version>13.4.0</version>
+</dependency>
+```
+
+For Java 21 or higher:
+
+```xml
+
+<dependency>
+  <groupId>com.github.imrafaelmerino</groupId>
+  <artifactId>json-values</artifactId>
+  <version>14.0.0-RC1</version>
 </dependency>
 ```
 

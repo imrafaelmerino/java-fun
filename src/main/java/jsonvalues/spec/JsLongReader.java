@@ -1,26 +1,24 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsLong;
-
-import java.util.Optional;
 import java.util.function.LongFunction;
+import jsonvalues.JsLong;
 
 final class JsLongReader extends AbstractReader {
 
   @Override
-  JsLong value(final JsReader reader) throws JsParserException {
+  JsLong value(final DslJsReader reader) throws JsParserException {
     return JsLong.of(NumberConverter.deserializeLong(reader));
   }
 
-  JsLong valueSuchThat(final JsReader reader,
-                       final LongFunction<Optional<JsError>> fn
+  JsLong valueSuchThat(final DslJsReader reader,
+                       final LongFunction<JsError> fn
                       ) throws JsParserException {
     long value = NumberConverter.deserializeLong(reader);
-    Optional<JsError> result = fn.apply(value);
-      if (result.isEmpty()) {
-          return JsLong.of(value);
-      }
-    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
+    JsError result = fn.apply(value);
+    if (result == null) {
+      return JsLong.of(value);
+    }
+    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result),
                                      reader.getPositionInStream()
                                     );
   }

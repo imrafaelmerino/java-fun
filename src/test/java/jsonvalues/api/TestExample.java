@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.regex.Pattern;
 import jsonvalues.JsArray;
 import jsonvalues.JsInt;
 import jsonvalues.JsObj;
@@ -20,6 +19,7 @@ import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsObjSpecParser;
 import jsonvalues.spec.JsSpecs;
 import jsonvalues.spec.SpecError;
+import jsonvalues.spec.StrSchema;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,10 +29,10 @@ public class TestExample {
   public void test() {
 
     JsObjSpec spec = JsObjSpec.of("name",
-                                  str(Pattern.compile("\\w+")),
+                                  str(StrSchema.withPattern("\\w+")),
                                   "surname",
-                                  str(1,
-                                      20),
+                                  str(StrSchema.withLength(2,
+                                                           20)),
                                   "languages",
                                   JsSpecs.arrayOfStr(),
                                   "age",

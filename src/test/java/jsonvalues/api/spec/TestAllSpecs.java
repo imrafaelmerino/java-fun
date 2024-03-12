@@ -10,6 +10,7 @@ import jsonvalues.gen.JsIntGen;
 import jsonvalues.gen.JsLongGen;
 import jsonvalues.gen.JsObjGen;
 import jsonvalues.gen.JsStrGen;
+import jsonvalues.spec.ArraySchema;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsObjSpecParser;
 import jsonvalues.spec.JsSpecs;
@@ -34,11 +35,9 @@ public class TestAllSpecs {
                                   "a6",
                                   JsSpecs.instant(),
                                   "a7",
-                                  JsSpecs.arrayOfStr(1,
-                                                     10),
+                                  JsSpecs.arrayOfStr(ArraySchema.sizeBetween(1, 10)),
                                   "a8",
-                                  JsSpecs.arrayOfInt(1,
-                                                     10),
+                                  JsSpecs.arrayOfInt(ArraySchema.sizeBetween(1, 10)),
                                   "a9",
                                   JsSpecs.arrayOfDec(),
                                   "a10",
@@ -78,7 +77,7 @@ public class TestAllSpecs {
                                                                       1,
                                                                       10)),
                                "a10",
-                               JsArrayGen.arbitrary(JsBigIntGen.arbitrary(10),
+                               JsArrayGen.arbitrary(JsBigIntGen.arbitrary(),
                                                     1,
                                                     10)
                               )
@@ -89,7 +88,7 @@ public class TestAllSpecs {
 
     Assertions.assertTrue(
         gen.suchThat(spec,
-                     20000)
+                     100000)
            .sample(100)
            .allMatch(it ->
                          parser.parse(it.toPrettyString())

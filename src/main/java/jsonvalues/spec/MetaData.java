@@ -1,11 +1,10 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import jsonvalues.JsValue;
 
 
 record MetaData(String name,
@@ -15,7 +14,9 @@ record MetaData(String name,
                 Map<String, String> fieldsDoc,
                 Map<String, JsObjSpecBuilder.ORDERS> fieldsOrder,
                 Map<String, List<String>> fieldsAliases,
-                Map<String, JsValue> fieldsDefault) {
+                Map<String, JsValue> fieldsDefault,
+                int minProperties,
+                int maxProperties) {
 
   MetaData {
     // Make lists and maps immutable (if they're not null)
@@ -37,6 +38,9 @@ record MetaData(String name,
     if (name == null || name.isEmpty() || name.isBlank()) {
       throw new IllegalArgumentException("Name cannot be null, empty, or blank.");
     }
+    if (minProperties > maxProperties) {
+      throw new IllegalArgumentException("minProperties must be less than or equal to maxProperties");
+    }
   }
 
   /**
@@ -46,14 +50,14 @@ record MetaData(String name,
    * @return the field that has as one possible alias the given one
    */
   String getAliasField(String alias) {
-      if (fieldsAliases == null) {
-          return null;
-      }
+    if (fieldsAliases == null) {
+      return null;
+    }
     for (String key : fieldsAliases.keySet()) {
-        if (fieldsAliases.get(key)
-                         .contains(alias)) {
-            return key;
-        }
+      if (fieldsAliases.get(key)
+                       .contains(alias)) {
+        return key;
+      }
     }
     return null;
   }
@@ -108,7 +112,9 @@ record MetaData(String name,
                         newFieldsDoc,
                         newOrders,
                         newAliases,
-                        newDefaults);
+                        newDefaults,
+                        minProperties,
+                        maxProperties);
   }
 
 }

@@ -1,12 +1,10 @@
 package jsonvalues.spec;
 
 
+import java.util.function.Function;
 import jsonvalues.JsBool;
 import jsonvalues.JsStr;
 import jsonvalues.JsValue;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 
 class JsValueReader extends AbstractReader {
@@ -27,35 +25,35 @@ class JsValueReader extends AbstractReader {
     this.arrayDeserializer = arrayDeserializer;
   }
 
-  JsValue valueSuchThat(JsReader reader,
-                        Function<JsValue, Optional<JsError>> fn
+  JsValue valueSuchThat(DslJsReader reader,
+                        Function<JsValue, JsError> fn
 
                        ) throws JsParserException {
     JsValue value = value(reader);
-    Optional<JsError> result = fn.apply(value);
-      if (result.isEmpty()) {
-          return value;
-      }
-    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
+    JsError result = fn.apply(value);
+    if (result == null) {
+      return value;
+    }
+    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result),
                                      reader.getPositionInStream()
                                     );
   }
 
   @Override
   @SuppressWarnings("FallThrough")
-  JsValue value(JsReader reader) throws JsParserException {
+  JsValue value(DslJsReader reader) throws JsParserException {
     return switch (reader.last()) {
       case 't' -> {
-          if (reader.wasTrue()) {
-              yield JsBool.TRUE;
-          }
+        if (reader.wasTrue()) {
+          yield JsBool.TRUE;
+        }
         throw JsParserException.reasonAt("true was expected",
                                          reader.getCurrentIndex());
       }
       case 'f' -> {
-          if (reader.wasFalse()) {
-              yield JsBool.FALSE;
-          }
+        if (reader.wasFalse()) {
+          yield JsBool.FALSE;
+        }
         throw JsParserException.reasonAt("false was expected",
                                          reader.getCurrentIndex());
       }

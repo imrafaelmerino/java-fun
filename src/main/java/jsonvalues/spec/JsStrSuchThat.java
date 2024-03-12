@@ -1,17 +1,15 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-import java.util.function.Function;
-
 import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
+
+import java.util.function.Function;
+import jsonvalues.JsValue;
 
 final class JsStrSuchThat extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
-  final Function<String, Optional<JsError>> predicate;
+  final Function<String, JsError> predicate;
 
-  JsStrSuchThat(final Function<String, Optional<JsError>> predicate,
+  JsStrSuchThat(final Function<String, JsError> predicate,
                 final boolean nullable
                ) {
     super(nullable);
@@ -36,14 +34,14 @@ final class JsStrSuchThat extends AbstractNullable implements JsOneErrorSpec, Av
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    final Optional<JsError> error = Functions.testElem(JsValue::isStr,
-                                                       STRING_EXPECTED,
-                                                       nullable
-                                                      )
-                                             .apply(value);
+  public JsError testValue(final JsValue value) {
+    final JsError error = Fun.testValue(JsValue::isStr,
+                                        STRING_EXPECTED,
+                                        nullable,
+                                        value
+                                       );
 
-    return error.isPresent() || value.isNull() ?
+    return error != null || value.isNull() ?
            error :
            predicate.apply(value.toJsStr().value);
   }

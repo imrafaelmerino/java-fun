@@ -2,31 +2,48 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-
 
 final class JsMapOfInt extends AbstractMap implements JsOneErrorSpec, AvroSpec {
 
+  final IntegerSchemaConstraints valuesConstraints;
+
   JsMapOfInt(boolean nullable) {
+    this(nullable,
+         null);
+  }
+
+  JsMapOfInt(boolean nullable,
+             IntegerSchemaConstraints valuesConstraints) {
     super(nullable);
+    this.valuesConstraints = valuesConstraints;
   }
 
   @Override
   public JsSpec nullable() {
-    return new JsMapOfInt(true);
+    return new JsMapOfInt(true,
+                          valuesConstraints);
   }
 
   @Override
   public JsParser parser() {
-    return JsParsers.INSTANCE.ofMapOfInt(nullable);
+    return JsParsers.INSTANCE.ofMapOfInt(nullable,
+                                         valuesConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(JsValue value) {
+  public JsError testValue(JsValue value) {
     return test(value,
-                it -> !it.isInt(),
-                ERROR_CODE.INT_EXPECTED);
+                it -> {
+                  if(!it.isInt())return ERROR_CODE.INT_EXPECTED;
+                  if(valuesConstraints != null) {
+                    return Fun.testIntConstraints(valuesConstraints,
+                                                   value.toJsInt());
+                  }
+                  return null;
+                }
+               );
+
   }
 
 

@@ -1,11 +1,10 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsObj;
+import static java.util.Objects.requireNonNull;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import static java.util.Objects.requireNonNull;
+import jsonvalues.JsObj;
 
 /**
  * The {@code JsObjSpecParser} class is responsible for creating JSON object parsers based on provided JSON
@@ -31,8 +30,9 @@ import static java.util.Objects.requireNonNull;
  * It's important to note that the provided JSON specification should match the structure and constraints of the JSON data you expect
  * to parse. The parser will enforce these constraints during parsing.
  */
-public final class JsObjSpecParser {
 
+
+public final class JsObjSpecParser {
 
   private final JsParser parser;
 
@@ -40,12 +40,12 @@ public final class JsObjSpecParser {
 
 
   private JsObjSpecParser(final JsSpec spec) {
-      if (!isValid(requireNonNull(spec))) {
-          throw new IllegalArgumentException("`%s` constructor requires a `%s` or `OneSpecOf(%s)`".formatted(JsObjSpecParser.class.getName(),
-                                                                                                             JsObjSpec.class.getName(),
-                                                                                                             JsObjSpec.class.getName()
-                                                                                                            ));
-      }
+    if (!isValid(requireNonNull(spec))) {
+      throw new IllegalArgumentException("`%s` constructor requires a `%s` or `OneSpecOf(%s)`".formatted(JsObjSpecParser.class.getName(),
+                                                                                                         JsObjSpec.class.getName(),
+                                                                                                         JsObjSpec.class.getName()
+                                                                                                        ));
+    }
     this.spec = spec;
     parser = spec.parser();
   }
@@ -62,17 +62,17 @@ public final class JsObjSpecParser {
   }
 
   private boolean isValid(JsSpec spec) {
-      if (spec instanceof JsObjSpec) {
-          return true;
-      }
-      if (spec instanceof OneOf oneOf) {
-          return oneOf.specs
-              .stream()
-              .allMatch(this::isValid);
-      }
-      if (spec instanceof NamedSpec namedSpec) {
-          return isValid(JsSpecCache.get(namedSpec.name));
-      }
+    if (spec instanceof JsObjSpec) {
+      return true;
+    }
+    if (spec instanceof OneOf oneOf) {
+      return oneOf.specs
+          .stream()
+          .allMatch(this::isValid);
+    }
+    if (spec instanceof NamedSpec namedSpec) {
+      return isValid(JsSpecCache.get(namedSpec.name));
+    }
     return false;
 
 

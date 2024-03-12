@@ -1,17 +1,15 @@
 package jsonvalues.spec;
 
+import java.util.function.Function;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 final class JsArrayOfIntSuchThat extends AbstractNullable implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  private final Function<JsArray, Optional<JsError>> predicate;
+  final Function<JsArray, JsError> predicate;
   private final JsArrayOfInt arrayOfIntSpec;
 
-  JsArrayOfIntSuchThat(final Function<JsArray, Optional<JsError>> predicate,
+  JsArrayOfIntSuchThat(final Function<JsArray, JsError> predicate,
                        final boolean nullable
                       ) {
     super(nullable);
@@ -37,9 +35,9 @@ final class JsArrayOfIntSuchThat extends AbstractNullable implements JsOneErrorS
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    final Optional<JsError> result = arrayOfIntSpec.testValue(value);
-    return result.isPresent() || value.isNull() ?
+  public JsError testValue(final JsValue value) {
+    JsError result = arrayOfIntSpec.testValue(value);
+    return result != null || value.isNull() ?
            result :
            predicate.apply(value.toJsArray());
   }

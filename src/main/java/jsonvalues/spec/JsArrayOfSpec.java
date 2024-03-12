@@ -1,12 +1,10 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsArray;
-import jsonvalues.JsValue;
+import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
 
 import java.util.List;
-import java.util.Optional;
-
-import static jsonvalues.spec.ERROR_CODE.ARRAY_EXPECTED;
+import jsonvalues.JsArray;
+import jsonvalues.JsValue;
 
 final class JsArrayOfSpec extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
@@ -17,18 +15,15 @@ final class JsArrayOfSpec extends AbstractSizableArr implements JsOneErrorSpec, 
                ) {
     this(nullable,
          spec,
-         0,
-         Integer.MAX_VALUE);
+         null);
   }
 
-  JsArrayOfSpec(final boolean nullable,
-                final JsSpec spec,
-                int min,
-                int max
+  JsArrayOfSpec(boolean nullable,
+                JsSpec spec,
+                ArraySchemaConstraints arrayConstraints
                ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
     this.spec = spec;
   }
 
@@ -40,8 +35,7 @@ final class JsArrayOfSpec extends AbstractSizableArr implements JsOneErrorSpec, 
   public JsSpec nullable() {
     return new JsArrayOfSpec(true,
                              spec,
-                             min,
-                             max
+                             arrayConstraints
     );
   }
 
@@ -50,22 +44,21 @@ final class JsArrayOfSpec extends AbstractSizableArr implements JsOneErrorSpec, 
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfSpec(spec.parser(),
                                             nullable,
-                                            min,
-                                            max
+                                            arrayConstraints
                                            );
 
   }
 
 
   @Override
-  public Optional<JsError> testValue(JsValue value) {
-      if (isNullable() && value.isNull()) {
-          return Optional.empty();
-      }
+  public JsError testValue(JsValue value) {
+    if (isNullable() && value.isNull()) {
+      return null;
+    }
 
     if (!value.isArray()) {
-      return Optional.of(new JsError(value,
-                                     ARRAY_EXPECTED));
+      return new JsError(value,
+                         ARRAY_EXPECTED);
 
     }
     return apply(value.toJsArray()
@@ -73,25 +66,26 @@ final class JsArrayOfSpec extends AbstractSizableArr implements JsOneErrorSpec, 
   }
 
 
-  private Optional<JsError> apply(final JsArray array
-                                 ) {
-
-      if (array.size() < min) {
-          return Optional.of(new JsError(array,
-                                         ERROR_CODE.ARR_SIZE_LOWER_THAN_MIN));
+  private JsError apply(final JsArray array
+                       ) {
+    if (arrayConstraints != null) {
+      if (array.size() < arrayConstraints.minItems()) {
+        return new JsError(array,
+                           ERROR_CODE.ARR_SIZE_LOWER_THAN_MIN);
       }
-      if (array.size() > max) {
-          return Optional.of(new JsError(array,
-                                         ERROR_CODE.ARR_SIZE_GREATER_THAN_MAX));
+      if (array.size() > arrayConstraints.maxItems()) {
+        return new JsError(array,
+                           ERROR_CODE.ARR_SIZE_GREATER_THAN_MAX);
       }
+    }
 
     for (JsValue value : array) {
       List<SpecError> errors = spec.test(value);
-        if (!errors.isEmpty()) {
-            return Optional.of(errors.get(0).error);
-        }
+      if (!errors.isEmpty()) {
+        return errors.get(0).error;
+      }
     }
-    return Optional.empty();
+    return null;
   }
 
 

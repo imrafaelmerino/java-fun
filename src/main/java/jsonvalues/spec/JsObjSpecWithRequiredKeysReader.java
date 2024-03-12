@@ -1,10 +1,9 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsObj;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import jsonvalues.JsObj;
 
 final class JsObjSpecWithRequiredKeysReader extends JsObjSpecReader {
 
@@ -27,14 +26,14 @@ final class JsObjSpecWithRequiredKeysReader extends JsObjSpecReader {
 
 
   @Override
-  JsObj value(JsReader reader) throws JsParserException {
+  JsObj value(DslJsReader reader) throws JsParserException {
     JsObj obj = super.value(reader);
     for (String key : required) {
-        if (!obj.containsKey(key)) {
-            throw JsParserException.reasonAt(ParserErrors.REQUIRED_KEY_NOT_FOUND.apply(key),
-                                             reader.getPositionInStream()
-                                            );
-        }
+      if (!obj.containsKey(key)) {
+        throw JsParserException.reasonAt(ParserErrors.REQUIRED_KEY_NOT_FOUND.apply(key),
+                                         reader.getPositionInStream()
+                                        );
+      }
     }
     return obj;
 

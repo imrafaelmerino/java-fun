@@ -1,16 +1,27 @@
 package jsonvalues.spec;
 
+import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.OBJ_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
+import static jsonvalues.spec.ERROR_CODE.REQUIRED;
+import static jsonvalues.spec.ERROR_CODE.SPEC_MISSING;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import jsonvalues.JsNothing;
 import jsonvalues.JsObj;
 import jsonvalues.JsPath;
 import jsonvalues.JsValue;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
-import static jsonvalues.spec.ERROR_CODE.*;
 
 /**
  * Represents a specification of a JSON object, allowing you to define rules and constraints for validating JSON
@@ -122,7 +133,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(final String key1,
                              final JsSpec spec1,
                              final String key2,
@@ -140,7 +151,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(final String key1,
                              final JsSpec spec1,
                              final String key2,
@@ -161,7 +172,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(final String key1,
                              final JsSpec spec1,
                              final String key2,
@@ -186,7 +197,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(String key1,
                              JsSpec spec1,
                              String key2,
@@ -216,7 +227,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -250,7 +261,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -289,7 +300,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -331,7 +342,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -377,7 +388,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -427,7 +438,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -481,7 +492,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -543,7 +554,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -609,7 +620,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -679,7 +689,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -753,7 +762,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -831,7 +840,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -915,7 +923,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
 
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1001,7 +1008,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1091,7 +1097,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1185,7 +1190,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1283,7 +1287,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1385,7 +1388,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1491,7 +1493,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1601,7 +1602,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1715,7 +1715,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1833,7 +1832,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -1955,7 +1953,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2081,7 +2078,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2211,7 +2207,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2345,7 +2340,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2483,7 +2478,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2625,7 +2619,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2771,7 +2764,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -2921,7 +2913,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -3075,7 +3066,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -3233,7 +3223,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -3395,7 +3384,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -3561,7 +3549,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -3731,7 +3718,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -3905,7 +3891,6 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -4083,7 +4068,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -4265,7 +4250,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -4451,7 +4436,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -4641,7 +4626,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -4835,7 +4820,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -5033,7 +5018,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -5235,7 +5220,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -5441,7 +5426,7 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                   );
   }
 
-  @SuppressWarnings("squid:S00107")
+
   public static JsObjSpec of(
       String key1,
       JsSpec spec1,
@@ -5723,6 +5708,23 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
       return errors;
     }
     JsObj json = parentValue.toJsObj();
+    if (metaData != null) {
+      if (json.size() < metaData.minProperties()) {
+        errors.add(SpecError.of(parent,
+                                new JsError(parentValue,
+                                            ERROR_CODE.OBJ_MIN_SIZE_NOT_MET
+
+                                )
+                               ));
+      }
+      if (json.size() > metaData.maxProperties()) {
+        errors.add(SpecError.of(parent,
+                                new JsError(parentValue,
+                                            ERROR_CODE.OBJ_MAX_SIZE_EXCEEDED
+                                )
+                               ));
+      }
+    }
     for (var next : json) {
       String key = next.key();
       JsValue value = next.value();
@@ -5863,4 +5865,5 @@ public final class JsObjSpec extends AbstractNullable implements JsSpec, AvroSpe
                          newReq,
                          newMet);
   }
+
 }

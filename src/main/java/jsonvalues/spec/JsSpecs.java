@@ -1,20 +1,41 @@
 package jsonvalues.spec;
 
 
-import jsonvalues.*;
+import static java.util.Objects.requireNonNull;
+import static jsonvalues.spec.ERROR_CODE.ARRAY_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.BINARY_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.DECIMAL_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.DOUBLE_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.INSTANT_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.INTEGRAL_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.INT_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.LONG_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.OBJ_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.STRING_CONDITION;
+import static jsonvalues.spec.ERROR_CODE.VALUE_CONDITION;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.DoublePredicate;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import static java.util.Objects.requireNonNull;
-import static jsonvalues.spec.ERROR_CODE.*;
+import jsonvalues.JsArray;
+import jsonvalues.JsBigDec;
+import jsonvalues.JsBigInt;
+import jsonvalues.JsBinary;
+import jsonvalues.JsDouble;
+import jsonvalues.JsInstant;
+import jsonvalues.JsInt;
+import jsonvalues.JsLong;
+import jsonvalues.JsObj;
+import jsonvalues.JsStr;
+import jsonvalues.JsValue;
 
 /**
  * The `JsSpecs` class provides a collection of static factory methods for creating JSON specifications (JsSpec). These
@@ -44,10 +65,13 @@ public final class JsSpecs {
   private static final JsArraySpec arrayOfBigInt = new JsArrayOfBigInt(false);
   private static final JsArraySpec arrayOfObj = new JsArrayOfObj(false);
   private static final JsArraySpec arrayOfBool = new JsArrayOfBool(false);
-  private static final JsSpec instant = new JsInstantSpec(false);
+  private static final JsSpec instant = new JsInstantSpec(false,
+                                                          null);
   private static final JsArraySpec arrayOfLong = new JsArrayOfLong(false);
   private static final JsArraySpec arrayOfInt = new JsArrayOfInt(false);
-  private static final JsArraySpec arrayOfStr = new JsArrayOfStr(false);
+  private static final JsArraySpec arrayOfStr = new JsArrayOfStr(false,
+                                                                 null,
+                                                                 null);
   private static final JsSpec binary = new JsBinarySpec(false);
   private static final JsSpec bigInteger = new JsBigIntSpec(false);
   private static final JsSpec longInteger = new JsLongSpec(false);
@@ -62,7 +86,8 @@ public final class JsSpecs {
 
   private static final JsSpec mapOfLongSpec = new JsMapOfLong(false);
 
-  private static final JsSpec mapOfStrSpec = new JsMapOfStr(false);
+  private static final JsSpec mapOfStrSpec = new JsMapOfStr(false,
+                                                            null);
 
 
   private static final JsSpec mapOfIntSpec = new JsMapOfInt(false);
@@ -78,14 +103,12 @@ public final class JsSpecs {
   private static final JsSpec mapOfInstantSpec = new JsMapOfInstant(false);
 
 
-  private static final String MAX_LOWER_THAN_MIN_ERROR = "max < min";
-
   private JsSpecs() {
   }
 
 
   /**
-   * non-nullable array of decimal numbers spec
+   * non-nullable array of decimal numbers
    *
    * @return a spec
    */
@@ -94,7 +117,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array of integral numbers spec
+   * non-nullable array of integral numbers
    *
    * @return a spec
    */
@@ -104,7 +127,7 @@ public final class JsSpecs {
 
 
   /**
-   * non-nullable array of double numbers spec
+   * non-nullable array of double numbers
    *
    * @return a spec
    */
@@ -114,7 +137,7 @@ public final class JsSpecs {
 
 
   /**
-   * non-nullable array of objects spec
+   * non-nullable array of objects
    *
    * @return a spec
    */
@@ -123,7 +146,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array of booleans spec
+   * non-nullable array of booleans
    *
    * @return a spec
    */
@@ -132,7 +155,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array spec
+   * non-nullable instant spec
    *
    * @return a spec
    */
@@ -141,7 +164,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array of long numbers spec
+   * non-nullable array of long numbers
    *
    * @return a spec
    */
@@ -150,7 +173,34 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array of integer numbers spec
+   * non-nullable array of long numbers. Each element of the array must satisfy the given schema.
+   *
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfLong(LongSchema schema) {
+
+    return new JsArrayOfLong(false,
+                             schema.build());
+  }
+
+  /**
+   * non-nullable array of long numbers. Each element of the array must satisfy the given schema. The array must satisfy
+   * the given array schema (min and max item, unique elements etc).
+   *
+   * @param schema      the schema that each element of the array must satisfy
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfLong(LongSchema schema,
+                                        ArraySchema arraySchema) {
+
+    return new JsArrayOfLong(false,
+                             arraySchema.build(),
+                             schema.build());
+  }
+
+  /**
+   * non-nullable array of integer numbers
    *
    * @return a spec
    */
@@ -159,7 +209,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array of strings spec
+   * non-nullable array of strings
    *
    * @return a spec
    */
@@ -168,7 +218,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable binary spec
+   * non-nullable binary
    *
    * @return a spec
    * @see JsBinary
@@ -177,12 +227,19 @@ public final class JsSpecs {
     return binary;
   }
 
-  public static JsSpec fixedBinary(int size) {
-    return new JsFixedBinary(size);
+  /**
+   * non-nullable fixed-length binary
+   *
+   * @param length the length of the binary
+   * @return a spec
+   * @see JsBinary
+   */
+  public static JsSpec fixedBinary(int length) {
+    return new JsFixedBinary(length);
   }
 
   /**
-   * non-nullable integral number
+   * non-nullable big integer number
    *
    * @return a spec
    */
@@ -201,12 +258,23 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable long number
+   * non-nullable double number
    *
    * @return a spec
    */
   public static JsSpec doubleNumber() {
     return doubleNumber;
+  }
+
+  /**
+   * non-nullable double number. Each element of the array must satisfy the given schema.
+   *
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
+   */
+  public static JsSpec doubleNumber(DoubleSchema schema) {
+    return new JsDoubleSpec(false,
+                            requireNonNull(schema).build());
   }
 
   /**
@@ -236,8 +304,20 @@ public final class JsSpecs {
     return integer;
   }
 
+
   /**
-   * non-nullable json object spec
+   * non-nullable integer number Each element of the array must satisfy the given schema.
+   *
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
+   */
+  public static JsSpec integer(IntegerSchema schema) {
+    return new JsIntSpec(false,
+                         requireNonNull(schema).build());
+  }
+
+  /**
+   * non-nullable json object
    *
    * @return a spec
    */
@@ -246,7 +326,7 @@ public final class JsSpecs {
   }
 
   /**
-   * non-nullable array spec
+   * non-nullable json array
    *
    * @return a spec
    */
@@ -272,214 +352,283 @@ public final class JsSpecs {
     return str;
   }
 
+
   /**
-   * Returns a non-nullable string specification that validates strings based on their length within the specified
-   * range.
+   * non-nullable string Each element of the array must satisfy the given schema.
    *
-   * @param min The minimum allowed length for strings (inclusive).
-   * @param max The maximum allowed length for strings (inclusive).
-   * @return A specification for strings that have a length within the specified range.
-   * @throws IllegalArgumentException If the provided min is negative, max is non-positive, or min is greater than max.
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
    */
-  public static JsSpec str(int min,
-                           int max
-                          ) {
-      if (min < 0) {
-          throw new IllegalArgumentException("min < 0");
-      }
-      if (max <= 0) {
-          throw new IllegalArgumentException("max <= 0");
-      }
-      if (min > max) {
-          throw new IllegalArgumentException("min > max");
-      }
-    return str(s -> s.length() >= min && s.length() <= max);
+  public static JsSpec str(StrSchema schema) {
+    return new JsStrSpec(false,
+                         schema.build());
   }
 
 
   /**
-   * Returns a non-nullable string specification with the specified regular expression pattern.
+   * non-nullable array of integer numbers. The array must satisfy the given schema (min and max item, unique elements
+   * etc).
    *
-   * @param pattern The regular expression pattern to match strings against.
-   * @return A specification for strings that match the given pattern.
-   * @throws NullPointerException If the provided pattern is null.
+   * @param schema the schema that the array must satisfy
+   * @return a spec
    */
-  public static JsSpec str(final Pattern pattern) {
-    Objects.requireNonNull(pattern);
-    return str(s -> pattern.matcher(s)
-                           .matches());
-  }
+  public static JsArraySpec arrayOfInt(ArraySchema schema) {
 
-
-  /**
-   * Returns a specification for an array of integers with a specified minimum and maximum length.
-   *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
-   * @return A specification for an array of integers with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
-   */
-  public static JsArraySpec arrayOfInt(int minLength,
-                                       int maxLength
-                                      ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
     return new JsArrayOfInt(false,
-                            minLength,
-                            maxLength);
+                            schema.build());
+  }
+
+  /**
+   * non-nullable array of integer numbers. Each element of the array must satisfy the given schema.
+   *
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfInt(IntegerSchema schema) {
+
+    return new JsArrayOfInt(false,
+                            schema.build());
+  }
+
+  /**
+   * non-nullable array of integer numbers. Each element of the array must satisfy the given schema. The array must
+   * satisfy the given schema (min and max item, unique elements etc).
+   *
+   * @param schema      the schema that each element of the array must satisfy
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfInt(IntegerSchema schema,
+                                       ArraySchema arraySchema) {
+
+    return new JsArrayOfInt(false,
+                            arraySchema.build(),
+                            schema.build());
   }
 
 
   /**
-   * Returns a specification for an array of double with a specified minimum and maximum length.
+   * non-nullable array of double numbers. The array must satisfy the given schema (min and max item, unique elements
+   * etc).
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
-   * @return A specification for an array of double with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
    */
-  public static JsArraySpec arrayOfDouble(int minLength,
-                                          int maxLength
-                                         ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+  public static JsArraySpec arrayOfDouble(ArraySchema arraySchema) {
+
     return new JsArrayOfDouble(false,
-                               minLength,
-                               maxLength);
+                               arraySchema.build());
   }
 
+
+  /**
+   * non-nullable array of double numbers. Each element of the array must satisfy the given schema.
+   *
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfDouble(DoubleSchema schema) {
+
+    return new JsArrayOfDouble(false,
+                               schema.build(),
+                               null);
+  }
+
+  /**
+   * non-nullable array of double numbers. Each element of the array must satisfy the given schema. The array must
+   * satisfy the given schema (min and max item, unique elements etc).
+   *
+   * @param schema      the schema that each element of the array must satisfy
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfDouble(DoubleSchema schema,
+                                          ArraySchema arraySchema) {
+
+    return new JsArrayOfDouble(false,
+                               schema.build(),
+                               arraySchema.build());
+  }
+
+
+  /**
+   * non-nullable array of decimal numbers. Each element of the array must satisfy the given predicate. The array must
+   * satisfy the given schema (min and max item, unique elements etc).
+   *
+   * @param predicate   The predicate that each number in the array must satisfy.
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
+   */
   public static JsArraySpec arrayOfDouble(DoublePredicate predicate,
-                                          int minLength,
-                                          int maxLength
+                                          ArraySchema arraySchema
                                          ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedDouble(s -> requireNonNull(predicate).test(s) ?
-                                          Optional.empty() :
-                                          Optional.of(new JsError(JsDouble.of(s),
-                                                                  DOUBLE_CONDITION)),
+    Objects.requireNonNull(predicate);
+    Objects.requireNonNull(arraySchema);
+    return new JsArrayOfTestedDouble(s -> predicate.test(s) ?
+                                          null :
+                                          new JsError(JsDouble.of(s),
+                                                      DOUBLE_CONDITION),
                                      false,
-                                     minLength,
-                                     maxLength);
+                                     arraySchema.build());
   }
 
   /**
-   * Returns a specification for an array of big integers with a specified minimum and maximum length.
+   * non-nullable array of big integer numbers. The array must satisfy the given schema (min and max item, unique
+   * elements etc).
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
-   * @return A specification for an array of big integers with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
    */
-  public static JsArraySpec arrayOfBigInt(int minLength,
-                                          int maxLength
+  public static JsArraySpec arrayOfBigInt(final ArraySchema arraySchema
                                          ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+    Objects.requireNonNull(arraySchema);
     return new JsArrayOfBigInt(false,
-                               minLength,
-                               maxLength);
+                               arraySchema
+                                   .build(),
+                               null);
+  }
+
+  /**
+   * non-nullable array of big integer numbers. Each element of the array must satisfy the given schema.
+   *
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfBigInt(BigIntSchema schema
+                                         ) {
+    Objects.requireNonNull(schema);
+    return new JsArrayOfBigInt(false,
+                               null,
+                               schema.build());
+  }
+
+  /**
+   * non-nullable array of big integer numbers. Each element of the array must satisfy the given schema. The array must
+   * satisfy the given schema (min and max item, unique elements etc).
+   *
+   * @param schema      the schema that each element of the array must satisfy
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfBigInt(final BigIntSchema schema,
+                                          final ArraySchema arraySchema
+                                         ) {
+    Objects.requireNonNull(arraySchema);
+    Objects.requireNonNull(schema);
+    return new JsArrayOfBigInt(false,
+                               arraySchema
+                                   .build(),
+                               schema.build());
   }
 
 
   /**
-   * Returns a specification for an array of objects with a specified minimum and maximum length.
+   * non-nullable array of objects. The array must satisfy the given schema (min and max item, unique elements etc).
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
-   * @return A specification for an array of objects with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
    */
-  public static JsArraySpec arrayOfObj(int minLength,
-                                       int maxLength
+  public static JsArraySpec arrayOfObj(final ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+    Objects.requireNonNull(arraySchema);
     return new JsArrayOfObj(false,
-                            minLength,
-                            maxLength);
+                            arraySchema.build());
   }
 
   /**
-   * Returns a specification for an array of decimal numbers with a specified minimum and maximum length.
+   * non-nullable array of big decimal numbers. The array must satisfy the given schema (min and max item, unique
+   * elements etc).
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
-   * @return A specification for an array of decimal numbers with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
+   * @param arraySchema the schema that the array must satisfy
+   * @return a spec
    */
-  public static JsArraySpec arrayOfDec(int minLength,
-                                       int maxLength
+  public static JsArraySpec arrayOfDec(ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+    Objects.requireNonNull(arraySchema);
     return new JsArrayOfDecimal(false,
-                                minLength,
-                                maxLength);
+                                arraySchema.build());
+  }
+
+  /**
+   * non-nullable array of big decimal numbers. Each element of the array must satisfy the given schema.
+   *
+   * @param schema the schema that each element of the array must satisfy
+   * @return a spec
+   */
+  public static JsArraySpec arrayOfDec(final DecimalSchema schema
+                                      ) {
+    Objects.requireNonNull(schema);
+    return new JsArrayOfDecimal(false,
+                                schema.build(),
+                                null);
+  }
+
+  public static JsArraySpec arrayOfDec(final DecimalSchema schema,
+                                       final ArraySchema arraySchema
+                                      ) {
+    Objects.requireNonNull(schema);
+    Objects.requireNonNull(arraySchema);
+    return new JsArrayOfDecimal(false,
+                                schema.build(),
+                                arraySchema.build());
   }
 
   /**
    * Returns a specification for an array of booleans with a specified minimum and maximum length.
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
+   * @param schema The schema defining constraints for the array.
    * @return A specification for an array of booleans with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
    */
-  public static JsArraySpec arrayOfBool(int minLength,
-                                        int maxLength
+  public static JsArraySpec arrayOfBool(final ArraySchema schema
                                        ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+    Objects.requireNonNull(schema);
     return new JsArrayOfBool(false,
-                             minLength,
-                             maxLength);
+                             schema.build());
   }
 
   /**
    * Returns a specification for an array of strings with a specified minimum and maximum length.
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
+   * @param arraySchema The schema defining constraints for the array.
    * @return A specification for an array of strings with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
    */
-  public static JsArraySpec arrayOfStr(int minLength,
-                                       int maxLength
+  public static JsArraySpec arrayOfStr(final ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+    Objects.requireNonNull(arraySchema);
     return new JsArrayOfStr(false,
-                            minLength,
-                            maxLength);
+                            arraySchema.build());
   }
+
+  /**
+   * Returns a specification for an array of strings with a specified minimum and maximum length, and each element
+   * conforming to the given element schema.
+   *
+   * @param arraySchema The schema defining constraints for the array.
+   * @param elemSchema  The schema defining constraints for each element in the array.
+   * @return A specification for an array of strings with the specified length constraints and element schema.
+   */
+  public static JsArraySpec arrayOfStr(StrSchema elemSchema,
+                                       ArraySchema arraySchema
+                                      ) {
+    Objects.requireNonNull(arraySchema);
+    Objects.requireNonNull(elemSchema);
+    return new JsArrayOfStr(false,
+                            arraySchema.build(),
+                            elemSchema.build());
+  }
+
 
   /**
    * Returns a specification for an array of long numbers with a specified minimum and maximum length.
    *
-   * @param minLength The minimum length of the array (inclusive).
-   * @param maxLength The maximum length of the array (inclusive).
+   * @param schema The schema defining constraints for the array.
    * @return A specification for an array of long numbers with the specified length constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
    */
-  public static JsArraySpec arrayOfLong(int minLength,
-                                        int maxLength
+  public static JsArraySpec arrayOfLong(ArraySchema schema
                                        ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
+    Objects.requireNonNull(schema);
     return new JsArrayOfLong(false,
-                             minLength,
-                             maxLength);
+                             schema.build());
   }
 
 
@@ -490,10 +639,13 @@ public final class JsSpecs {
    * @return A specification that enforces the provided constant value.
    */
   public static JsSpec cons(final JsValue value) {
-    return new AnySuchThat(v -> requireNonNull(value).equals(v) ?
-                                Optional.empty() :
-                                Optional.of(new JsError(v,
-                                                        CONSTANT_CONDITION)));
+    return new Cons(value);
+  }
+
+  public static JsSpec cons(final String name,
+                            final JsValue value) {
+    return new Cons(value,
+                    name);
   }
 
   /**
@@ -503,10 +655,11 @@ public final class JsSpecs {
    * @return A specification for strings based on the specified predicate.
    */
   public static JsSpec str(final Predicate<String> predicate) {
-    return new JsStrSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                  Optional.empty() :
-                                  Optional.of(new JsError(JsStr.of(s),
-                                                          STRING_CONDITION)),
+    requireNonNull(predicate);
+    return new JsStrSuchThat(s -> predicate.test(s) ?
+                                  null :
+                                  new JsError(JsStr.of(s),
+                                              STRING_CONDITION),
                              false
 
     );
@@ -521,10 +674,11 @@ public final class JsSpecs {
    * @return An array specification for integer numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfIntSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfIntSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                         Optional.empty() :
-                                         Optional.of(new JsError(s,
-                                                                 ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfIntSuchThat(s -> predicate.test(s) ?
+                                         null :
+                                         new JsError(s,
+                                                     ARRAY_CONDITION),
                                     false);
 
   }
@@ -538,11 +692,11 @@ public final class JsSpecs {
    * @return An array specification for decimal numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfDec(final Predicate<BigDecimal> predicate) {
-
-    return new JsArrayOfTestedDecimal(s -> requireNonNull(predicate).test(s) ?
-                                           Optional.empty() :
-                                           Optional.of(new JsError(JsBigDec.of(s),
-                                                                   DECIMAL_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedDecimal(s -> predicate.test(s) ?
+                                           null :
+                                           new JsError(JsBigDec.of(s),
+                                                       DECIMAL_CONDITION),
                                       false);
   }
 
@@ -554,11 +708,11 @@ public final class JsSpecs {
    * @return An array specification for decimal numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfDouble(final Predicate<Double> predicate) {
-
-    return new JsArrayOfTestedDouble(s -> requireNonNull(predicate).test(s) ?
-                                          Optional.empty() :
-                                          Optional.of(new JsError(JsDouble.of(s),
-                                                                  DOUBLE_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedDouble(s -> predicate.test(s) ?
+                                          null :
+                                          new JsError(JsDouble.of(s),
+                                                      DOUBLE_CONDITION),
                                      false);
   }
 
@@ -566,27 +720,21 @@ public final class JsSpecs {
    * Returns a specification for a non-nullable array of decimal numbers, where each element of the array satisfies the
    * given predicate. The array must have a size within the specified range.
    *
-   * @param predicate The predicate that each decimal number in the array must satisfy.
-   * @param minLength The minimum size of the array (inclusive).
-   * @param maxLength The maximum size of the array (inclusive).
+   * @param predicate   The predicate that each decimal number in the array must satisfy.
+   * @param arraySchema The schema defining constraints for the array.
    * @return An array specification for decimal numbers based on the specified predicate and size range.
-   * @throws IllegalArgumentException If the maximum length is lower than the minimum length.
    */
   public static JsArraySpec arrayOfDec(final Predicate<BigDecimal> predicate,
-                                       final int minLength,
-                                       final int maxLength
+                                       final ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedDecimal(s -> requireNonNull(predicate).test(s) ?
-                                           Optional.empty() :
-                                           Optional.of(new JsError(JsBigDec.of(s),
-                                                                   DECIMAL_CONDITION)),
+    requireNonNull(predicate);
+    requireNonNull(arraySchema);
+    return new JsArrayOfTestedDecimal(s -> predicate.test(s) ?
+                                           null :
+                                           new JsError(JsBigDec.of(s),
+                                                       DECIMAL_CONDITION),
                                       false,
-                                      minLength,
-                                      maxLength);
+                                      arraySchema.build());
   }
 
   /**
@@ -597,10 +745,11 @@ public final class JsSpecs {
    * @return An array specification for decimal numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfDecSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfDecimalSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                             Optional.empty() :
-                                             Optional.of(new JsError(s,
-                                                                     ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfDecimalSuchThat(s -> predicate.test(s) ?
+                                             null :
+                                             new JsError(s,
+                                                         ARRAY_CONDITION),
                                         false);
   }
 
@@ -612,10 +761,11 @@ public final class JsSpecs {
    * @return An array specification for integral numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfBigInt(final Predicate<BigInteger> predicate) {
-    return new JsArrayOfTestedBigInt(s -> requireNonNull(predicate).test(s) ?
-                                          Optional.empty() :
-                                          Optional.of(new JsError(JsBigInt.of(s),
-                                                                  INTEGRAL_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedBigInt(s -> predicate.test(s) ?
+                                          null :
+                                          new JsError(JsBigInt.of(s),
+                                                      INTEGRAL_CONDITION),
                                      false);
   }
 
@@ -623,27 +773,21 @@ public final class JsSpecs {
    * Returns a specification for a non-nullable array of integral numbers, where each element of the array satisfies the
    * given predicate. The array must have a minimum and maximum size as specified by the parameters.
    *
-   * @param predicate The predicate that each integral number in the array must satisfy.
-   * @param minLength The minimum size of the array (inclusive).
-   * @param maxLength The maximum size of the array (inclusive).
+   * @param predicate   The predicate that each integral number in the array must satisfy.
+   * @param arraySchema The schema defining constraints for the array.
    * @return An array specification for integral numbers based on the specified predicate and size constraints.
-   * @throws IllegalArgumentException If the maximum size is lower than the minimum size.
    */
   public static JsArraySpec arrayOfBigInt(final Predicate<BigInteger> predicate,
-                                          final int minLength,
-                                          final int maxLength
+                                          final ArraySchema arraySchema
                                          ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedBigInt(s -> requireNonNull(predicate).test(s) ?
-                                          Optional.empty() :
-                                          Optional.of(new JsError(JsBigInt.of(s),
-                                                                  INTEGRAL_CONDITION)),
+    requireNonNull(predicate);
+    requireNonNull(arraySchema);
+    return new JsArrayOfTestedBigInt(s -> predicate.test(s) ?
+                                          null :
+                                          new JsError(JsBigInt.of(s),
+                                                      INTEGRAL_CONDITION),
                                      false,
-                                     minLength,
-                                     maxLength);
+                                     arraySchema.build());
   }
 
   /**
@@ -654,10 +798,11 @@ public final class JsSpecs {
    * @return An array specification for integral numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfBigIntSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfBigIntSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                            Optional.empty() :
-                                            Optional.of(new JsError(s,
-                                                                    ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfBigIntSuchThat(s -> predicate.test(s) ?
+                                            null :
+                                            new JsError(s,
+                                                        ARRAY_CONDITION),
                                        false);
   }
 
@@ -671,9 +816,9 @@ public final class JsSpecs {
    */
   public static JsArraySpec arrayOfObj(final Predicate<JsObj> predicate) {
     return new JsArrayOfTestedObj(s -> requireNonNull(predicate).test(s) ?
-                                       Optional.empty() :
-                                       Optional.of(new JsError(s,
-                                                               OBJ_CONDITION)),
+                                       null :
+                                       new JsError(s,
+                                                   OBJ_CONDITION),
                                   false);
 
   }
@@ -682,27 +827,21 @@ public final class JsSpecs {
    * Returns a specification for a non-nullable array of objects, where each element of the array satisfies the given
    * predicate.
    *
-   * @param predicate The predicate that each object in the array must satisfy.
-   * @param minLength The minimum size of the array (inclusive).
-   * @param maxLength The maximum size of the array (inclusive).
+   * @param predicate   The predicate that each object in the array must satisfy.
+   * @param arraySchema The schema defining constraints for the array.
    * @return An array specification for objects based on the specified predicate and size constraints.
-   * @throws IllegalArgumentException If the maximum length is less than the minimum length.
    */
   public static JsArraySpec arrayOfObj(final Predicate<JsObj> predicate,
-                                       final int minLength,
-                                       final int maxLength
+                                       final ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedObj(s -> requireNonNull(predicate).test(s) ?
-                                       Optional.empty() :
-                                       Optional.of(new JsError(s,
-                                                               OBJ_CONDITION)),
+    requireNonNull(predicate);
+    requireNonNull(arraySchema);
+    return new JsArrayOfTestedObj(s -> predicate.test(s) ?
+                                       null :
+                                       new JsError(s,
+                                                   OBJ_CONDITION),
                                   false,
-                                  minLength,
-                                  maxLength);
+                                  arraySchema.build());
 
   }
 
@@ -713,10 +852,11 @@ public final class JsSpecs {
    * @return An array specification for objects based on the specified predicate.
    */
   public static JsArraySpec arrayOfObjSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfObjSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                         Optional.empty() :
-                                         Optional.of(new JsError(s,
-                                                                 ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfObjSuchThat(s -> predicate.test(s) ?
+                                         null :
+                                         new JsError(s,
+                                                     ARRAY_CONDITION),
                                     false);
 
   }
@@ -729,25 +869,26 @@ public final class JsSpecs {
    * @return A specification for integer numbers based on the specified predicate.
    */
   public static JsSpec integer(final IntPredicate predicate) {
-    return new JsIntSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                  Optional.empty() :
-                                  Optional.of(new JsError(JsInt.of(s),
-                                                          INT_CONDITION)),
+    requireNonNull(predicate);
+    return new JsIntSuchThat(s -> predicate.test(s) ?
+                                  null :
+                                  new JsError(JsInt.of(s),
+                                              INT_CONDITION),
                              false);
   }
 
   /**
-   * Returns a specification for a non-nullable array of strings, where each element of the array satisfies the given
-   * predicate.
+   * Returns a specification for a non-nullable array of strings that satisfies the given predicate.
    *
    * @param predicate The predicate that the array must satisfy.
    * @return An array specification for strings based on the specified predicate.
    */
   public static JsArraySpec arrayOfStrSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfStrSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                         Optional.empty() :
-                                         Optional.of(new JsError(s,
-                                                                 ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfStrSuchThat(s -> predicate.test(s) ?
+                                         null :
+                                         new JsError(s,
+                                                     ARRAY_CONDITION),
                                     false);
   }
 
@@ -758,10 +899,12 @@ public final class JsSpecs {
    * @return An array specification for values based on the specified predicate.
    */
   public static JsArraySpec array(final Predicate<JsValue> predicate) {
-    return new JsArrayOfTestedValue(s -> requireNonNull(predicate).test(s) ?
-                                         Optional.empty() :
-                                         Optional.of(new JsError(s,
-                                                                 VALUE_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedValue(s ->
+                                        predicate.test(s) ?
+                                        null :
+                                        new JsError(s,
+                                                    VALUE_CONDITION),
                                     false);
   }
 
@@ -774,38 +917,33 @@ public final class JsSpecs {
    * @return An array specification for long numbers based on the specified predicate.
    */
   public static JsArraySpec arrayOfLong(final LongPredicate predicate) {
-    return new JsArrayOfTestedLong(s -> requireNonNull(predicate).test(s) ?
-                                        Optional.empty() :
-                                        Optional.of(new JsError(JsLong.of(s),
-                                                                LONG_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedLong(s -> predicate.test(s) ?
+                                        null :
+                                        new JsError(JsLong.of(s),
+                                                    LONG_CONDITION),
                                    false);
   }
 
   /**
    * Returns a specification for a non-nullable array of long numbers, where each element of the array satisfies the
-   * given predicate.
+   * given predicate. The array must satisfy the given schema (min and max item, unique elements etc).
    *
    * @param predicate The predicate that each long number in the array must satisfy.
-   * @param minLength The minimum size of the array (inclusive).
-   * @param maxLength The maximum size of the array (inclusive).
+   * @param schema    The schema defining constraints for the array.
    * @return An array specification for long numbers based on the specified predicate.
-   * @throws IllegalArgumentException If maxLength is less than minLength.
    */
   public static JsArraySpec arrayOfLong(final LongPredicate predicate,
-                                        final int minLength,
-                                        final int maxLength
+                                        final ArraySchema schema
                                        ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedLong(s -> requireNonNull(predicate).test(s) ?
-                                        Optional.empty() :
-                                        Optional.of(new JsError(JsLong.of(s),
-                                                                LONG_CONDITION)),
+    requireNonNull(predicate);
+    requireNonNull(schema);
+    return new JsArrayOfTestedLong(s -> predicate.test(s) ?
+                                        null :
+                                        new JsError(JsLong.of(s),
+                                                    LONG_CONDITION),
                                    false,
-                                   minLength,
-                                   maxLength);
+                                   schema.build());
   }
 
   /**
@@ -815,10 +953,11 @@ public final class JsSpecs {
    * @return An array specification for booleans based on the specified predicate.
    */
   public static JsArraySpec arrayOfBoolSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfBoolSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                          Optional.empty() :
-                                          Optional.of(new JsError(s,
-                                                                  ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfBoolSuchThat(s -> predicate.test(s) ?
+                                          null :
+                                          new JsError(s,
+                                                      ARRAY_CONDITION),
                                      false);
   }
 
@@ -829,10 +968,11 @@ public final class JsSpecs {
    * @return An array specification for double based on the specified predicate.
    */
   public static JsArraySpec arrayOfDoubleSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfDoubleSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                            Optional.empty() :
-                                            Optional.of(new JsError(s,
-                                                                    ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfDoubleSuchThat(s -> predicate.test(s) ?
+                                            null :
+                                            new JsError(s,
+                                                        ARRAY_CONDITION),
                                        false);
   }
 
@@ -843,11 +983,23 @@ public final class JsSpecs {
    * @return A specification for long numbers based on the specified predicate.
    */
   public static JsSpec longInteger(final LongPredicate predicate) {
-    return new JsLongSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                   Optional.empty() :
-                                   Optional.of(new JsError(JsLong.of(s),
-                                                           LONG_CONDITION)),
+    requireNonNull(predicate);
+    return new JsLongSuchThat(s -> predicate.test(s) ?
+                                   null :
+                                   new JsError(JsLong.of(s),
+                                               LONG_CONDITION),
                               false);
+  }
+
+  /**
+   * Returns a specification for a non-nullable long number that satisfies the given schema.
+   *
+   * @param schema The schema the long number must satisfy.
+   * @return A specification for long numbers based on the specified schema.
+   */
+  public static JsSpec longInteger(final LongSchema schema) {
+    return new JsLongSpec(false,
+                          requireNonNull(schema).build());
   }
 
   /**
@@ -857,10 +1009,11 @@ public final class JsSpecs {
    * @return A specification for long numbers based on the specified predicate.
    */
   public static JsSpec doubleNumber(final DoublePredicate predicate) {
-    return new JsDoubleSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                     Optional.empty() :
-                                     Optional.of(new JsError(JsDouble.of(s),
-                                                             LONG_CONDITION)),
+    requireNonNull(predicate);
+    return new JsDoubleSuchThat(s -> predicate.test(s) ?
+                                     null :
+                                     new JsError(JsDouble.of(s),
+                                                 LONG_CONDITION),
                                 false);
   }
 
@@ -872,24 +1025,47 @@ public final class JsSpecs {
    */
   public static JsSpec decimal(final Predicate<BigDecimal> predicate) {
     return new JsDecimalSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                      Optional.empty() :
-                                      Optional.of(new JsError(JsBigDec.of(s),
-                                                              DECIMAL_CONDITION)),
+                                      null :
+                                      new JsError(JsBigDec.of(s),
+                                                  DECIMAL_CONDITION),
                                  false);
   }
 
   /**
-   * Returns a specification for a non-nullable integral number that satisfies the given predicate.
+   * Returns a specification for a non-nullable decimal number that satisfies the given schema
+   *
+   * @param schema The schema defining constraints for the decimal number.
+   * @return A specification for decimal numbers based on the specified schema.
+   */
+  public static JsSpec decimal(final DecimalSchema schema) {
+    return new JsDecimalSpec(false,
+                             requireNonNull(schema).build());
+  }
+
+  /**
+   * Returns a specification for a non-nullable big integer number that satisfies the given predicate.
    *
    * @param predicate The predicate that the integral number must satisfy.
    * @return A specification for integral numbers based on the specified predicate.
    */
   public static JsSpec bigInteger(final Predicate<BigInteger> predicate) {
-    return new JsBigIntSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                     Optional.empty() :
-                                     Optional.of(new JsError(JsBigInt.of(s),
-                                                             INTEGRAL_CONDITION)),
+    requireNonNull(predicate);
+    return new JsBigIntSuchThat(s -> predicate.test(s) ?
+                                     null :
+                                     new JsError(JsBigInt.of(s),
+                                                 INTEGRAL_CONDITION),
                                 false);
+  }
+
+  /**
+   * Returns a specification for a non-nullable big integer number that satisfies the given schema.
+   *
+   * @param schema The schema defining constraints for the big integer number.
+   * @return A specification for integral numbers based on the specified schema.
+   */
+  public static JsSpec bigInteger(final BigIntSchema schema) {
+    return new JsBigIntSpec(false,
+                            requireNonNull(schema).build());
   }
 
   /**
@@ -900,99 +1076,120 @@ public final class JsSpecs {
    * @return An array specification for strings based on the specified predicate.
    */
   public static JsArraySpec arrayOfStr(final Predicate<String> predicate) {
-
-    return new JsArrayOfTestedStr(s -> requireNonNull(predicate).test(s) ?
-                                       Optional.empty() :
-                                       Optional.of(new JsError(JsStr.of(s),
-                                                               STRING_CONDITION
-                                                   )
-                                                  ),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedStr(s -> predicate.test(s) ?
+                                       null :
+                                       new JsError(JsStr.of(s),
+                                                   STRING_CONDITION
+                                       ),
                                   false);
+  }
+
+  /**
+   * Returns a specification for a non-nullable array of strings, where each element of the array satisfies the given
+   * schema.
+   *
+   * @param schema The schema that each element of the array must satisfy.
+   * @return An array specification for strings based on the specified predicate and size constraints.
+   */
+  public static JsArraySpec arrayOfStr(final StrSchema schema) {
+
+    return new JsArrayOfStr(false,
+                            null,
+                            requireNonNull(schema).build());
   }
 
 
   /**
    * Returns a specification for a non-nullable array of strings, where each element of the array satisfies the given
-   * predicate.
+   * predicate. The array must satisfy the given schema (min and max item, unique elements etc).
    *
-   * @param predicate The predicate that each string in the array must satisfy.
-   * @param minLength The minimum size of the array (inclusive).
-   * @param maxLength The maximum size of the array (inclusive).
+   * @param predicate   The predicate that each string in the array must satisfy.
+   * @param arraySchema The schema defining constraints for the array.
    * @return An array specification for strings based on the specified predicate and size constraints.
-   * @throws IllegalArgumentException If maxLength is less than minLength.
    */
   public static JsArraySpec arrayOfStr(final Predicate<String> predicate,
-                                       final int minLength,
-                                       final int maxLength
+                                       final ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedStr(s -> requireNonNull(predicate).test(s) ?
-                                       Optional.empty() :
-                                       Optional.of(new JsError(JsStr.of(s),
-                                                               STRING_CONDITION)),
+    requireNonNull(predicate);
+    requireNonNull(arraySchema);
+    return new JsArrayOfTestedStr(s -> predicate.test(s) ?
+                                       null :
+                                       new JsError(JsStr.of(s),
+                                                   STRING_CONDITION),
                                   false,
-                                  minLength,
-                                  maxLength);
+                                  arraySchema.build());
   }
 
+
   /**
-   * Returns a specification that accepts any JSON value for which the given predicate evaluates to true. When the type
-   * is not specified by the spec, positive numbers are parsed as Long by default, which has to be taken into account
-   * when defining the condition.
+   * Returns a specification that accepts any JSON value for which the given predicate evaluates to true.
    *
    * @param predicate The predicate that determines whether a JSON value is accepted.
    * @return A specification that validates JSON values based on the specified predicate.
    */
   public static JsSpec any(final Predicate<JsValue> predicate) {
-    return new AnySuchThat(v -> requireNonNull(predicate).test(v) ?
-                                Optional.empty() :
-                                Optional.of(new JsError(v,
-                                                        VALUE_CONDITION)));
+    requireNonNull(predicate);
+    return new AnySuchThat(v -> predicate.test(v) ?
+                                null :
+                                new JsError(v,
+                                            VALUE_CONDITION));
   }
 
   /**
-   * Returns a specification for a non-nullable JSON binary data that satisfies the given predicate.
+   * Returns a specification for a non-nullable binary data that satisfies the given predicate.
    *
    * @param predicate The predicate the JSON binary data is tested on.
    * @return A specification that enforces the specified condition for JSON binary data.
    * @see JsBinary
    */
   public static JsSpec binary(final Predicate<byte[]> predicate) {
-    return new JsBinarySuchThat(s -> requireNonNull(predicate).test(s) ?
-                                     Optional.empty() :
-                                     Optional.of(new JsError(JsBinary.of(s),
-                                                             BINARY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsBinarySuchThat(s -> predicate.test(s) ?
+                                     null :
+                                     new JsError(JsBinary.of(s),
+                                                 BINARY_CONDITION),
                                 false);
   }
 
   /**
-   * Returns a specification for a non-nullable JSON instant that satisfies the given predicate.
+   * Returns a specification for a non-nullable instant that satisfies the given predicate.
    *
    * @param predicate The predicate the JSON instant is tested on.
    * @return A specification that enforces the specified condition for JSON instants.
    */
   public static JsSpec instant(final Predicate<Instant> predicate) {
-    return new JsInstantSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                      Optional.empty() :
-                                      Optional.of(new JsError(JsInstant.of(s),
-                                                              INSTANT_CONDITION)),
+    requireNonNull(predicate);
+    return new JsInstantSuchThat(s -> predicate.test(s) ?
+                                      null :
+                                      new JsError(JsInstant.of(s),
+                                                  INSTANT_CONDITION),
                                  false);
   }
 
   /**
-   * Returns a specification for a non-nullable JSON object that satisfies the given predicate.
+   * Returns a specification for a non-nullable JSON instant that satisfies the given schema.
    *
-   * @param predicate The predicate the JSON object is tested on.
+   * @param schema The schema the instant must satisfy.
+   * @return A specification that enforces the specified condition for JSON long numbers.
+   */
+  public static JsSpec instant(final InstantSchema schema) {
+    return new JsInstantSpec(false,
+                             requireNonNull(schema).build());
+  }
+
+  /**
+   * Returns a specification for a non-nullable object that satisfies the given predicate.
+   *
+   * @param predicate The predicate the object is tested on.
    * @return A specification that enforces the specified condition for JSON objects.
    */
   public static JsSpec obj(final Predicate<JsObj> predicate) {
-    return new JsObjSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                  Optional.empty() :
-                                  Optional.of(new JsError(s,
-                                                          OBJ_CONDITION)),
+    requireNonNull(predicate);
+    return new JsObjSuchThat(s -> predicate.test(s) ?
+                                  null :
+                                  new JsError(s,
+                                              OBJ_CONDITION),
                              false);
   }
 
@@ -1003,10 +1200,11 @@ public final class JsSpecs {
    * @return An array specification that enforces the specified condition for arrays of long numbers.
    */
   public static JsArraySpec arrayOfLongSuchThat(final Predicate<JsArray> predicate) {
-    return new JsArrayOfLongSuchThat(s -> requireNonNull(predicate).test(s) ?
-                                          Optional.empty() :
-                                          Optional.of(new JsError(s,
-                                                                  ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfLongSuchThat(s -> predicate.test(s) ?
+                                          null :
+                                          new JsError(s,
+                                                      ARRAY_CONDITION),
                                      false);
   }
 
@@ -1017,10 +1215,11 @@ public final class JsSpecs {
    * @return An array specification that enforces the specified condition for arrays.
    */
   public static JsArraySpec arraySuchThat(final Predicate<JsArray> predicate) {
-    return new JsArraySuchThat(s -> requireNonNull(predicate).test(s) ?
-                                    Optional.empty() :
-                                    Optional.of(new JsError(s,
-                                                            ARRAY_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArraySuchThat(s -> predicate.test(s) ?
+                                    null :
+                                    new JsError(s,
+                                                ARRAY_CONDITION),
                                false);
 
   }
@@ -1033,10 +1232,11 @@ public final class JsSpecs {
    * @return An array specification that enforces the specified condition for integer elements.
    */
   public static JsArraySpec arrayOfInt(final IntPredicate predicate) {
-    return new JsArrayOfTestedInt(s -> requireNonNull(predicate).test(s) ?
-                                       Optional.empty() :
-                                       Optional.of(new JsError(JsInt.of(s),
-                                                               INT_CONDITION)),
+    requireNonNull(predicate);
+    return new JsArrayOfTestedInt(s -> predicate.test(s) ?
+                                       null :
+                                       new JsError(JsInt.of(s),
+                                                   INT_CONDITION),
                                   false);
 
   }
@@ -1045,27 +1245,21 @@ public final class JsSpecs {
    * Returns a specification for a non-nullable array of integer numbers, where each element of the array satisfies the
    * given predicate.
    *
-   * @param predicate The predicate each integer number of the array is tested on.
-   * @param minLength The minimum size of the array (inclusive).
-   * @param maxLength The maximum size of the array (inclusive).
+   * @param predicate   The predicate each integer number of the array is tested on.
+   * @param arraySchema The schema defining constraints for the array.
    * @return An array specification that enforces the specified conditions.
-   * @throws IllegalArgumentException If maxLength is less than minLength.
    */
   public static JsArraySpec arrayOfInt(final IntPredicate predicate,
-                                       final int minLength,
-                                       final int maxLength
+                                       final ArraySchema arraySchema
                                       ) {
-      if (maxLength < minLength) {
-          throw new IllegalArgumentException(MAX_LOWER_THAN_MIN_ERROR);
-      }
-
-    return new JsArrayOfTestedInt(s -> requireNonNull(predicate).test(s) ?
-                                       Optional.empty() :
-                                       Optional.of(new JsError(JsInt.of(s),
-                                                               INT_CONDITION)),
+    requireNonNull(predicate);
+    requireNonNull(arraySchema);
+    return new JsArrayOfTestedInt(s -> predicate.test(s) ?
+                                       null :
+                                       new JsError(JsInt.of(s),
+                                                   INT_CONDITION),
                                   false,
-                                  minLength,
-                                  maxLength);
+                                  arraySchema.build());
 
   }
 
@@ -1077,8 +1271,8 @@ public final class JsSpecs {
    * @return A specification for a tuple that enforces the specified structure.
    */
   @SuppressWarnings("varargs")
-  public static JsArraySpec tuple(JsSpec spec,
-                                  JsSpec... others
+  public static JsArraySpec tuple(final JsSpec spec,
+                                  final JsSpec... others
                                  ) {
     return JsTuple.of(requireNonNull(spec),
                       requireNonNull(others));
@@ -1092,7 +1286,8 @@ public final class JsSpecs {
    * @return A specification that checks if a JSON value matches one of the provided values.
    */
   public static <O extends JsValue> JsSpec oneValOf(final List<O> cons) {
-    return any(o -> requireNonNull(cons).contains(o));
+    requireNonNull(cons);
+    return any(o -> cons.contains(o));
   }
 
   /**
@@ -1105,8 +1300,8 @@ public final class JsSpecs {
    */
   @SafeVarargs
   @SuppressWarnings("varargs")
-  public static <O extends JsValue> JsSpec oneValOf(O elem,
-                                                    O... others) {
+  public static <O extends JsValue> JsSpec oneValOf(final O elem,
+                                                    final O... others) {
     List<O> list = new ArrayList<>();
     list.add(requireNonNull(elem));
     Collections.addAll(list,
@@ -1134,8 +1329,8 @@ public final class JsSpecs {
    * @return A specification that checks if a JSON value matches one of the provided specifications.
    */
   @SuppressWarnings("varargs")
-  public static JsSpec oneSpecOf(JsSpec elem,
-                                 JsSpec... others) {
+  public static JsSpec oneSpecOf(final JsSpec elem,
+                                 final JsSpec... others) {
     List<JsSpec> list = new ArrayList<>();
     list.add(requireNonNull(elem));
     Collections.addAll(list,
@@ -1162,8 +1357,8 @@ public final class JsSpecs {
    * @return A specification that checks if a JSON value matches one of the provided symbol values.
    */
   @SuppressWarnings("varargs")
-  public static JsSpec oneStringOf(String elem,
-                                   String... others) {
+  public static JsSpec oneStringOf(final String elem,
+                                   final String... others) {
     List<String> list = new ArrayList<>();
     list.add(requireNonNull(elem));
     Collections.addAll(list,
@@ -1200,6 +1395,18 @@ public final class JsSpecs {
   }
 
   /**
+   * Returns a specification that validates that the JSON is an object, and the value of each key
+   * is a big integer that satisfies the given schema.
+   *
+   * @param schema the schema that each element of the map must satisfy
+   * @return A JSON specification for objects with big integer values.
+   */
+  public static JsSpec mapOfBigInteger(final BigIntSchema schema) {
+    return new JsMapOfBigInt(false,
+                             requireNonNull(schema).build());
+  }
+
+  /**
    * Returns a specification that validates that the JSON is an object, and the value of each key is a binary.
    *
    * @return A JSON specification for objects with binary values.
@@ -1217,6 +1424,16 @@ public final class JsSpecs {
     return mapOfDoubleSpec;
   }
 
+  /**
+   * Returns a specification that validates that the JSON is an object, and the value of each key is a double
+   * that satisfies the given schema.
+   * @param doubleSchema the schema that each element of the map must satisfy
+   * @return A JSON specification for objects with double values.
+   */
+  public static JsSpec mapOfDouble(final DoubleSchema doubleSchema) {
+    return new JsMapOfDouble(false,
+                             requireNonNull(doubleSchema).build());
+  }
 
   /**
    * Returns a specification that validates that the JSON is an object, and the value of each key is a decimal number.
@@ -1225,6 +1442,17 @@ public final class JsSpecs {
    */
   public static JsSpec mapOfDecimal() {
     return mapOfDecimalSpec;
+  }
+
+  /**
+   * Returns a specification that validates that the JSON is an object, and the value of each key is a decimal number
+   * that satisfies the given schema.
+   * @param decimalSchema the schema that each element of the map must satisfy
+   * @return A JSON specification for objects with decimal number values.
+   */
+  public static JsSpec mapOfDecimal(final DecimalSchema decimalSchema) {
+    return new JsMapOfDec(false,
+                          requireNonNull(decimalSchema).build());
   }
 
   /**
@@ -1246,12 +1474,23 @@ public final class JsSpecs {
   }
 
   /**
+   * Returns a specification that validates that the JSON is an object, and the value of each key is an instant
+   * that satifies the given schema.
+   * @param instantSchema the schema that each element of the map must satisfy
+   * @return A JSON specification for objects with instant values.
+   */
+  public static JsSpec mapOfInstant(final InstantSchema instantSchema) {
+    return new JsMapOfInstant(false,
+                              requireNonNull(instantSchema).build());
+  }
+
+  /**
    * Returns a specification that validates that the JSON is an object, and the value of each key is an object.
    *
    * @param spec the spec of the values of the map
    * @return A JSON specification for objects with object values.
    */
-  public static JsSpec mapOfObj(JsObjSpec spec) {
+  public static JsSpec mapOfObj(final JsObjSpec spec) {
     return new JsMapOfSpec(spec);
   }
 
@@ -1264,6 +1503,10 @@ public final class JsSpecs {
     return mapOfStrSpec;
   }
 
+  public static JsSpec mapOfStr(StrSchema schema) {
+    return new JsMapOfStr(false,
+                          requireNonNull(schema).build());
+  }
 
   /**
    * Returns a specification that validates that the JSON is an object, and the value of each key is a value that
@@ -1272,7 +1515,7 @@ public final class JsSpecs {
    * @param spec the spec of the values
    * @return A JSON specification for maps.
    */
-  public static JsSpec mapOfSpec(JsSpec spec) {
+  public static JsSpec mapOfSpec(final JsSpec spec) {
 
     return new JsMapOfSpec(false,
                            requireNonNull(spec));
@@ -1285,27 +1528,24 @@ public final class JsSpecs {
    * @param spec the spec of the elements
    * @return A JSON specification for arrays.
    */
-  public static JsArraySpec arrayOfSpec(JsSpec spec) {
+  public static JsArraySpec arrayOfSpec(final JsSpec spec) {
     return new JsArrayOfSpec(false,
                              requireNonNull(spec));
   }
 
   /**
-   * Returns a specification that validates that the JSON is an array within the limits of the specified bounds, and the
-   * value of each element is a value that conforms the given spec.
+   * Returns a specification that validates that the JSON is an array, and the value of each element is a value that
+   * conforms the given spec.
    *
-   * @param spec the spec of the elements
-   * @param min  the minimum length of the array
-   * @param max  the maximum length of the array
+   * @param spec        the spec of the elements
+   * @param arraySchema the schema that the array must satisfy
    * @return A JSON specification for arrays.
    */
-  public static JsArraySpec arrayOfSpec(JsSpec spec,
-                                        int min,
-                                        int max) {
+  public static JsArraySpec arrayOfSpec(final JsSpec spec,
+                                        final ArraySchema arraySchema) {
     return new JsArrayOfSpec(false,
                              requireNonNull(spec),
-                             min,
-                             max);
+                             requireNonNull(arraySchema).build());
   }
 
   /**
@@ -1341,14 +1581,13 @@ public final class JsSpecs {
    * @param name The name of the named spec.
    * @param spec The JsSpec to be associated with the named spec.
    * @return A named spec with the specified name.
-   * @throws IllegalArgumentException If the specified name already exists or the name is not valid
    */
   public static JsSpec ofNamedSpec(final String name,
                                    final JsSpec spec) {
     //builders already cache the specs, we need to create named specs with the builder
     //to create a metadata object used by avro-spec library. It's more common to
     //use the builder because there are a lot of metadata options not provided by this method
-    //(only the name). This is more commonly used by other kind of specs like oneOf(obspec1,objspec2)
+    //(only the name). This is more commonly used by other kind of specs like oneOf(obspec1, objspec2)
     if (requireNonNull(spec) instanceof JsObjSpec objSpec) {
       var unused = JsObjSpecBuilder.withName(name)
                                    .build(objSpec);
@@ -1358,12 +1597,12 @@ public final class JsSpecs {
                                 .build(enumSpec.symbols);
       assert unused != null;
     } else if (spec instanceof JsFixedBinary fixed) {
-        var unused = JsFixedBuilder.withName(name)
-                                   .build(fixed.getSize());
-        assert unused != null;
+      var unused = JsFixedBuilder.withName(name)
+                                 .build(fixed.getSize());
+      assert unused != null;
     } else {
-        JsSpecCache.put(name,
-                        spec);
+      JsSpecCache.put(name,
+                      spec);
     }
     return new NamedSpec(name);
   }

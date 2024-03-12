@@ -2,8 +2,6 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-
 
 final class JsMapOfBinary extends AbstractMap implements JsOneErrorSpec, AvroSpec {
 
@@ -22,10 +20,11 @@ final class JsMapOfBinary extends AbstractMap implements JsOneErrorSpec, AvroSpe
   }
 
   @Override
-  public Optional<JsError> testValue(JsValue value) {
+  public JsError testValue(JsValue value) {
     return test(value,
-                it -> !it.isBinary(),
-                ERROR_CODE.BINARY_EXPECTED);
+                it -> it.isBinary() ? null :  ERROR_CODE.BINARY_EXPECTED
+               );
+
 
   }
 

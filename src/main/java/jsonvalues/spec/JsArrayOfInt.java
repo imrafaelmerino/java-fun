@@ -1,54 +1,68 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsArrayOfInt extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
+  final IntegerSchemaConstraints constraints;
 
   JsArrayOfInt(final boolean nullable) {
-    super(nullable);
+    this(nullable,
+         null,
+         null);
   }
 
   JsArrayOfInt(final boolean nullable,
-               int min,
-               int max
+               IntegerSchemaConstraints constraints) {
+    super(nullable);
+    this.constraints = constraints;
+  }
+
+  JsArrayOfInt(final boolean nullable,
+               ArraySchemaConstraints arrayConstraints
+              ) {
+    this(nullable,
+         arrayConstraints,
+         null);
+  }
+
+  JsArrayOfInt(boolean nullable,
+               ArraySchemaConstraints arrayConstraints,
+               IntegerSchemaConstraints constraints
               ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
+    this.constraints = constraints;
   }
+
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfInt(true,
-                            min,
-                            max);
+                            arrayConstraints,
+                            constraints);
   }
 
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfInt(nullable,
-                                           min,
-                                           max);
+                                           arrayConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v -> v.isInt() ?
-                                                 Optional.empty() :
-                                                 Optional.of(new JsError(v,
-                                                                         INT_EXPECTED)),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v -> v.isInt() ?
+                                           null :
+                                           new JsError(v,
+                                                       INT_EXPECTED),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
 
   }
 }

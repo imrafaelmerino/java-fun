@@ -15,11 +15,12 @@ import jsonvalues.gen.JsStrGen;
 import jsonvalues.spec.JsObjSpec;
 import jsonvalues.spec.JsObjSpecParser;
 import jsonvalues.spec.JsSpecs;
+import jsonvalues.spec.SpecToJsonSchema;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-public class ModelingInheritance {
+public final class ModelingInheritance {
 
   String NAME_FIELD = "name";
   String TYPE_FIELD = "type";
@@ -29,7 +30,7 @@ public class ModelingInheritance {
   String KEY_COUNT_FIELD = "keyCount";
   String MEDIA_BUTTONS_FIELD = "mediaButtons";
   String CONNECTED_DEVICES_FIELD = "connectedDevices";
-  String PERIPHERAL_FIELD = "peripheral";
+  String PERIPHERAL_FIELD = "any_peripheral";
   List<String> TRACKING_TYPE_ENUM = List.of("ball",
                                             "optical");
 
@@ -37,18 +38,16 @@ public class ModelingInheritance {
   public void test() {
 
     var baseSpec = JsObjSpec.of(NAME_FIELD,
-                                JsSpecs.str(),
-                                TYPE_FIELD,
-                                JsSpecs.oneStringOf("mouse",
-                                                    "keyboard",
-                                                    "usb_hub"));
+                                JsSpecs.str());
 
     var baseGen = JsObjGen.of(NAME_FIELD,
                               JsStrGen.alphabetic()
                                       .distinct());
 
     var mouseSpec =
-        JsObjSpec.of(BUTTON_COUNT_FIELD,
+        JsObjSpec.of(TYPE_FIELD,
+                     JsSpecs.cons(JsStr.of("mouse")),
+                     BUTTON_COUNT_FIELD,
                      JsSpecs.integer(),
                      WHEEL_COUNT_FIELD,
                      JsSpecs.integer(),
@@ -73,7 +72,9 @@ public class ModelingInheritance {
                 .concat(baseGen);
 
     var keyboardSpec =
-        JsObjSpec.of(KEY_COUNT_FIELD,
+        JsObjSpec.of(TYPE_FIELD,
+                     JsSpecs.cons(JsStr.of("keyboard")),
+                     KEY_COUNT_FIELD,
                      JsSpecs.integer(),
                      MEDIA_BUTTONS_FIELD,
                      JsSpecs.bool()
@@ -92,8 +93,11 @@ public class ModelingInheritance {
                 .concat(baseGen);
 
     var usbHubSpec =
-        JsObjSpec.of(CONNECTED_DEVICES_FIELD,
+        JsObjSpec.of(TYPE_FIELD,
+                     JsSpecs.cons(JsStr.of("usb_hub")),
+                     CONNECTED_DEVICES_FIELD,
                      JsSpecs.arrayOfSpec(JsSpecs.ofNamedSpec(PERIPHERAL_FIELD))
+                            .nullable()
                     )
                  .withOptKeys(CONNECTED_DEVICES_FIELD)
                  .concat(baseSpec);
@@ -106,14 +110,18 @@ public class ModelingInheritance {
                     TYPE_FIELD,
                     Gen.cons(JsStr.of("usb_hub"))
                    )
+                .withNullValues(CONNECTED_DEVICES_FIELD)
                 .withOptKeys(CONNECTED_DEVICES_FIELD)
                 .concat(baseGen);
 
     var peripheralSpec =
         JsSpecs.ofNamedSpec(PERIPHERAL_FIELD,
-                            oneSpecOf(mouseSpec,
-                                      keyboardSpec,
-                                      usbHubSpec));
+                            oneSpecOf(JsSpecs.ofNamedSpec("mouse_spec",
+                                                          mouseSpec),
+                                      JsSpecs.ofNamedSpec("keyboard_spec",
+                                                          keyboardSpec),
+                                      JsSpecs.ofNamedSpec("usb_hub_spec",
+                                                          usbHubSpec)));
 
     var peripheralGen =
         NamedGen.of(PERIPHERAL_FIELD,
@@ -123,11 +131,12 @@ public class ModelingInheritance {
 
     var parser = JsObjSpecParser.of(peripheralSpec);
 
-    peripheralGen.sample(100)
-                 .peek(System.out::println)
+    var schema = SpecToJsonSchema.convert(peripheralSpec);
+
+    System.out.println(schema);
+
+    peripheralGen.sample(150)
                  .forEach(obj -> {
-                            System.out.println(obj);
-                            System.out.println(obj.getStr(TYPE_FIELD));
 
                             Assertions.assertEquals(obj,
                                                     parser.parse(obj.toString())

@@ -1,14 +1,13 @@
 package jsonvalues.gen;
 
 
+import static java.util.Objects.requireNonNull;
+
 import fun.gen.DoubleGen;
 import fun.gen.Gen;
-import jsonvalues.JsDouble;
-
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
-
-import static java.util.Objects.requireNonNull;
+import jsonvalues.JsDouble;
 
 /**
  * Represents a JsDouble generator. It can be created using the static factory methods {@link #biased()} and
@@ -70,8 +69,20 @@ public final class JsDoubleGen implements Gen<JsDouble> {
   public static Gen<JsDouble> biased(double min,
                                      double max
                                     ) {
+    validateBounds(min,
+                   max);
     return new JsDoubleGen(DoubleGen.biased(min,
                                             max));
+  }
+
+  private static void validateBounds(final double min,
+                                     final double max) {
+    if (Double.isNaN(min) || Double.isNaN(max)) {
+      throw new IllegalArgumentException("min and max must be valid numbers");
+    }
+    if (Double.isInfinite(min) || Double.isInfinite(max)) {
+      throw new IllegalArgumentException("min and max must be valid numbers");
+    }
   }
 
 
@@ -85,6 +96,8 @@ public final class JsDoubleGen implements Gen<JsDouble> {
   public static Gen<JsDouble> arbitrary(double min,
                                         double max
                                        ) {
+    validateBounds(min,
+                   max);
     return new JsDoubleGen(DoubleGen.arbitrary(min,
                                                max));
   }

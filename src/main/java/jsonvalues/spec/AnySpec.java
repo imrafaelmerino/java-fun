@@ -2,13 +2,11 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-
 final class AnySpec implements JsOneErrorSpec {
 
   @Override
   public JsSpec nullable() {
-    return this;
+    throw new RuntimeException("not allowed for AnySpec. Null is already included...");
   }
 
   @Override
@@ -23,10 +21,10 @@ final class AnySpec implements JsOneErrorSpec {
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
+  public JsError testValue(final JsValue value) {
     return value.isNothing() ?
-           Optional.of(new JsError(value,
-                                   ERROR_CODE.REQUIRED)) :
-           Optional.empty();
+           new JsError(value,
+                       ERROR_CODE.REQUIRED) :
+           null;
   }
 }

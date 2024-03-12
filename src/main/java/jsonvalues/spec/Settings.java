@@ -8,7 +8,7 @@ class Settings {
 
   final StringCache keyCache = new SimpleStringCache();
   StringCache valuesCache;
-  JsReader.DoublePrecision doublePrecision = JsReader.DoublePrecision.DEFAULT;
+  DslJsReader.DoublePrecision doublePrecision = DslJsReader.DoublePrecision.DEFAULT;
   int maxNumberDigits = 512;
   int maxStringBuffer = 128 * 1024 * 1024;
 
@@ -34,7 +34,7 @@ class Settings {
    * @param precision type of double deserialization
    * @return itself
    */
-  Settings doublePrecision(JsReader.DoublePrecision precision) {
+  Settings doublePrecision(DslJsReader.DoublePrecision precision) {
     this.doublePrecision = precision;
     return this;
   }
@@ -48,9 +48,9 @@ class Settings {
    * @return itself
    */
   Settings limitDigitsBuffer(int size) {
-      if (size < 1) {
-          throw new IllegalArgumentException("size can't be smaller than 1");
-      }
+    if (size < 1) {
+      throw new IllegalArgumentException("size can't be smaller than 1");
+    }
     this.maxNumberDigits = size;
     return this;
   }
@@ -63,9 +63,9 @@ class Settings {
    * @return itself
    */
   Settings limitStringBuffer(int size) {
-      if (size < 1) {
-          throw new IllegalArgumentException("size can't be smaller than 1");
-      }
+    if (size < 1) {
+      throw new IllegalArgumentException("size can't be smaller than 1");
+    }
     this.maxStringBuffer = size;
     return this;
   }

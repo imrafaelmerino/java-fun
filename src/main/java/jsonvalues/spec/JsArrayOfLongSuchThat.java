@@ -1,17 +1,15 @@
 package jsonvalues.spec;
 
+import java.util.function.Function;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 final class JsArrayOfLongSuchThat extends AbstractNullable implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  private final Function<JsArray, Optional<JsError>> predicate;
+  final Function<JsArray, JsError> predicate;
   private final JsArrayOfLong arrayOfLongSpec;
 
-  JsArrayOfLongSuchThat(final Function<JsArray, Optional<JsError>> predicate,
+  JsArrayOfLongSuchThat(final Function<JsArray, JsError> predicate,
                         final boolean nullable
                        ) {
     super(nullable);
@@ -37,9 +35,9 @@ final class JsArrayOfLongSuchThat extends AbstractNullable implements JsOneError
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    Optional<JsError> result = arrayOfLongSpec.testValue(value);
-    return result.isPresent() || value.isNull() ?
+  public JsError testValue(final JsValue value) {
+    JsError result = arrayOfLongSpec.testValue(value);
+    return result != null || value.isNull() ?
            result :
            predicate.apply(value.toJsArray());
   }

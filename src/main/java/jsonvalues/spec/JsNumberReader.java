@@ -1,32 +1,36 @@
 package jsonvalues.spec;
 
-import jsonvalues.*;
-
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.math.BigInteger;
 import java.util.function.Function;
+import jsonvalues.JsBigDec;
+import jsonvalues.JsBigInt;
+import jsonvalues.JsDouble;
+import jsonvalues.JsInt;
+import jsonvalues.JsLong;
+import jsonvalues.JsNumber;
 
 final class JsNumberReader extends AbstractReader {
 
-  JsNumber valueSuchThat(final JsReader reader,
-                         final Function<JsNumber, Optional<JsError>> fn
+  JsNumber valueSuchThat(final DslJsReader reader,
+                         final Function<JsNumber, JsError> fn
                         ) throws JsParserException {
     final JsNumber value = value(reader);
-    final Optional<JsError> result = fn.apply(value);
-      if (result.isEmpty()) {
-          return value;
-      }
-    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result.get()),
+    final JsError result = fn.apply(value);
+    if (result == null) {
+      return value;
+    }
+    throw JsParserException.reasonAt(ParserErrors.JS_ERROR_2_STR.apply(result),
                                      reader.getPositionInStream()
                                     );
   }
 
   @Override
-  JsNumber value(final JsReader reader) throws JsParserException {
+  JsNumber value(final DslJsReader reader) throws JsParserException {
     Number number = NumberConverter.deserializeNumber(reader);
-      if (number instanceof Double) {
-          return JsDouble.of(((double) number));
-      }
+    if (number instanceof Double) {
+      return JsDouble.of(((double) number));
+    }
     if (number instanceof Long) {
       long n = (long) number;
       try {
@@ -34,6 +38,8 @@ final class JsNumberReader extends AbstractReader {
       } catch (ArithmeticException e) {
         return JsLong.of(n);
       }
+    } else if (number instanceof BigInteger) {
+      return JsBigInt.of((BigInteger) number);
     }
     return JsBigDec.of(((BigDecimal) number));
   }

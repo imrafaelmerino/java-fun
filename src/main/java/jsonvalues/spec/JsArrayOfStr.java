@@ -1,51 +1,67 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.STRING_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsArrayOfStr extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
+  final StrConstraints constraints;
+
   JsArrayOfStr(final boolean nullable) {
-    super(nullable);
+    this(nullable,
+         null,
+         null);
   }
 
   JsArrayOfStr(final boolean nullable,
-               int min,
-               int max
+               StrConstraints constraints) {
+    super(nullable);
+    this.constraints = constraints;
+  }
+
+  JsArrayOfStr(final boolean nullable,
+               ArraySchemaConstraints arrayConstraints
+              ) {
+    this(nullable,
+         arrayConstraints,
+         null);
+  }
+
+  JsArrayOfStr(final boolean nullable,
+               ArraySchemaConstraints arrayConstraints,
+               StrConstraints constraints
               ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
+    this.constraints = constraints;
   }
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfStr(true,
-                            min,
-                            max);
+                            arrayConstraints,
+                            constraints);
   }
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfStr(nullable,
-                                           min,
-                                           max);
+                                           arrayConstraints,
+                                           constraints);
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v -> v.isStr() ?
-                                                 Optional.empty() :
-                                                 Optional.of(new JsError(v,
-                                                                         STRING_EXPECTED)),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    //TODO incluir schema validation
+    return Fun.testArrayOfTestedValue(v -> v.isStr() ?
+                                           null :
+                                           new JsError(v,
+                                                       STRING_EXPECTED),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 
 

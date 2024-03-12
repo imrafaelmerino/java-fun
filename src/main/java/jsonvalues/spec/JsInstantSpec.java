@@ -1,34 +1,54 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.INSTANT_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsInstantSpec extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
-  JsInstantSpec(final boolean nullable) {
+  InstantSchemaConstraints constraints;
+
+  JsInstantSpec(final boolean nullable,
+                final InstantSchemaConstraints constraints) {
     super(nullable);
+    this.constraints = constraints;
   }
 
   @Override
   public JsSpec nullable() {
-    return new JsInstantSpec(true);
+    return new JsInstantSpec(true,
+                             null);
   }
 
   @Override
   public JsParser parser() {
-    return JsParsers.INSTANCE.ofInstant(nullable);
+    return JsParsers.INSTANCE.ofInstant(nullable,
+                                        constraints);
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testElem(JsValue::isInstant,
-                              INSTANT_EXPECTED,
-                              nullable
-                             )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    var error =
+        Fun.testValue(JsValue::isInstant,
+                      INSTANT_EXPECTED,
+                      nullable,
+                      value
+                     );
+    if (error != null) {
+      return error;
+    }
+
+    if (constraints != null) {
+      var errorCode = Fun.testInstantConstraints(constraints,
+                                                 value.toJsInstant());
+      if (errorCode != null) {
+        return new JsError(value,
+                           errorCode);
+      }
+    }
+
+    return null;
+
 
   }
 

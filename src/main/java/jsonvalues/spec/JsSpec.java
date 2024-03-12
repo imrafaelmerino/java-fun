@@ -1,11 +1,10 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsPath;
-import jsonvalues.JsValue;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import jsonvalues.JsPath;
+import jsonvalues.JsValue;
 
 /**
  * The `JsSpec` interface represents a specification for validating JSON data structures. It provides methods and
@@ -33,7 +32,7 @@ import java.util.Objects;
  * @see JsParser
  * @see SpecError
  * @see JsPath
- * @see JsReader
+ * @see DslJsReader
  */
 public sealed interface JsSpec permits JsArraySpec, JsObjSpec, JsOneErrorSpec, NamedSpec, OneOf {
 

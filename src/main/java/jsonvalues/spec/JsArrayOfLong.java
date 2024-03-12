@@ -1,53 +1,70 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.LONG_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsArrayOfLong extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
+  final LongSchemaConstraints constraints;
+
   JsArrayOfLong(final boolean nullable) {
-    super(nullable);
+    this(nullable,
+         null,
+         null);
   }
 
-  JsArrayOfLong(final boolean nullable,
-                int min,
-                int max
+
+  JsArrayOfLong(boolean nullable,
+                ArraySchemaConstraints arrayConstraints
+               ) {
+    this(nullable,
+         arrayConstraints,
+         null);
+  }
+
+  JsArrayOfLong(boolean nullable,
+                ArraySchemaConstraints arrayConstraints,
+                LongSchemaConstraints constraints
                ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
+    this.constraints = constraints;
+  }
+
+  public JsArrayOfLong(final boolean nullable,
+                       final LongSchemaConstraints build) {
+    this(nullable,
+         null,
+         build
+        );
   }
 
 
   @Override
   public JsSpec nullable() {
     return new JsArrayOfLong(true,
-                             min,
-                             max);
+                             arrayConstraints,
+                             constraints);
   }
 
 
   @Override
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfLong(nullable,
-                                            min,
-                                            max);
+                                            arrayConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testArrayOfTestedValue(v -> v.isInt() || v.isLong() ?
-                                                 Optional.empty() :
-                                                 Optional.of(new JsError(v,
-                                                                         LONG_EXPECTED)),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testArrayOfTestedValue(v -> v.isInt() || v.isLong() ?
+                                           null :
+                                           new JsError(v,
+                                                       LONG_EXPECTED),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 }

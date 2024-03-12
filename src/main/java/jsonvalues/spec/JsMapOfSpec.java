@@ -1,9 +1,7 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
 import java.util.Objects;
-import java.util.Optional;
+import jsonvalues.JsValue;
 
 
 final class JsMapOfSpec extends AbstractMap implements JsOneErrorSpec, AvroSpec {
@@ -39,7 +37,7 @@ final class JsMapOfSpec extends AbstractMap implements JsOneErrorSpec, AvroSpec 
 
 
   @Override
-  public Optional<JsError> testValue(JsValue value) {
+  public JsError testValue(JsValue value) {
     return test(value,
                 valueSpec);
   }

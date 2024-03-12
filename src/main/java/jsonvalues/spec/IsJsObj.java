@@ -1,10 +1,8 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.OBJ_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class IsJsObj extends AbstractNullable implements JsOneErrorSpec {
 
@@ -25,11 +23,11 @@ final class IsJsObj extends AbstractNullable implements JsOneErrorSpec {
 
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testElem(JsValue::isObj,
-                              OBJ_EXPECTED,
-                              nullable)
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testValue(JsValue::isObj,
+                         OBJ_EXPECTED,
+                         nullable,
+                         value);
 
   }
 }

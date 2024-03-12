@@ -49,8 +49,7 @@ final class HashMap implements Iterable<HashArrayMappedTrieModule.LeafNode> {
   }
 
   static HashMap ofEntries(Set<Map.Entry<String, JsValue>> entries) {
-    Objects.requireNonNull(entries,
-                           "entries is null");
+    Objects.requireNonNull(entries);
     HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
     for (var entry : entries) {
       trie = trie.put(entry.getKey(),
@@ -60,8 +59,7 @@ final class HashMap implements Iterable<HashArrayMappedTrieModule.LeafNode> {
   }
 
   static HashMap ofStrEntries(Set<Map.Entry<String, String>> entries) {
-    Objects.requireNonNull(entries,
-                           "entries is null");
+    Objects.requireNonNull(entries);
     HashArrayMappedTrie trie = HashArrayMappedTrie.empty();
     for (var entry : entries) {
       trie = trie.put(entry.getKey(),
@@ -143,9 +141,9 @@ final class HashMap implements Iterable<HashArrayMappedTrieModule.LeafNode> {
   boolean containsValue(JsValue value) {
     for (Iterator<JsValue> it = trie.valuesIterator(); it.hasNext(); ) {
       JsValue v = it.next();
-        if (v.equals(value)) {
-            return true;
-        }
+      if (v.equals(value)) {
+        return true;
+      }
     }
 
     return false;

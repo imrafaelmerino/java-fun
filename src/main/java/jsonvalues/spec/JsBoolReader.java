@@ -6,14 +6,14 @@ import jsonvalues.JsBool;
 final class JsBoolReader extends AbstractReader {
 
   @Override
-  JsBool value(final JsReader reader) throws JsParserException {
+  JsBool value(final DslJsReader reader) throws JsParserException {
 
-      if (reader.wasTrue()) {
-          return JsBool.TRUE;
-      }
-      if (reader.wasFalse()) {
-          return JsBool.FALSE;
-      }
+    if (reader.wasTrue()) {
+      return JsBool.TRUE;
+    }
+    if (reader.wasFalse()) {
+      return JsBool.FALSE;
+    }
     throw JsParserException.reasonAt(ParserErrors.BOOL_EXPECTED,
                                      reader.getPositionInStream()
                                     );

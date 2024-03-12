@@ -2,31 +2,50 @@ package jsonvalues.spec;
 
 import jsonvalues.JsValue;
 
-import java.util.Optional;
-
 
 final class JsMapOfDouble extends AbstractMap implements JsOneErrorSpec, AvroSpec {
 
+  final DoubleSchemaConstraints valuesConstraints;
+
   JsMapOfDouble(boolean nullable) {
+    this(nullable,
+         null);
+  }
+
+  JsMapOfDouble(boolean nullable,
+                DoubleSchemaConstraints valuesConstraints) {
     super(nullable);
+    this.valuesConstraints = valuesConstraints;
   }
 
   @Override
   public JsSpec nullable() {
-    return new JsMapOfDouble(true);
+    return new JsMapOfDouble(true,
+                             valuesConstraints);
   }
 
   @Override
   public JsParser parser() {
-    return JsParsers.INSTANCE.ofMapOfDouble(nullable);
+    return JsParsers.INSTANCE.ofMapOfDouble(nullable,
+                                            valuesConstraints);
   }
 
 
   @Override
-  public Optional<JsError> testValue(JsValue value) {
+  public JsError testValue(JsValue value) {
     return test(value,
-                it -> !it.isDouble(),
-                ERROR_CODE.DOUBLE_EXPECTED);
+                it -> {
+                  if (!it.isDouble()) {
+                    return ERROR_CODE.DOUBLE_EXPECTED;
+                  }
+                  if (valuesConstraints != null) {
+                    return Fun.testDoubleConstraints(valuesConstraints,
+                                                     value.toJsDouble());
+                  }
+                  return null;
+                }
+               );
+
   }
 
 }

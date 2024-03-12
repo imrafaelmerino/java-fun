@@ -1,11 +1,9 @@
 package jsonvalues.spec;
 
+import java.util.Objects;
+import java.util.function.DoubleFunction;
 import jsonvalues.JsArray;
 import jsonvalues.JsValue;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.DoubleFunction;
 
 final class JsArrayOfDoubleReader extends JsArrayReader {
 
@@ -16,29 +14,25 @@ final class JsArrayOfDoubleReader extends JsArrayReader {
     this.parser = parser;
   }
 
-  JsValue nullOrArrayEachSuchThat(final JsReader reader,
-                                  final DoubleFunction<Optional<JsError>> fn,
-                                  final int min,
-                                  final int max
+  JsValue nullOrArrayEachSuchThat(final DslJsReader reader,
+                                  final DoubleFunction<JsError> fn,
+                                  ArraySchemaConstraints arrayConstraints
                                  ) throws JsParserException {
     return nullOrArrayEachSuchThat(reader,
                                    () -> parser.valueSuchThat(reader,
                                                               fn),
-                                   min,
-                                   max);
+                                   arrayConstraints);
   }
 
 
-  JsArray arrayEachSuchThat(final JsReader reader,
-                            final DoubleFunction<Optional<JsError>> fn,
-                            final int min,
-                            final int max
+  JsArray arrayEachSuchThat(final DslJsReader reader,
+                            final DoubleFunction<JsError> fn,
+                            ArraySchemaConstraints arrayConstraints
                            ) throws JsParserException {
     return arrayEachSuchThat(reader,
                              () -> parser.valueSuchThat(reader,
                                                         fn),
-                             min,
-                             max);
+                             arrayConstraints);
   }
 
 

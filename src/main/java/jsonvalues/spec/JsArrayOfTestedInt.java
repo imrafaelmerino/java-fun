@@ -1,31 +1,27 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-import java.util.function.IntFunction;
-
 import static jsonvalues.spec.ERROR_CODE.INT_EXPECTED;
+
+import java.util.function.IntFunction;
+import jsonvalues.JsValue;
 
 final class JsArrayOfTestedInt extends AbstractSizableArr implements JsOneErrorSpec, JsArraySpec, AvroSpec {
 
-  final IntFunction<Optional<JsError>> predicate;
+  private final IntFunction<JsError> predicate;
 
-  JsArrayOfTestedInt(final IntFunction<Optional<JsError>> predicate,
+  JsArrayOfTestedInt(final IntFunction<JsError> predicate,
                      final boolean nullable
                     ) {
     super(nullable);
     this.predicate = predicate;
   }
 
-  JsArrayOfTestedInt(final IntFunction<Optional<JsError>> predicate,
+  JsArrayOfTestedInt(final IntFunction<JsError> predicate,
                      final boolean nullable,
-                     int min,
-                     int max
+                     ArraySchemaConstraints arrayConstraints
                     ) {
     super(nullable,
-          min,
-          max);
+          arrayConstraints);
     this.predicate = predicate;
   }
 
@@ -34,8 +30,7 @@ final class JsArrayOfTestedInt extends AbstractSizableArr implements JsOneErrorS
   public JsSpec nullable() {
     return new JsArrayOfTestedInt(predicate,
                                   true,
-                                  min,
-                                  max
+                                  arrayConstraints
     );
   }
 
@@ -44,26 +39,23 @@ final class JsArrayOfTestedInt extends AbstractSizableArr implements JsOneErrorS
   public JsParser parser() {
     return JsParsers.INSTANCE.ofArrayOfIntEachSuchThat(predicate,
                                                        nullable,
-                                                       min,
-                                                       max
+                                                       arrayConstraints
                                                       );
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
+  public JsError testValue(final JsValue value) {
 
-    return Functions.testArrayOfTestedValue(v ->
-                                                v.isInt() ?
-                                                predicate.apply(v.toJsInt().value) :
-                                                Optional.of(new JsError(v,
-                                                                        INT_EXPECTED
-                                                            )
-                                                           ),
-                                            nullable,
-                                            min,
-                                            max
-                                           )
-                    .apply(value);
+    return Fun.testArrayOfTestedValue(v ->
+                                          v.isInt() ?
+                                          predicate.apply(v.toJsInt().value) :
+                                          new JsError(v,
+                                                      INT_EXPECTED
+                                          ),
+                                      nullable,
+                                      arrayConstraints,
+                                      value
+                                     );
   }
 
 

@@ -1,10 +1,8 @@
 package jsonvalues.spec;
 
-import jsonvalues.JsValue;
-
-import java.util.Optional;
-
 import static jsonvalues.spec.ERROR_CODE.BINARY_FIXED_LENGTH_EXPECTED;
+
+import jsonvalues.JsValue;
 
 final class JsFixedBinary extends AbstractNullable implements JsOneErrorSpec, AvroSpec {
 
@@ -17,9 +15,9 @@ final class JsFixedBinary extends AbstractNullable implements JsOneErrorSpec, Av
                 FixedMetaData metaData) {
     super(nullable);
     this.size = size;
-      if (size <= 0) {
-          throw new IllegalArgumentException("size of fixed binary spec <= 0");
-      }
+    if (size <= 0) {
+      throw new IllegalArgumentException("size of fixed binary spec <= 0");
+    }
     this.metaData = metaData;
 
   }
@@ -48,12 +46,12 @@ final class JsFixedBinary extends AbstractNullable implements JsOneErrorSpec, Av
   }
 
   @Override
-  public Optional<JsError> testValue(final JsValue value) {
-    return Functions.testElem(val -> val.isBinary() && val.toJsBinary().value.length == size,
-                              BINARY_FIXED_LENGTH_EXPECTED,
-                              nullable
-                             )
-                    .apply(value);
+  public JsError testValue(final JsValue value) {
+    return Fun.testValue(val -> val.isBinary() && val.toJsBinary().value.length == size,
+                         BINARY_FIXED_LENGTH_EXPECTED,
+                         nullable,
+                         value
+                        );
 
   }
 

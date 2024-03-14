@@ -113,7 +113,7 @@ New features:
 
 - Examples.java class leak in source code
 
-**14.0.0**
+**14.0.0-RC1**
 
 Breaking changes:
 
@@ -132,3 +132,7 @@ New features:
 Bugs:
 
 - `writeBinary` method in `JsWritter` class when binary was one byte long
+
+**14.0.0-RC2**
+
+- `SpecToGen` convert method returns `Gen<JsValue>` instead of `Gen<? extends JsValue>` 

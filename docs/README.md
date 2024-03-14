@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/color1/full/coverphoto/color1-white_logo_dark_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/14.0.0-RC)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/14.0.0-RC/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/14.0.0-RC2)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/14.0.0-RC2/jar)
 
 “_Simplicity is a great virtue, but it requires hard work to achieve it and education to appreciate
 it. And to make matters worse: complexity sells better._” **Edsger Wybe Dijkstra**
@@ -1864,7 +1864,7 @@ For Java 21 or higher:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>14.0.0-RC1</version>
+  <version>14.0.0-RC2</version>
 </dependency>
 ```
 

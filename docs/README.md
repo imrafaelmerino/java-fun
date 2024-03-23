@@ -198,8 +198,9 @@ Using [avro-spec](https://github.com/imrafaelmerino/avro-spec) you can convert j
 avro schemas as well:
 
 ```code
+import org.apache.avro.Schema;
 
-AvroSchema avroSchema = SpecToAvroSchema.convert(spec);
+Schema avroSchema = SpecToAvroSchema.convert(spec);
 
 ```
 

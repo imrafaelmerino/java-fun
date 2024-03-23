@@ -1,7 +1,10 @@
 package jsonvalues.spec;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 abstract class AbstractMap extends AbstractNullable {
@@ -11,15 +14,21 @@ abstract class AbstractMap extends AbstractNullable {
   }
 
 
-  protected JsError test(JsValue value,
-                         Function<JsValue, ERROR_CODE> getError
-                        ) {
+  protected List<SpecError> test(JsPath parent,
+                                 JsValue value,
+                                 Function<JsValue, ERROR_CODE> getError
+                                ) {
     if (value.isNull() && nullable) {
-      return null;
+      return List.of();
     }
+    List<SpecError> errors = new ArrayList<>();
+
     if (!value.isObj()) {
-      return new JsError(value,
-                         ERROR_CODE.OBJ_EXPECTED);
+      errors.add(SpecError.of(parent,
+                              new JsError(value,
+                                          ERROR_CODE.OBJ_EXPECTED)));
+      return errors;
+
     }
 
     var obj = value.toJsObj();
@@ -27,36 +36,42 @@ abstract class AbstractMap extends AbstractNullable {
     for (var pair : obj) {
       ERROR_CODE errorCode = getError.apply(pair.value());
       if (errorCode != null) {
-        return new JsError(pair.value(),
-                           errorCode);
+        errors.add(SpecError.of(parent.key(pair.key()),
+                                new JsError(pair.value(),
+                                            errorCode)));
+
       }
     }
 
-    return null;
+    return errors;
   }
 
-  protected JsError test(JsValue value,
-                         JsSpec spec
-                        ) {
+  protected List<SpecError> test(JsPath parent,
+                                 JsValue value,
+                                 JsSpec spec
+                                ) {
     if (value.isNull() && nullable) {
-      return null;
+      return List.of();
     }
 
+    List<SpecError> errors = new ArrayList<>();
+
     if (!value.isObj()) {
-      return new JsError(value,
-                         ERROR_CODE.OBJ_EXPECTED);
+      errors.add(SpecError.of(parent,
+                              new JsError(value,
+                                          ERROR_CODE.OBJ_EXPECTED)));
+      return errors;
     }
 
     var obj = value.toJsObj();
 
     for (var pair : obj) {
-      var xs = spec.test(pair.value());
-      if (!xs.isEmpty()) {
-        return xs.get(0).error;
-      }
+      var xs = spec.test(parent.key(pair.key()),
+                         pair.value());
+      errors.addAll(xs);
     }
 
-    return null;
+    return errors;
   }
 
 }

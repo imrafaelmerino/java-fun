@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfBool extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfBool extends AbstractMap implements JsSpec, AvroSpec {
 
   JsMapOfBool(boolean nullable) {
     super(nullable);
@@ -19,12 +21,12 @@ final class JsMapOfBool extends AbstractMap implements JsOneErrorSpec, AvroSpec 
     return JsParsers.INSTANCE.ofMapOfBool(nullable);
   }
 
-
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
-                it -> it.isBool() ? null : ERROR_CODE.BOOLEAN_EXPECTED)
-        ;
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
+                it -> it.isBool() ? null : ERROR_CODE.BOOLEAN_EXPECTED);
   }
 
 

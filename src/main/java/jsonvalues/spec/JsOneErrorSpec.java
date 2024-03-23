@@ -23,9 +23,7 @@ sealed interface JsOneErrorSpec extends JsSpec permits AnySpec, AnySuchThat, Con
                                                        JsBinarySuchThat, JsBooleanSpec, JsDecimalSpec,
                                                        JsDecimalSuchThat, JsDoubleSpec, JsDoubleSuchThat, JsEnum,
                                                        JsFixedBinary, JsInstantSpec, JsInstantSuchThat, JsIntSpec,
-                                                       JsIntSuchThat, JsLongSpec, JsLongSuchThat, JsMapOfBigInt,
-                                                       JsMapOfBinary, JsMapOfBool, JsMapOfDec, JsMapOfDouble,
-                                                       JsMapOfInstant, JsMapOfInt, JsMapOfLong, JsMapOfSpec, JsMapOfStr,
+                                                       JsIntSuchThat, JsLongSpec, JsLongSuchThat,
                                                        JsObjSuchThat, JsStrSpec, JsStrSuchThat {
 
   @Override

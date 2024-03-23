@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfBigInt extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfBigInt extends AbstractMap implements JsSpec, AvroSpec {
 
   final BigIntSchemaConstraints valuesConstraints;
 
@@ -29,10 +31,11 @@ final class JsMapOfBigInt extends AbstractMap implements JsOneErrorSpec, AvroSpe
                                             valuesConstraints);
   }
 
-
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
                 it -> {
                   if (!it.isIntegral()) {
                     return ERROR_CODE.INTEGRAL_EXPECTED;
@@ -44,7 +47,6 @@ final class JsMapOfBigInt extends AbstractMap implements JsOneErrorSpec, AvroSpe
                   return null;
                 }
                );
-
   }
 
 

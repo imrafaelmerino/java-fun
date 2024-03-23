@@ -34,7 +34,9 @@ import jsonvalues.JsValue;
  * @see JsPath
  * @see DslJsReader
  */
-public sealed interface JsSpec permits JsArraySpec, JsObjSpec, JsOneErrorSpec, NamedSpec, OneOf {
+public sealed interface JsSpec permits JsArraySpec, JsMapOfBigInt, JsMapOfBinary, JsMapOfBool, JsMapOfDec,
+                                       JsMapOfDouble, JsMapOfInstant, JsMapOfInt, JsMapOfLong, JsMapOfSpec, JsMapOfStr,
+                                       JsObjSpec, JsOneErrorSpec, NamedSpec, OneOf {
 
   /**
    * Returns the same spec with the nullable flag enabled.

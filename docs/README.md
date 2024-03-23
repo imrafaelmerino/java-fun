@@ -1,6 +1,6 @@
 <img src="./logo/package_twitter_if9bsyj4/color1/full/coverphoto/color1-white_logo_dark_background.png" alt="logo"/>
 
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/14.0.0-RC2)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/14.0.0-RC2/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/json-values/14.0.0-RC3)](https://search.maven.org/artifact/com.github.imrafaelmerino/json-values/14.0.0-RC3/jar)
 
 “_Simplicity is a great virtue, but it requires hard work to achieve it and education to appreciate
 it. And to make matters worse: complexity sells better._” **Edsger Wybe Dijkstra**
@@ -1376,7 +1376,7 @@ In this example, the spec named 'person' is referenced within its own definition
 
 You can turn a spec into a generator as well:
 
-```code 
+```code
 
 Gen<JsObj> gen = SpecToGen.DEFAULT.convert(spec);
 
@@ -1527,7 +1527,8 @@ Gen<JsObj> personGen =
 
 json-values uses the generators from the library
 [java-fun](https://github.com/imrafaelmerino/java-fun) to build the JSON generators. I strongly
-recommend you read the readme of [java-fun](https://github.com/imrafaelmerino/java-fun) to get a better understanding of how generators work.
+recommend you read the readme of [java-fun](https://github.com/imrafaelmerino/java-fun) to get a
+better understanding of how generators work.
 
 json-values leverages the generators provided by the
 [java-fun](https://github.com/imrafaelmerino/java-fun) library to construct its JSON generators. For
@@ -1571,9 +1572,16 @@ to identify bugs efficiently and maintain robust test suites with ease.
 
 ### <a name="parsers"><a/>Spec Parsers
 
-The capability to create parsers from specifications is a valuable feature, enabling the parsing of JSON data while enforcing adherence to a defined schema. This approach ensures that the parsed data aligns with the specified schema, offering a robust, efficient, and reliable JSON processing mechanism.
+The capability to create parsers from specifications is a valuable feature, enabling the parsing of
+JSON data while enforcing adherence to a defined schema. This approach ensures that the parsed data
+aligns with the specified schema, offering a robust, efficient, and reliable JSON processing
+mechanism.
 
-Furthermore, customization options are available for the parsing process, providing enhanced flexibility. These options include the provision of default values for optional fields and the definition of field aliases, which streamline the schema versioning process. To implement these customizations, specifications can be created using the `JsObjSpecBuilder` class, which allows the addition of metadata.
+Furthermore, customization options are available for the parsing process, providing enhanced
+flexibility. These options include the provision of default values for optional fields and the
+definition of field aliases, which streamline the schema versioning process. To implement these
+customizations, specifications can be created using the `JsObjSpecBuilder` class, which allows the
+addition of metadata.
 
 ```code
 
@@ -1599,28 +1607,23 @@ Furthermore, customization options are available for the parsing process, provid
                              JsStr.of("Doe")
                             )
                          .toString();
-                         
+
     JsObj person = parser.parse(personStr);
 
-````
+```
 
-To elaborate, the behavior of aliases and defaults is akin to that observed in Avro. Aliases facilitate 
-schema evolution by allowing fields to possess multiple names, while defaults ensure consistency by providing 
-fallback values for optional fields. This simplifies the process of schema versioning, making it more manageable and efficient.
+To elaborate, the behavior of aliases and defaults is akin to that observed in Avro. Aliases
+facilitate schema evolution by allowing fields to possess multiple names, while defaults ensure
+consistency by providing fallback values for optional fields. This simplifies the process of schema
+versioning, making it more manageable and efficient.
 
 ```json
-
 {
   "name": "John",
   "surname": "Doe",
   "title": "none"
 }
-
-
 ```
-
-
-
 
 ### <a name="optics"><a/>Enhance Clarity and Safety with Optics
 
@@ -1864,11 +1867,14 @@ For Java 21 or higher:
 <dependency>
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>json-values</artifactId>
-  <version>14.0.0-RC2</version>
+  <version>14.0.0-RC3</version>
 </dependency>
+
 ```
 
-Choose the appropriate version according to your Java runtime.
+Choose the appropriate version according to your Java runtime. Please note that any new features
+will exclusively be introduced in the latest version, whereas bugs will consistently be patched in
+older versions.
 
 Find [here](./../docs/CHANGELOG.md) the releases notes.
 

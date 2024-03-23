@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfInstant extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfInstant extends AbstractMap implements JsSpec, AvroSpec {
 
   final InstantSchemaConstraints valuesConstraints;
 
@@ -30,12 +32,13 @@ final class JsMapOfInstant extends AbstractMap implements JsOneErrorSpec, AvroSp
                                              valuesConstraints);
   }
 
-
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
                 it -> {
-                  if (!it.isInstant() ) {
+                  if (!it.isInstant()) {
                     return ERROR_CODE.INSTANT_EXPECTED;
                   }
                   if (valuesConstraints != null) {

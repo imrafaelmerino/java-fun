@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfInt extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfInt extends AbstractMap implements JsSpec, AvroSpec {
 
   final IntegerSchemaConstraints valuesConstraints;
 
@@ -30,15 +32,18 @@ final class JsMapOfInt extends AbstractMap implements JsOneErrorSpec, AvroSpec {
                                          valuesConstraints);
   }
 
-
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
                 it -> {
-                  if(!it.isInt())return ERROR_CODE.INT_EXPECTED;
-                  if(valuesConstraints != null) {
+                  if (!it.isInt()) {
+                    return ERROR_CODE.INT_EXPECTED;
+                  }
+                  if (valuesConstraints != null) {
                     return Fun.testIntConstraints(valuesConstraints,
-                                                   value.toJsInt());
+                                                  value.toJsInt());
                   }
                   return null;
                 }

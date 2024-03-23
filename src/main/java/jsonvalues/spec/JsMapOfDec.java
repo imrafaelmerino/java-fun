@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfDec extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfDec extends AbstractMap implements JsSpec, AvroSpec {
 
   final DecimalSchemaConstraints valuesConstraints;
 
@@ -30,10 +32,11 @@ final class JsMapOfDec extends AbstractMap implements JsOneErrorSpec, AvroSpec {
                                              valuesConstraints);
   }
 
-
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
                 it -> {
                   if (!it.isNumber()) {
                     return ERROR_CODE.DECIMAL_EXPECTED;

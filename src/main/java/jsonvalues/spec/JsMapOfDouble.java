@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfDouble extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfDouble extends AbstractMap implements JsSpec, AvroSpec {
 
   final DoubleSchemaConstraints valuesConstraints;
 
@@ -30,10 +32,11 @@ final class JsMapOfDouble extends AbstractMap implements JsOneErrorSpec, AvroSpe
                                             valuesConstraints);
   }
 
-
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
                 it -> {
                   if (!it.isDouble()) {
                     return ERROR_CODE.DOUBLE_EXPECTED;
@@ -45,7 +48,7 @@ final class JsMapOfDouble extends AbstractMap implements JsOneErrorSpec, AvroSpe
                   return null;
                 }
                );
-
   }
+
 
 }

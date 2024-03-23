@@ -1,9 +1,11 @@
 package jsonvalues.spec;
 
+import java.util.List;
+import jsonvalues.JsPath;
 import jsonvalues.JsValue;
 
 
-final class JsMapOfBinary extends AbstractMap implements JsOneErrorSpec, AvroSpec {
+final class JsMapOfBinary extends AbstractMap implements JsSpec, AvroSpec {
 
   JsMapOfBinary(boolean nullable) {
     super(nullable);
@@ -20,12 +22,12 @@ final class JsMapOfBinary extends AbstractMap implements JsOneErrorSpec, AvroSpe
   }
 
   @Override
-  public JsError testValue(JsValue value) {
-    return test(value,
-                it -> it.isBinary() ? null :  ERROR_CODE.BINARY_EXPECTED
+  public List<SpecError> test(final JsPath parentPath,
+                              final JsValue value) {
+    return test(parentPath,
+                value,
+                it -> it.isBinary() ? null : ERROR_CODE.BINARY_EXPECTED
                );
-
-
   }
 
 

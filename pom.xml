@@ -3,7 +3,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>json-values</artifactId>
-  <version>14.0.0-RC2</version>
+  <version>14.0.0-RC3</version>
   <scm>
     <url>https://github.com/imrafaelmerino/json-values.git</url>
   </scm>

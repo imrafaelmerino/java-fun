@@ -135,4 +135,4 @@ Bugs:
 
 **14.0.0-RC2**
 
-- `SpecToGen` convert method returns `Gen<JsValue>` instead of `Gen<? extends JsValue>` 
+- `SpecToGen` convert method returns `Gen<JsValue>` instead of `Gen<? extends JsValue>`

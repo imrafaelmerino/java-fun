@@ -29,11 +29,11 @@ not become entangled in unfamiliar types and conventions.
 
 Here are the key concepts that have been thoughtfully implemented within **java-fun**:
 
--   **Pseudo Random Generators **: Property-Based Testing is a highly effective testing approach,
+-   **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach,
     and having a robust set of generators that can be composed in countless ways is crucial.
     **java-fun** simplifies this process, making it incredibly straightforward.
 
--   **Optics **: In functional programming, optics take precedence over traditional getters and
+-   **Optics**: In functional programming, optics take precedence over traditional getters and
     setters. They offer safety and composability, eliminating the likelihood of encountering
     NullPointerExceptions when used correctly.
 
@@ -64,7 +64,7 @@ of type `O`. The lazy nature of these computations is essential for seamless gen
 To create generators, you have access to two fundamental static factory methods:
 
 -   **arbitrary**: This method produces generators that offer a uniform distribution of values.
--   **biased **: This method generates values with varying probabilities, giving higher
+-   **biased**: This method generates values with varying probabilities, giving higher
     probabilities to values that are known to trigger more bugs in our code. This is a crucial
     aspect of Property-Based Testing.
 
@@ -80,7 +80,7 @@ flavors. Let's explore them in detail:
 
 #### **String Generators**
 
--   **Bounded String Biased Generator **: This generator is biased towards producing specific string
+-   **Bounded String Biased Generator**: This generator is biased towards producing specific string
     values. It generates the empty string, blank strings, and strings of lengths within the
     specified range with higher probability, making it useful for focusing on scenarios prone to
     bugs.
@@ -98,7 +98,7 @@ flavors. Let's explore them in detail:
     This might produce strings like "", " ", or any string of length from zero to three, composed of
     valid printable Unicode characters.
 
--   **Bounded String Arbitrary Generators **: These generators produce strings of lengths uniformly
+-   **Bounded String Arbitrary Generators**: These generators produce strings of lengths uniformly
     distributed within the specified range `[minLength, maxLength]`. Unlike the biased generator,
     all values within this range are generated with equal probability.
 

@@ -15,7 +15,6 @@
     -   [Useful and common patterns](#ucp)
     -   [Using generators in JMeter Test Plans](#jmeter)
 -   [Optics](#optics)
--   [Requirements](#req)
 -   [Installation](#inst)
 -   [Related projects](#rp)
 
@@ -1056,10 +1055,6 @@ Person newPerson = setCoordinates.apply(new Coordinates(14.5, 45.78))
 
 This composition allows you to efficiently manipulate complex data structures, such as setting the
 latitude and longitude of a person with ease.
-
-## <a name="req"><a/> Requirements
-
-Requires Java 8 or greater
 
 ## <a name="inst"><a/> Installation
 

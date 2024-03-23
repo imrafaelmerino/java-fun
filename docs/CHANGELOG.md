@@ -135,4 +135,14 @@ Bugs:
 
 **14.0.0-RC2**
 
-- `SpecToGen` convert method returns `Gen<JsValue>` instead of `Gen<? extends JsValue>`
+Bugs:
+
+ - `SpecToGen` convert method returns `Gen<JsValue>` instead of `Gen<? extends JsValue>`.
+It's not a good practice to use wildcards for return types in methods
+
+**14.0.0-RC3**
+
+Improvements:
+
+- `JsSpecs.mapOfXXX` specs didn't return the right path of errors using the method `test`. Besides
+it only returned one error event if multiple existed, which has been fixed as well

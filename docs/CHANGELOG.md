@@ -33,7 +33,10 @@ New:
     2.2.0
 
 Breaking:
-- `BigIntGen` deleted methods `arbitrary(int nBits)` and `biased(int nBits)` 
+
+-   `BigIntGen` deleted methods `arbitrary(int nBits)` and `biased(int nBits)`
 
 New:
-- `BigIntGen` new static factory methods `arbitrary(BigInteger min, BigInteger max)` and `biased(BigInteger min, BigInteger max)`
+
+-   `BigIntGen` new static factory methods `arbitrary(BigInteger min, BigInteger max)` and
+    `biased(BigInteger min, BigInteger max)`

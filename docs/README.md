@@ -28,17 +28,18 @@ not become entangled in unfamiliar types and conventions.
 
 Here are the key concepts that have been thoughtfully implemented within **java-fun**:
 
--   **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach,
-    and having a robust set of generators that can be composed in countless ways is crucial.
+-   **Pseudo Random Generators**: Property-Based Testing is a highly effective testing approach, and
+    having a robust set of generators that can be composed in countless ways is crucial.
     **java-fun** simplifies this process, making it incredibly straightforward.
 
 -   **Optics**: In functional programming, optics take precedence over traditional getters and
     setters. They offer safety and composability, eliminating the likelihood of encountering
     NullPointerExceptions when used correctly.
 
--   **Tuples**: Although Java may not officially support tuples, they remain exceptionally valuable.
-    **java-fun ** introduces tuples with arities of two and three, encompassing pairs and triples,
-    respectively. These structures enhance code expressiveness and maintainability.
+-   **Tuples**: Although Java may not officially support tuples, they remain valuable. **java-fun**
+    introduces tuples with arities of two and three.In the same vein that lambdas represent nameless
+    functions, tuples can be seen as records lacking names. There are situations where assigning
+    names becomes more cumbersome than beneficial...
 
 ## <a name="prg"><a/> Pseudo Random Generators
 
@@ -63,9 +64,9 @@ of type `O`. The lazy nature of these computations is essential for seamless gen
 To create generators, you have access to two fundamental static factory methods:
 
 -   **arbitrary**: This method produces generators that offer a uniform distribution of values.
--   **biased**: This method generates values with varying probabilities, giving higher
-    probabilities to values that are known to trigger more bugs in our code. This is a crucial
-    aspect of Property-Based Testing.
+-   **biased**: This method generates values with varying probabilities, giving higher probabilities
+    to values that are known to trigger more bugs in our code. This is a crucial aspect of
+    Property-Based Testing.
 
 While you can create custom generators by implementing the `Gen` interface, **java-fun ** provides a
 plethora of predefined generators for your convenience. Let's delve into these predefined
@@ -216,31 +217,32 @@ flavors. Let's explore them in detail:
 
 #### **Big Integer and Big Decimal Generators**
 
--   **Unbounded BigInteger Biased Generator**: This generator focuses on producing specific big integer
-    values with higher probability: `Integer.MAX_VALUE + 1`, `Integer.MIN_VALUE -1`, `Long.MIN_VALUE - 1`, `Long.MAX_VALUE + 1`, and zero.
-    It also produces big integer numbers of 64 bits uniformly distributed.
+-   **Unbounded BigInteger Biased Generator**: This generator focuses on producing specific big
+    integer values with higher probability: `Integer.MAX_VALUE + 1`, `Integer.MIN_VALUE -1`,
+    `Long.MIN_VALUE - 1`, `Long.MAX_VALUE + 1`, and zero. It also produces big integer numbers of 64
+    bits uniformly distributed.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.biased();
     ```
 
--   **Bounded BigInteger-Biased Generator**: Similar to the unbounded version, this generator produces
-    values within the specified interval `(min, max)` with a higher probability.
+-   **Bounded BigInteger-Biased Generator**: Similar to the unbounded version, this generator
+    produces values within the specified interval `(min, max)` with a higher probability.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.biased(BigInteger min, BigInteger max);
     ```
 
--   **Unbounded BigInteger Arbitrary Generator**: This generator produces any big integer number of 64 bits with the
-    same probability, following a uniform distribution.
+-   **Unbounded BigInteger Arbitrary Generator**: This generator produces any big integer number of
+    64 bits with the same probability, following a uniform distribution.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.arbitrary();
     ```
 
 -   **Bounded BigInteger Arbitrary Generator**: Similar to the unbounded version, this generator
-    produces big integer numbers between `min` and `max` (inclusive) with the same probability, following
-    a uniform distribution.
+    produces big integer numbers between `min` and `max` (inclusive) with the same probability,
+    following a uniform distribution.
 
     ```code
     Gen<BigInteger> gen = BigIntGen.arbitrary(BigInteger min, BigInteger max);
@@ -360,10 +362,10 @@ detail:
 
 #### **Map Generator**
 
--   **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size
-    `size`. You need to provide key and value generators, and it ensures that keys are distinct. If
-    the key generator cannot produce enough distinct keys, it will fail after 10 times the specified
-    size (customized with the method `withMaxTries`)
+-   **Map Generator**: This generator creates maps of type `Map<K, V>` with a specified size `size`.
+    You need to provide key and value generators, and it ensures that keys are distinct. If the key
+    generator cannot produce enough distinct keys, it will fail after 10 times the specified size
+    (customized with the method `withMaxTries`)
 
     ```code
     Gen<Map<K, V>> gen = MapGen.of(Gen<K> keyGen, Gen<V> valueGen, int size);

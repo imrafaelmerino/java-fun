@@ -671,7 +671,12 @@ To integrate custom generators into your JMeter test plans (JMX files), follow t
 
     - Compile your JMeter functions into a JAR file, e.g., `my-jmeter-functions.jar`. If you are
       using Maven and your functions are in the `test` folder, generate the JAR with the command
-      `mvn jar:test-jar`. The resulting JAR will be in the `target` folder.
+   
+      ```shell
+      mvn package
+      mvn jar:test-jar
+      ```
+     The resulting JAR will be in the `target` folder.
 
 3. **Place JAR in JMeter's Extension Folder:**
 

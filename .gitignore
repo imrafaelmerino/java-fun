@@ -17,6 +17,3 @@ docs/javadoc
 docs/coverage-report
 settings.xml
 deploy.sh
-codecov
-codecov.sh
-sonar.sh

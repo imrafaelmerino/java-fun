@@ -39,8 +39,75 @@ JsObj.of("name", JsStr.of("Rafael"),
         "age", JsInt.of(1),
         "address", JsObj.of("street", JsStr.of("Elm Street"),
                             "coordinates", JsArray.of(3.32,40.4)
-                          )
+                           )
         );
+
+```
+
+or create a JSON template (requires Java 21 preview feature or later)
+
+```code
+public static final Processor<JsObj, RuntimeException> JS_OBJ =
+      StringTemplate.Processor.of(template -> JsObj.parse(template.interpolate()));
+
+public static final Processor<JsArray, RuntimeException> JS_ARR =
+      StringTemplate.Processor.of(template -> JsArray.parse(template.interpolate()));
+      
+      
+String name = "Joan Smith";
+String number = "555-123-4567";
+String address = "1 Maple Drive, Anytown";
+String type = "mobile";
+
+JsObj obj = JS_OBJ."""
+    {
+        "name":    "\{name}",
+        "address": "\{address}",
+        "phone": { "type" : "\{type}",
+                   "number": "\{number}"
+                 }
+    }
+    """;
+    
+JsArray arr = JS_ARR."""
+    [{
+        "name":    "\{name}",
+        "address": "\{address}",
+        "phone": { "type" : "\{type}",
+                   "number": "\{number}"
+                 }
+     }
+    ]
+    """;    
+```
+
+You can combine templates with parsers from specs to validate JSON:
+
+```code
+public static final JsObjSpec personSpec = 
+    JsObjSpec.of("name", JsSpecs.str(name -> !name.isEmpty()),
+                 "address", JsSpecs.str(address -> !address.isEmpty()),
+                 "phone", JsObjSpec.of("type", JsSpecs.oneStringOf("mobile","landing"),
+                                       "number", JsSpecs.str()
+                                      )
+                );
+
+public static final JsObjSpecParser personParser = JsObjSpecParser.of(personSpec);
+
+
+public static final Processor<JsObj, RuntimeException> JS_OBJ_PERSON =
+      StringTemplate.Processor.of(template -> personParser.parse(template.interpolate()));
+
+// person conforms the personSpec, otherwise an exception is thrown
+JsObj person = JS_OBJ_PERSON."""
+    {
+        "name":    "\{name}",
+        "address": "\{address}",
+        "phone": { "type" : "\{type}",
+                   "number": "\{number}"
+                 }
+    }
+    """;
 
 ```
 
@@ -1904,5 +1971,5 @@ After the development of json-values, I published some more related projects:
 - [mongo-values](https://github.com/imrafaelmerino/mongo-values) Set of codecs to use json-values
   with MongoDB
 - [avro-spec](https://github.com/imrafaelmerino/avro-spec) To create avro schemas from specs and
-  serialize/deserialize `JsObj` according avro specification
+  serialize/deserialize `JsObj` according avro specification.
 - [json-scala-values](https://github.com/imrafaelmerino/json-scala-values) The Scala version

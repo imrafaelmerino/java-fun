@@ -1,25 +1,24 @@
 **12.3.0**
 
-- New method JsSpec.withReqKeys New methods JsObjGen.withReqKeys and JsObjGen.withNonNullValues
+- New method JsSpec.withReqKeys New methods `JsObjGen.withReqKeys` and `JsObjGen.withNonNullValues`
 - Static factory methods to create specs and generators: up to 50 key-spec and key-gen pairs
 
 **12.3.1**
 
-- Bug: Some static factory methods were missing in JsSpec
+- Bug: Some static factory methods were missing in `JsSpec`
 
 **12.3.2**
 
-- Improved javadoc Improved implementation of JsObjGen
+- Improved javadoc Improved implementation of `JsObjGen`
 
 **12.4.0**
 
-- JsObjGen with optional and nullable fields, generates the whole json and with no null vales 50% of
-  the times refactor some tests Improved javadoc
+- `JsObjGen` with optional and nullable fields
 
 **12.5.0**
 
 - upgrade java-fun library
-- better optionals and nullable distribution in JsObjGen
+- better optional and nullable distribution in JsObjGen
 - New methods: `JsIntGen.biased(min)` `JsLongGen.biased(min)` `JsLongGen.arbitrary(min)`
   `JsIntGen.arbitrary(min)`
 
@@ -43,14 +42,14 @@
 
 **13.0.0**
 
-- added avro support for some specs with the interfaz AvroSpec (not public is used by avro-values
-  proyect)
+- added avro support for some specs with the interface AvroSpec (not public is used by avro-values
+  project)
 - `JsObjSpecBuilder`, `JsFixedBuilder` and `JsEnumBuilder` to facilitate integration with avro. It
   caches specs by name and now is possible to define recursive data types with
   `JsObjSpecs.ofNamedSpec`
 - If spec builder is used to create specs and parsers, the metadata of the spec can be used for
-  parsing, for example aliases and default values.
-- added oneOf specs and parsers (JsReader now support set marks and rollback to that marks!)
+  parsing, for example, aliases and default values.
+- added `oneOf` specs and parsers (JsReader now support set marks and rollback to that marks!)
 - added `JsArray.of(varargs)` and `JsArray.ofXXX(list)` methods to create arrays from primitives and
   list of primitives
 - added map of spec: `JsSpecs.mapOfSpec(JsSpec spec)`
@@ -85,7 +84,7 @@
   - Upgrade java-fun to version 1.4.0
 - Doc:
   - Introducing a new section in the readme, featuring an illustrative implementation of
-    [Modeling Inheritance](https://json-schema.org/blog/posts/modelling-inheritance)."
+    [Modeling Inheritance](https://json-schema.org/blog/posts/modelling-inheritance)
 - Issues:
   - https://github.com/imrafaelmerino/json-values/issues/195
 
@@ -144,5 +143,5 @@ It's not a good practice to use wildcards for return types in methods
 
 Improvements:
 
-- `JsSpecs.mapOfXXX` specs didn't return the right path of errors using the method `test`. Besides
+- `JsSpecs.mapOfXXX` specs didn't return the right path of errors using the method `test`. Besides, 
 it only returned one error event if multiple existed, which has been fixed as well

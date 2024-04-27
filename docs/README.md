@@ -32,21 +32,22 @@ it. And to make matters worse: complexity sells better._” **Edsger Wybe Dijkst
 
 Simplify JSON creation with a concise syntax:
 
-```code
+```java
 
-JsObj.of("name", JsStr.of("Rafael"),
-        "languages", JsArray.of("Java", "Scala", "Kotlin"),
-        "age", JsInt.of(1),
-        "address", JsObj.of("street", JsStr.of("Elm Street"),
-                            "coordinates", JsArray.of(3.32,40.4)
-                           )
-        );
+JsObj person = 
+        JsObj.of("name", JsStr.of("Rafael"),
+                 "languages", JsArray.of("Java", "Scala", "Kotlin"),
+                 "age", JsInt.of(1),
+                 "address", JsObj.of("street", JsStr.of("Elm Street"),
+                                     "coordinates", JsArray.of(3.32,40.4)
+                                    )
+                );
 
 ```
 
 or create a JSON template (requires Java 21 preview feature or later)
 
-```code
+```java
 public static final Processor<JsObj, RuntimeException> JS_OBJ =
       StringTemplate.Processor.of(template -> JsObj.parse(template.interpolate()));
 
@@ -59,7 +60,7 @@ String number = "555-123-4567";
 String address = "1 Maple Drive, Anytown";
 String type = "mobile";
 
-JsObj obj = JS_OBJ."""
+JsObj person = JS_OBJ."""
     {
         "name":    "\{name}",
         "address": "\{address}",
@@ -69,7 +70,7 @@ JsObj obj = JS_OBJ."""
     }
     """;
     
-JsArray arr = JS_ARR."""
+JsArray arrayOfPerson = JS_ARR."""
     [{
         "name":    "\{name}",
         "address": "\{address}",
@@ -83,7 +84,7 @@ JsArray arr = JS_ARR."""
 
 You can combine templates with parsers from specs to validate JSON:
 
-```code
+```java
 public static final JsObjSpec personSpec = 
     JsObjSpec.of("name", JsSpecs.str(name -> !name.isEmpty()),
                  "address", JsSpecs.str(address -> !address.isEmpty()),
@@ -115,7 +116,7 @@ JsObj person = JS_OBJ_PERSON."""
 
 Easily define JSON validation rules using a clear and expressive syntax:
 
-```code
+```java
 
 JsObjSpec spec=
         JsObjSpec.of("name", str(),
@@ -135,7 +136,7 @@ JsObjSpec spec=
 
 Transforming specifications into generators is effortless:
 
-```code
+```java
 
 Gen<JsObj> gen = SpecToGen.DEFAULT.convert(spec);
 
@@ -143,7 +144,7 @@ Gen<JsObj> gen = SpecToGen.DEFAULT.convert(spec);
 
 Further customization is possible:
 
-```code
+```java
 SpecToGen specToGen =
     SpecToGen.of(new SpecGenConfBuilder().withIntSize(10,100)
                                          .withStringLength(10,100)
@@ -157,14 +158,14 @@ Gen<JsObj> gen = specToGen.convert(spec);
 
 Override default generators:
 
-```code
+```java
 
-var longitudGen = JsBigDecGen.arbitrary(-180, 180);
+var longitudeGen = JsBigDecGen.arbitrary(-180, 180);
 
 var latitudeGen = JsBigDecGen.arbitrary(-90, 90);
 
 var overrides = Map.of(JsPath.path("/address/$0"), latitudeGen,
-                       JsPath.path("/address/$1"), longitudGen
+                       JsPath.path("/address/$1"), longitudeGen
                       );
 
 Gen<JsObj> gen = specToGen.convert(spec, overrides);
@@ -173,20 +174,20 @@ Gen<JsObj> gen = specToGen.convert(spec, overrides);
 
 Create custom generators from scratch:
 
-```code
+```java
 
 Gen<JsObj> gen=
-        JsObjGen.of("name", JsStrGen.biased(0, 100),
-                    "languages", JsArrayGen.biased(JsStrGen.digit(), 0, 10),
-                    "age", JsIntGen.biased(0, 100),
-                    "address", JsObjGen.of("street", JsStrGen.alphanumeric(0, 200),
-                                           "coordinates", JsTupleGen.of(JsBigDecGen.biased(),
-                                                                        JsBigDecGen.biased()
-                                                                       )
-                                          )
-                   )
-                 .withAllOptKeys()
-                 .withAllNullValues();
+     JsObjGen.of("name", JsStrGen.biased(0, 100),
+                 "languages", JsArrayGen.biased(JsStrGen.digit(), 0, 10),
+                 "age", JsIntGen.biased(0, 100),
+                 "address", JsObjGen.of("street", JsStrGen.alphanumeric(0, 200),
+                                        "coordinates", JsTupleGen.of(JsBigDecGen.biased(),
+                                                                     JsBigDecGen.biased()
+                                                                     )
+                                       )
+                 )
+              .withAllOptKeys()
+              .withAllNullValues();
 
 // and combine specs and generators!
 
@@ -203,7 +204,7 @@ generators** that never forget to include special values known to trigger bugs.
 
 **JSON SCHEMA conversion**
 
-```code
+```java
 
 JsObj jsonSchema = SpecToJsonSchema.convert(spec);
 
@@ -264,7 +265,7 @@ and the result is:
 Using [avro-spec](https://github.com/imrafaelmerino/avro-spec) you can convert json-values specs to
 avro schemas as well:
 
-```code
+```java
 import org.apache.avro.Schema;
 
 Schema avroSchema = SpecToAvroSchema.convert(spec);
@@ -371,9 +372,9 @@ public class ModelingInheritance {
 
 Let's convert the spec into a json schema
 
-```code
+```java
 
-var jsonSchema = SpecToJsonSchema.convert(peripheralSpec);
+JsObj jsonSchema = SpecToJsonSchema.convert(peripheralSpec);
 System.out.println(jsonSchema.toPrettyString());
 
 ```
@@ -475,7 +476,7 @@ generate diverse data, and ensure compliance with defined specifications.
 
 Perform JSON manipulation free of null checks and if-else conditions using optics:
 
-```code
+```java
 
 //let's craft a function using lenses and optionals
 Function<JsObj, JsObj> modify =
@@ -506,7 +507,7 @@ and we just create functions, like `modify` in the previous example, putting opt
 - Transform keys, values, or both effortlessly, allowing you to adapt data to your specific needs.
 - Apply filters to remove unwanted data, ensuring your JSON conforms to your expectations.
 
-```code
+```java
 // Define a function to convert keys to snake_case
 Function<String, String> toSneakCase = key -> {...};
 
@@ -523,9 +524,9 @@ Parsing and validating JSON data can be a time-consuming process, especially whe
 payloads. json-values offers a more efficient and convenient approach by interleaving parsing and
 validation without the need to parse the entire JSON. Here's how it works:
 
-```
+```java
 // Define your JSON schema using JsObjSpec
-JsObjSpec spec = ???
+JsObjSpec spec = ???;
 
 // Create a parser with the specified schema
 var parser = JsObjSpecParser.of(spec);
@@ -652,7 +653,7 @@ index. There are two convenient ways to create a `JsPath`:
   `JsPath.path`. The path string should follow the JSON Pointer specification defined in [RFC
   6901](http://tools.ietf.org/html/rfc6901).
 
-```code
+```java
 
 JsPath path = JsPath.path("/a/b/0");
 
@@ -677,7 +678,7 @@ Assertions.assertEquals(tail.last(),
   methods JsPath.fromKey or JsPath.fromIndex to start with a one-position path. Then, use the key or
   index methods to append more keys or indexes.
 
-```code
+```java
 
 JsPath.fromKey("a")
       .key("b")
@@ -687,7 +688,7 @@ JsPath.fromKey("a")
 
 Or, you can start with an empty path:
 
-```code
+```java
 
 JsPath.empty().key("a")
               .key("b")
@@ -738,7 +739,7 @@ Here's the hierarchical class structure of json-values:
 
 For example, consider the following JSON representations, `xs` and `ys`:
 
-```code
+```java
 JsObj xs = JsObj.of("a", JsInt.of(1000),
                     "b", JsBigDec.of(BigDecimal.valueOf(100_000_000_000_000L)),
                     "c", JsInstant.of("2022-05-25T14:27:37.353Z"),
@@ -767,7 +768,7 @@ information:
 
 As a result, json-values considers them equal, including their hashcode:
 
-```code
+```java
 
 Assertions.assertEquals(xs, ys);
 Assertions.assertEquals(xs.hashcode(), ys.hashcode());
@@ -819,7 +820,7 @@ Let's start with creating a JSON object that represents a person:
 
 **Using the static factory methods:**
 
-```code
+```java
 
 JsObj person=
         JsObj.of("name", JsStr.of("Rafael"),
@@ -847,7 +848,7 @@ data structure, allowing you to nest JSON objects as needed.
 Rather than specifying keys within a nested structure, you can create a JSON object directly from
 their respective paths, offering a highly convenient alternative:
 
-```code
+```java
 
 JsObj person =
         JsObj.of(path("/name"), JsStr.of("Rafael"),
@@ -868,7 +869,7 @@ JsObj person =
 
 **Parsing a string and the schema of the JSON object is unknown:**
 
-```code
+```java
 
 JsObj a = JsObj.parse("{...}");
 
@@ -882,7 +883,7 @@ option later on when I introduce json-spec.
 **Creating an empty object (or from an existing JsObj) and adding new values with the method
 `set`:**
 
-```code
+```java
 
 JsObj person=
         JsObj.empty().set("name", "Rafael")
@@ -897,7 +898,7 @@ Remember that a JSON is immutable, so the set method returns a brand-new value.
 
 **From primitive types using the static factory method `of` and _varargs_:**
 
-```code
+```java
 
 JsArray a = JsArray.of("apple", "orange", "pear");
 
@@ -907,7 +908,7 @@ JsArray b = JsArray.of(1, 2, 3, 4);
 
 **From JSON values using the static factory method `of` and _varargs_:**
 
-```code
+```java
 
 JsArray a = JsArray.of(JsStr.of("hi"),
                        JsInt.of(1),
@@ -919,7 +920,7 @@ JsArray a = JsArray.of(JsStr.of("hi"),
 
 **From an iterable of JSON values:**
 
-```code
+```java
 
 List<JsValue> list = ???;
 Set<JsValue> set = ???;
@@ -931,7 +932,7 @@ JsArray.ofIterable(set);
 
 **Parsing a string and the schema of the JSON array is unknown:**
 
-```code
+```java
 
 JsArray a = JsArray.parse("[...]");
 
@@ -944,7 +945,7 @@ the parsing. We'll also talk about this option later on when I introduce json-sp
 
 **Creating an empty array and adding new values with the methods `append` and `prepend`:**
 
-```code
+```java
 
 JsArray a = JsArray.empty().append(JsInt.of(1))
                            .prepend(JsInt.of(0));
@@ -964,7 +965,7 @@ Assertions.assertEquals(JsArray.of(2,3,0,1),
 
 Two important methods in the API are `get` and `set`:
 
-```code
+```java
 
 Json:: JsValue get(JsPath path);
 
@@ -982,7 +983,7 @@ Similarly, when you set a value at a specific path, it will always be created, i
 necessary containers and padding arrays. You can confidently expect that the value will be at the
 specified path, as demonstrated by the following property:
 
-```code
+```java
 
 Assertions.assertEquals(value,
                         obj.set(path, value)
@@ -992,7 +993,7 @@ Assertions.assertEquals(value,
 
 Setting JsNothing at a path removes the value, ensuring that get returns JsNothing:
 
-```code
+```java
 
 Assertions.assertEquals(JsNothing.NOTHING,
                         obj.set(path, JsNothing.NOTHING)
@@ -1006,7 +1007,7 @@ are immutable and implemented with persistent data structures in json-values.
 
 Let's look at some examples:
 
-```code
+```java
 
 JsObj.empty().set(path("/food/fruits/0"),
                   "apple"
@@ -1063,7 +1064,7 @@ You may want to retrieve Java primitive types directly. In this case, if there i
 specified path, the following methods return null, unless you specify a supplier to produce a
 default value:
 
-```code
+```java
 
 JsArray getArray(JsPath path);
 JsArray getArray(JsPath path, Supplier<JsArray> orElse);
@@ -1104,7 +1105,7 @@ String getStr(JsPath path, Supplier<String> orElse);
 To retrieve data from the first level of a JSON, you can simply pass in the key or index, which is
 less verbose:
 
-```code
+```java
 
 obj.getStr("a")
 
@@ -1118,7 +1119,7 @@ Let's take a look at some very common transformations using the `map` methods. T
 doesn't change the structure of the JSON. This is a pattern known in FP as a functor. Consider the
 following signatures:
 
-```code
+```java
 Json mapValues(Function<JsPrimitive, JsValue> map);
 
 Json mapKeys(Function<String, String> map);
@@ -1142,7 +1143,7 @@ Now, here's where it gets interesting:
 If the mapping depends not only on the value but also on its position in the JSON, you can pass the
 full path to the map function using the following overloaded methods:
 
-```code
+```java
 
 Json mapKeys(BiFunction<JsPath, JsValue, String> map);
 
@@ -1159,7 +1160,7 @@ the value and its position.
 Now, let's look at the filter methods. The filter methods are used to selectively include or exclude
 elements from the JSON based on specific criteria. Here are the equivalent filter methods:
 
-```code
+```java
 
 
 Json filterValues(Predicate<JsPrimitive> filter);
@@ -1177,7 +1178,7 @@ criteria. Now, here's the key point:
 If the filtering depends on both the value and its position in the JSON, you can pass the full path
 to the filter function using the following overloaded methods:
 
-```code
+```java
 Json filterKeys(BiPredicate<JsPath, JsValue> filter);
 
 Json filterValues(BiPredicate<JsPath, JsPrimitive> filter);
@@ -1196,7 +1197,7 @@ you to aggregate and process JSON values based on specific conditions. These ope
 applied selectively, and you can choose whether to access the element's path during the reduction
 process.
 
-```code
+```java
 
 //`reduce` with Path, Predicate, and Mapping
 
@@ -1213,7 +1214,7 @@ element's path. You can perform custom reduction operations using the provided o
 determines which values are included in the reduction. It's important to note that this method
 traverses the entire JSON structure recursively.
 
-```code
+```java
 //reduce with Predicate and Mapping
 
 <R> Optional<R> reduce(BinaryOperator<R> op,
@@ -1244,7 +1245,7 @@ as "specs," to validate JSON data.
 You can define JSON specs in a concise and expressive manner, making the validation process
 straightforward. Consider the following example of a JSON spec for a person's data:
 
-```code
+```java
 
 JsArraySpec addressesSpec =
        JsSpecs.arrayOfSpec(JsObjSpec.of("coordinates",tuple(decimal(),
@@ -1281,7 +1282,7 @@ is as easy as calling the method _lenient_.
 
 The real power is that you can create specs from predicates and compose them:
 
-```code
+```java
 
 BiFunction<Integer, Integer, Predicate<String>> lengthBetween=
      (min,max) -> string -> string.length() <= max && string.length() >= min;
@@ -1387,7 +1388,7 @@ a schema representing a customer. If you have their credit card number, you also
 have a billing address. If you don’t have their credit card number, a billing address would not be
 required:
 
-```code
+```java
 
 Predicate<JsObj> existsBillingIfCard =
      person -> !person.containsKey("credit_card")
@@ -1407,7 +1408,7 @@ Another exciting thing we can do with specs is parsing strings or bytes. Instead
 whole JSON and then validating it, we can verify the schema while parsing it and stop the process as
 soon as an error happens. **After all, failing fast is important as well!**
 
-```code
+```java
 
 JsObjSpecParser personParser = JsObjSpecParser.of(personSpec);
 
@@ -1427,7 +1428,7 @@ specifications. To implement this, start by creating a spec with `JsObjSpecBuild
 `JsObjSpecs.ofNamedSpec(name, spec)` to give it a name . Then, refer to it using the
 `JsSpecs.ofNamedSpec(name)` method within its own definition.
 
-```code
+```java
 
 var spec =
     JsObjSpecBuilder.withName("person")
@@ -1444,7 +1445,7 @@ In this example, the spec named 'person' is referenced within its own definition
 
 You can turn a spec into a generator as well:
 
-```code
+```java
 
 Gen<JsObj> gen = SpecToGen.DEFAULT.convert(spec);
 
@@ -1454,7 +1455,7 @@ As previously mentioned, the capability to create JSON and AVRO schemas is a pow
 enables the generation of schemas from specifications, facilitating the sharing of schemas with
 other systems or tools that necessitate such structured representations.
 
-```code
+```java
 
 JsObj jsonSchema = SpecToJsonSchema.convert(spec);
 
@@ -1462,7 +1463,7 @@ JsObj jsonSchema = SpecToJsonSchema.convert(spec);
 
 Using the library [avro-spec](https://github.com/imrafaelmerino/avro-spec):
 
-```code
+```java
 
 JsObj avroSchema = SpecToAvroSchema.convert(spec);
 
@@ -1565,7 +1566,7 @@ your JSON schemas effortlessly.
 
 Let's develop some generators:
 
-```code
+```java
 
 Gen<JsArray> addressGen=
         JsArrayGen.biased(JsObjGen.of("coordinates",JsTupleGen.of(JsBigDecGen.biased(LAT_MIN,LAT_MAX),
@@ -1621,7 +1622,7 @@ computers excel at. It ensures that, regardless of the complexity involved, your
 precisely to your desired criteria, guaranteeing the generation of data with the specified
 properties.
 
-```code
+```java
 
 Gen<JsObj> newPersonGen =
     personGen.suchThat(p->
@@ -1651,7 +1652,7 @@ definition of field aliases, which streamline the schema versioning process. To 
 customizations, specifications can be created using the `JsObjSpecBuilder` class, which allows the
 addition of metadata.
 
-```code
+```java
 
     JsObjSpec personSpec =
         JsObjSpecBuilder.withName("person")
@@ -1701,7 +1702,7 @@ the library's readme.
 
 Let's dive into a top-down approach and explore an example of a function crafted with optics:
 
-```code
+```java
 
 Function<JsObj, JsObj> modifyPerson =
         modifyAge.apply(n->n+1)
@@ -1716,7 +1717,7 @@ It is concise, expressive, and easy to maintain, thanks to json-values and optic
 
 Optics allow us to model JSON data as records of paths and their associated values:
 
-```code
+```java
 
 Json = { path: JsValue, path1: JsValue, path2: JsValue, ... }
 
@@ -1759,7 +1760,7 @@ JsNothing represents their associated values.
 
 From these paths, you can define lenses or optionals. Here are some examples:
 
-```code
+```java
 Lens<JsObj, JsStr> nameLens = JsObj.lens.str("name");
 
 Lens<JsObj, JsDouble> latitudeLens =
@@ -1795,7 +1796,7 @@ JsArray.prism :: Prism<JsValue, JsArray>
 
 Let's demonstrate these with examples:
 
-```code
+```java
 Assertions.assertEquals(Optional.of("hi!"),
                         JsStr.prism.getOptional.apply(JsStr.of("hi!")));
 
@@ -1838,7 +1839,7 @@ Assertions.assertEquals(Optional.empty(),
 Now, let's revisit the modifyPerson function defined previously and implement it step by step using
 lenses and prisms. We first validate the JSON data with a spec to ensure the operation's safety:
 
-```code
+```java
 Lens<JsObj, JsInt> ageLens = JsObj.lens.int("age");
 
 Lens<JsObj, JsStr> nameLens = JsObj.lens.str("name");

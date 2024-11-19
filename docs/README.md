@@ -68,7 +68,7 @@ To create generators, you have access to two fundamental static factory methods:
     to values that are known to trigger more bugs in our code. This is a crucial aspect of
     Property-Based Testing.
 
-While you can create custom generators by implementing the `Gen` interface, **java-fun ** provides a
+While you can create custom generators by implementing the `Gen` interface, **java-fun** provides a
 plethora of predefined generators for your convenience. Let's delve into these predefined
 generators.
 

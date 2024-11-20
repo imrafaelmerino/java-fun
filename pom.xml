@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
     <packaging>jar</packaging>
-    <version>2.2.0</version>
+    <version>3.0.0</version>
     <name>java-fun</name>
     <description>Some patterns and idioms from Functional Programming implemented in Java</description>
     <url>https://github.com/imrafaelmerino/java-fun</url>

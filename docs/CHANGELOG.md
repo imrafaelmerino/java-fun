@@ -53,3 +53,4 @@ Maintenance:
 
 - upgrade plugins and libraries version
 - error prone added
+- Update readme

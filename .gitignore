@@ -13,13 +13,8 @@ node_modules/
 src/main/java/jsonvalue/libs/
 .changelogrc
 migrar_a_wiki
-docs/javadoc
-docs/coverage-report
 settings.xml
 deploy.sh
 .idea/**
 .idea/workspace.xml
-jio-recording.jfr
 java-fun.iml
-codecov
-upload_codecov.sh

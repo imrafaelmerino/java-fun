@@ -40,7 +40,18 @@ public class TestFun {
      */
     static Predicate<Long> isInMargin(long expected,
                                       double margin) {
-        return times -> Math.abs(times - expected) < margin * expected;
+        return times -> {
+            System.out.printf("times - expected = %s - %s = %s\n",
+                              times,
+                              expected,
+                              times - expected);
+            System.out.printf("times - expected < margin * expected = %s * %s = %s is %s\n",
+                              margin,
+                              expected,
+                              margin * expected,
+                              (times - expected) < margin * expected);
+            return Math.abs(times - expected) < margin * expected;
+        };
     }
 
     static <I> Map<I, Long> generate(int times,

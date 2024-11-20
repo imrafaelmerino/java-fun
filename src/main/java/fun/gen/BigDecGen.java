@@ -114,7 +114,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
         gens.add(Pair.of(1,
                          Gen.cons(min)));
 
-        if (!max.equals(min))
+        if (max.compareTo(BigDecimal.ZERO) != 0)
             gens.add(Pair.of(1,
                              Gen.cons(max)));
 

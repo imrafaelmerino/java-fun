@@ -18,9 +18,9 @@ import java.util.random.RandomGenerator;
 public final class CharGen implements Gen<Character> {
 
     private static final Gen<Character> ascii =
-            IntGen.arbitrary(('\u0000'),
-                             ('\u007f'))
-                  .map(it -> ((char) it.intValue()));
+            IntGen.arbitrary('\u0000',
+                             '\u007f')
+                  .map(it -> (char) it.intValue());
     private static final Gen<Character> letter =
             IntGen.arbitrary(0,
                              25)

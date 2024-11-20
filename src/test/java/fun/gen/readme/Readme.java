@@ -2,7 +2,7 @@ package fun.gen.readme;
 
 import fun.gen.Combinators;
 import fun.gen.Gen;
-import fun.gen.RecordGen;
+import fun.gen.MyRecordGen;
 import fun.gen.StrGen;
 import fun.optic.Prism;
 
@@ -48,14 +48,14 @@ public class Readme {
                 );
 
 
-        Gen<User> userGen = RecordGen.of(LOGIN_FIELD,
-                                         loginGen,
-                                         PASSWORD_FIELD,
-                                         passwordGen,
-                                         NAME_FIELD,
-                                         nameGen)
-                                     .withAllOptKeys()
-                                     .map(record ->
+        Gen<User> userGen = MyRecordGen.of(LOGIN_FIELD,
+                                           loginGen,
+                                           PASSWORD_FIELD,
+                                           passwordGen,
+                                           NAME_FIELD,
+                                           nameGen)
+                                       .withAllOptKeys()
+                                       .map(record ->
                                                   new User(record.getOptStr(LOGIN_FIELD).orElse(null),
                                                            record.getStr(NAME_FIELD),
                                                            record.getOptStr(PASSWORD_FIELD).orElse(null))

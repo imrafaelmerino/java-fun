@@ -28,7 +28,7 @@ final class GenCache {
                                                              name));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","TypeParameterUnusedInFormals"})
     static <O extends Gen<?>> O get(String name) {
         O gen = (O) cache.get(requireNonNull(name));
         if (gen == null)
@@ -36,6 +36,7 @@ final class GenCache {
                                                      name));
         return gen;
     }
+
 
 
 }

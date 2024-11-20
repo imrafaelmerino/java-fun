@@ -38,20 +38,14 @@ public class TestBytesGen {
 
     @Test
     public void testBiased() {
+        int times = 1000000;
+        int max = 3;
         Gen<byte[]> gen = BytesGen.biased(0,
-                                          3);
+                                          max);
 
-        Assertions.assertTrue(gen.sample(10000)
-                                 .allMatch(it -> it.length < 4));
+        Assertions.assertTrue(gen.sample(times)
+                                 .allMatch(it -> it.length <= max));
 
-        Map<Integer, Long> count = TestFun.generate(100000,
-                                                    gen.map(it -> it.length));
 
-        TestFun.isInMargin(100000 / 3,
-                           0.1).test(count.get(0));
-        TestFun.isInMargin(100000 / 3,
-                           0.1).test(count.get(3));
-        TestFun.isInMargin(100000 / 3,
-                           0.1).test(count.get(1) + count.get(2));
     }
 }

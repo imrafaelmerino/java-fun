@@ -18,17 +18,17 @@ public class TesGen {
     public void testSuchThat() {
 
 
-        RecordGen gen =
-                RecordGen.of("a",
-                             StrGen.alphanumeric(1,
+        MyRecordGen gen =
+                MyRecordGen.of("a",
+                               StrGen.alphanumeric(1,
                                                  1),
-                             "b",
-                             StrGen.alphanumeric(1,
+                               "b",
+                               StrGen.alphanumeric(1,
                                                  1),
-                             "c",
-                             StrGen.alphanumeric(1,
+                               "c",
+                               StrGen.alphanumeric(1,
                                                  1))
-                         .withAllOptKeys();
+                           .withAllOptKeys();
 
 
         Assertions.assertTrue(gen.suchThat(it ->

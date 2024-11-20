@@ -7,6 +7,7 @@ package fun.gen;
 @SuppressWarnings("serial")
 public final class RecordTypeNotExpected extends RuntimeException {
 
+    @SuppressWarnings("InlineFormatString")
     private static final String TEMPLATE =
             "The anticipated data type for the value linked to the key %s is %s, yet the actual type is %s. Please contemplate utilizing an alternative getXXX method, or verify that the generator is producing the anticipated values";
 

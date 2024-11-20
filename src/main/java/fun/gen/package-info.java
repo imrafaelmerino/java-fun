@@ -13,7 +13,7 @@
  * - {@link fun.gen.Combinators}: A utility class that offers combinator functions for working with
  * generators. Combinators enable the composition, transformation, and customization of
  * generators to create complex data generation scenarios.
- * - Other generator classes such as {@link fun.gen.LongGen}, {@link fun.gen.MapGen}, {@link fun.gen.PairGen}, {@link fun.gen.RecordGen},
+ * - Other generator classes such as {@link fun.gen.LongGen}, {@link fun.gen.MapGen}, {@link fun.gen.PairGen}, {@link fun.gen.MyRecordGen},
  * {@link fun.gen.SetGen}, {@link fun.gen.StrGen}, {@link fun.gen.TripleGen}, etc., provide specialized generators for
  * generating specific data types or structures.
  * <p>

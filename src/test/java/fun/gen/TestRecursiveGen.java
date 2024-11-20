@@ -11,17 +11,17 @@ public class TestRecursiveGen {
     public void testRecordGen() {
 
 
-        Gen<Record> recordGen = NamedGen.of("person",
-                                            RecordGen.of("age",
-                                                         IntGen.arbitrary(16,
+        Gen<MyRecord> recordGen = NamedGen.of("person",
+                                              MyRecordGen.of("age",
+                                                             IntGen.arbitrary(16,
                                                                           100),
-                                                         "name",
-                                                         StrGen.alphabetic(10,
+                                                             "name",
+                                                             StrGen.alphabetic(10,
                                                                            50),
-                                                         "father",
-                                                         NamedGen.of("person")
+                                                             "father",
+                                                             NamedGen.of("person")
                                                      )
-                                                     .withNullValues("father"));
+                                                         .withNullValues("father"));
         recordGen
                 .sample(1)
                 .forEach(System.out::println);
@@ -33,22 +33,22 @@ public class TestRecursiveGen {
     public void testListGen() {
 
 
-        Gen<Record> recordGen =
+        Gen<MyRecord> recordGen =
                 NamedGen.of("person-1",
-                            RecordGen.of("age",
-                                         IntGen.arbitrary(16,
+                            MyRecordGen.of("age",
+                                           IntGen.arbitrary(16,
                                                           100),
-                                         "name",
-                                         StrGen.alphabetic(10,
+                                           "name",
+                                           StrGen.alphabetic(10,
                                                            50),
-                                         "father",
-                                         NamedGen.of("person-1")
+                                           "father",
+                                           NamedGen.of("person-1")
                                      )
-                                     .withOptKeys("father"));
+                                       .withOptKeys("father"));
 
-        Gen<List<Record>> listGen = ListGen.arbitrary(recordGen,
-                                                      1,
-                                                      10);
+        Gen<List<MyRecord>> listGen = ListGen.arbitrary(recordGen,
+                                                        1,
+                                                        10);
         listGen
                 .sample(100)
                 .forEach(System.out::println

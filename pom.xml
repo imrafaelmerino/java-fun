@@ -28,22 +28,20 @@
         <url>https://github.com/imrafaelmerino/java-fun.git</url>
     </scm>
     <properties>
-        <NEXUS-STAGING-MAVEN-PLUGIN.VERSION>1.6.12</NEXUS-STAGING-MAVEN-PLUGIN.VERSION>
-        <MAVEN-GPG-PLUGIN.VERSION>1.6</MAVEN-GPG-PLUGIN.VERSION>
-        <MAVEN-SOURCE-PLUGIN.VERSION>3.0.1</MAVEN-SOURCE-PLUGIN.VERSION>
+        <error-prone.version>2.36.0</error-prone.version>
+        <NEXUS-STAGING-MAVEN-PLUGIN.VERSION>1.7.0</NEXUS-STAGING-MAVEN-PLUGIN.VERSION>
+        <MAVEN-GPG-PLUGIN.VERSION>3.2.7</MAVEN-GPG-PLUGIN.VERSION>
+        <MAVEN-SOURCE-PLUGIN.VERSION>3.3.1</MAVEN-SOURCE-PLUGIN.VERSION>
         <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
-        <MAVEN-COMPILER-PLUGIN.VERSION>3.10.1</MAVEN-COMPILER-PLUGIN.VERSION>
-        <MAVEN-COMPILER-PLUGIN.SOURCE>17</MAVEN-COMPILER-PLUGIN.SOURCE>
-        <MAVEN-COMPILER-PLUGIN.TARGET>17</MAVEN-COMPILER-PLUGIN.TARGET>
-        <MAVEN-SUREFIRE-PLUGIN.VERSION>3.0.0-M6</MAVEN-SUREFIRE-PLUGIN.VERSION>
-        <MAVEN-JAR-PLUGIN.VERSION>3.2.2</MAVEN-JAR-PLUGIN.VERSION>
-        <MAVEN-JAVADOC-PLUGIN.VERSION>3.3.2</MAVEN-JAVADOC-PLUGIN.VERSION>
-        <sonar.organization>imrafaelmerino</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.projectKey>imrafaelmerino_java-fun</sonar.projectKey>
+        <MAVEN-COMPILER-PLUGIN.VERSION>3.13.0</MAVEN-COMPILER-PLUGIN.VERSION>
+        <MAVEN-COMPILER-PLUGIN.SOURCE>21</MAVEN-COMPILER-PLUGIN.SOURCE>
+        <MAVEN-COMPILER-PLUGIN.TARGET>21</MAVEN-COMPILER-PLUGIN.TARGET>
+        <MAVEN-SUREFIRE-PLUGIN.VERSION>3.5.2</MAVEN-SUREFIRE-PLUGIN.VERSION>
+        <MAVEN-JAR-PLUGIN.VERSION>3.4.2</MAVEN-JAR-PLUGIN.VERSION>
+        <MAVEN-JAVADOC-PLUGIN.VERSION>3.11.1</MAVEN-JAVADOC-PLUGIN.VERSION>
         <APACHE_JMETER_CORE.VERSION>5.6.3</APACHE_JMETER_CORE.VERSION>
-        <JUNIT-JUPITER-API.VERSION>5.7.0</JUNIT-JUPITER-API.VERSION>
-        <JSON-VALUES.VERSION>13.4.0</JSON-VALUES.VERSION>
+        <JUNIT-JUPITER-API.VERSION>5.11.3</JUNIT-JUPITER-API.VERSION>
+        <JSON-VALUES.VERSION>14.0.0-RC3</JSON-VALUES.VERSION>
     </properties>
     <dependencies>
         <dependency>
@@ -58,6 +56,7 @@
             <version>${APACHE_JMETER_CORE.VERSION}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.github.imrafaelmerino</groupId>
             <artifactId>json-values</artifactId>
@@ -76,10 +75,20 @@
                     <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
                     <target>${MAVEN-COMPILER-PLUGIN.TARGET}</target>
                     <showWarnings>true</showWarnings>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <encoding>UTF-8</encoding>
                     <compilerArgs>
-                        <arg>-Xlint:all</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>--should-stop=ifError=FLOW</arg>
+                        <arg>-Xplugin:ErrorProne -Xep:DeadException:WARN -Xep:GuardedBy:OFF</arg>
+                        <arg>-Xlint:unchecked</arg>
                     </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${error-prone.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -103,9 +112,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
-                    <configuration>
-                        <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
-                    </configuration>
+                <configuration>
+                    <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

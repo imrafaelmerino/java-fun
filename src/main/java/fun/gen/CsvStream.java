@@ -1,6 +1,7 @@
 package fun.gen;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -14,7 +15,7 @@ import java.util.stream.StreamSupport;
  * The class allows customization through various functions for header and value mapping,
  * as well as enabling/disabling type conversion.
  */
-class CsvStream implements Supplier<Stream<Record>> {
+class CsvStream implements Supplier<Stream<MyRecord>> {
 
     private final Function<String, String> headerMapper;
     private final BiFunction<String, String, String> valueMapper;
@@ -68,16 +69,21 @@ class CsvStream implements Supplier<Stream<Record>> {
             try {
                 return Integer.parseInt(xs);
             } catch (NumberFormatException ignored) {
+                // it's not an integer; that's fine, just continue
             }
 
             try {
                 return Long.parseLong(xs);
             } catch (NumberFormatException ignored) {
+                // it's not a long; that's fine, just continue
+
             }
 
             try {
                 return Double.parseDouble(xs);
             } catch (NumberFormatException ignored) {
+                // it's not a double; that's fine, just continue
+
             }
         }
 
@@ -105,9 +111,10 @@ class CsvStream implements Supplier<Stream<Record>> {
      * @throws UncheckedIOException If an I/O error occurs while reading the CSV file.
      */
     @Override
-    public Stream<Record> get() {
+    public Stream<MyRecord> get() {
         try {
-            var br = new BufferedReader(new FileReader(path));
+            var br = new BufferedReader(new FileReader(path,
+                                                       StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
             this.headers = Arrays.stream(headerLine.split(","))
@@ -139,7 +146,7 @@ class CsvStream implements Supplier<Stream<Record>> {
      * @param values The array of values from a CSV line.
      * @return A Record object representing the CSV line.
      */
-    private Record lineToRecord(String[] values) {
+    private MyRecord lineToRecord(String[] values) {
         Map<String, Object> record = new HashMap<>();
 
         for (int i = 0; i < headers.size(); i++) {
@@ -152,7 +159,7 @@ class CsvStream implements Supplier<Stream<Record>> {
                                   strValue));
         }
 
-        return new Record(record);
+        return new MyRecord(record);
     }
 
     /**

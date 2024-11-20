@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
  * A class representing a record with named fields and associated values. This class provides methods for safely retrieving
  * field values of various types from the record.
  */
-public final class Record {
+public final class MyRecord {
 
     /**
      * The underlying map that holds the record data
@@ -24,7 +24,7 @@ public final class Record {
      *
      * @param map A map containing field names as keys and their associated values.
      */
-    public Record(final Map<String, ?> map) {
+    public MyRecord(final Map<String, ?> map) {
         this.map = requireNonNull(map);
     }
 
@@ -770,7 +770,7 @@ public final class Record {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        var record = (Record) o;
+        var record = (MyRecord) o;
         return Objects.equals(map,
                               record.map);
     }

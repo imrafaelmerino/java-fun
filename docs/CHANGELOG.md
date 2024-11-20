@@ -40,3 +40,16 @@ New:
 
 -   `BigIntGen` new static factory methods `arbitrary(BigInteger min, BigInteger max)` and
     `biased(BigInteger min, BigInteger max)`
+
+    3.0.0
+
+Breaking:
+
+- Upgrade from Java 17 to Java 21
+- Rename Record -> MyRecord (https://errorprone.info/bugpattern/TypeParameterUnusedInFormals)
+- Rename RecordGen -> MyRecordGen
+
+Maintenance:
+
+- upgrade plugins and libraries version
+- error prone added

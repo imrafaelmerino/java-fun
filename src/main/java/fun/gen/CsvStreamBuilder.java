@@ -15,13 +15,13 @@ import java.util.stream.Stream;
  * Type conversions from string include converting to boolean (e.g., "true" to true),
  * integers (e.g., "123" to 123), longs, and doubles. The header row is mandatory in the CSV file.
  */
-public final class CsvStreamBuilder implements Supplier<Stream<Record>> {
+public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
 
     private final File path;
+    private final String separator;
     private Function<String, String> headerMapper = String::trim;
     private BiFunction<String, String, String> valueMapper = (header, val) -> val.trim();
     private boolean enableTypeConversion = true;
-    private final String separator;
 
     private CsvStreamBuilder(File path,
                              String separator) {
@@ -82,12 +82,14 @@ public final class CsvStreamBuilder implements Supplier<Stream<Record>> {
      * @return A Supplier of Stream of Records with the specified configurations.
      * @throws IllegalArgumentException If a required field is not set.
      */
-    public Stream<Record> get() {
+    @Override
+    public Stream<MyRecord> get() {
         return new CsvStream(path,
                              headerMapper,
                              valueMapper,
                              enableTypeConversion,
-                             separator).get();
+                             separator)
+                .get();
     }
 
 }

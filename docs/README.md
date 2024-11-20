@@ -396,18 +396,18 @@ detail:
 #### **Record Generator**
 
 -   **Record Generator**: A record is a structured data type with named fields and their associated
-    values. In `java-fun`, you can create record-like structures using the `Record` generator. This
+    values. In `java-fun`, you can create record-like structures using the `MyRecordGen` generator. This
     generator allows you to define fields and associated generators, making it easy to generate
     structured data.
 
     ```code
-    Gen<Record> person = RecordGen.of(name, StrGen.arbitrary(1, 20),
-                                      age, IntGen.biased(0, 150),
-                                      birthdate, InstantGen.arbitrary()
-                                     );
+    Gen<MyRecord> person = MyRecordGen.of(name, StrGen.arbitrary(1, 20),
+                                          age, IntGen.biased(0, 150),
+                                          birthdate, InstantGen.arbitrary()
+                                         );
     ```
 
-    The `fun.gen.Record` class functions as a `Map<String, ?>` to store generated data and provides
+    The `fun.gen.MyRecordGen` class functions as a `Map<String, ?>` to store generated data and provides
     convenient access to field values without requiring explicit type conversions. Record generators
     are highly versatile and useful for creating custom object generators using the function map.
     Find an example [here](#og).
@@ -492,7 +492,7 @@ detail:
 ### <a name="og"><a/> Objects generators
 
 This section on "Objects Generators" explains how to create generators for custom objects in your
-model using `RecordGen` and the function map. Let's delve deeper into this process:
+model using `MyRecordGen` and the function map. Let's delve deeper into this process:
 
 Consider you have a class `User` with fields `login`, `name`, and `password`. You want to generate
 instances of this class with various values for testing purposes.
@@ -524,23 +524,22 @@ Now, you can create a generator for the `User` class as follows:
     Gen<String> nameGen = StrGen.alphabetic(0, 100);
     ```
 
-2. Create a `User` generator using `RecordGen`:
+2. Create a `User` generator using `MyRecordGen`:
 
     ```code
-    Gen<User> userGen = RecordGen.of("login", loginGen,
-                                     "name", nameGen,
-                                     "password", passwordGen)
-                                 .map(record -> new User(
-                                                         record.getStr("login").orElse(null),
-                                                         record.getStr("name").orElse(null),
-                                                         record.getStr("password").orElse(null)
-                                                         )
-                                      );
+    Gen<User> userGen = MyRecordGen.of("login", loginGen,
+                                       "name", nameGen,
+                                       "password", passwordGen)
+                                   .map(record -> new User(record.getStr("login").orElse(null),
+                                                           record.getStr("name").orElse(null),
+                                                           record.getStr("password").orElse(null)
+                                                          )
+                                       );
     ```
 
     Here's how this works:
 
-    - `RecordGen.of("login", loginGen, ...)` defines a record generator with fields "login," "name,"
+    - `MyRecordGen.of("login", loginGen, ...)` defines a record generator with fields "login," "name,"
       and "password," each associated with their respective generators.
 
     - `.map(record -> new User(...))` uses the function map to transform the generated record into a
@@ -564,13 +563,13 @@ structures that reference themselves or include nested structures.
 
 ```code
 
-Gen<Record> recordGen =
+Gen<MyRecord> recordGen =
     NamedGen.of("person",
-                RecordGen.of("age", IntGen.arbitrary(16, 100),
-                             "name", StrGen.alphabetic(10, 50),
-                             "father", NamedGen.of("person")
-                             )
-                          .withOptKeys("father")
+                MyRecordGen.of("age", IntGen.arbitrary(16, 100),
+                               "name", StrGen.alphabetic(10, 50),
+                               "father", NamedGen.of("person")
+                              )
+                           .withOptKeys("father")
                 );
 
 // Generate and print 10 sample records
@@ -1088,6 +1087,18 @@ For Java 17 or higher:
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
     <version>2.2.0</version>
+</dependency>
+
+```
+
+For Java 21 or higher:
+
+```xml
+
+<dependency>
+    <groupId>com.github.imrafaelmerino</groupId>
+    <artifactId>java-fun</artifactId>
+    <version>3.0.0</version>
 </dependency>
 
 ```

@@ -1,5 +1,7 @@
 <img src="./logo/package_twitter_if9bsyj4/base/full/coverphoto/base_logo_white_background.png" alt="logo"/>
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20Support-yellow)](https://www.buymeacoffee.com/imrafaelmerino)
+
 [![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/java-fun/3.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/java-fun/3.0.0/jar)
 
 "_When in doubt, use brute force._" **Ken Thompson**

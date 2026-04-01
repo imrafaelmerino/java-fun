@@ -1,73 +1,99 @@
-4.0.0
+# Changelog
 
-Breaking:
+All notable changes to this project are documented in this file.
 
--   `MyRecord` optional accessors have been renamed from `getOptXxx` to `getOptionalXxx`.
--   `MyRecord.getStr/getBool/getBigInt` were renamed to
-    `getString/getBoolean/getBigInteger`.
--   `MyRecord.map` public field has been removed.
-    Use `asMap()`, `containsKey(String)`, `size()`, and `isEmpty()` instead.
--   `MyRecord` now defensively copies input maps and exposes an immutable map view.
+## 4.0.0
 
-DX and fixes:
+### Breaking
 
--   `CsvStream` applies `headerMapper` exactly once.
--   `CsvStream` correctly handles separators inside quoted values and escaped quotes (`""`).
--   Javadoc has been updated to make numeric precision semantics explicit.
+- `MyRecord` optional accessors were renamed from `getOptXxx(...)` to `getOptionalXxx(...)`.
+- `MyRecord.getStr(...)`, `MyRecord.getBool(...)`, and `MyRecord.getBigInt(...)` were renamed to:
+  - `getString(...)`
+  - `getBoolean(...)`
+  - `getBigInteger(...)`
+- Removed public field `MyRecord.map`.
+  Use `asMap()`, `containsKey(String)`, `size()`, and `isEmpty()` instead.
+- `MyRecord` now defensively copies input maps and exposes an immutable map view.
 
-1.4.0 New feature:
+### Fixed
 
--   Named generators: NamedGen Refactor:
--   JsObjGen (improvement nullable and optional fields generation) Doc:
--   New section in readme about recursive generators
+- `CsvStream` now applies `headerMapper` exactly once.
+- `CsvStream` correctly handles separators inside quoted values.
+- `CsvStream` correctly handles escaped quotes (`""`) inside quoted values.
 
-    2.0.0
+### Documentation
 
--   This version requires java 17
--   Refactor `Gen` interface: `RandomGenerator` interface instead of Random implementation
--   Refactor `SplitGen` implementation: uses the default implementation
-    `RandomGenerator.getDefault()` instead of `Random`
--   New Quadruple, Quintuple and SexTuple classes
--   New QuadrupleGen, QuintupleGen and SexTupleGen classes
+- Updated Javadoc to clarify numeric precision semantics.
 
-    2.1.0
+## 3.0.0
 
-Breaking:
+### Breaking
 
--   `getXXX` methods in `Record` class may return null and doesn't return `Optional`. Migrate those
-    to `getOptXXX` methods.
+- Upgraded Java baseline from 17 to 21.
+- Renamed `Record` to `MyRecord` ([reason](https://errorprone.info/bugpattern/TypeParameterUnusedInFormals)).
+- Renamed `RecordGen` to `MyRecordGen`.
 
-New:
+### Maintenance
 
--   `CSVStreamBuilder` class to read csv files into Stream of `Record`
--   upgrade error prone library
--   New `getOptXXX` methods in `Record` class (`getOptStr`, `getOptInt` ...)
--   The methods `getXXX` and `getOptXXX` in the `Record` class prioritize returning data where
-    possible instead of throwing exceptions.For instance, the `record.getLong("age")` method can
-    return not only `Long` but also `Byte`, `Short`, and `Integer`. Similarly, the `getDouble`
-    method can return integral numbers in addition to floating-point values.
+- Upgraded plugins and library versions.
+- Added Error Prone.
+- Updated README.
 
-    2.2.0
+## 2.2.0
 
-Breaking:
+### Breaking
 
--   `BigIntGen` deleted methods `arbitrary(int nBits)` and `biased(int nBits)`
+- Removed `BigIntGen.arbitrary(int nBits)`.
+- Removed `BigIntGen.biased(int nBits)`.
 
-New:
+### Added
 
--   `BigIntGen` new static factory methods `arbitrary(BigInteger min, BigInteger max)` and
-    `biased(BigInteger min, BigInteger max)`
+- Added `BigIntGen.arbitrary(BigInteger min, BigInteger max)`.
+- Added `BigIntGen.biased(BigInteger min, BigInteger max)`.
 
-    3.0.0
+## 2.1.0
 
-Breaking:
+### Breaking
 
-- Upgrade from Java 17 to Java 21
-- Rename Record -> MyRecord (https://errorprone.info/bugpattern/TypeParameterUnusedInFormals)
-- Rename RecordGen -> MyRecordGen
+- In `Record`, `getXXX(...)` methods may return `null` and no longer return `Optional`.
+  Migrate optional-safe usage to `getOptXXX(...)` methods.
 
-Maintenance:
+### Added
 
-- upgrade plugins and libraries version
-- error prone added
-- Update readme
+- Added `CSVStreamBuilder` to read CSV files into `Stream<Record>`.
+- Added `getOptXXX(...)` methods in `Record` (for example `getOptStr`, `getOptInt`).
+
+### Changed
+
+- Improved numeric coercion in `Record` getters to prefer returning compatible values instead of throwing.
+  For example:
+  - `record.getLong("age")` can accept `Byte`, `Short`, and `Integer`.
+  - `record.getDouble(...)` can accept integral values in addition to floating-point values.
+- Upgraded Error Prone.
+
+## 2.0.0
+
+### Breaking
+
+- This version requires Java 17.
+
+### Changed
+
+- Refactored `Gen` to use `RandomGenerator` instead of `Random`.
+- Refactored `SplitGen` to use `RandomGenerator.getDefault()`.
+
+### Added
+
+- Added tuple classes: `Quadruple`, `Quintuple`, `Sextuple`.
+- Added generators: `QuadrupleGen`, `QuintupleGen`, `SextupleGen`.
+
+## 1.4.0
+
+### Added
+
+- Added named generators (`NamedGen`).
+- Added README section about recursive generators.
+
+### Changed
+
+- Improved `JsObjGen` nullable and optional field generation.

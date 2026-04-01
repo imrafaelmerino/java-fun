@@ -672,6 +672,26 @@ public class TestGenRecordMy {
 
     }
 
+    @Test
+    public void withReqKeysCollectionShouldKeepThoseKeysAlwaysPresent() {
+        MyRecordGen gen = MyRecordGen.of("a",
+                                         IntGen.arbitrary(0,
+                                                          10),
+                                         "b",
+                                         IntGen.arbitrary(0,
+                                                          10),
+                                         "c",
+                                         IntGen.arbitrary(0,
+                                                          10))
+                                   .withAllOptKeys()
+                                   .withReqKeys(List.of("a",
+                                                        "b"));
+
+        Assertions.assertTrue(gen.sample(2000)
+                                 .allMatch(record -> record.map.containsKey("a")
+                                         && record.map.containsKey("b")));
+    }
+
 
     @Test
     public void testRecordGenWithAllNullableAndOptionals() {

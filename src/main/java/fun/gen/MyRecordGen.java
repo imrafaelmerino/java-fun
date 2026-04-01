@@ -2054,8 +2054,10 @@ public final class MyRecordGen implements Gen<MyRecord> {
      * @return A brand new record generator.
      */
     public MyRecordGen withReqKeys(final Collection<String> reqKeys) {
+        List<String> optionalKeys = new ArrayList<>(bindings.keySet());
+        optionalKeys.removeAll(requireNonNull(reqKeys));
         return new MyRecordGen(bindings,
-                               new ArrayList<>(reqKeys),
+                               optionalKeys,
                                nullables);
     }
 

@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestFun {
     static <I> void assertGeneratedValuesHaveSameProbability(Map<I, Long> counts,
@@ -58,8 +59,10 @@ public class TestFun {
                                      Gen<I> generator) {
         HashMap<I, Long> results = new HashMap<>();
 
-        generator.sample(times)
-                 .forEach(countOccurrences(results));
+        var supplier = generator.sample(new Random(0L));
+        Stream.generate(supplier)
+              .limit(times)
+              .forEach(countOccurrences(results));
 
         return results;
     }

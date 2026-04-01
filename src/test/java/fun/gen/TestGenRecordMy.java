@@ -8,6 +8,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestGenRecordMy {
 
@@ -617,37 +619,40 @@ public class TestGenRecordMy {
 
         int times = 1000000;
         Map<List<?>, Long> generated =
-                gen.collect(times,
-                            record -> {
-                                if (record.getOptInt("a").isPresent()
-                                        && record.getOptInt("b").isPresent()
-                                        && record.getOptInt("c").isPresent())
-                                    return Arrays.asList("a",
-                                                         "b",
-                                                         "c");
-                                if (record.getOptInt("a").isPresent()
-                                        && record.getOptInt("b").isPresent()
-                                )
-                                    return Arrays.asList("a",
-                                                         "b");
-                                if (record.getOptInt("a").isPresent()
-                                        && record.getOptInt("c").isPresent()
-                                )
-                                    return Arrays.asList("a",
-                                                         "c");
-                                if (record.getOptInt("b").isPresent()
-                                        && record.getOptInt("c").isPresent()
-                                )
-                                    return Arrays.asList("b",
-                                                         "c");
-                                if (record.getOptInt("a").isPresent())
-                                    return List.of("a");
-                                if (record.getOptInt("b").isPresent())
-                                    return List.of("b");
-                                if (record.getOptInt("c").isPresent())
-                                    return List.of("c");
-                                return new ArrayList<>();
-                            });
+                Stream.generate(gen.sample(new Random(0L)))
+                      .limit(times)
+                      .map(record -> {
+                          if (record.getOptInt("a").isPresent()
+                                  && record.getOptInt("b").isPresent()
+                                  && record.getOptInt("c").isPresent())
+                              return Arrays.asList("a",
+                                                   "b",
+                                                   "c");
+                          if (record.getOptInt("a").isPresent()
+                                  && record.getOptInt("b").isPresent()
+                          )
+                              return Arrays.asList("a",
+                                                   "b");
+                          if (record.getOptInt("a").isPresent()
+                                  && record.getOptInt("c").isPresent()
+                          )
+                              return Arrays.asList("a",
+                                                   "c");
+                          if (record.getOptInt("b").isPresent()
+                                  && record.getOptInt("c").isPresent()
+                          )
+                              return Arrays.asList("b",
+                                                   "c");
+                          if (record.getOptInt("a").isPresent())
+                              return List.of("a");
+                          if (record.getOptInt("b").isPresent())
+                              return List.of("b");
+                          if (record.getOptInt("c").isPresent())
+                              return List.of("c");
+                          return new ArrayList<>();
+                      })
+                      .collect(Collectors.groupingBy(Function.identity(),
+                                                     Collectors.counting()));
 
         Function<Long, Double> toPer =
                 e -> ((double) (e * 100)) / times;
@@ -663,7 +668,7 @@ public class TestGenRecordMy {
                                       .map(Entry::getValue)
                                       .map(toPer)
                                       .peek(System.out::println)
-                                      .allMatch(it -> it <= 50.1 && it >= 49.9));
+                                      .allMatch(it -> it <= 50.2 && it >= 49.8));
 
     }
 

@@ -30,6 +30,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private final List<String> expectedHeaders;
     private final boolean strictRowWidth;
     private final Set<String> nullTokens;
+    private final java.util.function.Predicate<String> nullTokenMatcher;
 
     /**
      * Constructs a CsvStream with custom mapping functions, type conversion, and separator.
@@ -48,7 +49,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             String separator,
             List<String> expectedHeaders,
             boolean strictRowWidth,
-            Set<String> nullTokens) {
+            Set<String> nullTokens,
+            java.util.function.Predicate<String> nullTokenMatcher) {
         this.path = path;
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
@@ -61,6 +63,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                           : nullTokens.stream()
                                       .map(CsvStream::removeQuotesIfExist)
                                       .collect(java.util.stream.Collectors.toUnmodifiableSet());
+        this.nullTokenMatcher = nullTokenMatcher;
     }
 
 
@@ -196,7 +199,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             return null;
         }
         String normalizedValue = removeQuotesIfExist(mappedValue);
-        if (nullTokens.contains(normalizedValue)) {
+        if (nullTokens.contains(normalizedValue)
+                || (nullTokenMatcher != null && nullTokenMatcher.test(normalizedValue))) {
             return null;
         }
 

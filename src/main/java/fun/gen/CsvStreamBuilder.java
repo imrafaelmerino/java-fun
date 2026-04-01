@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -25,6 +26,7 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     private List<String> expectedHeaders;
     private boolean strictRowWidth;
     private Set<String> nullTokens;
+    private Predicate<String> nullTokenMatcher;
 
     private CsvStreamBuilder(File path,
                              String separator) {
@@ -155,6 +157,18 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     }
 
     /**
+     * Sets a matcher used to decide whether a normalized value should be mapped to {@code null}.
+     * The matcher is evaluated after value mapping and quote normalization.
+     *
+     * @param nullTokenMatcher predicate to decide if a token should become null.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withNullTokenMatcher(Predicate<String> nullTokenMatcher) {
+        this.nullTokenMatcher = Objects.requireNonNull(nullTokenMatcher);
+        return this;
+    }
+
+    /**
      * Creates a Supplier of Stream of Records based on the configured options.
      *
      * @return A Supplier of Stream of Records with the specified configurations.
@@ -169,7 +183,8 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
                              separator,
                              expectedHeaders,
                              strictRowWidth,
-                             nullTokens)
+                             nullTokens,
+                             nullTokenMatcher)
                 .get();
     }
 

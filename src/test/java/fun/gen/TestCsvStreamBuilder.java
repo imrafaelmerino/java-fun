@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 class TestCsvStreamBuilder {
@@ -201,6 +202,31 @@ class TestCsvStreamBuilder {
             Assertions.assertEquals(1,
                                     records.size());
             Assertions.assertTrue(records.get(0).getOptStr("x").isEmpty());
+        }
+    }
+
+    @Test
+    void shouldMapTokensToNullUsingCustomMatcher() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-null-token-matcher",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b,c\nNuLl,  n/a  ,ok\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withNullTokenMatcher(token -> {
+                                              String normalized = token.trim().toLowerCase(Locale.ROOT);
+                                              return normalized.equals("null") || normalized.equals("n/a");
+                                          })
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertTrue(records.get(0).getOptStr("a").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptStr("b").isEmpty());
+            Assertions.assertEquals("ok",
+                                    records.get(0).getStr("c"));
         }
     }
 }

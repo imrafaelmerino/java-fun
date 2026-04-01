@@ -4,6 +4,8 @@ package fun.gen;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 public class TestSetGen {
 
     @Test
@@ -22,6 +24,21 @@ public class TestSetGen {
     public void ofNShouldNotOverflowDefaultMaxTriesWithLargeSize() {
         Assertions.assertDoesNotThrow(() -> SetGen.ofN(Gen.cons("x"),
                                                        Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void withMaxTriesEqualToRequestedSizeShouldSucceedWhenValuesAreUnique() {
+        Set<Integer> values = SetGen.ofN(Gen.seq(n -> n),
+                                         3)
+                                    .withMaxTries(3)
+                                    .sample()
+                                    .get();
+
+        Assertions.assertEquals(3,
+                                values.size());
+        Assertions.assertTrue(values.containsAll(Set.of(1,
+                                                        2,
+                                                        3)));
     }
 
 }

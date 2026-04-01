@@ -78,14 +78,14 @@ public final class SetGen<T> implements Gen<Set<T>> {
         {
             int tries = 0;
             Set<T> set = new HashSet<>();
-            while (set.size() != size) {
+            while (set.size() < size && tries < maxTries) {
                 set.add(supplier.get());
                 tries += 1;
-                if (tries >= maxTries)
-                    throw new RuntimeException(String.format("Couldn't generate set of %s different elements after %s tries",
-                                                             size,
-                                                             maxTries));
             }
+            if (set.size() < size)
+                throw new RuntimeException(String.format("Couldn't generate set of %s different elements after %s tries",
+                                                         size,
+                                                         maxTries));
             return set;
         };
     }

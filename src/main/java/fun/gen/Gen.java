@@ -139,8 +139,12 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
      */
     default <P> Gen<P> then(final Function<O, ? extends Gen<P>> fn) {
         Objects.requireNonNull(fn);
-        return seed -> fn.apply(this.apply(seed).get())
-                         .apply(SplitGen.DEFAULT.apply(seed));
+        return seed -> {
+            Supplier<O> supplier = this.apply(seed);
+            return () -> fn.apply(supplier.get())
+                           .apply(SplitGen.DEFAULT.apply(seed))
+                           .get();
+        };
     }
 
     /**

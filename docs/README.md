@@ -59,7 +59,9 @@ Main capabilities:
 import fun.gen.*;
 
 Gen<String> usernames = StrGen.alphanumeric(3, 12);
+// sample: ["aK9", "x2Pq7", "ZZ81m"]
 Gen<Integer> ages = IntGen.biased(0, 120);
+// sample: [0, 120, 37, 18, 65]
 
 System.out.println(usernames.sample(5).toList());
 System.out.println(ages.sample(5).toList());
@@ -82,6 +84,7 @@ Gen<User> users = MyRecordGen.of(
         r.getString("name"),
         r.getInt("age")
 ));
+// sample: [User[login=a1Z, name=Ana, age=33], User[login=q9kP, name=Leo, age=21]]
 
 System.out.println(users.sample(3).toList());
 ```
@@ -121,14 +124,22 @@ import fun.gen.*;
 import java.util.Map;
 
 Gen<Integer> base = IntGen.arbitrary(0, 100);
+// sample: [42, 7, 90, 13, 58]
 
 Gen<String> mapped = base.map(Object::toString);
+// sample: ["42", "7", "90"]
 Gen<Integer> distinct = base.distinct();
+// sample: [3, 81, 47, 10]
 Gen<Integer> distinctWithLimit = base.distinct(500);
+// sample: [22, 11, 66, 4]
 Gen<Integer> filtered = base.suchThat(n -> n % 2 == 0);
+// sample: [84, 2, 56, 100]
 Gen<Integer> filteredWithLimit = base.suchThat(n -> n > 90, 2000);
+// sample: [91, 99, 94]
 Gen<String> chained = base.then(n -> StrGen.alphanumeric(1, Math.max(1, n % 10)));
+// sample: ["A", "m9", "x7Q2"]
 Gen<Integer> withSideEffect = base.peek(n -> System.out.println("generated=" + n));
+// sample: [15, 73, 0]
 
 System.out.println(base.sample().get());
 System.out.println(base.sample(5).toList());
@@ -145,11 +156,17 @@ System.out.println(parity);
 import fun.gen.*;
 
 Gen<Integer> g1 = IntGen.arbitrary();
+// sample: [2147483647, -113, 0]
 Gen<Integer> g2 = IntGen.arbitrary(10);
+// sample: [10, 459, 2147483647]
 Gen<Integer> g3 = IntGen.arbitrary(-20, 20);
+// sample: [-3, 0, 19, -20, 20]
 Gen<Integer> g4 = IntGen.biased();
+// sample: [0, -128, 32767, 42]
 Gen<Integer> g5 = IntGen.biased(10);
+// sample: [10, 127, 32767, 9999]
 Gen<Integer> g6 = IntGen.biased(-20, 20);
+// sample: [-20, 0, 20, 7]
 ```
 
 ### LongGen
@@ -158,11 +175,17 @@ Gen<Integer> g6 = IntGen.biased(-20, 20);
 import fun.gen.*;
 
 Gen<Long> g1 = LongGen.arbitrary();
+// sample: [9223372036854775807, -19, 0]
 Gen<Long> g2 = LongGen.arbitrary(10L);
+// sample: [10, 482, 99999999]
 Gen<Long> g3 = LongGen.arbitrary(-100L, 100L);
+// sample: [-91, 0, 74, 100]
 Gen<Long> g4 = LongGen.biased();
+// sample: [0, -128, 2147483647, 15]
 Gen<Long> g5 = LongGen.biased(10L);
+// sample: [10, 127, 32767, 4000]
 Gen<Long> g6 = LongGen.biased(-100L, 100L);
+// sample: [-100, 0, 100, 31]
 ```
 
 ### DoubleGen
@@ -171,9 +194,13 @@ Gen<Long> g6 = LongGen.biased(-100L, 100L);
 import fun.gen.*;
 
 Gen<Double> g1 = DoubleGen.arbitrary();
+// sample: [0.7312, 0.1044, 0.9981]
 Gen<Double> g2 = DoubleGen.arbitrary(-10.0, 10.0);
+// sample: [-9.22, 0.01, 8.77]
 Gen<Double> g3 = DoubleGen.biased();
+// sample: [0.0, 127.0, -128.0, 0.443]
 Gen<Double> g4 = DoubleGen.biased(-10.0, 10.0);
+// sample: [-10.0, 0.0, 10.0, 4.56]
 ```
 
 ### BigIntGen
@@ -184,9 +211,13 @@ import fun.gen.*;
 import java.math.BigInteger;
 
 Gen<BigInteger> g1 = BigIntGen.arbitrary();
+// sample: [0, 18446744073709551615, 90234]
 Gen<BigInteger> g2 = BigIntGen.arbitrary(BigInteger.valueOf(-1_000), BigInteger.valueOf(1_000));
+// sample: [-1000, -2, 0, 999]
 Gen<BigInteger> g3 = BigIntGen.biased();
+// sample: [0, 2147483648, -9223372036854775809]
 Gen<BigInteger> g4 = BigIntGen.biased(BigInteger.valueOf(-1_000), BigInteger.valueOf(1_000));
+// sample: [-1000, 0, 1000, 321]
 ```
 
 ### BigDecGen
@@ -197,9 +228,13 @@ import fun.gen.*;
 import java.math.BigDecimal;
 
 Gen<BigDecimal> g1 = BigDecGen.arbitrary();
+// sample: [0.13, 0.91, 0.44]
 Gen<BigDecimal> g2 = BigDecGen.arbitrary(new BigDecimal("-100.00"), new BigDecimal("100.00"));
+// sample: [-99.75, 0.42, 100.00]
 Gen<BigDecimal> g3 = BigDecGen.biased();
+// sample: [0, 127, -128, 0.77]
 Gen<BigDecimal> g4 = BigDecGen.biased(new BigDecimal("-100.00"), new BigDecimal("100.00"));
+// sample: [-100.00, 0, 100.00, 18.22]
 ```
 
 Note: bounded `BigDecGen.arbitrary(min, max)` is cent-scale (`scale=2`) by design.
@@ -210,6 +245,7 @@ Note: bounded `BigDecGen.arbitrary(min, max)` is cent-scale (`scale=2`) by desig
 import fun.gen.*;
 
 Gen<Boolean> gb = BoolGen.arbitrary();
+// sample: [true, false, true, true]
 ```
 
 ### CharGen
@@ -218,11 +254,17 @@ Gen<Boolean> gb = BoolGen.arbitrary();
 import fun.gen.*;
 
 Gen<Character> g1 = CharGen.arbitrary();
+// sample: ['\u0001', 'A', 'z']
 Gen<Character> g2 = CharGen.arbitrary('a', 'z');
+// sample: ['a', 'm', 'z']
 Gen<Character> g3 = CharGen.ascii();
+// sample: ['#', 'A', '9']
 Gen<Character> g4 = CharGen.letter();
+// sample: ['a', 'B', 'z']
 Gen<Character> g5 = CharGen.digit();
+// sample: ['0', '7', '9']
 Gen<Character> g6 = CharGen.alphabetic();
+// sample: ['Ñ', 'k', 'Ж']
 ```
 
 ### StrGen
@@ -231,12 +273,19 @@ Gen<Character> g6 = CharGen.alphabetic();
 import fun.gen.*;
 
 Gen<String> g1 = StrGen.arbitrary(0, 40);
+// sample: ["", "a7$Q", "lorem123"]
 Gen<String> g2 = StrGen.biased(0, 40);
+// sample: ["", "          ", "abc"]
 Gen<String> g3 = StrGen.digits(1, 12);
+// sample: ["7", "045", "998211"]
 Gen<String> g4 = StrGen.ascii(0, 40);
+// sample: ["", "A!7", "x_y"]
 Gen<String> g5 = StrGen.letters(1, 30);
+// sample: ["a", "bCd", "xYz"]
 Gen<String> g6 = StrGen.alphabetic(1, 30);
+// sample: ["á", "ñQw", "Жk"]
 Gen<String> g7 = StrGen.alphanumeric(1, 30);
+// sample: ["a1", "Z9k2", "m7"]
 ```
 
 ### BytesGen
@@ -245,7 +294,9 @@ Gen<String> g7 = StrGen.alphanumeric(1, 30);
 import fun.gen.*;
 
 Gen<byte[]> g1 = BytesGen.arbitrary(0, 256);
+// sample: [[], [12, -4, 99], [0, 1, 2, 3]]
 Gen<byte[]> g2 = BytesGen.biased(0, 256);
+// sample: [[], [7, 8, 9], [...256 bytes...]]
 ```
 
 ### InstantGen
@@ -257,14 +308,20 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 Gen<java.time.Instant> g1 = InstantGen.arbitrary();
+// sample: [1970-01-01T00:00:00Z, 2038-01-19T03:14:07Z]
 Gen<java.time.Instant> g2 = InstantGen.biased();
+// sample: [1970-01-01T00:00:00Z, 1901-12-13T20:45:52Z]
 Gen<java.time.Instant> g3 = InstantGen.arbitrary(0L, 4_102_444_800L); // [1970, 2100]
+// sample: [1975-05-03T10:00:00Z, 2099-12-31T23:59:59Z]
 Gen<java.time.Instant> g4 = InstantGen.biased(0L, 4_102_444_800L);
+// sample: [1970-01-01T00:00:00Z, 2100-01-01T00:00:00Z]
 
 ZonedDateTime min = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
 ZonedDateTime max = ZonedDateTime.of(2030, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
 Gen<java.time.Instant> g5 = InstantGen.arbitrary(min, max);
+// sample: [2001-07-12T11:22:33Z, 2024-03-01T00:00:00Z]
 Gen<java.time.Instant> g6 = InstantGen.biased(min, max);
+// sample: [2000-01-01T00:00:00Z, 2030-01-01T00:00:00Z, 2015-10-20T08:00:00Z]
 ```
 
 ### ListGen
@@ -273,8 +330,11 @@ Gen<java.time.Instant> g6 = InstantGen.biased(min, max);
 import fun.gen.*;
 
 Gen<java.util.List<Integer>> g1 = ListGen.ofN(IntGen.arbitrary(0, 10), 5);
+// sample: [[1, 5, 9, 0, 3], [10, 10, 4, 2, 8]]
 Gen<java.util.List<Integer>> g2 = ListGen.arbitrary(IntGen.arbitrary(0, 10), 0, 20);
+// sample: [[], [3, 7], [1, 0, 2, 9]]
 Gen<java.util.List<Integer>> g3 = ListGen.biased(IntGen.arbitrary(0, 10), 0, 20);
+// sample: [[], [4, 1, 9, 8, 0, ...], [6]]
 ```
 
 ### SetGen
@@ -283,7 +343,9 @@ Gen<java.util.List<Integer>> g3 = ListGen.biased(IntGen.arbitrary(0, 10), 0, 20)
 import fun.gen.*;
 
 SetGen<Integer> base = SetGen.ofN(IntGen.arbitrary(0, 1000), 10);
+// sample: [{1, 7, 42, ...10 elems...}, {0, 15, 999, ...}]
 SetGen<Integer> tuned = base.withMaxTries(5_000);
+// sample: [{2, 13, 88, ...10 elems...}]
 ```
 
 ### MapGen
@@ -292,14 +354,19 @@ SetGen<Integer> tuned = base.withMaxTries(5_000);
 import fun.gen.*;
 
 MapGen<String, Integer> fixed = MapGen.of(StrGen.alphanumeric(3, 8), IntGen.arbitrary(0, 100), 5);
+// sample: [{a1B=12, X9k=77, ...5 entries...}]
 MapGen<String, Integer> fixedWithAlias = MapGen.ofN(StrGen.alphanumeric(3, 8), IntGen.arbitrary(0, 100), 5);
+// sample: [{k3L=4, p8Q=90, ...5 entries...}]
 MapGen<String, Integer> tuned = fixed.withMaxTries(10_000);
+// sample: [{ab1=0, zz9=100, ...5 entries...}]
 
 Gen<java.util.Map<String, Integer>> arbitraryMap =
         MapGen.arbitrary(StrGen.alphanumeric(3, 8), IntGen.arbitrary(0, 100), 0, 20);
+// sample: [{}, {u7P=11}, {a1B=12, q9W=33, ...}]
 
 Gen<java.util.Map<String, Integer>> biasedMap =
         MapGen.biased(StrGen.alphanumeric(3, 8), IntGen.arbitrary(0, 100), 0, 20);
+// sample: [{}, {...20 entries...}, {x1=4, y2=9}]
 ```
 
 ### NamedGen
@@ -308,7 +375,9 @@ Gen<java.util.Map<String, Integer>> biasedMap =
 import fun.gen.*;
 
 Gen<Integer> deferred = NamedGen.of("counter");
+// sample: [depends on later registration of "counter"]
 Gen<Integer> resolved = NamedGen.of("counter", IntGen.arbitrary(0, 100));
+// sample: [0, 57, 100, 22]
 ```
 
 ### Pair/Triple/Quadruple/Quintuple/Sextuple generators
@@ -318,16 +387,21 @@ import fun.gen.*;
 import fun.tuple.*;
 
 Gen<Pair<String, Integer>> p = PairGen.of(StrGen.alphabetic(1, 10), IntGen.arbitrary(0, 100));
+// sample: [(ana, 24), (leo, 99)]
 Gen<Triple<String, Integer, Boolean>> t = TripleGen.of(StrGen.alphabetic(1, 10), IntGen.arbitrary(0, 100), BoolGen.arbitrary());
+// sample: [(ana, 24, true), (leo, 99, false)]
 Gen<Quadruple<String, Integer, Boolean, Long>> q4 = QuadrupleGen.of(
         StrGen.alphabetic(1, 10), IntGen.arbitrary(0, 100), BoolGen.arbitrary(), LongGen.arbitrary(0L, 1000L)
 );
+// sample: [(a, 1, true, 900), (b, 88, false, 12)]
 Gen<Quintuple<String, Integer, Boolean, Long, Double>> q5 = QuintupleGen.of(
         StrGen.alphabetic(1, 10), IntGen.arbitrary(0, 100), BoolGen.arbitrary(), LongGen.arbitrary(0L, 1000L), DoubleGen.arbitrary(-1, 1)
 );
+// sample: [(a, 1, true, 900, 0.33), (b, 88, false, 12, -0.4)]
 Gen<Sextuple<String, Integer, Boolean, Long, Double, Character>> q6 = SextupleGen.of(
         StrGen.alphabetic(1, 10), IntGen.arbitrary(0, 100), BoolGen.arbitrary(), LongGen.arbitrary(0L, 1000L), DoubleGen.arbitrary(-1, 1), CharGen.letter()
 );
+// sample: [(a, 1, true, 900, 0.33, 'x'), (b, 88, false, 12, -0.4, 'Q')]
 ```
 
 ## Combinators Cookbook (All Public Methods)
@@ -342,14 +416,19 @@ import java.util.Set;
 
 // oneOf from constant values (varargs)
 Gen<String> c1 = Combinators.oneOf("A", "B", "C");
+// sample: ["A", "C", "B", "A"]
 
 // oneOf from List / Set
 Gen<String> c2 = Combinators.oneOf(List.of("X", "Y", "Z"));
+// sample: ["Z", "X", "Y"]
 Gen<String> c3 = Combinators.oneOf(Set.of("red", "green", "blue"));
+// sample: ["green", "red", "blue"]
 
 // nOf from List / Set
 Gen<List<String>> c4 = Combinators.nOf(List.of("a", "b", "c", "d"), 2);
+// sample: [["a", "d"], ["b", "c"]]
 Gen<Set<String>> c5 = Combinators.nOf(Set.of("a", "b", "c", "d"), 2);
+// sample: [{a, d}, {b, c}]
 
 // oneOf from generators (varargs)
 Gen<Integer> c6 = Combinators.oneOf(
@@ -357,12 +436,14 @@ Gen<Integer> c6 = Combinators.oneOf(
         IntGen.arbitrary(100, 110),
         IntGen.arbitrary(1000, 1010)
 );
+// sample: [5, 108, 1003, 1]
 
 // oneOf from generator list
 Gen<Integer> c7 = Combinators.oneOfList(List.of(
         IntGen.arbitrary(0, 10),
         IntGen.arbitrary(100, 110)
 ));
+// sample: [3, 109, 101, 0]
 
 // weighted choice
 Gen<Integer> c8 = Combinators.freq(
@@ -370,21 +451,29 @@ Gen<Integer> c8 = Combinators.freq(
         Pair.of(2, IntGen.arbitrary(100, 110)),
         Pair.of(1, IntGen.arbitrary(1000, 1010))
 );
+// sample: [1, 7, 4, 103, 2, 0]
 
 // nullable default (50%) and custom probability
 Gen<String> c9 = Combinators.nullable(StrGen.alphabetic(1, 8));
+// sample: [null, "ana", null, "leo"]
 Gen<String> c10 = Combinators.nullable(StrGen.alphabetic(1, 8), 20);
+// sample: ["ana", "leo", null, "marta"]
 
 // combinations from list or set
 Gen<Set<Integer>> c11 = Combinators.combinations(2, List.of(1, 2, 3, 4));
+// sample: [{1, 2}, {1, 4}, {2, 3}]
 Gen<Set<Integer>> c12 = Combinators.combinations(2, Set.of(1, 2, 3, 4));
+// sample: [{1, 3}, {2, 4}, {1, 2}]
 
 // all subsets from list or set
 Gen<Set<Integer>> c13 = Combinators.subsets(List.of(1, 2, 3));
+// sample: [{}, {1}, {2, 3}, {1, 2, 3}]
 Gen<Set<Integer>> c14 = Combinators.subsets(Set.of(1, 2, 3));
+// sample: [{2}, {1, 3}, {1, 2, 3}]
 
 // shuffle
 Gen<List<Integer>> c15 = Combinators.shuffle(List.of(1, 2, 3, 4, 5));
+// sample: [[3, 1, 5, 4, 2], [2, 5, 1, 3, 4]]
 
 // swap utility (in-place)
 List<String> xs = new ArrayList<>(List.of("a", "b", "c"));
@@ -436,27 +525,34 @@ import fun.gen.*;
 
 // Using overloaded of(...)
 MyRecordGen g1 = MyRecordGen.of("id", IntGen.arbitrary(1, 1_000));
+// sample: [{id=731}, {id=12}]
 MyRecordGen g2 = MyRecordGen.of(
         "id", IntGen.arbitrary(1, 1_000),
         "name", StrGen.alphabetic(1, 30)
 );
+// sample: [{id=731, name=Ana}, {id=12, name=Leo}]
 
 // Dynamic builder style using of() + set(...)
 MyRecordGen dynamic = MyRecordGen.of()
         .set("id", IntGen.arbitrary(1, 1_000))
         .set("name", StrGen.alphabetic(1, 30))
         .set("age", IntGen.arbitrary(18, 99));
+// sample: [{id=44, name=Eva, age=31}, {id=901, name=Tom, age=22}]
 
 // Optional/required/nullable controls
 MyRecordGen tuned = dynamic
         .withOptKeys("age")
         .withReqKeys("id", "name")
         .withNullValues("name");
+// sample: [{id=44, name=null, age=31}, {id=901, name=Tom}]
 
 MyRecordGen allOptional = tuned.withAllOptKeys();
+// sample: [{}, {id=3}, {name=Ana, age=29}]
 MyRecordGen allNullable = tuned.withAllNullValues();
+// sample: [{id=null, name=null, age=null}, {id=7, name=Eva, age=null}]
 
 Gen<MyRecord> users = tuned;
+// sample: [{id=44, name=Ana, age=31}, {id=901, name=null}]
 ```
 
 ## CSV Ingestion
@@ -511,6 +607,7 @@ Gen<MyRecord> person = NamedGen.of(
                 "parent", NamedGen.of("person")
         ).withOptKeys("parent")
 );
+// sample: [{name=Ana, age=30}, {name=Leo, age=5, parent={name=Ana, age=30}}]
 ```
 
 ## Optics

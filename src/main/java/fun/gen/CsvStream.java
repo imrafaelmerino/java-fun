@@ -31,6 +31,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private final boolean strictRowWidth;
     private final Set<String> nullTokens;
     private final java.util.function.Predicate<String> nullTokenMatcher;
+    private final BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler;
 
     /**
      * Constructs a CsvStream with custom mapping functions, type conversion, and separator.
@@ -50,7 +51,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             List<String> expectedHeaders,
             boolean strictRowWidth,
             Set<String> nullTokens,
-            java.util.function.Predicate<String> nullTokenMatcher) {
+            java.util.function.Predicate<String> nullTokenMatcher,
+            BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler) {
         this.path = path;
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
@@ -64,6 +66,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                       .map(CsvStream::removeQuotesIfExist)
                                       .collect(java.util.stream.Collectors.toUnmodifiableSet());
         this.nullTokenMatcher = nullTokenMatcher;
+        this.rowErrorHandler = rowErrorHandler;
     }
 
 
@@ -142,7 +145,6 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                                  separator);
             return StreamSupport.stream(spliterator,
                                         false)
-                                .map(this::lineToRecord)
                                 .onClose(
                                         () -> {
                                             try {
@@ -228,10 +230,11 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     /**
      * CsvSpliterator is a custom Spliterator for efficiently streaming CSV lines from a BufferedReader.
      */
-    private static class CsvSpliterator extends Spliterators.AbstractSpliterator<String[]> {
+    private class CsvSpliterator extends Spliterators.AbstractSpliterator<MyRecord> {
 
         private final BufferedReader reader;
         private final String separator;
+        private long currentRow = 1;
 
         CsvSpliterator(BufferedReader reader,
                        String separator) {
@@ -242,16 +245,30 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
         }
 
         @Override
-        public boolean tryAdvance(java.util.function.Consumer<? super String[]> action) {
+        public boolean tryAdvance(java.util.function.Consumer<? super MyRecord> action) {
             try {
-                String line = reader.readLine();
-                if (line != null) {
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        return false;
+                    }
+                    currentRow++;
                     String[] values = line.split(Pattern.quote(separator),
                                                  -1);
-                    action.accept(values);
-                    return true;
-                } else {
-                    return false;
+                    try {
+                        action.accept(lineToRecord(values));
+                        return true;
+                    } catch (RuntimeException ex) {
+                        CsvRowErrorAction decision =
+                                rowErrorHandler == null
+                                ? CsvRowErrorAction.THROW
+                                : rowErrorHandler.apply(currentRow,
+                                                        ex);
+                        if (decision == CsvRowErrorAction.SKIP) {
+                            continue;
+                        }
+                        throw ex;
+                    }
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Error reading CSV file",

@@ -27,6 +27,7 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     private boolean strictRowWidth;
     private Set<String> nullTokens;
     private Predicate<String> nullTokenMatcher;
+    private BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler;
 
     private CsvStreamBuilder(File path,
                              String separator) {
@@ -169,6 +170,28 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     }
 
     /**
+     * Sets the handler used when a data row fails to parse.
+     * The handler receives the 1-based CSV row number (including header row) and the thrown exception.
+     *
+     * @param rowErrorHandler function deciding whether to throw or skip the malformed row.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withRowErrorHandler(BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler) {
+        this.rowErrorHandler = Objects.requireNonNull(rowErrorHandler);
+        return this;
+    }
+
+    /**
+     * Convenience method that skips malformed data rows.
+     *
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withSkipMalformedRows() {
+        this.rowErrorHandler = (rowNumber, ex) -> CsvRowErrorAction.SKIP;
+        return this;
+    }
+
+    /**
      * Creates a Supplier of Stream of Records based on the configured options.
      *
      * @return A Supplier of Stream of Records with the specified configurations.
@@ -184,7 +207,8 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
                              expectedHeaders,
                              strictRowWidth,
                              nullTokens,
-                             nullTokenMatcher)
+                             nullTokenMatcher,
+                             rowErrorHandler)
                 .get();
     }
 

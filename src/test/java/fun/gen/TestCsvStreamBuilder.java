@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 class TestCsvStreamBuilder {
 
@@ -228,5 +229,49 @@ class TestCsvStreamBuilder {
             Assertions.assertEquals("ok",
                                     records.get(0).getStr("c"));
         }
+    }
+
+    @Test
+    void shouldSkipMalformedRowsWhenConfigured() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-skip-malformed",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n3,4,5\n6,7\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withStrictRowWidth()
+                                          .withSkipMalformedRows()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(2,
+                                    records.size());
+            Assertions.assertEquals(1,
+                                    records.get(0).getInt("a"));
+            Assertions.assertEquals(6,
+                                    records.get(1).getInt("a"));
+        }
+    }
+
+    @Test
+    void rowErrorHandlerShouldReceiveCsvRowNumber() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-row-handler-row-number",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n3,4,5\n");
+        AtomicLong rowSeen = new AtomicLong(-1);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> CsvStreamBuilder.of(file.toFile(),
+                                                          ",")
+                                                      .withStrictRowWidth()
+                                                      .withRowErrorHandler((rowNumber, ex) -> {
+                                                          rowSeen.set(rowNumber);
+                                                          return CsvRowErrorAction.THROW;
+                                                      })
+                                                      .get()
+                                                      .toList());
+        Assertions.assertEquals(3,
+                                rowSeen.get());
     }
 }

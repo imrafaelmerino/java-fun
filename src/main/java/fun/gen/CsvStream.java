@@ -3,6 +3,7 @@ package fun.gen;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +33,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private final Set<String> nullTokens;
     private final java.util.function.Predicate<String> nullTokenMatcher;
     private final BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler;
+    private final BiConsumer<Long, RuntimeException> errorCollector;
 
     /**
      * Constructs a CsvStream with custom mapping functions, type conversion, and separator.
@@ -52,7 +54,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             boolean strictRowWidth,
             Set<String> nullTokens,
             java.util.function.Predicate<String> nullTokenMatcher,
-            BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler) {
+            BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler,
+            BiConsumer<Long, RuntimeException> errorCollector) {
         this.path = path;
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
@@ -67,6 +70,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                       .collect(java.util.stream.Collectors.toUnmodifiableSet());
         this.nullTokenMatcher = nullTokenMatcher;
         this.rowErrorHandler = rowErrorHandler;
+        this.errorCollector = errorCollector;
     }
 
 
@@ -259,6 +263,10 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                         action.accept(lineToRecord(values));
                         return true;
                     } catch (RuntimeException ex) {
+                        if (errorCollector != null) {
+                            errorCollector.accept(currentRow,
+                                                  ex);
+                        }
                         CsvRowErrorAction decision =
                                 rowErrorHandler == null
                                 ? CsvRowErrorAction.THROW

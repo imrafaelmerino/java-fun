@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,6 +29,7 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     private Set<String> nullTokens;
     private Predicate<String> nullTokenMatcher;
     private BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler;
+    private BiConsumer<Long, RuntimeException> errorCollector;
 
     private CsvStreamBuilder(File path,
                              String separator) {
@@ -192,6 +194,18 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     }
 
     /**
+     * Registers a collector called every time a data row fails to parse.
+     * The collector receives the 1-based CSV row number (including header row) and the thrown exception.
+     *
+     * @param errorCollector error collector callback.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withErrorCollector(BiConsumer<Long, RuntimeException> errorCollector) {
+        this.errorCollector = Objects.requireNonNull(errorCollector);
+        return this;
+    }
+
+    /**
      * Creates a Supplier of Stream of Records based on the configured options.
      *
      * @return A Supplier of Stream of Records with the specified configurations.
@@ -208,7 +222,8 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
                              strictRowWidth,
                              nullTokens,
                              nullTokenMatcher,
-                             rowErrorHandler)
+                             rowErrorHandler,
+                             errorCollector)
                 .get();
     }
 

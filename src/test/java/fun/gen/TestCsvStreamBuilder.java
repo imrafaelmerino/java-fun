@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 class TestCsvStreamBuilder {
@@ -269,6 +270,48 @@ class TestCsvStreamBuilder {
                                                           rowSeen.set(rowNumber);
                                                           return CsvRowErrorAction.THROW;
                                                       })
+                                                      .get()
+                                                      .toList());
+        Assertions.assertEquals(3,
+                                rowSeen.get());
+    }
+
+    @Test
+    void errorCollectorShouldCaptureMalformedRowsWhenSkipping() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-error-collector-skip",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n3,4,5\n6,7,8\n9,10\n");
+        List<Long> rows = new ArrayList<>();
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withStrictRowWidth()
+                                          .withErrorCollector((row, ex) -> rows.add(row))
+                                          .withSkipMalformedRows()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(2,
+                                    records.size());
+            Assertions.assertEquals(List.of(3L,
+                                           4L),
+                                    rows);
+        }
+    }
+
+    @Test
+    void errorCollectorShouldCaptureRowBeforeThrowing() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-error-collector-throw",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n3,4,5\n");
+        AtomicLong rowSeen = new AtomicLong(-1);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> CsvStreamBuilder.of(file.toFile(),
+                                                          ",")
+                                                      .withStrictRowWidth()
+                                                      .withErrorCollector((row, ex) -> rowSeen.set(row))
                                                       .get()
                                                       .toList());
         Assertions.assertEquals(3,

@@ -20,6 +20,10 @@ All notable changes to this project are documented in this file.
 - `CsvStream` now applies `headerMapper` exactly once.
 - `CsvStream` correctly handles separators inside quoted values.
 - `CsvStream` correctly handles escaped quotes (`""`) inside quoted values.
+- `CsvStream` now propagates downstream consumer exceptions instead of treating them as malformed-row errors.
+- `CsvStream` now closes the underlying reader when `withExpectedHeaders(...)` validation fails during stream initialization.
+- `Combinators.combinations(k, input)` no longer relies on rejection sampling, avoiding failures for extreme cardinalities (`k=0`, `k=n`, near-edges) on large inputs.
+- `Combinators.combinations(k, List)` now validates `k` against the number of distinct input values, preventing impossible requests when the list contains duplicates.
 
 ### Documentation
 

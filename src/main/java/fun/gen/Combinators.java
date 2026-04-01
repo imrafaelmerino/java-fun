@@ -308,15 +308,23 @@ public final class Combinators {
      * @param k     The size of the combinations to generate.
      * @param input A list of input values.
      * @return A generator that produces combinations of elements of size {@code k} from the input list.
-     * @throws IllegalArgumentException If {@code k} is negative or greater than {@code input.size()}.
+     * @throws IllegalArgumentException If {@code k} is negative or greater than the number of distinct values in
+     *                                  {@code input}.
      */
     public static <I> Gen<Set<I>> combinations(final int k,
                                                final List<I> input) {
         requireNonNull(input);
-        if (k < 0 || k > input.size()) {
-            throw new IllegalArgumentException("k must be between 0 and input.size");
+        List<I> distinctInput = new ArrayList<>(new LinkedHashSet<>(input));
+        if (k < 0 || k > distinctInput.size()) {
+            throw new IllegalArgumentException("k must be between 0 and number of distinct input values");
         }
-        return subsets(input).suchThat(it -> it.size() == k);
+        return random -> () -> {
+            List<I> shuffled = new ArrayList<>(distinctInput);
+            shuffle(shuffled,
+                    random);
+            return new HashSet<>(shuffled.subList(0,
+                                                  k));
+        };
     }
 
     /**

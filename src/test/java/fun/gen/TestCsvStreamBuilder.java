@@ -1,14 +1,19 @@
 package fun.gen;
 
+import com.sun.management.UnixOperatingSystemMXBean;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 class TestCsvStreamBuilder {
@@ -449,5 +454,63 @@ class TestCsvStreamBuilder {
                                                       .toList());
         Assertions.assertEquals(3,
                                 rowSeen.get());
+    }
+
+    @Test
+    void shouldPropagateDownstreamConsumerExceptionsEvenWhenSkippingMalformedRows() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-downstream-exception",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n3,4\n");
+        AtomicInteger handlerCalls = new AtomicInteger();
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withRowErrorHandler((row, ex) -> {
+                                              handlerCalls.incrementAndGet();
+                                              return CsvRowErrorAction.SKIP;
+                                          })
+                                          .get()) {
+            Assertions.assertThrows(IllegalStateException.class,
+                                    () -> stream.forEach(record -> {
+                                        throw new IllegalStateException("downstream failure");
+                                    }));
+        }
+        Assertions.assertEquals(0,
+                                handlerCalls.get());
+    }
+
+    @Test
+    void shouldCloseReaderWhenExpectedHeadersValidationFails() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-expected-headers-close",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n");
+
+        long before = openFileDescriptorCount();
+        Assumptions.assumeTrue(before >= 0,
+                               "Open file descriptor count not available on this platform");
+
+        for (int i = 0; i < 250; i++) {
+            Assertions.assertThrows(IllegalArgumentException.class,
+                                    () -> CsvStreamBuilder.of(file.toFile(),
+                                                              ",")
+                                                          .withExpectedHeaders("a",
+                                                                               "c")
+                                                          .get()
+                                                          .toList());
+        }
+
+        long after = openFileDescriptorCount();
+        Assertions.assertTrue(after - before < 30,
+                              "Potential reader leak detected during header validation mismatch");
+    }
+
+    private static long openFileDescriptorCount() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        if (osBean instanceof UnixOperatingSystemMXBean unix) {
+            return unix.getOpenFileDescriptorCount();
+        }
+        return -1L;
     }
 }

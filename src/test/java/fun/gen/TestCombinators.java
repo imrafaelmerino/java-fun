@@ -383,4 +383,29 @@ public class TestCombinators {
                                                                        "b")));
     }
 
+    @Test
+    public void combinationsShouldGenerateExtremeSizesWithoutSuchThatFailures() {
+        List<Integer> input = IntStream.range(0,
+                                              40)
+                                     .boxed()
+                                     .toList();
+
+        Gen<Set<Integer>> empty = Combinators.combinations(0,
+                                                            input);
+        Gen<Set<Integer>> single = Combinators.combinations(1,
+                                                             input);
+        Gen<Set<Integer>> full = Combinators.combinations(input.size(),
+                                                           input);
+
+        Assertions.assertDoesNotThrow(() -> empty.sample(20)
+                                                 .forEach(values -> Assertions.assertEquals(0,
+                                                                                             values.size())));
+        Assertions.assertDoesNotThrow(() -> single.sample(20)
+                                                  .forEach(values -> Assertions.assertEquals(1,
+                                                                                              values.size())));
+        Assertions.assertDoesNotThrow(() -> full.sample(20)
+                                                .forEach(values -> Assertions.assertEquals(input.size(),
+                                                                                            values.size())));
+    }
+
 }

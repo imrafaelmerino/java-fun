@@ -137,9 +137,10 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      */
     @Override
     public Stream<MyRecord> get() {
+        BufferedReader br = null;
         try {
-            var br = new BufferedReader(new FileReader(path,
-                                                       StandardCharsets.UTF_8));
+            br = new BufferedReader(new FileReader(path,
+                                                   StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
             this.headers = Arrays.stream(splitCsvLine(headerLine,
@@ -148,19 +149,36 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                  .map(headerMapper)
                                  .toList();
             validateExpectedHeaders();
-            var spliterator = new CsvSpliterator(br,
+            final BufferedReader reader = br;
+            var spliterator = new CsvSpliterator(reader,
                                                  separator);
             return StreamSupport.stream(spliterator,
                                         false)
                                 .onClose(
                                         () -> {
                                             try {
-                                                br.close();
+                                                reader.close();
                                             } catch (IOException e) {
                                                 throw new UncheckedIOException(e);
                                             }
                                         });
+        } catch (RuntimeException e) {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException closeEx) {
+                    e.addSuppressed(closeEx);
+                }
+            }
+            throw e;
         } catch (IOException e) {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException closeEx) {
+                    e.addSuppressed(closeEx);
+                }
+            }
             throw new UncheckedIOException(e);
         }
 
@@ -303,9 +321,9 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                     currentRow++;
                     String[] values = splitCsvLine(line,
                                                    separator);
+                    MyRecord record;
                     try {
-                        action.accept(lineToRecord(values));
-                        return true;
+                        record = lineToRecord(values);
                     } catch (RuntimeException ex) {
                         if (errorCollector != null) {
                             errorCollector.accept(currentRow,
@@ -321,6 +339,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                         }
                         throw ex;
                     }
+                    action.accept(record);
+                    return true;
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Error reading CSV file",

@@ -34,6 +34,78 @@ class TestCsvStreamBuilder {
     }
 
     @Test
+    void shouldTrimValuesByDefault() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-default-trim",
+                                         ".csv");
+        Files.writeString(file,
+                          "name\n  value  \n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals("value",
+                                    records.get(0).getStr("name"));
+        }
+    }
+
+    @Test
+    void shouldAllowDisablingTrimValues() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-disable-trim",
+                                         ".csv");
+        Files.writeString(file,
+                          "name\n  value  \n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withTrimValues(false)
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals("  value  ",
+                                    records.get(0).getStr("name"));
+        }
+    }
+
+    @Test
+    void customValueMapperShouldKeepLegacyRawInputByDefault() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-custom-mapper-raw",
+                                         ".csv");
+        Files.writeString(file,
+                          "name\n  value  \n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withValueMapper((header, value) -> "[" + value + "]")
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals("[  value  ]",
+                                    records.get(0).getStr("name"));
+        }
+    }
+
+    @Test
+    void customValueMapperCanWorkWithExplicitTrimValues() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-custom-mapper-trim",
+                                         ".csv");
+        Files.writeString(file,
+                          "name\n  value  \n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withValueMapper((header, value) -> "[" + value + "]")
+                                          .withTrimValues(true)
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals("[value]",
+                                    records.get(0).getStr("name"));
+        }
+    }
+
+    @Test
     void shouldConvertQuotedFalseToBoolean() throws Exception {
         Path file = Files.createTempFile("java-fun-csv-quoted-bool",
                                          ".csv");

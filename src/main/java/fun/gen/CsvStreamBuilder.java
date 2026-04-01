@@ -22,8 +22,10 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     private final File path;
     private final String separator;
     private Function<String, String> headerMapper = String::trim;
-    private BiFunction<String, String, String> valueMapper = (header, val) -> val.trim();
+    private BiFunction<String, String, String> valueMapper = (header, val) -> val;
     private boolean enableTypeConversion = true;
+    private boolean trimValues = true;
+    private boolean trimValuesConfigured;
     private List<String> expectedHeaders;
     private boolean strictRowWidth;
     private Set<String> nullTokens;
@@ -72,6 +74,23 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
      */
     public CsvStreamBuilder withValueMapper(BiFunction<String, String, String> valueMapper) {
         this.valueMapper = Objects.requireNonNull(valueMapper);
+        // Preserve legacy behavior for custom mappers unless caller explicitly configured trimming.
+        if (!trimValuesConfigured) {
+            this.trimValues = false;
+        }
+        return this;
+    }
+
+    /**
+     * Controls whether raw CSV cell values are trimmed before value mapping.
+     * Default is {@code true} for the default mapper.
+     *
+     * @param trimValues true to trim values before applying {@link #withValueMapper(BiFunction)}.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withTrimValues(boolean trimValues) {
+        this.trimValues = trimValues;
+        this.trimValuesConfigured = true;
         return this;
     }
 
@@ -217,6 +236,7 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
                              headerMapper,
                              valueMapper,
                              enableTypeConversion,
+                             trimValues,
                              separator,
                              expectedHeaders,
                              strictRowWidth,

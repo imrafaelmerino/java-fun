@@ -21,6 +21,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private final BiFunction<String, String, String> valueMapper;
 
     private final boolean enableTypeConversion;
+    private final boolean trimValues;
 
     private static final Pattern numberPattern = Pattern.compile("^-?(?:0|[1-9]\\d*)(\\.\\d+)?$");
     private final File path;
@@ -49,6 +50,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             Function<String, String> headerMapper,
             BiFunction<String, String, String> valueMapper,
             boolean enableTypeConversion,
+            boolean trimValues,
             String separator,
             List<String> expectedHeaders,
             boolean strictRowWidth,
@@ -60,6 +62,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
         this.enableTypeConversion = enableTypeConversion;
+        this.trimValues = trimValues;
         this.separator = separator;
         this.expectedHeaders = expectedHeaders == null ? null : List.copyOf(expectedHeaders);
         this.strictRowWidth = strictRowWidth;
@@ -199,8 +202,9 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      */
     private Object parseValue(String header,
                               String strValue) {
+        String inputValue = trimValues ? strValue.trim() : strValue;
         String mappedValue = valueMapper.apply(header,
-                                               strValue);
+                                               inputValue);
         if (mappedValue == null) {
             return null;
         }

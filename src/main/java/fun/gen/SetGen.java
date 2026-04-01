@@ -29,7 +29,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
 
     /**
      * Creates a new SetGen instance with the specified generator and size.
-     * The maximum number of tries will be set to size * 10.
+     * The maximum number of tries is derived from the requested size and capped at {@link Integer#MAX_VALUE}.
      *
      * @param gen  The generator for individual elements.
      * @param size The desired size of the generated set.
@@ -40,7 +40,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
                                     final int size) {
         return new SetGen<>(gen,
                             size,
-                            size * 10);
+                            defaultMaxTries(size));
     }
 
     /**
@@ -57,6 +57,13 @@ public final class SetGen<T> implements Gen<Set<T>> {
         return new SetGen<>(gen,
                             size,
                             tries);
+    }
+
+    private static int defaultMaxTries(final int size) {
+        long tries = (long) size * 10L;
+        return tries > Integer.MAX_VALUE
+                ? Integer.MAX_VALUE
+                : (int) tries;
     }
 
 

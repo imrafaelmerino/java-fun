@@ -190,6 +190,9 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
                                                 final int size,
                                                 final int maxTries) {
         HashMap<K, V> map = new HashMap<>();
+        if (size == 0) {
+            return map;
+        }
         int tries = 0;
         do {
             map.put(keys.get(),

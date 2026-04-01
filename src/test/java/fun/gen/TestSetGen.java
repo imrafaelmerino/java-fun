@@ -18,4 +18,10 @@ public class TestSetGen {
                                 () -> gen.sample(10).peek(System.out::println).count());
     }
 
+    @Test
+    public void ofNShouldNotOverflowDefaultMaxTriesWithLargeSize() {
+        Assertions.assertDoesNotThrow(() -> SetGen.ofN(Gen.cons("x"),
+                                                       Integer.MAX_VALUE));
+    }
+
 }

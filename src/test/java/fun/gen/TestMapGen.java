@@ -104,4 +104,25 @@ public class TestMapGen {
                              size);
         Assertions.assertTrue(gen.sample(500).allMatch(map -> map.size() == size));
     }
+
+    @Test
+    public void ofWithZeroSizeShouldGenerateEmptyMaps() {
+        var gen = MapGen.of(StrGen.alphanumeric(1,
+                                                5),
+                            IntGen.arbitrary(0,
+                                             10),
+                            0);
+        Assertions.assertTrue(gen.sample(200).allMatch(Map::isEmpty));
+    }
+
+    @Test
+    public void arbitraryRangeWithZeroOnlyShouldGenerateEmptyMaps() {
+        var gen = MapGen.arbitrary(StrGen.alphanumeric(1,
+                                                       5),
+                                   IntGen.arbitrary(0,
+                                                    10),
+                                   0,
+                                   0);
+        Assertions.assertTrue(gen.sample(200).allMatch(Map::isEmpty));
+    }
 }

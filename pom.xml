@@ -38,10 +38,13 @@
         <MAVEN-SUREFIRE-PLUGIN.VERSION>3.5.5</MAVEN-SUREFIRE-PLUGIN.VERSION>
         <MAVEN-JAR-PLUGIN.VERSION>3.5.0</MAVEN-JAR-PLUGIN.VERSION>
         <MAVEN-JAVADOC-PLUGIN.VERSION>3.12.0</MAVEN-JAVADOC-PLUGIN.VERSION>
+        <MAVEN-JACOCO-PLUGIN.VERSION>0.8.12</MAVEN-JACOCO-PLUGIN.VERSION>
         <MAVEN-ENFORCER-PLUGIN.VERSION>3.5.0</MAVEN-ENFORCER-PLUGIN.VERSION>
         <MAVEN-MINIMUM-VERSION>3.6.3</MAVEN-MINIMUM-VERSION>
         <JAVA-MINIMUM-VERSION>21</JAVA-MINIMUM-VERSION>
         <JAVAFUN.STATS.ENABLED>false</JAVAFUN.STATS.ENABLED>
+        <JAVAFUN.COVERAGE.MIN.INSTRUCTION>0.50</JAVAFUN.COVERAGE.MIN.INSTRUCTION>
+        <JAVAFUN.COVERAGE.MIN.BRANCH>0.35</JAVAFUN.COVERAGE.MIN.BRANCH>
         <APACHE_JMETER_CORE.VERSION>5.6.3</APACHE_JMETER_CORE.VERSION>
         <JUNIT-JUPITER-API.VERSION>5.11.3</JUNIT-JUPITER-API.VERSION>
         <JSON-VALUES.VERSION>14.0.0</JSON-VALUES.VERSION>
@@ -114,6 +117,38 @@
                         <javafun.stats>${JAVAFUN.STATS.ENABLED}</javafun.stats>
                     </systemPropertyVariables>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${MAVEN-JACOCO-PLUGIN.VERSION}</version>
+                <configuration>
+                    <rules>
+                        <rule>
+                            <element>BUNDLE</element>
+                            <limits>
+                                <limit>
+                                    <counter>INSTRUCTION</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>${JAVAFUN.COVERAGE.MIN.INSTRUCTION}</minimum>
+                                </limit>
+                                <limit>
+                                    <counter>BRANCH</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>${JAVAFUN.COVERAGE.MIN.BRANCH}</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

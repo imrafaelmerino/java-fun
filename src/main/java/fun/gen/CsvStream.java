@@ -11,9 +11,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * CsvStream provides a convenient way to process CSV files as a Stream of Records.
- * The class allows customization through various functions for header and value mapping,
- * as well as enabling/disabling type conversion.
+ * Internal CSV reader that exposes rows as {@link MyRecord}.
+ * Header and value mappers are applied on top of raw CSV tokens.
  */
 class CsvStream implements Supplier<Stream<MyRecord>> {
 
@@ -53,16 +52,14 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
 
 
     /**
-     * Attempts to convert a string value to a suitable data type, including boolean, integer,
-     * long, and double. If conversion is not possible, the original string is returned.
-     *
-     * @param value The string value to convert.
-     * @return The converted value or the original string.
+     * Attempts to convert a string value to a primitive-friendly type:
+     * boolean, int, long, or double (in that order). If no conversion matches,
+     * the original (possibly unquoted) string is returned.
      */
     private Object tryConvert(String value) {
         var xs = removeQuotesIfExist(value);
 
-        if (xs.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"))
+        if (xs.equalsIgnoreCase("true") || xs.equalsIgnoreCase("false"))
             return Boolean.parseBoolean(xs);
 
         if (numberPattern.matcher(xs).matches()) {
@@ -105,10 +102,12 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     }
 
     /**
-     * Retrieves a Stream of Records from the CSV file.
+     * Reads the CSV and returns it as a lazy stream of records.
+     * The stream closes the underlying reader on stream close.
      *
-     * @return A Stream of Records.
-     * @throws UncheckedIOException If an I/O error occurs while reading the CSV file.
+     * @return A stream of parsed records.
+     * @throws IllegalArgumentException If the CSV has no header line.
+     * @throws UncheckedIOException     If an I/O error occurs while reading the file.
      */
     @Override
     public Stream<MyRecord> get() {
@@ -117,7 +116,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                                        StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
-            this.headers = Arrays.stream(headerLine.split(","))
+            this.headers = Arrays.stream(headerLine.split(separator))
                                  .map(CsvStream::removeQuotesIfExist)
                                  .map(headerMapper)
                                  .toList();

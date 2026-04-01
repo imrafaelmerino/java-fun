@@ -8,12 +8,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * CsvStreamBuilder is a builder class for creating instances of CsvStream with customizable options.
- * The builder allows users to configure header and value mapping, type conversion, separator, and default values.
- * The resulting CsvStream processes CSV files where the header row defines the names of the records,
- * and each subsequent row represents a record with column values.
- * Type conversions from string include converting to boolean (e.g., "true" to true),
- * integers (e.g., "123" to 123), longs, and doubles. The header row is mandatory in the CSV file.
+ * Builder for creating CSV streams as {@link Stream} of {@link MyRecord}.
+ * <p>
+ * Supports customizable header/value mapping, optional type conversion, and custom separators.
+ * The first line is treated as the header; each subsequent line becomes one record.
  */
 public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
 
@@ -37,6 +35,7 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
      * @param path      The path to the CSV file.
      * @param separator The CSV column separator.
      * @return A CsvStreamBuilder instance.
+     * @throws IllegalArgumentException If the file does not exist or the separator is blank.
      */
     public static CsvStreamBuilder of(File path,
                                       String separator) {

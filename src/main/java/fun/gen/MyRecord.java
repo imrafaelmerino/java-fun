@@ -508,14 +508,13 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional instant.
-     * If the field does not exist, it returns the result from the provided supplier.
+     * Retrieves the value associated with the specified field name as an {@link Instant}.
+     * If the field is absent or null, the provided supplier is used to provide a fallback value.
      *
      * @param key      The name of the field.
-     * @param supplier A supplier to provide a default Instant value if the field is null.
-     * @return The Instant value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not an Instant,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @param supplier A supplier used when the field is absent or null.
+     * @return The stored instant value, or the supplier value when the field is absent or null.
+     * @throws RecordTypeNotExpected If the field exists but cannot be interpreted as an {@link Instant}.
      */
     public Instant getInstant(final String key,
                               final Supplier<Instant> supplier) {
@@ -528,11 +527,10 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional instant.
-     * If the field does not exist, it returns a default value of null.
+     * Retrieves the value associated with the specified field name as an {@link Instant}.
      *
      * @param key The name of the field.
-     * @return The Instant value if present, or null if the field is not found.
+     * @return The instant value if present; otherwise {@code null}.
      * @see #getInstant(String, Supplier)
      */
     public Instant getInstant(final String key) {
@@ -563,14 +561,14 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional double precision floating-point number.
-     * If the field does not exist, it returns the result from the provided supplier.
+     * Retrieves the value associated with the specified field name as a {@code double}.
+     * Numeric widening is supported from {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, and {@link Float}.
+     * If the field is absent or null, the provided supplier is used.
      *
      * @param key      The name of the field.
-     * @param supplier A supplier to provide a default Double value if the field is null.
-     * @return The Double value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a Double,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @param supplier A supplier used when the field is absent or null.
+     * @return The converted double value, or the supplier value when absent/null.
+     * @throws RecordTypeNotExpected If the field exists but is not compatible with a double value.
      */
     public double getDouble(final String key,
                             final Supplier<Double> supplier) {
@@ -588,11 +586,10 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional double precision floating-point number.
-     * If the field does not exist, it returns a default value of null.
+     * Retrieves the value associated with the specified field name as a boxed {@link Double}.
      *
      * @param key The name of the field.
-     * @return The Double value if present, or null if the field is not found.
+     * @return The value if present; otherwise {@code null}.
      * @see #getDouble(String, Supplier)
      */
     public Double getDouble(final String key) {
@@ -620,14 +617,13 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional boolean.
-     * If the field does not exist, it returns the result from the provided supplier.
+     * Retrieves the value associated with the specified field name as a {@code boolean}.
+     * If the field is absent or null, the provided supplier is used.
      *
      * @param key      The name of the field.
-     * @param supplier A supplier to provide a default Boolean value if the field is null.
-     * @return The Boolean value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a Boolean,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @param supplier A supplier used when the field is absent or null.
+     * @return The stored boolean value, or the supplier value when absent/null.
+     * @throws RecordTypeNotExpected If the field exists but is not a {@link Boolean}.
      */
     public boolean getBool(final String key,
                            final Supplier<Boolean> supplier) {
@@ -640,11 +636,10 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional boolean.
-     * If the field does not exist, it returns a default value of null.
+     * Retrieves the value associated with the specified field name as a boxed {@link Boolean}.
      *
      * @param key The name of the field.
-     * @return The Boolean value if present, or null if the field is not found.
+     * @return The value if present; otherwise {@code null}.
      * @see #getBool(String, Supplier)
      */
     public Boolean getBool(final String key) {
@@ -669,14 +664,13 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional character.
-     * If the field does not exist, it returns the result from the provided supplier.
+     * Retrieves the value associated with the specified field name as a {@code char}.
+     * If the field is absent or null, the provided supplier is used.
      *
      * @param key      The name of the field.
-     * @param supplier A supplier to provide a default Character value if the field is null.
-     * @return The Character value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a Character,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @param supplier A supplier used when the field is absent or null.
+     * @return The stored character value, or the supplier value when absent/null.
+     * @throws RecordTypeNotExpected If the field exists but is not a {@link Character}.
      */
     public char getChar(final String key,
                         final Supplier<Character> supplier) {
@@ -689,11 +683,10 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional character.
-     * If the field does not exist, it returns a default value of null.
+     * Retrieves the value associated with the specified field name as a boxed {@link Character}.
      *
      * @param key The name of the field.
-     * @return The Character value if present, or null if the field is not found.
+     * @return The value if present; otherwise {@code null}.
      * @see #getChar(String, Supplier)
      */
     public Character getChar(final String key) {
@@ -723,14 +716,14 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional BigInteger.
-     * If the field does not exist, it returns the result from the provided supplier.
+     * Retrieves the value associated with the specified field name as a {@link BigInteger}.
+     * Numeric widening is supported from {@link Byte}, {@link Short}, {@link Integer}, and {@link Long}.
+     * If the field is absent or null, the provided supplier is used.
      *
      * @param key The name of the field.
-     * @param bi  A supplier to provide a default BigInteger value if the field is null.
-     * @return The BigInteger value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a BigInteger,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @param bi  A supplier used when the field is absent or null.
+     * @return The converted big integer value, or the supplier value when absent/null.
+     * @throws RecordTypeNotExpected If the field exists but cannot be interpreted as a big integer.
      */
     public BigInteger getBigInt(final String key,
                                 final Supplier<BigInteger> bi) {
@@ -747,11 +740,10 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional BigInteger.
-     * If the field does not exist, it returns a default value of null.
+     * Retrieves the value associated with the specified field name as a {@link BigInteger}.
      *
      * @param key The name of the field.
-     * @return The BigInteger value if present, or null if the field is not found.
+     * @return The value if present; otherwise {@code null}.
      * @see #getBigInt(String, Supplier)
      */
     public BigInteger getBigInt(final String key) {

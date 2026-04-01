@@ -3,6 +3,7 @@ package fun.gen;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -23,6 +24,7 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     private boolean enableTypeConversion = true;
     private List<String> expectedHeaders;
     private boolean strictRowWidth;
+    private Set<String> nullTokens;
 
     private CsvStreamBuilder(File path,
                              String separator) {
@@ -127,6 +129,32 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     }
 
     /**
+     * Sets the string tokens that should be interpreted as {@code null}
+     * after value mapping and quote normalization.
+     *
+     * @param nullTokens tokens to map to null.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withNullTokens(Set<String> nullTokens) {
+        Objects.requireNonNull(nullTokens);
+        this.nullTokens = Set.copyOf(nullTokens);
+        if (this.nullTokens.stream().anyMatch(Objects::isNull)) {
+            throw new NullPointerException("nullTokens contains null values");
+        }
+        return this;
+    }
+
+    /**
+     * Varargs overload for null tokens.
+     *
+     * @param nullTokens tokens to map to null.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withNullTokens(String... nullTokens) {
+        return withNullTokens(Set.of(Objects.requireNonNull(nullTokens)));
+    }
+
+    /**
      * Creates a Supplier of Stream of Records based on the configured options.
      *
      * @return A Supplier of Stream of Records with the specified configurations.
@@ -140,7 +168,8 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
                              enableTypeConversion,
                              separator,
                              expectedHeaders,
-                             strictRowWidth)
+                             strictRowWidth,
+                             nullTokens)
                 .get();
     }
 

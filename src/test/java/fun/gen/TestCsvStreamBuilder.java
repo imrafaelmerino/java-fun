@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 class TestCsvStreamBuilder {
 
@@ -158,6 +159,48 @@ class TestCsvStreamBuilder {
                                     records.get(0).getStr("a"));
             Assertions.assertEquals("",
                                     records.get(0).getStr("b"));
+        }
+    }
+
+    @Test
+    void shouldMapConfiguredNullTokensToNull() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-null-tokens",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b,c\nnull,N/A,\"\"\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withNullTokens(Set.of("null",
+                                                                 "N/A",
+                                                                 ""))
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertTrue(records.get(0).getOptStr("a").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptStr("b").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptStr("c").isEmpty());
+        }
+    }
+
+    @Test
+    void shouldSupportVarargsNullTokens() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-null-tokens-varargs",
+                                         ".csv");
+        Files.writeString(file,
+                          "x\nNULL\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withNullTokens("NULL")
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertTrue(records.get(0).getOptStr("x").isEmpty());
         }
     }
 }

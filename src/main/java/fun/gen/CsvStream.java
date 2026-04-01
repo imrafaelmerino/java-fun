@@ -29,6 +29,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private final String separator;
     private final List<String> expectedHeaders;
     private final boolean strictRowWidth;
+    private final Set<String> nullTokens;
 
     /**
      * Constructs a CsvStream with custom mapping functions, type conversion, and separator.
@@ -46,7 +47,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             boolean enableTypeConversion,
             String separator,
             List<String> expectedHeaders,
-            boolean strictRowWidth) {
+            boolean strictRowWidth,
+            Set<String> nullTokens) {
         this.path = path;
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
@@ -54,6 +56,11 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
         this.separator = separator;
         this.expectedHeaders = expectedHeaders == null ? null : List.copyOf(expectedHeaders);
         this.strictRowWidth = strictRowWidth;
+        this.nullTokens = nullTokens == null
+                          ? Set.of()
+                          : nullTokens.stream()
+                                      .map(CsvStream::removeQuotesIfExist)
+                                      .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
 
@@ -183,14 +190,15 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      */
     private Object parseValue(String header,
                               String strValue) {
-        if (strValue.isEmpty()) return strValue;
-
         String mappedValue = valueMapper.apply(header,
                                                strValue);
         if (mappedValue == null) {
             return null;
         }
         String normalizedValue = removeQuotesIfExist(mappedValue);
+        if (nullTokens.contains(normalizedValue)) {
+            return null;
+        }
 
         return enableTypeConversion ?
                tryConvert(normalizedValue) :

@@ -242,18 +242,18 @@ public final class Combinators {
     private static <A> Supplier<A> freqSupplier(SplitGen split,
                                                 RandomGenerator seed,
                                                 List<Pair<Integer, Gen<? extends A>>> filtered) {
-        int total = 0;
-        TreeMap<Integer, Supplier<? extends A>> treeMap = new TreeMap<>();
+        long total = 0L;
+        TreeMap<Long, Supplier<? extends A>> treeMap = new TreeMap<>();
         for (Pair<Integer, Gen<? extends A>> t : filtered) {
             total += t.first();
             treeMap.put(total,
                         t.second()
                          .apply(split.apply(seed)));
         }
-        Supplier<Integer> choose =
-                IntGen.arbitrary(1,
-                                 total)
-                      .apply(split.apply(seed));
+        Supplier<Long> choose =
+                LongGen.arbitrary(1L,
+                                  total)
+                       .apply(split.apply(seed));
         return () -> treeMap.ceilingEntry(choose.get())
                             .getValue().get();
     }

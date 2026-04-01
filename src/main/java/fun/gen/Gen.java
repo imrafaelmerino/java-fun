@@ -78,6 +78,7 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
      * @return A generator that produces distinct values based on the given number of tries.
      */
     default Gen<O> distinct(int tries) {
+        if (tries < 0) throw new IllegalArgumentException("tries < 0");
         return seed -> {
             Set<O> generated = new HashSet<>();
             Supplier<O> gen = this.apply(seed);

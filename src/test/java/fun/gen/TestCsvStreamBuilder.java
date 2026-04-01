@@ -46,7 +46,7 @@ class TestCsvStreamBuilder {
                                           .get()) {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals("value",
-                                    records.get(0).getStr("name"));
+                                    records.get(0).getString("name"));
         }
     }
 
@@ -64,7 +64,7 @@ class TestCsvStreamBuilder {
                                           .get()) {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals("  value  ",
-                                    records.get(0).getStr("name"));
+                                    records.get(0).getString("name"));
         }
     }
 
@@ -82,7 +82,7 @@ class TestCsvStreamBuilder {
                                           .get()) {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals("[  value  ]",
-                                    records.get(0).getStr("name"));
+                                    records.get(0).getString("name"));
         }
     }
 
@@ -101,7 +101,7 @@ class TestCsvStreamBuilder {
                                           .get()) {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals("[value]",
-                                    records.get(0).getStr("name"));
+                                    records.get(0).getString("name"));
         }
     }
 
@@ -118,7 +118,7 @@ class TestCsvStreamBuilder {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals(1,
                                     records.size());
-            Assertions.assertFalse(records.get(0).getBool("flag"));
+            Assertions.assertFalse(records.get(0).getBoolean("flag"));
         }
     }
 
@@ -143,6 +143,47 @@ class TestCsvStreamBuilder {
     }
 
     @Test
+    void shouldKeepSeparatorInsideQuotedValue() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-quoted-separator",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n\"1,2\",x\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withoutTypeConversion()
+                                          .withStrictRowWidth()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals("1,2",
+                                    records.get(0).getString("a"));
+            Assertions.assertEquals("x",
+                                    records.get(0).getString("b"));
+        }
+    }
+
+    @Test
+    void shouldUnescapeDoubleQuotesInsideQuotedValues() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-escaped-quotes",
+                                         ".csv");
+        Files.writeString(file,
+                          "text\n\"he said \"\"hi\"\"\"\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals("he said \"hi\"",
+                                    records.get(0).getString("text"));
+        }
+    }
+
+    @Test
     void shouldUnquoteEmptyStringValues() throws Exception {
         Path file = Files.createTempFile("java-fun-csv-empty-quoted",
                                          ".csv");
@@ -157,7 +198,7 @@ class TestCsvStreamBuilder {
             Assertions.assertEquals(1,
                                     records.size());
             Assertions.assertEquals("",
-                                    records.get(0).getStr("name"));
+                                    records.get(0).getString("name"));
         }
     }
 
@@ -201,6 +242,26 @@ class TestCsvStreamBuilder {
     }
 
     @Test
+    void headerMapperShouldBeAppliedOnlyOnce() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-header-mapper-once",
+                                         ".csv");
+        Files.writeString(file,
+                          "a\n1\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withHeaderMapper(h -> h + "_x")
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals(1,
+                                    records.get(0).getInt("a_x"));
+            Assertions.assertTrue(records.get(0).getOptionalInt("a_x_x").isEmpty());
+        }
+    }
+
+    @Test
     void shouldFailOnRowsWithDifferentWidthInStrictMode() throws Exception {
         Path file = Files.createTempFile("java-fun-csv-strict-width-fail",
                                          ".csv");
@@ -231,9 +292,9 @@ class TestCsvStreamBuilder {
             Assertions.assertEquals(1,
                                     records.size());
             Assertions.assertEquals("1",
-                                    records.get(0).getStr("a"));
+                                    records.get(0).getString("a"));
             Assertions.assertEquals("",
-                                    records.get(0).getStr("b"));
+                                    records.get(0).getString("b"));
         }
     }
 
@@ -254,9 +315,9 @@ class TestCsvStreamBuilder {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals(1,
                                     records.size());
-            Assertions.assertTrue(records.get(0).getOptStr("a").isEmpty());
-            Assertions.assertTrue(records.get(0).getOptStr("b").isEmpty());
-            Assertions.assertTrue(records.get(0).getOptStr("c").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptionalString("a").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptionalString("b").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptionalString("c").isEmpty());
         }
     }
 
@@ -275,7 +336,7 @@ class TestCsvStreamBuilder {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals(1,
                                     records.size());
-            Assertions.assertTrue(records.get(0).getOptStr("x").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptionalString("x").isEmpty());
         }
     }
 
@@ -297,10 +358,10 @@ class TestCsvStreamBuilder {
             List<MyRecord> records = stream.toList();
             Assertions.assertEquals(1,
                                     records.size());
-            Assertions.assertTrue(records.get(0).getOptStr("a").isEmpty());
-            Assertions.assertTrue(records.get(0).getOptStr("b").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptionalString("a").isEmpty());
+            Assertions.assertTrue(records.get(0).getOptionalString("b").isEmpty());
             Assertions.assertEquals("ok",
-                                    records.get(0).getStr("c"));
+                                    records.get(0).getString("c"));
         }
     }
 

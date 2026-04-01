@@ -16,6 +16,10 @@ import java.util.random.RandomGenerator;
  * Generators for {@link BigDecimal} values.
  * <p>
  * Includes arbitrary generators and biased variants that emphasize common boundaries.
+ * <p>
+ * Precision note:
+ * some generators in this class are backed by {@code double} sampling and therefore do not
+ * enumerate all possible decimal values in a range.
  */
 public final class BigDecGen implements Gen<BigDecimal> {
 
@@ -26,6 +30,9 @@ public final class BigDecGen implements Gen<BigDecimal> {
 
     /**
      * Returns an arbitrary generator in the range [0, 1).
+     * <p>
+     * Values are produced from {@link RandomGenerator#nextDouble()} and converted with
+     * {@link BigDecimal#valueOf(double)}.
      *
      * @return arbitrary decimal generator
      */
@@ -117,9 +124,16 @@ public final class BigDecGen implements Gen<BigDecimal> {
     }
 
     /**
-     * Creates an arbitrary {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}].
-     * Values are produced using {@code nextDouble()}, rounded to scale {@code 2} using
-     * {@link RoundingMode#HALF_UP}, and then clamped to stay within bounds.
+     * Creates an arbitrary {@code BigDecimal} generator that produces values within the
+     * specified range [{@code min}, {@code max}].
+     * <p>
+     * Generation algorithm:
+     * - sample {@code u} from {@code nextDouble()} in [0, 1)
+     * - compute {@code min + u * (max - min)}
+     * - round to scale {@code 2} using {@link RoundingMode#HALF_UP}
+     * - clamp to [{@code min}, {@code max}] after rounding
+     * <p>
+     * This is a cent-scale generator by design, not a full-precision decimal generator.
      *
      * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
      * @param max The maximum value (inclusive) of the generated {@code BigDecimal}.

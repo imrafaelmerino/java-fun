@@ -1,3 +1,20 @@
+4.0.0
+
+Breaking:
+
+-   `MyRecord` optional accessors have been renamed from `getOptXxx` to `getOptionalXxx`.
+-   `MyRecord.getStr/getBool/getBigInt` were renamed to
+    `getString/getBoolean/getBigInteger`.
+-   `MyRecord.map` public field has been removed.
+    Use `asMap()`, `containsKey(String)`, `size()`, and `isEmpty()` instead.
+-   `MyRecord` now defensively copies input maps and exposes an immutable map view.
+
+DX and fixes:
+
+-   `CsvStream` applies `headerMapper` exactly once.
+-   `CsvStream` correctly handles separators inside quoted values and escaped quotes (`""`).
+-   Javadoc has been updated to make numeric precision semantics explicit.
+
 1.4.0 New feature:
 
 -   Named generators: NamedGen Refactor:

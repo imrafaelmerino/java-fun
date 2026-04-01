@@ -37,6 +37,21 @@ public class TestCombinators {
     }
 
     @Test
+    public void freqShouldSupportLargeTotalWeightsWithoutOverflow() {
+        Gen<Integer> gen = Combinators.freq(Pair.of(Integer.MAX_VALUE,
+                                                    Gen.cons(1)),
+                                            Pair.of(Integer.MAX_VALUE,
+                                                    Gen.cons(2)));
+
+        Assertions.assertDoesNotThrow(() -> {
+            Map<Integer, Long> counts = TestFun.generate(10000,
+                                                         gen);
+            Assertions.assertTrue(counts.containsKey(1));
+            Assertions.assertTrue(counts.containsKey(2));
+        });
+    }
+
+    @Test
     public void nullable() {
 
 

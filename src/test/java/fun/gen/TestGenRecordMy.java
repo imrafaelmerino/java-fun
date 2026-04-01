@@ -20,7 +20,7 @@ public class TestGenRecordMy {
                                          IntGen.arbitrary(0,
                                                       10));
 
-        Assertions.assertTrue(one.sample(100).allMatch(it -> it.map.size() == 1));
+        Assertions.assertTrue(one.sample(100).allMatch(it -> it.asMap().size() == 1));
 
         MyRecordGen two = MyRecordGen.of("a",
                                          IntGen.arbitrary(0,
@@ -29,7 +29,7 @@ public class TestGenRecordMy {
                                          StrGen.letters(1,
                                                     1));
 
-        Assertions.assertTrue(two.sample(100).allMatch(it -> it.map.size() == 2));
+        Assertions.assertTrue(two.sample(100).allMatch(it -> it.asMap().size() == 2));
 
 
         MyRecordGen three = MyRecordGen.of("a",
@@ -40,7 +40,7 @@ public class TestGenRecordMy {
                                            "c",
                                            BoolGen.arbitrary());
 
-        Assertions.assertTrue(three.sample(100).allMatch(it -> it.map.size() == 3));
+        Assertions.assertTrue(three.sample(100).allMatch(it -> it.asMap().size() == 3));
 
 
         MyRecordGen four = MyRecordGen.of("a",
@@ -53,7 +53,7 @@ public class TestGenRecordMy {
                                           "d",
                                           LongGen.arbitrary());
 
-        Assertions.assertTrue(four.sample(100).allMatch(it -> it.map.size() == 4));
+        Assertions.assertTrue(four.sample(100).allMatch(it -> it.asMap().size() == 4));
 
 
         MyRecordGen five = MyRecordGen.of("a",
@@ -68,7 +68,7 @@ public class TestGenRecordMy {
                                           "e",
                                           DoubleGen.arbitrary());
 
-        Assertions.assertTrue(five.sample(100).allMatch(it -> it.map.size() == 5));
+        Assertions.assertTrue(five.sample(100).allMatch(it -> it.asMap().size() == 5));
 
 
         MyRecordGen six = MyRecordGen.of("a",
@@ -85,7 +85,7 @@ public class TestGenRecordMy {
                                          "f",
                                          DoubleGen.arbitrary());
 
-        Assertions.assertTrue(six.sample(100).allMatch(it -> it.map.size() == 6));
+        Assertions.assertTrue(six.sample(100).allMatch(it -> it.asMap().size() == 6));
 
         MyRecordGen seven = MyRecordGen.of("a",
                                            IntGen.arbitrary(),
@@ -104,7 +104,7 @@ public class TestGenRecordMy {
                                            BytesGen.arbitrary(0,
                                                           1024));
 
-        Assertions.assertTrue(seven.sample(100).allMatch(it -> it.map.size() == 7));
+        Assertions.assertTrue(seven.sample(100).allMatch(it -> it.asMap().size() == 7));
 
         MyRecordGen eight = MyRecordGen.of("a",
                                            IntGen.arbitrary(),
@@ -127,7 +127,7 @@ public class TestGenRecordMy {
                                                          0,
                                                          10));
 
-        Assertions.assertTrue(eight.sample(100).allMatch(it -> it.map.size() == 8));
+        Assertions.assertTrue(eight.sample(100).allMatch(it -> it.asMap().size() == 8));
 
 
         MyRecordGen nine = MyRecordGen.of("a",
@@ -155,7 +155,7 @@ public class TestGenRecordMy {
         );
 
 
-        Assertions.assertTrue(nine.sample(100).allMatch(it -> it.map.size() == 9));
+        Assertions.assertTrue(nine.sample(100).allMatch(it -> it.asMap().size() == 9));
 
         MyRecordGen ten = MyRecordGen.of("a",
                                          IntGen.arbitrary(),
@@ -182,7 +182,7 @@ public class TestGenRecordMy {
                                          "j",
                                          IntGen.biased()
         );
-        Assertions.assertTrue(ten.sample(100).allMatch(it -> it.map.size() == 10));
+        Assertions.assertTrue(ten.sample(100).allMatch(it -> it.asMap().size() == 10));
 
         MyRecordGen eleven = MyRecordGen.of("a",
                                             IntGen.arbitrary(),
@@ -211,7 +211,7 @@ public class TestGenRecordMy {
                                             "k",
                                             IntGen.biased()
         );
-        Assertions.assertTrue(eleven.sample(100).allMatch(it -> it.map.size() == 11));
+        Assertions.assertTrue(eleven.sample(100).allMatch(it -> it.asMap().size() == 11));
 
         MyRecordGen twelve = MyRecordGen.of("a",
                                             IntGen.arbitrary(),
@@ -242,7 +242,7 @@ public class TestGenRecordMy {
                                             "l",
                                             LongGen.biased()
         );
-        Assertions.assertTrue(twelve.sample(100).allMatch(it -> it.map.size() == 12));
+        Assertions.assertTrue(twelve.sample(100).allMatch(it -> it.asMap().size() == 12));
 
         MyRecordGen thirteen = MyRecordGen.of("a",
                                               IntGen.arbitrary(),
@@ -276,7 +276,7 @@ public class TestGenRecordMy {
                                               BigIntGen.arbitrary(BigInteger.ONE,
                                                               BigInteger.TEN)
         );
-        Assertions.assertTrue(thirteen.sample(100).allMatch(it -> it.map.size() == 13));
+        Assertions.assertTrue(thirteen.sample(100).allMatch(it -> it.asMap().size() == 13));
 
         MyRecordGen fourteen = MyRecordGen.of("a",
                                               IntGen.arbitrary(),
@@ -312,7 +312,7 @@ public class TestGenRecordMy {
                                               "n",
                                               BigDecGen.biased()
         );
-        Assertions.assertTrue(fourteen.sample(100).allMatch(it -> it.map.size() == 14));
+        Assertions.assertTrue(fourteen.sample(100).allMatch(it -> it.asMap().size() == 14));
 
         MyRecordGen fifteen = MyRecordGen.of("a",
                                              IntGen.arbitrary(),
@@ -350,7 +350,7 @@ public class TestGenRecordMy {
                                              "o",
                                              BigDecGen.arbitrary()
         );
-        Assertions.assertTrue(fifteen.sample(100).allMatch(it -> it.map.size() == 15));
+        Assertions.assertTrue(fifteen.sample(100).allMatch(it -> it.asMap().size() == 15));
 
         MyRecordGen sixteen = MyRecordGen.of("a",
                                              IntGen.arbitrary(),
@@ -390,7 +390,7 @@ public class TestGenRecordMy {
                                              "p",
                                              CharGen.arbitrary()
         );
-        Assertions.assertTrue(sixteen.sample(100).allMatch(it -> it.map.size() == 16));
+        Assertions.assertTrue(sixteen.sample(100).allMatch(it -> it.asMap().size() == 16));
 
         MyRecordGen seventeen = MyRecordGen.of("a",
                                                IntGen.arbitrary(),
@@ -432,7 +432,7 @@ public class TestGenRecordMy {
                                                "q",
                                                DoubleGen.biased()
         );
-        Assertions.assertTrue(seventeen.sample(100).allMatch(it -> it.map.size() == 17));
+        Assertions.assertTrue(seventeen.sample(100).allMatch(it -> it.asMap().size() == 17));
 
         MyRecordGen eighteen = MyRecordGen.of("a",
                                               IntGen.arbitrary(),
@@ -476,7 +476,7 @@ public class TestGenRecordMy {
                                               "r",
                                               DoubleGen.arbitrary()
         );
-        Assertions.assertTrue(eighteen.sample(100).allMatch(it -> it.map.size() == 18));
+        Assertions.assertTrue(eighteen.sample(100).allMatch(it -> it.asMap().size() == 18));
 
 
         MyRecordGen nineteen = MyRecordGen.of("a",
@@ -523,7 +523,7 @@ public class TestGenRecordMy {
                                               "s",
                                               InstantGen.biased()
         );
-        Assertions.assertTrue(nineteen.sample(100).allMatch(it -> it.map.size() == 19));
+        Assertions.assertTrue(nineteen.sample(100).allMatch(it -> it.asMap().size() == 19));
 
         MyRecordGen twenty = MyRecordGen.of("a",
                                             IntGen.arbitrary(),
@@ -573,7 +573,7 @@ public class TestGenRecordMy {
                                                              1000000000)
         );
         Assertions.assertTrue(twenty.sample(100)
-                                    .allMatch(it -> it.map.size() == 20)
+                                    .allMatch(it -> it.asMap().size() == 20)
         );
     }
 
@@ -622,32 +622,32 @@ public class TestGenRecordMy {
                 Stream.generate(gen.sample(new Random(0L)))
                       .limit(times)
                       .map(record -> {
-                          if (record.getOptInt("a").isPresent()
-                                  && record.getOptInt("b").isPresent()
-                                  && record.getOptInt("c").isPresent())
+                          if (record.getOptionalInt("a").isPresent()
+                                  && record.getOptionalInt("b").isPresent()
+                                  && record.getOptionalInt("c").isPresent())
                               return Arrays.asList("a",
                                                    "b",
                                                    "c");
-                          if (record.getOptInt("a").isPresent()
-                                  && record.getOptInt("b").isPresent()
+                          if (record.getOptionalInt("a").isPresent()
+                                  && record.getOptionalInt("b").isPresent()
                           )
                               return Arrays.asList("a",
                                                    "b");
-                          if (record.getOptInt("a").isPresent()
-                                  && record.getOptInt("c").isPresent()
+                          if (record.getOptionalInt("a").isPresent()
+                                  && record.getOptionalInt("c").isPresent()
                           )
                               return Arrays.asList("a",
                                                    "c");
-                          if (record.getOptInt("b").isPresent()
-                                  && record.getOptInt("c").isPresent()
+                          if (record.getOptionalInt("b").isPresent()
+                                  && record.getOptionalInt("c").isPresent()
                           )
                               return Arrays.asList("b",
                                                    "c");
-                          if (record.getOptInt("a").isPresent())
+                          if (record.getOptionalInt("a").isPresent())
                               return List.of("a");
-                          if (record.getOptInt("b").isPresent())
+                          if (record.getOptionalInt("b").isPresent())
                               return List.of("b");
-                          if (record.getOptInt("c").isPresent())
+                          if (record.getOptionalInt("c").isPresent())
                               return List.of("c");
                           return new ArrayList<>();
                       })
@@ -688,8 +688,8 @@ public class TestGenRecordMy {
                                                         "b"));
 
         Assertions.assertTrue(gen.sample(2000)
-                                 .allMatch(record -> record.map.containsKey("a")
-                                         && record.map.containsKey("b")));
+                                 .allMatch(record -> record.asMap().containsKey("a")
+                                         && record.asMap().containsKey("b")));
     }
 
 
@@ -709,76 +709,76 @@ public class TestGenRecordMy {
 
         int times = 5_000_000;
         Function<MyRecord, List<String>> nonNullKeys = r -> {
-            if (r.map.get("a") != null
-                    && r.map.get("b") != null
-                    && r.map.get("c") != null)
+            if (r.asMap().get("a") != null
+                    && r.asMap().get("b") != null
+                    && r.asMap().get("c") != null)
                 return Arrays.asList("a",
                                      "b",
                                      "c");
-            if (r.map.get("a") != null
-                    && r.map.get("b") != null
-                    && r.map.get("c") == null)
+            if (r.asMap().get("a") != null
+                    && r.asMap().get("b") != null
+                    && r.asMap().get("c") == null)
                 return Arrays.asList("a",
                                      "b");
-            if (r.map.get("a") != null
-                    && r.map.get("b") == null
-                    && r.map.get("c") != null)
+            if (r.asMap().get("a") != null
+                    && r.asMap().get("b") == null
+                    && r.asMap().get("c") != null)
                 return Arrays.asList("a",
                                      "c");
-            if (r.map.get("a") == null
-                    && r.map.get("b") != null
-                    && r.map.get("c") != null)
+            if (r.asMap().get("a") == null
+                    && r.asMap().get("b") != null
+                    && r.asMap().get("c") != null)
                 return Arrays.asList("b",
                                      "c");
-            if (r.map.get("a") == null
-                    && r.map.get("c") == null
-                    && r.map.get("b") != null)
+            if (r.asMap().get("a") == null
+                    && r.asMap().get("c") == null
+                    && r.asMap().get("b") != null)
                 return List.of("b");
-            if (r.map.get("a") == null
-                    && r.map.get("c") != null
-                    && r.map.get("b") == null)
+            if (r.asMap().get("a") == null
+                    && r.asMap().get("c") != null
+                    && r.asMap().get("b") == null)
                 return List.of("c");
-            if (r.map.get("a") != null
-                    && r.map.get("c") == null
-                    && r.map.get("b") == null)
+            if (r.asMap().get("a") != null
+                    && r.asMap().get("c") == null
+                    && r.asMap().get("b") == null)
                 return List.of("a");
 
             return List.of();
         };
 
         Function<MyRecord, List<String>> presentKeys = r -> {
-            if (r.map.containsKey("a")
-                    && r.map.containsKey("b")
-                    && r.map.containsKey("c"))
+            if (r.asMap().containsKey("a")
+                    && r.asMap().containsKey("b")
+                    && r.asMap().containsKey("c"))
                 return Arrays.asList("a",
                                      "b",
                                      "c");
-            if (r.map.containsKey("a")
-                    && r.map.containsKey("b")
-                    && !r.map.containsKey("c"))
+            if (r.asMap().containsKey("a")
+                    && r.asMap().containsKey("b")
+                    && !r.asMap().containsKey("c"))
                 return Arrays.asList("a",
                                      "b");
-            if (r.map.containsKey("a")
-                    && !r.map.containsKey("b")
-                    && r.map.containsKey("c"))
+            if (r.asMap().containsKey("a")
+                    && !r.asMap().containsKey("b")
+                    && r.asMap().containsKey("c"))
                 return Arrays.asList("a",
                                      "c");
-            if (!r.map.containsKey("a")
-                    && r.map.containsKey("b")
-                    && r.map.containsKey("c"))
+            if (!r.asMap().containsKey("a")
+                    && r.asMap().containsKey("b")
+                    && r.asMap().containsKey("c"))
                 return Arrays.asList("b",
                                      "c");
-            if (!r.map.containsKey("a")
-                    && !r.map.containsKey("c")
-                    && r.map.containsKey("b"))
+            if (!r.asMap().containsKey("a")
+                    && !r.asMap().containsKey("c")
+                    && r.asMap().containsKey("b"))
                 return List.of("b");
-            if (!r.map.containsKey("a")
-                    && r.map.containsKey("c")
-                    && !r.map.containsKey("b"))
+            if (!r.asMap().containsKey("a")
+                    && r.asMap().containsKey("c")
+                    && !r.asMap().containsKey("b"))
                 return List.of("c");
-            if (r.map.containsKey("a")
-                    && !r.map.containsKey("c")
-                    && !r.map.containsKey("b"))
+            if (r.asMap().containsKey("a")
+                    && !r.asMap().containsKey("c")
+                    && !r.asMap().containsKey("b"))
                 return List.of("a");
 
             return List.of();
@@ -864,44 +864,44 @@ public class TestGenRecordMy {
         Assertions.assertTrue(MyRecordGen.of("a",
                                              IntGen.biased())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptInt("a").isPresent()));
+                                         .allMatch(it -> it.getOptionalInt("a").isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              LongGen.biased())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptLong("a").isPresent()));
+                                         .allMatch(it -> it.getOptionalLong("a").isPresent()));
 
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              BigIntGen.arbitrary(new BigInteger("1000000000"),
                                                                new BigInteger("2000000000")))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptBigInt("a")
+                                         .allMatch(it -> it.getOptionalBigInteger("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              BigDecGen.arbitrary())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptDecimal("a")
+                                         .allMatch(it -> it.getOptionalDecimal("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              DoubleGen.arbitrary())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptDouble("a")
+                                         .allMatch(it -> it.getOptionalDouble("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              StrGen.biased(1,
                                                          100))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptStr("a")
+                                         .allMatch(it -> it.getOptionalString("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              CharGen.alphabetic())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptChar("a")
+                                         .allMatch(it -> it.getOptionalChar("a")
                                                          .isPresent()));
 
 
@@ -910,40 +910,40 @@ public class TestGenRecordMy {
                                                           1,
                                                           100))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptList("a")
+                                         .allMatch(it -> it.getOptionalList("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              InstantGen.arbitrary())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptInstant("a")
+                                         .allMatch(it -> it.getOptionalInstant("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              BoolGen.arbitrary())
                                          .sample(100)
-                                         .allMatch(it -> it.getOptBool("a")
+                                         .allMatch(it -> it.getOptionalBoolean("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              BytesGen.arbitrary(1,
                                                               10))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptBytes("a")
+                                         .allMatch(it -> it.getOptionalBytes("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              SetGen.ofN(IntGen.arbitrary(),
                                                       10))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptSet("a")
+                                         .allMatch(it -> it.getOptionalSet("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
                                              BytesGen.arbitrary(1,
                                                               10))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptBytes("a")
+                                         .allMatch(it -> it.getOptionalBytes("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
@@ -953,7 +953,7 @@ public class TestGenRecordMy {
                                                      100))
                                          .sample(100)
                                          .allMatch(it -> {
-                                           Optional<Map<String, Integer>> a = it.getOptMap("a");
+                                           Optional<Map<String, Integer>> a = it.getOptionalMap("a");
                                            return a.isPresent();
                                        }));
     }

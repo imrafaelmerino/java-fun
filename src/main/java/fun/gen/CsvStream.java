@@ -142,8 +142,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                                        StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
-            this.headers = Arrays.stream(headerLine.split(Pattern.quote(separator),
-                                                          -1))
+            this.headers = Arrays.stream(splitCsvLine(headerLine,
+                                                      separator))
                                  .map(CsvStream::removeQuotesIfExist)
                                  .map(headerMapper)
                                  .toList();
@@ -185,7 +185,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             String strValue = (values.length > i) ?
                               values[i] :
                               "";
-            record.put(headerMapper.apply(header),
+            record.put(header,
                        parseValue(header,
                                   strValue));
         }
@@ -236,6 +236,46 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     }
 
     /**
+     * Splits a CSV line honoring quoted sections, so separators inside quotes are kept as literal content.
+     * Escaped quotes are represented as {@code ""} inside quoted values.
+     */
+    static String[] splitCsvLine(String line,
+                                 String separator) {
+        List<String> values = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                if (inQuotes
+                        && i + 1 < line.length()
+                        && line.charAt(i + 1) == '"') {
+                    current.append('"');
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                    current.append(c);
+                }
+                continue;
+            }
+
+            if (!inQuotes && line.startsWith(separator,
+                                             i)) {
+                values.add(current.toString());
+                current.setLength(0);
+                i += separator.length() - 1;
+                continue;
+            }
+
+            current.append(c);
+        }
+
+        values.add(current.toString());
+        return values.toArray(new String[0]);
+    }
+
+    /**
      * CsvSpliterator is a custom Spliterator for efficiently streaming CSV lines from a BufferedReader.
      */
     private class CsvSpliterator extends Spliterators.AbstractSpliterator<MyRecord> {
@@ -261,8 +301,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                         return false;
                     }
                     currentRow++;
-                    String[] values = line.split(Pattern.quote(separator),
-                                                 -1);
+                    String[] values = splitCsvLine(line,
+                                                   separator);
                     try {
                         action.accept(lineToRecord(values));
                         return true;

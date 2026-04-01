@@ -9,23 +9,61 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A class representing a record with named fields and associated values. This class provides methods for safely retrieving
- * field values of various types from the record.
+ * A class representing an immutable record with named fields and associated values.
+ * This class provides methods for safely retrieving field values of various types.
  */
 public final class MyRecord {
 
     /**
-     * The underlying map that holds the record data
+     * The underlying immutable map that holds the record data.
      */
-    public final Map<String, ?> map;
+    private final Map<String, ?> values;
 
     /**
-     * Constructs a new Record instance with the provided map of field names and values.
+     * Constructs a new record instance with the provided map of field names and values.
+     * The map is defensively copied and wrapped as unmodifiable.
      *
      * @param map A map containing field names as keys and their associated values.
      */
     public MyRecord(final Map<String, ?> map) {
-        this.map = requireNonNull(map);
+        this.values = Collections.unmodifiableMap(new LinkedHashMap<>(requireNonNull(map)));
+    }
+
+    /**
+     * Returns an immutable view of the underlying key-value data.
+     *
+     * @return immutable record values map
+     */
+    public Map<String, ?> asMap() {
+        return values;
+    }
+
+    /**
+     * Checks whether this record contains the given key.
+     *
+     * @param key field name
+     * @return {@code true} if the key exists in the record map, {@code false} otherwise
+     */
+    public boolean containsKey(final String key) {
+        return values.containsKey(key);
+    }
+
+    /**
+     * Returns the number of keys stored in this record.
+     *
+     * @return record size
+     */
+    public int size() {
+        return values.size();
+    }
+
+    /**
+     * Returns whether this record has no keys.
+     *
+     * @return {@code true} when the record has no keys
+     */
+    public boolean isEmpty() {
+        return values.isEmpty();
     }
 
     /**
@@ -34,8 +72,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the byte array value if present, otherwise an empty optional.
      */
-    public Optional<byte[]> getOptBytes(final String key) {
-        Object value = map.get(key);
+    public Optional<byte[]> getOptionalBytes(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof byte[] b) return Optional.of(b);
         throw new RecordTypeNotExpected("byte[]",
@@ -56,7 +94,7 @@ public final class MyRecord {
      */
     public byte[] getBytes(final String key,
                            final Supplier<byte[]> supplier) {
-        var value = map.get(key);
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof byte[] d) return d;
         throw new RecordTypeNotExpected("byte[]",
@@ -84,8 +122,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the long value if present, otherwise an empty optional.
      */
-    public Optional<Long> getOptLong(final String key) {
-        Object value = map.get(key);
+    public Optional<Long> getOptionalLong(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof Long n) return Optional.of(n);
         if (value instanceof Integer n) return Optional.of(Long.valueOf(n));
@@ -109,7 +147,7 @@ public final class MyRecord {
      */
     public long getLong(final String key,
                         final Supplier<Long> supplier) {
-        var value = map.get(key);
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Long n) return n;
         if (value instanceof Integer n) return Long.valueOf(n);
@@ -129,7 +167,7 @@ public final class MyRecord {
      * @see #getLong(String, Supplier)
      */
     public Long getLong(final String key) {
-        return getOptLong(key).orElse(null);
+        return getOptionalLong(key).orElse(null);
     }
 
 
@@ -139,8 +177,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the string value if present, otherwise an empty optional.
      */
-    public Optional<String> getOptStr(final String key) {
-        Object value = map.get(key);
+    public Optional<String> getOptionalString(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
 
         if (value instanceof String) return Optional.of(((String) value));
@@ -160,9 +198,9 @@ public final class MyRecord {
      * @throws RecordTypeNotExpected If the field exists but its value is not a string,
      *                               this exception is thrown, indicating an unexpected type.
      */
-    public String getStr(final String key,
-                         final Supplier<String> supplier) {
-        var value = map.get(key);
+    public String getString(final String key,
+                            final Supplier<String> supplier) {
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof String d) return d;
         throw new RecordTypeNotExpected(String.class.getName(),
@@ -176,10 +214,10 @@ public final class MyRecord {
      *
      * @param key The name of the field.
      * @return The string value if present, or null if the field is not found.
-     * @see #getStr(String, Supplier)
+     * @see #getString(String, Supplier)
      */
-    public String getStr(final String key) {
-        return getStr(key,
+    public String getString(final String key) {
+        return getString(key,
                       () -> null);
     }
 
@@ -190,8 +228,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the integer value if present, otherwise an empty optional.
      */
-    public Optional<Integer> getOptInt(final String key) {
-        Object value = map.get(key);
+    public Optional<Integer> getOptionalInt(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof Integer n) return Optional.of(n);
         if (value instanceof Short n) return Optional.of(Integer.valueOf(n));
@@ -214,7 +252,7 @@ public final class MyRecord {
      */
     public int getInt(final String key,
                       final Supplier<Integer> supplier) {
-        var value = map.get(key);
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Integer d) return d;
         if (value instanceof Short n) return Integer.valueOf(n);
@@ -233,20 +271,32 @@ public final class MyRecord {
      * @see #getInt(String, Supplier)
      */
     public Integer getInt(final String key) {
-        return getOptInt(key).orElse(null);
+        return getOptionalInt(key).orElse(null);
     }
 
 
     /**
      * Retrieves the value associated with the specified field name as an optional decimal.
+     * <p>
+     * Accepted source types:
+     * {@link BigDecimal}, {@link BigInteger}, {@link Long}, {@link Integer}, {@link Short},
+     * {@link Byte}, {@link Double}, and {@link Float}.
+     * <p>
+     * Conversion semantics:
+     * - {@code BigDecimal}, {@code BigInteger}, and integral wrappers are converted exactly.
+     * - {@code Double}/{@code Float} are converted with {@link BigDecimal#valueOf(double)}.
+     * Their binary floating-point approximation is preserved, so decimal artifacts may appear.
+     * <p>
+     * This method does not perform extra rounding or normalization.
      *
      * @param key The name of the field.
      * @return An optional containing the decimal value if present, otherwise an empty optional.
      */
-    public Optional<BigDecimal> getOptDecimal(final String key) {
-        Object value = map.get(key);
+    public Optional<BigDecimal> getOptionalDecimal(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof BigDecimal bd) return Optional.of(bd);
+        if (value instanceof BigInteger n) return Optional.of(new BigDecimal(n));
         if (value instanceof Long n) return Optional.of(BigDecimal.valueOf(n));
         if (value instanceof Integer n) return Optional.of(BigDecimal.valueOf(n));
         if (value instanceof Short n) return Optional.of(BigDecimal.valueOf(n));
@@ -262,18 +312,21 @@ public final class MyRecord {
     /**
      * Retrieves the value associated with the specified field name as a decimal.
      * If the field does not exist, it returns the result from the provided supplier.
+     * <p>
+     * Accepted source types and conversion semantics are the same as in
+     * {@link #getOptionalDecimal(String)}.
      *
      * @param key      The name of the field.
      * @param supplier A supplier to provide a default BigDecimal value if the field is null.
      * @return The BigDecimal value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a BigDecimal,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @throws RecordTypeNotExpected If the field exists but its value is not one of the accepted numeric types.
      */
     public BigDecimal getDecimal(final String key,
                                  final Supplier<BigDecimal> supplier) {
-        var value = map.get(key);
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof BigDecimal d) return d;
+        if (value instanceof BigInteger n) return new BigDecimal(n);
         if (value instanceof Long n) return BigDecimal.valueOf(n);
         if (value instanceof Integer n) return BigDecimal.valueOf(n);
         if (value instanceof Short n) return BigDecimal.valueOf(n);
@@ -288,6 +341,9 @@ public final class MyRecord {
     /**
      * Retrieves the value associated with the specified field name as a decimal.
      * If the field does not exist, it returns a default value of null.
+     * <p>
+     * Accepted source types and conversion semantics are the same as in
+     * {@link #getOptionalDecimal(String)}.
      *
      * @param key The name of the field.
      * @return The BigDecimal value if present, or null if the field is not found.
@@ -312,8 +368,8 @@ public final class MyRecord {
      */
 
     @SuppressWarnings("unchecked")
-    public <O> Optional<List<O>> getOptList(final String key) {
-        Object value = map.get(key);
+    public <O> Optional<List<O>> getOptionalList(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
 
         if (value instanceof List<?> list) return Optional.of((List<O>) list);
@@ -338,7 +394,7 @@ public final class MyRecord {
     @SuppressWarnings("unchecked")
     public <O> List<O> getList(final String key,
                                final Supplier<List<O>> supplier) {
-        Object value = map.get(key);
+        Object value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof List<?>) return (List<O>) value;
         throw new RecordTypeNotExpected(List.class.getName(),
@@ -374,8 +430,8 @@ public final class MyRecord {
      *                               that the expected type was a set, but the actual type was different.
      */
     @SuppressWarnings("unchecked")
-    public <O> Optional<Set<O>> getOptSet(final String key) {
-        Object value = map.get(key);
+    public <O> Optional<Set<O>> getOptionalSet(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
 
         if (value instanceof Set<?> set) return Optional.of((Set<O>) set);
@@ -400,7 +456,7 @@ public final class MyRecord {
     @SuppressWarnings("unchecked")
     public <O> Set<O> getSet(final String key,
                              final Supplier<Set<O>> supplier) {
-        Object value = map.get(key);
+        Object value = values.get(key);
         if (value == null) return supplier.get();
 
         if (value instanceof Set<?>) return (Set<O>) value;
@@ -438,8 +494,8 @@ public final class MyRecord {
      *                               that the expected type was a map, but the actual type was different.
      */
     @SuppressWarnings("unchecked")
-    public <K, V> Optional<Map<K, V>> getOptMap(final String key) {
-        Object value = map.get(key);
+    public <K, V> Optional<Map<K, V>> getOptionalMap(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
 
         if (value instanceof Map) return Optional.of((Map<K, V>) value);
@@ -464,7 +520,7 @@ public final class MyRecord {
     @SuppressWarnings("unchecked")
     public <K, V> Map<K, V> getMap(final String key,
                                    Supplier<Map<K, V>> supplier) {
-        Object value = map.get(key);
+        Object value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Map<?, ?> o) return (Map<K, V>) o;
         throw new RecordTypeNotExpected(Map.class.getName(),
@@ -494,8 +550,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the instant value if present, otherwise an empty optional.
      */
-    public Optional<Instant> getOptInstant(final String key) {
-        Object value = map.get(key);
+    public Optional<Instant> getOptionalInstant(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
 
         if (value instanceof Instant i) return Optional.of(i);
@@ -516,7 +572,7 @@ public final class MyRecord {
      */
     public Instant getInstant(final String key,
                               final Supplier<Instant> supplier) {
-        var value = map.get(key);
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Instant d) return d;
         throw new RecordTypeNotExpected(Instant.class.getName(),
@@ -543,8 +599,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the double value if present, otherwise an empty optional.
      */
-    public Optional<Double> getOptDouble(final String key) {
-        Object value = map.get(key);
+    public Optional<Double> getOptionalDouble(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof Double d) return Optional.of(d);
         if (value instanceof Long n) return Optional.of(Double.valueOf(n));
@@ -570,7 +626,7 @@ public final class MyRecord {
      */
     public double getDouble(final String key,
                             final Supplier<Double> supplier) {
-        var value = map.get(key);
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Double d) return d;
         if (value instanceof Long n) return Double.valueOf(n);
@@ -591,7 +647,7 @@ public final class MyRecord {
      * @see #getDouble(String, Supplier)
      */
     public Double getDouble(final String key) {
-        return getOptDouble(key).orElse(null);
+        return getOptionalDouble(key).orElse(null);
     }
 
 
@@ -601,8 +657,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the boolean value if present, otherwise an empty optional.
      */
-    public Optional<Boolean> getOptBool(final String key) {
-        Object value = map.get(key);
+    public Optional<Boolean> getOptionalBoolean(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
 
         if (value instanceof Boolean b) return Optional.of(b);
@@ -622,9 +678,9 @@ public final class MyRecord {
      * @return The stored boolean value, or the supplier value when absent/null.
      * @throws RecordTypeNotExpected If the field exists but is not a {@link Boolean}.
      */
-    public boolean getBool(final String key,
-                           final Supplier<Boolean> supplier) {
-        var value = map.get(key);
+    public boolean getBoolean(final String key,
+                              final Supplier<Boolean> supplier) {
+        var value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Boolean bool) return bool;
         throw new RecordTypeNotExpected(Boolean.class.getName(),
@@ -637,10 +693,10 @@ public final class MyRecord {
      *
      * @param key The name of the field.
      * @return The value if present; otherwise {@code null}.
-     * @see #getBool(String, Supplier)
+     * @see #getBoolean(String, Supplier)
      */
-    public Boolean getBool(final String key) {
-        return getOptBool(key).orElse(null);
+    public Boolean getBoolean(final String key) {
+        return getOptionalBoolean(key).orElse(null);
     }
 
     /**
@@ -649,8 +705,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the character value if present, otherwise an empty optional.
      */
-    public Optional<Character> getOptChar(final String key) {
-        Object value = map.get(key);
+    public Optional<Character> getOptionalChar(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof Character c) return Optional.of(c);
         throw new RecordTypeNotExpected(Character.class.getName(),
@@ -670,7 +726,7 @@ public final class MyRecord {
      */
     public char getChar(final String key,
                         final Supplier<Character> supplier) {
-        Object value = map.get(key);
+        Object value = values.get(key);
         if (value == null) return supplier.get();
         if (value instanceof Character c) return c;
         throw new RecordTypeNotExpected(Character.class.getName(),
@@ -686,7 +742,7 @@ public final class MyRecord {
      * @see #getChar(String, Supplier)
      */
     public Character getChar(final String key) {
-        return getOptChar(key).orElse(null);
+        return getOptionalChar(key).orElse(null);
     }
 
 
@@ -696,8 +752,8 @@ public final class MyRecord {
      * @param key The name of the field.
      * @return An optional containing the big integer value if present, otherwise an empty optional.
      */
-    public Optional<BigInteger> getOptBigInt(final String key) {
-        Object value = map.get(key);
+    public Optional<BigInteger> getOptionalBigInteger(final String key) {
+        Object value = values.get(key);
         if (value == null) return Optional.empty();
         if (value instanceof BigInteger bi) return Optional.of(bi);
         if (value instanceof Long n) return Optional.of(BigInteger.valueOf(n));
@@ -720,9 +776,9 @@ public final class MyRecord {
      * @return The converted big integer value, or the supplier value when absent/null.
      * @throws RecordTypeNotExpected If the field exists but cannot be interpreted as a big integer.
      */
-    public BigInteger getBigInt(final String key,
+    public BigInteger getBigInteger(final String key,
                                 final Supplier<BigInteger> bi) {
-        Object value = map.get(key);
+        Object value = values.get(key);
         if (value == null) return bi.get();
         if (value instanceof BigInteger b) return b;
         if (value instanceof Long n) return BigInteger.valueOf(n);
@@ -739,10 +795,10 @@ public final class MyRecord {
      *
      * @param key The name of the field.
      * @return The value if present; otherwise {@code null}.
-     * @see #getBigInt(String, Supplier)
+     * @see #getBigInteger(String, Supplier)
      */
-    public BigInteger getBigInt(final String key) {
-        return getBigInt(key,
+    public BigInteger getBigInteger(final String key) {
+        return getBigInteger(key,
                          () -> null);
     }
 
@@ -758,8 +814,8 @@ public final class MyRecord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         var record = (MyRecord) o;
-        return Objects.equals(map,
-                              record.map);
+        return Objects.equals(values,
+                              record.values);
     }
 
     /**
@@ -769,7 +825,7 @@ public final class MyRecord {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(map);
+        return Objects.hash(values);
     }
 
     /**
@@ -779,6 +835,6 @@ public final class MyRecord {
      */
     @Override
     public String toString() {
-        return map.toString();
+        return values.toString();
     }
 }

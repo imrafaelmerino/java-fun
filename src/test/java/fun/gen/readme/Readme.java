@@ -56,9 +56,9 @@ public class Readme {
                                            nameGen)
                                        .withAllOptKeys()
                                        .map(record ->
-                                                  new User(record.getOptStr(LOGIN_FIELD).orElse(null),
-                                                           record.getStr(NAME_FIELD),
-                                                           record.getOptStr(PASSWORD_FIELD).orElse(null))
+                                                  new User(record.getOptionalString(LOGIN_FIELD).orElse(null),
+                                                           record.getString(NAME_FIELD),
+                                                           record.getOptionalString(PASSWORD_FIELD).orElse(null))
                                      );
 
         Predicate<User> isValid = user ->

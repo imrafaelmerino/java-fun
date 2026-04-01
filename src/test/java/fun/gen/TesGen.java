@@ -32,17 +32,17 @@ public class TesGen {
 
 
         Assertions.assertTrue(gen.suchThat(it ->
-                                                   it.map.containsKey("a") &&
-                                                           it.map.containsKey("b") &&
-                                                           it.map.containsKey("c"))
+                                                   it.asMap().containsKey("a") &&
+                                                           it.asMap().containsKey("b") &&
+                                                           it.asMap().containsKey("c"))
                                  .sample(100)
                                  .findAny()
                                  .isPresent());
 
         Assertions.assertTrue(gen.suchThat(it ->
-                                                   !it.map.containsKey("a") &&
-                                                           !it.map.containsKey("b") &&
-                                                           !it.map.containsKey("c"))
+                                                   !it.asMap().containsKey("a") &&
+                                                           !it.asMap().containsKey("b") &&
+                                                           !it.asMap().containsKey("c"))
                                  .sample(100)
                                  .findAny()
                                  .isPresent());
@@ -61,6 +61,15 @@ public class TesGen {
                                                  10).distinct().sample(100000).toList();
         Assertions.assertEquals(letters.size(),
                                 new HashSet<>(letters).size());
+    }
+
+    @Test
+    public void distinctShouldRejectNegativeTries() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Gen.cons(1)
+                                         .distinct(-1)
+                                         .sample()
+                                         .get());
     }
 
     @Test

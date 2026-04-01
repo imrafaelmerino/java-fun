@@ -58,22 +58,47 @@ public final class Quintuple<A, B, C, D, E> {
                                fifth);
     }
 
+    /**
+     * Returns the first element.
+     *
+     * @return first element.
+     */
     public A first() {
         return first;
     }
 
+    /**
+     * Returns the second element.
+     *
+     * @return second element.
+     */
     public B second() {
         return second;
     }
 
+    /**
+     * Returns the third element.
+     *
+     * @return third element.
+     */
     public C third() {
         return third;
     }
 
+    /**
+     * Returns the fourth element.
+     *
+     * @return fourth element.
+     */
     public D fourth() {
         return fourth;
     }
 
+    /**
+     * Returns the fifth element.
+     *
+     * @return fifth element.
+     */
     public E fifth() {
         return fifth;
     }

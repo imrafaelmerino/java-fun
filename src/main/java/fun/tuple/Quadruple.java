@@ -50,18 +50,38 @@ public final class Quadruple<A, B, C, D> {
                                fourth);
     }
 
+    /**
+     * Returns the first element.
+     *
+     * @return first element.
+     */
     public A first() {
         return first;
     }
 
+    /**
+     * Returns the second element.
+     *
+     * @return second element.
+     */
     public B second() {
         return second;
     }
 
+    /**
+     * Returns the third element.
+     *
+     * @return third element.
+     */
     public C third() {
         return third;
     }
 
+    /**
+     * Returns the fourth element.
+     *
+     * @return fourth element.
+     */
     public D fourth() {
         return fourth;
     }

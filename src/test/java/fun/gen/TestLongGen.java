@@ -41,7 +41,7 @@ public class TestLongGen {
                                                   LongGen.biased());
 
         List<Long> problematic = TestFun.list(Long.MAX_VALUE,
-                                              Long.MAX_VALUE,
+                                              Long.MIN_VALUE,
                                               (long) Integer.MAX_VALUE,
                                               (long) Integer.MIN_VALUE,
                                               (long) Short.MAX_VALUE,

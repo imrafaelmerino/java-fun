@@ -42,7 +42,7 @@ public class TestBigDecGen {
                                                         BigDecGen.biased());
 
         List<BigDecimal> problematic = TestFun.list(BigDecimal.valueOf(Long.MAX_VALUE),
-                                                    BigDecimal.valueOf(Long.MAX_VALUE),
+                                                    BigDecimal.valueOf(Long.MIN_VALUE),
                                                     BigDecimal.valueOf(Integer.MAX_VALUE),
                                                     BigDecimal.valueOf(Integer.MIN_VALUE),
                                                     BigDecimal.valueOf(Short.MAX_VALUE),
@@ -56,6 +56,21 @@ public class TestBigDecGen {
                                                          0.05);
 
 
+    }
+
+    @Test
+    public void biasedRangeWithZeroAsUpperBoundBiasesToZero() {
+        Map<BigDecimal, Long> counts = TestFun.generate(20000,
+                                                        BigDecGen.biased(BigDecimal.valueOf(-0.1),
+                                                                         BigDecimal.ZERO));
+
+        long zeroCount = counts.getOrDefault(BigDecimal.ZERO,
+                                             0L);
+
+        // Regression check: max (=0) must be explicitly present in the biased set.
+        // Without that bias, zero appears only from the arbitrary branch and is much rarer.
+        org.junit.jupiter.api.Assertions.assertTrue(zeroCount > 3000,
+                                                    "Expected strong bias towards zero, but got count=" + zeroCount);
     }
 
 }

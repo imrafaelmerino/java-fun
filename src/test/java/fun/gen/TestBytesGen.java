@@ -48,4 +48,11 @@ public class TestBytesGen {
 
 
     }
+
+    @Test
+    public void arbitraryShouldRejectNegativeMinLength() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> BytesGen.arbitrary(-1,
+                                                         3));
+    }
 }

@@ -60,4 +60,30 @@ public class TestDoubleGen {
                                                          problematic,
                                                          0.05);
     }
+
+    @Test
+    public void arbitraryShouldRejectNonFiniteBounds() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.arbitrary(Double.NaN,
+                                                          1.0));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.arbitrary(0.0,
+                                                          Double.POSITIVE_INFINITY));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.arbitrary(Double.NEGATIVE_INFINITY,
+                                                          0.0));
+    }
+
+    @Test
+    public void biasedShouldRejectNonFiniteBounds() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.biased(Double.NaN,
+                                                       1.0));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.biased(0.0,
+                                                       Double.POSITIVE_INFINITY));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.biased(Double.NEGATIVE_INFINITY,
+                                                       0.0));
+    }
 }

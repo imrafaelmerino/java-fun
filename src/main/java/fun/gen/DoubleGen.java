@@ -39,6 +39,8 @@ public final class DoubleGen implements Gen<Double> {
      */
     public static Gen<Double> biased(final double min,
                                      final double max) {
+        if (!Double.isFinite(min) || !Double.isFinite(max))
+            throw new IllegalArgumentException("min and max must be finite");
         if (max < min) throw new IllegalArgumentException("max < min");
         List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
         if (max >= Integer.MAX_VALUE && min <= Integer.MAX_VALUE)
@@ -89,6 +91,8 @@ public final class DoubleGen implements Gen<Double> {
      */
     public static Gen<Double> arbitrary(final double min,
                                         final double max) {
+        if (!Double.isFinite(min) || !Double.isFinite(max))
+            throw new IllegalArgumentException("min and max must be finite");
         if (max < min) throw new IllegalArgumentException("max < min");
 
         return seed -> () -> {

@@ -64,9 +64,10 @@ public final class Combinators {
      * @throws NullPointerException If the provided {@code values} list is {@code null} or empty.
      */
     public static <T> Gen<T> oneOf(final List<T> values) {
-        if (requireNonNull(values).isEmpty())
+        final List<T> snapshot = new ArrayList<>(requireNonNull(values));
+        if (snapshot.isEmpty())
             throw new RuntimeException("list empty. No value can be generated");
-        return r -> () -> values.get(requireNonNull(r).nextInt(values.size()));
+        return r -> () -> snapshot.get(requireNonNull(r).nextInt(snapshot.size()));
     }
 
     /**
@@ -78,24 +79,10 @@ public final class Combinators {
      * @throws NullPointerException If the provided {@code values} set is {@code null} or empty.
      */
     public static <T> Gen<T> oneOf(final Set<T> values) {
-        if (requireNonNull(values).isEmpty())
+        final List<T> snapshot = new ArrayList<>(requireNonNull(values));
+        if (snapshot.isEmpty())
             throw new RuntimeException("set empty. No value can be generated");
-        return r -> {
-            int size = values.size();
-            return () -> {
-                int counter = 0;
-                Iterator<T> iterator = values.iterator();
-                int j = r.nextInt(size);
-                T value = null;
-                while (iterator.hasNext()) {
-                    T next = iterator.next();
-                    if (j == counter) value = next;
-                    counter += 1;
-                }
-                return value;
-
-            };
-        };
+        return r -> () -> snapshot.get(requireNonNull(r).nextInt(snapshot.size()));
     }
 
     /**
@@ -301,14 +288,14 @@ public final class Combinators {
         return seed -> {
             Supplier<Integer> n =
                     IntGen.arbitrary(0,
-                                     100)
+                                     99)
                           .apply(SplitGen.DEFAULT.apply(seed));
 
 
             Supplier<O> supplier =
                     gen.apply(SplitGen.DEFAULT.apply(seed));
 
-            return () -> n.get() <= prob ?
+            return () -> n.get() < prob ?
                          null :
                          supplier.get();
         };

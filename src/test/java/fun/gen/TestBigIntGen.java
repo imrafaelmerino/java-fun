@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.random.RandomGenerator;
 
 public class TestBigIntGen {
 
@@ -24,6 +25,21 @@ public class TestBigIntGen {
                                       .sample(100000)
                                       .allMatch(
                                               bi -> bi.compareTo(min) >= 0 && bi.compareTo(max) <= 0));
+    }
+
+    @Test
+    public void arbitraryDefaultShouldReachHighBitLengths() {
+        var supplier = BigIntGen.arbitrary()
+                                .sample(RandomGenerator.getDefault());
+        int maxBitLength = 0;
+        for (int i = 0; i < 500; i++) {
+            maxBitLength = Math.max(maxBitLength,
+                                    supplier.get()
+                                            .bitLength());
+        }
+
+        Assertions.assertTrue(maxBitLength > 40,
+                              "Expected arbitrary 64-bit generator to produce values with bitLength > 40, got " + maxBitLength);
     }
 
 

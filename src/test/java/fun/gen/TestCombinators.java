@@ -53,6 +53,29 @@ public class TestCombinators {
     }
 
     @Test
+    public void nullableWithZeroProbabilityNeverGeneratesNull() {
+        Map<String, Long> counts = TestFun.generate(100000,
+                                                    Combinators.nullable(Gen.cons("a"),
+                                                                         0));
+
+        Assertions.assertFalse(counts.containsKey(null));
+        Assertions.assertEquals(100000L,
+                                counts.get("a"));
+    }
+
+    @Test
+    public void nullableWithHundredProbabilityAlwaysGeneratesNull() {
+        Map<String, Long> counts = TestFun.generate(100000,
+                                                    Combinators.nullable(Gen.cons("a"),
+                                                                         100));
+
+        Assertions.assertEquals(1,
+                                counts.size());
+        Assertions.assertEquals(100000L,
+                                counts.get(null));
+    }
+
+    @Test
     public void testOneOfValues() {
 
 
@@ -91,6 +114,32 @@ public class TestCombinators {
     }
 
     @Test
+    public void oneOfListShouldNotDependOnSubsequentListMutations() {
+        List<String> values = new ArrayList<>(Arrays.asList("a",
+                                                             "b",
+                                                             "c"));
+        Gen<String> gen = Combinators.oneOf(values);
+        values.clear();
+
+        Assertions.assertTrue(gen.sample(1000)
+                                 .allMatch(v -> v.equals("a") || v.equals("b") || v.equals("c")));
+    }
+
+    @Test
+    public void oneOfListShouldSupportNullElements() {
+        List<String> values = new ArrayList<>();
+        values.add("a");
+        values.add(null);
+        Gen<String> gen = Combinators.oneOf(values);
+
+        Map<String, Long> counts = TestFun.generate(50000,
+                                                    gen);
+
+        Assertions.assertTrue(counts.containsKey("a"));
+        Assertions.assertTrue(counts.containsKey(null));
+    }
+
+    @Test
     public void testOneOfSetOfValues() {
 
 
@@ -109,6 +158,32 @@ public class TestCombinators {
                                                                  "b",
                                                                  "c"),
                                                          0.05);
+    }
+
+    @Test
+    public void oneOfSetShouldNotDependOnSubsequentSetMutations() {
+        Set<String> values = new HashSet<>(Arrays.asList("a",
+                                                         "b",
+                                                         "c"));
+        Gen<String> gen = Combinators.oneOf(values);
+        values.clear();
+
+        Assertions.assertTrue(gen.sample(1000)
+                                 .allMatch(v -> v.equals("a") || v.equals("b") || v.equals("c")));
+    }
+
+    @Test
+    public void oneOfSetShouldSupportNullElements() {
+        Set<String> values = new HashSet<>();
+        values.add("a");
+        values.add(null);
+        Gen<String> gen = Combinators.oneOf(values);
+
+        Map<String, Long> counts = TestFun.generate(50000,
+                                                    gen);
+
+        Assertions.assertTrue(counts.containsKey("a"));
+        Assertions.assertTrue(counts.containsKey(null));
     }
 
     @Test

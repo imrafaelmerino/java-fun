@@ -68,7 +68,7 @@ public final class BigIntGen implements Gen<BigInteger> {
         return r -> {
             BigInteger range = max.subtract(min).add(BigInteger.ONE);
             int bitLength = range.bitLength();
-            Random random = new Random(r.nextInt());
+            Random random = new Random(r.nextLong());
             return () -> {
                 BigInteger randomBigInteger;
                 do {
@@ -156,7 +156,8 @@ public final class BigIntGen implements Gen<BigInteger> {
 
             @Override
             protected int next(int bits) {
-                return gen.nextInt(bits);
+                if (bits <= 0) return 0;
+                return gen.nextInt() >>> (Integer.SIZE - bits);
             }
         };
 

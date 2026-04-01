@@ -27,6 +27,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private List<String> headers;
 
     private final String separator;
+    private final List<String> expectedHeaders;
+    private final boolean strictRowWidth;
 
     /**
      * Constructs a CsvStream with custom mapping functions, type conversion, and separator.
@@ -42,12 +44,16 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             Function<String, String> headerMapper,
             BiFunction<String, String, String> valueMapper,
             boolean enableTypeConversion,
-            String separator) {
+            String separator,
+            List<String> expectedHeaders,
+            boolean strictRowWidth) {
         this.path = path;
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
         this.enableTypeConversion = enableTypeConversion;
         this.separator = separator;
+        this.expectedHeaders = expectedHeaders == null ? null : List.copyOf(expectedHeaders);
+        this.strictRowWidth = strictRowWidth;
     }
 
 
@@ -116,10 +122,12 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                                        StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
-            this.headers = Arrays.stream(headerLine.split(Pattern.quote(separator)))
+            this.headers = Arrays.stream(headerLine.split(Pattern.quote(separator),
+                                                          -1))
                                  .map(CsvStream::removeQuotesIfExist)
                                  .map(headerMapper)
                                  .toList();
+            validateExpectedHeaders();
             var spliterator = new CsvSpliterator(br,
                                                  separator);
             return StreamSupport.stream(spliterator,
@@ -146,6 +154,11 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      * @return A Record object representing the CSV line.
      */
     private MyRecord lineToRecord(String[] values) {
+        if (strictRowWidth && values.length != headers.size()) {
+            throw new IllegalArgumentException(
+                    "CSV row width mismatch. Expected %s columns but got %s".formatted(headers.size(),
+                                                                                        values.length));
+        }
         Map<String, Object> record = new HashMap<>();
 
         for (int i = 0; i < headers.size(); i++) {
@@ -185,6 +198,21 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
 
     }
 
+    private void validateExpectedHeaders() {
+        if (expectedHeaders == null) {
+            return;
+        }
+        List<String> normalizedExpected = expectedHeaders.stream()
+                                                         .map(CsvStream::removeQuotesIfExist)
+                                                         .map(headerMapper)
+                                                         .toList();
+        if (!normalizedExpected.equals(headers)) {
+            throw new IllegalArgumentException(
+                    "CSV headers mismatch. Expected %s but got %s".formatted(normalizedExpected,
+                                                                             headers));
+        }
+    }
+
     /**
      * CsvSpliterator is a custom Spliterator for efficiently streaming CSV lines from a BufferedReader.
      */
@@ -206,7 +234,8 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             try {
                 String line = reader.readLine();
                 if (line != null) {
-                    String[] values = line.split(Pattern.quote(separator));
+                    String[] values = line.split(Pattern.quote(separator),
+                                                 -1);
                     action.accept(values);
                     return true;
                 } else {

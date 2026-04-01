@@ -1,6 +1,7 @@
 package fun.gen;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,6 +21,8 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     private Function<String, String> headerMapper = String::trim;
     private BiFunction<String, String, String> valueMapper = (header, val) -> val.trim();
     private boolean enableTypeConversion = true;
+    private List<String> expectedHeaders;
+    private boolean strictRowWidth;
 
     private CsvStreamBuilder(File path,
                              String separator) {
@@ -76,6 +79,54 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
     }
 
     /**
+     * Sets the expected headers. Parsed CSV headers are normalized with the current header mapper
+     * and must match exactly in content and order.
+     *
+     * @param expectedHeaders expected header names in order.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withExpectedHeaders(List<String> expectedHeaders) {
+        Objects.requireNonNull(expectedHeaders);
+        this.expectedHeaders = List.copyOf(expectedHeaders);
+        if (this.expectedHeaders.stream().anyMatch(Objects::isNull)) {
+            throw new NullPointerException("expectedHeaders contains null values");
+        }
+        return this;
+    }
+
+    /**
+     * Varargs overload for expected headers.
+     *
+     * @param expectedHeaders expected header names in order.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withExpectedHeaders(String... expectedHeaders) {
+        return withExpectedHeaders(List.of(Objects.requireNonNull(expectedHeaders)));
+    }
+
+    /**
+     * Enables strict row width validation: every data row must have the same number
+     * of columns as the header.
+     *
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withStrictRowWidth() {
+        this.strictRowWidth = true;
+        return this;
+    }
+
+    /**
+     * Configures strict row width validation.
+     *
+     * @param strictRowWidth whether to enforce exact row width equality with headers.
+     * @return The CsvStreamBuilder instance for method chaining.
+     */
+    public CsvStreamBuilder withStrictRowWidth(boolean strictRowWidth) {
+        this.strictRowWidth = strictRowWidth;
+        return this;
+    }
+
+    /**
      * Creates a Supplier of Stream of Records based on the configured options.
      *
      * @return A Supplier of Stream of Records with the specified configurations.
@@ -87,7 +138,9 @@ public final class CsvStreamBuilder implements Supplier<Stream<MyRecord>> {
                              headerMapper,
                              valueMapper,
                              enableTypeConversion,
-                             separator)
+                             separator,
+                             expectedHeaders,
+                             strictRowWidth)
                 .get();
     }
 

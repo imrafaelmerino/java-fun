@@ -84,4 +84,80 @@ class TestCsvStreamBuilder {
                                     records.get(0).getStr("name"));
         }
     }
+
+    @Test
+    void shouldValidateExpectedHeaders() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-expected-headers",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2\n");
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> CsvStreamBuilder.of(file.toFile(),
+                                                          ",")
+                                                      .withExpectedHeaders("a",
+                                                                           "c")
+                                                      .get()
+                                                      .toList());
+    }
+
+    @Test
+    void shouldPassWhenExpectedHeadersMatchAfterMapping() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-expected-headers-pass",
+                                         ".csv");
+        Files.writeString(file,
+                          " A , B \n1,2\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withHeaderMapper(String::trim)
+                                          .withExpectedHeaders("A",
+                                                               "B")
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals(1,
+                                    records.get(0).getInt("A"));
+            Assertions.assertEquals(2,
+                                    records.get(0).getInt("B"));
+        }
+    }
+
+    @Test
+    void shouldFailOnRowsWithDifferentWidthInStrictMode() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-strict-width-fail",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,2,3\n");
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> CsvStreamBuilder.of(file.toFile(),
+                                                          ",")
+                                                      .withStrictRowWidth()
+                                                      .get()
+                                                      .toList());
+    }
+
+    @Test
+    void shouldAcceptTrailingEmptyColumnInStrictMode() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-strict-width-empty-tail",
+                                         ".csv");
+        Files.writeString(file,
+                          "a,b\n1,\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withStrictRowWidth()
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals("1",
+                                    records.get(0).getStr("a"));
+            Assertions.assertEquals("",
+                                    records.get(0).getStr("b"));
+        }
+    }
 }

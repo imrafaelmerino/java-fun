@@ -11,7 +11,10 @@ import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 
 /**
- * Represents a generator for long values. This class provides methods to generate arbitrary and biased long values within specified ranges.
+ * Generators for {@link Long} values.
+ * <p>
+ * Supports uniform generation over full or bounded ranges and biased generation
+ * toward representative boundary/common values.
  */
 public final class LongGen implements Gen<Long> {
 

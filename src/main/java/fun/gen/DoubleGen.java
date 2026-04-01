@@ -10,8 +10,10 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of double values. This class provides methods to generate arbitrary and biased double values.
- * Use this class to create random double generators for various purposes.
+ * Generators for {@link Double} values.
+ * <p>
+ * Range-based methods only accept finite bounds. Biased variants emphasize
+ * boundary/common values and mix them with arbitrary values from the same interval.
  */
 public final class DoubleGen implements Gen<Double> {
     private static final Gen<Double> arbitrary = new DoubleGen();

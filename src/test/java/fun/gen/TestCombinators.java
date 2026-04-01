@@ -340,6 +340,8 @@ public class TestCombinators {
                                 () -> Combinators.oneOf(List.<String>of()));
         Assertions.assertThrows(IllegalArgumentException.class,
                                 () -> Combinators.oneOf(Set.<String>of()));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.oneOfList(List.of()));
     }
 
     @Test

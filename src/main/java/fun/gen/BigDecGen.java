@@ -13,12 +13,9 @@ import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 
 /**
- * Represents a generator of {@code BigDecimal} values.
- * This class implements the {@link Gen} interface to generate {@code BigDecimal} values within specified ranges
- * and with various biases.
- *
- * @see Gen
- * @see Combinators
+ * Generators for {@link BigDecimal} values.
+ * <p>
+ * Includes arbitrary generators and biased variants that emphasize common boundaries.
  */
 public final class BigDecGen implements Gen<BigDecimal> {
 
@@ -28,16 +25,9 @@ public final class BigDecGen implements Gen<BigDecimal> {
     }
 
     /**
-     * Creates an arbitrary {@code BigDecimal} generator that produces values within the range [0, 1) with a uniform distribution.
-     * The generated values are not biased towards specific values and are distributed uniformly across the specified range.
-     * <p>
-     * Example usage:
-     * <pre>
-     * Gen&lt;BigDecimal&gt; arbitraryGenerator = BigDecGen.arbitrary();
-     * BigDecimal randomValue = arbitraryGenerator.sample(new Random()).get();
-     * </pre>
+     * Returns an arbitrary generator in the range [0, 1).
      *
-     * @return An arbitrary generator for {@code BigDecimal} values within the range [0, 1), distributed uniformly.
+     * @return arbitrary decimal generator
      */
     public static Gen<BigDecimal> arbitrary() {
         return arbitrary;
@@ -62,7 +52,7 @@ public final class BigDecGen implements Gen<BigDecimal> {
                                          final BigDecimal max) {
         requireNonNull(min);
         requireNonNull(max);
-        if (min.compareTo(max) > 0) throw new IllegalArgumentException("max <= min");
+        if (min.compareTo(max) > 0) throw new IllegalArgumentException("max < min");
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         if (max.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) < 0
@@ -128,7 +118,8 @@ public final class BigDecGen implements Gen<BigDecimal> {
 
     /**
      * Creates an arbitrary {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}].
-     * Values are produced using {@code nextDouble()} and then rounded to scale 2 using {@link RoundingMode#HALF_UP}.
+     * Values are produced using {@code nextDouble()}, rounded to scale {@code 2} using
+     * {@link RoundingMode#HALF_UP}, and then clamped to stay within bounds.
      *
      * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
      * @param max The maximum value (inclusive) of the generated {@code BigDecimal}.
@@ -141,12 +132,15 @@ public final class BigDecGen implements Gen<BigDecimal> {
         requireNonNull(min);
         requireNonNull(max);
         if (min.compareTo(max) > 0)
-            throw new IllegalArgumentException("max <= min");
+            throw new IllegalArgumentException("max < min");
         return seed -> () -> {
             BigDecimal random = min.add(BigDecimal.valueOf(seed.nextDouble())
                                                   .multiply(max.subtract(min)));
-            return random.setScale(2,
-                                   RoundingMode.HALF_UP);
+            BigDecimal rounded = random.setScale(2,
+                                                 RoundingMode.HALF_UP);
+            if (rounded.compareTo(min) < 0) return min;
+            if (rounded.compareTo(max) > 0) return max;
+            return rounded;
         };
     }
 

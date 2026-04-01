@@ -12,12 +12,10 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of {@code BigInteger} values.
- * This class implements the {@link Gen} interface to generate {@code BigInteger} values within specified ranges
- * and with various biases.
- *
- * @see Gen
- * @see Combinators
+ * Generators for {@link BigInteger} values.
+ * <p>
+ * The default {@link #arbitrary()} generator produces non-negative values up to 64 bits.
+ * Range-based methods generate values uniformly within inclusive bounds.
  */
 public final class BigIntGen implements Gen<BigInteger> {
 
@@ -29,10 +27,22 @@ public final class BigIntGen implements Gen<BigInteger> {
         this.nBits = nBits;
     }
 
+    /**
+     * Returns the default arbitrary generator.
+     * <p>
+     * Values are non-negative and fit in at most 64 bits.
+     *
+     * @return default arbitrary big integer generator
+     */
     public static Gen<BigInteger> arbitrary() {
         return arbitrary;
     }
 
+    /**
+     * Returns a biased generator that emphasizes selected boundary-like values and zero.
+     *
+     * @return biased big integer generator
+     */
     public static Gen<BigInteger> biased() {
         List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
 
@@ -59,6 +69,15 @@ public final class BigIntGen implements Gen<BigInteger> {
         return Combinators.freqList(gens);
     }
 
+    /**
+     * Returns a uniform generator over the inclusive range [{@code min}, {@code max}].
+     *
+     * @param min lower inclusive bound
+     * @param max upper inclusive bound
+     * @return arbitrary generator constrained to the provided range
+     * @throws NullPointerException if {@code min} or {@code max} is {@code null}
+     * @throws IllegalArgumentException if {@code min > max}
+     */
     public static Gen<BigInteger> arbitrary(final BigInteger min,
                                             final BigInteger max) {
         if (requireNonNull(min).compareTo(requireNonNull(max)) > 0) {
@@ -83,7 +102,15 @@ public final class BigIntGen implements Gen<BigInteger> {
 
     }
 
-
+    /**
+     * Returns a biased generator over the inclusive range [{@code min}, {@code max}].
+     *
+     * @param min lower inclusive bound
+     * @param max upper inclusive bound
+     * @return biased range generator
+     * @throws NullPointerException if {@code min} or {@code max} is {@code null}
+     * @throws IllegalArgumentException if {@code min > max}
+     */
     public static Gen<BigInteger> biased(final BigInteger min,
                                          final BigInteger max) {
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class TestBigDecGen {
 
@@ -71,6 +72,21 @@ public class TestBigDecGen {
         // Without that bias, zero appears only from the arbitrary branch and is much rarer.
         org.junit.jupiter.api.Assertions.assertTrue(zeroCount > 3000,
                                                     "Expected strong bias towards zero, but got count=" + zeroCount);
+    }
+
+    @Test
+    public void arbitraryShouldAlwaysRespectBoundsAfterRounding() {
+        BigDecimal min = new BigDecimal("0.006");
+        BigDecimal max = new BigDecimal("0.016");
+        var supplier = BigDecGen.arbitrary(min,
+                                           max)
+                                .sample(new Random(0L));
+        for (int i = 0; i < 20000; i++) {
+            BigDecimal generated = supplier.get();
+            org.junit.jupiter.api.Assertions.assertTrue(generated.compareTo(min) >= 0
+                                                                && generated.compareTo(max) <= 0,
+                                                        "Generated value out of bounds: " + generated);
+        }
     }
 
 }

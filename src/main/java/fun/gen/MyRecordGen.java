@@ -10,14 +10,16 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * A generator for creating records. This generator provides a flexible way to define the fields and their corresponding
- * generators for generating records. You can specify which fields are optional and nullable, allowing you to generate
- * records with varying structures.
- *
- * <p>With {@code RecordGen}, you can easily generate custom records for testing and data generation purposes. It enables
- * you to control the generation of each field, making it suitable for generating diverse data for your record-based classes.
- * A common use case involves defining a generator for a custom Java object by creating a Record and then using the
- * {@link Gen#map} function to transform the generated record into your desired custom object.</p>
+ * Generator for {@link MyRecord} values backed by named field generators.
+ * <p>
+ * Instances are immutable: configuration methods return a new generator preserving insertion order
+ * of keys. A field can be:
+ * <p>
+ * - required or optional (presence in generated records)
+ * <p>
+ * - nullable or non-nullable (value may be {@code null} when present)
+ * <p>
+ * Typical usage is to define a record shape and then map generated records to a domain object.
  */
 public final class MyRecordGen implements Gen<MyRecord> {
 
@@ -2096,7 +2098,7 @@ public final class MyRecordGen implements Gen<MyRecord> {
      * Returns a brand new record generator with the same key-generators pairs as this instance and
      * all keys optional. An optional key may or may not appear in the generated records.
      *
-     * @return A brand new JsObj generator.
+     * @return A brand new record generator.
      */
     public MyRecordGen withAllOptKeys() {
         return new MyRecordGen(bindings,
@@ -2109,7 +2111,7 @@ public final class MyRecordGen implements Gen<MyRecord> {
      *
      * @param key The name of the field to set.
      * @param gen The generator for the field's values.
-     * @return A new RecordGen instance with the updated field binding.
+     * @return A new {@code MyRecordGen} instance with the updated field binding.
      */
     public MyRecordGen set(final String key,
                            final Gen<?> gen) {
@@ -2121,6 +2123,12 @@ public final class MyRecordGen implements Gen<MyRecord> {
                                nullables);
     }
 
+    /**
+     * Builds a stateful supplier of {@link MyRecord} values from this configuration.
+     *
+     * @param random source of randomness used to derive all field suppliers
+     * @return supplier of records honoring required/optional and nullable settings
+     */
     @Override
     public Supplier<MyRecord> apply(final RandomGenerator random) {
         Objects.requireNonNull(random);

@@ -12,8 +12,10 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of Integer values. This class provides methods to generate arbitrary and biased Integer values.
- * Use this class to create random Integer generators for various purposes.
+ * Generators for {@link Integer} values.
+ * <p>
+ * Includes uniform generators over full or bounded ranges and biased generators that
+ * increase the probability of edge/common values.
  */
 public final class IntGen implements Gen<Integer> {
 

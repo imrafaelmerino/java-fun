@@ -17,7 +17,8 @@ public class TestSetGen {
                       .withMaxTries(5001);
 
         Assertions.assertThrows(RuntimeException.class,
-                                () -> gen.sample(10).peek(System.out::println).count());
+                                () -> gen.sample(10)
+                                         .count());
     }
 
     @Test

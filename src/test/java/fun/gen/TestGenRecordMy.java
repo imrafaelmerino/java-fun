@@ -667,7 +667,6 @@ public class TestGenRecordMy {
                                       .filter(containsAll)
                                       .map(Entry::getValue)
                                       .map(toPer)
-                                      .peek(System.out::println)
                                       .allMatch(it -> it <= 50.2 && it >= 49.8));
 
     }
@@ -798,7 +797,6 @@ public class TestGenRecordMy {
                                  .stream()
                                  .filter(containsAll)
                                  .map(toPer)
-                                 .peek(System.out::println)
                                  .allMatch(it -> it <= 50.5 && it >= 49.5));
 
         Assertions.assertTrue(gen.withAllOptKeys()
@@ -853,7 +851,6 @@ public class TestGenRecordMy {
                                  .stream()
                                  .filter(containsAll.negate())
                                  .map(toPer)
-                                 .peek(System.out::println)
                                  .allMatch(it -> it <= 7.2 && it >= 6.8));
     }
 

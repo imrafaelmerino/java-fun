@@ -1,5 +1,6 @@
 package fun.gen;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,7 +25,12 @@ public class TestRecursiveGen {
                                                          .withNullValues("father"));
         recordGen
                 .sample(1)
-                .forEach(System.out::println);
+                .forEach(record -> {
+                    Assertions.assertTrue(record.getOptionalInt("age")
+                                                .isPresent());
+                    Assertions.assertTrue(record.getOptionalString("name")
+                                                .isPresent());
+                });
 
 
     }
@@ -51,8 +57,14 @@ public class TestRecursiveGen {
                                                         10);
         listGen
                 .sample(100)
-                .forEach(System.out::println
-                );
+                .forEach(records -> {
+                    Assertions.assertTrue(records.size() >= 1 && records.size() <= 10);
+                    Assertions.assertTrue(records.stream()
+                                                 .allMatch(record -> record.getOptionalInt("age")
+                                                                           .isPresent()
+                                                         && record.getOptionalString("name")
+                                                                  .isPresent()));
+                });
 
 
     }

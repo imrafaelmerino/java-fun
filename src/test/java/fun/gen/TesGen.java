@@ -87,8 +87,8 @@ public class TesGen {
                                  10).classify(10000,
                                               classifier,
                                               "Others");
-
-        System.out.println(map);
+        Assertions.assertFalse(map.isEmpty());
+        Assertions.assertTrue(map.containsKey("Others"));
     }
 
     @Test

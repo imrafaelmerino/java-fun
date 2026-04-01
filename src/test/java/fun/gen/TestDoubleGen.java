@@ -86,4 +86,17 @@ public class TestDoubleGen {
                                 () -> DoubleGen.biased(Double.NEGATIVE_INFINITY,
                                                        0.0));
     }
+
+    @Test
+    public void arbitraryOnVeryWideRangeShouldGenerateBothSigns() {
+        var samples = DoubleGen.arbitrary(-Double.MAX_VALUE,
+                                          Double.MAX_VALUE)
+                               .sample(2000)
+                               .toList();
+
+        Assertions.assertTrue(samples.stream().anyMatch(it -> it < 0.0),
+                              "Expected at least one negative value");
+        Assertions.assertTrue(samples.stream().anyMatch(it -> it > 0.0),
+                              "Expected at least one positive value");
+    }
 }

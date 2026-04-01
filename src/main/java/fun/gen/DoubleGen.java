@@ -96,14 +96,37 @@ public final class DoubleGen implements Gen<Double> {
         if (!Double.isFinite(min) || !Double.isFinite(max))
             throw new IllegalArgumentException("min and max must be finite");
         if (max < min) throw new IllegalArgumentException("max < min");
+        if (max == min) return Gen.cons(min);
 
         return seed -> () -> {
-            double r = seed.nextDouble();
-            r = r * (max - min) + min;
-            if (r > max)  // may need to correct a rounding problem
-                r = Double.longBitsToDouble(Double.doubleToLongBits(max) - 1);
-            return r;
+            double range = max - min;
+            if (Double.isFinite(range)) {
+                return nextInFiniteRange(seed,
+                                         min,
+                                         max);
+            }
+            // When max - min overflows (for very wide intervals), split around a safe midpoint.
+            // This keeps each half finite and avoids collapsing samples near max.
+            double mid = min / 2.0 + max / 2.0;
+            return seed.nextBoolean()
+                    ? nextInFiniteRange(seed,
+                                        min,
+                                        mid)
+                    : nextInFiniteRange(seed,
+                                        mid,
+                                        max);
         };
+    }
+
+    private static double nextInFiniteRange(RandomGenerator seed,
+                                            double min,
+                                            double max) {
+        double r = seed.nextDouble();
+        r = r * (max - min) + min;
+        if (r > max) {
+            return Math.nextDown(max);
+        }
+        return r;
     }
 
     /**

@@ -94,7 +94,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      * @return The processed string value.
      */
     static String removeQuotesIfExist(String value) {
-        return value.length() > 2 && value.startsWith("\"") && value.endsWith("\"")
+        return value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")
                ?
                value.substring(1,
                                value.length() - 1) :
@@ -116,7 +116,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
                                                        StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
-            this.headers = Arrays.stream(headerLine.split(separator))
+            this.headers = Arrays.stream(headerLine.split(Pattern.quote(separator)))
                                  .map(CsvStream::removeQuotesIfExist)
                                  .map(headerMapper)
                                  .toList();
@@ -174,10 +174,14 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
 
         String mappedValue = valueMapper.apply(header,
                                                strValue);
+        if (mappedValue == null) {
+            return null;
+        }
+        String normalizedValue = removeQuotesIfExist(mappedValue);
 
         return enableTypeConversion ?
-               tryConvert(mappedValue) :
-               mappedValue;
+               tryConvert(normalizedValue) :
+               normalizedValue;
 
     }
 
@@ -202,7 +206,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             try {
                 String line = reader.readLine();
                 if (line != null) {
-                    String[] values = line.split(separator);
+                    String[] values = line.split(Pattern.quote(separator));
                     action.accept(values);
                     return true;
                 } else {

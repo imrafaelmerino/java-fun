@@ -129,8 +129,7 @@ public final class MyRecord {
      * @see #getLong(String, Supplier)
      */
     public Long getLong(final String key) {
-        return getLong(key,
-                       () -> null);
+        return getOptLong(key).orElse(null);
     }
 
 
@@ -234,8 +233,7 @@ public final class MyRecord {
      * @see #getInt(String, Supplier)
      */
     public Integer getInt(final String key) {
-        return getInt(key,
-                      () -> null);
+        return getOptInt(key).orElse(null);
     }
 
 
@@ -593,8 +591,7 @@ public final class MyRecord {
      * @see #getDouble(String, Supplier)
      */
     public Double getDouble(final String key) {
-        return getDouble(key,
-                         () -> null);
+        return getOptDouble(key).orElse(null);
     }
 
 
@@ -643,8 +640,7 @@ public final class MyRecord {
      * @see #getBool(String, Supplier)
      */
     public Boolean getBool(final String key) {
-        return getBool(key,
-                       () -> null);
+        return getOptBool(key).orElse(null);
     }
 
     /**
@@ -690,8 +686,7 @@ public final class MyRecord {
      * @see #getChar(String, Supplier)
      */
     public Character getChar(final String key) {
-        return getChar(key,
-                       () -> null);
+        return getOptChar(key).orElse(null);
     }
 
 

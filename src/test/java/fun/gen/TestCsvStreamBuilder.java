@@ -45,4 +45,43 @@ class TestCsvStreamBuilder {
             Assertions.assertFalse(records.get(0).getBool("flag"));
         }
     }
+
+    @Test
+    void shouldSupportRegexMetaCharacterSeparator() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-pipe-separator",
+                                         ".csv");
+        Files.writeString(file,
+                          "a|b\n1|2\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              "|")
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals(1,
+                                    records.get(0).getInt("a"));
+            Assertions.assertEquals(2,
+                                    records.get(0).getInt("b"));
+        }
+    }
+
+    @Test
+    void shouldUnquoteEmptyStringValues() throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-empty-quoted",
+                                         ".csv");
+        Files.writeString(file,
+                          "name\n\"\"\n");
+
+        try (var stream = CsvStreamBuilder.of(file.toFile(),
+                                              ",")
+                                          .withoutTypeConversion()
+                                          .get()) {
+            List<MyRecord> records = stream.toList();
+            Assertions.assertEquals(1,
+                                    records.size());
+            Assertions.assertEquals("",
+                                    records.get(0).getStr("name"));
+        }
+    }
 }

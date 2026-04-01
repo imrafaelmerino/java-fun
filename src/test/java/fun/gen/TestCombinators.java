@@ -334,4 +334,36 @@ public class TestCombinators {
 
     }
 
+    @Test
+    public void oneOfShouldRejectEmptyCollections() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.oneOf(List.<String>of()));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.oneOf(Set.<String>of()));
+    }
+
+    @Test
+    public void nOfShouldRejectNegativeN() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.nOf(List.of(1,
+                                                              2),
+                                                      -1));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.nOf(Set.of(1,
+                                                             2),
+                                                      -1));
+    }
+
+    @Test
+    public void combinationsShouldValidateKBounds() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.combinations(-1,
+                                                               List.of("a",
+                                                                       "b")));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.combinations(3,
+                                                               List.of("a",
+                                                                       "b")));
+    }
+
 }

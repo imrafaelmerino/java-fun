@@ -37,7 +37,7 @@ public final class IntGen implements Gen<Integer> {
      *
      * @param min The minimum Integer value (inclusive) from which values will be generated.
      * @return A biased generator for Integer values starting from the specified minimum value.
-     * @throws IllegalArgumentException If {@code min} is greater than {@link Integer#MAX_VALUE}.
+     * @throws IllegalArgumentException Never thrown by this overload.
      */
     public static Gen<Integer> biased(int min) {
         return biased(min,
@@ -125,7 +125,7 @@ public final class IntGen implements Gen<Integer> {
      *
      * @param min The minimum Integer value (inclusive) from which values will be generated.
      * @return An Integer generator starting from the specified minimum value.
-     * @throws IllegalArgumentException If {@code min} is greater than {@link Integer#MAX_VALUE}.
+     * @throws IllegalArgumentException Never thrown by this overload.
      */
     public static Gen<Integer> arbitrary(int min) {
         return arbitrary(min,

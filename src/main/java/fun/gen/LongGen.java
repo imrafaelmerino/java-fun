@@ -152,7 +152,7 @@ public final class LongGen implements Gen<Long> {
      *
      * @param min The minimum long value (inclusive).
      * @return A biased long generator starting from the specified minimum value.
-     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     * @throws IllegalArgumentException Never thrown by this overload.
      */
     public static Gen<Long> biased(long min) {
         return biased(min,
@@ -164,7 +164,7 @@ public final class LongGen implements Gen<Long> {
      *
      * @param min The minimum long value (inclusive).
      * @return A long generator starting from the specified minimum value.
-     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     * @throws IllegalArgumentException Never thrown by this overload.
      */
     public static Gen<Long> arbitrary(long min) {
         return arbitrary(min,

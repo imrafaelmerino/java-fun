@@ -44,19 +44,19 @@ public final class BigDecGen implements Gen<BigDecimal> {
     }
 
     /**
-     * Creates a biased {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}).
+     * Creates a biased {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}].
      * The generated values will be biased towards specific values based on the specified range.
      * This method aims to create generators with specific value distributions, emphasizing the specified boundaries and zero.
      * <p>
      * The generated values are biased toward the following values within the specified range:
      * - The minimum value {@code min} is always included as a possible generated value.
      * - The maximum value {@code max} is included as a possible generated value unless it is equal to {@code min}.
-     * - Zero is included as a possible value within the specified range [{@code min}, {@code max}].*
+     * - Zero is included as a possible value within the specified range when it lies between {@code min} and {@code max}.
      *
      * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
-     * @param max The maximum value (exclusive) of the generated {@code BigDecimal}.
+     * @param max The maximum value (inclusive) of the generated {@code BigDecimal}.
      * @return A biased generator for {@code BigDecimal} values within the specified range, emphasizing specific values.
-     * @throws IllegalArgumentException If {@code max} is less than or equal to {@code min}.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
      */
     public static Gen<BigDecimal> biased(final BigDecimal min,
                                          final BigDecimal max) {
@@ -127,13 +127,13 @@ public final class BigDecGen implements Gen<BigDecimal> {
     }
 
     /**
-     * Creates an arbitrary {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}).
-     * The generated values will be uniformly distributed across the specified range.
+     * Creates an arbitrary {@code BigDecimal} generator that produces values within the specified range [{@code min}, {@code max}].
+     * Values are produced using {@code nextDouble()} and then rounded to scale 2 using {@link RoundingMode#HALF_UP}.
      *
      * @param min The minimum value (inclusive) of the generated {@code BigDecimal}.
-     * @param max The maximum value (exclusive) of the generated {@code BigDecimal}.
+     * @param max The maximum value (inclusive) of the generated {@code BigDecimal}.
      * @return An arbitrary generator for {@code BigDecimal} values within the specified range.
-     * @throws IllegalArgumentException If {@code max} is less than or equal to {@code min}.
+     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
      */
     public static Gen<BigDecimal> arbitrary(final BigDecimal min,
                                             final BigDecimal max) {

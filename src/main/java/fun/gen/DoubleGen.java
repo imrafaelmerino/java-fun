@@ -29,13 +29,13 @@ public final class DoubleGen implements Gen<Double> {
     }
 
     /**
-     * Returns a biased generator for double values within the specified range [{@code min}, {@code max}] (inclusive).
-     * This generator is biased towards generating common values within the specified range.
+     * Returns a biased generator for finite double values within the range [{@code min}, {@code max}].
+     * This generator is biased toward common boundary and primitive-like values that fall inside the interval.
      *
      * @param min The minimum double value (inclusive).
      * @param max The maximum double value (inclusive).
      * @return A biased generator for double values within the specified range.
-     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     * @throws IllegalArgumentException If either bound is not finite, or if {@code max} is less than {@code min}.
      */
     public static Gen<Double> biased(final double min,
                                      final double max) {
@@ -81,13 +81,13 @@ public final class DoubleGen implements Gen<Double> {
     }
 
     /**
-     * Returns a generator for arbitrary double values within the specified range [{@code min}, {@code max}] (inclusive).
-     * This generator produces random double values within the specified range.
+     * Returns a generator for finite double values within the range [{@code min}, {@code max}].
+     * Values are generated from a uniform source over [0,1), then scaled to the target interval.
      *
      * @param min The minimum double value (inclusive).
      * @param max The maximum double value (inclusive).
      * @return A generator for arbitrary double values within the specified range.
-     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     * @throws IllegalArgumentException If either bound is not finite, or if {@code max} is less than {@code min}.
      */
     public static Gen<Double> arbitrary(final double min,
                                         final double max) {

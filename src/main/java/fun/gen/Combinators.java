@@ -61,12 +61,13 @@ public final class Combinators {
      * @param <T>    The type of values to choose from.
      * @param values A list of values to choose from.
      * @return A generator that produces values randomly selected from the provided list of values.
-     * @throws NullPointerException If the provided {@code values} list is {@code null} or empty.
+     * @throws NullPointerException     If the provided {@code values} list is {@code null}.
+     * @throws IllegalArgumentException If the provided {@code values} list is empty.
      */
     public static <T> Gen<T> oneOf(final List<T> values) {
         final List<T> snapshot = new ArrayList<>(requireNonNull(values));
         if (snapshot.isEmpty())
-            throw new RuntimeException("list empty. No value can be generated");
+            throw new IllegalArgumentException("list empty. No value can be generated");
         return r -> () -> snapshot.get(requireNonNull(r).nextInt(snapshot.size()));
     }
 
@@ -76,12 +77,13 @@ public final class Combinators {
      * @param <T>    The type of values to choose from.
      * @param values A set of values to choose from.
      * @return A generator that produces values randomly selected from the provided set of values.
-     * @throws NullPointerException If the provided {@code values} set is {@code null} or empty.
+     * @throws NullPointerException     If the provided {@code values} set is {@code null}.
+     * @throws IllegalArgumentException If the provided {@code values} set is empty.
      */
     public static <T> Gen<T> oneOf(final Set<T> values) {
         final List<T> snapshot = new ArrayList<>(requireNonNull(values));
         if (snapshot.isEmpty())
-            throw new RuntimeException("set empty. No value can be generated");
+            throw new IllegalArgumentException("set empty. No value can be generated");
         return r -> () -> snapshot.get(requireNonNull(r).nextInt(snapshot.size()));
     }
 
@@ -92,10 +94,11 @@ public final class Combinators {
      * @param values A list of values to choose from.
      * @param n      The number of values to generate in the list.
      * @return A generator that produces a list of {@code n} random values from the provided list.
-     * @throws IllegalArgumentException If {@code n} is greater than the size of the {@code values} list.
+     * @throws IllegalArgumentException If {@code n} is negative or greater than the size of the {@code values} list.
      */
     public static <T> Gen<List<T>> nOf(final List<T> values,
                                        int n) {
+        if (n < 0) throw new IllegalArgumentException("n < 0");
         if (n > values.size()) throw new IllegalArgumentException("n > list.size=" + values.size());
         return random -> () -> {
             List<T> result = new ArrayList<>();
@@ -115,10 +118,11 @@ public final class Combinators {
      * @param values A set of values to choose from.
      * @param n      The number of values to generate in the set.
      * @return A generator that produces a set of {@code n} random values from the provided set.
-     * @throws IllegalArgumentException If {@code n} is greater than the size of the {@code values} set.
+     * @throws IllegalArgumentException If {@code n} is negative or greater than the size of the {@code values} set.
      */
     public static <T> Gen<Set<T>> nOf(final Set<T> values,
                                       int n) {
+        if (n < 0) throw new IllegalArgumentException("n < 0");
         if (n > values.size()) throw new IllegalArgumentException("n > set.size=" + values.size());
         return random -> () -> {
             Set<T> result = new HashSet<>();
@@ -309,9 +313,14 @@ public final class Combinators {
      * @param k     The size of the combinations to generate.
      * @param input A list of input values.
      * @return A generator that produces combinations of elements of size {@code k} from the input list.
+     * @throws IllegalArgumentException If {@code k} is negative or greater than {@code input.size()}.
      */
     public static <I> Gen<Set<I>> combinations(final int k,
                                                final List<I> input) {
+        requireNonNull(input);
+        if (k < 0 || k > input.size()) {
+            throw new IllegalArgumentException("k must be between 0 and input.size");
+        }
         return subsets(input).suchThat(it -> it.size() == k);
     }
 
@@ -322,11 +331,12 @@ public final class Combinators {
      * @param k     The size of the combinations to generate.
      * @param input A set of input values.
      * @return A generator that produces combinations of elements of size {@code k} from the input set.
+     * @throws IllegalArgumentException If {@code k} is negative or greater than {@code input.size()}.
      */
     public static <I> Gen<Set<I>> combinations(final int k,
                                                final Set<I> input) {
         return combinations(k,
-                            new ArrayList<>(input));
+                            new ArrayList<>(requireNonNull(input)));
     }
 
     /**
@@ -337,7 +347,7 @@ public final class Combinators {
      * @return A generator that produces subsets of input elements.
      */
     public static <I> Gen<Set<I>> subsets(List<I> elements) {
-        return new SubsetGen<>(elements);
+        return new SubsetGen<>(requireNonNull(elements));
     }
 
     /**
@@ -348,7 +358,7 @@ public final class Combinators {
      * @return A generator that produces subsets of input elements.
      */
     public static <I> Gen<Set<I>> subsets(Set<I> elements) {
-        return subsets(new ArrayList<>(elements));
+        return subsets(new ArrayList<>(requireNonNull(elements)));
     }
 
     /**
@@ -360,6 +370,7 @@ public final class Combinators {
      * @return a generator that produces shuffled lists
      */
     public static <I> Gen<List<I>> shuffle(List<I> xs) {
+        requireNonNull(xs);
         return random -> () -> {
             List<I> ys = new ArrayList<>(xs);
             shuffle(ys,

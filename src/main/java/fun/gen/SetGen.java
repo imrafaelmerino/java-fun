@@ -51,7 +51,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
      *              of successfully generating a set of the desired size, but it can also increase the time it takes to
      *              generate the set.
      * @return A new SetGen instance with the updated maximum tries.
-     * @throws IllegalArgumentException If the specified number of tries is negative.
+     * @throws IllegalArgumentException If {@code tries} is less than {@code size}.
      */
     public SetGen<T> withMaxTries(final int tries) {
         return new SetGen<>(gen,

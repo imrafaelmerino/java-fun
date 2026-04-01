@@ -58,7 +58,7 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
      *
      * @param tries The maximum number of attempts to generate the map.
      * @return A new instance of MapGen with the specified maximum tries.
-     * @throws IllegalArgumentException If the provided number of tries is less than the current size of the map to be generated, or if the number of tries is negative.
+     * @throws IllegalArgumentException If {@code tries} is less than {@code size}.
      */
     public MapGen<K, V> withMaxTries(final int tries) {
         return new MapGen<>(keyGen,

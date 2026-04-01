@@ -41,6 +41,7 @@
         <MAVEN-ENFORCER-PLUGIN.VERSION>3.5.0</MAVEN-ENFORCER-PLUGIN.VERSION>
         <MAVEN-MINIMUM-VERSION>3.6.3</MAVEN-MINIMUM-VERSION>
         <JAVA-MINIMUM-VERSION>21</JAVA-MINIMUM-VERSION>
+        <JAVAFUN.STATS.ENABLED>false</JAVAFUN.STATS.ENABLED>
         <APACHE_JMETER_CORE.VERSION>5.6.3</APACHE_JMETER_CORE.VERSION>
         <JUNIT-JUPITER-API.VERSION>5.11.3</JUNIT-JUPITER-API.VERSION>
         <JSON-VALUES.VERSION>14.0.0</JSON-VALUES.VERSION>
@@ -48,7 +49,7 @@
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${JUNIT-JUPITER-API.VERSION}</version>
             <scope>test</scope>
         </dependency>
@@ -108,6 +109,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <javafun.stats>${JAVAFUN.STATS.ENABLED}</javafun.stats>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -140,6 +146,15 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>stats</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <JAVAFUN.STATS.ENABLED>true</JAVAFUN.STATS.ENABLED>
+            </properties>
+        </profile>
         <profile>
             <id>jmeter-example</id>
             <activation>

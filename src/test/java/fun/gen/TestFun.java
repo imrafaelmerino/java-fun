@@ -1,6 +1,7 @@
 package fun.gen;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -12,6 +13,8 @@ public class TestFun {
     static <I> void assertGeneratedValuesHaveSameProbability(Map<I, Long> counts,
                                                              Collection<I> values,
                                                              double errorMargin) {
+        Assumptions.assumeTrue(Boolean.getBoolean("javafun.stats"),
+                               "Statistical distribution tests are disabled by default. Run with -Pstats.");
         if (errorMargin < 0.0) throw new IllegalArgumentException("errorMargin < 0");
         if (errorMargin > 1.0) throw new IllegalArgumentException("errorMargin > 1");
 

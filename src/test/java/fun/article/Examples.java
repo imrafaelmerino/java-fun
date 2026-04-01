@@ -5,6 +5,7 @@ import fun.gen.Gen;
 import fun.gen.IntGen;
 import fun.gen.PairGen;
 import fun.tuple.Pair;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap;
@@ -32,6 +33,7 @@ public class Examples {
 
     @Test
     public void test_1() {
+        requireStatsProfile();
 
         Map<Integer, Long> collect = IntGen.arbitrary(-5,
                                                       5)
@@ -56,6 +58,7 @@ public class Examples {
 
     @Test
     public void test_2() {
+        requireStatsProfile();
 
         Map<Integer, Long> collect = IntGen.biased(-5,
                                                    5)
@@ -69,6 +72,7 @@ public class Examples {
 
     @Test
     public void test_3() {
+        requireStatsProfile();
 
         //        Suppose you need a generator which generates a tuple that contains two random integer values,
         //        one of them being at least twice as big as the other
@@ -94,6 +98,7 @@ public class Examples {
 
     @Test
     public void test_4() {
+        requireStatsProfile();
         //You can create generators that pick one value out of a selection of values. The oneOf method creates a
         // generator that randomly picks one of its parameters each time it generates a value. Notice that plain
         // values are implicitly converted to generators (which always generate that value) if needed.
@@ -120,6 +125,11 @@ public class Examples {
                                  100_000)
         );
 
+    }
+
+    private static void requireStatsProfile() {
+        Assumptions.assumeTrue(Boolean.getBoolean("javafun.stats"),
+                               "Article/statistical tests are disabled by default. Run with -Pstats.");
     }
 
 }

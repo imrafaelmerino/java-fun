@@ -156,7 +156,7 @@ public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
 
     default <P> Gen<P> map(Function<O, P> fn);
 
-    default <P> Gen<P> then(Function<O, Gen<P>> fn);
+    default <P> Gen<P> flatMap(Function<O, Gen<P>> fn);
 
     default Map<String, Long> classify(int n,
                                        Map<String, Predicate<O>> classifier,
@@ -208,7 +208,7 @@ Antes de continuar vamos a resumir de forma concisa los principales puntos visto
     de una interfaz común.
 -   Hemos modelados un generador con interfaz `Gen` que no deja de ser una simple función que acepta
     un `RandomGenerator` y produce un `Supplier` de objetos.
--   Métodos clave en `Gen` incluyen `sample()`, `map()`, `then()`, `classify()`, y `collect()`.
+-   Métodos clave en `Gen` incluyen `sample()`, `map()`, `flatMap()`, `classify()`, y `collect()`.
 
 ## ¡Manos a la obra! Creando algunos generadores...
 
@@ -218,13 +218,13 @@ Antes de continuar vamos a resumir de forma concisa los principales puntos visto
 
 public interface Gen<O> extends Function<RandomGenerator, Supplier<O>> {
 
-    static <O> Gen<O> cons(final O value) {
+    static <O> Gen<O> constant(final O value) {
         return random -> () -> value;
     }
 
 }
 
-Gen<Integer> gen = Gen.cons(1);
+Gen<Integer> gen = Gen.constant(1);
 Supplier<Integer> supplier = gen.apply(new Random());
 
 var a = supplier.get();

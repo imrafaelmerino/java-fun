@@ -65,55 +65,55 @@ public final class BigDecGen implements Gen<BigDecimal> {
                 && min.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) < 0
         )
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Long.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Long.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Long.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Integer.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Integer.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Integer.MIN_VALUE))));
 
 
         if (max.compareTo(BigDecimal.valueOf(Short.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Short.MAX_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Short.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Short.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Short.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Short.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Byte.MAX_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Byte.MAX_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Byte.MAX_VALUE))));
 
         if (max.compareTo(BigDecimal.valueOf(Byte.MIN_VALUE)) > 0
                 && min.compareTo(BigDecimal.valueOf(Byte.MIN_VALUE)) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
+                             Gen.constant(BigDecimal.valueOf(Byte.MIN_VALUE))));
 
         if (max.compareTo(BigDecimal.ZERO) > 0
                 && min.compareTo(BigDecimal.ZERO) < 0)
             gens.add(Pair.of(1,
-                             Gen.cons(BigDecimal.ZERO)));
+                             Gen.constant(BigDecimal.ZERO)));
 
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
 
         if (max.compareTo(min) != 0)
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
 
 
         gens.add(Pair.of(gens.size(),
@@ -180,32 +180,32 @@ public final class BigDecGen implements Gen<BigDecimal> {
     public static Gen<BigDecimal> biased() {
         List<Pair<Integer, Gen<? extends BigDecimal>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Long.MAX_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Long.MAX_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Long.MIN_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Long.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Integer.MAX_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Integer.MAX_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Integer.MIN_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Integer.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Short.MAX_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Short.MAX_VALUE))));
 
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Short.MIN_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Short.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Byte.MAX_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Byte.MAX_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(Byte.MIN_VALUE))));
+                         Gen.constant(BigDecimal.valueOf(Byte.MIN_VALUE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigDecimal.valueOf(0))));
+                         Gen.constant(BigDecimal.valueOf(0))));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary));

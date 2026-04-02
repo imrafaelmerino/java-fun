@@ -12,7 +12,7 @@ public class Examples {
 
         IntGen.arbitrary(10,
                          20)
-              .then(n -> IntGen.arbitrary(n * 2,
+              .flatMap(n -> IntGen.arbitrary(n * 2,
                                           500));
 
 
@@ -27,14 +27,14 @@ public class Examples {
 
         Combinators.freq(
                 Pair.of(3,
-                        Gen.cons('A')),
+                        Gen.constant('A')),
                 Pair.of(4,
-                        Gen.cons('E')),
+                        Gen.constant('E')),
                 Pair.of(2,
-                        Gen.cons('I')),
+                        Gen.constant('I')),
                 Pair.of(3,
-                        Gen.cons('O')),
+                        Gen.constant('O')),
                 Pair.of(1,
-                        Gen.cons('U')));
+                        Gen.constant('U')));
     }
 }

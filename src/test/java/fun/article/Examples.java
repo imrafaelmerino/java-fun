@@ -81,14 +81,14 @@ public class Examples {
                                               20),
                              IntGen.arbitrary(0,
                                               20))
-                         .suchThat(pair -> pair.second() > 2 * pair.first());
+                         .filter(pair -> pair.second() > 2 * pair.first());
 
 
         System.out.println(gen.collect(100_000));
 
         var gen1 = IntGen.arbitrary(0,
                                     20)
-                         .then(a -> IntGen.arbitrary(2 * a + 1)
+                         .flatMap(a -> IntGen.arbitrary(2 * a + 1)
                                           .map(b -> Pair.of(a,
                                                             b))
                          );
@@ -111,15 +111,15 @@ public class Examples {
         System.out.println(uniVowelGen.collect(100_000));
 
         var vowelGen = Combinators.freq(Pair.of(3,
-                                                Gen.cons('A')),
+                                                Gen.constant('A')),
                                         Pair.of(4,
-                                                Gen.cons('E')),
+                                                Gen.constant('E')),
                                         Pair.of(2,
-                                                Gen.cons('I')),
+                                                Gen.constant('I')),
                                         Pair.of(3,
-                                                Gen.cons('O')),
+                                                Gen.constant('O')),
                                         Pair.of(1,
-                                                Gen.cons('U')));
+                                                Gen.constant('U')));
 
         System.out.println(toPer(vowelGen.collect(100_000),
                                  100_000)

@@ -83,9 +83,11 @@ public final class SetGen<T> implements Gen<Set<T>> {
                 tries += 1;
             }
             if (set.size() < size)
-                throw new RuntimeException(String.format("Couldn't generate set of %s different elements after %s tries",
-                                                         size,
-                                                         maxTries));
+                throw new GenerationExhaustedException(String.format(
+                        "Couldn't generate set of %s different elements after %s tries",
+                        size,
+                        maxTries
+                ));
             return set;
         };
     }

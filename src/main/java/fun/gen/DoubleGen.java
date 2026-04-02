@@ -47,32 +47,32 @@ public final class DoubleGen implements Gen<Double> {
         List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
         if (max >= Integer.MAX_VALUE && min <= Integer.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((double) Integer.MAX_VALUE)));
+                             Gen.constant((double) Integer.MAX_VALUE)));
         if (max >= Integer.MIN_VALUE && min <= Integer.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((double) Integer.MIN_VALUE)));
+                             Gen.constant((double) Integer.MIN_VALUE)));
         if (max >= Short.MAX_VALUE && min <= Short.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((double) Short.MAX_VALUE)));
+                             Gen.constant((double) Short.MAX_VALUE)));
         if (max >= Short.MIN_VALUE && min <= Short.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((double) Short.MIN_VALUE)));
+                             Gen.constant((double) Short.MIN_VALUE)));
         if (max >= Byte.MAX_VALUE && min <= Byte.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((double) Byte.MAX_VALUE)));
+                             Gen.constant((double) Byte.MAX_VALUE)));
         if (max >= Byte.MIN_VALUE && min <= Byte.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((double) Byte.MIN_VALUE)));
+                             Gen.constant((double) Byte.MIN_VALUE)));
         if (max >= 0 && min <= 0)
             gens.add(Pair.of(1,
-                             Gen.cons(0.0)));
+                             Gen.constant(0.0)));
 
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
 
         if (max != min)
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary(min,
@@ -96,7 +96,7 @@ public final class DoubleGen implements Gen<Double> {
         if (!Double.isFinite(min) || !Double.isFinite(max))
             throw new IllegalArgumentException("min and max must be finite");
         if (max < min) throw new IllegalArgumentException("max < min");
-        if (max == min) return Gen.cons(min);
+        if (max == min) return Gen.constant(min);
 
         return seed -> () -> {
             double range = max - min;
@@ -137,27 +137,27 @@ public final class DoubleGen implements Gen<Double> {
     public static Gen<Double> biased() {
         List<Pair<Integer, Gen<? extends Double>>> gens = new ArrayList<>();
         gens.add(Pair.of(1,
-                         Gen.cons(Double.MIN_VALUE)));
+                         Gen.constant(Double.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons(Double.MAX_VALUE)));
+                         Gen.constant(Double.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Long.MAX_VALUE)));
+                         Gen.constant((double) Long.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Long.MIN_VALUE)));
+                         Gen.constant((double) Long.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Integer.MAX_VALUE)));
+                         Gen.constant((double) Integer.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Integer.MIN_VALUE)));
+                         Gen.constant((double) Integer.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Short.MAX_VALUE)));
+                         Gen.constant((double) Short.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Short.MIN_VALUE)));
+                         Gen.constant((double) Short.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Byte.MAX_VALUE)));
+                         Gen.constant((double) Byte.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((double) Byte.MIN_VALUE)));
+                         Gen.constant((double) Byte.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons(0.0)));
+                         Gen.constant(0.0)));
         gens.add(Pair.of(gens.size(),
                          arbitrary));
         return Combinators.freqList(gens);

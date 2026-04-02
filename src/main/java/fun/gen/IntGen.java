@@ -62,25 +62,25 @@ public final class IntGen implements Gen<Integer> {
 
         if (max >= Short.MAX_VALUE && min <= Short.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((int) Short.MAX_VALUE)));
+                             Gen.constant((int) Short.MAX_VALUE)));
         if (max >= Short.MIN_VALUE && min <= Short.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((int) Short.MIN_VALUE)));
+                             Gen.constant((int) Short.MIN_VALUE)));
         if (max >= Byte.MAX_VALUE && min <= Byte.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((int) Byte.MAX_VALUE)));
+                             Gen.constant((int) Byte.MAX_VALUE)));
         if (max >= Byte.MIN_VALUE && min <= Byte.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((int) Byte.MIN_VALUE)));
+                             Gen.constant((int) Byte.MIN_VALUE)));
         if (max >= 0 && min <= 0)
             gens.add(Pair.of(1,
-                             Gen.cons(0)));
+                             Gen.constant(0)));
 
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
         if (max != min)
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary(min,
@@ -143,25 +143,25 @@ public final class IntGen implements Gen<Integer> {
         List<Pair<Integer, Gen<? extends Integer>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                         Gen.cons(Integer.MAX_VALUE)));
+                         Gen.constant(Integer.MAX_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons(Integer.MIN_VALUE)));
+                         Gen.constant(Integer.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons((int) Short.MAX_VALUE)));
+                         Gen.constant((int) Short.MAX_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons((int) Short.MIN_VALUE)));
+                         Gen.constant((int) Short.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons((int) Byte.MAX_VALUE)));
+                         Gen.constant((int) Byte.MAX_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons((int) Byte.MIN_VALUE)));
+                         Gen.constant((int) Byte.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons(0)));
+                         Gen.constant(0)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary));

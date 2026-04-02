@@ -200,9 +200,11 @@ public final class MapGen<K, V> implements Gen<Map<K, V>> {
             tries++;
         } while (tries != maxTries && map.size() < size);
         if (map.size() < size) {
-            throw new RuntimeException(String.format("Couldn't generate map of %s elements after %s tries",
-                                                     size,
-                                                     maxTries));
+            throw new GenerationExhaustedException(String.format(
+                    "Couldn't generate map of %s elements after %s tries",
+                    size,
+                    maxTries
+            ));
         }
         return map;
     }

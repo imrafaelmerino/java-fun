@@ -22,7 +22,7 @@ public class TestNamedGenCache {
     @Test
     public void shouldResolveRegisteredNamedGenerator() {
         Gen<Integer> named = NamedGen.of("answer",
-                                         Gen.cons(42));
+                                         Gen.constant(42));
 
         Integer value = named.sample(new Random(1L)).get();
 
@@ -33,11 +33,11 @@ public class TestNamedGenCache {
     @Test
     public void shouldThrowWhenNameIsRegisteredTwice() {
         NamedGen.of("dup",
-                    Gen.cons("first"));
+                    Gen.constant("first"));
 
         IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
                                                               () -> NamedGen.of("dup",
-                                                                                Gen.cons("second")));
+                                                                                Gen.constant("second")));
 
         Assertions.assertTrue(ex.getMessage().contains("already been created"));
     }

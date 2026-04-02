@@ -47,21 +47,21 @@ public final class BigIntGen implements Gen<BigInteger> {
         List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Long.MAX_VALUE)
+                         Gen.constant(BigInteger.valueOf(Long.MAX_VALUE)
                                             .add(BigInteger.ONE))));
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Long.MIN_VALUE)
+                         Gen.constant(BigInteger.valueOf(Long.MIN_VALUE)
                                             .subtract(BigInteger.ONE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE)
+                         Gen.constant(BigInteger.valueOf(Integer.MAX_VALUE)
                                             .add(BigInteger.ONE))));
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Integer.MIN_VALUE)
+                         Gen.constant(BigInteger.valueOf(Integer.MIN_VALUE)
                                             .subtract(BigInteger.ONE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.ZERO)));
+                         Gen.constant(BigInteger.ZERO)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary));
@@ -149,11 +149,11 @@ public final class BigIntGen implements Gen<BigInteger> {
                         max);
 
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
 
         if (min.compareTo(max) != 0) {
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
         }
 
         gens.add(Pair.of(gens.size(),
@@ -170,7 +170,7 @@ public final class BigIntGen implements Gen<BigInteger> {
         if (max.compareTo(value) >= 0
                 && min.compareTo(value) <= 0) {
             gens.add(Pair.of(1,
-                             Gen.cons(value)));
+                             Gen.constant(value)));
         }
     }
 

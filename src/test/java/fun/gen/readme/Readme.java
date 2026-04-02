@@ -68,9 +68,9 @@ public class Readme {
                         !user.getName().trim().isEmpty() &&
                         !user.getPassword().trim().isEmpty();
 
-        Gen<User> validUserGen = userGen.suchThat(isValid);
+        Gen<User> validUserGen = userGen.filter(isValid);
 
-        Gen<User> invalidUserGen = userGen.suchThat(isValid.negate());
+        Gen<User> invalidUserGen = userGen.filter(isValid.negate());
 
         validUserGen.sample(100)
                     .forEach(System.out::println);

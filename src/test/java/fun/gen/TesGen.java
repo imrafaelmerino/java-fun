@@ -31,7 +31,7 @@ public class TesGen {
                            .withAllOptKeys();
 
 
-        Assertions.assertTrue(gen.suchThat(it ->
+        Assertions.assertTrue(gen.filter(it ->
                                                    it.asMap().containsKey("a") &&
                                                            it.asMap().containsKey("b") &&
                                                            it.asMap().containsKey("c"))
@@ -39,7 +39,7 @@ public class TesGen {
                                  .findAny()
                                  .isPresent());
 
-        Assertions.assertTrue(gen.suchThat(it ->
+        Assertions.assertTrue(gen.filter(it ->
                                                    !it.asMap().containsKey("a") &&
                                                            !it.asMap().containsKey("b") &&
                                                            !it.asMap().containsKey("c"))
@@ -66,10 +66,60 @@ public class TesGen {
     @Test
     public void distinctShouldRejectNegativeTries() {
         Assertions.assertThrows(IllegalArgumentException.class,
-                                () -> Gen.cons(1)
+                                () -> Gen.constant(1)
                                          .distinct(-1)
                                          .sample()
                                          .get());
+    }
+
+    @Test
+    public void distinctShouldThrowTypedExhaustedException() {
+        var supplier = Gen.constant(1)
+                          .distinct(3)
+                          .sample();
+        var ignored = supplier.get();
+        Assertions.assertEquals(1,
+                                ignored);
+        Assertions.assertThrows(GenerationExhaustedException.class,
+                                supplier::get);
+    }
+
+    @Test
+    public void filterShouldThrowTypedUnsatisfiableException() {
+        Assertions.assertThrows(UnsatisfiableConstraintException.class,
+                                () -> Gen.constant(1)
+                                         .filter(n -> n > 1,
+                                                 5)
+                                         .sample()
+                                         .get());
+    }
+
+    @Test
+    public void sampleWithSeedShouldBeDeterministic() {
+        List<Integer> left = IntGen.arbitrary(0,
+                                              1_000)
+                                   .sample(50,
+                                           42L)
+                                   .toList();
+        List<Integer> right = IntGen.arbitrary(0,
+                                               1_000)
+                                    .sample(50,
+                                            42L)
+                                    .toList();
+        Assertions.assertEquals(left,
+                                right);
+    }
+
+    @Test
+    public void collectWithSeedShouldBeDeterministic() {
+        Map<Integer, Long> left = IntGen.arbitrary(0,
+                                                   10).collect(10_000,
+                                                               123L);
+        Map<Integer, Long> right = IntGen.arbitrary(0,
+                                                    10).collect(10_000,
+                                                                123L);
+        Assertions.assertEquals(left,
+                                right);
     }
 
     @Test

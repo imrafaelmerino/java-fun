@@ -75,11 +75,12 @@ import fun.gen.*;
 
 record User(String login, String name, Integer age) {}
 
-Gen<User> users = MyRecordGen.of(
-        "login", StrGen.alphanumeric(3, 20),
-        "name", StrGen.alphabetic(1, 40),
-        "age", IntGen.arbitrary(18, 99)
-).map(r -> new User(
+Gen<User> users = MyRecordGen.builder()
+        .field("login", StrGen.alphanumeric(3, 20))
+        .field("name", StrGen.alphabetic(1, 40))
+        .field("age", IntGen.arbitrary(18, 99))
+        .build()
+        .map(r -> new User(
         r.getString("login"),
         r.getString("name"),
         r.getInt("age")
@@ -132,21 +133,31 @@ Gen<Integer> distinct = base.distinct();
 // sample: [3, 81, 47, 10]
 Gen<Integer> distinctWithLimit = base.distinct(500);
 // sample: [22, 11, 66, 4]
-Gen<Integer> filtered = base.suchThat(n -> n % 2 == 0);
+Gen<Integer> filtered = base.filter(n -> n % 2 == 0);
 // sample: [84, 2, 56, 100]
-Gen<Integer> filteredWithLimit = base.suchThat(n -> n > 90, 2000);
+Gen<Integer> filteredWithLimit = base.filter(n -> n > 90, 2000);
 // sample: [91, 99, 94]
-Gen<String> chained = base.then(n -> StrGen.alphanumeric(1, Math.max(1, n % 10)));
+Gen<String> chained = base.flatMap(n -> StrGen.alphanumeric(1, Math.max(1, n % 10)));
 // sample: ["A", "m9", "x7Q2"]
 Gen<Integer> withSideEffect = base.peek(n -> System.out.println("generated=" + n));
 // sample: [15, 73, 0]
 
 System.out.println(base.sample().get());
 System.out.println(base.sample(5).toList());
+System.out.println(base.sample(5, 42L).toList()); // deterministic
 System.out.println(base.collect(1000));
+System.out.println(base.collect(1000, 42L));      // deterministic
 Map<String, Long> parity = base.collect(1000, n -> n % 2 == 0 ? "even" : "odd");
 System.out.println(parity);
 ```
+
+Idiomatic naming note:
+- Prefer `Gen.constant(...)`, `flatMap(...)`, and `filter(...)`.
+- Legacy names `cons(...)`, `then(...)`, and `suchThat(...)` were removed.
+
+Failure semantics:
+- `distinct(...)`, `SetGen`, and `MapGen` throw `GenerationExhaustedException` if uniqueness goals cannot be reached in the configured tries.
+- `filter(...)` throws `UnsatisfiableConstraintException` when the predicate cannot be satisfied in the configured tries.
 
 ## Generators Cookbook (Method by Method)
 
@@ -411,24 +422,36 @@ import fun.gen.*;
 import fun.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 // oneOf from constant values (varargs)
 Gen<String> c1 = Combinators.oneOf("A", "B", "C");
 // sample: ["A", "C", "B", "A"]
+Gen<String> c1v = Combinators.oneOfView("A", "B", "C");
+// sample: ["A", "B", "C", "A"]
 
 // oneOf from List / Set
 Gen<String> c2 = Combinators.oneOf(List.of("X", "Y", "Z"));
 // sample: ["Z", "X", "Y"]
 Gen<String> c3 = Combinators.oneOf(Set.of("red", "green", "blue"));
 // sample: ["green", "red", "blue"]
+Gen<String> c2v = Combinators.oneOfView(new ArrayList<>(List.of("X", "Y", "Z")));
+// sample: ["Y", "X", "Z"]
+Gen<String> c3v = Combinators.oneOfView(new HashSet<>(Set.of("red", "green", "blue")));
+// sample: ["blue", "green", "red"]
 
 // nOf from List / Set
 Gen<List<String>> c4 = Combinators.nOf(List.of("a", "b", "c", "d"), 2);
 // sample: [["a", "d"], ["b", "c"]]
 Gen<Set<String>> c5 = Combinators.nOf(Set.of("a", "b", "c", "d"), 2);
 // sample: [{a, d}, {b, c}]
+Gen<List<String>> c4v = Combinators.nOfView(new ArrayList<>(List.of("a", "b", "c", "d")), 2);
+// sample: [["d", "a"], ["b", "c"]]
+Gen<Set<String>> c5v = Combinators.nOfView(new HashSet<>(Set.of("a", "b", "c", "d")), 2);
+// sample: [{b, d}, {a, c}]
 
 // oneOf from generators (varargs)
 Gen<Integer> c6 = Combinators.oneOf(
@@ -437,6 +460,12 @@ Gen<Integer> c6 = Combinators.oneOf(
         IntGen.arbitrary(1000, 1010)
 );
 // sample: [5, 108, 1003, 1]
+Gen<Integer> c6v = Combinators.oneOfView(
+        IntGen.arbitrary(0, 10),
+        IntGen.arbitrary(100, 110),
+        IntGen.arbitrary(1000, 1010)
+);
+// sample: [1009, 4, 106, 2]
 
 // oneOf from generator list
 Gen<Integer> c7 = Combinators.oneOfList(List.of(
@@ -444,6 +473,11 @@ Gen<Integer> c7 = Combinators.oneOfList(List.of(
         IntGen.arbitrary(100, 110)
 ));
 // sample: [3, 109, 101, 0]
+Gen<Integer> c7v = Combinators.oneOfListView(new ArrayList<>(List.of(
+        IntGen.arbitrary(0, 10),
+        IntGen.arbitrary(100, 110)
+)));
+// sample: [8, 104, 1, 107]
 
 // weighted choice
 Gen<Integer> c8 = Combinators.freq(
@@ -452,6 +486,7 @@ Gen<Integer> c8 = Combinators.freq(
         Pair.of(1, IntGen.arbitrary(1000, 1010))
 );
 // sample: [1, 7, 4, 103, 2, 0]
+// weights must be strictly positive; 0 or negatives throw IllegalArgumentException
 
 // nullable default (50%) and custom probability
 Gen<String> c9 = Combinators.nullable(StrGen.alphabetic(1, 8));
@@ -464,16 +499,26 @@ Gen<Set<Integer>> c11 = Combinators.combinations(2, List.of(1, 2, 3, 4));
 // sample: [{1, 2}, {1, 4}, {2, 3}]
 Gen<Set<Integer>> c12 = Combinators.combinations(2, Set.of(1, 2, 3, 4));
 // sample: [{1, 3}, {2, 4}, {1, 2}]
+Gen<Set<Integer>> c11v = Combinators.combinationsView(2, new ArrayList<>(List.of(1, 2, 3, 4)));
+// sample: [{1, 4}, {2, 3}, {1, 2}] (reflects live source changes)
+Gen<Set<Integer>> c12v = Combinators.combinationsView(2, new LinkedHashSet<>(Set.of(1, 2, 3, 4)));
+// sample: [{2, 4}, {1, 3}, {1, 2}]
 
 // all subsets from list or set
 Gen<Set<Integer>> c13 = Combinators.subsets(List.of(1, 2, 3));
 // sample: [{}, {1}, {2, 3}, {1, 2, 3}]
 Gen<Set<Integer>> c14 = Combinators.subsets(Set.of(1, 2, 3));
 // sample: [{2}, {1, 3}, {1, 2, 3}]
+Gen<Set<Integer>> c13v = Combinators.subsetsView(new ArrayList<>(List.of(1, 2, 3)));
+// sample: [{}, {1, 2}, {3}]
+Gen<Set<Integer>> c14v = Combinators.subsetsView(new HashSet<>(Set.of(1, 2, 3)));
+// sample: [{1}, {2, 3}, {1, 2, 3}]
 
 // shuffle
 Gen<List<Integer>> c15 = Combinators.shuffle(List.of(1, 2, 3, 4, 5));
 // sample: [[3, 1, 5, 4, 2], [2, 5, 1, 3, 4]]
+Gen<List<Integer>> c15v = Combinators.shuffleView(new ArrayList<>(List.of(1, 2, 3, 4, 5)));
+// sample: [[4, 2, 1, 5, 3], [5, 1, 4, 2, 3]]
 
 // swap utility (in-place)
 List<String> xs = new ArrayList<>(List.of("a", "b", "c"));
@@ -486,6 +531,10 @@ Useful practical scenarios:
 - Stress parser edge cases with weighted `freq(...)` (e.g., more malformed values).
 - Exhaustively test small set behaviors with `subsets(...)` and `combinations(...)`.
 
+Safety model:
+- Default methods (no `View` suffix) snapshot mutable inputs at construction time (including `combinations(...)`).
+- `*View` methods avoid that copy and keep a live reference (faster setup, but caller is responsible for avoiding unsafe external mutations).
+
 ## MyRecord and MyRecordGen
 
 `MyRecord` access patterns:
@@ -494,6 +543,8 @@ Useful practical scenarios:
 import fun.gen.MyRecord;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -502,41 +553,61 @@ MyRecord rec = new MyRecord(Map.of(
         "age", 32,
         "active", true,
         "salary", BigDecimal.valueOf(1000),
-        "tags", List.of("dev", "java")
+        "tags", List.of("dev", "java"),
+        "metadata", Map.of("source", "api")
 ));
 
 String name = rec.getString("name");
 Integer age = rec.getInt("age");
 Boolean active = rec.getBoolean("active");
 BigDecimal salary = rec.getDecimal("salary");
-List<String> tags = rec.getList("tags");
+List<String> tagsView = rec.getListView("tags");
+List<String> tagsCopy = rec.getListCopy("tags");
+Map<String, Object> metadataView = rec.getMapView("metadata");
+Map<String, Object> metadataCopy = rec.getMapCopy("metadata");
 
 String nick = rec.getOptionalString("nick").orElse("n/a");
 
 boolean hasName = rec.containsKey("name");
 int size = rec.size();
 Map<String, ?> raw = rec.asMap();
+
+Map<String, Object> source = new LinkedHashMap<>();
+source.put("name", "ana");
+source.put("tags", new ArrayList<>(List.of("dev")));
+MyRecord fast = MyRecord.wrap(source); // no deep freeze, live source view
 ```
+
+Collection access semantics in `MyRecord`:
+- `*View` methods return a typed view over the stored frozen value (no extra copy at read time).
+- `*Copy` methods return an immutable defensive copy.
+- Collection access now uses explicit `*View` and `*Copy` methods only.
+- `new MyRecord(map)` performs deep freeze on nested `List`/`Set`/`Map` and `byte[]`.
+- `MyRecord.wrap(map)` skips deep-freeze for performance and keeps a live wrapped reference.
 
 `MyRecordGen` setup patterns:
 
 ```java
 import fun.gen.*;
+import fun.tuple.Pair;
 
-// Using overloaded of(...)
-MyRecordGen g1 = MyRecordGen.of("id", IntGen.arbitrary(1, 1_000));
+// Preferred fluent builder
+MyRecordGen g1 = MyRecordGen.builder()
+        .field("id", IntGen.arbitrary(1, 1_000))
+        .build();
 // sample: [{id=731}, {id=12}]
-MyRecordGen g2 = MyRecordGen.of(
-        "id", IntGen.arbitrary(1, 1_000),
-        "name", StrGen.alphabetic(1, 30)
-);
+MyRecordGen g2 = MyRecordGen.builder()
+        .field("id", IntGen.arbitrary(1, 1_000))
+        .field("name", StrGen.alphabetic(1, 30))
+        .build();
 // sample: [{id=731, name=Ana}, {id=12, name=Leo}]
 
-// Dynamic builder style using of() + set(...)
-MyRecordGen dynamic = MyRecordGen.of()
-        .set("id", IntGen.arbitrary(1, 1_000))
-        .set("name", StrGen.alphabetic(1, 30))
-        .set("age", IntGen.arbitrary(18, 99));
+// Compact declarative entries
+MyRecordGen dynamic = MyRecordGen.ofEntries(
+        Pair.of("id", IntGen.arbitrary(1, 1_000)),
+        Pair.of("name", StrGen.alphabetic(1, 30)),
+        Pair.of("age", IntGen.arbitrary(18, 99))
+);
 // sample: [{id=44, name=Eva, age=31}, {id=901, name=Tom, age=22}]
 
 // Optional/required/nullable controls
@@ -554,6 +625,9 @@ MyRecordGen allNullable = tuned.withAllNullValues();
 Gen<MyRecord> users = tuned;
 // sample: [{id=44, name=Ana, age=31}, {id=901, name=null}]
 ```
+
+Migration note:
+- `MyRecordGen.builder()` and `MyRecordGen.ofEntries(...)` are recommended for new code.
 
 ## CSV Ingestion
 
@@ -601,11 +675,12 @@ import fun.gen.*;
 
 Gen<MyRecord> person = NamedGen.of(
         "person",
-        MyRecordGen.of(
-                "name", StrGen.alphabetic(1, 20),
-                "age", IntGen.arbitrary(0, 100),
-                "parent", NamedGen.of("person")
-        ).withOptKeys("parent")
+        MyRecordGen.builder()
+                .field("name", StrGen.alphabetic(1, 20))
+                .field("age", IntGen.arbitrary(0, 100))
+                .field("parent", NamedGen.of("person"))
+                .build()
+                .withOptKeys("parent")
 );
 // sample: [{name=Ana, age=30}, {name=Leo, age=5, parent={name=Ana, age=30}}]
 ```

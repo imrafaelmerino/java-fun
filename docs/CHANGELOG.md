@@ -11,9 +11,12 @@ All notable changes to this project are documented in this file.
   - `getString(...)`
   - `getBoolean(...)`
   - `getBigInteger(...)`
+- Removed legacy `Gen.cons(...)`, `Gen.then(...)`, and `Gen.suchThat(...)`; use `Gen.constant(...)`, `Gen.flatMap(...)`, and `Gen.filter(...)`.
+- `MyRecordGen.builder()` and `MyRecordGen.ofEntries(...)` are the primary APIs for explicit, scalable record generator definitions.
 - Removed public field `MyRecord.map`.
   Use `asMap()`, `containsKey(String)`, `size()`, and `isEmpty()` instead.
-- `MyRecord` now defensively copies input maps and exposes an immutable map view.
+- `MyRecord` constructor now deep-freezes nested container values (`List`/`Set`/`Map`) and `byte[]` values by default.
+- Removed ambiguous `MyRecord` collection getters without suffix (`getOptionalList`, `getList`, `getOptionalSet`, `getSet`, `getOptionalMap`, `getMap`) in favor of explicit `*View`/`*Copy` methods.
 
 ### Fixed
 
@@ -24,10 +27,42 @@ All notable changes to this project are documented in this file.
 - `CsvStream` now closes the underlying reader when `withExpectedHeaders(...)` validation fails during stream initialization.
 - `Combinators.combinations(k, input)` no longer relies on rejection sampling, avoiding failures for extreme cardinalities (`k=0`, `k=n`, near-edges) on large inputs.
 - `Combinators.combinations(k, List)` now validates `k` against the number of distinct input values, preventing impossible requests when the list contains duplicates.
+- `Combinators.oneOf(value, others...)` and `Combinators.oneOf(gen, others...)` now take defensive snapshots of varargs inputs, avoiding external-mutation aliasing.
+- `Combinators.oneOfList(...)`, `Combinators.nOf(...)`, `Combinators.subsets(...)`, and `Combinators.shuffle(...)` now snapshot mutable inputs by default.
+- `Combinators.combinations(...)` now has a coherent `combinationsView(...)` counterpart for live-reference semantics.
+- `Combinators.freq(...)`/`freqList(...)` now reject non-positive weights explicitly instead of silently ignoring them.
+- Exhaustion/constraint failures now throw typed generation exceptions instead of generic runtime exceptions.
 
 ### Documentation
 
 - Updated Javadoc to clarify numeric precision semantics.
+- Expanded `Combinators` Javadoc/README with explicit safe-vs-view input handling guidance and examples.
+- Clarified `MyRecord` collection access semantics with explicit `*View` and `*Copy` APIs and deep-freeze constructor behavior.
+- Added migration guidance for `Gen` idiomatic names and `MyRecordGen` builder-based creation.
+
+### Added
+
+- Added `Combinators.oneOfView(...)` overloads for value varargs, generator varargs, list, and set inputs.
+- Added `Combinators.oneOfListView(...)`.
+- Added `Combinators.nOfView(...)` overloads for list and set inputs.
+- Added `Combinators.combinationsView(...)` overloads for list and set inputs.
+- Added `Combinators.subsetsView(...)` overloads for list and set inputs.
+- Added `Combinators.shuffleView(...)`.
+- Added deterministic seed helpers in `Gen`:
+  - `sample(long seed)`, `sample(int n, long seed)`
+  - `collect(int n, long seed)`, `collect(int n, long seed, Function)`
+  - `classify(..., int n, long seed)` overloads
+- Added typed generation exception hierarchy:
+  - `GenerationException`
+  - `GenerationExhaustedException`
+  - `UnsatisfiableConstraintException`
+- Added `Gen.constant(...)`, `Gen.flatMap(...)`, and `Gen.filter(...)` as canonical API names.
+- Added `MyRecordGen.builder()` and `MyRecordGen.ofEntries(...)`.
+- Added `MyRecord` explicit collection accessors:
+  - `getOptionalListView(...)`, `getListView(...)`, `getOptionalListCopy(...)`, `getListCopy(...)`
+  - `getOptionalSetView(...)`, `getSetView(...)`, `getOptionalSetCopy(...)`, `getSetCopy(...)`
+  - `getOptionalMapView(...)`, `getMapView(...)`, `getOptionalMapCopy(...)`, `getMapCopy(...)`
+- Added `MyRecord.wrap(Map<String, ?>)` as explicit performance-oriented construction mode without deep-freeze.
 
 ## 3.0.0
 

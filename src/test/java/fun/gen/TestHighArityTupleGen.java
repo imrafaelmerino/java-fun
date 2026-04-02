@@ -82,23 +82,23 @@ public class TestHighArityTupleGen {
     public void shouldValidateNullGenerators() {
         Assertions.assertThrows(NullPointerException.class,
                                 () -> QuadrupleGen.of(null,
-                                                      Gen.cons(1),
-                                                      Gen.cons(1),
-                                                      Gen.cons(1)));
+                                                      Gen.constant(1),
+                                                      Gen.constant(1),
+                                                      Gen.constant(1)));
 
         Assertions.assertThrows(NullPointerException.class,
-                                () -> QuintupleGen.of(Gen.cons(1),
+                                () -> QuintupleGen.of(Gen.constant(1),
                                                       null,
-                                                      Gen.cons(1),
-                                                      Gen.cons(1),
-                                                      Gen.cons(1)));
+                                                      Gen.constant(1),
+                                                      Gen.constant(1),
+                                                      Gen.constant(1)));
 
         Assertions.assertThrows(NullPointerException.class,
-                                () -> SextupleGen.of(Gen.cons(1),
-                                                     Gen.cons(1),
+                                () -> SextupleGen.of(Gen.constant(1),
+                                                     Gen.constant(1),
                                                      null,
-                                                     Gen.cons(1),
-                                                     Gen.cons(1),
-                                                     Gen.cons(1)));
+                                                     Gen.constant(1),
+                                                     Gen.constant(1),
+                                                     Gen.constant(1)));
     }
 }

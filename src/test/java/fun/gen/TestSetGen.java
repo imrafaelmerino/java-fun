@@ -23,7 +23,7 @@ public class TestSetGen {
 
     @Test
     public void ofNShouldNotOverflowDefaultMaxTriesWithLargeSize() {
-        Assertions.assertDoesNotThrow(() -> SetGen.ofN(Gen.cons("x"),
+        Assertions.assertDoesNotThrow(() -> SetGen.ofN(Gen.constant("x"),
                                                        Integer.MAX_VALUE));
     }
 

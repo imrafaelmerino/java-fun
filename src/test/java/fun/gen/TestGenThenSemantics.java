@@ -10,7 +10,22 @@ public class TestGenThenSemantics {
     @Test
     public void thenShouldEvaluateOuterGeneratorForEachSample() {
         List<Integer> values = Gen.seq(n -> n)
-                                  .then(Gen::cons)
+                                  .flatMap(Gen::constant)
+                                  .sample(5)
+                                  .toList();
+
+        Assertions.assertEquals(List.of(1,
+                                        2,
+                                        3,
+                                        4,
+                                        5),
+                                values);
+    }
+
+    @Test
+    public void flatMapShouldEvaluateOuterGeneratorForEachSample() {
+        List<Integer> values = Gen.seq(n -> n)
+                                  .flatMap(Gen::constant)
                                   .sample(5)
                                   .toList();
 
@@ -22,4 +37,3 @@ public class TestGenThenSemantics {
                                 values);
     }
 }
-

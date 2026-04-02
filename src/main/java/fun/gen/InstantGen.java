@@ -44,15 +44,15 @@ public final class InstantGen implements Gen<Instant> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                         Gen.cons(MAX_SECONDS)));
+                         Gen.constant(MAX_SECONDS)));
         gens.add(Pair.of(1,
-                         Gen.cons(MIN_SECONDS)));
+                         Gen.constant(MIN_SECONDS)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Integer.MAX_VALUE)));
+                         Gen.constant((long) Integer.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Integer.MIN_VALUE)));
+                         Gen.constant((long) Integer.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons(0L)));
+                         Gen.constant(0L)));
         gens.add(Pair.of(gens.size(),
                          LongGen.arbitrary(MIN_SECONDS,
                                            MAX_SECONDS)));
@@ -84,18 +84,18 @@ public final class InstantGen implements Gen<Instant> {
 
         if (min <= Integer.MAX_VALUE && max >= Integer.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Integer.MAX_VALUE)));
+                             Gen.constant((long) Integer.MAX_VALUE)));
         if (min <= Integer.MIN_VALUE && max >= Integer.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Integer.MIN_VALUE)));
+                             Gen.constant((long) Integer.MIN_VALUE)));
         if (min <= 0L && max >= 0L)
             gens.add(Pair.of(1,
-                             Gen.cons(0L)));
+                             Gen.constant(0L)));
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
         if (max != min)
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
 
         gens.add(Pair.of(gens.size(),
                          LongGen.arbitrary(min,

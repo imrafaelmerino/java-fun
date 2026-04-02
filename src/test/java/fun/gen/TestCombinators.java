@@ -14,15 +14,15 @@ public class TestCombinators {
     public void freqCombinator() {
 
         Gen<Integer> gen = Combinators.freq(Pair.of(1,
-                                                    Gen.cons(1)),
+                                                    Gen.constant(1)),
                                             Pair.of(1,
-                                                    Gen.cons(2)),
+                                                    Gen.constant(2)),
                                             Pair.of(1,
-                                                    Gen.cons(3)),
+                                                    Gen.constant(3)),
                                             Pair.of(1,
-                                                    Gen.cons(4)),
+                                                    Gen.constant(4)),
                                             Pair.of(1,
-                                                    Gen.cons(5)));
+                                                    Gen.constant(5)));
 
         Map<Integer, Long> counts = TestFun.generate(100000,
                                                      gen);
@@ -39,9 +39,9 @@ public class TestCombinators {
     @Test
     public void freqShouldSupportLargeTotalWeightsWithoutOverflow() {
         Gen<Integer> gen = Combinators.freq(Pair.of(Integer.MAX_VALUE,
-                                                    Gen.cons(1)),
+                                                    Gen.constant(1)),
                                             Pair.of(Integer.MAX_VALUE,
-                                                    Gen.cons(2)));
+                                                    Gen.constant(2)));
 
         Assertions.assertDoesNotThrow(() -> {
             Map<Integer, Long> counts = TestFun.generate(10000,
@@ -57,7 +57,7 @@ public class TestCombinators {
 
         Map<String, Long> counts =
                 TestFun.generate(100000,
-                                 Combinators.nullable(Gen.cons("a")));
+                                 Combinators.nullable(Gen.constant("a")));
 
 
         TestFun.assertGeneratedValuesHaveSameProbability(counts,
@@ -70,7 +70,7 @@ public class TestCombinators {
     @Test
     public void nullableWithZeroProbabilityNeverGeneratesNull() {
         Map<String, Long> counts = TestFun.generate(100000,
-                                                    Combinators.nullable(Gen.cons("a"),
+                                                    Combinators.nullable(Gen.constant("a"),
                                                                          0));
 
         Assertions.assertFalse(counts.containsKey(null));
@@ -81,7 +81,7 @@ public class TestCombinators {
     @Test
     public void nullableWithHundredProbabilityAlwaysGeneratesNull() {
         Map<String, Long> counts = TestFun.generate(100000,
-                                                    Combinators.nullable(Gen.cons("a"),
+                                                    Combinators.nullable(Gen.constant("a"),
                                                                          100));
 
         Assertions.assertEquals(1,
@@ -152,6 +152,38 @@ public class TestCombinators {
 
         Assertions.assertTrue(counts.containsKey("a"));
         Assertions.assertTrue(counts.containsKey(null));
+    }
+
+    @Test
+    public void oneOfVarargsShouldNotDependOnSubsequentArrayMutations() {
+        String[] others = new String[]{"b", "c"};
+        Gen<String> gen = Combinators.oneOf("a",
+                                            others);
+        others[0] = "z";
+
+        Map<String, Long> counts = TestFun.generate(50000,
+                                                    gen);
+
+        Assertions.assertTrue(counts.containsKey("a"));
+        Assertions.assertTrue(counts.containsKey("b"));
+        Assertions.assertTrue(counts.containsKey("c"));
+        Assertions.assertFalse(counts.containsKey("z"));
+    }
+
+    @Test
+    public void oneOfViewVarargsShouldReflectSubsequentArrayMutations() {
+        String[] others = new String[]{"b", "c"};
+        Gen<String> gen = Combinators.oneOfView("a",
+                                                others);
+        others[0] = "z";
+
+        Map<String, Long> counts = TestFun.generate(50000,
+                                                    gen);
+
+        Assertions.assertTrue(counts.containsKey("a"));
+        Assertions.assertTrue(counts.containsKey("z"));
+        Assertions.assertTrue(counts.containsKey("c"));
+        Assertions.assertFalse(counts.containsKey("b"));
     }
 
     @Test
@@ -265,6 +297,66 @@ public class TestCombinators {
                                                          0.05);
     }
 
+    @Test
+    public void oneOfGeneratorVarargsShouldNotDependOnSubsequentArrayMutations() {
+        @SuppressWarnings("unchecked")
+        Gen<? extends String>[] others = new Gen[]{Gen.constant("b"),
+                                                   Gen.constant("c")};
+        Gen<String> gen = Combinators.oneOf(Gen.constant("a"),
+                                            others);
+        others[0] = Gen.constant("z");
+
+        Map<String, Long> counts = TestFun.generate(50000,
+                                                    gen);
+
+        Assertions.assertTrue(counts.containsKey("a"));
+        Assertions.assertTrue(counts.containsKey("b"));
+        Assertions.assertTrue(counts.containsKey("c"));
+        Assertions.assertFalse(counts.containsKey("z"));
+    }
+
+    @Test
+    public void oneOfGeneratorVarargsViewShouldReflectSubsequentArrayMutations() {
+        @SuppressWarnings("unchecked")
+        Gen<? extends String>[] others = new Gen[]{Gen.constant("b"),
+                                                   Gen.constant("c")};
+        Gen<String> gen = Combinators.oneOfView(Gen.constant("a"),
+                                                others);
+        others[0] = Gen.constant("z");
+
+        Map<String, Long> counts = TestFun.generate(50000,
+                                                    gen);
+
+        Assertions.assertTrue(counts.containsKey("a"));
+        Assertions.assertTrue(counts.containsKey("z"));
+        Assertions.assertTrue(counts.containsKey("c"));
+        Assertions.assertFalse(counts.containsKey("b"));
+    }
+
+    @Test
+    public void oneOfGeneratorListShouldNotDependOnSubsequentListMutations() {
+        List<Gen<? extends String>> gens = new ArrayList<>();
+        gens.add(Gen.constant("x"));
+        gens.add(Gen.constant("y"));
+        Gen<String> gen = Combinators.oneOfList(gens);
+        gens.clear();
+
+        Assertions.assertTrue(gen.sample(200)
+                                 .allMatch(v -> v.equals("x") || v.equals("y")));
+    }
+
+    @Test
+    public void oneOfGeneratorListViewShouldFailIfSourceListBecomesEmpty() {
+        List<Gen<? extends String>> gens = new ArrayList<>();
+        gens.add(Gen.constant("x"));
+        gens.add(Gen.constant("y"));
+        Gen<String> gen = Combinators.oneOfListView(gens);
+        gens.clear();
+
+        Assertions.assertThrows(IllegalStateException.class,
+                                () -> gen.sample().get());
+    }
+
 
     @Test
     public void testCombinations() {
@@ -324,6 +416,63 @@ public class TestCombinators {
     }
 
     @Test
+    public void subsetsShouldNotDependOnSubsequentListMutations() {
+        List<String> values = new ArrayList<>(List.of("a",
+                                                      "b",
+                                                      "c"));
+        Gen<Set<String>> gen = Combinators.subsets(values);
+        values.clear();
+
+        Assertions.assertTrue(gen.sample(200)
+                                 .allMatch(subset -> subset.stream()
+                                                           .allMatch(v -> v.equals("a")
+                                                                   || v.equals("b")
+                                                                   || v.equals("c"))));
+    }
+
+    @Test
+    public void subsetsViewShouldReflectSubsequentListMutations() {
+        List<String> values = new ArrayList<>(List.of("a",
+                                                      "b",
+                                                      "c"));
+        Gen<Set<String>> gen = Combinators.subsetsView(values);
+        values.clear();
+
+        Assertions.assertTrue(gen.sample(50)
+                                 .allMatch(Set::isEmpty));
+    }
+
+    @Test
+    public void shuffleShouldNotDependOnSubsequentSourceListMutations() {
+        List<Integer> values = new ArrayList<>(List.of(1,
+                                                       2,
+                                                       3,
+                                                       4));
+        Gen<List<Integer>> gen = Combinators.shuffle(values);
+        values.clear();
+
+        Assertions.assertTrue(gen.sample(200)
+                                 .allMatch(sample -> sample.containsAll(List.of(1,
+                                                                                2,
+                                                                                3,
+                                                                                4))
+                                         && sample.size() == 4));
+    }
+
+    @Test
+    public void shuffleViewShouldReflectSubsequentSourceListMutations() {
+        List<Integer> values = new ArrayList<>(List.of(1,
+                                                       2,
+                                                       3,
+                                                       4));
+        Gen<List<Integer>> gen = Combinators.shuffleView(values);
+        values.clear();
+
+        Assertions.assertTrue(gen.sample(20)
+                                 .allMatch(List::isEmpty));
+    }
+
+    @Test
     public void testNOf() {
 
         List<Integer> numbers = IntStream.range(0,
@@ -350,6 +499,52 @@ public class TestCombinators {
     }
 
     @Test
+    public void nOfListShouldNotDependOnSubsequentMutations() {
+        List<Integer> numbers = new ArrayList<>(List.of(0, 1, 2, 3));
+        Gen<List<Integer>> gen = Combinators.nOf(numbers,
+                                                 3);
+        numbers.clear();
+
+        Assertions.assertDoesNotThrow(() -> gen.sample(20)
+                                               .forEach(sample -> Assertions.assertEquals(3,
+                                                                                           sample.size())));
+    }
+
+    @Test
+    public void nOfViewListShouldFailIfSourceListShrinksBelowN() {
+        List<Integer> numbers = new ArrayList<>(List.of(0, 1, 2, 3));
+        Gen<List<Integer>> gen = Combinators.nOfView(numbers,
+                                                     3);
+        numbers.clear();
+
+        Assertions.assertThrows(IllegalStateException.class,
+                                () -> gen.sample().get());
+    }
+
+    @Test
+    public void nOfSetShouldNotDependOnSubsequentMutations() {
+        Set<Integer> numbers = new LinkedHashSet<>(List.of(0, 1, 2, 3));
+        Gen<Set<Integer>> gen = Combinators.nOf(numbers,
+                                                3);
+        numbers.clear();
+
+        Assertions.assertDoesNotThrow(() -> gen.sample(20)
+                                               .forEach(sample -> Assertions.assertEquals(3,
+                                                                                           sample.size())));
+    }
+
+    @Test
+    public void nOfViewSetShouldFailIfSourceSetShrinksBelowN() {
+        Set<Integer> numbers = new LinkedHashSet<>(List.of(0, 1, 2, 3));
+        Gen<Set<Integer>> gen = Combinators.nOfView(numbers,
+                                                    3);
+        numbers.clear();
+
+        Assertions.assertThrows(IllegalStateException.class,
+                                () -> gen.sample().get());
+    }
+
+    @Test
     public void oneOfShouldRejectEmptyCollections() {
         Assertions.assertThrows(IllegalArgumentException.class,
                                 () -> Combinators.oneOf(List.<String>of()));
@@ -357,6 +552,12 @@ public class TestCombinators {
                                 () -> Combinators.oneOf(Set.<String>of()));
         Assertions.assertThrows(IllegalArgumentException.class,
                                 () -> Combinators.oneOfList(List.of()));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.oneOfListView(List.of()));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.oneOfView(List.<String>of()));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.oneOfView(Set.<String>of()));
     }
 
     @Test
@@ -406,6 +607,59 @@ public class TestCombinators {
         Assertions.assertDoesNotThrow(() -> full.sample(20)
                                                 .forEach(values -> Assertions.assertEquals(input.size(),
                                                                                             values.size())));
+    }
+
+    @Test
+    public void combinationsViewListShouldReflectSubsequentSourceMutations() {
+        List<Integer> input = new ArrayList<>(List.of(1,
+                                                      2,
+                                                      3,
+                                                      4));
+        Gen<Set<Integer>> gen = Combinators.combinationsView(3,
+                                                              input);
+        input.clear();
+        input.addAll(List.of(9,
+                             8,
+                             7));
+
+        Assertions.assertTrue(gen.sample(20)
+                                 .allMatch(values -> values.equals(Set.of(7,
+                                                                          8,
+                                                                          9))));
+    }
+
+    @Test
+    public void combinationsViewSetShouldFailIfSourceShrinksBelowK() {
+        Set<Integer> input = new LinkedHashSet<>(List.of(1,
+                                                         2,
+                                                         3,
+                                                         4));
+        Gen<Set<Integer>> gen = Combinators.combinationsView(3,
+                                                              input);
+        input.clear();
+        input.addAll(List.of(1,
+                             2));
+
+        Assertions.assertThrows(IllegalStateException.class,
+                                () -> gen.sample().get());
+    }
+
+    @Test
+    public void freqShouldRejectNonPositiveWeights() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.freq(Pair.of(0,
+                                                               Gen.constant(1)),
+                                                       Pair.of(1,
+                                                               Gen.constant(2)))
+                                                .sample()
+                                                .get());
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> Combinators.freq(Pair.of(-1,
+                                                               Gen.constant(1)),
+                                                       Pair.of(1,
+                                                               Gen.constant(2)))
+                                                .sample()
+                                                .get());
     }
 
 }

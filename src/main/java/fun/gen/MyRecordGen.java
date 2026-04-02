@@ -1,10 +1,11 @@
 package fun.gen;
 
 
+import fun.tuple.Pair;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
-import java.util.random.RandomGeneratorFactory;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,6 +21,9 @@ import static java.util.Objects.requireNonNull;
  * - nullable or non-nullable (value may be {@code null} when present)
  * <p>
  * Typical usage is to define a record shape and then map generated records to a domain object.
+ * <p>
+ * For new code prefer {@link #builder()} or {@link #ofEntries(Pair, Pair[])} over the legacy
+ * {@code of(...)} overload family.
  */
 public final class MyRecordGen implements Gen<MyRecord> {
 
@@ -52,6 +56,38 @@ public final class MyRecordGen implements Gen<MyRecord> {
         this(bindings,
              new ArrayList<>(),
              new ArrayList<>());
+    }
+
+    /**
+     * Creates a fluent builder for record generator definitions.
+     *
+     * @return a new builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Creates a record generator from field entries preserving insertion order.
+     *
+     * @param first  first field entry
+     * @param others optional additional field entries
+     * @return a configured record generator
+     */
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    public static MyRecordGen ofEntries(final Pair<String, Gen<?>> first,
+                                        final Pair<String, Gen<?>>... others) {
+        requireNonNull(first);
+        requireNonNull(others);
+        Builder builder = builder().field(first.first(),
+                                          first.second());
+        for (Pair<String, Gen<?>> pair : others) {
+            Pair<String, Gen<?>> nonNullPair = requireNonNull(pair);
+            builder.field(nonNullPair.first(),
+                          nonNullPair.second());
+        }
+        return builder.build();
     }
 
     public static MyRecordGen of() {
@@ -1975,25 +2011,6 @@ public final class MyRecordGen implements Gen<MyRecord> {
                               gen29).set(key30,
                                        gen30);
     }
-
-    public static void main(String[] args) {
-
-
-        RandomGenerator random = RandomGeneratorFactory.getDefault().create();
-        for (int i = 0; i < 100; i++) {
-            Supplier<Boolean> isRemoveOpts = BoolGen.arbitrary()
-                                                    .apply(SplitGen.DEFAULT
-                                                                   .apply(random));
-            Supplier<Boolean> isSetNullables = BoolGen.arbitrary()
-                                                      .apply(SplitGen.DEFAULT
-                                                                     .apply(random));
-            System.out.println(isRemoveOpts.get());
-            System.out.println(isSetNullables.get());
-        }
-
-
-    }
-
     /**
      * Returns a brand new record generator with the same key-generators pairs as this instance and
      * the specified nullable keys. The value associated with a nullable key may or may not be null.
@@ -2107,6 +2124,90 @@ public final class MyRecordGen implements Gen<MyRecord> {
     }
 
     /**
+     * Fluent builder for {@link MyRecordGen}.
+     * <p>
+     * Builder state is mutable while building and converted to immutable {@link MyRecordGen}
+     * configuration at {@link #build()}.
+     */
+    public static final class Builder {
+        private final LinkedHashMap<String, Gen<?>> bindings = new LinkedHashMap<>();
+        private final LinkedHashSet<String> optionalKeys = new LinkedHashSet<>();
+        private final LinkedHashSet<String> nullableKeys = new LinkedHashSet<>();
+
+        private Builder() {
+        }
+
+        /**
+         * Adds or replaces a field generator.
+         *
+         * @param key field name
+         * @param gen value generator
+         * @return this builder
+         */
+        public Builder field(final String key,
+                             final Gen<?> gen) {
+            bindings.put(requireNonNull(key),
+                         requireNonNull(gen));
+            return this;
+        }
+
+        /**
+         * Marks keys as optional.
+         *
+         * @param keys keys that may be absent from generated records
+         * @return this builder
+         */
+        public Builder optional(final Collection<String> keys) {
+            optionalKeys.addAll(requireNonNull(keys));
+            return this;
+        }
+
+        /**
+         * Marks keys as optional.
+         *
+         * @param keys keys that may be absent from generated records
+         * @return this builder
+         */
+        public Builder optional(final String... keys) {
+            optionalKeys.addAll(List.of(requireNonNull(keys)));
+            return this;
+        }
+
+        /**
+         * Marks keys as nullable.
+         *
+         * @param keys keys whose generated value may be {@code null}
+         * @return this builder
+         */
+        public Builder nullable(final Collection<String> keys) {
+            nullableKeys.addAll(requireNonNull(keys));
+            return this;
+        }
+
+        /**
+         * Marks keys as nullable.
+         *
+         * @param keys keys whose generated value may be {@code null}
+         * @return this builder
+         */
+        public Builder nullable(final String... keys) {
+            nullableKeys.addAll(List.of(requireNonNull(keys)));
+            return this;
+        }
+
+        /**
+         * Builds a {@link MyRecordGen} from this builder configuration.
+         *
+         * @return configured record generator
+         */
+        public MyRecordGen build() {
+            return new MyRecordGen(new LinkedHashMap<>(bindings),
+                                   new ArrayList<>(optionalKeys),
+                                   new ArrayList<>(nullableKeys));
+        }
+    }
+
+    /**
      * Sets a specific field and its corresponding generator for the generated records.
      *
      * @param key The name of the field to set.
@@ -2135,14 +2236,14 @@ public final class MyRecordGen implements Gen<MyRecord> {
         var optionalFields =
                 optionals.isEmpty() ?
                 EMPTY_SET_GEN :
-                new SubsetGen<>(optionals).suchThat(set -> !set.isEmpty())
+                new SubsetGen<>(optionals).filter(set -> !set.isEmpty())
                                           .apply(split.apply(random));
 
         var nullableFields =
                 nullables.isEmpty() ?
                 EMPTY_SET_GEN :
                 new SubsetGen<>(nullables)
-                        .suchThat(set -> !set.isEmpty())
+                        .filter(set -> !set.isEmpty())
                         .apply(split.apply(random));
 
         var isRemoveOpts = BoolGen.arbitrary()

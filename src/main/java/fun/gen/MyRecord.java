@@ -9,8 +9,19 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A class representing an immutable record with named fields and associated values.
+ * A class representing a record with named fields and associated values.
  * This class provides methods for safely retrieving field values of various types.
+ * <p>
+ * Construction modes:
+ * <ul>
+ *     <li>Default constructor: deep-frozen snapshot (safe by default).</li>
+ *     <li>{@link #wrap(Map)}: no-copy wrap with live-reference semantics.</li>
+ * </ul>
+ * Getter semantics:
+ * <ul>
+ *     <li>{@code *View} getters return typed views over stored values.</li>
+ *     <li>{@code *Copy} getters return defensive immutable copies.</li>
+ * </ul>
  */
 public final class MyRecord {
 
@@ -21,16 +32,149 @@ public final class MyRecord {
 
     /**
      * Constructs a new record instance with the provided map of field names and values.
-     * The map is defensively copied and wrapped as unmodifiable.
+     * The map and nested container values are defensively copied and deep-frozen.
      *
      * @param map A map containing field names as keys and their associated values.
      */
     public MyRecord(final Map<String, ?> map) {
-        this.values = Collections.unmodifiableMap(new LinkedHashMap<>(requireNonNull(map)));
+        this(map,
+             true);
+    }
+
+    private MyRecord(final Map<String, ?> map,
+                     final boolean deepFreeze) {
+        if (!deepFreeze) {
+            this.values = Collections.unmodifiableMap(requireNonNull(map));
+            return;
+        }
+        Map<String, Object> copy = new LinkedHashMap<>();
+        for (var entry : requireNonNull(map).entrySet()) {
+            copy.put(entry.getKey(),
+                     freezeValue(entry.getValue()));
+        }
+        this.values = Collections.unmodifiableMap(copy);
+    }
+
+    /**
+     * Creates a record by wrapping the provided map without deep-freezing nested structures.
+     * <p>
+     * This avoids defensive copy cost and can be useful in hot paths, but external mutations to the source map
+     * (or nested mutable values) are visible through this record and can affect equals/hashCode stability over time.
+     *
+     * @param map map to wrap (live reference)
+     * @return record wrapping the provided map with live-reference semantics
+     */
+    public static MyRecord wrap(final Map<String, ?> map) {
+        return new MyRecord(map,
+                            false);
+    }
+
+    private static Object freezeValue(final Object value) {
+        if (value instanceof byte[] bytes) {
+            return Arrays.copyOf(bytes,
+                                 bytes.length);
+        }
+        if (value instanceof List<?> list) {
+            List<Object> frozen = new ArrayList<>(list.size());
+            for (Object elem : list) {
+                frozen.add(freezeValue(elem));
+            }
+            return Collections.unmodifiableList(frozen);
+        }
+        if (value instanceof Set<?> set) {
+            Set<Object> frozen = new LinkedHashSet<>(set.size());
+            for (Object elem : set) {
+                frozen.add(freezeValue(elem));
+            }
+            return Collections.unmodifiableSet(frozen);
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<Object, Object> frozen = new LinkedHashMap<>(map.size());
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                frozen.put(freezeValue(entry.getKey()),
+                           freezeValue(entry.getValue()));
+            }
+            return Collections.unmodifiableMap(frozen);
+        }
+        return value;
+    }
+
+    private static <T> List<T> immutableListCopy(final List<T> list) {
+        return Collections.unmodifiableList(new ArrayList<>(list));
+    }
+
+    private static <T> Set<T> immutableSetCopy(final Set<T> set) {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(set));
+    }
+
+    private static <K, V> Map<K, V> immutableMapCopy(final Map<K, V> map) {
+        return Collections.unmodifiableMap(new LinkedHashMap<>(map));
+    }
+
+    private static boolean deepValueEquals(final Object left,
+                                           final Object right) {
+        if (left == right) return true;
+        if (left == null || right == null) return false;
+        if (left instanceof byte[] a && right instanceof byte[] b) return Arrays.equals(a,
+                                                                                        b);
+        if (left instanceof short[] a && right instanceof short[] b) return Arrays.equals(a,
+                                                                                          b);
+        if (left instanceof int[] a && right instanceof int[] b) return Arrays.equals(a,
+                                                                                      b);
+        if (left instanceof long[] a && right instanceof long[] b) return Arrays.equals(a,
+                                                                                        b);
+        if (left instanceof float[] a && right instanceof float[] b) return Arrays.equals(a,
+                                                                                          b);
+        if (left instanceof double[] a && right instanceof double[] b) return Arrays.equals(a,
+                                                                                            b);
+        if (left instanceof char[] a && right instanceof char[] b) return Arrays.equals(a,
+                                                                                        b);
+        if (left instanceof boolean[] a && right instanceof boolean[] b) return Arrays.equals(a,
+                                                                                              b);
+        if (left instanceof Object[] a && right instanceof Object[] b) return Arrays.deepEquals(a,
+                                                                                                b);
+        return Objects.equals(left,
+                              right);
+    }
+
+    private static int deepValueHash(final Object value) {
+        if (value == null) return 0;
+        if (value instanceof byte[] a) return Arrays.hashCode(a);
+        if (value instanceof short[] a) return Arrays.hashCode(a);
+        if (value instanceof int[] a) return Arrays.hashCode(a);
+        if (value instanceof long[] a) return Arrays.hashCode(a);
+        if (value instanceof float[] a) return Arrays.hashCode(a);
+        if (value instanceof double[] a) return Arrays.hashCode(a);
+        if (value instanceof char[] a) return Arrays.hashCode(a);
+        if (value instanceof boolean[] a) return Arrays.hashCode(a);
+        if (value instanceof Object[] a) return Arrays.deepHashCode(a);
+        return value.hashCode();
+    }
+
+    private static boolean deepMapEquals(final Map<String, ?> left,
+                                         final Map<String, ?> right) {
+        if (left.size() != right.size()) return false;
+        for (var entry : left.entrySet()) {
+            if (!right.containsKey(entry.getKey())) return false;
+            if (!deepValueEquals(entry.getValue(),
+                                 right.get(entry.getKey()))) return false;
+        }
+        return true;
+    }
+
+    private static int deepMapHash(final Map<String, ?> map) {
+        int hash = 0;
+        for (var entry : map.entrySet()) {
+            hash += Objects.hashCode(entry.getKey()) ^ deepValueHash(entry.getValue());
+        }
+        return hash;
     }
 
     /**
      * Returns an immutable view of the underlying key-value data.
+     * <p>
+     * In default constructor mode this view points to deep-frozen snapshot data.
+     * In {@link #wrap(Map)} mode it is an unmodifiable live view over the wrapped source map.
      *
      * @return immutable record values map
      */
@@ -75,7 +219,8 @@ public final class MyRecord {
     public Optional<byte[]> getOptionalBytes(final String key) {
         Object value = values.get(key);
         if (value == null) return Optional.empty();
-        if (value instanceof byte[] b) return Optional.of(b);
+        if (value instanceof byte[] b) return Optional.of(Arrays.copyOf(b,
+                                                                        b.length));
         throw new RecordTypeNotExpected("byte[]",
                                         value.getClass(),
                                         key
@@ -96,7 +241,8 @@ public final class MyRecord {
                            final Supplier<byte[]> supplier) {
         var value = values.get(key);
         if (value == null) return supplier.get();
-        if (value instanceof byte[] d) return d;
+        if (value instanceof byte[] d) return Arrays.copyOf(d,
+                                                            d.length);
         throw new RecordTypeNotExpected("byte[]",
                                         value.getClass(),
                                         key);
@@ -114,7 +260,6 @@ public final class MyRecord {
         return getBytes(key,
                         () -> null);
     }
-
 
     /**
      * Retrieves the value associated with the specified field name as an optional long integer.
@@ -170,7 +315,6 @@ public final class MyRecord {
         return getOptionalLong(key).orElse(null);
     }
 
-
     /**
      * Retrieves the value associated with the specified field name as an optional string.
      *
@@ -218,9 +362,8 @@ public final class MyRecord {
      */
     public String getString(final String key) {
         return getString(key,
-                      () -> null);
+                         () -> null);
     }
-
 
     /**
      * Retrieves the value associated with the specified field name as an optional integer.
@@ -273,7 +416,6 @@ public final class MyRecord {
     public Integer getInt(final String key) {
         return getOptionalInt(key).orElse(null);
     }
-
 
     /**
      * Retrieves the value associated with the specified field name as an optional decimal.
@@ -355,192 +497,301 @@ public final class MyRecord {
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional list of a generic type.
+     * Returns an optional live view of the list value stored at {@code key}.
      * <p>
-     * This method is used to get the value of a JSON field as a list of elements of a generic type. If the field
-     * exists and its value is a list, it returns an optional containing that list; otherwise, it returns an empty optional.
+     * The returned list is not copied at read time. In default constructor mode, it points to deep-frozen
+     * internal state. In {@link #wrap(Map)} mode, it may reflect external mutations.
      *
      * @param key The name of the field.
-     * @param <O> The generic type of the elements in the list.
-     * @return An optional containing the list value if present, otherwise an empty optional.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a list, this exception is thrown, indicating
-     *                               that the expected type was a list, but the actual type was different.
+     * @param <O> The list element type.
+     * @return An optional containing the stored list view, or empty when the key is missing.
+     * @throws RecordTypeNotExpected If the stored value is not a list.
      */
-
     @SuppressWarnings("unchecked")
-    public <O> Optional<List<O>> getOptionalList(final String key) {
+    public <O> Optional<List<O>> getOptionalListView(final String key) {
         Object value = values.get(key);
-        if (value == null) return Optional.empty();
-
+        if (value == null) return Optional.<List<O>>empty();
         if (value instanceof List<?> list) return Optional.of((List<O>) list);
-
-        throw new RecordTypeNotExpected(List.class.getName(),
-                                        value.getClass(),
-                                        key
-        );
-    }
-
-    /**
-     * Retrieves the value associated with the specified field name as a list of a generic type.
-     * If the field does not exist, it returns the result from the provided supplier.
-     *
-     * @param key      The name of the field.
-     * @param supplier A supplier to provide a default List value if the field is null.
-     * @param <O>      The generic type of the elements in the list.
-     * @return The List value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a List,
-     *                               this exception is thrown, indicating an unexpected type.
-     */
-    @SuppressWarnings("unchecked")
-    public <O> List<O> getList(final String key,
-                               final Supplier<List<O>> supplier) {
-        Object value = values.get(key);
-        if (value == null) return supplier.get();
-        if (value instanceof List<?>) return (List<O>) value;
         throw new RecordTypeNotExpected(List.class.getName(),
                                         value.getClass(),
                                         key);
     }
 
     /**
-     * Retrieves the value associated with the specified field name as a list of a generic type.
-     * If the field does not exist, it returns a default value of null.
+     * Returns an optional immutable copy of the list value stored at {@code key}.
      *
      * @param key The name of the field.
-     * @param <O> The generic type of the elements in the list.
-     * @return The List value if present, or null if the field is not found.
-     * @see #getList(String, Supplier)
+     * @param <O> The list element type.
+     * @return An optional containing an immutable copy, or empty when the key is missing.
+     * @throws RecordTypeNotExpected If the stored value is not a list.
      */
-    public <O> List<O> getList(final String key) {
-        return getList(key,
-                       () -> null);
+    public <O> Optional<List<O>> getOptionalListCopy(final String key) {
+        Optional<List<O>> view = getOptionalListView(key);
+        if (view.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(immutableListCopy(view.get()));
+    }
+
+    /**
+     * Returns the live list view stored at {@code key}, or a fallback from {@code supplier} when absent.
+     *
+     * @param key      The name of the field.
+     * @param supplier Fallback supplier used when the field is absent or null.
+     * @param <O>      The list element type.
+     * @return The stored live list view, or the fallback value.
+     * @throws RecordTypeNotExpected If the stored value is not a list.
+     */
+    public <O> List<O> getListView(final String key,
+                                   final Supplier<List<O>> supplier) {
+        Optional<List<O>> view = getOptionalListView(key);
+        return view.isPresent() ?
+               view.get() :
+               supplier.get();
+    }
+
+    /**
+     * Returns the live list view stored at {@code key}, or {@code null} when absent.
+     *
+     * @param key The name of the field.
+     * @param <O> The list element type.
+     * @return The stored live list view, or {@code null}.
+     * @see #getListView(String, Supplier)
+     */
+    public <O> List<O> getListView(final String key) {
+        return getListView(key,
+                           () -> null);
+    }
+
+    /**
+     * Returns an immutable copy of the list value stored at {@code key}, or the fallback from {@code supplier}.
+     *
+     * @param key      The name of the field.
+     * @param supplier Fallback supplier used when the field is absent or null.
+     * @param <O>      The list element type.
+     * @return An immutable copy of the stored list, or the fallback value.
+     * @throws RecordTypeNotExpected If the stored value is not a list.
+     */
+    public <O> List<O> getListCopy(final String key,
+                                   final Supplier<List<O>> supplier) {
+        List<O> value = getListView(key,
+                                    supplier);
+        return value == null ?
+               null :
+               immutableListCopy(value);
+    }
+
+    /**
+     * Returns an immutable copy of the list value stored at {@code key}, or {@code null} when absent.
+     *
+     * @param key The name of the field.
+     * @param <O> The list element type.
+     * @return An immutable copy of the stored list, or {@code null}.
+     * @see #getListCopy(String, Supplier)
+     */
+    public <O> List<O> getListCopy(final String key) {
+        return getListCopy(key,
+                           () -> null);
     }
 
 
-    /**
-     * Retrieves the value associated with the specified field name as an optional set of a generic type.
-     * <p>
-     * This method is used to get the value of a JSON field as a set of elements of a generic type. If the field
-     * exists and its value is a set, it returns an optional containing that set; otherwise, it returns an empty optional.
+     /**
+      * Returns an optional live view of the set value stored at {@code key}.
+     * In {@link #wrap(Map)} mode, it may reflect external mutations.
      *
      * @param key The name of the field.
-     * @param <O> The generic type of the elements in the set.
-     * @return An optional containing the set value if present, otherwise an empty optional.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a set, this exception is thrown, indicating
-     *                               that the expected type was a set, but the actual type was different.
+     * @param <O> The set element type.
+     * @return An optional containing the stored set view, or empty when absent.
+     * @throws RecordTypeNotExpected If the stored value is not a set.
      */
     @SuppressWarnings("unchecked")
-    public <O> Optional<Set<O>> getOptionalSet(final String key) {
+    public <O> Optional<Set<O>> getOptionalSetView(final String key) {
         Object value = values.get(key);
-        if (value == null) return Optional.empty();
-
+        if (value == null) return Optional.<Set<O>>empty();
         if (value instanceof Set<?> set) return Optional.of((Set<O>) set);
-
-        throw new RecordTypeNotExpected(Set.class.getName(),
-                                        value.getClass(),
-                                        key
-        );
-    }
-
-    /**
-     * Retrieves the value associated with the specified field name as a set of a generic type.
-     * If the field does not exist, it returns the result from the provided supplier.
-     *
-     * @param key      The name of the field.
-     * @param supplier A supplier to provide a default Set value if the field is null.
-     * @param <O>      The generic type of the elements in the set.
-     * @return The Set value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a Set,
-     *                               this exception is thrown, indicating an unexpected type.
-     */
-    @SuppressWarnings("unchecked")
-    public <O> Set<O> getSet(final String key,
-                             final Supplier<Set<O>> supplier) {
-        Object value = values.get(key);
-        if (value == null) return supplier.get();
-
-        if (value instanceof Set<?>) return (Set<O>) value;
-
         throw new RecordTypeNotExpected(Set.class.getName(),
                                         value.getClass(),
                                         key);
     }
 
     /**
-     * Retrieves the value associated with the specified field name as a set of a generic type.
-     * If the field does not exist, it returns a default value of null.
+     * Returns an optional immutable copy of the set value stored at {@code key}.
      *
      * @param key The name of the field.
-     * @param <O> The generic type of the elements in the set.
-     * @return The Set value if present, or null if the field is not found.
-     * @see #getSet(String, Supplier)
+     * @param <O> The set element type.
+     * @return An optional containing an immutable copy, or empty when absent.
+     * @throws RecordTypeNotExpected If the stored value is not a set.
      */
-    public <O> Set<O> getSet(final String key) {
-        return getSet(key,
-                      () -> null);
+    public <O> Optional<Set<O>> getOptionalSetCopy(final String key) {
+        Optional<Set<O>> view = getOptionalSetView(key);
+        if (view.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(immutableSetCopy(view.get()));
     }
 
     /**
-     * Retrieves the value associated with the specified field name as an optional map of generic types for keys and values.
-     * <p>
-     * This method is used to get the value of a JSON field as a map with generic types for keys and values. If the field
-     * exists and its value is a map, it returns an optional containing that map; otherwise, it returns an empty optional.
-     *
-     * @param key The name of the field.
-     * @param <K> The generic type of map keys.
-     * @param <V> The generic type of map values.
-     * @return An optional containing the map value if present, otherwise an empty optional.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a map, this exception is thrown, indicating
-     *                               that the expected type was a map, but the actual type was different.
-     */
-    @SuppressWarnings("unchecked")
-    public <K, V> Optional<Map<K, V>> getOptionalMap(final String key) {
-        Object value = values.get(key);
-        if (value == null) return Optional.empty();
-
-        if (value instanceof Map) return Optional.of((Map<K, V>) value);
-        throw new RecordTypeNotExpected(Map.class.getName(),
-                                        value.getClass(),
-                                        key
-        );
-    }
-
-    /**
-     * Retrieves the value associated with the specified field name as a map with generic types for keys and values.
-     * If the field does not exist, it returns the result from the provided supplier.
+     * Returns the live set view stored at {@code key}, or a fallback from {@code supplier} when absent.
      *
      * @param key      The name of the field.
-     * @param supplier A supplier to provide a default Map value if the field is null.
-     * @param <K>      The generic type of map keys.
-     * @param <V>      The generic type of map values.
-     * @return The Map value if present, or the result from the supplier if the field is null.
-     * @throws RecordTypeNotExpected If the field exists but its value is not a Map,
-     *                               this exception is thrown, indicating an unexpected type.
+     * @param supplier Fallback supplier used when the field is absent or null.
+     * @param <O>      The set element type.
+     * @return The stored live set view, or the fallback value.
+     * @throws RecordTypeNotExpected If the stored value is not a set.
+     */
+    public <O> Set<O> getSetView(final String key,
+                                 final Supplier<Set<O>> supplier) {
+        Optional<Set<O>> view = getOptionalSetView(key);
+        return view.isPresent() ?
+               view.get() :
+               supplier.get();
+    }
+
+    /**
+     * Returns the live set view stored at {@code key}, or {@code null} when absent.
+     *
+     * @param key The name of the field.
+     * @param <O> The set element type.
+     * @return The stored live set view, or {@code null}.
+     * @see #getSetView(String, Supplier)
+     */
+    public <O> Set<O> getSetView(final String key) {
+        return getSetView(key,
+                          () -> null);
+    }
+
+    /**
+     * Returns an immutable copy of the set value stored at {@code key}, or the fallback from {@code supplier}.
+     *
+     * @param key      The name of the field.
+     * @param supplier Fallback supplier used when the field is absent or null.
+     * @param <O>      The set element type.
+     * @return An immutable copy of the stored set, or the fallback value.
+     * @throws RecordTypeNotExpected If the stored value is not a set.
+     */
+    public <O> Set<O> getSetCopy(final String key,
+                                 final Supplier<Set<O>> supplier) {
+        Set<O> value = getSetView(key,
+                                  supplier);
+        return value == null ?
+               null :
+               immutableSetCopy(value);
+    }
+
+    /**
+     * Returns an immutable copy of the set value stored at {@code key}, or {@code null} when absent.
+     *
+     * @param key The name of the field.
+     * @param <O> The set element type.
+     * @return An immutable copy of the stored set, or {@code null}.
+     * @see #getSetCopy(String, Supplier)
+     */
+    public <O> Set<O> getSetCopy(final String key) {
+        return getSetCopy(key,
+                          () -> null);
+    }
+
+
+     /**
+      * Returns an optional live view of the map value stored at {@code key}.
+     * In {@link #wrap(Map)} mode, it may reflect external mutations.
+     *
+     * @param key The name of the field.
+     * @param <K> The map key type.
+     * @param <V> The map value type.
+     * @return An optional containing the stored map view, or empty when absent.
+     * @throws RecordTypeNotExpected If the stored value is not a map.
      */
     @SuppressWarnings("unchecked")
-    public <K, V> Map<K, V> getMap(final String key,
-                                   Supplier<Map<K, V>> supplier) {
+    public <K, V> Optional<Map<K, V>> getOptionalMapView(final String key) {
         Object value = values.get(key);
-        if (value == null) return supplier.get();
-        if (value instanceof Map<?, ?> o) return (Map<K, V>) o;
+        if (value == null) return Optional.<Map<K, V>>empty();
+        if (value instanceof Map<?, ?> map) return Optional.of((Map<K, V>) map);
         throw new RecordTypeNotExpected(Map.class.getName(),
                                         value.getClass(),
                                         key);
     }
 
     /**
-     * Retrieves the value associated with the specified field name as a map with generic types for keys and values.
-     * If the field does not exist, it returns a default value of null.
+     * Returns an optional immutable copy of the map value stored at {@code key}.
      *
      * @param key The name of the field.
-     * @param <K> The generic type of map keys.
-     * @param <V> The generic type of map values.
-     * @return The Map value if present, or null if the field is not found.
-     * @see #getMap(String, Supplier)
+     * @param <K> The map key type.
+     * @param <V> The map value type.
+     * @return An optional containing an immutable copy, or empty when absent.
+     * @throws RecordTypeNotExpected If the stored value is not a map.
      */
-    public <K, V> Map<K, V> getMap(final String key) {
-        return getMap(key,
-                      () -> null);
+    public <K, V> Optional<Map<K, V>> getOptionalMapCopy(final String key) {
+        Optional<Map<K, V>> view = getOptionalMapView(key);
+        if (view.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(immutableMapCopy(view.get()));
+    }
+
+    /**
+     * Returns the live map view stored at {@code key}, or a fallback from {@code supplier} when absent.
+     *
+     * @param key      The name of the field.
+     * @param supplier Fallback supplier used when the field is absent or null.
+     * @param <K>      The map key type.
+     * @param <V>      The map value type.
+     * @return The stored live map view, or the fallback value.
+     * @throws RecordTypeNotExpected If the stored value is not a map.
+     */
+    public <K, V> Map<K, V> getMapView(final String key,
+                                       final Supplier<Map<K, V>> supplier) {
+        Optional<Map<K, V>> view = getOptionalMapView(key);
+        return view.isPresent() ?
+               view.get() :
+               supplier.get();
+    }
+
+    /**
+     * Returns the live map view stored at {@code key}, or {@code null} when absent.
+     *
+     * @param key The name of the field.
+     * @param <K> The map key type.
+     * @param <V> The map value type.
+     * @return The stored live map view, or {@code null}.
+     * @see #getMapView(String, Supplier)
+     */
+    public <K, V> Map<K, V> getMapView(final String key) {
+        return getMapView(key,
+                          () -> null);
+    }
+
+    /**
+     * Returns an immutable copy of the map value stored at {@code key}, or the fallback from {@code supplier}.
+     *
+     * @param key      The name of the field.
+     * @param supplier Fallback supplier used when the field is absent or null.
+     * @param <K>      The map key type.
+     * @param <V>      The map value type.
+     * @return An immutable copy of the stored map, or the fallback value.
+     * @throws RecordTypeNotExpected If the stored value is not a map.
+     */
+    public <K, V> Map<K, V> getMapCopy(final String key,
+                                       final Supplier<Map<K, V>> supplier) {
+        Map<K, V> value = getMapView(key,
+                                     supplier);
+        return value == null ?
+               null :
+               immutableMapCopy(value);
+    }
+
+    /**
+     * Returns an immutable copy of the map value stored at {@code key}, or {@code null} when absent.
+     *
+     * @param key The name of the field.
+     * @param <K> The map key type.
+     * @param <V> The map value type.
+     * @return An immutable copy of the stored map, or {@code null}.
+     * @see #getMapCopy(String, Supplier)
+     */
+    public <K, V> Map<K, V> getMapCopy(final String key) {
+        return getMapCopy(key,
+                          () -> null);
     }
 
 
@@ -591,7 +842,6 @@ public final class MyRecord {
         return getInstant(key,
                           () -> null);
     }
-
 
     /**
      * Retrieves the value associated with the specified field name as an optional double precision floating-point number.
@@ -649,7 +899,6 @@ public final class MyRecord {
     public Double getDouble(final String key) {
         return getOptionalDouble(key).orElse(null);
     }
-
 
     /**
      * Retrieves the value associated with the specified field name as an optional boolean.
@@ -745,7 +994,6 @@ public final class MyRecord {
         return getOptionalChar(key).orElse(null);
     }
 
-
     /**
      * Retrieves the value associated with the specified field name as an optional big integer.
      *
@@ -777,7 +1025,7 @@ public final class MyRecord {
      * @throws RecordTypeNotExpected If the field exists but cannot be interpreted as a big integer.
      */
     public BigInteger getBigInteger(final String key,
-                                final Supplier<BigInteger> bi) {
+                                    final Supplier<BigInteger> bi) {
         Object value = values.get(key);
         if (value == null) return bi.get();
         if (value instanceof BigInteger b) return b;
@@ -799,9 +1047,8 @@ public final class MyRecord {
      */
     public BigInteger getBigInteger(final String key) {
         return getBigInteger(key,
-                         () -> null);
+                             () -> null);
     }
-
 
     /**
      * Checks if this Record is equal to another object.
@@ -814,8 +1061,8 @@ public final class MyRecord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         var record = (MyRecord) o;
-        return Objects.equals(values,
-                              record.values);
+        return deepMapEquals(values,
+                             record.values);
     }
 
     /**
@@ -825,7 +1072,7 @@ public final class MyRecord {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(values);
+        return deepMapHash(values);
     }
 
     /**

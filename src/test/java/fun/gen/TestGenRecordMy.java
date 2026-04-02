@@ -907,7 +907,7 @@ public class TestGenRecordMy {
                                                           1,
                                                           100))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptionalList("a")
+                                         .allMatch(it -> it.getOptionalListView("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
@@ -933,7 +933,7 @@ public class TestGenRecordMy {
                                              SetGen.ofN(IntGen.arbitrary(),
                                                       10))
                                          .sample(100)
-                                         .allMatch(it -> it.getOptionalSet("a")
+                                         .allMatch(it -> it.getOptionalSetView("a")
                                                          .isPresent()));
 
         Assertions.assertTrue(MyRecordGen.of("a",
@@ -950,7 +950,7 @@ public class TestGenRecordMy {
                                                      100))
                                          .sample(100)
                                          .allMatch(it -> {
-                                           Optional<Map<String, Integer>> a = it.getOptionalMap("a");
+                                           Optional<Map<String, Integer>> a = it.getOptionalMapView("a");
                                            return a.isPresent();
                                        }));
     }

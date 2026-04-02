@@ -67,6 +67,7 @@ All notable changes to this project are documented in this file.
 - Added `TestSuiteConventionsTest` to enforce naming/modifier conventions (`*Test`, `should...When...`, non-public JUnit 5 tests) across test sources.
 - Refactored `GenRecordMyTest` arity coverage into a parameterized test to keep compact `MyRecordGen.of(...)` coverage with less duplication.
 - Refactored `GenRecordMyTest` and `CombinatorsTest` with shared sample-size constants and helper assertions to improve readability and maintenance.
+- Refactored `CsvStreamBuilderTest` into nested behavioral suites with reusable CSV helpers, preserving coverage while reducing duplication.
 
 ## 3.0.0
 

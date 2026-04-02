@@ -11,12 +11,18 @@ import java.util.stream.Stream;
 
 public class TestFun {
     private static final boolean VERBOSE_STATS = Boolean.getBoolean("javafun.stats");
+    private static final String STATS_DISABLED_MESSAGE =
+            "Statistical distribution tests are disabled by default. Run with -Pstats.";
+
+    static void assumeStatsEnabled() {
+        Assumptions.assumeTrue(Boolean.getBoolean("javafun.stats"),
+                               STATS_DISABLED_MESSAGE);
+    }
 
     static <I> void assertGeneratedValuesHaveSameProbability(Map<I, Long> counts,
                                                              Collection<I> values,
                                                              double errorMargin) {
-        Assumptions.assumeTrue(Boolean.getBoolean("javafun.stats"),
-                               "Statistical distribution tests are disabled by default. Run with -Pstats.");
+        assumeStatsEnabled();
         if (errorMargin < 0.0) throw new IllegalArgumentException("errorMargin < 0");
         if (errorMargin > 1.0) throw new IllegalArgumentException("errorMargin > 1");
 

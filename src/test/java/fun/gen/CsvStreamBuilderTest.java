@@ -25,6 +25,50 @@ class CsvStreamBuilderTest {
     private static final int HEADER_VALIDATION_REPETITIONS = 250;
     private static final long MAX_ALLOWED_OPEN_FD_DELTA = 30L;
 
+    private static Stream<MyRecord> openCsvStream(Path file,
+                                                  UnaryOperator<CsvStreamBuilder> configuration) {
+        return configuration.apply(CsvStreamBuilder.of(file.toFile(),
+                                                       DEFAULT_SEPARATOR)).get();
+    }
+
+    private static List<MyRecord> readCsv(Path file,
+                                          UnaryOperator<CsvStreamBuilder> configuration) throws Exception {
+        return readCsv(file,
+                       DEFAULT_SEPARATOR,
+                       configuration);
+    }
+
+    private static List<MyRecord> readCsv(Path file,
+                                          String separator,
+                                          UnaryOperator<CsvStreamBuilder> configuration) throws Exception {
+        try (var stream = configuration.apply(CsvStreamBuilder.of(file.toFile(),
+                                                                  separator)).get()) {
+            return stream.toList();
+        }
+    }
+
+    private static Path writeTempCsv(String testName,
+                                     String content) throws Exception {
+        Path file = Files.createTempFile("java-fun-csv-" + testName,
+                                         ".csv");
+        Files.writeString(file,
+                          content);
+        return file;
+    }
+
+    private static void assertSingleRecord(List<MyRecord> records) {
+        Assertions.assertEquals(1,
+                                records.size());
+    }
+
+    private static long openFileDescriptorCount() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        if (osBean instanceof UnixOperatingSystemMXBean unix) {
+            return unix.getOpenFileDescriptorCount();
+        }
+        return -1L;
+    }
+
     @Nested
     class ParsingAndMappingTests {
 
@@ -37,8 +81,10 @@ class CsvStreamBuilderTest {
                                              ";",
                                              UnaryOperator.identity());
             assertSingleRecord(records);
-            Assertions.assertEquals(1, records.getFirst().getInt("a"));
-            Assertions.assertEquals(2, records.getFirst().getInt("b"));
+            Assertions.assertEquals(1,
+                                    records.getFirst().getInt("a"));
+            Assertions.assertEquals(2,
+                                    records.getFirst().getInt("b"));
         }
 
         @Test
@@ -49,7 +95,8 @@ class CsvStreamBuilderTest {
             List<MyRecord> records = readCsv(file,
                                              builder -> builder.withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("value", records.getFirst().getString("name"));
+            Assertions.assertEquals("value",
+                                    records.getFirst().getString("name"));
         }
 
         @Test
@@ -61,7 +108,8 @@ class CsvStreamBuilderTest {
                                              builder -> builder.withTrimValues(false)
                                                                .withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("  value  ", records.getFirst().getString("name"));
+            Assertions.assertEquals("  value  ",
+                                    records.getFirst().getString("name"));
         }
 
         @Test
@@ -73,7 +121,8 @@ class CsvStreamBuilderTest {
                                              builder -> builder.withValueMapper((header, value) -> "[" + value + "]")
                                                                .withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("[  value  ]", records.getFirst().getString("name"));
+            Assertions.assertEquals("[  value  ]",
+                                    records.getFirst().getString("name"));
         }
 
         @Test
@@ -86,7 +135,8 @@ class CsvStreamBuilderTest {
                                                                .withTrimValues(true)
                                                                .withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("[value]", records.getFirst().getString("name"));
+            Assertions.assertEquals("[value]",
+                                    records.getFirst().getString("name"));
         }
 
         @Test
@@ -109,8 +159,10 @@ class CsvStreamBuilderTest {
                                              "|",
                                              UnaryOperator.identity());
             assertSingleRecord(records);
-            Assertions.assertEquals(1, records.getFirst().getInt("a"));
-            Assertions.assertEquals(2, records.getFirst().getInt("b"));
+            Assertions.assertEquals(1,
+                                    records.getFirst().getInt("a"));
+            Assertions.assertEquals(2,
+                                    records.getFirst().getInt("b"));
         }
 
         @Test
@@ -122,8 +174,10 @@ class CsvStreamBuilderTest {
                                              builder -> builder.withoutTypeConversion()
                                                                .withStrictRowWidth());
             assertSingleRecord(records);
-            Assertions.assertEquals("1,2", records.getFirst().getString("a"));
-            Assertions.assertEquals("x", records.getFirst().getString("b"));
+            Assertions.assertEquals("1,2",
+                                    records.getFirst().getString("a"));
+            Assertions.assertEquals("x",
+                                    records.getFirst().getString("b"));
         }
 
         @Test
@@ -134,7 +188,8 @@ class CsvStreamBuilderTest {
             List<MyRecord> records = readCsv(file,
                                              builder -> builder.withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("he said \"hi\"", records.getFirst().getString("text"));
+            Assertions.assertEquals("he said \"hi\"",
+                                    records.getFirst().getString("text"));
         }
 
         @Test
@@ -145,7 +200,8 @@ class CsvStreamBuilderTest {
             List<MyRecord> records = readCsv(file,
                                              builder -> builder.withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("", records.getFirst().getString("name"));
+            Assertions.assertEquals("",
+                                    records.getFirst().getString("name"));
         }
     }
 
@@ -159,7 +215,8 @@ class CsvStreamBuilderTest {
 
             Assertions.assertThrows(IllegalArgumentException.class,
                                     () -> readCsv(file,
-                                                  builder -> builder.withExpectedHeaders("a", "c")));
+                                                  builder -> builder.withExpectedHeaders("a",
+                                                                                         "c")));
         }
 
         @Test
@@ -169,10 +226,13 @@ class CsvStreamBuilderTest {
 
             List<MyRecord> records = readCsv(file,
                                              builder -> builder.withHeaderMapper(String::trim)
-                                                               .withExpectedHeaders("A", "B"));
+                                                               .withExpectedHeaders("A",
+                                                                                    "B"));
             assertSingleRecord(records);
-            Assertions.assertEquals(1, records.getFirst().getInt("A"));
-            Assertions.assertEquals(2, records.getFirst().getInt("B"));
+            Assertions.assertEquals(1,
+                                    records.getFirst().getInt("A"));
+            Assertions.assertEquals(2,
+                                    records.getFirst().getInt("B"));
         }
 
         @Test
@@ -183,7 +243,8 @@ class CsvStreamBuilderTest {
             List<MyRecord> records = readCsv(file,
                                              builder -> builder.withHeaderMapper(h -> h + "_x"));
             assertSingleRecord(records);
-            Assertions.assertEquals(1, records.getFirst().getInt("a_x"));
+            Assertions.assertEquals(1,
+                                    records.getFirst().getInt("a_x"));
             Assertions.assertTrue(records.getFirst().getOptionalInt("a_x_x").isEmpty());
         }
 
@@ -206,8 +267,10 @@ class CsvStreamBuilderTest {
                                              builder -> builder.withStrictRowWidth()
                                                                .withoutTypeConversion());
             assertSingleRecord(records);
-            Assertions.assertEquals("1", records.getFirst().getString("a"));
-            Assertions.assertEquals("", records.getFirst().getString("b"));
+            Assertions.assertEquals("1",
+                                    records.getFirst().getString("a"));
+            Assertions.assertEquals("",
+                                    records.getFirst().getString("b"));
         }
     }
 
@@ -220,7 +283,9 @@ class CsvStreamBuilderTest {
                                      "a,b,c\nnull,N/A,\"\"\n");
 
             List<MyRecord> records = readCsv(file,
-                                             builder -> builder.withNullTokens(Set.of("null", "N/A", ""))
+                                             builder -> builder.withNullTokens(Set.of("null",
+                                                                                      "N/A",
+                                                                                      ""))
                                                                .withoutTypeConversion());
             assertSingleRecord(records);
             Assertions.assertTrue(records.getFirst().getOptionalString("a").isEmpty());
@@ -255,7 +320,8 @@ class CsvStreamBuilderTest {
             assertSingleRecord(records);
             Assertions.assertTrue(records.getFirst().getOptionalString("a").isEmpty());
             Assertions.assertTrue(records.getFirst().getOptionalString("b").isEmpty());
-            Assertions.assertEquals("ok", records.getFirst().getString("c"));
+            Assertions.assertEquals("ok",
+                                    records.getFirst().getString("c"));
         }
     }
 
@@ -270,9 +336,12 @@ class CsvStreamBuilderTest {
             List<MyRecord> records = readCsv(file,
                                              builder -> builder.withStrictRowWidth()
                                                                .withSkipMalformedRows());
-            Assertions.assertEquals(2, records.size());
-            Assertions.assertEquals(1, records.get(0).getInt("a"));
-            Assertions.assertEquals(6, records.get(1).getInt("a"));
+            Assertions.assertEquals(2,
+                                    records.size());
+            Assertions.assertEquals(1,
+                                    records.get(0).getInt("a"));
+            Assertions.assertEquals(6,
+                                    records.get(1).getInt("a"));
         }
 
         @Test
@@ -288,7 +357,8 @@ class CsvStreamBuilderTest {
                                                                         rowSeen.set(rowNumber);
                                                                         return CsvRowErrorAction.THROW;
                                                                     })));
-            Assertions.assertEquals(3, rowSeen.get());
+            Assertions.assertEquals(3,
+                                    rowSeen.get());
         }
 
         @Test
@@ -301,8 +371,11 @@ class CsvStreamBuilderTest {
                                              builder -> builder.withStrictRowWidth()
                                                                .withErrorCollector((row, ex) -> rows.add(row))
                                                                .withSkipMalformedRows());
-            Assertions.assertEquals(2, records.size());
-            Assertions.assertEquals(List.of(3L, 4L), rows);
+            Assertions.assertEquals(2,
+                                    records.size());
+            Assertions.assertEquals(List.of(3L,
+                                            4L),
+                                    rows);
         }
 
         @Test
@@ -315,7 +388,8 @@ class CsvStreamBuilderTest {
                                     () -> readCsv(file,
                                                   builder -> builder.withStrictRowWidth()
                                                                     .withErrorCollector((row, ex) -> rowSeen.set(row))));
-            Assertions.assertEquals(3, rowSeen.get());
+            Assertions.assertEquals(3,
+                                    rowSeen.get());
         }
 
         @Test
@@ -334,7 +408,8 @@ class CsvStreamBuilderTest {
                                             throw new IllegalStateException("downstream failure");
                                         }));
             }
-            Assertions.assertEquals(0, handlerCalls.get());
+            Assertions.assertEquals(0,
+                                    handlerCalls.get());
         }
 
         @Test
@@ -349,49 +424,13 @@ class CsvStreamBuilderTest {
             for (int i = 0; i < HEADER_VALIDATION_REPETITIONS; i++) {
                 Assertions.assertThrows(IllegalArgumentException.class,
                                         () -> readCsv(file,
-                                                      builder -> builder.withExpectedHeaders("a", "c")));
+                                                      builder -> builder.withExpectedHeaders("a",
+                                                                                             "c")));
             }
 
             long after = openFileDescriptorCount();
             Assertions.assertTrue(after - before < MAX_ALLOWED_OPEN_FD_DELTA,
                                   "Potential reader leak detected during header validation mismatch");
         }
-    }
-
-    private static Stream<MyRecord> openCsvStream(Path file,
-                                                  UnaryOperator<CsvStreamBuilder> configuration) {
-        return configuration.apply(CsvStreamBuilder.of(file.toFile(), DEFAULT_SEPARATOR)).get();
-    }
-
-    private static List<MyRecord> readCsv(Path file,
-                                          UnaryOperator<CsvStreamBuilder> configuration) throws Exception {
-        return readCsv(file, DEFAULT_SEPARATOR, configuration);
-    }
-
-    private static List<MyRecord> readCsv(Path file,
-                                          String separator,
-                                          UnaryOperator<CsvStreamBuilder> configuration) throws Exception {
-        try (var stream = configuration.apply(CsvStreamBuilder.of(file.toFile(), separator)).get()) {
-            return stream.toList();
-        }
-    }
-
-    private static Path writeTempCsv(String testName,
-                                     String content) throws Exception {
-        Path file = Files.createTempFile("java-fun-csv-" + testName, ".csv");
-        Files.writeString(file, content);
-        return file;
-    }
-
-    private static void assertSingleRecord(List<MyRecord> records) {
-        Assertions.assertEquals(1, records.size());
-    }
-
-    private static long openFileDescriptorCount() {
-        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-        if (osBean instanceof UnixOperatingSystemMXBean unix) {
-            return unix.getOpenFileDescriptorCount();
-        }
-        return -1L;
     }
 }

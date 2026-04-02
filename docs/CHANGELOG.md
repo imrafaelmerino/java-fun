@@ -64,6 +64,8 @@ All notable changes to this project are documented in this file.
   - `getOptionalSetView(...)`, `getSetView(...)`, `getOptionalSetCopy(...)`, `getSetCopy(...)`
   - `getOptionalMapView(...)`, `getMapView(...)`, `getOptionalMapCopy(...)`, `getMapCopy(...)`
 - Added `MyRecord.wrap(Map<String, ?>)` as explicit performance-oriented construction mode without deep-freeze.
+- Added `TestSuiteConventionsTest` to enforce naming/modifier conventions (`*Test`, `should...When...`, non-public JUnit 5 tests) across test sources.
+- Refactored `GenRecordMyTest` arity coverage into a parameterized test to keep compact `MyRecordGen.of(...)` coverage with less duplication.
 
 ## 3.0.0
 

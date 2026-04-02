@@ -1,0 +1,102 @@
+package fun.gen;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+
+class DoubleGenTest {
+
+    @Test
+    void shouldBiasTowardBoundaryValuesWhenUsingBiasedDefault() {
+
+        Map<Double, Long> counts = TestFun.generate(100000,
+                                                    DoubleGen.biased());
+
+        List<Double> problematic = TestFun.list((double) Integer.MAX_VALUE,
+                                                (double) Integer.MIN_VALUE,
+                                                (double) Short.MAX_VALUE,
+                                                (double) Short.MIN_VALUE,
+                                                (double) Byte.MAX_VALUE,
+                                                (double) Byte.MIN_VALUE,
+                                                0.0);
+
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         problematic,
+                                                         0.05);
+
+
+    }
+
+    @Test
+    void shouldGenerateValuesWithinRangeWhenUsingArbitrary() {
+
+        Assertions.assertTrue(DoubleGen.arbitrary(1,
+                                                  2)
+                                       .sample(100000)
+                                       .allMatch(it -> it >= 1.0 && it <= 2.0));
+
+
+    }
+
+
+    @Test
+    void shouldBiasTowardBoundaryValuesWhenUsingBiasedInterval() {
+
+        Map<Double, Long> counts = TestFun.generate(100000,
+                                                    DoubleGen.biased(-1000000000,
+                                                                     100000000));
+
+        List<Double> problematic = TestFun.list(100000000.0,
+                                                -1000000000.0,
+                                                (double) Short.MAX_VALUE,
+                                                (double) Byte.MAX_VALUE,
+                                                (double) Short.MIN_VALUE,
+                                                (double) Byte.MIN_VALUE,
+                                                0.0);
+
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         problematic,
+                                                         0.05);
+    }
+
+    @Test
+    void shouldRejectNonFiniteBoundsWhenUsingArbitrary() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.arbitrary(Double.NaN,
+                                                          1.0));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.arbitrary(0.0,
+                                                          Double.POSITIVE_INFINITY));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.arbitrary(Double.NEGATIVE_INFINITY,
+                                                          0.0));
+    }
+
+    @Test
+    void shouldRejectNonFiniteBoundsWhenUsingBiased() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.biased(Double.NaN,
+                                                       1.0));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.biased(0.0,
+                                                       Double.POSITIVE_INFINITY));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> DoubleGen.biased(Double.NEGATIVE_INFINITY,
+                                                       0.0));
+    }
+
+    @Test
+    void shouldGenerateBothSignsWhenUsingArbitraryOnVeryWideRange() {
+        var samples = DoubleGen.arbitrary(-Double.MAX_VALUE,
+                                          Double.MAX_VALUE)
+                               .sample(2000)
+                               .toList();
+
+        Assertions.assertTrue(samples.stream().anyMatch(it -> it < 0.0),
+                              "Expected at least one negative value");
+        Assertions.assertTrue(samples.stream().anyMatch(it -> it > 0.0),
+                              "Expected at least one positive value");
+    }
+}

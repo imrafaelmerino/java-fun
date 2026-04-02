@@ -610,6 +610,14 @@ MyRecordGen dynamic = MyRecordGen.ofEntries(
 );
 // sample: [{id=44, name=Eva, age=31}, {id=901, name=Tom, age=22}]
 
+// Compact call-site style (alternating key/generator pairs)
+MyRecordGen compact = MyRecordGen.of(
+        "id", IntGen.arbitrary(1, 1_000),
+        "name", StrGen.alphabetic(1, 30),
+        "age", IntGen.arbitrary(18, 99)
+);
+// sample: [{id=44, name=Eva, age=31}, {id=901, name=Tom, age=22}]
+
 // Optional/required/nullable controls
 MyRecordGen tuned = dynamic
         .withOptKeys("age")
@@ -627,7 +635,9 @@ Gen<MyRecord> users = tuned;
 ```
 
 Migration note:
-- `MyRecordGen.builder()` and `MyRecordGen.ofEntries(...)` are recommended for new code.
+- The previous giant `MyRecordGen.of(...)` overload family was replaced by one compact varargs form.
+- Prefer `MyRecordGen.builder()` or `MyRecordGen.ofEntries(...)` for strongest type-safety and readability.
+- Use compact `MyRecordGen.of(...)` when you prioritize concise call sites.
 
 ## CSV Ingestion
 

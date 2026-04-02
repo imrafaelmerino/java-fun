@@ -12,7 +12,7 @@ All notable changes to this project are documented in this file.
   - `getBoolean(...)`
   - `getBigInteger(...)`
 - Removed legacy `Gen.cons(...)`, `Gen.then(...)`, and `Gen.suchThat(...)`; use `Gen.constant(...)`, `Gen.flatMap(...)`, and `Gen.filter(...)`.
-- `MyRecordGen.builder()` and `MyRecordGen.ofEntries(...)` are the primary APIs for explicit, scalable record generator definitions.
+- Replaced the giant `MyRecordGen.of(...)` overload family with a compact varargs form and made `builder()`/`ofEntries(...)` the primary typed construction APIs.
 - Removed public field `MyRecord.map`.
   Use `asMap()`, `containsKey(String)`, `size()`, and `isEmpty()` instead.
 - `MyRecord` constructor now deep-freezes nested container values (`List`/`Set`/`Map`) and `byte[]` values by default.
@@ -38,7 +38,8 @@ All notable changes to this project are documented in this file.
 - Updated Javadoc to clarify numeric precision semantics.
 - Expanded `Combinators` Javadoc/README with explicit safe-vs-view input handling guidance and examples.
 - Clarified `MyRecord` collection access semantics with explicit `*View` and `*Copy` APIs and deep-freeze constructor behavior.
-- Added migration guidance for `Gen` idiomatic names and `MyRecordGen` builder-based creation.
+- Added migration guidance for `Gen` idiomatic names and the simplified `MyRecordGen` construction API.
+- Normalized test class and test method naming to idiomatic JUnit 5 conventions (`*Test`, `should...When...`) to improve readability and maintenance.
 
 ### Added
 
@@ -57,7 +58,7 @@ All notable changes to this project are documented in this file.
   - `GenerationExhaustedException`
   - `UnsatisfiableConstraintException`
 - Added `Gen.constant(...)`, `Gen.flatMap(...)`, and `Gen.filter(...)` as canonical API names.
-- Added `MyRecordGen.builder()` and `MyRecordGen.ofEntries(...)`.
+- Added `MyRecordGen.builder()`, `MyRecordGen.ofEntries(...)`, and compact `MyRecordGen.of(key, gen, ...)` construction paths.
 - Added `MyRecord` explicit collection accessors:
   - `getOptionalListView(...)`, `getListView(...)`, `getOptionalListCopy(...)`, `getListCopy(...)`
   - `getOptionalSetView(...)`, `getSetView(...)`, `getOptionalSetCopy(...)`, `getSetCopy(...)`

@@ -66,6 +66,7 @@ All notable changes to this project are documented in this file.
 - Added `MyRecord.wrap(Map<String, ?>)` as explicit performance-oriented construction mode without deep-freeze.
 - Added `TestSuiteConventionsTest` to enforce naming/modifier conventions (`*Test`, `should...When...`, non-public JUnit 5 tests) across test sources.
 - Refactored `GenRecordMyTest` arity coverage into a parameterized test to keep compact `MyRecordGen.of(...)` coverage with less duplication.
+- Refactored `GenRecordMyTest` and `CombinatorsTest` with shared sample-size constants and helper assertions to improve readability and maintenance.
 
 ## 3.0.0
 

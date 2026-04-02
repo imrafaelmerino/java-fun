@@ -10,30 +10,21 @@ import java.util.stream.IntStream;
 
 class CombinatorsTest {
 
+    private static final int LARGE_SAMPLE_SIZE = 100_000;
+    private static final int MEDIUM_SAMPLE_SIZE = 50_000;
+    private static final int SMALL_SAMPLE_SIZE = 1_000;
+    private static final double UNIFORM_ERROR_MARGIN = 0.05;
+
     @Test
     void shouldGenerateValuesAccordingToWeightsWhenUsingFreq() {
 
-        Gen<Integer> gen = Combinators.freq(Pair.of(1,
-                                                    Gen.constant(1)),
-                                            Pair.of(1,
-                                                    Gen.constant(2)),
-                                            Pair.of(1,
-                                                    Gen.constant(3)),
-                                            Pair.of(1,
-                                                    Gen.constant(4)),
-                                            Pair.of(1,
-                                                    Gen.constant(5)));
+        Gen<Integer> gen = Combinators.freq(Pair.of(1, Gen.constant(1)),
+                                            Pair.of(1, Gen.constant(2)),
+                                            Pair.of(1, Gen.constant(3)),
+                                            Pair.of(1, Gen.constant(4)),
+                                            Pair.of(1, Gen.constant(5)));
 
-        Map<Integer, Long> counts = TestFun.generate(100000,
-                                                     gen);
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(1,
-                                                                      2,
-                                                                      3,
-                                                                      4,
-                                                                      5),
-                                                         0.05);
+        assertUniformDistribution(gen, TestFun.list(1, 2, 3, 4, 5));
     }
 
     @Test
@@ -44,10 +35,9 @@ class CombinatorsTest {
                                                     Gen.constant(2)));
 
         Assertions.assertDoesNotThrow(() -> {
-            Map<Integer, Long> counts = TestFun.generate(10000,
+            Map<Integer, Long> counts = TestFun.generate(MEDIUM_SAMPLE_SIZE,
                                                          gen);
-            Assertions.assertTrue(counts.containsKey(1));
-            Assertions.assertTrue(counts.containsKey(2));
+            assertContainsAllKeys(counts, Set.of(1, 2));
         });
     }
 
@@ -55,38 +45,30 @@ class CombinatorsTest {
     void shouldGenerateNullAndValueWithSameProbabilityWhenUsingNullable() {
 
 
-        Map<String, Long> counts =
-                TestFun.generate(100000,
-                                 Combinators.nullable(Gen.constant("a")));
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(
-                                                                 "a",
-                                                                 null),
-                                                         0.05);
+        assertUniformDistribution(Combinators.nullable(Gen.constant("a")),
+                                  TestFun.list("a", null));
     }
 
     @Test
     void shouldNeverGenerateNullWhenUsingNullableWithZeroProbability() {
-        Map<String, Long> counts = TestFun.generate(100000,
+        Map<String, Long> counts = TestFun.generate(LARGE_SAMPLE_SIZE,
                                                     Combinators.nullable(Gen.constant("a"),
                                                                          0));
 
         Assertions.assertFalse(counts.containsKey(null));
-        Assertions.assertEquals(100000L,
+        Assertions.assertEquals(LARGE_SAMPLE_SIZE,
                                 counts.get("a"));
     }
 
     @Test
     void shouldAlwaysGenerateNullWhenUsingNullableWithHundredProbability() {
-        Map<String, Long> counts = TestFun.generate(100000,
+        Map<String, Long> counts = TestFun.generate(LARGE_SAMPLE_SIZE,
                                                     Combinators.nullable(Gen.constant("a"),
                                                                          100));
 
         Assertions.assertEquals(1,
                                 counts.size());
-        Assertions.assertEquals(100000L,
+        Assertions.assertEquals(LARGE_SAMPLE_SIZE,
                                 counts.get(null));
     }
 
@@ -94,38 +76,16 @@ class CombinatorsTest {
     void shouldGenerateAnyProvidedValueWhenUsingOneOfVarargs() {
 
 
-        Map<String, Long> counts =
-                TestFun.generate(100000,
-                                 Combinators.oneOf("a",
-                                                   "b",
-                                                   "c"));
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(
-                                                                 "a",
-                                                                 "b",
-                                                                 "c"),
-                                                         0.05);
+        assertUniformDistribution(Combinators.oneOf("a", "b", "c"),
+                                  TestFun.list("a", "b", "c"));
     }
 
     @Test
     void shouldGenerateAnyProvidedValueWhenUsingOneOfList() {
 
 
-        Map<String, Long> counts =
-                TestFun.generate(100000,
-                                 Combinators.oneOf(Arrays.asList("a",
-                                                                 "b",
-                                                                 "c")));
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(
-                                                                 "a",
-                                                                 "b",
-                                                                 "c"),
-                                                         0.05);
+        assertUniformDistribution(Combinators.oneOf(Arrays.asList("a", "b", "c")),
+                                  TestFun.list("a", "b", "c"));
     }
 
     @Test
@@ -136,7 +96,7 @@ class CombinatorsTest {
         Gen<String> gen = Combinators.oneOf(values);
         values.clear();
 
-        Assertions.assertTrue(gen.sample(1000)
+        Assertions.assertTrue(gen.sample(SMALL_SAMPLE_SIZE)
                                  .allMatch(v -> v.equals("a") || v.equals("b") || v.equals("c")));
     }
 
@@ -147,11 +107,10 @@ class CombinatorsTest {
         values.add(null);
         Gen<String> gen = Combinators.oneOf(values);
 
-        Map<String, Long> counts = TestFun.generate(50000,
+        Map<String, Long> counts = TestFun.generate(MEDIUM_SAMPLE_SIZE,
                                                     gen);
 
-        Assertions.assertTrue(counts.containsKey("a"));
-        Assertions.assertTrue(counts.containsKey(null));
+        assertContainsAllKeys(counts, TestFun.list("a", null));
     }
 
     @Test
@@ -161,12 +120,10 @@ class CombinatorsTest {
                                             others);
         others[0] = "z";
 
-        Map<String, Long> counts = TestFun.generate(50000,
+        Map<String, Long> counts = TestFun.generate(MEDIUM_SAMPLE_SIZE,
                                                     gen);
 
-        Assertions.assertTrue(counts.containsKey("a"));
-        Assertions.assertTrue(counts.containsKey("b"));
-        Assertions.assertTrue(counts.containsKey("c"));
+        assertContainsAllKeys(counts, Set.of("a", "b", "c"));
         Assertions.assertFalse(counts.containsKey("z"));
     }
 
@@ -177,12 +134,10 @@ class CombinatorsTest {
                                                 others);
         others[0] = "z";
 
-        Map<String, Long> counts = TestFun.generate(50000,
+        Map<String, Long> counts = TestFun.generate(MEDIUM_SAMPLE_SIZE,
                                                     gen);
 
-        Assertions.assertTrue(counts.containsKey("a"));
-        Assertions.assertTrue(counts.containsKey("z"));
-        Assertions.assertTrue(counts.containsKey("c"));
+        assertContainsAllKeys(counts, Set.of("a", "z", "c"));
         Assertions.assertFalse(counts.containsKey("b"));
     }
 
@@ -190,21 +145,9 @@ class CombinatorsTest {
     void shouldGenerateAnyProvidedValueWhenUsingOneOfSet() {
 
 
-        Map<String, Long> counts =
-                TestFun.generate(100000,
-                                 Combinators.oneOf(new HashSet<>(Arrays.asList("a",
-                                                                               "b",
-                                                                               "c"))
-                                 )
-                );
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(
-                                                                 "a",
-                                                                 "b",
-                                                                 "c"),
-                                                         0.05);
+        assertUniformDistribution(
+                Combinators.oneOf(new HashSet<>(Arrays.asList("a", "b", "c"))),
+                TestFun.list("a", "b", "c"));
     }
 
     @Test
@@ -215,7 +158,7 @@ class CombinatorsTest {
         Gen<String> gen = Combinators.oneOf(values);
         values.clear();
 
-        Assertions.assertTrue(gen.sample(1000)
+        Assertions.assertTrue(gen.sample(SMALL_SAMPLE_SIZE)
                                  .allMatch(v -> v.equals("a") || v.equals("b") || v.equals("c")));
     }
 
@@ -226,11 +169,10 @@ class CombinatorsTest {
         values.add(null);
         Gen<String> gen = Combinators.oneOf(values);
 
-        Map<String, Long> counts = TestFun.generate(50000,
+        Map<String, Long> counts = TestFun.generate(MEDIUM_SAMPLE_SIZE,
                                                     gen);
 
-        Assertions.assertTrue(counts.containsKey("a"));
-        Assertions.assertTrue(counts.containsKey(null));
+        assertContainsAllKeys(counts, TestFun.list("a", null));
     }
 
     @Test
@@ -247,22 +189,8 @@ class CombinatorsTest {
                                                               "f"));
         var gen1 = Combinators.oneOf(values1);
 
-        Map<String, Long> counts =
-                TestFun.generate(100000,
-                                 Combinators.oneOf(gen,
-                                                   gen1)
-                );
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(
-                                                                 "a",
-                                                                 "b",
-                                                                 "c",
-                                                                 "d",
-                                                                 "e",
-                                                                 "f"),
-                                                         0.05);
+        assertUniformDistribution(Combinators.oneOf(gen, gen1),
+                                  TestFun.list("a", "b", "c", "d", "e", "f"));
     }
 
     @Test
@@ -279,22 +207,8 @@ class CombinatorsTest {
                                                               "f"));
         var gen1 = Combinators.oneOf(values1);
 
-        Map<String, Long> counts =
-                TestFun.generate(100000,
-                                 Combinators.oneOfList(List.of(gen,
-                                                               gen1))
-                );
-
-
-        TestFun.assertGeneratedValuesHaveSameProbability(counts,
-                                                         TestFun.list(
-                                                                 "a",
-                                                                 "b",
-                                                                 "c",
-                                                                 "d",
-                                                                 "e",
-                                                                 "f"),
-                                                         0.05);
+        assertUniformDistribution(Combinators.oneOfList(List.of(gen, gen1)),
+                                  TestFun.list("a", "b", "c", "d", "e", "f"));
     }
 
     @Test
@@ -306,12 +220,10 @@ class CombinatorsTest {
                                             others);
         others[0] = Gen.constant("z");
 
-        Map<String, Long> counts = TestFun.generate(50000,
+        Map<String, Long> counts = TestFun.generate(MEDIUM_SAMPLE_SIZE,
                                                     gen);
 
-        Assertions.assertTrue(counts.containsKey("a"));
-        Assertions.assertTrue(counts.containsKey("b"));
-        Assertions.assertTrue(counts.containsKey("c"));
+        assertContainsAllKeys(counts, Set.of("a", "b", "c"));
         Assertions.assertFalse(counts.containsKey("z"));
     }
 
@@ -660,6 +572,19 @@ class CombinatorsTest {
                                                                Gen.constant(2)))
                                                 .sample()
                                                 .get());
+    }
+
+    private static <T> void assertUniformDistribution(Gen<T> generator,
+                                                      List<T> expectedValues) {
+        Map<T, Long> counts = TestFun.generate(LARGE_SAMPLE_SIZE, generator);
+        TestFun.assertGeneratedValuesHaveSameProbability(counts,
+                                                         expectedValues,
+                                                         UNIFORM_ERROR_MARGIN);
+    }
+
+    private static <T> void assertContainsAllKeys(Map<T, Long> counts,
+                                                  Collection<T> expectedKeys) {
+        expectedKeys.forEach(key -> Assertions.assertTrue(counts.containsKey(key)));
     }
 
 }

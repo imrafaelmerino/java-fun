@@ -728,8 +728,13 @@ System.out.println(after);
 - Keep a fixed `RandomGenerator` seed in failing tests for reproducibility.
 - Prefer small composable generators over one big opaque generator.
 - Mark expensive distribution assertions with `@Tag("stats")` so they do not run in the default fast suite.
+- Mark performance-regression tests with `@Tag("perf")` and run them explicitly.
+- Mark fuzz-invariant tests with `@Tag("fuzz")` and run them explicitly.
 - Run fast CI-equivalent checks locally with `mvn -q test jacoco:report jacoco:check`.
 - Run statistical/distribution checks explicitly with `mvn -q -Pstats test`.
+- Run performance regressions explicitly with `mvn -q -Pperf test`.
+- Run fuzz invariants explicitly with `mvn -q -Pfuzz test`.
+- Run mutation analysis explicitly with `mvn -q -Pmutation test org.pitest:pitest-maven:mutationCoverage`.
 - Enable detailed stats logs only when needed with `mvn -q -Pstats -DJAVAFUN.STATS.VERBOSE=true test`.
 
 ## Migration Guide (3.x -> 4.0)

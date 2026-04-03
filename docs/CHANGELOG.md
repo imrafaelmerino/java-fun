@@ -42,6 +42,7 @@ All notable changes to this project are documented in this file.
 - Added migration guidance for `Gen` idiomatic names and the simplified `MyRecordGen` construction API.
 - Normalized test class and test method naming to idiomatic JUnit 5 conventions (`*Test`, `should...When...`) to improve readability and maintenance.
 - Added test-execution guidance for fast vs. statistical suites (`@Tag("stats")`, default exclusion, `-Pstats` profile).
+- Added test-execution guidance for performance (`@Tag("perf")`), fuzz (`@Tag("fuzz")`), and mutation analysis workflows.
 
 ### Added
 
@@ -73,6 +74,11 @@ All notable changes to this project are documented in this file.
 - Refactored `fun.optic` tests (`LensesTest`, `OptionalsTest`, `PrismTest`) into nested behavior-focused suites for consistent readability and maintenance.
 - Refactored remaining core `fun.gen` suites (`MapGenTest`, `SetGenTest`, `StrGenTest`, `GenCoreTest`) with nested structures/constants/helpers.
 - Added `@Tag("stats")` classification for statistical/distribution tests and wired Maven Surefire to exclude them by default and run them explicitly with `-Pstats`.
+- Added `@Tag("perf")` and `@Tag("fuzz")` suites plus Maven profiles (`-Pperf`, `-Pfuzz`) for explicit non-default quality runs.
+- Added `GeneratorPerformanceTest` with regression checks for large-cardinality combinations, wide-record generation, and large-list shuffling.
+- Added `GeneratorFuzzTest` with deterministic seed-driven invariant checks for `Combinators` and `MyRecordGen`.
+- Added `mutation` Maven profile with PIT (`pitest-maven`) focused on `MyRecord*` and `CsvStream*` surfaces.
+- Added weekly GitHub workflow `CI Quality` to run perf, fuzz, and mutation analysis automatically.
 - Added `CONTRIBUTING.md` with test naming, tagging, and local run conventions.
 
 ## 3.0.0

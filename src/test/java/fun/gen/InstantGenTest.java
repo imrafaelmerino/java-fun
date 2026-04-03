@@ -4,25 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Tag("stats")
 class InstantGenTest {
-
-    public static void main(String[] args) {
-        Gen<Set<String>> permutations = Combinators.subsets(Arrays.asList("a",
-                                                                          "b",
-                                                                          "c"));
-
-        Set<Set<String>> r = new HashSet<>();
-
-        permutations.sample(10000).forEach(r::add);
-
-        System.out.println(r);
-
-    }
 
     @Test
     void shouldBiasTowardInterestingEpochSecondsWhenUsingBiasedDefault() {

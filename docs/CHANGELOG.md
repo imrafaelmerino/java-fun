@@ -32,6 +32,7 @@ All notable changes to this project are documented in this file.
 - `Combinators.combinations(...)` now has a coherent `combinationsView(...)` counterpart for live-reference semantics.
 - `Combinators.freq(...)`/`freqList(...)` now reject non-positive weights explicitly instead of silently ignoring them.
 - Exhaustion/constraint failures now throw typed generation exceptions instead of generic runtime exceptions.
+- Statistical/article example tests were converted from console-print demos to deterministic assertions, keeping `-Pstats` runs quiet by default.
 
 ### Documentation
 

@@ -56,9 +56,9 @@ public class Readme {
                                            nameGen)
                                        .withAllOptKeys()
                                        .map(record ->
-                                                  new User(record.getOptStr(LOGIN_FIELD).orElse(null),
-                                                           record.getStr(NAME_FIELD),
-                                                           record.getOptStr(PASSWORD_FIELD).orElse(null))
+                                                  new User(record.getOptionalString(LOGIN_FIELD).orElse(null),
+                                                           record.getString(NAME_FIELD),
+                                                           record.getOptionalString(PASSWORD_FIELD).orElse(null))
                                      );
 
         Predicate<User> isValid = user ->
@@ -68,9 +68,9 @@ public class Readme {
                         !user.getName().trim().isEmpty() &&
                         !user.getPassword().trim().isEmpty();
 
-        Gen<User> validUserGen = userGen.suchThat(isValid);
+        Gen<User> validUserGen = userGen.filter(isValid);
 
-        Gen<User> invalidUserGen = userGen.suchThat(isValid.negate());
+        Gen<User> invalidUserGen = userGen.filter(isValid.negate());
 
         validUserGen.sample(100)
                     .forEach(System.out::println);

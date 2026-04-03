@@ -5,37 +5,39 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * An Optional is an optic that allows seeing into a structure and getting, setting, or modifying an optional focus.
- * It combines the properties of a Lens (getting, setting, and modifying) with the properties of a Prism (an optional focus).
- * An Optional can be seen as a pair of functions:
- * - {@code get: S => Optional[T]} i.e., get the target of an Optional or nothing if there is no target.
- * - {@code set: (T, S) => S} i.e., a function to look into S, set a value for an optional focus T, and obtain the modified source.
- * An Optional could also be defined as a weaker Lens and weaker Prism.
+ * Optional optic over a source type {@code S} and an optional focus type {@code T}.
+ * <p>
+ * Conceptually, this optic combines:
+ * <ul>
+ *   <li>A partial getter: {@code S -> Optional<T>}</li>
+ *   <li>A setter: {@code (T, S) -> S}</li>
+ * </ul>
+ * It can be viewed as a weaker {@link Lens} (focus may be absent) and a weaker {@link Prism}
+ * (it can also update the enclosing source).
  *
- * @param <S> the source of an optional.
- * @param <T> the target of an optional.
+ * @param <S> source type.
+ * @param <T> focus type.
  */
 public class Option<S, T> {
-    /**
-     * get the target of an Optional or nothing if there is no target
-     */
+    /** Getter for the optional focus. */
     public final Function<S, Optional<T>> get;
 
     /**
-     * function to look into S, set a value for an optional focus T, and obtain the modified source
+     * Setter for the focus. The resulting function updates a source with the provided focus value.
      */
     public final Function<T, Function<S, S>> set;
 
     /**
-     * modify the target of an optional with a function if it exists, returning the same source otherwise
+     * Focus modifier. If no focus is present, it returns the original source unchanged.
      */
     public final Function<Function<T, T>, Function<S, S>> modify;
 
     /**
-     * Creates a new Optional with the given functions for getting and setting the optional focus.
+     * Creates an optional optic from a partial getter and a setter.
      *
-     * @param get The function to get the target of an Optional or nothing if there is no target.
-     * @param set The function to look into S, set a value for an optional focus T, and obtain the modified source.
+     * @param get partial getter for the focus.
+     * @param set setter for updating the focus in a source.
+     * @throws NullPointerException if any parameter is null.
      */
     public Option(final Function<S, Optional<T>> get,
                   final Function<T, Function<S, S>> set) {
@@ -51,11 +53,14 @@ public class Option<S, T> {
 
 
     /**
-     * Compose this optional with another optional.
+     * Composes this optional with another optional.
+     * <p>
+     * Resulting optic focuses from {@code S} directly into {@code F}, preserving optional semantics.
      *
-     * @param other The other optional.
-     * @param <F>   The type of the focus.
-     * @return A new optional.
+     * @param other optional from {@code T} to {@code F}.
+     * @param <F>   composed focus type.
+     * @return composed optional.
+     * @throws NullPointerException if {@code other} is null.
      */
     public <F> Option<S, F> compose(final Option<T, F> other) {
         Objects.requireNonNull(other);
@@ -72,7 +77,6 @@ public class Option<S, T> {
     }
 
 }
-
 
 
 

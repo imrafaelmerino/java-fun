@@ -3,6 +3,7 @@ package fun.gen;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -11,9 +12,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * CsvStream provides a convenient way to process CSV files as a Stream of Records.
- * The class allows customization through various functions for header and value mapping,
- * as well as enabling/disabling type conversion.
+ * Internal CSV reader that exposes rows as {@link MyRecord}.
+ * Header and value mappers are applied on top of raw CSV tokens.
  */
 class CsvStream implements Supplier<Stream<MyRecord>> {
 
@@ -21,6 +21,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private final BiFunction<String, String, String> valueMapper;
 
     private final boolean enableTypeConversion;
+    private final boolean trimValues;
 
     private static final Pattern numberPattern = Pattern.compile("^-?(?:0|[1-9]\\d*)(\\.\\d+)?$");
     private final File path;
@@ -28,6 +29,12 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     private List<String> headers;
 
     private final String separator;
+    private final List<String> expectedHeaders;
+    private final boolean strictRowWidth;
+    private final Set<String> nullTokens;
+    private final java.util.function.Predicate<String> nullTokenMatcher;
+    private final BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler;
+    private final BiConsumer<Long, RuntimeException> errorCollector;
 
     /**
      * Constructs a CsvStream with custom mapping functions, type conversion, and separator.
@@ -43,26 +50,42 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             Function<String, String> headerMapper,
             BiFunction<String, String, String> valueMapper,
             boolean enableTypeConversion,
-            String separator) {
+            boolean trimValues,
+            String separator,
+            List<String> expectedHeaders,
+            boolean strictRowWidth,
+            Set<String> nullTokens,
+            java.util.function.Predicate<String> nullTokenMatcher,
+            BiFunction<Long, RuntimeException, CsvRowErrorAction> rowErrorHandler,
+            BiConsumer<Long, RuntimeException> errorCollector) {
         this.path = path;
         this.headerMapper = Objects.requireNonNull(headerMapper);
         this.valueMapper = Objects.requireNonNull(valueMapper);
         this.enableTypeConversion = enableTypeConversion;
+        this.trimValues = trimValues;
         this.separator = separator;
+        this.expectedHeaders = expectedHeaders == null ? null : List.copyOf(expectedHeaders);
+        this.strictRowWidth = strictRowWidth;
+        this.nullTokens = nullTokens == null
+                          ? Set.of()
+                          : nullTokens.stream()
+                                      .map(CsvStream::removeQuotesIfExist)
+                                      .collect(java.util.stream.Collectors.toUnmodifiableSet());
+        this.nullTokenMatcher = nullTokenMatcher;
+        this.rowErrorHandler = rowErrorHandler;
+        this.errorCollector = errorCollector;
     }
 
 
     /**
-     * Attempts to convert a string value to a suitable data type, including boolean, integer,
-     * long, and double. If conversion is not possible, the original string is returned.
-     *
-     * @param value The string value to convert.
-     * @return The converted value or the original string.
+     * Attempts to convert a string value to a primitive-friendly type:
+     * boolean, int, long, or double (in that order). If no conversion matches,
+     * the original (possibly unquoted) string is returned.
      */
     private Object tryConvert(String value) {
         var xs = removeQuotesIfExist(value);
 
-        if (xs.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"))
+        if (xs.equalsIgnoreCase("true") || xs.equalsIgnoreCase("false"))
             return Boolean.parseBoolean(xs);
 
         if (numberPattern.matcher(xs).matches()) {
@@ -97,7 +120,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      * @return The processed string value.
      */
     static String removeQuotesIfExist(String value) {
-        return value.length() > 2 && value.startsWith("\"") && value.endsWith("\"")
+        return value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")
                ?
                value.substring(1,
                                value.length() - 1) :
@@ -105,36 +128,57 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
     }
 
     /**
-     * Retrieves a Stream of Records from the CSV file.
+     * Reads the CSV and returns it as a lazy stream of records.
+     * The stream closes the underlying reader on stream close.
      *
-     * @return A Stream of Records.
-     * @throws UncheckedIOException If an I/O error occurs while reading the CSV file.
+     * @return A stream of parsed records.
+     * @throws IllegalArgumentException If the CSV has no header line.
+     * @throws UncheckedIOException     If an I/O error occurs while reading the file.
      */
     @Override
     public Stream<MyRecord> get() {
+        BufferedReader br = null;
         try {
-            var br = new BufferedReader(new FileReader(path,
-                                                       StandardCharsets.UTF_8));
+            br = new BufferedReader(new FileReader(path,
+                                                   StandardCharsets.UTF_8));
             var headerLine = br.readLine();
             if (headerLine == null) throw new IllegalArgumentException("CSV file has no header line.");
-            this.headers = Arrays.stream(headerLine.split(","))
+            this.headers = Arrays.stream(splitCsvLine(headerLine,
+                                                      separator))
                                  .map(CsvStream::removeQuotesIfExist)
                                  .map(headerMapper)
                                  .toList();
-            var spliterator = new CsvSpliterator(br,
+            validateExpectedHeaders();
+            final BufferedReader reader = br;
+            var spliterator = new CsvSpliterator(reader,
                                                  separator);
             return StreamSupport.stream(spliterator,
                                         false)
-                                .map(this::lineToRecord)
                                 .onClose(
                                         () -> {
                                             try {
-                                                br.close();
+                                                reader.close();
                                             } catch (IOException e) {
                                                 throw new UncheckedIOException(e);
                                             }
                                         });
+        } catch (RuntimeException e) {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException closeEx) {
+                    e.addSuppressed(closeEx);
+                }
+            }
+            throw e;
         } catch (IOException e) {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException closeEx) {
+                    e.addSuppressed(closeEx);
+                }
+            }
             throw new UncheckedIOException(e);
         }
 
@@ -147,6 +191,11 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      * @return A Record object representing the CSV line.
      */
     private MyRecord lineToRecord(String[] values) {
+        if (strictRowWidth && values.length != headers.size()) {
+            throw new IllegalArgumentException(
+                    "CSV row width mismatch. Expected %s columns but got %s".formatted(headers.size(),
+                                                                                        values.length));
+        }
         Map<String, Object> record = new HashMap<>();
 
         for (int i = 0; i < headers.size(); i++) {
@@ -154,7 +203,7 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
             String strValue = (values.length > i) ?
                               values[i] :
                               "";
-            record.put(headerMapper.apply(header),
+            record.put(header,
                        parseValue(header,
                                   strValue));
         }
@@ -171,24 +220,87 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
      */
     private Object parseValue(String header,
                               String strValue) {
-        if (strValue.isEmpty()) return strValue;
-
+        String inputValue = trimValues ? strValue.trim() : strValue;
         String mappedValue = valueMapper.apply(header,
-                                               strValue);
+                                               inputValue);
+        if (mappedValue == null) {
+            return null;
+        }
+        String normalizedValue = removeQuotesIfExist(mappedValue);
+        if (nullTokens.contains(normalizedValue)
+                || (nullTokenMatcher != null && nullTokenMatcher.test(normalizedValue))) {
+            return null;
+        }
 
         return enableTypeConversion ?
-               tryConvert(mappedValue) :
-               mappedValue;
+               tryConvert(normalizedValue) :
+               normalizedValue;
 
+    }
+
+    private void validateExpectedHeaders() {
+        if (expectedHeaders == null) {
+            return;
+        }
+        List<String> normalizedExpected = expectedHeaders.stream()
+                                                         .map(CsvStream::removeQuotesIfExist)
+                                                         .map(headerMapper)
+                                                         .toList();
+        if (!normalizedExpected.equals(headers)) {
+            throw new IllegalArgumentException(
+                    "CSV headers mismatch. Expected %s but got %s".formatted(normalizedExpected,
+                                                                             headers));
+        }
+    }
+
+    /**
+     * Splits a CSV line honoring quoted sections, so separators inside quotes are kept as literal content.
+     * Escaped quotes are represented as {@code ""} inside quoted values.
+     */
+    static String[] splitCsvLine(String line,
+                                 String separator) {
+        List<String> values = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                if (inQuotes
+                        && i + 1 < line.length()
+                        && line.charAt(i + 1) == '"') {
+                    current.append('"');
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                    current.append(c);
+                }
+                continue;
+            }
+
+            if (!inQuotes && line.startsWith(separator,
+                                             i)) {
+                values.add(current.toString());
+                current.setLength(0);
+                i += separator.length() - 1;
+                continue;
+            }
+
+            current.append(c);
+        }
+
+        values.add(current.toString());
+        return values.toArray(new String[0]);
     }
 
     /**
      * CsvSpliterator is a custom Spliterator for efficiently streaming CSV lines from a BufferedReader.
      */
-    private static class CsvSpliterator extends Spliterators.AbstractSpliterator<String[]> {
+    private class CsvSpliterator extends Spliterators.AbstractSpliterator<MyRecord> {
 
         private final BufferedReader reader;
         private final String separator;
+        private long currentRow = 1;
 
         CsvSpliterator(BufferedReader reader,
                        String separator) {
@@ -199,15 +311,36 @@ class CsvStream implements Supplier<Stream<MyRecord>> {
         }
 
         @Override
-        public boolean tryAdvance(java.util.function.Consumer<? super String[]> action) {
+        public boolean tryAdvance(java.util.function.Consumer<? super MyRecord> action) {
             try {
-                String line = reader.readLine();
-                if (line != null) {
-                    String[] values = line.split(separator);
-                    action.accept(values);
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        return false;
+                    }
+                    currentRow++;
+                    String[] values = splitCsvLine(line,
+                                                   separator);
+                    MyRecord record;
+                    try {
+                        record = lineToRecord(values);
+                    } catch (RuntimeException ex) {
+                        if (errorCollector != null) {
+                            errorCollector.accept(currentRow,
+                                                  ex);
+                        }
+                        CsvRowErrorAction decision =
+                                rowErrorHandler == null
+                                ? CsvRowErrorAction.THROW
+                                : rowErrorHandler.apply(currentRow,
+                                                        ex);
+                        if (decision == CsvRowErrorAction.SKIP) {
+                            continue;
+                        }
+                        throw ex;
+                    }
+                    action.accept(record);
                     return true;
-                } else {
-                    return false;
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Error reading CSV file",

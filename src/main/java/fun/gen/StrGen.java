@@ -50,24 +50,24 @@ public final class StrGen implements Gen<String> {
         if (maxLength < minLength)
             throw new IllegalArgumentException("maxLength < minLength");
         List<Pair<Integer, Gen<? extends String>>> gens = new ArrayList<>();
-        if (minLength == maxLength && minLength == 0) return Gen.cons("");
+        if (minLength == maxLength && minLength == 0) return Gen.constant("");
 
         if (minLength == 0) {
             gens.add(Pair.of(1,
-                             Gen.cons("")));
+                             Gen.constant("")));
         } else {
             gens.add(Pair.of(1,
                              new StrGen(minLength)));
 
             gens.add(Pair.of(1,
-                             Gen.cons(blank(minLength))));
+                             Gen.constant(blank(minLength))));
         }
 
 
         if (minLength != maxLength) {
 
             gens.add(Pair.of(1,
-                             Gen.cons(blank(maxLength))));
+                             Gen.constant(blank(maxLength))));
 
             gens.add(Pair.of(1,
                              new StrGen(maxLength)));

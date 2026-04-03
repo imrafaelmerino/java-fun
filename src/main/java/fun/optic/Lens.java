@@ -9,53 +9,47 @@ import java.util.function.Predicate;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A Lens is an optic that can be seen as a pair of functions:
- * <pre>{@code
- * - get: S      => O i.e. from an S, we can extract an O
- * - set: (O, S) => S i.e. from an S and an O, we obtain an S. Unless it's a prism,
- *   to go back to S, we need another S.
- * }</pre>
- * Typically, a Lens can be defined between a Product (e.g., record, tuple) and one of its components.
- * Given a lens, there are essentially three things you might want to do:
+ * Total optic that focuses from a source {@code S} into a mandatory part {@code O}.
+ * <p>
+ * A lens is defined by:
  * <ul>
- *     <li>View the subpart.</li>
- *     <li>Modify the whole by changing the subpart.</li>
- *     <li>Combine this lens with another lens to look even deeper.</li>
+ *   <li>{@code get: S -> O}</li>
+ *   <li>{@code set: (O, S) -> S}</li>
  * </ul>
+ * Typical usage is focusing into product-like structures (records, tuples, objects).
  *
- * @param <S> the source of a lens
- * @param <O> the target of a lens
+ * @param <S> source type.
+ * @param <O> focus type.
  */
 public class Lens<S, O> {
 
-    /**
-     * Function to view the part.
-     */
+    /** Getter for the focused part. */
     public final Function<S, O> get;
     /**
-     * function to modify the whole by setting the subpart
+     * Setter for replacing the focused part in the source.
      */
     public final Function<O, Function<S, S>> set;
 
     /**
-     * find if the target satisfies the predicate
+     * Finds the focus when it satisfies a predicate.
      */
     public final Function<Predicate<O>, Function<S, Optional<O>>> find;
 
     /**
-     * check if there is a target, and it satisfies the predicate
+     * Checks whether the focused value satisfies a predicate.
      */
     public final Function<Predicate<O>, Predicate<S>> exists;
     /**
-     * function to modify the whole by modifying the subpart with a function
+     * Modifier for transforming the focus and rebuilding the source.
      */
     public final Function<Function<O, O>, Function<S, S>> modify;
 
     /**
-     * Creates a new Lens instance with the specified get and set functions.
+     * Creates a lens from a getter and setter.
      *
-     * @param get The function to view the part.
-     * @param set The function to modify the whole by setting the subpart.
+     * @param get focus getter.
+     * @param set focus setter.
+     * @throws NullPointerException if any parameter is null.
      */
     public Lens(final Function<S, O> get,
                 final Function<O, Function<S, S>> set) {
@@ -72,11 +66,12 @@ public class Lens<S, O> {
 
 
     /**
-     * Composing a Lens and a Prism returns and Optional
+     * Composes this lens with a prism, producing an {@link Option}.
      *
-     * @param prism A Prism from the focus of the lens to the new focus of the Optional
-     * @param <T>   the type of the new focus of the Optional
-     * @return an Optional
+     * @param prism prism from current focus type to a nested optional focus.
+     * @param <T>   new focus type.
+     * @return composed optional optic.
+     * @throws NullPointerException if {@code prism} is null.
      */
     public <T> Option<S, T> compose(final Prism<O, T> prism) {
         Objects.requireNonNull(prism);
@@ -90,11 +85,12 @@ public class Lens<S, O> {
     }
 
     /**
-     * Compose this lens with another one
+     * Composes this lens with another lens.
      *
-     * @param other the other lens
-     * @param <B>   the type of the focus on the new lens
-     * @return a new Lens
+     * @param other lens from current focus to nested focus.
+     * @param <B>   new focus type.
+     * @return composed lens.
+     * @throws NullPointerException if {@code other} is null.
      */
     public <B> Lens<S, B> compose(final Lens<O, B> other) {
         Objects.requireNonNull(other);
@@ -109,14 +105,15 @@ public class Lens<S, O> {
     }
 
     /**
-     * Composes this lens with an Option.
+     * Composes this lens with an option.
      *
-     * @param option The Option to compose with.
-     * @param <B>    The type of the focus on the new Option.
-     * @return A new Option.
+     * @param option optional optic from current focus to nested optional focus.
+     * @param <B>    new focus type.
+     * @return composed optional optic.
+     * @throws NullPointerException if {@code option} is null.
      */
     public <B> Option<S, B> compose(final Option<O, B> option) {
-
+        Objects.requireNonNull(option);
         return new Option<>(s -> option.get.apply(get.apply(s)),
                             b -> s -> {
                                 O c = get.apply(s);

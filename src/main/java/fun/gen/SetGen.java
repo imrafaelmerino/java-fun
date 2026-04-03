@@ -29,7 +29,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
 
     /**
      * Creates a new SetGen instance with the specified generator and size.
-     * The maximum number of tries will be set to size * 10.
+     * The maximum number of tries is derived from the requested size and capped at {@link Integer#MAX_VALUE}.
      *
      * @param gen  The generator for individual elements.
      * @param size The desired size of the generated set.
@@ -40,7 +40,7 @@ public final class SetGen<T> implements Gen<Set<T>> {
                                     final int size) {
         return new SetGen<>(gen,
                             size,
-                            size * 10);
+                            defaultMaxTries(size));
     }
 
     /**
@@ -51,12 +51,19 @@ public final class SetGen<T> implements Gen<Set<T>> {
      *              of successfully generating a set of the desired size, but it can also increase the time it takes to
      *              generate the set.
      * @return A new SetGen instance with the updated maximum tries.
-     * @throws IllegalArgumentException If the specified number of tries is negative.
+     * @throws IllegalArgumentException If {@code tries} is less than {@code size}.
      */
     public SetGen<T> withMaxTries(final int tries) {
         return new SetGen<>(gen,
                             size,
                             tries);
+    }
+
+    private static int defaultMaxTries(final int size) {
+        long tries = (long) size * 10L;
+        return tries > Integer.MAX_VALUE
+                ? Integer.MAX_VALUE
+                : (int) tries;
     }
 
 
@@ -71,14 +78,16 @@ public final class SetGen<T> implements Gen<Set<T>> {
         {
             int tries = 0;
             Set<T> set = new HashSet<>();
-            while (set.size() != size) {
+            while (set.size() < size && tries < maxTries) {
                 set.add(supplier.get());
                 tries += 1;
-                if (tries >= maxTries)
-                    throw new RuntimeException(String.format("Couldn't generate set of %s different elements after %s tries",
-                                                             size,
-                                                             maxTries));
             }
+            if (set.size() < size)
+                throw new GenerationExhaustedException(String.format(
+                        "Couldn't generate set of %s different elements after %s tries",
+                        size,
+                        maxTries
+                ));
             return set;
         };
     }

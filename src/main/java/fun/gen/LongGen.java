@@ -11,7 +11,10 @@ import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 
 /**
- * Represents a generator for long values. This class provides methods to generate arbitrary and biased long values within specified ranges.
+ * Generators for {@link Long} values.
+ * <p>
+ * Supports uniform generation over full or bounded ranges and biased generation
+ * toward representative boundary/common values.
  */
 public final class LongGen implements Gen<Long> {
 
@@ -44,32 +47,32 @@ public final class LongGen implements Gen<Long> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
         if (max >= Integer.MAX_VALUE && min <= Integer.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Integer.MAX_VALUE)));
+                             Gen.constant((long) Integer.MAX_VALUE)));
 
         if (max >= Integer.MIN_VALUE && min <= Integer.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Integer.MIN_VALUE)));
+                             Gen.constant((long) Integer.MIN_VALUE)));
         if (max >= Short.MAX_VALUE && min <= Short.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Short.MAX_VALUE)));
+                             Gen.constant((long) Short.MAX_VALUE)));
         if (max >= Short.MIN_VALUE && min <= Short.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Short.MIN_VALUE)));
+                             Gen.constant((long) Short.MIN_VALUE)));
         if (max >= Byte.MAX_VALUE && min <= Byte.MAX_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Byte.MAX_VALUE)));
+                             Gen.constant((long) Byte.MAX_VALUE)));
         if (max >= Byte.MIN_VALUE && min <= Byte.MIN_VALUE)
             gens.add(Pair.of(1,
-                             Gen.cons((long) Byte.MIN_VALUE)));
+                             Gen.constant((long) Byte.MIN_VALUE)));
         if (max >= 0 && min <= 0)
             gens.add(Pair.of(1,
-                             Gen.cons(0L)));
+                             Gen.constant(0L)));
 
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
         if (max != min)
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary(min,
@@ -121,24 +124,24 @@ public final class LongGen implements Gen<Long> {
         List<Pair<Integer, Gen<? extends Long>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                         Gen.cons(Long.MAX_VALUE)));
+                         Gen.constant(Long.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons(Long.MIN_VALUE)));
+                         Gen.constant(Long.MIN_VALUE)));
 
         gens.add(Pair.of(1,
-                         Gen.cons((long) Integer.MAX_VALUE)));
+                         Gen.constant((long) Integer.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Integer.MIN_VALUE)));
+                         Gen.constant((long) Integer.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Short.MAX_VALUE)));
+                         Gen.constant((long) Short.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Short.MIN_VALUE)));
+                         Gen.constant((long) Short.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Byte.MAX_VALUE)));
+                         Gen.constant((long) Byte.MAX_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons((long) Byte.MIN_VALUE)));
+                         Gen.constant((long) Byte.MIN_VALUE)));
         gens.add(Pair.of(1,
-                         Gen.cons(0L)));
+                         Gen.constant(0L)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary));
@@ -152,7 +155,7 @@ public final class LongGen implements Gen<Long> {
      *
      * @param min The minimum long value (inclusive).
      * @return A biased long generator starting from the specified minimum value.
-     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     * @throws IllegalArgumentException Never thrown by this overload.
      */
     public static Gen<Long> biased(long min) {
         return biased(min,
@@ -164,7 +167,7 @@ public final class LongGen implements Gen<Long> {
      *
      * @param min The minimum long value (inclusive).
      * @return A long generator starting from the specified minimum value.
-     * @throws IllegalArgumentException If {@code max} is less than {@code min}.
+     * @throws IllegalArgumentException Never thrown by this overload.
      */
     public static Gen<Long> arbitrary(long min) {
         return arbitrary(min,

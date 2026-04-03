@@ -36,6 +36,7 @@ public final class BytesGen implements Gen<byte[]> {
 
     public static Gen<byte[]> arbitrary(int minLength,
                                         int maxLength) {
+        if (minLength < 0) throw new IllegalArgumentException("min < 0");
         if (maxLength < minLength) throw new IllegalArgumentException("max < min");
         return seed -> genBytes(seed,
                                 IntGen.arbitrary(minLength,

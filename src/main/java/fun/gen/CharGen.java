@@ -127,7 +127,7 @@ public final class CharGen implements Gen<Character> {
                                         char max) {
         Supplier<Integer> supplier = IntGen.arbitrary(min,
                                                       max)
-                                           .suchThat(it -> !isNonCharacter(it) && !isPUC(it))
+                                           .filter(it -> !isNonCharacter(it) && !isPUC(it))
                                            .apply(gen);
 
         return () -> ((char) supplier.get().intValue());

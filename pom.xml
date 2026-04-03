@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>java-fun</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.0</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>java-fun</name>
     <description>Some patterns and idioms from Functional Programming implemented in Java</description>
     <url>https://github.com/imrafaelmerino/java-fun</url>
@@ -29,53 +29,75 @@
     </scm>
     <properties>
         <error-prone.version>2.36.0</error-prone.version>
-        <NEXUS-STAGING-MAVEN-PLUGIN.VERSION>1.6.12</NEXUS-STAGING-MAVEN-PLUGIN.VERSION>
-        <MAVEN-GPG-PLUGIN.VERSION>1.6</MAVEN-GPG-PLUGIN.VERSION>
-        <MAVEN-SOURCE-PLUGIN.VERSION>3.0.1</MAVEN-SOURCE-PLUGIN.VERSION>
-        <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
-        <MAVEN-COMPILER-PLUGIN.VERSION>3.13.0</MAVEN-COMPILER-PLUGIN.VERSION>
-        <MAVEN-COMPILER-PLUGIN.SOURCE>21</MAVEN-COMPILER-PLUGIN.SOURCE>
-        <MAVEN-COMPILER-PLUGIN.TARGET>21</MAVEN-COMPILER-PLUGIN.TARGET>
-        <MAVEN-SUREFIRE-PLUGIN.VERSION>3.5.2</MAVEN-SUREFIRE-PLUGIN.VERSION>
-        <MAVEN-JAR-PLUGIN.VERSION>3.4.2</MAVEN-JAR-PLUGIN.VERSION>
-        <MAVEN-JAVADOC-PLUGIN.VERSION>3.11.1</MAVEN-JAVADOC-PLUGIN.VERSION>
+        <NEXUS-STAGING-MAVEN-PLUGIN.VERSION>1.7.0</NEXUS-STAGING-MAVEN-PLUGIN.VERSION>
+        <MAVEN-GPG-PLUGIN.VERSION>3.2.8</MAVEN-GPG-PLUGIN.VERSION>
+        <MAVEN-SOURCE-PLUGIN.VERSION>3.4.0</MAVEN-SOURCE-PLUGIN.VERSION>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <MAVEN-COMPILER-PLUGIN.VERSION>3.15.0</MAVEN-COMPILER-PLUGIN.VERSION>
+        <MAVEN-COMPILER-PLUGIN.RELEASE>21</MAVEN-COMPILER-PLUGIN.RELEASE>
+        <MAVEN-SUREFIRE-PLUGIN.VERSION>3.5.5</MAVEN-SUREFIRE-PLUGIN.VERSION>
+        <MAVEN-JAR-PLUGIN.VERSION>3.5.0</MAVEN-JAR-PLUGIN.VERSION>
+        <MAVEN-JAVADOC-PLUGIN.VERSION>3.12.0</MAVEN-JAVADOC-PLUGIN.VERSION>
+        <MAVEN-JACOCO-PLUGIN.VERSION>0.8.12</MAVEN-JACOCO-PLUGIN.VERSION>
+        <MAVEN-ENFORCER-PLUGIN.VERSION>3.5.0</MAVEN-ENFORCER-PLUGIN.VERSION>
+        <MAVEN-MINIMUM-VERSION>3.6.3</MAVEN-MINIMUM-VERSION>
+        <JAVA-MINIMUM-VERSION>21</JAVA-MINIMUM-VERSION>
+        <JAVAFUN.STATS.ENABLED>false</JAVAFUN.STATS.ENABLED>
+        <JAVAFUN.STATS.VERBOSE>false</JAVAFUN.STATS.VERBOSE>
+        <JAVAFUN.TEST.INCLUDED.TAGS></JAVAFUN.TEST.INCLUDED.TAGS>
+        <JAVAFUN.TEST.EXCLUDED.TAGS>stats,perf,fuzz</JAVAFUN.TEST.EXCLUDED.TAGS>
+        <PITEST-MAVEN-PLUGIN.VERSION>1.17.2</PITEST-MAVEN-PLUGIN.VERSION>
+        <PITEST-JUNIT5-PLUGIN.VERSION>1.2.2</PITEST-JUNIT5-PLUGIN.VERSION>
+        <JAVAFUN.COVERAGE.MIN.INSTRUCTION>0.50</JAVAFUN.COVERAGE.MIN.INSTRUCTION>
+        <JAVAFUN.COVERAGE.MIN.BRANCH>0.35</JAVAFUN.COVERAGE.MIN.BRANCH>
         <APACHE_JMETER_CORE.VERSION>5.6.3</APACHE_JMETER_CORE.VERSION>
         <JUNIT-JUPITER-API.VERSION>5.11.3</JUNIT-JUPITER-API.VERSION>
-        <JSON-VALUES.VERSION>14.0.0-RC3</JSON-VALUES.VERSION>
+        <JSON-VALUES.VERSION>14.0.0</JSON-VALUES.VERSION>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${JUNIT-JUPITER-API.VERSION}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_core</artifactId>
-            <version>${APACHE_JMETER_CORE.VERSION}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.imrafaelmerino</groupId>
-            <artifactId>json-values</artifactId>
-            <version>${JSON-VALUES.VERSION}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${MAVEN-ENFORCER-PLUGIN.VERSION}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-build-requirements</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[${MAVEN-MINIMUM-VERSION},)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[${JAVA-MINIMUM-VERSION},)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <version>${MAVEN-COMPILER-PLUGIN.VERSION}</version>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
-                    <target>${MAVEN-COMPILER-PLUGIN.TARGET}</target>
+                    <release>${MAVEN-COMPILER-PLUGIN.RELEASE}</release>
                     <showWarnings>true</showWarnings>
                     <encoding>UTF-8</encoding>
+                    <testExcludes>
+                        <testExclude>**/fun/jmeter/**</testExclude>
+                    </testExcludes>
                     <compilerArgs>
                         <arg>-XDcompilePolicy=simple</arg>
                         <arg>--should-stop=ifError=FLOW</arg>
@@ -95,6 +117,46 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
+                <configuration>
+                    <groups>${JAVAFUN.TEST.INCLUDED.TAGS}</groups>
+                    <excludedGroups>${JAVAFUN.TEST.EXCLUDED.TAGS}</excludedGroups>
+                    <systemPropertyVariables>
+                        <javafun.stats>${JAVAFUN.STATS.ENABLED}</javafun.stats>
+                        <javafun.stats.verbose>${JAVAFUN.STATS.VERBOSE}</javafun.stats.verbose>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${MAVEN-JACOCO-PLUGIN.VERSION}</version>
+                <configuration>
+                    <rules>
+                        <rule>
+                            <element>BUNDLE</element>
+                            <limits>
+                                <limit>
+                                    <counter>INSTRUCTION</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>${JAVAFUN.COVERAGE.MIN.INSTRUCTION}</minimum>
+                                </limit>
+                                <limit>
+                                    <counter>BRANCH</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>${JAVAFUN.COVERAGE.MIN.BRANCH}</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -113,7 +175,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
                 <configuration>
-                    <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
+                    <source>${MAVEN-COMPILER-PLUGIN.RELEASE}</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -127,6 +189,115 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>stats</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <JAVAFUN.STATS.ENABLED>true</JAVAFUN.STATS.ENABLED>
+                <JAVAFUN.TEST.INCLUDED.TAGS>stats</JAVAFUN.TEST.INCLUDED.TAGS>
+                <JAVAFUN.TEST.EXCLUDED.TAGS></JAVAFUN.TEST.EXCLUDED.TAGS>
+            </properties>
+        </profile>
+        <profile>
+            <id>perf</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <JAVAFUN.TEST.INCLUDED.TAGS>perf</JAVAFUN.TEST.INCLUDED.TAGS>
+                <JAVAFUN.TEST.EXCLUDED.TAGS></JAVAFUN.TEST.EXCLUDED.TAGS>
+            </properties>
+        </profile>
+        <profile>
+            <id>fuzz</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <JAVAFUN.TEST.INCLUDED.TAGS>fuzz</JAVAFUN.TEST.INCLUDED.TAGS>
+                <JAVAFUN.TEST.EXCLUDED.TAGS></JAVAFUN.TEST.EXCLUDED.TAGS>
+            </properties>
+        </profile>
+        <profile>
+            <id>mutation</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>${PITEST-MAVEN-PLUGIN.VERSION}</version>
+                        <configuration>
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+                            <targetClasses>
+                                <param>fun.gen.MyRecord*</param>
+                                <param>fun.gen.CsvStream*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>fun.gen.MyRecordTest</param>
+                                <param>fun.gen.MyRecordGenBuilderTest</param>
+                                <param>fun.gen.CsvStreamBuilderTest</param>
+                            </targetTests>
+                            <threads>2</threads>
+                            <timeoutFactor>4.0</timeoutFactor>
+                            <timeoutConstant>6000</timeoutConstant>
+                            <timestampedReports>false</timestampedReports>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>${PITEST-JUNIT5-PLUGIN.VERSION}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jmeter-example</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.jmeter</groupId>
+                    <artifactId>ApacheJMeter_core</artifactId>
+                    <version>${APACHE_JMETER_CORE.VERSION}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.imrafaelmerino</groupId>
+                    <artifactId>json-values</artifactId>
+                    <version>${JSON-VALUES.VERSION}</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.github.imrafaelmerino</groupId>
+                            <artifactId>java-fun</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <testExcludes combine.self="override"/>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>local</id>
             <activation>

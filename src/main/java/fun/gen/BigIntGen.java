@@ -12,12 +12,10 @@ import java.util.random.RandomGenerator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a generator of {@code BigInteger} values.
- * This class implements the {@link Gen} interface to generate {@code BigInteger} values within specified ranges
- * and with various biases.
- *
- * @see Gen
- * @see Combinators
+ * Generators for {@link BigInteger} values.
+ * <p>
+ * The default {@link #arbitrary()} generator produces non-negative values up to 64 bits.
+ * Range-based methods generate values uniformly within inclusive bounds.
  */
 public final class BigIntGen implements Gen<BigInteger> {
 
@@ -29,29 +27,41 @@ public final class BigIntGen implements Gen<BigInteger> {
         this.nBits = nBits;
     }
 
+    /**
+     * Returns the default arbitrary generator.
+     * <p>
+     * Values are non-negative and fit in at most 64 bits.
+     *
+     * @return default arbitrary big integer generator
+     */
     public static Gen<BigInteger> arbitrary() {
         return arbitrary;
     }
 
+    /**
+     * Returns a biased generator that emphasizes selected boundary-like values and zero.
+     *
+     * @return biased big integer generator
+     */
     public static Gen<BigInteger> biased() {
         List<Pair<Integer, Gen<? extends BigInteger>>> gens = new ArrayList<>();
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Long.MAX_VALUE)
+                         Gen.constant(BigInteger.valueOf(Long.MAX_VALUE)
                                             .add(BigInteger.ONE))));
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Long.MIN_VALUE)
+                         Gen.constant(BigInteger.valueOf(Long.MIN_VALUE)
                                             .subtract(BigInteger.ONE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Integer.MAX_VALUE)
+                         Gen.constant(BigInteger.valueOf(Integer.MAX_VALUE)
                                             .add(BigInteger.ONE))));
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.valueOf(Integer.MIN_VALUE)
+                         Gen.constant(BigInteger.valueOf(Integer.MIN_VALUE)
                                             .subtract(BigInteger.ONE))));
 
         gens.add(Pair.of(1,
-                         Gen.cons(BigInteger.ZERO)));
+                         Gen.constant(BigInteger.ZERO)));
 
         gens.add(Pair.of(gens.size(),
                          arbitrary));
@@ -59,6 +69,15 @@ public final class BigIntGen implements Gen<BigInteger> {
         return Combinators.freqList(gens);
     }
 
+    /**
+     * Returns a uniform generator over the inclusive range [{@code min}, {@code max}].
+     *
+     * @param min lower inclusive bound
+     * @param max upper inclusive bound
+     * @return arbitrary generator constrained to the provided range
+     * @throws NullPointerException if {@code min} or {@code max} is {@code null}
+     * @throws IllegalArgumentException if {@code min > max}
+     */
     public static Gen<BigInteger> arbitrary(final BigInteger min,
                                             final BigInteger max) {
         if (requireNonNull(min).compareTo(requireNonNull(max)) > 0) {
@@ -68,7 +87,7 @@ public final class BigIntGen implements Gen<BigInteger> {
         return r -> {
             BigInteger range = max.subtract(min).add(BigInteger.ONE);
             int bitLength = range.bitLength();
-            Random random = new Random(r.nextInt());
+            Random random = new Random(r.nextLong());
             return () -> {
                 BigInteger randomBigInteger;
                 do {
@@ -83,7 +102,15 @@ public final class BigIntGen implements Gen<BigInteger> {
 
     }
 
-
+    /**
+     * Returns a biased generator over the inclusive range [{@code min}, {@code max}].
+     *
+     * @param min lower inclusive bound
+     * @param max upper inclusive bound
+     * @return biased range generator
+     * @throws NullPointerException if {@code min} or {@code max} is {@code null}
+     * @throws IllegalArgumentException if {@code min > max}
+     */
     public static Gen<BigInteger> biased(final BigInteger min,
                                          final BigInteger max) {
 
@@ -122,11 +149,11 @@ public final class BigIntGen implements Gen<BigInteger> {
                         max);
 
         gens.add(Pair.of(1,
-                         Gen.cons(min)));
+                         Gen.constant(min)));
 
         if (min.compareTo(max) != 0) {
             gens.add(Pair.of(1,
-                             Gen.cons(max)));
+                             Gen.constant(max)));
         }
 
         gens.add(Pair.of(gens.size(),
@@ -143,7 +170,7 @@ public final class BigIntGen implements Gen<BigInteger> {
         if (max.compareTo(value) >= 0
                 && min.compareTo(value) <= 0) {
             gens.add(Pair.of(1,
-                             Gen.cons(value)));
+                             Gen.constant(value)));
         }
     }
 
@@ -156,7 +183,8 @@ public final class BigIntGen implements Gen<BigInteger> {
 
             @Override
             protected int next(int bits) {
-                return gen.nextInt(bits);
+                if (bits <= 0) return 0;
+                return gen.nextInt() >>> (Integer.SIZE - bits);
             }
         };
 

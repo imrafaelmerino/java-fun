@@ -1,0 +1,94 @@
+name: CI Quality
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  perf-tests:
+    name: Performance Regression Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run perf profile
+        run: mvn -q -Pperf test
+
+      - name: Upload Surefire reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-perf
+          path: |
+            target/surefire-reports/**
+            **/target/surefire-reports/**
+
+  fuzz-tests:
+    name: Fuzz Invariants Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run fuzz profile
+        run: mvn -q -Pfuzz test
+
+      - name: Upload Surefire reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-fuzz
+          path: |
+            target/surefire-reports/**
+            **/target/surefire-reports/**
+
+  mutation-tests:
+    name: Mutation Coverage (PIT)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run PIT mutation analysis
+        run: mvn -q -Pmutation test org.pitest:pitest-maven:mutationCoverage
+
+      - name: Upload PIT reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pitest-report
+          path: |
+            target/pit-reports/**
+            **/target/pit-reports/**

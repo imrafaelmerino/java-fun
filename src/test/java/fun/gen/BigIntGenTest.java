@@ -1,6 +1,7 @@
 package fun.gen;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -44,6 +45,7 @@ class BigIntGenTest {
 
 
     @Test
+    @Tag("stats")
     void shouldBiasTowardBoundaryValuesWhenUsingBiasedInterval() {
         BigInteger min = new BigInteger("-10000000000000000000000");
         BigInteger max = new BigInteger("100000000000000000000000");
@@ -70,6 +72,7 @@ class BigIntGenTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldBiasTowardBoundaryValuesWhenUsingBiasedDefault() {
         var gen = BigIntGen.biased();
 

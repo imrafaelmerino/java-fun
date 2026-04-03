@@ -5,7 +5,7 @@ import fun.gen.Gen;
 import fun.gen.IntGen;
 import fun.gen.PairGen;
 import fun.tuple.Pair;
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap;
@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@Tag("stats")
 class ArticleExamplesTest {
 
     private static <I> Map<I, String> toPercentages(Map<I, Long> counters,
@@ -28,8 +29,6 @@ class ArticleExamplesTest {
 
     @Test
     void shouldGenerateUniformIntegerDistributionWhenUsingArbitrary() {
-        requireStatsProfile();
-
         Map<Integer, Long> counts = IntGen.arbitrary(-5, 5).collect(100_000_000);
         Map<Integer, String> percentages = toPercentages(counts, 100_000_000);
         System.out.println(percentages);
@@ -43,8 +42,6 @@ class ArticleExamplesTest {
 
     @Test
     void shouldGenerateBoundaryBiasedIntegerDistributionWhenUsingBiased() {
-        requireStatsProfile();
-
         Map<Integer, Long> counts = IntGen.biased(-5, 5).collect(100_000_000);
         Map<Integer, String> percentages = toPercentages(counts, 100_000_000);
         System.out.println(percentages);
@@ -52,8 +49,6 @@ class ArticleExamplesTest {
 
     @Test
     void shouldGenerateDependentPairsWhenComparingFilterAndFlatMapApproaches() {
-        requireStatsProfile();
-
         Gen<Pair<Integer, Integer>> filtered =
                 PairGen.of(IntGen.arbitrary(0, 20), IntGen.arbitrary(0, 20))
                        .filter(pair -> pair.second() > 2 * pair.first());
@@ -67,8 +62,6 @@ class ArticleExamplesTest {
 
     @Test
     void shouldGenerateWeightedVowelsWhenUsingFreqCombinator() {
-        requireStatsProfile();
-
         Gen<Character> uniformVowelGen = Combinators.oneOf('A', 'E', 'I', 'O', 'U');
         System.out.println(uniformVowelGen.collect(100_000));
 
@@ -80,8 +73,4 @@ class ArticleExamplesTest {
         System.out.println(toPercentages(weightedVowelGen.collect(100_000), 100_000));
     }
 
-    private static void requireStatsProfile() {
-        Assumptions.assumeTrue(Boolean.getBoolean("javafun.stats"),
-                               "Article/statistical tests are disabled by default. Run with -Pstats.");
-    }
 }

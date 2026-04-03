@@ -2,6 +2,7 @@ package fun.gen;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -17,9 +18,8 @@ class StrGenTest {
     class LengthAndDistributionTests {
 
         @Test
+        @Tag("stats")
         void shouldGenerateStringsWithinLengthRangeWhenUsingArbitrary() {
-            TestFun.assumeStatsEnabled();
-
             Map<Integer, Long> count = TestFun.generate(LARGE_STATS_SAMPLE_SIZE,
                                                         StrGen.arbitrary(0, 3)
                                                               .map(String::length));
@@ -29,6 +29,7 @@ class StrGenTest {
         }
 
         @Test
+        @Tag("stats")
         void shouldBiasTowardBoundaryLengthsWhenUsingBiased() {
             Assertions.assertTrue(StrGen.biased(0, 0)
                                        .sample(SMALL_SAMPLE_SIZE)
@@ -37,7 +38,6 @@ class StrGenTest {
                                        .sample(SMALL_SAMPLE_SIZE)
                                        .allMatch(it -> it.length() < 3));
 
-            TestFun.assumeStatsEnabled();
             Map<Integer, Long> count = TestFun.generate(LARGE_STATS_SAMPLE_SIZE,
                                                         StrGen.biased(0, 3)
                                                               .map(String::length));
@@ -48,9 +48,8 @@ class StrGenTest {
         }
 
         @Test
+        @Tag("stats")
         void shouldGenerateUniformSingleCharacterOutputsWhenLengthIsOneAcrossFactories() {
-            TestFun.assumeStatsEnabled();
-
             Map<String, Long> countsLetter = TestFun.generate(MEDIUM_STATS_SAMPLE_SIZE,
                                                               StrGen.letters(1, 1));
             Map<String, Long> countsDigit = TestFun.generate(MEDIUM_STATS_SAMPLE_SIZE,

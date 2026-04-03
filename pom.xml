@@ -43,6 +43,9 @@
         <MAVEN-MINIMUM-VERSION>3.6.3</MAVEN-MINIMUM-VERSION>
         <JAVA-MINIMUM-VERSION>21</JAVA-MINIMUM-VERSION>
         <JAVAFUN.STATS.ENABLED>false</JAVAFUN.STATS.ENABLED>
+        <JAVAFUN.STATS.VERBOSE>false</JAVAFUN.STATS.VERBOSE>
+        <JAVAFUN.TEST.INCLUDED.TAGS></JAVAFUN.TEST.INCLUDED.TAGS>
+        <JAVAFUN.TEST.EXCLUDED.TAGS>stats</JAVAFUN.TEST.EXCLUDED.TAGS>
         <JAVAFUN.COVERAGE.MIN.INSTRUCTION>0.50</JAVAFUN.COVERAGE.MIN.INSTRUCTION>
         <JAVAFUN.COVERAGE.MIN.BRANCH>0.35</JAVAFUN.COVERAGE.MIN.BRANCH>
         <APACHE_JMETER_CORE.VERSION>5.6.3</APACHE_JMETER_CORE.VERSION>
@@ -113,8 +116,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
                 <configuration>
+                    <groups>${JAVAFUN.TEST.INCLUDED.TAGS}</groups>
+                    <excludedGroups>${JAVAFUN.TEST.EXCLUDED.TAGS}</excludedGroups>
                     <systemPropertyVariables>
                         <javafun.stats>${JAVAFUN.STATS.ENABLED}</javafun.stats>
+                        <javafun.stats.verbose>${JAVAFUN.STATS.VERBOSE}</javafun.stats.verbose>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -188,6 +194,8 @@
             </activation>
             <properties>
                 <JAVAFUN.STATS.ENABLED>true</JAVAFUN.STATS.ENABLED>
+                <JAVAFUN.TEST.INCLUDED.TAGS>stats</JAVAFUN.TEST.INCLUDED.TAGS>
+                <JAVAFUN.TEST.EXCLUDED.TAGS></JAVAFUN.TEST.EXCLUDED.TAGS>
             </properties>
         </profile>
         <profile>

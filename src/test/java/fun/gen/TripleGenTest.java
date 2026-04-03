@@ -2,10 +2,12 @@ package fun.gen;
 
 import fun.tuple.Triple;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+@Tag("stats")
 class TripleGenTest {
 
     @Test

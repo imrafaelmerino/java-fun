@@ -1,6 +1,7 @@
 package fun.gen;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 class DoubleGenTest {
 
     @Test
+    @Tag("stats")
     void shouldBiasTowardBoundaryValuesWhenUsingBiasedDefault() {
 
         Map<Double, Long> counts = TestFun.generate(100000,
@@ -42,6 +44,7 @@ class DoubleGenTest {
 
 
     @Test
+    @Tag("stats")
     void shouldBiasTowardBoundaryValuesWhenUsingBiasedInterval() {
 
         Map<Double, Long> counts = TestFun.generate(100000,

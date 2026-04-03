@@ -1,5 +1,6 @@
 package fun.gen;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ class BigDecGenTest {
 
 
     @Test
+    @Tag("stats")
     void shouldBiasTowardBoundaryValuesWhenUsingBiasedInterval() {
 
         Map<BigDecimal, Long> counts =
@@ -37,6 +39,7 @@ class BigDecGenTest {
 
 
     @Test
+    @Tag("stats")
     void shouldBiasTowardBoundaryValuesWhenUsingBiasedDefault() {
 
         Map<BigDecimal, Long> counts = TestFun.generate(100000,

@@ -1,9 +1,11 @@
 package fun.gen;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Map;
 
+@Tag("stats")
 class CharGenTest {
 
 

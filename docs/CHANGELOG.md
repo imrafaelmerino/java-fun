@@ -40,6 +40,7 @@ All notable changes to this project are documented in this file.
 - Clarified `MyRecord` collection access semantics with explicit `*View` and `*Copy` APIs and deep-freeze constructor behavior.
 - Added migration guidance for `Gen` idiomatic names and the simplified `MyRecordGen` construction API.
 - Normalized test class and test method naming to idiomatic JUnit 5 conventions (`*Test`, `should...When...`) to improve readability and maintenance.
+- Added test-execution guidance for fast vs. statistical suites (`@Tag("stats")`, default exclusion, `-Pstats` profile).
 
 ### Added
 
@@ -69,7 +70,9 @@ All notable changes to this project are documented in this file.
 - Refactored `GenRecordMyTest` and `CombinatorsTest` with shared sample-size constants and helper assertions to improve readability and maintenance.
 - Refactored `CsvStreamBuilderTest` into nested behavioral suites with reusable CSV helpers, preserving coverage while reducing duplication.
 - Refactored `fun.optic` tests (`LensesTest`, `OptionalsTest`, `PrismTest`) into nested behavior-focused suites for consistent readability and maintenance.
-- Refactored remaining core `fun.gen` suites (`MapGenTest`, `SetGenTest`, `StrGenTest`, `GenCoreTest`) with nested structures/constants/helpers, and added `TestFun.assumeStatsEnabled()` to skip heavy statistical generation when stats profile is disabled.
+- Refactored remaining core `fun.gen` suites (`MapGenTest`, `SetGenTest`, `StrGenTest`, `GenCoreTest`) with nested structures/constants/helpers.
+- Added `@Tag("stats")` classification for statistical/distribution tests and wired Maven Surefire to exclude them by default and run them explicitly with `-Pstats`.
+- Added `CONTRIBUTING.md` with test naming, tagging, and local run conventions.
 
 ## 3.0.0
 

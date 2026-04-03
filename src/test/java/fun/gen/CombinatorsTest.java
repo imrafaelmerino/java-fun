@@ -2,6 +2,7 @@ package fun.gen;
 
 import fun.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -16,6 +17,7 @@ class CombinatorsTest {
     private static final double UNIFORM_ERROR_MARGIN = 0.05;
 
     @Test
+    @Tag("stats")
     void shouldGenerateValuesAccordingToWeightsWhenUsingFreq() {
 
         Gen<Integer> gen = Combinators.freq(Pair.of(1, Gen.constant(1)),
@@ -42,6 +44,7 @@ class CombinatorsTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldGenerateNullAndValueWithSameProbabilityWhenUsingNullable() {
 
 
@@ -73,6 +76,7 @@ class CombinatorsTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldGenerateAnyProvidedValueWhenUsingOneOfVarargs() {
 
 
@@ -81,6 +85,7 @@ class CombinatorsTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldGenerateAnyProvidedValueWhenUsingOneOfList() {
 
 
@@ -142,6 +147,7 @@ class CombinatorsTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldGenerateAnyProvidedValueWhenUsingOneOfSet() {
 
 
@@ -176,6 +182,7 @@ class CombinatorsTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldGenerateValuesFromAnyProvidedGeneratorWhenUsingOneOfGenerators() {
 
 
@@ -194,6 +201,7 @@ class CombinatorsTest {
     }
 
     @Test
+    @Tag("stats")
     void shouldGenerateValuesFromAnyProvidedGeneratorWhenUsingOneOfListGenerators() {
 
 
@@ -271,6 +279,7 @@ class CombinatorsTest {
 
 
     @Test
+    @Tag("stats")
     void shouldGenerateAllTwoElementCombinationsWhenUsingSubsetWithSizeTwo() {
 
         Gen<Set<String>> gen = Combinators.combinations(2,
@@ -298,6 +307,7 @@ class CombinatorsTest {
 
 
     @Test
+    @Tag("stats")
     void shouldGenerateAllNonEmptySubsetsWhenUsingSubsetWithoutSizeConstraint() {
 
         Gen<Set<String>> gen =

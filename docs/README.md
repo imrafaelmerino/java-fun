@@ -727,8 +727,10 @@ System.out.println(after);
 - Use `distinct(tries)` only where uniqueness is a requirement.
 - Keep a fixed `RandomGenerator` seed in failing tests for reproducibility.
 - Prefer small composable generators over one big opaque generator.
+- Mark expensive distribution assertions with `@Tag("stats")` so they do not run in the default fast suite.
 - Run fast CI-equivalent checks locally with `mvn -q test jacoco:report jacoco:check`.
 - Run statistical/distribution checks explicitly with `mvn -q -Pstats test`.
+- Enable detailed stats logs only when needed with `mvn -q -Pstats -DJAVAFUN.STATS.VERBOSE=true test`.
 
 ## Migration Guide (3.x -> 4.0)
 

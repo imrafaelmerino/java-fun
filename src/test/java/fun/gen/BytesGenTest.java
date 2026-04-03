@@ -1,6 +1,7 @@
 package fun.gen;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 class BytesGenTest {
 
     @Test
+    @Tag("stats")
     void shouldGenerateByteArraysWithinLengthRangeWhenUsingArbitrary() {
 
         Assertions.assertTrue(BytesGen.arbitrary(0,

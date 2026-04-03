@@ -1,12 +1,14 @@
 package fun.gen;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Tag("stats")
 class InstantGenTest {
 
     public static void main(String[] args) {
